@@ -11,6 +11,13 @@ Small tools shared by the monorepo components. Per-component test suites live in
   embedding the registry from `standard/registry/`. Run via `npm run build:sdk`.
 - `build-schemas.py` — regenerates the JSON Schemas in `standard/schemas/` from the
   pinned vocabulary in `standard/registry/` (Python 3, stdlib only).
+- `build-standalone-pages.js` — re-inlines the current `notation/dist/ddn.global.js`
+  into the root `index.html` landing page and rebuilds `standard/plates/index.html`
+  with all SVG plates inlined. Run after `build:sdk` or after changing plates. The
+  single-file pages exist so `file://` browsing works even when the browser sandbox
+  exposes only the opened file (e.g. Flatpak document-portal launches).
+  (Replacement-string safety: always use function replacements when inlining —
+  the runtime contains `$'` sequences that `String.replace` would expand.)
 - `requirements-dev.txt` — optional Python tooling (markdown rendering, schema
   validation, browser tests). Nothing here is required to run or test the runtime.
 

@@ -6,6 +6,13 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Chrome/file:// fix: `index.html` and `standard/plates/index.html` are now
+  single-file pages (runtime and plates inlined via
+  `tools/build-standalone-pages.js`). Flatpak Chrome exposes only the opened
+  file to the sandbox, which blocked the external `ddn.global.js` subresource
+  ("DDNLive is not defined"); the inlined pages are immune. All linked
+  standalone pages (gallery, Studio, designer prototype) were already
+  self-contained. Verified in Chrome 151 and Chromium over `file://`.
 - Standalone readiness: root `index.html` landing page with live in-browser
   render, `standard/plates/index.html` notation-plate browser, and
   `designer/prototype/standalone.html` single-file designer prototype
