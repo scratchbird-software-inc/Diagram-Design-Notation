@@ -85,23 +85,45 @@ License: GPL-2.0-or-later (see <a href="LICENSE">LICENSE</a>, <a href="NOTICE.md
 <script src="notation/dist/ddn.global.js"></script>
 <script>
 (function(){
-var source = [
-'ddn "0.5";',
-'module "portal.demo";',
-'data model {',
-'    object customer "Customer" { kind: table; fields { field id; field display_name; field status; } }',
-'    object orders "Order" { kind: table; fields { field id; field customer_id; field created_at; } }',
-'    object invoice "Invoice" { kind: table; fields { field id; field order_id; field issued_at; } }',
-'    relation order_customer "Customer reference" @model.orders.customer_id -> @model.customer.id { kind: ref; enforcement: undecided; }',
-'    relation invoice_order "Order reference" @model.invoice.order_id -> @model.orders.id { kind: ref; enforcement: undecided; }',
-'}',
-'format common {',
-'    style standard { look: classic; theme: default; font: sans; }',
-'    layout grid { algorithm: grid; columns: 2; gap: 130px; row_gap: 100px; routing: orthogonal; }',
-'    bundle design { style:@standard; layout:@grid; }',
-'}',
-'view overview "Customer orders" { data: [@model]; format: @common.design; }'
-].join('\n');
+var source = `
+ddn "0.5";
+module "designer.sample";
+// Synthetic design; no production/customer information.
+// Shared definition edits must preserve this comment.
+data model {
+    object customer "Customer" {
+        kind: table;
+        description: "A customer in the commerce domain";
+        fields { field id; field display_name; field status; }
+    }
+    object orders "Order" {
+        kind: table;
+        fields { field id; field customer_id; field created_at; }
+    }
+    object invoice "Invoice" {
+        kind: table;
+        fields { field id; field order_id; field issued_at; }
+    }
+    object posting "Post to ledger" { kind: activity; }
+    relation order_customer "Customer reference" @model.orders.customer_id -> @model.customer.id { kind: ref; enforcement: undecided; }
+    relation invoice_order "Order reference" @model.invoice.order_id -> @model.orders.id { kind: ref; enforcement: undecided; }
+    relation invoice_post "Approved invoice" @model.invoice -> @model.posting { kind: flow; }
+}
+format common {
+    style standard { look: classic; theme: default; font: sans; }
+    layout grid { algorithm: grid; columns: 2; gap: 130px; row_gap: 100px; routing: orthogonal; }
+    legend compact { mode: tokens; placement: none; }
+    publication screen { size: content; fit: none; }
+    bundle design { style:@standard; layout:@grid; legend:@compact; publication:@screen; }
+}
+view overview "Customer orders / structural view" {
+    data: [@model]; format: @common.design;
+}
+view names "Customer orders / compact view" {
+    data: [@model]; format: @common.design;
+    display { fields:none; }
+}
+`;
 try {
   var ws = DDNLive.createWorkspace({'demo.ddn': source});
   var r = ws.renderSync({entry:'demo.ddn', view:'overview'});
