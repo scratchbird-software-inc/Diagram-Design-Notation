@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:designer:shape-recipe:0.1",
+  "title": "Proposed trusted, installed shape recipe",
+  "type": "object",
+  "required": [
+    "format",
+    "id",
+    "status",
+    "semanticKinds",
+    "body",
+    "content",
+    "markers",
+    "anchors",
+    "variants"
+  ],
+  "properties": {
+    "format": {
+      "const": "ddn-shape-recipe-proposal@1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "status": {
+      "const": "proposed-not-runtime-installed"
+    },
+    "semanticKinds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "uniqueItems": true
+    },
+    "body": {
+      "type": "object",
+      "required": [
+        "form",
+        "contour",
+        "obstacle",
+        "minimumWidth",
+        "minimumHeight"
+      ],
+      "properties": {
+        "form": {
+          "enum": [
+            "card",
+            "activity",
+            "frame",
+            "note",
+            "sample",
+            "profile"
+          ]
+        },
+        "silhouette": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "contour": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "obstacle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "minimumWidth": {
+          "type": "number",
+          "minimum": 8
+        },
+        "minimumHeight": {
+          "type": "number",
+          "minimum": 8
+        },
+        "padding": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "content": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "source",
+          "renderer",
+          "optional"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "renderer": {
+            "enum": [
+              "text",
+              "field-tree",
+              "parameter-list",
+              "operation-list",
+              "sample-grid",
+              "property-summary",
+              "ports"
+            ]
+          },
+          "optional": {
+            "type": "boolean"
+          },
+          "separator": {
+            "type": "boolean"
+          },
+          "visibleWhen": {
+            "type": "object",
+            "required": [
+              "property",
+              "equals"
+            ],
+            "properties": {
+              "property": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "equals": {
+                "type": [
+                  "string",
+                  "boolean",
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "markers": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "property",
+          "slot",
+          "registry",
+          "displayPolicy"
+        ],
+        "properties": {
+          "property": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "slot": {
+            "enum": [
+              "NW",
+              "NE",
+              "E",
+              "SW1",
+              "SW2",
+              "SE1",
+              "SE2",
+              "S1",
+              "S2",
+              "S3",
+              "member-leading",
+              "member-trailing"
+            ]
+          },
+          "registry": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "displayPolicy": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "overflow": {
+            "const": "expand-or-more-indicator"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "anchors": {
+      "type": "object",
+      "required": [
+        "semanticEndpoints",
+        "visualSides",
+        "ordering",
+        "respectExplicit"
+      ],
+      "properties": {
+        "semanticEndpoints": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "body",
+              "member",
+              "port"
+            ]
+          }
+        },
+        "visualSides": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "north",
+              "east",
+              "south",
+              "west"
+            ]
+          }
+        },
+        "ordering": {
+          "enum": [
+            "registered-policy",
+            "fixed-member-order"
+          ]
+        },
+        "respectExplicit": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "meaningInvariant",
+          "approvedLooks"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "meaningInvariant": {
+            "const": true
+          },
+          "approvedLooks": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "classic",
+                "handDrawn",
+                "neo"
+              ]
+            }
+          },
+          "visibilityPolicy": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "fallback": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    }
+  },
+  "additionalProperties": false
+}

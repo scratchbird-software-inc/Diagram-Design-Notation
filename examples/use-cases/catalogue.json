@@ -1,0 +1,455 @@
+{
+  "edition": "use-cases.1",
+  "engine": "0.2.0-draft.2",
+  "status": "Executable teaching examples, not production-conformance claims",
+  "cases": [
+    {
+      "number": 1,
+      "slug": "whiteboard",
+      "title": "01 / Whiteboard sketch",
+      "question": "What are the main things in this discussion?",
+      "entry": "use-cases/01-whiteboard.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "sketch",
+      "explanation": "Unspecified objects and named associations capture a conversation before tables, datatypes or deployment are chosen. The sketch look makes the drawing informal; it does not set maturity to draft.",
+      "try": "Add a Return object and a named association, without assigning a datatype or a location.",
+      "limitation": "This is a conceptual sketch, not an implemented schema.",
+      "select": [
+        "s.model.customer",
+        "s.model.order",
+        "s.model.shipment"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 2,
+      "slug": "business-erd",
+      "title": "02 / Business concepts",
+      "question": "What does one customer relate to?",
+      "entry": "use-cases/02-business-erd.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "Conceptual entities describe business meaning. Endpoint marks express one customer per order and optional multiple orders or shipments on the opposite ends.",
+      "try": "Change a cardinality only after deciding its business meaning; do not infer it from sample row counts.",
+      "limitation": "The diagram asserts intended cardinalities, not database-enforced constraints.",
+      "select": [
+        "c.concepts.customer",
+        "c.concepts.order",
+        "c.concepts.shipment"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 3,
+      "slug": "relational",
+      "title": "03 / Logical relational schema",
+      "question": "Which fields reference which identifiers?",
+      "entry": "use-cases/03-relational.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "The field-level references connect Order line to Orders and Orders to Customer. Key icons and shared semantic-domain bindings can exist before physical SQL datatypes are selected.",
+      "try": "Use the compact display policy to hide the fields; field endpoint identities remain in the resolved model.",
+      "limitation": "Datatypes and enforcement are deliberately undecided. This does not generate DDL.",
+      "select": [
+        "c.tables.line",
+        "c.tables.orders",
+        "c.tables.customer"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 4,
+      "slug": "sql-dependencies",
+      "title": "04 / SQL object dependencies",
+      "question": "What could be affected by changing a SQL definition?",
+      "entry": "use-cases/04-sql-dependencies.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "Procedure, view and table definitions use the same card grammar. Dependency arrows describe required definitions; they do not assert copying, scheduling or execution.",
+      "try": "Add the supplied index definition to a separate access-path view, keeping its target dependency explicit.",
+      "limitation": "This is declared dependency information. SQL parsing and database reverse engineering are not implemented.",
+      "select": [
+        "s.model.routine",
+        "s.model.view",
+        "c.tables.orders"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 5,
+      "slug": "documents",
+      "title": "05 / Nested document structure",
+      "question": "What is embedded rather than independently stored?",
+      "entry": "use-cases/05-documents.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "A collection shape contains an embedded contacts array whose item shape is a document. The required/optional and nullability assertions stay independent.",
+      "try": "Add an optional property to the contact item. Compare it with a nullable required property.",
+      "limitation": "This is a schematic shape view, not a complete JSON Schema validator or an automatically expanded JSON tree.",
+      "select": [
+        "d.model.profiles",
+        "d.model.contacts",
+        "d.model.contact"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 6,
+      "slug": "graph-schema",
+      "title": "06 / Property-graph schema",
+      "question": "Can a relationship have properties of its own?",
+      "entry": "use-cases/06-graph-schema.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "neo",
+      "explanation": "The PURCHASED edge type has purchased_at and quantity properties. Its incident node types are shown explicitly, so an edge is not confused with a property-free line.",
+      "try": "Add a second graph-edge type with its own properties and endpoint types.",
+      "limitation": "This is an incidence-style schema drawing; it does not query or validate a live graph database.",
+      "select": [
+        "g.model.customer",
+        "g.model.purchased",
+        "g.model.product"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 7,
+      "slug": "keyed-storage",
+      "title": "07 / Key-value design",
+      "question": "What is the key, and what shape is its value?",
+      "entry": "use-cases/07-keyed-storage.ddn",
+      "view": "diagram",
+      "category": "Structure",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "Separate the session identity, the key-value store and the value record. A companion wide-column view shows partition and clustering roles without treating them as ordinary foreign keys.",
+      "try": "Change the value shape without changing the key definition, then inspect the wide-column companion view.",
+      "limitation": "The reference renderer uses a generic key glyph. Exact partition/clustering roles are explicit in source and the resolved model, not unique rendered row glyphs yet.",
+      "select": [
+        "k.kv.key",
+        "k.kv.sessions",
+        "k.kv.value"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 8,
+      "slug": "domains",
+      "title": "08 / Domain discovery and binding",
+      "question": "Do differently named fields share the same meaning?",
+      "entry": "use-cases/08-domains.ddn",
+      "view": "diagram",
+      "category": "Meaning and organization",
+      "layout": "fixed teaching layout",
+      "style": "classic",
+      "explanation": "Orders.customer_id has an established domain binding. Support.account_ref is only a candidate. A separate representation-binding object leaves the SQL type decision open.",
+      "try": "Review the candidate and, only when meaning is confirmed, change candidate_domain_match to uses_domain.",
+      "limitation": "Successful rendering does not approve a domain match, select a SQL engine or infer a datatype.",
+      "select": [
+        "c.tables.orders",
+        "d.model.support",
+        "c.domains.customer_id",
+        "d.model.binding"
+      ],
+      "visibleRelations": 3
+    },
+    {
+      "number": 9,
+      "slug": "namespaces",
+      "title": "09 / Namespace organization",
+      "question": "Which schema contains these SQL objects?",
+      "entry": "use-cases/09-namespaces.ddn",
+      "view": "diagram",
+      "category": "Meaning and organization",
+      "layout": "fixed teaching layout",
+      "style": "classic",
+      "explanation": "Tables and routines can belong to the same schema. Namespace-membership relationships say nothing by themselves about cloud location or physical storage.",
+      "try": "Build another view over the same Orders definition that selects its shard and deployed copies instead.",
+      "limitation": "This models declared membership, not a live catalogue inventory.",
+      "select": [
+        "c.tables.orders",
+        "s.model.routine",
+        "n.model.schema"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 10,
+      "slug": "hybrid-deployment",
+      "title": "10 / Shards, copies and placement",
+      "question": "Which fragment is copied, and where are its copies?",
+      "entry": "use-cases/10-hybrid-deployment.ddn",
+      "view": "diagram",
+      "category": "Deployment and operations",
+      "layout": "fixed teaching layout",
+      "style": "classic",
+      "explanation": "One logical Orders definition maps to a fragment. Two separate copies realize that fragment and sit on different services. A replication flow is distinct from the copy and placement relationships.",
+      "try": "Add another shard as a new fragment, rather than duplicating the business concept.",
+      "limitation": "This is a declared topology. Replica health, actual placements and delivery guarantees have not been observed.",
+      "select": [
+        "c.tables.orders",
+        "d.model.shard",
+        "d.model.primary",
+        "d.model.follower",
+        "d.model.local",
+        "d.model.cloud"
+      ],
+      "visibleRelations": 6
+    },
+    {
+      "number": 11,
+      "slug": "data-flow",
+      "title": "11 / Data-flow diagram",
+      "question": "What data enters a process and what comes out?",
+      "entry": "use-cases/11-data-flow.ddn",
+      "view": "diagram",
+      "category": "Movement and lineage",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "A dataset is consumed by a validation activity that writes another dataset. Movement arrows explain processing, not a foreign-key relationship.",
+      "try": "Add a rejected-record output as a distinct dataset with its own flow.",
+      "limitation": "This uses DDN process/data-flow conventions. It is not a claim of formal DFD or BPMN execution semantics.",
+      "select": [
+        "f.dfd.incoming",
+        "f.dfd.validate",
+        "f.dfd.accepted"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 12,
+      "slug": "streaming",
+      "title": "12 / Event publication and consumers",
+      "question": "How can one change stream feed independent projections?",
+      "entry": "use-cases/12-streaming.ddn",
+      "view": "diagram",
+      "category": "Movement and lineage",
+      "layout": "fixed teaching layout",
+      "style": "classic",
+      "explanation": "Capture, transport, consumption and projection building are separate stages. History and search are independent derived representations with separate consumers.",
+      "try": "Add a consumer group and a stated delivery requirement; do not infer exactly-once effects from the Kafka label.",
+      "limitation": "This is an architectural contract illustration. The renderer does not operate Kafka, monitor lag or prove delivery behaviour.",
+      "select": [
+        "f.stream.source",
+        "f.stream.capture",
+        "f.stream.topic",
+        "f.stream.hist_job",
+        "f.stream.search_job",
+        "f.stream.history",
+        "f.stream.search"
+      ],
+      "visibleRelations": 6
+    },
+    {
+      "number": 13,
+      "slug": "lineage",
+      "title": "13 / Dataset lineage",
+      "question": "Where did an analytical result come from?",
+      "entry": "use-cases/13-lineage.ddn",
+      "view": "diagram",
+      "category": "Movement and lineage",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "Declared derivation links connect the shared Orders table to daily totals and a dashboard. Unlike the operational flow view, this view does not claim a transfer mechanism or schedule.",
+      "try": "Reuse Orders in both a lineage view and a deployment view; its identity must remain the same.",
+      "limitation": "Lineage is authored information here, not automatically harvested or verified runtime provenance.",
+      "select": [
+        "c.tables.orders",
+        "l.model.daily",
+        "l.model.report"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 14,
+      "slug": "temporal",
+      "title": "14 / Valid time and recorded time",
+      "question": "When did a fact apply, and when did we know it?",
+      "entry": "use-cases/14-temporal.ddn",
+      "view": "diagram",
+      "category": "Analytics and history",
+      "layout": "fixed teaching layout",
+      "style": "classic",
+      "explanation": "A correction known on March 5 says suspension was effective from March 3. Three synthetic rows preserve the earlier recorded belief and the later corrected intervals. End bounds are exclusive; null in an end column means open-ended in this example.",
+      "try": "Compare the valid state on March 4 with what the warehouse knew on March 4. Do not substitute arrival time for business-effective time.",
+      "limitation": "These are civil-date examples with an explicit open-end convention. The renderer does not execute temporal queries or provide point-in-time restore.",
+      "select": [
+        "t.model.history",
+        "t.model.example"
+      ],
+      "visibleRelations": 1
+    },
+    {
+      "number": 15,
+      "slug": "warehouse",
+      "title": "15 / Dimensional warehouse",
+      "question": "What is the fact grain and which dimensions describe it?",
+      "entry": "use-cases/15-warehouse.ddn",
+      "view": "diagram",
+      "category": "Analytics and history",
+      "layout": "fixed teaching layout",
+      "style": "classic",
+      "explanation": "A central fact representation references customer, product and date dimensions. The note declares one row per order line so measures are interpreted at a known grain.",
+      "try": "Add a promotion dimension or bridge only after specifying its multiplicity and effect on the grain.",
+      "limitation": "The star arrangement is deliberately positioned in this teaching view. There is no automatic star-layout engine or measure-additivity validator.",
+      "select": [
+        "w.model.fact",
+        "w.model.customer",
+        "w.model.product",
+        "w.model.date",
+        "w.model.grain"
+      ],
+      "visibleRelations": 3
+    },
+    {
+      "number": 16,
+      "slug": "vector-lineage",
+      "title": "16 / Vector and embedding lineage",
+      "question": "Which source and transformation produced these vectors?",
+      "entry": "use-cases/16-vector-lineage.ddn",
+      "view": "diagram",
+      "category": "Analytics and history",
+      "layout": "automatic grid",
+      "style": "neo",
+      "explanation": "Source descriptions are consumed by an embedding activity that generates a vector representation. The transformation version and model version belong to the design metadata.",
+      "try": "Extend the view with a query interface or add feature and model-artifact kinds for an ML feature pipeline.",
+      "limitation": "This illustrates lineage; it does not run a model, calculate embeddings or assess model quality.",
+      "select": [
+        "v.model.source",
+        "v.model.embedding",
+        "v.model.index"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 17,
+      "slug": "governance",
+      "title": "17 / Data products and contracts",
+      "question": "Which contract applies, and who stewards it?",
+      "entry": "use-cases/17-governance.ddn",
+      "view": "diagram",
+      "category": "Meaning and organization",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "A data product conforms to a declared contract, and the contract has a responsible team. The relationship direction distinguishes the governed object from its policy or owner.",
+      "try": "Add separate product ownership and operational responsibility relationships rather than assuming contract stewardship covers both.",
+      "limitation": "The example documents responsibilities. It does not validate compliance or enforce a contract.",
+      "select": [
+        "g.model.product",
+        "g.model.contract",
+        "g.model.team"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 18,
+      "slug": "security",
+      "title": "18 / Data handling boundaries",
+      "question": "What must happen before data leaves a restricted context?",
+      "entry": "use-cases/18-security.ddn",
+      "view": "diagram",
+      "category": "Meaning and organization",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "The declared process removes direct identifiers and aggregates contact records before an export. Scope frames separate the restricted source from a review-before-release context.",
+      "try": "Add explicit policy and approval records. Record which checks would support a release decision.",
+      "limitation": "The labels are a proposed handling design, not proof of anonymization, legal compliance or network enforcement. Frames alone do not implement security.",
+      "select": [
+        "s.model.source",
+        "s.model.mask",
+        "s.model.export"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 19,
+      "slug": "recovery",
+      "title": "19 / Backup and restore design",
+      "question": "Which artifact is used to construct a recovery target?",
+      "entry": "use-cases/19-recovery.ddn",
+      "view": "diagram",
+      "category": "Deployment and operations",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "A backup artifact is the input to an isolated restore activity. The resulting database is a distinct target, not another drawing of the production database.",
+      "try": "Add a restore test, log coverage and recovery objectives before claiming a point-in-time recovery capability.",
+      "limitation": "No restore was performed. This backup-only example does not prove PITR, recoverability, RPO or RTO.",
+      "select": [
+        "r.model.backup",
+        "r.model.restore",
+        "r.model.target"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 20,
+      "slug": "migration",
+      "title": "20 / Migration and target design",
+      "question": "How will the old representation become the new one?",
+      "entry": "use-cases/20-migration.ddn",
+      "view": "diagram",
+      "category": "Deployment and operations",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "Legacy and target tables have distinct instance identities. Extraction and loading are connected through an explicit mapping/reconciliation activity; maturity indicators remain independent of drawing style.",
+      "try": "Add a parallel-run comparison, cutover decision and rollback path as explicit activities or constraints.",
+      "limitation": "The diagram documents a plan; it does not execute a migration or prove zero-downtime cutover.",
+      "select": [
+        "m.model.legacy",
+        "m.model.convert",
+        "m.model.target"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 21,
+      "slug": "quality",
+      "title": "21 / Example-driven data quality",
+      "question": "What is the expected outcome for a concrete invalid input?",
+      "entry": "use-cases/21-quality.ddn",
+      "view": "diagram",
+      "category": "Quality and examples",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "The input grid deliberately contains a null status. The expected grid excludes that row. Column bindings target the same status-record fields, so the fixture survives a display-name change.",
+      "try": "Change one input record and explicitly update or reject the expected output. A sample is not automatically a constraint.",
+      "limitation": "The reference renderer displays the fixture but does not execute the validation. Test-runner integration is a separate task.",
+      "select": [
+        "q.model.input",
+        "q.model.check",
+        "q.model.expected"
+      ],
+      "visibleRelations": 2
+    },
+    {
+      "number": 22,
+      "slug": "linked-documentation",
+      "title": "22 / Navigable design documentation",
+      "question": "How can a document offer an overview without repeating the entire model?",
+      "entry": "use-cases/22-linked-documentation.ddn",
+      "view": "diagram",
+      "category": "Documentation",
+      "layout": "automatic grid",
+      "style": "classic",
+      "explanation": "An overview links to detailed logical and business views. Each target view selects shared data and policies independently. The reference cards represent navigation, not new datasets or copies.",
+      "try": "Open the exported SVG directly and follow a detail link, or use the companion links below the image. The same file defines both destinations.",
+      "limitation": "Links inside an SVG shown as an ordinary image are not interactive. Companion HTML links provide the portable fallback. Existing core examples separately demonstrate inline subdiagrams.",
+      "select": [
+        "c.tables.orders",
+        "c.tables.customer"
+      ],
+      "visibleRelations": 1
+    }
+  ]
+}

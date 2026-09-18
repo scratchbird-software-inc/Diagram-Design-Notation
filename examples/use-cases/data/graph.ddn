@@ -1,0 +1,30 @@
+ddn "0.3";
+module "ddn.usecases.graph";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object customer "Customer node" {
+        kind: graph_node;
+        fields {
+            field customer_id;
+            field name;
+        }
+    }
+    object purchased "PURCHASED edge" {
+        kind: graph_edge;
+        fields {
+            field purchased_at;
+            field quantity;
+        }
+    }
+    object product "Product node" {
+        kind: graph_node;
+        fields {
+            field sku;
+            field title;
+        }
+    }
+    relation r_source "source node type" @customer -> @purchased { kind: assoc; }
+    relation r_target "target node type" @purchased -> @product { kind: assoc; }
+}

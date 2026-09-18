@@ -1,0 +1,6 @@
+# Optional build/validation dependencies pinned to this executed build.
+# Neither these nor Python is required by the distributed browser runtime.
+markdown-it-py==4.2.0
+jsonschema==4.26.0
+lxml==6.1.1
+Pillow==12.3.0

@@ -1,0 +1,1094 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:schema:resolved:0.3",
+  "title": "DDN reference resolved view interchange 0.3",
+  "description": "Structural schema of the distributed reference IR. Cross-record semantics and production profile obligations require additional validation.",
+  "type": "object",
+  "required": [
+    "format",
+    "language",
+    "registry",
+    "entry",
+    "view",
+    "elements",
+    "relations",
+    "diagnostics"
+  ],
+  "properties": {
+    "format": {
+      "enum": [
+        "ddn-resolved@0.3",
+        "ddn-resolved@0.4",
+        "ddn-resolved@0.5"
+      ]
+    },
+    "language": {
+      "enum": [
+        "0.3",
+        "0.4",
+        "0.5"
+      ]
+    },
+    "registry": {
+      "const": "ddn-core@0.3"
+    },
+    "entry": {
+      "type": "string"
+    },
+    "view": {
+      "$ref": "#/$defs/view"
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/element"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      }
+    },
+    "publication": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "value": {
+      "oneOf": [
+        {
+          "type": [
+            "null",
+            "boolean",
+            "string",
+            "number"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "$ref"
+          ],
+          "properties": {
+            "$ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$state"
+          ],
+          "properties": {
+            "$state": {
+              "enum": [
+                "undecided",
+                "not_applicable",
+                "conflicting"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$missing"
+          ],
+          "properties": {
+            "$missing": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$quantity",
+            "unit"
+          ],
+          "properties": {
+            "$quantity": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "px",
+                "pt",
+                "mm",
+                "cm",
+                "in",
+                "ms",
+                "s",
+                "min",
+                "h",
+                "d",
+                "%"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[^$]"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "file",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bodyEnd": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "member": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "local",
+        "properties"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "local": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parent": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": false
+    },
+    "element": {
+      "type": "object",
+      "required": [
+        "id",
+        "ref",
+        "local",
+        "name",
+        "type",
+        "kind",
+        "kindCode",
+        "properties",
+        "fields",
+        "ports"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "local": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "object",
+            "domain",
+            "sample",
+            "flow",
+            "assertion"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "object",
+            "entity",
+            "rel",
+            "domain",
+            "term",
+            "enumeration",
+            "rule",
+            "unit",
+            "aggregate",
+            "context",
+            "binding",
+            "identity",
+            "table",
+            "view",
+            "materialized_view",
+            "foreign_table",
+            "function",
+            "procedure",
+            "trigger",
+            "sequence",
+            "sql_domain",
+            "sql_type",
+            "constraint",
+            "index",
+            "synonym",
+            "opr",
+            "pkg",
+            "ext",
+            "qry",
+            "pol",
+            "pub",
+            "sub",
+            "dataset",
+            "record",
+            "field",
+            "collection",
+            "document",
+            "array",
+            "map",
+            "set",
+            "variant",
+            "graph",
+            "graph_node",
+            "graph_edge",
+            "key_value",
+            "wide_column",
+            "time_series",
+            "file",
+            "file_set",
+            "bucket",
+            "manifest",
+            "search_index",
+            "vector",
+            "blob",
+            "tensor",
+            "rdf",
+            "fact",
+            "dimension",
+            "bridge",
+            "cube",
+            "semantic_model",
+            "metric",
+            "report",
+            "dashboard",
+            "data_product",
+            "feature",
+            "model_artifact",
+            "export",
+            "api",
+            "endpoint",
+            "topic",
+            "queue",
+            "message",
+            "command",
+            "consumer_group",
+            "subscription",
+            "schema_registry",
+            "connector",
+            "webhook",
+            "federation",
+            "activity",
+            "pipeline",
+            "job",
+            "run",
+            "schedule",
+            "application",
+            "query_operation",
+            "write_operation",
+            "checkpoint",
+            "test",
+            "manual_activity",
+            "gateway",
+            "catalog",
+            "database",
+            "schema",
+            "keyspace",
+            "namespace",
+            "workspace",
+            "folder",
+            "registry",
+            "cloud",
+            "cloud_account",
+            "region",
+            "zone",
+            "site",
+            "network",
+            "cluster",
+            "service",
+            "host",
+            "container",
+            "volume",
+            "device",
+            "environment",
+            "security_zone",
+            "partition_rule",
+            "partition",
+            "shard",
+            "placement",
+            "replica",
+            "replica_set",
+            "colocation",
+            "cache",
+            "log",
+            "router",
+            "snapshot",
+            "backup",
+            "archive",
+            "timeline",
+            "recovery",
+            "window",
+            "history",
+            "retention",
+            "organization",
+            "team",
+            "role",
+            "dct",
+            "gpo",
+            "qlr",
+            "slo",
+            "entl",
+            "cls",
+            "prv",
+            "dcl",
+            "note",
+            "sample",
+            "fixture",
+            "decision",
+            "issue",
+            "observation",
+            "change",
+            "saved_view",
+            "extension",
+            "flow.start",
+            "flow.end",
+            "flow.process",
+            "flow.decision",
+            "flow.io",
+            "flow.document",
+            "flow.subprocess",
+            "dfd.process",
+            "dfd.store",
+            "dfd.external",
+            "uml.class",
+            "uml.interface",
+            "uml.package",
+            "uml.component",
+            "uml.actor",
+            "uml.usecase",
+            "req.requirement",
+            "req.test",
+            "req.implementation",
+            "analysis.role",
+            "analysis.task",
+            "chen.entity",
+            "chen.attribute",
+            "chen.association",
+            "quality.effect",
+            "quality.category",
+            "quality.cause",
+            "state.initial",
+            "state.state",
+            "state.final",
+            "rule.row",
+            "uml.subject",
+            "flow.connector",
+            "flow.offpage",
+            "flow.annotation",
+            "flow.storage"
+          ]
+        },
+        "kindCode": {
+          "enum": [
+            "OBJ",
+            "ENT",
+            "REL",
+            "DOM",
+            "TERM",
+            "ENUM",
+            "RULE",
+            "UNIT",
+            "AGG",
+            "CTX",
+            "BIND",
+            "KEY",
+            "TBL",
+            "VIW",
+            "MVI",
+            "FTB",
+            "FUN",
+            "PRC",
+            "TRG",
+            "SEQ",
+            "SDM",
+            "TYP",
+            "CON",
+            "IDX",
+            "SYN",
+            "OPR",
+            "PKG",
+            "EXT",
+            "QRY",
+            "POL",
+            "PUB",
+            "SUB",
+            "DST",
+            "REC",
+            "FLD",
+            "COL",
+            "DOC",
+            "ARR",
+            "MAP",
+            "SET",
+            "VAR",
+            "GRF",
+            "NOD",
+            "EDG",
+            "KVS",
+            "WCF",
+            "TSR",
+            "FIL",
+            "FLS",
+            "BUK",
+            "MAN",
+            "SRC",
+            "VEC",
+            "BIN",
+            "TEN",
+            "RDF",
+            "FCT",
+            "DIM",
+            "BRG",
+            "CUB",
+            "SEM",
+            "MET",
+            "RPT",
+            "DSH",
+            "DPR",
+            "FTR",
+            "MLM",
+            "EXP",
+            "API",
+            "EPT",
+            "TOP",
+            "QUE",
+            "MSG",
+            "CMD",
+            "CGR",
+            "SBS",
+            "SCHR",
+            "CNX",
+            "WHK",
+            "FED",
+            "ACT",
+            "PIP",
+            "JOB",
+            "RUN",
+            "SCD",
+            "APP",
+            "QOP",
+            "WOP",
+            "CHK",
+            "TST",
+            "HUM",
+            "GAT",
+            "CAT",
+            "DB",
+            "SCM",
+            "KSP",
+            "NSP",
+            "PRJ",
+            "DIR",
+            "REG",
+            "CLD",
+            "ACC",
+            "RGN",
+            "AZ",
+            "SITE",
+            "NET",
+            "CLU",
+            "SRV",
+            "HOST",
+            "CTR",
+            "VOL",
+            "DEV",
+            "ENV",
+            "SECZ",
+            "PRL",
+            "PAR",
+            "SHD",
+            "PLC",
+            "RPL",
+            "RPS",
+            "COG",
+            "CAC",
+            "LOG",
+            "BAL",
+            "SNP",
+            "BAK",
+            "ARC",
+            "TLN",
+            "RCP",
+            "WIN",
+            "HST",
+            "RET",
+            "ORG",
+            "TEAM",
+            "ROLE",
+            "DCT",
+            "GPO",
+            "QLR",
+            "SLO",
+            "ENTL",
+            "CLS",
+            "PRV",
+            "DCL",
+            "NOTE",
+            "SMP",
+            "FIX",
+            "DEC",
+            "ISS",
+            "OBS",
+            "CHG",
+            "VIE",
+            "EXTN",
+            "START",
+            "END",
+            "PROCESS",
+            "DECISION",
+            "IO",
+            "DOCUMENT",
+            "SUBPROCESS",
+            "PROCESS",
+            "STORE",
+            "EXTERNAL",
+            "CLASS",
+            "INTERFACE",
+            "PACKAGE",
+            "COMPONENT",
+            "ACTOR",
+            "USECASE",
+            "REQUIREMENT",
+            "TEST",
+            "IMPLEMENTATION",
+            "ROLE",
+            "TASK",
+            "ENTITY",
+            "ATTRIBUTE",
+            "ASSOCIATION",
+            "EFFECT",
+            "CATEGORY",
+            "CAUSE",
+            "INITIAL",
+            "STATE",
+            "FINAL",
+            "ROW",
+            "SUBJECT",
+            "CONNECTOR",
+            "OFFPAGE",
+            "ANNOTATION",
+            "STORAGE"
+          ]
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/member"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": false
+    },
+    "endpoint": {
+      "type": "object",
+      "required": [
+        "element"
+      ],
+      "properties": {
+        "element": {
+          "type": "string"
+        },
+        "member": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "field",
+            "port"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "relation": {
+      "type": "object",
+      "required": [
+        "id",
+        "ref",
+        "name",
+        "kind",
+        "kindCode",
+        "from",
+        "to",
+        "properties"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "assoc",
+            "ref",
+            "emb",
+            "mem",
+            "subtype",
+            "part",
+            "edge",
+            "ident",
+            "same",
+            "flow",
+            "read",
+            "write",
+            "replicate",
+            "capture",
+            "publish",
+            "deliver",
+            "extract",
+            "load",
+            "sync",
+            "snapshot",
+            "export",
+            "import",
+            "invalidate",
+            "delete",
+            "replay",
+            "restore",
+            "reject",
+            "depends",
+            "calls",
+            "queries",
+            "refresh",
+            "lookup",
+            "uses",
+            "aliases",
+            "enforces",
+            "represents",
+            "instance",
+            "domain",
+            "candidate",
+            "binds",
+            "placed",
+            "namespace",
+            "realizes",
+            "copyof",
+            "coloc",
+            "implements",
+            "exposes",
+            "version",
+            "supersedes",
+            "compat",
+            "bindfield",
+            "trigger",
+            "schedule",
+            "invoke",
+            "precede",
+            "gate",
+            "retry",
+            "ack",
+            "cancel",
+            "failover",
+            "derives",
+            "generates",
+            "consumed",
+            "aggregates",
+            "joins",
+            "filters",
+            "masks",
+            "train",
+            "feature",
+            "report",
+            "owns",
+            "steward",
+            "operate",
+            "policy",
+            "contract",
+            "grant",
+            "class",
+            "resides",
+            "retain",
+            "hold",
+            "quality",
+            "slo",
+            "consent",
+            "note",
+            "example",
+            "evidence",
+            "decision",
+            "issue",
+            "test",
+            "appear",
+            "flow.next",
+            "dfd.data",
+            "uml.association",
+            "uml.generalization",
+            "uml.realization",
+            "uml.dependency",
+            "uml.uses",
+            "uml.include",
+            "uml.extend",
+            "req.satisfies",
+            "req.verifies",
+            "req.derives",
+            "analysis.assignment",
+            "analysis.access",
+            "analysis.precedes",
+            "quality.cause",
+            "state.transition",
+            "flow.annotation",
+            "flow.continues"
+          ]
+        },
+        "kindCode": {
+          "enum": [
+            "ASSOC",
+            "REF",
+            "EMB",
+            "MEM",
+            "SUBTYPE",
+            "PART",
+            "EDGE",
+            "IDENT",
+            "SAME",
+            "FLOW",
+            "READ",
+            "WRITE",
+            "REPLICATE",
+            "CAPTURE",
+            "PUBLISH",
+            "DELIVER",
+            "EXTRACT",
+            "LOAD",
+            "SYNC",
+            "SNAPSHOT",
+            "EXPORT",
+            "IMPORT",
+            "INVALIDATE",
+            "DELETE",
+            "REPLAY",
+            "RESTORE",
+            "REJECT",
+            "DEPENDS",
+            "CALLS",
+            "QUERIES",
+            "REFRESH",
+            "LOOKUP",
+            "USES",
+            "ALIASES",
+            "ENFORCES",
+            "REPRESENTS",
+            "INSTANCE",
+            "DOMAIN",
+            "CANDIDATE",
+            "BINDS",
+            "PLACED",
+            "NAMESPACE",
+            "REALIZES",
+            "COPYOF",
+            "COLOC",
+            "IMPLEMENTS",
+            "EXPOSES",
+            "VERSION",
+            "SUPERSEDES",
+            "COMPAT",
+            "BINDFIELD",
+            "TRIGGER",
+            "SCHEDULE",
+            "INVOKE",
+            "PRECEDE",
+            "GATE",
+            "RETRY",
+            "ACK",
+            "CANCEL",
+            "FAILOVER",
+            "DERIVES",
+            "GENERATES",
+            "CONSUMED",
+            "AGGREGATES",
+            "JOINS",
+            "FILTERS",
+            "MASKS",
+            "TRAIN",
+            "FEATURE",
+            "REPORT",
+            "OWNS",
+            "STEWARD",
+            "OPERATE",
+            "POLICY",
+            "CONTRACT",
+            "GRANT",
+            "CLASS",
+            "RESIDES",
+            "RETAIN",
+            "HOLD",
+            "QUALITY",
+            "SLO",
+            "CONSENT",
+            "NOTE",
+            "EXAMPLE",
+            "EVIDENCE",
+            "DECISION",
+            "ISSUE",
+            "TEST",
+            "APPEAR",
+            "NEXT",
+            "DATA",
+            "ASSOCIATION",
+            "GENERALIZATION",
+            "REALIZATION",
+            "DEPENDENCY",
+            "USES",
+            "INCLUDE",
+            "EXTEND",
+            "SATISFIES",
+            "VERIFIES",
+            "DERIVES",
+            "ASSIGNMENT",
+            "ACCESS",
+            "PRECEDES",
+            "CAUSE",
+            "TRANSITION",
+            "ANNOTATION",
+            "CONTINUES"
+          ]
+        },
+        "from": {
+          "$ref": "#/$defs/endpoint"
+        },
+        "to": {
+          "$ref": "#/$defs/endpoint"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diagnostic": {
+      "type": "object",
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning",
+            "information",
+            "info"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "line": {
+          "type": "integer"
+        },
+        "column": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "view": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "local",
+        "selected",
+        "relations",
+        "profiles",
+        "keys",
+        "placements",
+        "routes",
+        "subdiagrams",
+        "frames"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "local": {
+          "type": "string"
+        },
+        "selected": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "profiles": {
+          "type": "object",
+          "required": [
+            "notation",
+            "style",
+            "layout",
+            "display",
+            "publication",
+            "legend"
+          ]
+        },
+        "keys": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "placements": {
+          "type": "object"
+        },
+        "routes": {
+          "type": "object"
+        },
+        "subdiagrams": {
+          "type": "array"
+        },
+        "frames": {
+          "type": "array"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "children": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "slot",
+              "ir"
+            ],
+            "properties": {
+              "slot": {
+                "type": "string"
+              },
+              "ir": {
+                "$ref": "#"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

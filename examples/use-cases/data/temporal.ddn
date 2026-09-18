@@ -1,0 +1,27 @@
+ddn "0.3";
+module "ddn.usecases.temporal";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object history "Customer status history" {
+        kind: history;
+        temporal: bitemporal;
+        time: { valid: "business-effective civil date", recorded: "warehouse-known civil date", retention: undecided };
+        fields {
+            field customer_id;
+            field status;
+            field valid_from;
+            field valid_to;
+            field recorded_from;
+            field recorded_to;
+        }
+    }
+    sample example "Correction received on March 5" {
+        kind: sample;
+        mode: synthetic;
+        columns: [@history.customer_id, @history.status, @history.valid_from, @history.valid_to, @history.recorded_from, @history.recorded_to];
+        rows: [["C001", "Active", "2026-03-01", null, "2026-03-01", "2026-03-05"], ["C001", "Active", "2026-03-01", "2026-03-03", "2026-03-05", null], ["C001", "Suspended", "2026-03-03", null, "2026-03-05", null]];
+    }
+    relation r_example @example -> @history { kind: example; }
+}

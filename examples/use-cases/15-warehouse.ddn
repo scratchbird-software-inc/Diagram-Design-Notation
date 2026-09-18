@@ -1,0 +1,24 @@
+ddn "0.3";
+module "ddn.usecases.views.warehouse";
+import "formats.ddn" as fmt;
+import "data/warehouse.ddn" as w;
+
+// What is the fact grain and which dimensions describe it?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "15 / Dimensional warehouse" {
+    data: [@w.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.teaching;
+    select: [@w.model.fact, @w.model.customer, @w.model.product, @w.model.date, @w.model.grain];
+    publication { width: 1680px; height: 1050px; }
+    legend { keys: { "model.r_c": 1, "model.r_p": 2, "model.r_d": 3 }; }
+    
+    
+    
+    
+    
+    
+    
+    
+}

@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:designer:editor-descriptor:0.1",
+  "title": "Proposed Designer editor descriptor; not a current DDN runtime schema",
+  "type": "object",
+  "required": [
+    "format",
+    "id",
+    "version",
+    "status",
+    "targets",
+    "basicLimit",
+    "controls"
+  ],
+  "properties": {
+    "format": {
+      "const": "ddn-designer-descriptor@1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "status": {
+      "const": "proposed"
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      }
+    },
+    "basicLimit": {
+      "const": 6
+    },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 80,
+      "items": {
+        "$ref": "#/$defs/control"
+      }
+    },
+    "conversionPolicy": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "condition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "property",
+            "value"
+          ],
+          "properties": {
+            "op": {
+              "const": "equals"
+            },
+            "property": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "value": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "name"
+          ],
+          "properties": {
+            "op": {
+              "const": "capability"
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "conditions"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "conditions": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 12,
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "op",
+            "condition"
+          ],
+          "properties": {
+            "op": {
+              "const": "not"
+            },
+            "condition": {
+              "$ref": "#/$defs/condition"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "control": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "scope",
+        "group",
+        "widget",
+        "command",
+        "adapterStatus",
+        "valueStates"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "scope": {
+          "enum": [
+            "model",
+            "view",
+            "session"
+          ]
+        },
+        "group": {
+          "enum": [
+            "basic",
+            "content",
+            "appearance",
+            "layout",
+            "advanced",
+            "evidence"
+          ]
+        },
+        "widget": {
+          "enum": [
+            "text",
+            "select",
+            "optional_boolean",
+            "number_unit",
+            "reference",
+            "fields_tree",
+            "ports_list",
+            "conditions",
+            "key_roles",
+            "cardinality",
+            "summary",
+            "readonly",
+            "multiline"
+          ]
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "adapterStatus": {
+          "enum": [
+            "existing",
+            "wrapper-required",
+            "new-core-required"
+          ]
+        },
+        "sourceBinding": {
+          "type": "string"
+        },
+        "valueStates": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "unset",
+              "undecided",
+              "not_applicable",
+              "known",
+              "mixed",
+              "conflicting"
+            ]
+          }
+        },
+        "visibleWhen": {
+          "$ref": "#/$defs/condition"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value",
+              "label"
+            ],
+            "properties": {
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "help": {
+          "type": "string"
+        },
+        "reset": {
+          "enum": [
+            "remove-assertion",
+            "remove-override",
+            "not-allowed"
+          ]
+        },
+        "multiEdit": {
+          "type": "boolean"
+        },
+        "destructive": {
+          "type": "boolean"
+        },
+        "requiredFor": {
+          "enum": [
+            "draft",
+            "review",
+            "publication",
+            "never"
+          ]
+        },
+        "validate": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "defaultVisible": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

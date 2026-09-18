@@ -1,0 +1,47 @@
+ddn "0.3";
+module "ddn.usecases.keyed";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data kv {
+    object key "Session key" {
+        kind: identity;
+        description: "Scope: one active login session.";
+    }
+    object sessions "Session store" {
+        kind: key_value;
+    }
+    object value "Session value" {
+        kind: record;
+        fields {
+            field user_id;
+            field expires_at;
+            field cart_id;
+        }
+    }
+    relation r_a @key -> @sessions { kind: ident; }
+    relation r_b "value shape" @sessions -> @value { kind: mem; }
+}
+
+data wide {
+    domain key "Device identifier" {
+        kind: domain;
+        meaning: "Identifies the producing sensor.";
+        representation: undecided;
+    }
+    object readings "Readings by device" {
+        kind: wide_column;
+        workload: [streaming];
+        fields {
+            field device_id { key: partition; }
+            field measured_at { key: clustering; }
+            field value;
+        }
+    }
+    object query "Latest device readings" {
+        kind: qry;
+        description: "Access pattern; not a claim that a database query has been executed.";
+    }
+    relation r_a @readings.device_id -> @key { kind: domain; }
+    relation r_b @query -> @readings { kind: depends; }
+}

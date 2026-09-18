@@ -1,0 +1,33 @@
+ddn "0.3";
+module "ddn.examples.subdiagrams";
+import "shared.ddn" as shared;
+
+data model {
+    object service "Customer service" { kind: application; }
+    object table "Customer table" { kind: table; fields { field customer_id; field display_name; } }
+    object schema "crm schema" { kind: schema; }
+    relation member @table -> @schema { kind: namespace_member; }
+}
+view overview "A view can link to another view" {
+    data: [@model]; format: @shared.styles.technical;
+    select: [@model.service];
+    place @model.service { at: [0px,20px]; }
+    subdiagram storage "Storage details" { view: @detail; mode: reference; at: [480px,20px]; size: [310px,105px]; }
+}
+view detail "Storage detail" {
+    data: [@model]; format: @shared.styles.technical;
+    select: [@model.table, @model.schema];
+    display: @shared.styles.compact;
+    publication { width: 700px; height: 320px; margin: 20px; minimum_text: 7pt; overflow: warn; }
+    legend { mode: tokens; placement: none; }
+    place @model.table { at: [0px,0px]; }
+    place @model.schema { at: [370px,0px]; }
+    route @model.member { callout: [320px,65px]; }
+}
+view inline "An embedded view retains its own composition" {
+    data: [@model]; format: @shared.styles.technical;
+    select: [@model.service];
+    legend { mode: text; placement: none; }
+    place @model.service { at: [0px,0px]; }
+    subdiagram storage "Storage details" { view: @detail; mode: inline; at: [330px,0px]; size: [710px,426px]; }
+}

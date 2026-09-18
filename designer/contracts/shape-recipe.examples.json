@@ -1,0 +1,123 @@
+[
+  {
+    "format": "ddn-shape-recipe-proposal@1",
+    "id": "recipe.ddn.data-card",
+    "status": "proposed-not-runtime-installed",
+    "semanticKinds": [
+      "table",
+      "view",
+      "materialized_view",
+      "record",
+      "collection"
+    ],
+    "body": {
+      "form": "card",
+      "contour": "rectangle",
+      "obstacle": "measured-body-plus-visible-badge-rail",
+      "minimumWidth": 180,
+      "minimumHeight": 54,
+      "padding": 12
+    },
+    "content": [
+      {
+        "id": "title",
+        "source": "definition.displayName",
+        "renderer": "text",
+        "optional": false
+      },
+      {
+        "id": "fields",
+        "source": "definition.fields",
+        "renderer": "field-tree",
+        "optional": true,
+        "separator": true,
+        "visibleWhen": {
+          "property": "display.fields",
+          "equals": "names"
+        }
+      },
+      {
+        "id": "summary",
+        "source": "applicable-visible-properties",
+        "renderer": "property-summary",
+        "optional": true,
+        "separator": true
+      }
+    ],
+    "markers": [
+      {
+        "property": "kind",
+        "slot": "NW",
+        "registry": "installed-kind-recipe",
+        "displayPolicy": "display.kind",
+        "overflow": "expand-or-more-indicator"
+      },
+      {
+        "property": "maturity",
+        "slot": "NE",
+        "registry": "maturity-facets",
+        "displayPolicy": "display.maturity",
+        "overflow": "expand-or-more-indicator"
+      },
+      {
+        "property": "workload",
+        "slot": "SW1",
+        "registry": "workload-facets",
+        "displayPolicy": "display.badges",
+        "overflow": "expand-or-more-indicator"
+      },
+      {
+        "property": "authority",
+        "slot": "SW2",
+        "registry": "authority-facets",
+        "displayPolicy": "display.badges",
+        "overflow": "expand-or-more-indicator"
+      },
+      {
+        "property": "time",
+        "slot": "SE1",
+        "registry": "temporal-facets",
+        "displayPolicy": "display.badges",
+        "overflow": "expand-or-more-indicator"
+      }
+    ],
+    "anchors": {
+      "semanticEndpoints": [
+        "body",
+        "member",
+        "port"
+      ],
+      "visualSides": [
+        "north",
+        "east",
+        "south",
+        "west"
+      ],
+      "ordering": "registered-policy",
+      "respectExplicit": true
+    },
+    "variants": [
+      {
+        "id": "expanded",
+        "meaningInvariant": true,
+        "approvedLooks": [
+          "classic",
+          "handDrawn",
+          "neo"
+        ],
+        "visibilityPolicy": "fields-and-selected-facets"
+      },
+      {
+        "id": "compact",
+        "meaningInvariant": true,
+        "approvedLooks": [
+          "classic",
+          "handDrawn",
+          "neo"
+        ],
+        "visibilityPolicy": "title-and-required-indicators"
+      }
+    ],
+    "fallback": "registered kind token plus readable name; never infer another semantic kind"
+  }
+]

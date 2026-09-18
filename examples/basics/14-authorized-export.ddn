@@ -1,0 +1,29 @@
+ddn "0.3";
+module "ddn.examples.export";
+import "shared.ddn" as shared;
+data model {
+ object workforce "Workforce public directory" {
+  kind: table;
+  fields {field staff_id; field display_name; field salary {classification: restricted;}}
+  description: "Synthetic restricted note: SALARY_SECRET_CANARY";
+ }
+ object team "Team" {kind: table;fields {field team_id;field name;}}
+ relation membership "Membership" @workforce -> @team {kind: ref;}
+}
+view private "Private source / hiding is not redaction" {
+ data: [@model];format: @shared.styles.technical;
+ display {fields: none;}
+ publication {size: content;fit: none;overflow: error;}
+}
+view public "Allowlisted publication" {
+ data: [@model];format: @shared.styles.technical;
+ export {
+  mode: redacted;
+  elements: [@model.workforce, @model.team];
+  fields: [@model.workforce.staff_id,@model.workforce.display_name,@model.team.team_id,@model.team.name];
+  properties: [kind];
+  identifier_mode: opaque;
+  title: "Public directory / approved projection";
+ }
+ publication {size: content;fit: none;overflow: error;}
+}

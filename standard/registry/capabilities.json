@@ -1,0 +1,2030 @@
+{
+  "version": "0.5.0-draft.2",
+  "language": [
+    "0.3",
+    "0.4",
+    "0.5"
+  ],
+  "compatibility_read": [
+    "0.2"
+  ],
+  "registry": "ddn-core@0.3",
+  "profiles": {
+    "projection": {
+      "kind": [
+        "graph",
+        "chen",
+        "matrix",
+        "panels",
+        "table",
+        "chart",
+        "timeline",
+        "fishbone",
+        "decision"
+      ]
+    },
+    "style": {
+      "look": [
+        "classic",
+        "handDrawn",
+        "neo"
+      ],
+      "theme": [
+        "default",
+        "neutral",
+        "dark",
+        "night",
+        "forest",
+        "base"
+      ],
+      "font": [
+        "sans",
+        "serif",
+        "mono",
+        "handwriting"
+      ]
+    },
+    "layout": {
+      "algorithm": [
+        "auto",
+        "grid",
+        "manual",
+        "layered",
+        "tree",
+        "mindmap",
+        "grouped",
+        "fit_grid",
+        "circular",
+        "radial",
+        "spanning_tree",
+        "organic"
+      ],
+      "center": [
+        "pins",
+        "content"
+      ],
+      "optimize": [
+        "crossings",
+        "none"
+      ],
+      "endpoint_ordering": [
+        "optimize",
+        "preserve"
+      ],
+      "direction": [
+        "right",
+        "down",
+        "left",
+        "up"
+      ],
+      "routing": [
+        "orthogonal",
+        "straight",
+        "curved"
+      ],
+      "curve": [
+        "bezier",
+        "rounded"
+      ],
+      "crossings": [
+        "gap",
+        "bridge",
+        "square_bridge"
+      ]
+    },
+    "display": {
+      "fields": [
+        "names",
+        "none"
+      ],
+      "kind": [
+        "text",
+        "icon_token",
+        "icon",
+        "none"
+      ],
+      "maturity": [
+        "token",
+        "none"
+      ],
+      "badges": [
+        "tokens",
+        "none"
+      ],
+      "relations": [
+        "between_selected",
+        "none"
+      ],
+      "samples": [
+        "show",
+        "hide"
+      ],
+      "domains": [
+        "show",
+        "hide"
+      ],
+      "datatypes": [
+        "show",
+        "hide"
+      ]
+    },
+    "legend": {
+      "mode": [
+        "numbers",
+        "text",
+        "tokens"
+      ],
+      "placement": [
+        "right",
+        "bottom",
+        "none"
+      ]
+    },
+    "publication": {
+      "size": [
+        "figure",
+        "content",
+        "a4",
+        "letter"
+      ],
+      "fit": [
+        "contain",
+        "none",
+        "reflow"
+      ],
+      "overflow": [
+        "error",
+        "warn"
+      ]
+    },
+    "validation": {
+      "mode": [
+        "sketch",
+        "logical",
+        "strict"
+      ],
+      "unknown_extensions": [
+        "warn",
+        "error"
+      ]
+    },
+    "export": {
+      "mode": [
+        "full",
+        "redacted"
+      ],
+      "identifier_mode": [
+        "opaque",
+        "preserve"
+      ]
+    }
+  },
+  "defaults": {
+    "projection": {
+      "kind": "graph",
+      "profile": "ddn@1"
+    },
+    "notation": {
+      "registry": "ddn-core@0.3"
+    },
+    "style": {
+      "look": "classic",
+      "theme": "default",
+      "font": "sans",
+      "font_size": {
+        "$quantity": 16,
+        "unit": "px"
+      },
+      "seed": 42
+    },
+    "layout": {
+      "algorithm": "auto",
+      "auto_place": true,
+      "center": "content",
+      "grid_step": {
+        "$quantity": 32,
+        "unit": "px"
+      },
+      "optimize": "crossings",
+      "endpoint_ordering": "optimize",
+      "direction": "right",
+      "routing": "orthogonal",
+      "curve": "bezier",
+      "curve_tension": 0.5,
+      "curve_radius": {
+        "$quantity": 32,
+        "unit": "px"
+      },
+      "crossings": "gap",
+      "gap": {
+        "$quantity": 100,
+        "unit": "px"
+      },
+      "row_gap": {
+        "$quantity": 100,
+        "unit": "px"
+      },
+      "columns": 3,
+      "object_clearance": {
+        "$quantity": 16,
+        "unit": "px"
+      },
+      "edge_clearance": {
+        "$quantity": 12,
+        "unit": "px"
+      },
+      "port_clearance": {
+        "$quantity": 28,
+        "unit": "px"
+      },
+      "route_policy": "repair",
+      "quality": "error",
+      "root": null,
+      "group_by": "none"
+    },
+    "display": {
+      "fields": "names",
+      "kind": "icon_token",
+      "maturity": "token",
+      "badges": "tokens",
+      "relations": "between_selected",
+      "samples": "show",
+      "domains": "hide",
+      "datatypes": "hide",
+      "depth": 32
+    },
+    "publication": {
+      "size": "figure",
+      "width": {
+        "$quantity": 1280,
+        "unit": "px"
+      },
+      "height": {
+        "$quantity": 800,
+        "unit": "px"
+      },
+      "margin": {
+        "$quantity": 32,
+        "unit": "px"
+      },
+      "fit": "contain",
+      "minimum_text": {
+        "$quantity": 8,
+        "unit": "pt"
+      },
+      "overflow": "error"
+    },
+    "legend": {
+      "mode": "text",
+      "placement": "right",
+      "width": {
+        "$quantity": 310,
+        "unit": "px"
+      },
+      "keys": {}
+    },
+    "validation": {
+      "mode": "logical",
+      "unknown_extensions": "warn"
+    },
+    "export": {
+      "mode": "full",
+      "elements": [],
+      "fields": null,
+      "properties": [],
+      "include_samples": false,
+      "identifier_mode": "opaque",
+      "title": "Published data view"
+    }
+  },
+  "properties": [
+    {
+      "id": "notation.registry",
+      "scope": "notation",
+      "name": "registry",
+      "default": "ddn-core@0.3",
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.look",
+      "scope": "style",
+      "name": "look",
+      "default": "classic",
+      "choices": [
+        "classic",
+        "handDrawn",
+        "neo"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.theme",
+      "scope": "style",
+      "name": "theme",
+      "default": "default",
+      "choices": [
+        "default",
+        "neutral",
+        "dark",
+        "night",
+        "forest",
+        "base"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.font",
+      "scope": "style",
+      "name": "font",
+      "default": "sans",
+      "choices": [
+        "sans",
+        "serif",
+        "mono",
+        "handwriting"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.font_size",
+      "scope": "style",
+      "name": "font_size",
+      "default": {
+        "$quantity": 16,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.seed",
+      "scope": "style",
+      "name": "seed",
+      "default": 42,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.roughness",
+      "scope": "style",
+      "name": "roughness",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "style.hachure",
+      "scope": "style",
+      "name": "hachure",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.algorithm",
+      "scope": "layout",
+      "name": "algorithm",
+      "default": "auto",
+      "choices": [
+        "auto",
+        "grid",
+        "manual",
+        "layered",
+        "tree",
+        "mindmap",
+        "grouped",
+        "fit_grid",
+        "circular",
+        "radial",
+        "spanning_tree",
+        "organic"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.auto_place",
+      "scope": "layout",
+      "name": "auto_place",
+      "default": true,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.center",
+      "scope": "layout",
+      "name": "center",
+      "default": "content",
+      "choices": [
+        "pins",
+        "content"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.grid_step",
+      "scope": "layout",
+      "name": "grid_step",
+      "default": {
+        "$quantity": 32,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.optimize",
+      "scope": "layout",
+      "name": "optimize",
+      "default": "crossings",
+      "choices": [
+        "crossings",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.endpoint_ordering",
+      "scope": "layout",
+      "name": "endpoint_ordering",
+      "default": "optimize",
+      "choices": [
+        "optimize",
+        "preserve"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.direction",
+      "scope": "layout",
+      "name": "direction",
+      "default": "right",
+      "choices": [
+        "right",
+        "down",
+        "left",
+        "up"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.routing",
+      "scope": "layout",
+      "name": "routing",
+      "default": "orthogonal",
+      "choices": [
+        "orthogonal",
+        "straight",
+        "curved"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.curve",
+      "scope": "layout",
+      "name": "curve",
+      "default": "bezier",
+      "choices": [
+        "bezier",
+        "rounded"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.curve_tension",
+      "scope": "layout",
+      "name": "curve_tension",
+      "default": 0.5,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.curve_radius",
+      "scope": "layout",
+      "name": "curve_radius",
+      "default": {
+        "$quantity": 32,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.crossings",
+      "scope": "layout",
+      "name": "crossings",
+      "default": "gap",
+      "choices": [
+        "gap",
+        "bridge",
+        "square_bridge"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.gap",
+      "scope": "layout",
+      "name": "gap",
+      "default": {
+        "$quantity": 100,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.columns",
+      "scope": "layout",
+      "name": "columns",
+      "default": 3,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.port_clearance",
+      "scope": "layout",
+      "name": "port_clearance",
+      "default": {
+        "$quantity": 28,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.object_clearance",
+      "scope": "layout",
+      "name": "object_clearance",
+      "default": {
+        "$quantity": 16,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.edge_clearance",
+      "scope": "layout",
+      "name": "edge_clearance",
+      "default": {
+        "$quantity": 12,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.junctions",
+      "scope": "layout",
+      "name": "junctions",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.shared_segments",
+      "scope": "layout",
+      "name": "shared_segments",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.row_gap",
+      "scope": "layout",
+      "name": "row_gap",
+      "default": {
+        "$quantity": 100,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.route_policy",
+      "scope": "layout",
+      "name": "route_policy",
+      "default": "repair",
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.quality",
+      "scope": "layout",
+      "name": "quality",
+      "default": "error",
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.root",
+      "scope": "layout",
+      "name": "root",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.hierarchy",
+      "scope": "layout",
+      "name": "hierarchy",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.group_by",
+      "scope": "layout",
+      "name": "group_by",
+      "default": "none",
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.fields",
+      "scope": "display",
+      "name": "fields",
+      "default": "names",
+      "choices": [
+        "names",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.kind",
+      "scope": "display",
+      "name": "kind",
+      "default": "icon_token",
+      "choices": [
+        "text",
+        "icon_token",
+        "icon",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.maturity",
+      "scope": "display",
+      "name": "maturity",
+      "default": "token",
+      "choices": [
+        "token",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.badges",
+      "scope": "display",
+      "name": "badges",
+      "default": "tokens",
+      "choices": [
+        "tokens",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.relations",
+      "scope": "display",
+      "name": "relations",
+      "default": "between_selected",
+      "choices": [
+        "between_selected",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.samples",
+      "scope": "display",
+      "name": "samples",
+      "default": "show",
+      "choices": [
+        "show",
+        "hide"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.datatypes",
+      "scope": "display",
+      "name": "datatypes",
+      "default": "hide",
+      "choices": [
+        "show",
+        "hide"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.domains",
+      "scope": "display",
+      "name": "domains",
+      "default": "hide",
+      "choices": [
+        "show",
+        "hide"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "display.depth",
+      "scope": "display",
+      "name": "depth",
+      "default": 32,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.size",
+      "scope": "publication",
+      "name": "size",
+      "default": "figure",
+      "choices": [
+        "figure",
+        "content",
+        "a4",
+        "letter"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.width",
+      "scope": "publication",
+      "name": "width",
+      "default": {
+        "$quantity": 1280,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.height",
+      "scope": "publication",
+      "name": "height",
+      "default": {
+        "$quantity": 800,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.margin",
+      "scope": "publication",
+      "name": "margin",
+      "default": {
+        "$quantity": 32,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.orientation",
+      "scope": "publication",
+      "name": "orientation",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.fit",
+      "scope": "publication",
+      "name": "fit",
+      "default": "contain",
+      "choices": [
+        "contain",
+        "none",
+        "reflow"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.minimum_text",
+      "scope": "publication",
+      "name": "minimum_text",
+      "default": {
+        "$quantity": 8,
+        "unit": "pt"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.overflow",
+      "scope": "publication",
+      "name": "overflow",
+      "default": "error",
+      "choices": [
+        "error",
+        "warn"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.title",
+      "scope": "publication",
+      "name": "title",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.caption",
+      "scope": "publication",
+      "name": "caption",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.embedding_scale",
+      "scope": "publication",
+      "name": "embedding_scale",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "publication.metrics",
+      "scope": "publication",
+      "name": "metrics",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "legend.mode",
+      "scope": "legend",
+      "name": "mode",
+      "default": "text",
+      "choices": [
+        "numbers",
+        "text",
+        "tokens"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "legend.placement",
+      "scope": "legend",
+      "name": "placement",
+      "default": "right",
+      "choices": [
+        "right",
+        "bottom",
+        "none"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "legend.width",
+      "scope": "legend",
+      "name": "width",
+      "default": {
+        "$quantity": 310,
+        "unit": "px"
+      },
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "legend.keys",
+      "scope": "legend",
+      "name": "keys",
+      "default": {},
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "legend.keyset",
+      "scope": "legend",
+      "name": "keyset",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "legend.scope",
+      "scope": "legend",
+      "name": "scope",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "validation.mode",
+      "scope": "validation",
+      "name": "mode",
+      "default": "logical",
+      "choices": [
+        "sketch",
+        "logical",
+        "strict"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "validation.unknown_extensions",
+      "scope": "validation",
+      "name": "unknown_extensions",
+      "default": "warn",
+      "choices": [
+        "warn",
+        "error"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.mode",
+      "scope": "export",
+      "name": "mode",
+      "default": "full",
+      "choices": [
+        "full",
+        "redacted"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.elements",
+      "scope": "export",
+      "name": "elements",
+      "default": [],
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.fields",
+      "scope": "export",
+      "name": "fields",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.properties",
+      "scope": "export",
+      "name": "properties",
+      "default": [],
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.include_samples",
+      "scope": "export",
+      "name": "include_samples",
+      "default": false,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.identifier_mode",
+      "scope": "export",
+      "name": "identifier_mode",
+      "default": "opaque",
+      "choices": [
+        "opaque",
+        "preserve"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.title",
+      "scope": "export",
+      "name": "title",
+      "default": "Published data view",
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.kind",
+      "scope": "projection",
+      "name": "kind",
+      "default": "graph",
+      "choices": [
+        "graph",
+        "chen",
+        "matrix",
+        "panels",
+        "table",
+        "chart",
+        "timeline",
+        "fishbone",
+        "decision"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.profile",
+      "scope": "projection",
+      "name": "profile",
+      "default": "ddn@1",
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.write_data",
+      "scope": "projection",
+      "name": "write_data",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.rows",
+      "scope": "projection",
+      "name": "rows",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.columns",
+      "scope": "projection",
+      "name": "columns",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.relation",
+      "scope": "projection",
+      "name": "relation",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.value",
+      "scope": "projection",
+      "name": "value",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.duplicates",
+      "scope": "projection",
+      "name": "duplicates",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.panels",
+      "scope": "projection",
+      "name": "panels",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.records",
+      "scope": "projection",
+      "name": "records",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.mark",
+      "scope": "projection",
+      "name": "mark",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.x",
+      "scope": "projection",
+      "name": "x",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.y",
+      "scope": "projection",
+      "name": "y",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.x_type",
+      "scope": "projection",
+      "name": "x_type",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.size",
+      "scope": "projection",
+      "name": "size",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.unit",
+      "scope": "projection",
+      "name": "unit",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.aggregate",
+      "scope": "projection",
+      "name": "aggregate",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.start",
+      "scope": "projection",
+      "name": "start",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.end",
+      "scope": "projection",
+      "name": "end",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.label",
+      "scope": "projection",
+      "name": "label",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.dependencies",
+      "scope": "projection",
+      "name": "dependencies",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.width",
+      "scope": "projection",
+      "name": "width",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.height",
+      "scope": "projection",
+      "name": "height",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.filter",
+      "scope": "projection",
+      "name": "filter",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.order",
+      "scope": "projection",
+      "name": "order",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.missing",
+      "scope": "projection",
+      "name": "missing",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.inner_radius",
+      "scope": "projection",
+      "name": "inner_radius",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.values",
+      "scope": "projection",
+      "name": "values",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.effect",
+      "scope": "projection",
+      "name": "effect",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.encoding",
+      "scope": "projection",
+      "name": "encoding",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.series",
+      "scope": "projection",
+      "name": "series",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.series_missing",
+      "scope": "projection",
+      "name": "series_missing",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.arrangement",
+      "scope": "projection",
+      "name": "arrangement",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.transform",
+      "scope": "projection",
+      "name": "transform",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.layers",
+      "scope": "projection",
+      "name": "layers",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.bins",
+      "scope": "projection",
+      "name": "bins",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.normalize",
+      "scope": "projection",
+      "name": "normalize",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.outside",
+      "scope": "projection",
+      "name": "outside",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.whiskers",
+      "scope": "projection",
+      "name": "whiskers",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.quartiles",
+      "scope": "projection",
+      "name": "quartiles",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.step",
+      "scope": "projection",
+      "name": "step",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.baseline",
+      "scope": "projection",
+      "name": "baseline",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.target",
+      "scope": "projection",
+      "name": "target",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.inputs",
+      "scope": "projection",
+      "name": "inputs",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.outputs",
+      "scope": "projection",
+      "name": "outputs",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.hit_policy",
+      "scope": "projection",
+      "name": "hit_policy",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.coverage",
+      "scope": "projection",
+      "name": "coverage",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.analysis_budget",
+      "scope": "projection",
+      "name": "analysis_budget",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "projection.traces",
+      "scope": "projection",
+      "name": "traces",
+      "default": null,
+      "choices": null,
+      "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    }
+  ],
+  "installedProfiles": [
+    {
+      "id": "ddn@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "DDN graph"
+      ],
+      "scope": "Existing DDN notation",
+      "validation": [
+        "existing core contracts"
+      ],
+      "unsupported": []
+    },
+    {
+      "id": "flow.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Conventional flowchart",
+        "Accounting/audit flowchart"
+      ],
+      "scope": "Start/end, process, decision, I/O, document and predefined process; named branches.",
+      "validation": [
+        "start has no incoming edge; end has no outgoing edge",
+        "decisions have >=2 distinct nonempty branch labels",
+        "every process reachable from a start and can reach an end"
+      ],
+      "unsupported": [
+        "execution",
+        "complete standardized accounting symbol inventory"
+      ]
+    },
+    {
+      "id": "dfd.gane_sarson@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Gane–Sarson DFD"
+      ],
+      "scope": "Numbered three-compartment processes; open-ended stores and external entities.",
+      "validation": [
+        "data flows cannot directly connect two non-process elements",
+        "process has input/output",
+        "unique process numbers"
+      ],
+      "unsupported": [
+        "method certification",
+        "automatic context balancing across arbitrary diagrams"
+      ]
+    },
+    {
+      "id": "dfd.yourdon@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Yourdon-style DFD"
+      ],
+      "scope": "Circular processes; parallel-line stores; rectangular external entities.",
+      "validation": [
+        "same structural checks as Gane–Sarson"
+      ],
+      "unsupported": [
+        "complete SSADM lifecycle",
+        "method certification"
+      ]
+    },
+    {
+      "id": "uml.structure@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML class subset",
+        "UML package subset",
+        "UML component subset"
+      ],
+      "scope": "Class/interface attribute and operation compartments; package tabs; component markers; generalization/dependency/realization.",
+      "validation": [
+        "profile endpoint restrictions",
+        "acyclic generalization",
+        "same-kind generalization",
+        "operation/attribute visibility enumeration"
+      ],
+      "unsupported": [
+        "XMI",
+        "OCL",
+        "full UML type/parameter model",
+        "assembly interfaces",
+        "formal UML conformance"
+      ]
+    },
+    {
+      "id": "uml.usecase@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Use-case diagram subset"
+      ],
+      "scope": "Actors, use-case ellipses, associations, include/extend/generalization.",
+      "validation": [
+        "correct actor/use-case endpoints",
+        "acyclic include and generalization"
+      ],
+      "unsupported": [
+        "extension-point model",
+        "full UML behavior semantics"
+      ]
+    },
+    {
+      "id": "requirements.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Requirements traceability"
+      ],
+      "scope": "Requirement IDs/text, satisfies/verifies/derives links.",
+      "validation": [
+        "nonempty unique requirement codes",
+        "compatible verification/implementation endpoints"
+      ],
+      "unsupported": [
+        "SysML conformance",
+        "evidence of operating effectiveness"
+      ]
+    },
+    {
+      "id": "chen.basic@1",
+      "projection": "chen",
+      "diagramFamilies": [
+        "Chen ER binary subset"
+      ],
+      "scope": "Entity rectangles; field-derived attribute ovals with key underlining; binary association diamonds.",
+      "validation": [
+        "scalar attribute projection",
+        "binary association mapping with stable provenance"
+      ],
+      "unsupported": [
+        "weak entities",
+        "n-ary association model",
+        "multivalued/derived attributes",
+        "faithful all-Chen conformance"
+      ]
+    },
+    {
+      "id": "matrix.raci@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "RACI matrix"
+      ],
+      "scope": "Rows/roles/cells derived from responsibility relations.",
+      "validation": [
+        "one A and at least one R per row",
+        "unique row/column assignment",
+        "allowed A/R/C/I values"
+      ],
+      "unsupported": [
+        "automatic responsibility inference",
+        "complete role-specific workflow app"
+      ]
+    },
+    {
+      "id": "matrix.crud@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "CRUD matrix"
+      ],
+      "scope": "Processes by data objects; cells from access relations.",
+      "validation": [
+        "nonempty unique subset of C/R/U/D",
+        "no duplicate row/column records"
+      ],
+      "unsupported": [
+        "database access discovery"
+      ]
+    },
+    {
+      "id": "matrix.relations@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "Relationship matrix"
+      ],
+      "scope": "Model-to-matrix projection with provenance.",
+      "validation": [
+        "unique row/column slots",
+        "explicit duplicate policy"
+      ],
+      "unsupported": [
+        "arbitrary SQL pivots"
+      ]
+    },
+    {
+      "id": "panels.basic@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "SIPOC",
+        "SWOT",
+        "Business Model Canvas-style panels",
+        "Customer journey stages",
+        "Planning board"
+      ],
+      "scope": "Span-aware fixed column panels containing shared model references.",
+      "validation": [
+        "positive grid spans",
+        "no overlapping panel slots",
+        "referenced elements exist"
+      ],
+      "unsupported": [
+        "nested independent child projections",
+        "image-rich cells",
+        "responsive widget behavior"
+      ]
+    },
+    {
+      "id": "table.records@1",
+      "projection": "table",
+      "diagramFamilies": [
+        "Record table",
+        "Decision-table presentation"
+      ],
+      "scope": "Typed field-key table bound to explicit records.",
+      "validation": [
+        "path safety",
+        "missing policy",
+        "record limit"
+      ],
+      "unsupported": [
+        "FEEL",
+        "hit policy execution",
+        "automatic coverage"
+      ]
+    },
+    {
+      "id": "chart.basic@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Bar/column",
+        "Line",
+        "Area",
+        "Scatter/bubble",
+        "Pie",
+        "Doughnut"
+      ],
+      "scope": "Native SVG quantitative marks; numeric/categorical coordinates; record provenance.",
+      "validation": [
+        "finite numeric values",
+        "consistent units",
+        "explicit aggregation",
+        "nonnegative arcs",
+        "duplicate coordinates rejected"
+      ],
+      "unsupported": [
+        "multi-axis",
+        "statistics",
+        "geo",
+        "radar",
+        "candlestick"
+      ]
+    },
+    {
+      "id": "timeline.basic@1",
+      "projection": "timeline",
+      "diagramFamilies": [
+        "Gantt supplied dates",
+        "Timeline",
+        "Calendar roadmap"
+      ],
+      "scope": "UTC date intervals mapped to a fixed axis; milestones and dependency overlays.",
+      "validation": [
+        "valid ISO date-only",
+        "end>=start",
+        "acyclic dependencies",
+        "no model-position pins"
+      ],
+      "unsupported": [
+        "scheduling",
+        "working calendars",
+        "resource leveling",
+        "critical-path computation",
+        "UML timing"
+      ]
+    },
+    {
+      "id": "fishbone.basic@1",
+      "projection": "fishbone",
+      "diagramFamilies": [
+        "Fishbone / Ishikawa"
+      ],
+      "scope": "Cause-to-parent DAG projected onto a spine and measured branches; repeated occurrences retain source identity.",
+      "validation": [
+        "cause cycles, orphan edges, depth/occurrence bounds"
+      ],
+      "unsupported": [
+        "causal inference",
+        "unbounded branch depth"
+      ]
+    },
+    {
+      "id": "matrix.heatmap@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "Heatmap",
+        "Risk/priority matrix"
+      ],
+      "scope": "Source-derived numeric, categorical or threshold cell encodings with visible missing state.",
+      "validation": [
+        "declared finite scales; typed values; unique cell"
+      ],
+      "unsupported": [
+        "implicit ordinal arithmetic",
+        "automatic risk policy"
+      ]
+    },
+    {
+      "id": "chart.quality@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Grouped/stacked bars",
+        "Percentage stacks",
+        "Multiseries lines and areas",
+        "Actual/target overlay",
+        "Histogram",
+        "Pareto",
+        "Waterfall",
+        "Box plot"
+      ],
+      "scope": "Shared-scale series/layers and explicit bounded transformations with record provenance.",
+      "validation": [
+        "numeric domains, units, bin boundaries, totals, quartile/whisker conventions"
+      ],
+      "unsupported": [
+        "authoritative decimal accounting",
+        "general statistical inference",
+        "multiple unrelated axes"
+      ]
+    },
+    {
+      "id": "state.flat@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Flat lifecycle diagram",
+        "Trace validation"
+      ],
+      "scope": "One initial state, explicit terminal states, events and typed guards; safe trace evaluator does not execute actions.",
+      "validation": [
+        "reachability, event determinism, terminal rules, trace legality"
+      ],
+      "unsupported": [
+        "hierarchical/parallel states",
+        "SCXML/UML certification",
+        "timers and executable actions"
+      ]
+    },
+    {
+      "id": "decision.rules@1",
+      "projection": "decision",
+      "diagramFamilies": [
+        "Rule decision table"
+      ],
+      "scope": "Typed conjunction predicates; unique/first/collect hit policies; bounded partition proof and evaluation.",
+      "validation": [
+        "domain types, overlaps, coverage, shadowing, budgets"
+      ],
+      "unsupported": [
+        "FEEL",
+        "DMN interchange",
+        "unbounded analysis"
+      ]
+    },
+    {
+      "id": "panels.composed@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Composed dashboard",
+        "Report review page"
+      ],
+      "scope": "One level of child views, source mappings, scoped SVG IDs, preserved scales and publication checks.",
+      "validation": [
+        "span collisions; view cycles; child limits; text scale"
+      ],
+      "unsupported": [
+        "recursive dashboards",
+        "responsive application widgets"
+      ]
+    },
+    {
+      "id": "uml.usecase@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Use-case diagram"
+      ],
+      "scope": "Adds subjects, extension-point targets, conditions and classifier generalization to the declared subset.",
+      "validation": [
+        "subject references; extension-point existence; condition declaration; acyclic generalization"
+      ],
+      "unsupported": [
+        "complete UML behavioral semantics",
+        "formal standards certification"
+      ]
+    },
+    {
+      "id": "chen.binary@2",
+      "projection": "chen",
+      "diagramFamilies": [
+        "Binary Chen ER"
+      ],
+      "scope": "Composite, derived/multivalued attributes, keys and partial keys, weak entities and identifying binary associations; min/max participant annotations.",
+      "validation": [
+        "field metadata; identifying owner references; participation bounds"
+      ],
+      "unsupported": [
+        "n-ary relationships",
+        "lossless external format interchange"
+      ]
+    },
+    {
+      "id": "flow.documented@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Documented flowchart",
+        "Cross-page flowchart"
+      ],
+      "scope": "Adds on-page connectors, matched off-page continuations, storage and non-control annotations.",
+      "validation": [
+        "control reachability; annotation separation; continuation contracts"
+      ],
+      "unsupported": [
+        "all accounting stencils",
+        "workflow execution"
+      ]
+    }
+  ],
+  "projectionProperties": {
+    "graph": [
+      "kind",
+      "profile",
+      "inputs",
+      "analysis_budget",
+      "traces"
+    ],
+    "fishbone": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "effect",
+      "relation"
+    ],
+    "decision": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "records",
+      "inputs",
+      "outputs",
+      "hit_policy",
+      "coverage",
+      "analysis_budget",
+      "filter",
+      "order"
+    ],
+    "chen": [
+      "kind",
+      "profile",
+      "width",
+      "height"
+    ],
+    "matrix": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "write_data",
+      "rows",
+      "columns",
+      "relation",
+      "value",
+      "duplicates",
+      "encoding"
+    ],
+    "table": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "records",
+      "columns",
+      "filter",
+      "order",
+      "missing"
+    ],
+    "panels": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "columns",
+      "panels",
+      "value"
+    ],
+    "chart": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "records",
+      "mark",
+      "x",
+      "y",
+      "x_type",
+      "size",
+      "unit",
+      "aggregate",
+      "filter",
+      "order",
+      "missing",
+      "inner_radius",
+      "series",
+      "series_missing",
+      "arrangement",
+      "transform",
+      "layers",
+      "bins",
+      "normalize",
+      "outside",
+      "whiskers",
+      "quartiles",
+      "step",
+      "baseline",
+      "target"
+    ],
+    "timeline": [
+      "kind",
+      "profile",
+      "width",
+      "height",
+      "records",
+      "start",
+      "end",
+      "label",
+      "dependencies",
+      "filter",
+      "order"
+    ]
+  },
+  "implemented": [
+    "geometry-ordered free endpoint slots and bounded coupled side/slot refinement",
+    "fishbone source-linked cause occurrences",
+    "numeric categorical and band encoded heatmaps",
+    "shared write_data matrix creation and atomic batch changes",
+    "multiseries grouped signed/percentage stacked and layered charts",
+    "histogram Pareto waterfall and R7 boxplots",
+    "flat lifecycle and nonexecuting trace checks",
+    "typed unique/first/collect decision evaluation and bounded partition analysis",
+    "one-level child-view composition and contributor mappings",
+    "use-case subject/extension-point and binary weak/composite Chen profile checks",
+    "matched flow continuations and annotations",
+    "registered trusted profile catalogue with bounded semantic validation",
+    "shape contours and classifier compartments",
+    "binary scalar Chen source-linked occurrences",
+    "derived RACI CRUD relation matrices",
+    "record tables with safe bindings and explicit missing policies",
+    "spanning panel compositor",
+    "native bar line area point pie donut and UTC intervals",
+    "record/assignment source editors with provenance",
+    "Vega-Lite local-values export prototype",
+    "shared data/format/view references",
+    "grid/layered/tree/mindmap/grouped placement",
+    "pin-centred fit_grid/circular/radial/spanning_tree/organic placement",
+    "optional retained free-node positions",
+    "lighter dark/night registered palettes",
+    "single public JS runtime",
+    "local DDN/workspace upload and source downloads",
+    "full source editing with undoable guided actions",
+    "bounded obstacle-aware orthogonal routing",
+    "checked cubic Bezier and rounded connectors",
+    "per-relation routing overrides",
+    "curve-aware gap and jump decoration",
+    "separate parallel lanes",
+    "post-route quality checks",
+    "field rows and nested endpoints",
+    "typed registered metadata",
+    "endpoint contracts",
+    "domain and datatype display",
+    "font sizing with measured metrics",
+    "explicit allowlist SVG/JSON export",
+    "bounded declarative workflow fixtures",
+    "DFD interface balance contracts",
+    "scoped review requirements and evidence",
+    "content/figure/A4/Letter publication and final-size checks"
+  ],
+  "unsupported": [
+    "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
+    "arbitrary runtime profile code installation",
+    "unrestricted nested dashboard/widget composition (one child-view level is implemented)",
+    "complete UML/SysML/BPMN/DMN metamodels or external interchange",
+    "critical-path scheduling, arbitrary/DMN-FEEL rule execution and engineering solvers",
+    "third-party Vega runtime execution unverified in build environment",
+    "curved routes in the fixed-lane experimental interaction profile (DDN-I031)",
+    "redacted interaction SVG without an occurrence/payload closure (DDN-I032)",
+    "automatic cross-page tiling or pagination",
+    "native bus/junction-network drawing",
+    "arbitrary collapsed process visual ports",
+    "universal Unicode/font fallback certification",
+    "production ERP command execution",
+    "real-world legal/accounting approval",
+    "cryptographic authentication of external review evidence"
+  ],
+  "contracts_schema_subset": [
+    "type",
+    "enum",
+    "const",
+    "required",
+    "properties",
+    "additionalProperties",
+    "items",
+    "minItems",
+    "maxItems",
+    "uniqueItems",
+    "minLength",
+    "maxLength",
+    "minimum",
+    "maximum",
+    "pattern",
+    "allOf",
+    "anyOf",
+    "oneOf"
+  ],
+  "disclosure": "A syntax validator is not an operating-effectiveness or professional approval certificate. Unsupported options are rejected, not downgraded silently."
+}

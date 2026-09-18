@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.data-flow";
+import "formats.ddn" as fmt;
+import "data/flow.ddn" as f;
+
+// What data enters a process and what comes out?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "11 / Data-flow diagram" {
+    data: [@f.dfd];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@f.dfd.incoming, @f.dfd.validate, @f.dfd.accepted];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "dfd.r_input": 1, "dfd.r_output": 2 }; }
+}

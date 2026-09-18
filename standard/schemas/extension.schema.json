@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:schema:extension:0.3",
+  "title": "DDN extension contract",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "class",
+    "definition",
+    "parameters",
+    "fallback"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]+:[A-Za-z0-9._-]+$"
+    },
+    "version": {
+      "type": "string"
+    },
+    "class": {
+      "enum": [
+        "kind",
+        "facet",
+        "relation",
+        "property",
+        "view",
+        "profile"
+      ]
+    },
+    "definition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "endpoints": {
+      "type": "object"
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "slot": {
+      "type": "string"
+    },
+    "glyph": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "fallback": {
+      "type": "object",
+      "required": [
+        "label"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "shape": {
+          "enum": [
+            "card",
+            "activity",
+            "frame",
+            "note",
+            "sample",
+            "port"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "colourModes": {
+      "type": "object"
+    },
+    "security": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

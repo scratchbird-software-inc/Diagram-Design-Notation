@@ -1,0 +1,23 @@
+ddn "0.3";
+module "ddn.usecases.views.namespaces";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+import "data/sql.ddn" as s;
+import "data/namespace.ddn" as n;
+
+// Which schema contains these SQL objects?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "09 / Namespace organization" {
+    data: [@c.tables, @s.model, @n.model, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.teaching;
+    select: [@c.tables.orders, @s.model.routine, @n.model.schema];
+    publication { width: 1370px; height: 640px; }
+    legend { keys: { "model.r_orders_schema": 1, "model.r_routine_schema": 2 }; }
+    
+    
+    
+    
+    
+}

@@ -1,0 +1,170 @@
+ddn "0.5";
+module "meridian.quality.review";
+
+// Shared synthetic observations and requirements. No remote service is called.
+
+data causes {
+    object effect "Dimensional inspection failures" { kind: "quality.effect"; }
+    object cat0 "Equipment" { kind: "quality.category"; }
+    relation cat_to_effect0 "Possible cause category" @cat0 -> @effect { kind: "quality.cause"; }
+    object cat1 "Materials" { kind: "quality.category"; }
+    relation cat_to_effect1 "Possible cause category" @cat1 -> @effect { kind: "quality.cause"; }
+    object cat2 "Method" { kind: "quality.category"; }
+    relation cat_to_effect2 "Possible cause category" @cat2 -> @effect { kind: "quality.cause"; }
+    object cat3 "Measurement" { kind: "quality.category"; }
+    relation cat_to_effect3 "Possible cause category" @cat3 -> @effect { kind: "quality.cause"; }
+    object cat4 "People" { kind: "quality.category"; }
+    relation cat_to_effect4 "Possible cause category" @cat4 -> @effect { kind: "quality.cause"; }
+    object cat5 "Environment" { kind: "quality.category"; }
+    relation cat_to_effect5 "Possible cause category" @cat5 -> @effect { kind: "quality.cause"; }
+    object calibration "Calibration drift" { kind: "quality.cause"; }
+    relation c_calibration "Possible contributing cause" @calibration -> @cat0 { kind: "quality.cause"; }
+    object wear "Tool wear" { kind: "quality.cause"; }
+    relation c_wear "Possible contributing cause" @wear -> @cat0 { kind: "quality.cause"; }
+    object variation "Incoming material variation" { kind: "quality.cause"; }
+    relation c_variation "Possible contributing cause" @variation -> @cat1 { kind: "quality.cause"; }
+    object storage "Humidity during storage" { kind: "quality.cause"; }
+    relation c_storage "Possible contributing cause" @storage -> @cat1 { kind: "quality.cause"; }
+    object setup "Setup instructions unclear" { kind: "quality.cause"; }
+    relation c_setup "Possible contributing cause" @setup -> @cat2 { kind: "quality.cause"; }
+    object schedule "Calibration interval too long" { kind: "quality.cause"; }
+    relation c_schedule "Possible contributing cause" @schedule -> @cat2 { kind: "quality.cause"; }
+    object gauge "Gauge repeatability" { kind: "quality.cause"; }
+    relation c_gauge "Possible contributing cause" @gauge -> @cat3 { kind: "quality.cause"; }
+    object sample "Sample identification errors" { kind: "quality.cause"; }
+    relation c_sample "Possible contributing cause" @sample -> @cat3 { kind: "quality.cause"; }
+    object training "Training not current" { kind: "quality.cause"; }
+    relation c_training "Possible contributing cause" @training -> @cat4 { kind: "quality.cause"; }
+    object handover "Shift handover incomplete" { kind: "quality.cause"; }
+    relation c_handover "Possible contributing cause" @handover -> @cat4 { kind: "quality.cause"; }
+    object temperature "Temperature variation" { kind: "quality.cause"; }
+    relation c_temperature "Possible contributing cause" @temperature -> @cat5 { kind: "quality.cause"; }
+    object vibration "Nearby equipment vibration" { kind: "quality.cause"; }
+    relation c_vibration "Possible contributing cause" @vibration -> @cat5 { kind: "quality.cause"; }
+    relation calibration_measurement "Same cause, second appearance" @calibration -> @cat3 { kind: "quality.cause"; }
+    relation schedule_calibration "Possible underlying cause" @schedule -> @calibration { kind: "quality.cause"; }
+}
+
+data responsibilities {
+    object inspect "Inspect incoming lots" { kind: "analysis.task"; }
+    object contain "Contain nonconforming lots" { kind: "analysis.task"; }
+    object correct "Implement corrective action" { kind: "analysis.task"; }
+    object inspector "Quality inspector" { kind: "analysis.role"; }
+    object engineer "Process engineer" { kind: "analysis.role"; }
+    object manager "Quality manager" { kind: "analysis.role"; }
+    object plant_a "Plant A" { kind: "team"; }
+    object plant_b "Plant B" { kind: "team"; }
+    object plant_c "Warehouse C" { kind: "team"; }
+    object lot "Inspection lot" { kind: "table"; fields { field id; field status; } }
+    object check "Inspection result" { kind: "table"; fields { field id; field status; } }
+    object action "Corrective action" { kind: "table"; fields { field id; field status; } }
+    relation assign_inspect_inspector "Responsibility" @inspect -> @inspector { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
+    relation assign_inspect_manager "Responsibility" @inspect -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
+    relation assign_contain_inspector "Responsibility" @contain -> @inspector { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
+    relation assign_contain_manager "Responsibility" @contain -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
+    relation assign_correct_engineer "Responsibility" @correct -> @engineer { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
+    relation assign_correct_manager "Responsibility" @correct -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
+    relation access_inspect_lot "Data access" @inspect -> @lot { kind: "analysis.access"; x_assignment: { "code": "R" }; }
+    relation access_inspect_check "Data access" @inspect -> @check { kind: "analysis.access"; x_assignment: { "code": "CR" }; }
+    relation access_contain_lot "Data access" @contain -> @lot { kind: "analysis.access"; x_assignment: { "code": "RU" }; }
+    relation access_correct_action "Data access" @correct -> @action { kind: "analysis.access"; x_assignment: { "code": "CRUD" }; }
+    relation score_inspect_plant_a "Supplied review score" @inspect -> @plant_a { kind: "assoc"; x_record: { "score": 1, "status": "Good" }; }
+    relation score_inspect_plant_b "Supplied review score" @inspect -> @plant_b { kind: "assoc"; x_record: { "score": 5, "status": "Monitor" }; }
+    relation score_inspect_plant_c "Supplied review score" @inspect -> @plant_c { kind: "assoc"; x_record: { "score": 8, "status": "Action" }; }
+    relation score_contain_plant_a "Supplied review score" @contain -> @plant_a { kind: "assoc"; x_record: { "score": 2, "status": "Good" }; }
+    relation score_contain_plant_b "Supplied review score" @contain -> @plant_b { kind: "assoc"; x_record: { "score": 7, "status": "Action" }; }
+    relation score_contain_plant_c "Supplied review score" @contain -> @plant_c { kind: "assoc"; x_record: { "score": 4, "status": "Monitor" }; }
+    relation score_correct_plant_a "Supplied review score" @correct -> @plant_a { kind: "assoc"; x_record: { "score": 0, "status": "Good" }; }
+    relation score_correct_plant_b "Supplied review score" @correct -> @plant_b { kind: "assoc"; x_record: { "score": 3, "status": "Monitor" }; }
+}
+
+data defects {
+    object d0 "Dimension" { kind: "record"; x_record: { "category": "Dimension", "count": 22, "unit": "defects" }; }
+    object d1 "Surface" { kind: "record"; x_record: { "category": "Surface", "count": 12, "unit": "defects" }; }
+    object d2 "Packaging" { kind: "record"; x_record: { "category": "Packaging", "count": 6, "unit": "defects" }; }
+    object d3 "Label" { kind: "record"; x_record: { "category": "Label", "count": 4, "unit": "defects" }; }
+}
+
+data measurements {
+    object m0_0 "Machine A observation 1" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.82, "unit": "mm" }; }
+    object m0_1 "Machine A observation 2" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.88, "unit": "mm" }; }
+    object m0_2 "Machine A observation 3" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.95, "unit": "mm" }; }
+    object m0_3 "Machine A observation 4" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.98, "unit": "mm" }; }
+    object m0_4 "Machine A observation 5" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.0, "unit": "mm" }; }
+    object m0_5 "Machine A observation 6" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.01, "unit": "mm" }; }
+    object m0_6 "Machine A observation 7" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.04, "unit": "mm" }; }
+    object m0_7 "Machine A observation 8" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.06, "unit": "mm" }; }
+    object m0_8 "Machine A observation 9" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.09, "unit": "mm" }; }
+    object m0_9 "Machine A observation 10" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.12, "unit": "mm" }; }
+    object m0_10 "Machine A observation 11" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.15, "unit": "mm" }; }
+    object m0_11 "Machine A observation 12" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.18, "unit": "mm" }; }
+    object m1_0 "Machine B observation 1" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.9, "unit": "mm" }; }
+    object m1_1 "Machine B observation 2" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.94, "unit": "mm" }; }
+    object m1_2 "Machine B observation 3" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.99, "unit": "mm" }; }
+    object m1_3 "Machine B observation 4" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.02, "unit": "mm" }; }
+    object m1_4 "Machine B observation 5" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.03, "unit": "mm" }; }
+    object m1_5 "Machine B observation 6" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.05, "unit": "mm" }; }
+    object m1_6 "Machine B observation 7" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.07, "unit": "mm" }; }
+    object m1_7 "Machine B observation 8" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.11, "unit": "mm" }; }
+    object m1_8 "Machine B observation 9" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.16, "unit": "mm" }; }
+    object m1_9 "Machine B observation 10" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.19, "unit": "mm" }; }
+    object m1_10 "Machine B observation 11" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.24, "unit": "mm" }; }
+    object m1_11 "Machine B observation 12" { kind: "record"; x_record: { "machine": "Machine B", "value": 11.2, "unit": "mm" }; }
+}
+
+data series {
+    object s0_0 "Plant A / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Plant A", "count": 8, "unit": "defects" }; }
+    object s0_1 "Plant A / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Plant A", "count": 14, "unit": "defects" }; }
+    object s0_2 "Plant A / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Plant A", "count": 6, "unit": "defects" }; }
+    object s1_0 "Plant B / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Plant B", "count": 6, "unit": "defects" }; }
+    object s1_1 "Plant B / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Plant B", "count": 9, "unit": "defects" }; }
+    object s1_2 "Plant B / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Plant B", "count": 5, "unit": "defects" }; }
+}
+
+data targets {
+    object s0_0 "Actual / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Actual", "count": 8, "unit": "defects" }; }
+    object s0_1 "Actual / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Actual", "count": 14, "unit": "defects" }; }
+    object s0_2 "Actual / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Actual", "count": 6, "unit": "defects" }; }
+    object s1_0 "Target / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Target", "count": 7, "unit": "defects" }; }
+    object s1_1 "Target / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Target", "count": 9, "unit": "defects" }; }
+    object s1_2 "Target / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Target", "count": 5, "unit": "defects" }; }
+}
+
+data cost {
+    object cost0 "Inspection" { kind: "record"; x_record: { "label": "Inspection", "amount": 120, "step": "delta", "unit": "CAD" }; }
+    object cost1 "Rework" { kind: "record"; x_record: { "label": "Rework", "amount": 180, "step": "delta", "unit": "CAD" }; }
+    object cost2 "Subtotal" { kind: "record"; x_record: { "label": "Subtotal", "amount": 300, "step": "subtotal", "unit": "CAD" }; }
+    object cost3 "Scrap" { kind: "record"; x_record: { "label": "Scrap", "amount": 70, "step": "delta", "unit": "CAD" }; }
+    object cost4 "Recovery" { kind: "record"; x_record: { "label": "Recovery", "amount": -40, "step": "delta", "unit": "CAD" }; }
+    object cost5 "Total" { kind: "record"; x_record: { "label": "Total", "amount": 330, "step": "total", "unit": "CAD" }; }
+}
+
+data lifecycle {
+    object initial "Start" { kind: "state.initial"; x_record: { "stage": "Start" }; }
+    object open "Open" { kind: "state.state"; x_record: { "stage": "Open" }; }
+    object triage "Triage" { kind: "state.state"; x_record: { "stage": "Triage" }; }
+    object investigate "Investigating" { kind: "state.state"; x_record: { "stage": "Investigating" }; }
+    object correct "Correcting" { kind: "state.state"; x_record: { "stage": "Correcting" }; }
+    object verified "Verified" { kind: "state.state"; x_record: { "stage": "Verified" }; }
+    object closed "Closed" { kind: "state.final"; x_record: { "stage": "Closed" }; }
+    relation begin "begin" @initial -> @open { kind: "state.transition"; }
+    relation submit "submit" @open -> @triage { kind: "state.transition"; x_transition: { "event": "submit" }; }
+    relation accept "accept" @triage -> @investigate { kind: "state.transition"; x_transition: { "event": "accept" }; }
+    relation investigated "investigated" @investigate -> @correct { kind: "state.transition"; x_transition: { "event": "investigated" }; }
+    relation verify_ok "verify ok" @correct -> @verified { kind: "state.transition"; x_transition: { "event": "verify", "guard": { "passed": { "op": "eq", "value": true } } }; }
+    relation verify_fail "verify fail" @correct -> @investigate { kind: "state.transition"; x_transition: { "event": "verify", "guard": { "passed": { "op": "eq", "value": false } } }; }
+    relation close "close" @verified -> @closed { kind: "state.transition"; x_transition: { "event": "close" }; }
+}
+
+data rules {
+    object high "High severity" { kind: "rule.row"; x_rule: { "when": { "severity": { "op": "eq", "value": "high" } }, "then": { "route": "quarantine", "audit": true } }; }
+    object low_pass "Low severity within tolerance" { kind: "rule.row"; x_rule: { "when": { "severity": { "op": "eq", "value": "low" }, "score": { "op": "interval", "min": 0, "max": 5, "upper_closed": false } }, "then": { "route": "release", "audit": false } }; }
+    object low_review "Low severity outside tolerance" { kind: "rule.row"; x_rule: { "when": { "severity": { "op": "eq", "value": "low" }, "score": { "op": "interval", "min": 5, "max": 10 } }, "then": { "route": "inspect", "audit": true } }; }
+    object default "Default review" { kind: "rule.row"; x_rule: { "when": {  }, "then": { "route": "review", "audit": true } }; }
+    object audit "All cases audited" { kind: "rule.row"; x_rule: { "when": {  }, "then": { "route": "audit", "audit": true } }; }
+    object check "Score requires inspection" { kind: "rule.row"; x_rule: { "when": { "score": { "op": "interval", "min": 5, "max": 10 } }, "then": { "route": "inspect", "audit": true } }; }
+}
+
+data notes {
+    object note "Quality review assumptions" { kind: "note"; description: "Synthetic data: scores are supplied review policy values, not ordinal arithmetic. Possible causes require investigation. The chart library is not an authoritative accounting engine."; }
+}

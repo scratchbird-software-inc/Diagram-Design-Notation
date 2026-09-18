@@ -1,0 +1,21 @@
+ddn "0.3";
+module "ddn.examples.documents";
+import "shared.ddn" as shared;
+
+data model {
+    object profiles "Customer profiles" { kind: collection; fields { field customer_id; field address; field status { presence: optional; nullable: true; } } }
+    object address "Embedded address" { kind: document; fields { field street; field city; field postal_code; } }
+    object contacts "Contact array" { kind: array; fields { field kind; field value; } }
+    sample example "Absent is not null" { mode: synthetic; columns: [@profiles.customer_id, @profiles.status]; rows: [["C001", null], ["C002", missing]]; }
+    relation nested @profiles -> @address { kind: embeds; }
+    relation repeated @profiles -> @contacts { kind: embeds; }
+}
+view documents "Document structure / presence versus null" {
+    data: [@model]; format: @shared.styles.technical;
+    legend { mode: numbers; keys: { "nested": 1, "repeated": 2 }; }
+    
+    
+    
+    
+    
+}

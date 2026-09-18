@@ -1,0 +1,17 @@
+ddn "0.3";
+module "ddn.usecases.views.sql-dependencies";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+import "data/sql.ddn" as s;
+
+// What could be affected by changing a SQL definition?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "04 / SQL object dependencies" {
+    data: [@s.model, @c.tables, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@s.model.routine, @s.model.view, @c.tables.orders];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_routine_view": 1, "model.r_view_orders": 2 }; }
+}

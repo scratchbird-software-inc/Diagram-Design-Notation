@@ -1,0 +1,36 @@
+ddn "0.3";
+module "ddn.examples.customer-views";
+import "shared.ddn" as shared;
+import "customer-data.ddn" as customer;
+
+view overview "Customer data / a shared model" {
+    data: [@customer.model];
+    format: @shared.styles.technical;
+    legend: @shared.styles.numbers;
+    select: [@customer.model.customer, @customer.model.order, @customer.model.customer_identifier, @customer.model.customers];
+    legend { keys: { "model.order_customer": 7, "model.customer_domain": 12, "model.order_domain": 18 }; }
+    
+    
+    
+    
+    
+    
+    
+}
+view compact "Customer data / compact view" {
+    data: [@customer.model];
+    format: @shared.styles.technical;
+    display: @shared.styles.compact;
+    select: [@customer.model.order, @customer.model.customer];
+    
+    
+}
+view print "Customer data / print rendition" {
+    data: [@customer.model];
+    format: @shared.styles.technical;
+    style: @shared.styles.neutral;
+    publication: @shared.styles.paper;
+    select: [@customer.model.order, @customer.model.customer];
+    
+    
+}

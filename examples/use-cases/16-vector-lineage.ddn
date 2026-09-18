@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.vector-lineage";
+import "formats.ddn" as fmt;
+import "data/vectors.ddn" as v;
+
+// Which source and transformation produced these vectors?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "16 / Vector and embedding lineage" {
+    data: [@v.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.neo;
+    layout: @fmt.shared.row;
+    select: [@v.model.source, @v.model.embedding, @v.model.index];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_input": 1, "model.r_output": 2 }; }
+}

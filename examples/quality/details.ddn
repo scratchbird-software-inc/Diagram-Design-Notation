@@ -1,0 +1,44 @@
+ddn "0.5";
+module "meridian.quality.notations";
+
+data chen {
+    object order "Order" { kind: "entity"; fields { field order_id { x_chen:{key:true}; } field address { x_chen:{composite:true}; fields { field street; field city; } } field tags { x_chen:{multivalued:true}; } field calculated_total { x_chen:{derived:true}; } } }
+    object line "Order line" { kind: "entity"; x_chen: { "weak": true, "owner": @order }; fields { field line_no { x_chen:{partial_key:true}; } field quantity; } }
+    relation contains "Identifies line" @order -> @line { kind: "assoc"; x_chen: { "identifying": true, "owner": @order, "weak": @line, "from": { "min": 1, "max": 1 }, "to": { "min": 0, "max": "many" } }; }
+}
+
+data usecases {
+    object subject "Quality control system" { kind: "uml.subject"; }
+    object inspector "Inspector" { kind: "uml.actor"; }
+    object senior "Senior inspector" { kind: "uml.actor"; }
+    object review "Review lot" { kind: "uml.usecase"; x_usecase: { "subjects": [@subject], "extension_points": ["before disposition"] }; }
+    object record "Record evidence" { kind: "uml.usecase"; x_usecase: { "subjects": [@subject] }; }
+    object escalate "Escalate issue" { kind: "uml.usecase"; x_usecase: { "subjects": [@subject] }; }
+    relation uses "Reviews" @inspector -> @review { kind: "uml.uses"; }
+    relation generalizes "Specializes" @senior -> @inspector { kind: "uml.generalization"; }
+    relation includes "Includes evidence" @review -> @record { kind: "uml.include"; }
+    relation extends "Escalates when necessary" @escalate -> @review { kind: "uml.extend"; x_usecase: { "extension_point": "before disposition", "condition": "The declared review policy requires escalation." }; }
+}
+
+data flow {
+    object start "Inspection received" { kind: "flow.start"; }
+    object inspect "Inspect evidence" { kind: "flow.process"; }
+    object decision "Within limits?" { kind: "flow.decision"; }
+    object store "Record audit outcome" { kind: "flow.storage"; }
+    object reject "Nonconformance record" { kind: "flow.document"; }
+    object out "To closure sheet" { kind: "flow.offpage"; x_continuation: { "key": "QC-A", "side": "out", "page": "2" }; }
+    object in "From inspection sheet" { kind: "flow.offpage"; x_continuation: { "key": "QC-A", "side": "in", "page": "1" }; }
+    object connector "A" { kind: "flow.connector"; }
+    object end "Review complete" { kind: "flow.end"; }
+    object note "Keep evidence independent of approvals" { kind: "flow.annotation"; }
+    relation a "Receive" @start -> @inspect { kind: "flow.next"; }
+    relation b "Evaluate" @inspect -> @decision { kind: "flow.next"; }
+    relation pass "Accept" @decision -> @store { kind: "flow.next"; x_diagram: { "branch": "accept" }; }
+    relation fail "Reject" @decision -> @reject { kind: "flow.next"; x_diagram: { "branch": "reject" }; }
+    relation c "Continue" @store -> @out { kind: "flow.next"; }
+    relation d "Continue" @reject -> @out { kind: "flow.next"; }
+    relation e "Resume" @in -> @connector { kind: "flow.next"; }
+    relation f "Close" @connector -> @end { kind: "flow.next"; }
+    relation continuation "QC-A continuation" @out -> @in { kind: "flow.continues"; }
+    relation annotation "Evidence note" @note -> @store { kind: "flow.annotation"; }
+}

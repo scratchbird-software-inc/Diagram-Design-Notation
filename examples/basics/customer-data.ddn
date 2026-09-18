@@ -1,0 +1,44 @@
+ddn "0.3";
+module "ddn.examples.customer-data";
+
+data model {
+    object customer "Customer" {
+        uid: "urn:ddn:example:customer";
+        kind: table;
+        maturity: draft;
+        workload: [oltp];
+        role: authoritative;
+        fields {
+            field customer_id { key: primary; domain: @customer_identifier; }
+            field display_name;
+            field status;
+        }
+    }
+    object order "Order" {
+        kind: table;
+        maturity: draft;
+        workload: [oltp];
+        fields {
+            field order_id { key: primary; }
+            field customer_id { domain: @customer_identifier; }
+            field ordered_at;
+        }
+    }
+    domain customer_identifier "Customer identifier" {
+        meaning: "Identifies a customer in the registry";
+        representation: undecided;
+    }
+    sample customers "Synthetic customer records" {
+        mode: synthetic;
+        columns: [@customer.customer_id, @customer.display_name, @customer.status];
+        rows: [["C001", "Customer A", "Active"], ["C002", "Customer B", "Suspended"]];
+    }
+    relation order_customer @order.customer_id -> @customer.customer_id {
+        kind: references;
+        source_mark: zeromany;
+        target_mark: one;
+        enforcement: undecided;
+    }
+    relation customer_domain @customer.customer_id -> @customer_identifier { kind: uses_domain; }
+    relation order_domain @order.customer_id -> @customer_identifier { kind: uses_domain; }
+}

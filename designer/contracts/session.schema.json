@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Proposed Designer preferences; canonical DDN source is separate",
+  "type": "object",
+  "required": [
+    "format",
+    "workspaceId",
+    "baseRevision",
+    "viewId",
+    "viewport"
+  ],
+  "properties": {
+    "format": {
+      "const": "ddn-designer-session@1"
+    },
+    "workspaceId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "baseRevision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "viewId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "viewport": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "zoom": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 16
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "zoom"
+      ],
+      "additionalProperties": false
+    },
+    "selection": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "uniqueItems": true
+    },
+    "panels": {
+      "type": "object",
+      "properties": {
+        "left": {
+          "enum": [
+            "add",
+            "model",
+            "views",
+            "closed"
+          ]
+        },
+        "right": {
+          "enum": [
+            "meaning",
+            "view",
+            "details",
+            "closed"
+          ]
+        },
+        "problems": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "left",
+        "right",
+        "problems"
+      ],
+      "additionalProperties": false
+    },
+    "retainedLayoutState": {
+      "type": "object",
+      "description": "Must additionally validate against the installed runtime layoutState schema. No invented source pins."
+    }
+  },
+  "additionalProperties": false
+}

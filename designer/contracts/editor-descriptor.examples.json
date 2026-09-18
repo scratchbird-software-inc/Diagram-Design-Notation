@@ -1,0 +1,717 @@
+[
+  {
+    "format": "ddn-designer-descriptor@1",
+    "id": "editor.table",
+    "version": "0.1",
+    "status": "proposed",
+    "targets": [
+      "table"
+    ],
+    "basicLimit": 6,
+    "conversionPolicy": "preview-conversion-never-recipe-only",
+    "controls": [
+      {
+        "id": "name",
+        "label": "Name",
+        "scope": "model",
+        "group": "basic",
+        "widget": "text",
+        "command": "setLabel",
+        "adapterStatus": "existing",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "definition.label",
+        "help": "Display name. Stable identity is unchanged.",
+        "requiredFor": "draft"
+      },
+      {
+        "id": "kind",
+        "label": "Type",
+        "scope": "model",
+        "group": "basic",
+        "widget": "select",
+        "command": "planKindConversion",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "definition.kind",
+        "options": [
+          {
+            "value": "table",
+            "label": "Table"
+          },
+          {
+            "value": "view",
+            "label": "SQL view"
+          }
+        ],
+        "destructive": true,
+        "help": "Changes meaning, not silhouette. Preview constraints, fields and affected views."
+      },
+      {
+        "id": "fields",
+        "label": "Fields",
+        "scope": "model",
+        "group": "basic",
+        "widget": "fields_tree",
+        "command": "editMembers",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "definition.fields",
+        "help": "Names first; domains and implementation types are optional. Existing single-field insertion can be wrapped."
+      },
+      {
+        "id": "description",
+        "label": "Description",
+        "scope": "model",
+        "group": "basic",
+        "widget": "multiline",
+        "command": "setProperty",
+        "adapterStatus": "existing",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "definition.description"
+      },
+      {
+        "id": "maturity",
+        "label": "Design status",
+        "scope": "model",
+        "group": "basic",
+        "widget": "select",
+        "command": "setProperty",
+        "adapterStatus": "existing",
+        "valueStates": [
+          "unset",
+          "undecided",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "definition.maturity",
+        "options": [
+          {
+            "value": "draft",
+            "label": "Draft"
+          },
+          {
+            "value": "approved",
+            "label": "Approved"
+          }
+        ],
+        "help": "Approval is not evidence of deployment."
+      },
+      {
+        "id": "detail",
+        "label": "Show",
+        "scope": "view",
+        "group": "appearance",
+        "widget": "select",
+        "command": "setViewOverride",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.display.fields",
+        "options": [
+          {
+            "value": "names",
+            "label": "Field names"
+          },
+          {
+            "value": "none",
+            "label": "Name only"
+          }
+        ]
+      },
+      {
+        "id": "kindIndicator",
+        "label": "Type indicator",
+        "scope": "view",
+        "group": "appearance",
+        "widget": "select",
+        "command": "setViewOverride",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.display.kind"
+      },
+      {
+        "id": "pin",
+        "label": "Position",
+        "scope": "view",
+        "group": "layout",
+        "widget": "select",
+        "command": "setOccurrencePin",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.place.at",
+        "options": [
+          {
+            "value": "free",
+            "label": "Automatic"
+          },
+          {
+            "value": "pinned",
+            "label": "Pinned"
+          }
+        ]
+      },
+      {
+        "id": "namespace",
+        "label": "Namespace",
+        "scope": "model",
+        "group": "advanced",
+        "widget": "reference",
+        "command": "setMembership",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "help": "Select an actual namespace relationship, not a visual frame.",
+        "visibleWhen": {
+          "op": "capability",
+          "name": "membership.namespace"
+        }
+      },
+      {
+        "id": "owner",
+        "label": "Responsible team",
+        "scope": "model",
+        "group": "advanced",
+        "widget": "reference",
+        "command": "setMembership",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "help": "Ownership does not move data to another server."
+      }
+    ]
+  },
+  {
+    "format": "ddn-designer-descriptor@1",
+    "id": "editor.field",
+    "version": "0.1",
+    "status": "proposed",
+    "targets": [
+      "field"
+    ],
+    "basicLimit": 6,
+    "controls": [
+      {
+        "id": "name",
+        "label": "Field name",
+        "scope": "model",
+        "group": "basic",
+        "widget": "text",
+        "command": "setLabel",
+        "adapterStatus": "existing",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "field.label",
+        "help": "Label editing is not stable identifier renaming."
+      },
+      {
+        "id": "domain",
+        "label": "Meaning / domain",
+        "scope": "model",
+        "group": "basic",
+        "widget": "reference",
+        "command": "setDomainBinding",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "field.domain"
+      },
+      {
+        "id": "key",
+        "label": "Key role",
+        "scope": "model",
+        "group": "basic",
+        "widget": "key_roles",
+        "command": "editKeyMembership",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "help": "Compound keys are shared constraint records, not independent PK booleans."
+      },
+      {
+        "id": "presence",
+        "label": "Presence",
+        "scope": "model",
+        "group": "basic",
+        "widget": "select",
+        "command": "setProperty",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "undecided",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "field.presence",
+        "options": [
+          {
+            "value": "required",
+            "label": "Required"
+          },
+          {
+            "value": "optional",
+            "label": "Optional"
+          }
+        ]
+      },
+      {
+        "id": "nullable",
+        "label": "Null value",
+        "scope": "model",
+        "group": "basic",
+        "widget": "optional_boolean",
+        "command": "setProperty",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "undecided",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "field.nullable"
+      },
+      {
+        "id": "datatype",
+        "label": "Implementation type",
+        "scope": "model",
+        "group": "advanced",
+        "widget": "reference",
+        "command": "setRepresentation",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "help": "Does not replace the semantic domain."
+      },
+      {
+        "id": "parent",
+        "label": "Structure",
+        "scope": "model",
+        "group": "advanced",
+        "widget": "reference",
+        "command": "reparentMember",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "help": "Preserve ID and all relationships; preview source/import changes."
+      }
+    ]
+  },
+  {
+    "format": "ddn-designer-descriptor@1",
+    "id": "editor.relation",
+    "version": "0.1",
+    "status": "proposed",
+    "targets": [
+      "relation"
+    ],
+    "basicLimit": 6,
+    "controls": [
+      {
+        "id": "name",
+        "label": "Label",
+        "scope": "model",
+        "group": "basic",
+        "widget": "text",
+        "command": "setLabel",
+        "adapterStatus": "existing",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "relation.label"
+      },
+      {
+        "id": "meaning",
+        "label": "Meaning",
+        "scope": "model",
+        "group": "basic",
+        "widget": "select",
+        "command": "planRelationConversion",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "relation.kind"
+      },
+      {
+        "id": "from",
+        "label": "From",
+        "scope": "model",
+        "group": "basic",
+        "widget": "reference",
+        "command": "reconnectRelation",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "relation.from",
+        "help": "Choose object / field / named port, not an arbitrary pixel."
+      },
+      {
+        "id": "to",
+        "label": "To",
+        "scope": "model",
+        "group": "basic",
+        "widget": "reference",
+        "command": "reconnectRelation",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "relation.to"
+      },
+      {
+        "id": "multiplicity",
+        "label": "Participation",
+        "scope": "model",
+        "group": "basic",
+        "widget": "cardinality",
+        "command": "setCardinality",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "relation.properties.cardinality",
+        "visibleWhen": {
+          "op": "capability",
+          "name": "relation.cardinality"
+        }
+      },
+      {
+        "id": "enforcement",
+        "label": "Enforcement",
+        "scope": "model",
+        "group": "basic",
+        "widget": "select",
+        "command": "setProperty",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "undecided",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "sourceBinding": "relation.enforcement",
+        "visibleWhen": {
+          "op": "capability",
+          "name": "relation.enforcement"
+        }
+      },
+      {
+        "id": "path",
+        "label": "Path",
+        "scope": "view",
+        "group": "appearance",
+        "widget": "select",
+        "command": "setRouteOverride",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.route.routing",
+        "options": [
+          {
+            "value": "orthogonal",
+            "label": "Right angles"
+          },
+          {
+            "value": "curved",
+            "label": "Curved"
+          },
+          {
+            "value": "straight",
+            "label": "Straight"
+          }
+        ]
+      },
+      {
+        "id": "anchor",
+        "label": "Connection point",
+        "scope": "view",
+        "group": "layout",
+        "widget": "select",
+        "command": "setAnchorPolicy",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "help": "Automatic visual attachment cannot exchange semantic fields."
+      },
+      {
+        "id": "callout",
+        "label": "Callout key",
+        "scope": "view",
+        "group": "appearance",
+        "widget": "number_unit",
+        "command": "setLegendKey",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.legend.keys",
+        "help": "A numbered reference is not a sequence number."
+      }
+    ]
+  },
+  {
+    "format": "ddn-designer-descriptor@1",
+    "id": "editor.chart",
+    "version": "0.1",
+    "status": "proposed",
+    "targets": [
+      "projection:chart"
+    ],
+    "basicLimit": 6,
+    "controls": [
+      {
+        "id": "source",
+        "label": "Records",
+        "scope": "view",
+        "group": "basic",
+        "widget": "reference",
+        "command": "setProjectionBinding",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.projection.records"
+      },
+      {
+        "id": "mark",
+        "label": "Chart type",
+        "scope": "view",
+        "group": "basic",
+        "widget": "select",
+        "command": "setProjectionOverride",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.projection.mark"
+      },
+      {
+        "id": "category",
+        "label": "Category",
+        "scope": "view",
+        "group": "basic",
+        "widget": "reference",
+        "command": "setProjectionBinding",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.projection.category"
+      },
+      {
+        "id": "measure",
+        "label": "Value",
+        "scope": "view",
+        "group": "basic",
+        "widget": "reference",
+        "command": "setProjectionBinding",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.projection.value"
+      },
+      {
+        "id": "units",
+        "label": "Units",
+        "scope": "view",
+        "group": "basic",
+        "widget": "reference",
+        "command": "setProjectionBinding",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.projection.unit"
+      },
+      {
+        "id": "missing",
+        "label": "Missing values",
+        "scope": "view",
+        "group": "basic",
+        "widget": "select",
+        "command": "setProjectionOverride",
+        "adapterStatus": "wrapper-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": true,
+        "reset": "remove-override",
+        "multiEdit": false,
+        "sourceBinding": "view.projection.missing"
+      },
+      {
+        "id": "scale",
+        "label": "Scale",
+        "scope": "view",
+        "group": "advanced",
+        "widget": "conditions",
+        "command": "setProjectionScale",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-override",
+        "multiEdit": false
+      },
+      {
+        "id": "definition",
+        "label": "Metric definition",
+        "scope": "model",
+        "group": "advanced",
+        "widget": "reference",
+        "command": "editMetric",
+        "adapterStatus": "new-core-required",
+        "valueStates": [
+          "unset",
+          "known"
+        ],
+        "defaultVisible": false,
+        "reset": "remove-assertion",
+        "multiEdit": false,
+        "help": "Changes the shared metric, not just the visible axis."
+      }
+    ]
+  }
+]

@@ -1,0 +1,19 @@
+ddn "0.3";
+module "ddn.usecases.views.temporal";
+import "formats.ddn" as fmt;
+import "data/temporal.ddn" as t;
+
+// When did a fact apply, and when did we know it?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "14 / Valid time and recorded time" {
+    data: [@t.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.teaching;
+    select: [@t.model.history, @t.model.example];
+    publication { width: 1700px; height: 850px; }
+    legend { keys: { "model.r_example": 1 }; }
+    
+    
+    
+}

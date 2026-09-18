@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.business-erd";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+
+// What does one customer relate to?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "02 / Business concepts" {
+    data: [@c.concepts];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@c.concepts.customer, @c.concepts.order, @c.concepts.shipment];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "concepts.r_places": 1, "concepts.r_ships": 2 }; }
+}

@@ -1,0 +1,123 @@
+ddn "0.3";
+module "ddn.live.adaptive-lab";
+// Presentation-only routing laboratory. No physical operations are executed.
+// Default placement is automatic. place.at and route.via remain hard hints.
+data pipeline {
+    object client "Order entry" { kind: application; }
+    object validate "Validate order" { kind: activity; }
+    object catalog "Product catalogue" { kind: table;
+        fields { field product_id { key: primary; } field description; field sellable; }
+    }
+    object stock "Inventory reserve" { kind: activity; }
+    object orders "Accepted orders" { kind: table;
+        fields { field order_id { key: primary; } field customer_id; field accepted_at; field row_version; }
+    }
+    object events "Order events" { kind: topic; }
+    object reports "Sales projection" { kind: table; workload: [olap]; role: derived;
+        fields { field order_id; field business_date; field net_amount; }
+    }
+    relation submit "Submit proposed order" @client -> @validate { kind: flow; }
+    relation lookup "Check product status" @validate -> @catalog { kind: depends; }
+    relation reserve "Request stock reservation" @validate -> @stock { kind: flow; }
+    relation persist "Record accepted order" @stock -> @orders { kind: flow; }
+    relation publish "Publish outbox event" @orders -> @events { kind: flow; }
+    relation project "Build sales projection" @events -> @reports { kind: flow; }
+}
+data ports {
+    object n0 "Sales application" { kind: application; }
+    object n1 "Customer service" { kind: application; }
+    object n2 "Order service" { kind: application; }
+    object n3 "Reporting" { kind: application; }
+    object n4 "Warehouse" { kind: application; }
+    object n5 "Integration hub" { kind: application; }
+    relation r0 "Order event" @n2 -> @n5 { kind: flow; }
+    relation r1 "Customer update" @n5 -> @n1 { kind: flow; }
+    relation r2 "Warehouse summary" @n4 -> @n3 { kind: flow; }
+    relation r3 "Acknowledgement" @n5 -> @n0 { kind: flow; }
+}
+data movement {
+    object n0 "Request handler" { kind: application; }
+    object n1 "Client" { kind: application; }
+    object n2 "Projection service" { kind: application; }
+    object n3 "Gateway" { kind: application; }
+    object n4 "Database" { kind: application; }
+    object n5 "Middleware" { kind: application; }
+    relation r0 "Dispatch request" @n3 -> @n0 { kind: flow; }
+    relation r1 "Forward request" @n5 -> @n3 { kind: flow; }
+    relation r2 "Persist projection" @n2 -> @n4 { kind: flow; }
+    relation r3 "Submit command" @n1 -> @n5 { kind: flow; }
+}
+data locked {
+    object left "Source A" { kind: application; }
+    object right "Destination A" { kind: application; }
+    object top "Source B" { kind: application; }
+    object bottom "Destination B" { kind: application; }
+    relation horizontal "Independent transfer A" @left -> @right { kind: flow; }
+    relation vertical "Independent dependency B" @top -> @bottom { kind: depends; }
+}
+data blockers {
+    object a "Order lines" { kind: table; fields { field customer_id; } }
+    object b "Unrelated dataset" { kind: table; fields { field audit_id; } }
+    object c "Customers" { kind: table; fields { field customer_id { key: primary; } } }
+    relation a_c "Logical customer reference" @a.customer_id -> @c.customer_id { kind: ref; enforcement: undecided; }
+}
+format shared {
+    style night { look: classic; theme: night; font: sans; seed: 42; }
+    layout adaptive { algorithm: auto; routing: orthogonal; crossings: gap; gap: 90px; }
+    layout grid_seed { algorithm: grid; columns: 3; gap: 100px; routing: orthogonal; crossings: gap; }
+    display details { fields: names; kind: icon_token; maturity: none; badges: tokens; }
+    legend numbered { mode: numbers; placement: right; width: 320px; }
+    publication page { size: content; fit: none; minimum_text: 8pt; overflow: error; }
+    bundle technical { style: @night; layout: @adaptive; display: @details; legend: @numbered; publication: @page; }
+}
+view automatic "Adaptive order flow / no positional coordinates" {
+    legend { keys: {"pipeline.submit": 1, "pipeline.lookup": 2, "pipeline.reserve": 3, "pipeline.persist": 4, "pipeline.publish": 5, "pipeline.project": 6}; }
+    data: [@pipeline]; format: @shared.technical;
+    // None of the seven nodes has place.at. Change visible detail and re-render.
+}
+view ports_first "1 / Move connection points before moving boxes" {
+    legend { keys: {"ports.r0": 1, "ports.r1": 2, "ports.r2": 3, "ports.r3": 4}; }
+    data: [@ports]; format: @shared.technical; layout: @shared.grid_seed;
+    publication { size: content; fit: none; }
+    place @ports.n0 { at: [0px, 0px]; size: [240px, 130px]; }
+    place @ports.n1 { at: [340px, 0px]; size: [240px, 130px]; }
+    place @ports.n2 { at: [680px, 0px]; size: [240px, 130px]; }
+    place @ports.n3 { at: [0px, 230px]; size: [240px, 130px]; }
+    place @ports.n4 { at: [340px, 230px]; size: [240px, 130px]; }
+    place @ports.n5 { at: [680px, 230px]; size: [240px, 130px]; }
+}
+view move_unpinned "2 / Move unpinned nodes after connection-point trials" {
+    legend { keys: {"movement.r0": 1, "movement.r1": 2, "movement.r2": 3, "movement.r3": 4}; }
+    data: [@movement]; format: @shared.technical; layout: @shared.grid_seed;
+    publication { size: content; fit: none; }
+    place @movement.n0 { size: [240px, 130px]; }
+    place @movement.n1 { size: [240px, 130px]; }
+    place @movement.n2 { size: [240px, 130px]; }
+    place @movement.n3 { size: [240px, 130px]; }
+    place @movement.n4 { size: [240px, 130px]; }
+    place @movement.n5 { size: [240px, 130px]; }
+    // Side constraints remain east/west; offsets on those sides are movable.
+    route @movement.r0 { source_side: east; target_side: west; }
+    route @movement.r1 { source_side: east; target_side: west; }
+    route @movement.r2 { source_side: east; target_side: west; }
+    route @movement.r3 { source_side: east; target_side: west; }
+}
+view pinned_crossing "3 / Short pinned routes with explicit nonconnection marks" {
+    legend { keys: {"locked.horizontal": 1, "locked.vertical": 2}; }
+    data: [@locked]; format: @shared.technical;
+    publication { size: content; fit: none; }
+    place @locked.left { at: [0px, 220px]; size: [220px, 100px]; }
+    place @locked.right { at: [1000px, 220px]; size: [220px, 100px]; }
+    place @locked.top { at: [500px, 0px]; size: [220px, 100px]; }
+    place @locked.bottom { at: [500px, 500px]; size: [220px, 100px]; }
+    route @locked.horizontal { source_side: east; target_side: west; x_source_fraction: 0.5; x_target_fraction: 0.5; via: [[450px, 270px], [850px, 270px]]; }
+    route @locked.vertical { source_side: south; target_side: north; x_source_fraction: 0.5; x_target_fraction: 0.5; via: [[610px, 170px], [610px, 440px]]; }
+}
+view obstacle "Named field endpoints / route around an unrelated box" {
+    legend { keys: {"blockers.a_c": 1}; }
+    data: [@blockers]; format: @shared.technical; layout: @shared.grid_seed;
+    publication { size: content; fit: none; }
+    place @blockers.a { at: [0px, 0px]; size: [240px, 150px]; }
+    place @blockers.b { at: [350px, 0px]; size: [240px, 150px]; }
+    place @blockers.c { at: [700px, 0px]; size: [240px, 150px]; }
+}

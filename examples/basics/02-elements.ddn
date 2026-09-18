@@ -1,0 +1,138 @@
+ddn "0.3";
+module "ddn.examples.elements";
+import "shared.ddn" as shared;
+
+data model {
+    object customer "Customer" { kind: table; maturity: draft; workload: [oltp]; fields { field customer_id { key: primary; } field display_name; field status; } }
+    object history "Customer history" { kind: history; workload: [olap]; temporal: bitemporal; fields { field customer_id; field valid_from; field recorded_from; } }
+    object profile "Profile document" { kind: collection; fields { field customer_id; field address { shape: object; } field tags { shape: array; } } }
+    object events "Customer events" { kind: topic; fields { field event_id; field occurred_at; field payload; } }
+    object transform "Build history" { kind: activity; }
+    object procedure "Reconcile customers" { kind: procedure; fields { field tenant_id; field batch_id; } }
+    domain identifier "Customer identifier" { meaning: "Stable registry identity"; representation: undecided; }
+    object schema "SQL namespace" { kind: schema; }
+    object server "Cloud SQL service" { kind: service; location: cloud; }
+    object cloud "Cloud scope" { kind: cloud; }
+    object note "Design decision" { kind: note; description: "Examples illustrate intent; the data model remains independent of its look."; }
+    sample example "Synthetic rows" { mode: synthetic; columns: [@customer.customer_id, @customer.status]; rows: [["C001", "Active"], ["C002", "Suspended"]]; }
+}
+
+view classic "Classic / fixed semantic notation" {
+    data: [@model];
+    format: @shared.styles.technical;
+    style: @shared.styles.classic;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+view handDrawn "Hand drawn / the same model" {
+    data: [@model];
+    format: @shared.styles.technical;
+    style: @shared.styles.hand;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+view neo "Neo / the same model" {
+    data: [@model];
+    format: @shared.styles.technical;
+    style: @shared.styles.neo;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+view dark "Dark canvas / fixed contrast palette" {
+    data: [@model];
+    format: @shared.styles.technical;
+    style: @shared.styles.dark;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+view neutral "Neutral / print-safe symbols" {
+    data: [@model];
+    format: @shared.styles.technical;
+    style: @shared.styles.neutral;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+view forest "Forest canvas / hand-drawn treatment" {
+    data: [@model];
+    format: @shared.styles.technical;
+    style: @shared.styles.forest;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}

@@ -1,0 +1,22 @@
+ddn "0.3";
+module "ddn.usecases.views.keyed-storage";
+import "formats.ddn" as fmt;
+import "data/keyed.ddn" as k;
+
+// What is the key, and what shape is its value?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "07 / Key-value design" {
+    data: [@k.kv];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@k.kv.key, @k.kv.sessions, @k.kv.value];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "kv.r_a": 1, "kv.r_b": 2 }; }
+}
+
+view wide_column "07b / Wide-column access pattern" {
+    data: [@k.wide]; format: @fmt.shared.technical;
+    select: [@k.wide.query, @k.wide.readings, @k.wide.key];
+    legend { keys: { "wide.r_a": 1, "wide.r_b": 2 }; }
+}

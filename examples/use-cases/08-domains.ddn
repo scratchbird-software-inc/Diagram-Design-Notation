@@ -1,0 +1,23 @@
+ddn "0.3";
+module "ddn.usecases.views.domains";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+import "data/domains.ddn" as d;
+
+// Do differently named fields share the same meaning?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "08 / Domain discovery and binding" {
+    data: [@c.tables, @d.model, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.teaching;
+    select: [@c.tables.orders, @d.model.support, @c.domains.customer_id, @d.model.binding];
+    publication { width: 1730px; height: 700px; }
+    legend { keys: { "model.r_order_domain": 1, "model.r_support_candidate": 2, "model.r_binding": 3 }; }
+    
+    
+    
+    
+    
+    
+}

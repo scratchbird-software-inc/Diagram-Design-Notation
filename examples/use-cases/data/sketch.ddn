@@ -1,0 +1,18 @@
+ddn "0.3";
+module "ddn.usecases.sketch";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object customer "Customer" {
+        kind: object;
+    }
+    object order "Order" {
+        kind: object;
+    }
+    object shipment "Shipment" {
+        kind: object;
+    }
+    relation r_a "places" @customer -> @order { kind: assoc; }
+    relation r_b "fulfilled by" @order -> @shipment { kind: assoc; }
+}

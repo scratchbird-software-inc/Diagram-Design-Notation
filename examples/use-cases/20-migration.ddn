@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.migration";
+import "formats.ddn" as fmt;
+import "data/migration.ddn" as m;
+
+// How will the old representation become the new one?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "20 / Migration and target design" {
+    data: [@m.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@m.model.legacy, @m.model.convert, @m.model.target];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_extract": 1, "model.r_load": 2 }; }
+}

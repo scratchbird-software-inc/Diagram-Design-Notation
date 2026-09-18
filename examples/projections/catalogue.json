@@ -1,0 +1,211 @@
+[
+  {
+    "view": "flowchart",
+    "title": "01 / Purchasing control flow",
+    "purpose": "A closed success/rejection graph with explicit decision branches.",
+    "diagramFamilies": [
+      "Conventional flowchart",
+      "Accounting/audit flowchart subset"
+    ]
+  },
+  {
+    "view": "responsibility_graph",
+    "title": "02 / Shared responsibility assignments",
+    "purpose": "These exact task and relationship identities also generate the RACI matrix.",
+    "diagramFamilies": []
+  },
+  {
+    "view": "raci",
+    "title": "03 / Model-derived RACI",
+    "purpose": "One A and at least one R required per row. Cells select the original assignments.",
+    "diagramFamilies": [
+      "RACI"
+    ]
+  },
+  {
+    "view": "crud",
+    "title": "04 / Model-derived CRUD",
+    "purpose": "Source-bound access cells, not a separately maintained spreadsheet.",
+    "diagramFamilies": [
+      "CRUD"
+    ]
+  },
+  {
+    "view": "dfd_gane",
+    "title": "05 / Numbered Gane\u2013Sarson-style DFD",
+    "purpose": "Same DFD participants and transfers; two registered notations.",
+    "diagramFamilies": [
+      "dfd.gane_sarson@1"
+    ]
+  },
+  {
+    "view": "dfd_yourdon",
+    "title": "06 / Yourdon-style DFD",
+    "purpose": "Same DFD participants and transfers; two registered notations.",
+    "diagramFamilies": [
+      "dfd.yourdon@1"
+    ]
+  },
+  {
+    "view": "structure",
+    "title": "07 / Declared class / interface subset",
+    "purpose": "Attributes and operations have separate compartments; UML parameter/type semantics remain out of scope.",
+    "diagramFamilies": [
+      "UML class subset",
+      "UML component/package subset"
+    ]
+  },
+  {
+    "view": "usecases",
+    "title": "08 / Actor and use-case subset",
+    "purpose": "Actors, ellipses, include and extend; not full UML conformance.",
+    "diagramFamilies": [
+      "Use-case subset"
+    ]
+  },
+  {
+    "view": "requirements",
+    "title": "09 / Requirement traceability",
+    "purpose": "Requirement IDs/text and typed verification/implementation links.",
+    "diagramFamilies": [
+      "Requirement traceability"
+    ]
+  },
+  {
+    "view": "erd",
+    "title": "10 / Entity-field representation",
+    "purpose": "Entity fields are shared with the Chen projection.",
+    "diagramFamilies": []
+  },
+  {
+    "view": "chen",
+    "title": "11 / Chen binary projection",
+    "purpose": "The attribute ovals and relationship diamonds are view occurrences of existing fields/relations.",
+    "diagramFamilies": [
+      "Chen binary/scalar subset"
+    ]
+  },
+  {
+    "view": "chart_bar",
+    "title": "12 / Synthetic monthly value \u2014 bar",
+    "purpose": "Same six source records across marks. Quantitative coordinates remain exact under style changes.",
+    "diagramFamilies": [
+      "bar chart"
+    ]
+  },
+  {
+    "view": "chart_line",
+    "title": "13 / Synthetic monthly value \u2014 line",
+    "purpose": "Same six source records across marks. Quantitative coordinates remain exact under style changes.",
+    "diagramFamilies": [
+      "line chart"
+    ]
+  },
+  {
+    "view": "chart_area",
+    "title": "14 / Synthetic monthly value \u2014 area",
+    "purpose": "Same six source records across marks. Quantitative coordinates remain exact under style changes.",
+    "diagramFamilies": [
+      "area chart"
+    ]
+  },
+  {
+    "view": "chart_pie",
+    "title": "15 / Synthetic monthly value \u2014 pie",
+    "purpose": "Same six source records across marks. Quantitative coordinates remain exact under style changes.",
+    "diagramFamilies": [
+      "pie chart"
+    ]
+  },
+  {
+    "view": "chart_donut",
+    "title": "16 / Synthetic monthly value \u2014 donut",
+    "purpose": "Same six source records across marks. Quantitative coordinates remain exact under style changes.",
+    "diagramFamilies": [
+      "donut chart"
+    ]
+  },
+  {
+    "view": "scatter",
+    "title": "17 / Cost versus recorded value",
+    "purpose": "Bubble area uses a square-root radius mapping; record counts are not added to currency.",
+    "diagramFamilies": [
+      "Scatter/bubble"
+    ]
+  },
+  {
+    "view": "time_series",
+    "title": "18 / UTC monthly observations",
+    "purpose": "Date positions come from source values, not graph placement.",
+    "diagramFamilies": []
+  },
+  {
+    "view": "record_table",
+    "title": "19 / Shared observation table",
+    "purpose": "Inspect values that feed the chart projections.",
+    "diagramFamilies": [
+      "Source table"
+    ]
+  },
+  {
+    "view": "decision_table",
+    "title": "20 / Declarative decision-table presentation",
+    "purpose": "Conditions/actions are documentation. No FEEL/hit-policy execution is implied.",
+    "diagramFamilies": [
+      "Decision-table presentation"
+    ]
+  },
+  {
+    "view": "gantt",
+    "title": "21 / Supplied-date procurement schedule",
+    "purpose": "UTC, end-exclusive dates with finish-to-start guards; no scheduler or resource leveling.",
+    "diagramFamilies": [
+      "Gantt supplied dates",
+      "Timeline/roadmap"
+    ]
+  },
+  {
+    "view": "schedule_table",
+    "title": "22 / Schedule source records",
+    "purpose": "These are the same task objects visible in flowchart and RACI.",
+    "diagramFamilies": []
+  },
+  {
+    "view": "swot",
+    "title": "23 / Reusable SWOT panel template",
+    "purpose": "Measured text determines row heights; spans cannot overlap.",
+    "diagramFamilies": [
+      "SWOT",
+      "Analysis canvas"
+    ]
+  },
+  {
+    "view": "sipoc",
+    "title": "24 / SIPOC from shared notes",
+    "purpose": "Five explicit panels reuse model definitions.",
+    "diagramFamilies": [
+      "SIPOC"
+    ]
+  },
+  {
+    "view": "journey",
+    "title": "25 / Service journey with spanning panels",
+    "purpose": "Span-aware layout, not yet a rich widget/emotion-chart compositor.",
+    "diagramFamilies": [
+      "Customer journey stages",
+      "Process-map panels"
+    ]
+  },
+  {
+    "view": "matrix_general",
+    "title": "26 / General relationship matrix",
+    "purpose": "A general cross-tab uses relationship text rather than RACI codes; source identities remain the same.",
+    "diagramFamilies": []
+  },
+  {
+    "view": "shape_atlas",
+    "title": "27 / Composable semantic silhouettes",
+    "purpose": "Inventory only: disconnected shapes are not a valid control-flow process.",
+    "diagramFamilies": []
+  }
+]

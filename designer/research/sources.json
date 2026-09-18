@@ -1,0 +1,202 @@
+{
+  "checked": "2026-09-08",
+  "method": "Primary documentation and repository license review; not installed-product usability benchmarking. Failed speculative URLs are not counted as evidence.",
+  "sources": [
+    {
+      "id": "R01",
+      "title": "draw.io editor",
+      "url": "https://www.drawio.com/docs/manual/editor/",
+      "observation": "Context-sensitive panels and distinct editor themes; left palette and right inspector.",
+      "design_use": "Borrow the visible interaction vocabulary, not an unrestricted styling-first data model."
+    },
+    {
+      "id": "R02",
+      "title": "draw.io shape properties",
+      "url": "https://www.drawio.com/docs/manual/shapes/shape-properties/",
+      "observation": "Applicable properties depend on selection; mixed selection exposes common controls.",
+      "design_use": "Show applicable properties only; avoid the documented thousands-of-properties experience."
+    },
+    {
+      "id": "R03",
+      "title": "draw.io connections",
+      "url": "https://www.drawio.com/doc/faq/connect-shapes",
+      "observation": "Quick append/connect and keyboard alternatives.",
+      "design_use": "Use contextual append with explicit DDN relation meaning; never split arbitrary references silently."
+    },
+    {
+      "id": "R04",
+      "title": "draw.io fixed/floating connectors",
+      "url": "https://www.drawio.com/docs/manual/connectors/connector-fixed-vs-floating/",
+      "observation": "Distinguishes attachment to fixed connection points from perimeter connections.",
+      "design_use": "DDN distinguishes field/port identity from automatic visual anchor freedom."
+    },
+    {
+      "id": "R05",
+      "title": "draw.io metadata",
+      "url": "https://www.drawio.com/doc/faq/shape-metadata",
+      "observation": "Shapes and connectors can carry metadata and separate tooltip behavior.",
+      "design_use": "DDN metadata remains typed; do not expose all hidden sensitive properties in tooltips."
+    },
+    {
+      "id": "R06",
+      "title": "React Flow custom UI and APIs",
+      "url": "https://reactflow.dev/learn",
+      "observation": "Node/edge/handle customization, viewport controls, examples and integration API.",
+      "design_use": "Alternative interaction host; keep DDN scene, router, and canonical source authoritative."
+    },
+    {
+      "id": "R07",
+      "title": "React Flow validation",
+      "url": "https://reactflow.dev/examples/interaction/validation",
+      "observation": "Connection validation is available as an explicit predicate.",
+      "design_use": "Filter by compatible endpoint types, then validate the actual proposed DDN transaction."
+    },
+    {
+      "id": "R08",
+      "title": "React Flow accessibility",
+      "url": "https://reactflow.dev/learn/advanced-use/accessibility",
+      "observation": "Keyboard selection/movement, accessible labels, focus behavior.",
+      "design_use": "Build full keyboard creation and connection flows; framework features do not certify the finished product."
+    },
+    {
+      "id": "R09",
+      "title": "diagram-js architecture via bpmn-js walkthrough",
+      "url": "https://bpmn.io/toolkit/bpmn-js/walkthrough/",
+      "observation": "Separates generic canvas/command stack/context pad from domain metamodel and modeling rules.",
+      "design_use": "Best architectural reference for commands, rules, and contextual construction."
+    },
+    {
+      "id": "R10",
+      "title": "diagram-js license",
+      "url": "https://github.com/bpmn-io/diagram-js/blob/develop/LICENSE",
+      "observation": "MIT license for diagram-js itself.",
+      "design_use": "Eligible optional interaction dependency; distinct from bpmn-js licensing."
+    },
+    {
+      "id": "R11",
+      "title": "bpmn.io domain toolkit license",
+      "url": "https://bpmn.io/license/",
+      "observation": "bpmn-js and related toolkits require preserving the visible bpmn.io watermark.",
+      "design_use": "Do not assume generic diagram-js and domain toolkits have identical terms."
+    },
+    {
+      "id": "R12",
+      "title": "JointJS ports",
+      "url": "https://docs.jointjs.com/learn/features/ports/",
+      "observation": "First-class port definitions and port groups.",
+      "design_use": "Separate meaning of a port from its position and visual magnet."
+    },
+    {
+      "id": "R13",
+      "title": "JointJS Inspector",
+      "url": "https://docs.jointjs.com/learn/features/property-editor-and-viewer/",
+      "observation": "Declarative inputs, groups, conditional visibility, validation, and typed controls; example imports @joint/plus.",
+      "design_use": "Adopt the descriptor-driven approach; do not bundle the commercial Inspector unknowingly."
+    },
+    {
+      "id": "R14",
+      "title": "JointJS command history",
+      "url": "https://docs.jointjs.com/learn/features/undo-redo/",
+      "observation": "Batch commands collapse related changes into one undo operation; documented plugin uses @joint/plus.",
+      "design_use": "One user intent is one DDN source transaction; no second independent history."
+    },
+    {
+      "id": "R15",
+      "title": "JointJS licensing",
+      "url": "https://www.jointjs.com/license",
+      "observation": "Community library is MPL-2.0; JointJS+ is a separate commercial extension.",
+      "design_use": "License-check actual selected modules rather than assuming every documented feature is community code."
+    },
+    {
+      "id": "R16",
+      "title": "tldraw shape architecture",
+      "url": "https://tldraw.dev/docs/shapes",
+      "observation": "Validated props and shape utilities separate geometry, rendering, indicators and interaction.",
+      "design_use": "Reusable geometry + typed descriptors + migrations are valuable patterns."
+    },
+    {
+      "id": "R17",
+      "title": "tldraw licensing",
+      "url": "https://tldraw.dev/community/license",
+      "observation": "SDK is source-available under its own license; production requires an applicable license/key.",
+      "design_use": "Not the default dependency for a freely redistributable DDN editor."
+    },
+    {
+      "id": "R18",
+      "title": "Excalidraw integration",
+      "url": "https://docs.excalidraw.com/docs/@excalidraw/excalidraw/api/props/",
+      "observation": "Host callbacks, local scene changes, view modes and optional custom data.",
+      "design_use": "Borrow compact contextual UX; customData is not a DDN semantic contract."
+    },
+    {
+      "id": "R19",
+      "title": "Excalidraw license",
+      "url": "https://github.com/excalidraw/excalidraw/blob/master/LICENSE",
+      "observation": "MIT license in the inspected repository.",
+      "design_use": "Suitable reference; replacing DDN export with freehand scene export would lose semantics."
+    },
+    {
+      "id": "R20",
+      "title": "yEd partial layout",
+      "url": "https://yed.yworks.com/support/manual/layout/layout_partial.html",
+      "observation": "Selected regions can be laid out without moving the remainder; scope and preferred placement are explicit.",
+      "design_use": "Provide selected/unpinned/all scopes and preview before applying the existing DDN layouts."
+    },
+    {
+      "id": "R21",
+      "title": "Penpot components",
+      "url": "https://help.penpot.app/user-guide/design-systems/components/",
+      "observation": "Main/copy distinction, linked instances, overrides, reset and explicit update of main.",
+      "design_use": "Show Shared definition versus This view and show override provenance; never equate a visual occurrence with a physical replica."
+    },
+    {
+      "id": "R22",
+      "title": "WCAG dragging movements",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html",
+      "observation": "SC 2.5.7 requires a single-pointer alternative to nonessential dragging.",
+      "design_use": "Click-place and click-connect plus keyboard controls are requirements, not follow-up enhancements."
+    },
+    {
+      "id": "R23",
+      "title": "WCAG target size",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+      "observation": "SC 2.5.8 defines minimum target size with exceptions.",
+      "design_use": "Use at least 24 CSS-pixel hit regions or conforming spacing; prefer 32–44 for creation and touch."
+    },
+    {
+      "id": "R24",
+      "title": "WAI toolbar pattern",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/",
+      "observation": "Toolbar grouping and keyboard navigation guidance.",
+      "design_use": "Use a labeled toolbar with tested focus behavior and do not hijack shortcuts inside text fields."
+    },
+    {
+      "id": "R25",
+      "title": "WAI treeview pattern",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/treeview/",
+      "observation": "Tree semantics, selection and keyboard interaction guidance.",
+      "design_use": "Provide a searchable keyboard-operable model outline with equivalent commands."
+    },
+    {
+      "id": "R26",
+      "title": "Pointer events",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events",
+      "observation": "Unified mouse/pen/touch input, pointer capture and cancellation.",
+      "design_use": "Cancel transient geometry cleanly on pointercancel; commit only completed intentions."
+    },
+    {
+      "id": "R27",
+      "title": "React Flow license",
+      "url": "https://github.com/xyflow/xyflow/blob/main/LICENSE",
+      "observation": "MIT for the inspected xyflow repository.",
+      "design_use": "Separate core licensing from paid examples/support and other dependencies."
+    },
+    {
+      "id": "R28",
+      "title": "draw.io license",
+      "url": "https://github.com/jgraph/drawio/blob/dev/LICENSE",
+      "observation": "Apache License 2.0 in the inspected branch.",
+      "design_use": "Do not infer third-party asset or trademark rights; no draw.io source copied into this deliverable."
+    }
+  ]
+}

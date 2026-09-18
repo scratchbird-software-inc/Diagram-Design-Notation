@@ -1,0 +1,61 @@
+{
+  "proposal": "DDN Designer specification0.1",
+  "baseline": "0.5.0-draft.2",
+  "reviewers": [
+    {
+      "role": "DDN maintainer",
+      "reviewer": null,
+      "decision": "pending",
+      "artifactHash": null,
+      "date": null,
+      "notes": null
+    },
+    {
+      "role": "Data architect",
+      "reviewer": null,
+      "decision": "pending",
+      "artifactHash": null,
+      "date": null,
+      "notes": null
+    },
+    {
+      "role": "UX/interaction designer",
+      "reviewer": null,
+      "decision": "pending",
+      "artifactHash": null,
+      "date": null,
+      "notes": null
+    },
+    {
+      "role": "Accessibility reviewer",
+      "reviewer": null,
+      "decision": "pending",
+      "artifactHash": null,
+      "date": null,
+      "notes": null
+    },
+    {
+      "role": "Security reviewer",
+      "reviewer": null,
+      "decision": "pending",
+      "artifactHash": null,
+      "date": null,
+      "notes": null
+    },
+    {
+      "role": "Documentation owner",
+      "reviewer": null,
+      "decision": "pending",
+      "artifactHash": null,
+      "date": null,
+      "notes": null
+    }
+  ],
+  "questions": [
+    "Approve a separate Designer with unchanged Studio?",
+    "Approve Meaning/This view/Details and explicit shared impact?",
+    "Approve create pins vs automatic add and pause semantics?",
+    "Approve draft/review separation without weakening publish checks?",
+    "Approve optional interaction-host evaluation without replacing DDN renderer?"
+  ]
+}

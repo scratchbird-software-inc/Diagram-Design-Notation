@@ -1,0 +1,74 @@
+[
+  {
+    "commandId": "gesture-001",
+    "expectedRevision": 8,
+    "intent": "Create Order table on canvas",
+    "policy": "design",
+    "type": "createDefinition",
+    "payload": {
+      "kind": "table",
+      "label": "Order",
+      "destination": {
+        "file": "model.ddn",
+        "dataId": "model"
+      },
+      "addToView": "views::overview",
+      "drop": {
+        "x": 380,
+        "y": 160,
+        "pin": true
+      }
+    }
+  },
+  {
+    "commandId": "gesture-002",
+    "expectedRevision": 9,
+    "intent": "Reference Customer from Order",
+    "policy": "design",
+    "type": "createRelation",
+    "payload": {
+      "kind": "ref",
+      "label": "Customer reference",
+      "from": {
+        "elementId": "domain::order",
+        "memberId": "domain::order.customer_id"
+      },
+      "to": {
+        "elementId": "domain::customer",
+        "memberId": "domain::customer.id"
+      },
+      "destination": {
+        "file": "model.ddn",
+        "dataId": "model"
+      }
+    }
+  },
+  {
+    "commandId": "gesture-003",
+    "expectedRevision": 10,
+    "intent": "Reflow free neighbors without moving Customer",
+    "policy": "design",
+    "type": "applyLayout",
+    "payload": {
+      "viewId": "views::overview",
+      "scope": "unpinned",
+      "policyId": "arrangements::circular",
+      "preservePins": true
+    }
+  },
+  {
+    "commandId": "gesture-004",
+    "expectedRevision": 11,
+    "intent": "Reconnect semantic target to Customer.id",
+    "policy": "review",
+    "type": "reconnectRelation",
+    "payload": {
+      "relationId": "links::customer_ref",
+      "end": "to",
+      "endpoint": {
+        "elementId": "domain::customer",
+        "memberId": "domain::customer.id"
+      }
+    }
+  }
+]

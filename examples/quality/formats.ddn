@@ -1,0 +1,9 @@
+ddn "0.5";
+module "meridian.quality.formats";
+format shared {
+    style standard { look:classic; theme:default; font:sans; font_size:16px; }
+    layout adaptive { algorithm:layered; routing:orthogonal; crossings:gap; gap:90px; }
+    publication reading { size:content; fit:none; minimum_text:8pt; }
+    legend compact { mode:text; placement:none; }
+    bundle common { style:@standard; layout:@adaptive; publication:@reading; legend:@compact; }
+}

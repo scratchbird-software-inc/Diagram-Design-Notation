@@ -1,0 +1,15 @@
+ddn "0.3";
+module "ddn.usecases.namespace";
+import "commerce.ddn" as commerce;
+import "sql.ddn" as sql;
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object schema "sales schema" {
+        kind: schema;
+    }
+    relation r_orders_schema @commerce.tables.orders -> @schema { kind: namespace; }
+    relation r_routine_schema @sql.model.routine -> @schema { kind: namespace; }
+    relation r_view_schema @sql.model.view -> @schema { kind: namespace; }
+}

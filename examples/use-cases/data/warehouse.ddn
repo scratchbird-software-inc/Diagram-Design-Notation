@@ -1,0 +1,48 @@
+ddn "0.3";
+module "ddn.usecases.warehouse";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object fact "Order line fact" {
+        kind: fact;
+        workload: [olap];
+        description: "Grain: one row per order line.";
+        fields {
+            field order_id;
+            field line_id;
+            field customer_key;
+            field product_key;
+            field date_key;
+            field net_amount;
+        }
+    }
+    object customer "Customer dimension" {
+        kind: dimension;
+        fields {
+            field customer_key;
+            field display_name;
+        }
+    }
+    object product "Product dimension" {
+        kind: dimension;
+        fields {
+            field product_key;
+            field product_name;
+        }
+    }
+    object date "Date dimension" {
+        kind: dimension;
+        fields {
+            field date_key;
+            field calendar_date;
+        }
+    }
+    object grain "Declare the grain" {
+        kind: note;
+        description: "One fact row per order line. Order totals must not be repeated as additive line measures.";
+    }
+    relation r_c @fact.customer_key -> @customer.customer_key { kind: ref; source_mark: zeromany; target_mark: one; }
+    relation r_p @fact.product_key -> @product.product_key { kind: ref; source_mark: zeromany; target_mark: one; }
+    relation r_d @fact.date_key -> @date.date_key { kind: ref; source_mark: zeromany; target_mark: one; }
+}

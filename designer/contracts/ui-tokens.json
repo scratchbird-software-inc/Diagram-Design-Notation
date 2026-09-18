@@ -1,0 +1,40 @@
+{
+  "format": "ddn-designer-ui-tokens@1",
+  "status": "design-target",
+  "layout": {
+    "projectBar": 56,
+    "toolbar": 44,
+    "leftShelf": 240,
+    "inspector": 320,
+    "status": 28
+  },
+  "hitTargets": {
+    "minimumCSSPixels": 24,
+    "preferredPointer": 32,
+    "preferredTouch": 44
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "text": {
+    "body": 14,
+    "small": 12,
+    "heading": 18,
+    "font": "system-ui, sans-serif"
+  },
+  "palette": {
+    "chromeBackground": "#f3f6fa",
+    "canvas": "#f8fafc",
+    "text": "#17263d",
+    "secondary": "#536277",
+    "accent": "#146b7c",
+    "selection": "#245cdb",
+    "incomplete": "#8a5a13"
+  },
+  "note": "Editor chrome tokens; not permission to redefine semantic diagram colours."
+}

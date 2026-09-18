@@ -1,0 +1,1266 @@
+{
+  "format": "ddn-designer-acceptance-plan@1",
+  "status": "Proposed production acceptance plan, not current test passes",
+  "cases": [
+    {
+      "id": "VE-AC-001",
+      "milestone": "M0",
+      "area": "Baseline",
+      "title": "Keep Studio available",
+      "action": "Install Designer beside the baseline",
+      "expected": "Old Studio route and public rendering output remain unchanged",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-002",
+      "milestone": "M0",
+      "area": "Catalogue",
+      "title": "Enumerate all types",
+      "action": "Load core plus installed profiles",
+      "expected": "188 audited kinds and109 relation definitions have inspectable descriptors or explicit unsupported editor status",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-003",
+      "milestone": "M0",
+      "area": "Catalogue",
+      "title": "Reject drift",
+      "action": "Declare used shape absent from catalogue",
+      "expected": "Build fails on missing registered recipe",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-004",
+      "milestone": "M0",
+      "area": "Command",
+      "title": "Stale revision",
+      "action": "Prepare then edit the same workspace before commit",
+      "expected": "Commit rejects without overwriting newer source",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-005",
+      "milestone": "M0",
+      "area": "Command",
+      "title": "Atomic intent",
+      "action": "Create definition, select occurrence, set pin and required imports",
+      "expected": "One successful undo restores all original bytes",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-006",
+      "milestone": "M0",
+      "area": "Draft",
+      "title": "Start before End",
+      "action": "Insert Start into an empty flowchart",
+      "expected": "Draft node appears with incomplete obligation; publish is blocked, source retained",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-007",
+      "milestone": "M0",
+      "area": "Draft",
+      "title": "Safety separate",
+      "action": "Enter executable script where typed value is expected",
+      "expected": "Input rejected, not downgraded to incomplete",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-008",
+      "milestone": "M0",
+      "area": "Sources",
+      "title": "Comments",
+      "action": "Edit one label near comments and unrelated definitions",
+      "expected": "Only target source span changes; exact undo restores input",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-009",
+      "milestone": "M0",
+      "area": "Geometry",
+      "title": "Coordinate transforms",
+      "action": "Place a node after pan/zoom",
+      "expected": "Committed world coordinates match pointer intent within documented precision",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-010",
+      "milestone": "M0",
+      "area": "References",
+      "title": "Stable IDs",
+      "action": "Rename display label used by two views",
+      "expected": "Both views show new label; references keep IDs",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-011",
+      "milestone": "M0",
+      "area": "Profiles",
+      "title": "Unknown extension",
+      "action": "Open document with unavailable profile",
+      "expected": "Metadata remains; no false compatible rendering or lossy save",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-012",
+      "milestone": "M0",
+      "area": "Validation",
+      "title": "No silent coerces",
+      "action": "Optional boolean unset, false and undecided",
+      "expected": "All three round-trip distinctly",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-013",
+      "milestone": "M1",
+      "area": "Create",
+      "title": "Click alternative",
+      "action": "Click palette item then click canvas",
+      "expected": "Same definition as drag-drop; no dragging required",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-014",
+      "milestone": "M1",
+      "area": "Create",
+      "title": "Keyboard",
+      "action": "Insert item through command menu and choose auto position",
+      "expected": "No pointer required",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-015",
+      "milestone": "M1",
+      "area": "Create",
+      "title": "Explicit place pins",
+      "action": "Drag new table to position",
+      "expected": "Exactly one new definition with explicit position intent",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-016",
+      "milestone": "M1",
+      "area": "Create",
+      "title": "Automatic add",
+      "action": "Activate Add automatically",
+      "expected": "New object is free; existing pins unchanged",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-017",
+      "milestone": "M1",
+      "area": "Create",
+      "title": "Field datatype optional",
+      "action": "Insert field with name only",
+      "expected": "Valid untyped field shown; no default datatype fabricated",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-018",
+      "milestone": "M1",
+      "area": "Select",
+      "title": "Multi selection",
+      "action": "Select two different kinds",
+      "expected": "Inspector shows compatible property intersection and mixed states",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-019",
+      "milestone": "M1",
+      "area": "Connect",
+      "title": "Two clicks",
+      "action": "Choose source then compatible target",
+      "expected": "Same validated endpoints as connector drag",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-020",
+      "milestone": "M1",
+      "area": "Connect",
+      "title": "Field identity",
+      "action": "Connect journal and account fields to distinct targets",
+      "expected": "Endpoint optimization never exchanges field IDs",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-021",
+      "milestone": "M1",
+      "area": "Connect",
+      "title": "Cancel",
+      "action": "Escape or pointercancel while drawing",
+      "expected": "No partial persisted relation",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-022",
+      "milestone": "M1",
+      "area": "Connect",
+      "title": "Invalid target",
+      "action": "Draw replication from team to table",
+      "expected": "Explicit rejection and reason before commit",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-023",
+      "milestone": "M1",
+      "area": "Connect",
+      "title": "Reconnect",
+      "action": "Move existing relation endpoint to another legal field",
+      "expected": "Preserve relation identity; preview affected semantics; one undo",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-024",
+      "milestone": "M1",
+      "area": "Connect",
+      "title": "Labels",
+      "action": "Choose numbered reference labels",
+      "expected": "Callout key does not change causal order",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-025",
+      "milestone": "M1",
+      "area": "Move",
+      "title": "Pinned anchor",
+      "action": "Reflow circular neighbors of two pins",
+      "expected": "Both source top-left coordinates remain exact",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-026",
+      "milestone": "M1",
+      "area": "Move",
+      "title": "Transient drag",
+      "action": "Drag a node over 60 pointer updates",
+      "expected": "Only completed pointerup makes one undo entry",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-027",
+      "milestone": "M1",
+      "area": "Move",
+      "title": "Cancel drag",
+      "action": "Cancel after movement preview",
+      "expected": "Restore original geometry/source",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-028",
+      "milestone": "M1",
+      "area": "Display",
+      "title": "Theme",
+      "action": "Switch standard/handdrawn/neo and night",
+      "expected": "No model property changes; field IDs unchanged",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-029",
+      "milestone": "M1",
+      "area": "Display",
+      "title": "Hidden fields",
+      "action": "Hide field compartment",
+      "expected": "References remain semantically field-bound",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-030",
+      "milestone": "M1",
+      "area": "Delete",
+      "title": "Remove appearance",
+      "action": "Delete key with ordinary selection",
+      "expected": "Remove/hide occurrence, not shared definition",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-031",
+      "milestone": "M1",
+      "area": "Delete",
+      "title": "Referenced definition",
+      "action": "Choose Delete from project",
+      "expected": "Impact shown; existing dependencies block or require explicit repair plan",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-032",
+      "milestone": "M1",
+      "area": "Undo",
+      "title": "History",
+      "action": "Create/edit/connect then undo/redo",
+      "expected": "History follows user intentions across all edits",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-033",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Choose destination",
+      "action": "Create table while several data modules selected",
+      "expected": "Picker chooses actual shared data block; not automatic local editor_data",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-034",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Imports",
+      "action": "Connect to existing definition in other module",
+      "expected": "Minimal import edits added atomically with relation",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-035",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Existing",
+      "action": "Add same definition to another view",
+      "expected": "No duplicate semantic object",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-036",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Same-view alias",
+      "action": "Request second occurrence in same view",
+      "expected": "Native occurrence ID or explicit unsupported response, never clone disguised as alias",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-037",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Duplicate",
+      "action": "Duplicate definition including members",
+      "expected": "New IDs created and relationship policy explicit",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-038",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Type conversion",
+      "action": "Change Table to View with existing constraints",
+      "expected": "Preview incompatible properties and dependencies; no metadata loss",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-039",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Reset override",
+      "action": "Reset a locally hidden kind badge",
+      "expected": "Remove view override, inherit shared format value",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-040",
+      "milestone": "M2",
+      "area": "Shared",
+      "title": "Frames",
+      "action": "Drag table inside a server frame",
+      "expected": "No placement relationship inferred without explicit action",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-041",
+      "milestone": "M2",
+      "area": "Files",
+      "title": "Rename file",
+      "action": "Move a source file used by multiple imports",
+      "expected": "Imports rewritten and views re-resolved; exact undo",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-042",
+      "milestone": "M2",
+      "area": "Files",
+      "title": "Duplicate IDs",
+      "action": "Import ZIP with colliding module IDs",
+      "expected": "Show resolve choices; no last-file-wins silent replacement",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-043",
+      "milestone": "M2",
+      "area": "Files",
+      "title": "Missing imports",
+      "action": "Open one script without dependencies",
+      "expected": "Keep source, show required files, no external network requests",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-044",
+      "milestone": "M2",
+      "area": "Files",
+      "title": "Archive traversal",
+      "action": "ZIP contains ../ path or symlink",
+      "expected": "Reject before any persistent workspace mutation",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-045",
+      "milestone": "M2",
+      "area": "Files",
+      "title": "Unsaved",
+      "action": "Close with unapplied property draft",
+      "expected": "Prompt and recovery state, no silent commit/loss",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-046",
+      "milestone": "M2",
+      "area": "Roundtrip",
+      "title": "Unsupported GUI fields",
+      "action": "Open valid source containing properties without custom inspector",
+      "expected": "Generic typed/source handoff preserves exact properties",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-047",
+      "milestone": "M2",
+      "area": "Roundtrip",
+      "title": "Source/visual conflict",
+      "action": "Studio changes same revision externally",
+      "expected": "Designer prompts conflict, never silent overwrite",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-048",
+      "milestone": "M2",
+      "area": "Impact",
+      "title": "Affected views",
+      "action": "Edit shared domain used by graph and chart",
+      "expected": "Impact includes dependent projection views",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-049",
+      "milestone": "M3",
+      "area": "Matrix",
+      "title": "Empty assignment",
+      "action": "Click empty RACI cell, add C",
+      "expected": "Create shared assignment; graph updates",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-050",
+      "milestone": "M3",
+      "area": "Matrix",
+      "title": "Batch valid",
+      "action": "Move accountability between roles",
+      "expected": "Single validated transaction avoids invalid intermediate committed state",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-051",
+      "milestone": "M3",
+      "area": "Chart",
+      "title": "Data-bound coordinates",
+      "action": "Attempt dragging a numeric bar horizontally",
+      "expected": "Operation disabled; data edit offered, value not silently changed",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-052",
+      "milestone": "M3",
+      "area": "Chart",
+      "title": "Contributors",
+      "action": "Click aggregated mark",
+      "expected": "Show input IDs, no invented total record",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-053",
+      "milestone": "M3",
+      "area": "Chart",
+      "title": "Units",
+      "action": "Bind two incompatible units on one scale",
+      "expected": "Reject with unit-specific diagnostic",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-054",
+      "milestone": "M3",
+      "area": "Timeline",
+      "title": "Dates",
+      "action": "Change task start through date editor",
+      "expected": "Axis position updates; movement not an arbitrary pin",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-055",
+      "milestone": "M3",
+      "area": "Panels",
+      "title": "Reorder children",
+      "action": "Move child panel in dashboard grid",
+      "expected": "Only parent occurrence layout changes",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-056",
+      "milestone": "M3",
+      "area": "Panels",
+      "title": "Depth",
+      "action": "Insert child composition beyond supported nesting",
+      "expected": "Explicit limit before commit",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-057",
+      "milestone": "M3",
+      "area": "Fishbone",
+      "title": "Cause reuse",
+      "action": "Use same cause in two branches",
+      "expected": "One semantic identity with distinct safe occurrence IDs",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-058",
+      "milestone": "M3",
+      "area": "Chen",
+      "title": "Attribute edit",
+      "action": "Select multivalued attribute oval",
+      "expected": "Edit shared field; preserve source reference",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-059",
+      "milestone": "M3",
+      "area": "Decision",
+      "title": "Coverage",
+      "action": "Add overlapping unique-hit interval rule",
+      "expected": "Witness input shown; invalid publish blocked",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-060",
+      "milestone": "M3",
+      "area": "Decision",
+      "title": "Budget",
+      "action": "Rule partition count exceeds analysis budget",
+      "expected": "Status unestablished, not success",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-061",
+      "milestone": "M3",
+      "area": "Lifecycle",
+      "title": "Trace",
+      "action": "Enter event sequence violating transition",
+      "expected": "Exact failing step and state shown; no action execution",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-062",
+      "milestone": "M3",
+      "area": "Interaction",
+      "title": "Ordering",
+      "action": "Renumber sequence callouts",
+      "expected": "Predecessor graph unchanged",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-063",
+      "milestone": "M3",
+      "area": "Interaction",
+      "title": "Free layout",
+      "action": "Choose organic on participant-lane sequence",
+      "expected": "Not offered and API rejects incompatible layout",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-064",
+      "milestone": "M3",
+      "area": "UI descriptors",
+      "title": "All installed",
+      "action": "Open each kind with fixture",
+      "expected": "No unsupported property silently applied; basic inspector within bound",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-065",
+      "milestone": "M3",
+      "area": "Projection export",
+      "title": "Redaction",
+      "action": "Export unsupported authorized projection",
+      "expected": "Fail closed, no legacy fallback",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-066",
+      "milestone": "M4",
+      "area": "Accessibility",
+      "title": "Single pointer",
+      "action": "Complete create/move/connect without dragging",
+      "expected": "Click operations equivalent to drag; keyboard alone not sole alternative",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-067",
+      "milestone": "M4",
+      "area": "Accessibility",
+      "title": "Keyboard",
+      "action": "Complete whole authoring workflow with keyboard",
+      "expected": "Visible focus, no traps, input shortcuts preserved",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-068",
+      "milestone": "M4",
+      "area": "Accessibility",
+      "title": "Screen reader",
+      "action": "Navigate model outline and create relation",
+      "expected": "Meaningful labels/endpoints/errors announced",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-069",
+      "milestone": "M4",
+      "area": "Accessibility",
+      "title": "Targets",
+      "action": "Inspect handles at zoom extremes",
+      "expected": "24 CSSpx minimum hit target or applicable spacing exception; small art independent",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-070",
+      "milestone": "M4",
+      "area": "Accessibility",
+      "title": "Contrast",
+      "action": "Inspect night text, relation and chrome states",
+      "expected": "Measured contrast at intended scale; no colour-only errors",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-071",
+      "milestone": "M4",
+      "area": "Touch",
+      "title": "Cancel/lost capture",
+      "action": "Interrupt touch/pen connector gesture",
+      "expected": "No phantom connection or stuck pan state",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-072",
+      "milestone": "M4",
+      "area": "Performance",
+      "title": "Worker cancel",
+      "action": "Supersede long layout job",
+      "expected": "Actual worker terminated/cancelled; stale revision cannot replace current scene",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-073",
+      "milestone": "M4",
+      "area": "Performance",
+      "title": "Graph limits",
+      "action": "Exceed supported visible limits",
+      "expected": "Recoverable diagnostic and bounded memory/time, no frozen unsavable source",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-074",
+      "milestone": "M4",
+      "area": "Performance",
+      "title": "Incremental",
+      "action": "Edit label in one small region",
+      "expected": "Reusable measurements kept where safe; results match uncached baseline",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-075",
+      "milestone": "M4",
+      "area": "Security",
+      "title": "XSS",
+      "action": "Load malicious labels and SVG references",
+      "expected": "No script, unsafe URL, handler or network access executes",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-076",
+      "milestone": "M4",
+      "area": "Security",
+      "title": "Source export",
+      "action": "Attempt hidden-salary public source download",
+      "expected": "Access controlled before browser input; visibility never authorization",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-077",
+      "milestone": "M4",
+      "area": "Security",
+      "title": "Dependencies",
+      "action": "Build distribution",
+      "expected": "SBOM/licenses versions pinned; no commercial plugins or font files smuggled",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-078",
+      "milestone": "M4",
+      "area": "Storage",
+      "title": "Disk vs cache",
+      "action": "Save without selected file handle",
+      "expected": "UI says browser recovery or downloaded; no false disk-save status",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-079",
+      "milestone": "M4",
+      "area": "Browser",
+      "title": "Served and portable",
+      "action": "Test intended Chrome/Firefox normal file/HTTP",
+      "expected": "Record actual browser/version and failures; injected harness not navigation proof",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-080",
+      "milestone": "M4",
+      "area": "Publication",
+      "title": "Minimum print size",
+      "action": "Compose dense fixed A4 page",
+      "expected": "Reject/unambiguously warn per policy; no silent illegible scaling",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-081",
+      "milestone": "M4",
+      "area": "Parity",
+      "title": "Export rendering",
+      "action": "Save SVG from Designer and render same DDN headlessly",
+      "expected": "Model/endpoints and approved layout semantic geometry match",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-082",
+      "milestone": "M4",
+      "area": "Regression",
+      "title": "Complete connector",
+      "action": "Render purchasing flow",
+      "expected": "Short route preserved; label does not send it to global graph center",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-083",
+      "milestone": "M4",
+      "area": "Regression",
+      "title": "Journal endpoints",
+      "action": "Render same accounting fixture",
+      "expected": "Field IDs retained; 11/12 avoided local crossing remains fixed",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    },
+    {
+      "id": "VE-AC-084",
+      "milestone": "M4",
+      "area": "Release",
+      "title": "Independent review",
+      "action": "Package proposed signoff",
+      "expected": "Named reviewer evidence pending until actual review; no fabricated approval",
+      "status": "planned-not-executed",
+      "evidenceRequired": [
+        "fixture-source",
+        "actual-result",
+        "diagnostics",
+        "source-diff-or-identity-check"
+      ]
+    }
+  ]
+}

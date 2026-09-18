@@ -1,0 +1,53 @@
+# Source workspaces, local imports and editing transactions
+
+> **Current 0.5 extension:** chapters 21–24 add quality profiles, matrix creation, multiseries/statistical transforms, rule/lifecycle checks and one-level composed views. This chapter retains the earlier basic profile scopes; broader options require their registered 0.5 profiles.
+
+
+**DDN 0.3.0-draft.2 · proposed-standard tooling profile.** The diagram language itself remains UTF-8 DDN 0.3. This profile describes the editor's transport envelope, not another data-model notation.
+
+## File formats
+
+An individual `.ddn` file is UTF-8 source. The editor does not require JSON around a single script. Relative imports need their referenced files too. Opening one file cannot grant access to its sibling directory; open the project folder or a workspace ZIP when imports are involved.
+
+A `.ddn-workspace.json` file has this shape:
+
+```json
+{
+  "format": "ddn-workspace@1",
+  "runtime": {"core": "0.3.0-draft.2"},
+  "entry": "views/main.ddn",
+  "view": "overview",
+  "files": {"views/main.ddn": "ddn source text"},
+  "overrides": {"theme": "night"}
+}
+```
+
+Optional `layoutState` carries paused positions. `runtime` records provenance, not executable code to load. The editor does not download a runtime named inside this record. The older `ddn-live-snapshot@0.1` envelope is readable, but unsupported source/options produce explicit diagnostics; it does not trigger a 0.2 engine fallback.
+
+A workspace ZIP contains raw `.ddn` files at their relative paths plus a `ddn-workspace.json` manifest with entry/view/options/state but without a duplicate `files` map. The writer uses deterministic ZIP STORE records and CRC32. The reader accepts stored and standard DEFLATE entries, verifies checksums and paths, and rejects encrypted, split, ZIP64 and symlink archives. A release-distribution ZIP is not a source-workspace ZIP.
+
+## Local operation and limits
+
+File inputs and optional directory selection process only user-selected files. No upload server is contacted. The file reader decodes UTF-8 fatally: malformed bytes are rejected, not silently substituted into identifiers. It preserves decoded source text and comments. BOM/CRLF normalization is not forcibly applied to raw downloaded source.
+
+Names must be normalized relative POSIX paths ending `.ddn`. Reject absolute paths, drive/URL prefixes, `..`/`.` components, empty segments, backslashes, control characters and dangerous object-property names. Two files cannot silently overwrite each other; the UI asks before explicit replacement. Cross-directory file moves rewrite **import path string tokens**, not arbitrary string literals or comments. Module IDs remain stable.
+
+Import bounds: 16 MB archive/JSON input, 12 MB expanded file text, 2 MB per selected source entry and at most 1,501 archive entries (including the manifest). Decompression is streamed with a size limit. Programmatic workspace limits use decoded character counts (12 million total / 2 million per source / 1,500 files). These are resource guards, not complete hostile-input or browser availability certification. There is no automatic network import resolution.
+
+## Editing semantics
+
+The complete source text can edit every accepted language construct: data, fields, domains, samples, flows, views, profiles, constraints and extensions. Raw edits may temporarily be invalid. The editor MUST preserve the invalid draft, display diagnostics and block current-diagram export rather than erase the draft or silently use old source.
+
+Guided actions use parsed source spans and stable semantic identities. Supported actions are changing display labels and registered kinds, adding elements/fields/relations, hiding occurrences, pin/unpin and drag-to-pin, and deleting unreferenced definitions. They validate the resulting workspace before atomically applying a source transaction. Comments and unrelated source remain untouched; unsupported GUI edits can be made in source. This is full **source** editing with selected graphical assistance, not an assertion that every grammar construct has a bespoke WYSIWYG control.
+
+An edit carries a workspace revision. Stale revisions are rejected. A file rename updates import literals without renaming the module or symbols. Semantic identifier rename/refactor is not silently approximated by global search/replace. The editor's Find/Replace explicitly operates on text only.
+
+Deleting a referenced definition/file is blocked by guided operations. Hiding it is a view operation. Direct source editing can deliberately change dependencies; diagnostics remain authoritative. Undo/redo operates on committed source transactions; the textarea also retains native editing undo while its buffer is active. Session history is bounded and held in memory, not persisted automatically.
+
+## Save and reopen
+
+Download `.ddn` saves the current raw file, including a deliberately invalid work in progress. Workspace ZIP/JSON saves all current source files, entry/view, view options and paused layout state. Those are source archives, not sanitized publications: the operator must be authorized for all source. The SVG export follows the selected view's export policy.
+
+A round-trip test MUST compare raw decoded source text for every file, import resolution, selected view, semantic identity and relevant saved options. A screenshot comparison alone is insufficient. Error tests MUST cover missing imports, duplicate paths, traversal, malformed UTF-8, corrupt ZIPs, invalid DDN, refused graph edits, undo, cancelled dialogs and stale SVG export.
+
+The supplied editor does not store credentials, connect to modeled systems, run SQL, or execute extension text. Saving downloads files; it does not overwrite a local project without an explicit browser-mediated operation.

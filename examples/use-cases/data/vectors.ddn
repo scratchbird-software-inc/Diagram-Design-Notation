@@ -1,0 +1,25 @@
+ddn "0.3";
+module "ddn.usecases.vectors";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object source "Product descriptions" {
+        kind: dataset;
+    }
+    object embedding "Build embeddings" {
+        kind: activity;
+        description: "Record the embedding model and preprocessing version before implementation approval.";
+    }
+    object index "Product vectors" {
+        kind: vector;
+        role: derived;
+        fields {
+            field product_id;
+            field embedding;
+            field model_version;
+        }
+    }
+    relation r_input @source -> @embedding { kind: consumed; }
+    relation r_output @embedding -> @index { kind: generates; }
+}

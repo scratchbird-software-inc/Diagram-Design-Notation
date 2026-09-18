@@ -1,0 +1,22 @@
+ddn "0.3";
+module "ddn.usecases.lineage";
+import "commerce.ddn" as commerce;
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object daily "Daily order totals" {
+        kind: dataset;
+        role: derived;
+        workload: [olap];
+        fields {
+            field business_date;
+            field order_count;
+        }
+    }
+    object report "Operations dashboard" {
+        kind: dashboard;
+    }
+    relation r_aggregate @commerce.tables.orders -> @daily { kind: aggregates; }
+    relation r_report @daily -> @report { kind: report; }
+}

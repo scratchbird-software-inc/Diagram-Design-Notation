@@ -1,0 +1,3135 @@
+{
+  "version": "0.5.0-draft.2",
+  "fileCount": 311,
+  "viewCount": 391,
+  "entries": [
+    {
+      "id": "examples/quality/views.ddn#actual_target",
+      "entry": "examples/quality/views.ddn",
+      "view": "actual_target",
+      "title": "07 / Actual versus target",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#boxplot",
+      "entry": "examples/quality/views.ddn",
+      "view": "boxplot",
+      "title": "11 / Machine variation — tukey_1_5",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#boxplot_minmax",
+      "entry": "examples/quality/views.ddn",
+      "view": "boxplot_minmax",
+      "title": "11 / Machine variation — minmax",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#chen_extended",
+      "entry": "examples/quality/views.ddn",
+      "view": "chen_extended",
+      "title": "18 / Binary Chen details",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#crud",
+      "entry": "examples/quality/views.ddn",
+      "view": "crud",
+      "title": "04 / Inspection data access",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#dashboard_operations",
+      "entry": "examples/quality/views.ddn",
+      "view": "dashboard_operations",
+      "title": "17 / Dashboard Operations",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#dashboard_quality",
+      "entry": "examples/quality/views.ddn",
+      "view": "dashboard_quality",
+      "title": "17 / Dashboard Quality",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#dashboard_repeated",
+      "entry": "examples/quality/views.ddn",
+      "view": "dashboard_repeated",
+      "title": "17 / Dashboard Repeated",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#decision_collect",
+      "entry": "examples/quality/views.ddn",
+      "view": "decision_collect",
+      "title": "14 / Disposition policy — collect",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#decision_first",
+      "entry": "examples/quality/views.ddn",
+      "view": "decision_first",
+      "title": "14 / Disposition policy — first",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#decision_unique",
+      "entry": "examples/quality/views.ddn",
+      "view": "decision_unique",
+      "title": "14 / Disposition policy — unique",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#defect_table",
+      "entry": "examples/quality/views.ddn",
+      "view": "defect_table",
+      "title": "16 / Shared defect counts",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#erd_shared",
+      "entry": "examples/quality/views.ddn",
+      "view": "erd_shared",
+      "title": "19 / Same entity definitions as cards",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#fishbone",
+      "entry": "examples/quality/views.ddn",
+      "view": "fishbone",
+      "title": "01 / Possible causes",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#fishbone_sketch",
+      "entry": "examples/quality/views.ddn",
+      "view": "fishbone_sketch",
+      "title": "01 / Possible causes — sketch",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#flow_documented",
+      "entry": "examples/quality/views.ddn",
+      "view": "flow_documented",
+      "title": "21 / Documented cross-sheet control flow",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#grouped_bars",
+      "entry": "examples/quality/views.ddn",
+      "view": "grouped_bars",
+      "title": "06 / Defects — grouped bars",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#heat_bands",
+      "entry": "examples/quality/views.ddn",
+      "view": "heat_bands",
+      "title": "02 / Review score — bands",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#heat_categories",
+      "entry": "examples/quality/views.ddn",
+      "view": "heat_categories",
+      "title": "02 / Review score — categories",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#heat_numeric",
+      "entry": "examples/quality/views.ddn",
+      "view": "heat_numeric",
+      "title": "02 / Review score — numeric",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#histogram",
+      "entry": "examples/quality/views.ddn",
+      "view": "histogram",
+      "title": "08 / Dimension measurements — count",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#histogram_density",
+      "entry": "examples/quality/views.ddn",
+      "view": "histogram_density",
+      "title": "08 / Dimension measurements — density",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#lifecycle",
+      "entry": "examples/quality/views.ddn",
+      "view": "lifecycle",
+      "title": "12 / Corrective-action lifecycle",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#lifecycle_trace",
+      "entry": "examples/quality/views.ddn",
+      "view": "lifecycle_trace",
+      "title": "13 / Corrective-action retry trace",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#measurement_table",
+      "entry": "examples/quality/views.ddn",
+      "view": "measurement_table",
+      "title": "15 / Shared measurement observations",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#multiseries_area",
+      "entry": "examples/quality/views.ddn",
+      "view": "multiseries_area",
+      "title": "06 / Defects — multiseries area",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#multiseries_line",
+      "entry": "examples/quality/views.ddn",
+      "view": "multiseries_line",
+      "title": "06 / Defects — multiseries line",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#pareto",
+      "entry": "examples/quality/views.ddn",
+      "view": "pareto",
+      "title": "09 / Defect priorities",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#percent_bars",
+      "entry": "examples/quality/views.ddn",
+      "view": "percent_bars",
+      "title": "06 / Defects — percent bars",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#raci",
+      "entry": "examples/quality/views.ddn",
+      "view": "raci",
+      "title": "03 / Quality responsibility assignments",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#responsibility_graph",
+      "entry": "examples/quality/views.ddn",
+      "view": "responsibility_graph",
+      "title": "05 / Same assignments as a graph",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#stacked_bars",
+      "entry": "examples/quality/views.ddn",
+      "view": "stacked_bars",
+      "title": "06 / Defects — stacked bars",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#usecases_extended",
+      "entry": "examples/quality/views.ddn",
+      "view": "usecases_extended",
+      "title": "20 / Use-case subjects and extension points",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/quality/views.ddn#waterfall",
+      "entry": "examples/quality/views.ddn",
+      "view": "waterfall",
+      "title": "10 / Cost-of-quality reconciliation",
+      "collection": "Quality and lifecycle laboratory",
+      "module": "meridian.quality.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#chart_area",
+      "entry": "examples/projections/views.ddn",
+      "view": "chart_area",
+      "title": "14 / Synthetic monthly value — area",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#chart_bar",
+      "entry": "examples/projections/views.ddn",
+      "view": "chart_bar",
+      "title": "12 / Synthetic monthly value — bar",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#chart_donut",
+      "entry": "examples/projections/views.ddn",
+      "view": "chart_donut",
+      "title": "16 / Synthetic monthly value — donut",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#chart_line",
+      "entry": "examples/projections/views.ddn",
+      "view": "chart_line",
+      "title": "13 / Synthetic monthly value — line",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#chart_pie",
+      "entry": "examples/projections/views.ddn",
+      "view": "chart_pie",
+      "title": "15 / Synthetic monthly value — pie",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#chen",
+      "entry": "examples/projections/views.ddn",
+      "view": "chen",
+      "title": "11 / Chen binary projection",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#crud",
+      "entry": "examples/projections/views.ddn",
+      "view": "crud",
+      "title": "04 / Model-derived CRUD",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#decision_table",
+      "entry": "examples/projections/views.ddn",
+      "view": "decision_table",
+      "title": "20 / Declarative decision-table presentation",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#dfd_gane",
+      "entry": "examples/projections/views.ddn",
+      "view": "dfd_gane",
+      "title": "05 / Numbered Gane–Sarson-style DFD",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#dfd_yourdon",
+      "entry": "examples/projections/views.ddn",
+      "view": "dfd_yourdon",
+      "title": "06 / Yourdon-style DFD",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#erd",
+      "entry": "examples/projections/views.ddn",
+      "view": "erd",
+      "title": "10 / Entity-field representation",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#flowchart",
+      "entry": "examples/projections/views.ddn",
+      "view": "flowchart",
+      "title": "01 / Purchasing control flow",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#gantt",
+      "entry": "examples/projections/views.ddn",
+      "view": "gantt",
+      "title": "21 / Supplied-date procurement schedule",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#journey",
+      "entry": "examples/projections/views.ddn",
+      "view": "journey",
+      "title": "25 / Service journey with spanning panels",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#matrix_general",
+      "entry": "examples/projections/views.ddn",
+      "view": "matrix_general",
+      "title": "26 / General relationship matrix",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#raci",
+      "entry": "examples/projections/views.ddn",
+      "view": "raci",
+      "title": "03 / Model-derived RACI",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#record_table",
+      "entry": "examples/projections/views.ddn",
+      "view": "record_table",
+      "title": "19 / Shared observation table",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#requirements",
+      "entry": "examples/projections/views.ddn",
+      "view": "requirements",
+      "title": "09 / Requirement traceability",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#responsibility_graph",
+      "entry": "examples/projections/views.ddn",
+      "view": "responsibility_graph",
+      "title": "02 / Shared responsibility assignments",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#scatter",
+      "entry": "examples/projections/views.ddn",
+      "view": "scatter",
+      "title": "17 / Cost versus recorded value",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#schedule_table",
+      "entry": "examples/projections/views.ddn",
+      "view": "schedule_table",
+      "title": "22 / Schedule source records",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#shape_atlas",
+      "entry": "examples/projections/views.ddn",
+      "view": "shape_atlas",
+      "title": "27 / Composable semantic silhouettes",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#sipoc",
+      "entry": "examples/projections/views.ddn",
+      "view": "sipoc",
+      "title": "24 / SIPOC from shared notes",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#structure",
+      "entry": "examples/projections/views.ddn",
+      "view": "structure",
+      "title": "07 / Declared class / interface subset",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#swot",
+      "entry": "examples/projections/views.ddn",
+      "view": "swot",
+      "title": "23 / Reusable SWOT panel template",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#time_series",
+      "entry": "examples/projections/views.ddn",
+      "view": "time_series",
+      "title": "18 / UTC monthly observations",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/projections/views.ddn#usecases",
+      "entry": "examples/projections/views.ddn",
+      "view": "usecases",
+      "title": "08 / Actor and use-case subset",
+      "collection": "Projection laboratory",
+      "module": "meridian.procurement.views"
+    },
+    {
+      "id": "examples/live/adaptive-lab.ddn#automatic",
+      "entry": "examples/live/adaptive-lab.ddn",
+      "view": "automatic",
+      "title": "Adaptive order flow / no positional coordinates",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.adaptive-lab"
+    },
+    {
+      "id": "examples/live/adaptive-lab.ddn#move_unpinned",
+      "entry": "examples/live/adaptive-lab.ddn",
+      "view": "move_unpinned",
+      "title": "2 / Move unpinned nodes after connection-point trials",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.adaptive-lab"
+    },
+    {
+      "id": "examples/live/adaptive-lab.ddn#obstacle",
+      "entry": "examples/live/adaptive-lab.ddn",
+      "view": "obstacle",
+      "title": "Named field endpoints / route around an unrelated box",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.adaptive-lab"
+    },
+    {
+      "id": "examples/live/adaptive-lab.ddn#pinned_crossing",
+      "entry": "examples/live/adaptive-lab.ddn",
+      "view": "pinned_crossing",
+      "title": "3 / Short pinned routes with explicit nonconnection marks",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.adaptive-lab"
+    },
+    {
+      "id": "examples/live/adaptive-lab.ddn#ports_first",
+      "entry": "examples/live/adaptive-lab.ddn",
+      "view": "ports_first",
+      "title": "1 / Move connection points before moving boxes",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.adaptive-lab"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#circular",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "circular",
+      "title": "Circular / two fixed pins",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#fit_grid",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "fit_grid",
+      "title": "Fit to grid / around two pins",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#layered",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "layered",
+      "title": "Hierarchical / directed layers",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#no_pins",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "no_pins",
+      "title": "No pins / deterministic radial root",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#organic",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "organic",
+      "title": "Organic / movable neighbours, fixed core",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#paused",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "paused",
+      "title": "Pause placement / retain the current scene",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#radial",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "radial",
+      "title": "Radial / graph-distance rings",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#single_pin",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "single_pin",
+      "title": "One pin / circular neighbours",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#sketch_night",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "sketch_night",
+      "title": "Same anchored circle / hand-drawn night",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/pinned-patterns.ddn#tree",
+      "entry": "examples/live/pinned-patterns.ddn",
+      "view": "tree",
+      "title": "Tree / breadth levels from fixed pins",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.pinned-patterns"
+    },
+    {
+      "id": "examples/live/routing-lab.ddn#diagram",
+      "entry": "examples/live/routing-lab.ddn",
+      "view": "diagram",
+      "title": "Order acceptance / illustration",
+      "collection": "Placement laboratory",
+      "module": "ddn.live.routing-lab"
+    },
+    {
+      "id": "enterprise-review/views/accounting_control.ddn#diagram",
+      "entry": "enterprise-review/views/accounting_control.ddn",
+      "view": "diagram",
+      "title": "Accounting: journal, book and scope",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.accounting_control"
+    },
+    {
+      "id": "enterprise-review/views/accounting_neo.ddn#diagram",
+      "entry": "enterprise-review/views/accounting_neo.ddn",
+      "view": "diagram",
+      "title": "Accounting control / neo",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.accounting_neo"
+    },
+    {
+      "id": "enterprise-review/views/accounting_sketch.ddn#diagram",
+      "entry": "enterprise-review/views/accounting_sketch.ddn",
+      "view": "diagram",
+      "title": "Accounting control / hand-drawn",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.accounting_sketch"
+    },
+    {
+      "id": "enterprise-review/views/analytics_star.ddn#diagram",
+      "entry": "enterprise-review/views/analytics_star.ddn",
+      "view": "diagram",
+      "title": "Analytical grain: no accidental fanout",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.analytics_star"
+    },
+    {
+      "id": "enterprise-review/views/ap_match.ddn#diagram",
+      "entry": "enterprise-review/views/ap_match.ddn",
+      "view": "diagram",
+      "title": "Procurement to payable: allocation grain",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.ap_match"
+    },
+    {
+      "id": "enterprise-review/views/ar_fulfilment.ddn#diagram",
+      "entry": "enterprise-review/views/ar_fulfilment.ddn",
+      "view": "diagram",
+      "title": "Order / shipment / invoice allocation",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.ar_fulfilment"
+    },
+    {
+      "id": "enterprise-review/views/audit.ddn#diagram",
+      "entry": "enterprise-review/views/audit.ddn",
+      "view": "diagram",
+      "title": "Audit evidence and independent custody",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.audit"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_001.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_001.ddn",
+      "view": "diagram",
+      "title": "Supporting api definitions / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_001"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_002.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_002.ddn",
+      "view": "diagram",
+      "title": "Supporting api definitions / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_002"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_003.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_003.ddn",
+      "view": "diagram",
+      "title": "Supporting api definitions / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_003"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_004.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_004.ddn",
+      "view": "diagram",
+      "title": "Supporting api definitions / 4",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_004"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_005.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_005.ddn",
+      "view": "diagram",
+      "title": "Supporting api definitions / 5",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_005"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_006.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_006.ddn",
+      "view": "diagram",
+      "title": "Supporting api definitions / 6",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_006"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_007.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_007.ddn",
+      "view": "diagram",
+      "title": "Supporting report definitions / 7",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_007"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_008.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_008.ddn",
+      "view": "diagram",
+      "title": "Supporting report definitions / 8",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_008"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_009.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_009.ddn",
+      "view": "diagram",
+      "title": "Supporting report definitions / 9",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_009"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_010.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_010.ddn",
+      "view": "diagram",
+      "title": "Supporting report definitions / 10",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_010"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_011.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_011.ddn",
+      "view": "diagram",
+      "title": "Supporting report definitions / 11",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_011"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_012.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_012.ddn",
+      "view": "diagram",
+      "title": "Supporting rule definitions / 12",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_012"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_013.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_013.ddn",
+      "view": "diagram",
+      "title": "Supporting rule definitions / 13",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_013"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_014.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_014.ddn",
+      "view": "diagram",
+      "title": "Supporting rule definitions / 14",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_014"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_015.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_015.ddn",
+      "view": "diagram",
+      "title": "Supporting rule definitions / 15",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_015"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_016.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_016.ddn",
+      "view": "diagram",
+      "title": "Supporting message definitions / 16",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_016"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_017.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_017.ddn",
+      "view": "diagram",
+      "title": "Supporting message definitions / 17",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_017"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_018.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_018.ddn",
+      "view": "diagram",
+      "title": "Supporting team definitions / 18",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_018"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_019.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_019.ddn",
+      "view": "diagram",
+      "title": "Supporting team definitions / 19",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_019"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_020.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_020.ddn",
+      "view": "diagram",
+      "title": "Supporting team definitions / 20",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_020"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_021.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_021.ddn",
+      "view": "diagram",
+      "title": "Supporting topic definitions / 21",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_021"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_022.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_022.ddn",
+      "view": "diagram",
+      "title": "Supporting site definitions / 22",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_022"
+    },
+    {
+      "id": "enterprise-review/views/catalogue_023.ddn#diagram",
+      "entry": "enterprise-review/views/catalogue_023.ddn",
+      "view": "diagram",
+      "title": "Supporting network definitions / 23",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.catalogue_023"
+    },
+    {
+      "id": "enterprise-review/views/context.ddn#diagram",
+      "entry": "enterprise-review/views/context.ddn",
+      "view": "diagram",
+      "title": "Enterprise context: external exchanges",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.context"
+    },
+    {
+      "id": "enterprise-review/views/controls_financial.ddn#diagram",
+      "entry": "enterprise-review/views/controls_financial.ddn",
+      "view": "diagram",
+      "title": "Verification gates / financial",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.controls_financial"
+    },
+    {
+      "id": "enterprise-review/views/controls_operations.ddn#diagram",
+      "entry": "enterprise-review/views/controls_operations.ddn",
+      "view": "diagram",
+      "title": "Verification gates / operations",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.controls_operations"
+    },
+    {
+      "id": "enterprise-review/views/controls_security.ddn#diagram",
+      "entry": "enterprise-review/views/controls_security.ddn",
+      "view": "diagram",
+      "title": "Verification gates / security",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.controls_security"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p01_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p01_1.ddn",
+      "view": "diagram",
+      "title": "Procure to pay / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p01_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p01_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p01_2.ddn",
+      "view": "diagram",
+      "title": "Procure to pay / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p01_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p02_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p02_1.ddn",
+      "view": "diagram",
+      "title": "Order to cash / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p02_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p02_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p02_2.ddn",
+      "view": "diagram",
+      "title": "Order to cash / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p02_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p03_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p03_1.ddn",
+      "view": "diagram",
+      "title": "Plan to produce / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p03_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p03_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p03_2.ddn",
+      "view": "diagram",
+      "title": "Plan to produce / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p03_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p04_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p04_1.ddn",
+      "view": "diagram",
+      "title": "Warehouse transfer and count / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p04_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p04_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p04_2.ddn",
+      "view": "diagram",
+      "title": "Warehouse transfer and count / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p04_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p05_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p05_1.ddn",
+      "view": "diagram",
+      "title": "Hire to retire / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p05_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p05_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p05_2.ddn",
+      "view": "diagram",
+      "title": "Hire to retire / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p05_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p06_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p06_1.ddn",
+      "view": "diagram",
+      "title": "Time to payroll and cost / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p06_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p06_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p06_2.ddn",
+      "view": "diagram",
+      "title": "Time to payroll and cost / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p06_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p07_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p07_1.ddn",
+      "view": "diagram",
+      "title": "Record to report and close / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p07_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p07_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p07_2.ddn",
+      "view": "diagram",
+      "title": "Record to report and close / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p07_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p08_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p08_1.ddn",
+      "view": "diagram",
+      "title": "Quality containment and recall / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p08_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p08_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p08_2.ddn",
+      "view": "diagram",
+      "title": "Quality containment and recall / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p08_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p09_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p09_1.ddn",
+      "view": "diagram",
+      "title": "Maintain to return-to-service / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p09_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p10_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p10_1.ddn",
+      "view": "diagram",
+      "title": "Commit to event and analytic publication / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p10_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p10_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p10_2.ddn",
+      "view": "diagram",
+      "title": "Commit to event and analytic publication / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p10_2"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p11_1.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p11_1.ddn",
+      "view": "diagram",
+      "title": "Recover and resume / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p11_1"
+    },
+    {
+      "id": "enterprise-review/views/dfd_p11_2.ddn#diagram",
+      "entry": "enterprise-review/views/dfd_p11_2.ddn",
+      "view": "diagram",
+      "title": "Recover and resume / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.dfd_p11_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_analytics_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_analytics_1.ddn",
+      "view": "diagram",
+      "title": "Analytics and report reproducibility / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_analytics_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_analytics_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_analytics_2.ddn",
+      "view": "diagram",
+      "title": "Analytics and report reproducibility / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_analytics_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_buy_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_buy_1.ddn",
+      "view": "diagram",
+      "title": "Procurement and inbound control / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_buy_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_buy_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_buy_2.ddn",
+      "view": "diagram",
+      "title": "Procurement and inbound control / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_buy_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_control_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_control_1.ddn",
+      "view": "diagram",
+      "title": "Audit, authorization and operations / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_control_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_control_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_control_2.ddn",
+      "view": "diagram",
+      "title": "Audit, authorization and operations / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_control_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_control_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_control_3.ddn",
+      "view": "diagram",
+      "title": "Audit, authorization and operations / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_control_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_core_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_core_1.ddn",
+      "view": "diagram",
+      "title": "Enterprise and reference data / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_core_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_core_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_core_2.ddn",
+      "view": "diagram",
+      "title": "Enterprise and reference data / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_core_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_core_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_core_3.ddn",
+      "view": "diagram",
+      "title": "Enterprise and reference data / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_core_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_finance_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_finance_1.ddn",
+      "view": "diagram",
+      "title": "Accounting and financial control / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_finance_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_finance_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_finance_2.ddn",
+      "view": "diagram",
+      "title": "Accounting and financial control / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_finance_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_finance_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_finance_3.ddn",
+      "view": "diagram",
+      "title": "Accounting and financial control / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_finance_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_finance_4.ddn#diagram",
+      "entry": "enterprise-review/views/erd_finance_4.ddn",
+      "view": "diagram",
+      "title": "Accounting and financial control / 4",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_finance_4"
+    },
+    {
+      "id": "enterprise-review/views/erd_finance_5.ddn#diagram",
+      "entry": "enterprise-review/views/erd_finance_5.ddn",
+      "view": "diagram",
+      "title": "Accounting and financial control / 5",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_finance_5"
+    },
+    {
+      "id": "enterprise-review/views/erd_finance_6.ddn#diagram",
+      "entry": "enterprise-review/views/erd_finance_6.ddn",
+      "view": "diagram",
+      "title": "Accounting and financial control / 6",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_finance_6"
+    },
+    {
+      "id": "enterprise-review/views/erd_integration_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_integration_1.ddn",
+      "view": "diagram",
+      "title": "Integration control plane / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_integration_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_integration_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_integration_2.ddn",
+      "view": "diagram",
+      "title": "Integration control plane / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_integration_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_logistics_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_logistics_1.ddn",
+      "view": "diagram",
+      "title": "Logistics and transport / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_logistics_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_logistics_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_logistics_2.ddn",
+      "view": "diagram",
+      "title": "Logistics and transport / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_logistics_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_logistics_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_logistics_3.ddn",
+      "view": "diagram",
+      "title": "Logistics and transport / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_logistics_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_maint_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_maint_1.ddn",
+      "view": "diagram",
+      "title": "Maintenance and asset availability / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_maint_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_make_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_make_1.ddn",
+      "view": "diagram",
+      "title": "Production planning and execution / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_make_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_make_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_make_2.ddn",
+      "view": "diagram",
+      "title": "Production planning and execution / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_make_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_make_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_make_3.ddn",
+      "view": "diagram",
+      "title": "Production planning and execution / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_make_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_make_4.ddn#diagram",
+      "entry": "enterprise-review/views/erd_make_4.ddn",
+      "view": "diagram",
+      "title": "Production planning and execution / 4",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_make_4"
+    },
+    {
+      "id": "enterprise-review/views/erd_pay_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_pay_1.ddn",
+      "view": "diagram",
+      "title": "Payroll and labor accounting / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_pay_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_pay_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_pay_2.ddn",
+      "view": "diagram",
+      "title": "Payroll and labor accounting / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_pay_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_people_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_people_1.ddn",
+      "view": "diagram",
+      "title": "Human resources and workforce / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_people_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_people_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_people_2.ddn",
+      "view": "diagram",
+      "title": "Human resources and workforce / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_people_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_people_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_people_3.ddn",
+      "view": "diagram",
+      "title": "Human resources and workforce / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_people_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_people_4.ddn#diagram",
+      "entry": "enterprise-review/views/erd_people_4.ddn",
+      "view": "diagram",
+      "title": "Human resources and workforce / 4",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_people_4"
+    },
+    {
+      "id": "enterprise-review/views/erd_quality_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_quality_1.ddn",
+      "view": "diagram",
+      "title": "Quality and traceability / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_quality_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_quality_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_quality_2.ddn",
+      "view": "diagram",
+      "title": "Quality and traceability / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_quality_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_sell_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_sell_1.ddn",
+      "view": "diagram",
+      "title": "Sales and customer control / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_sell_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_sell_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_sell_2.ddn",
+      "view": "diagram",
+      "title": "Sales and customer control / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_sell_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_stock_1.ddn#diagram",
+      "entry": "enterprise-review/views/erd_stock_1.ddn",
+      "view": "diagram",
+      "title": "Inventory and warehouse control / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_stock_1"
+    },
+    {
+      "id": "enterprise-review/views/erd_stock_2.ddn#diagram",
+      "entry": "enterprise-review/views/erd_stock_2.ddn",
+      "view": "diagram",
+      "title": "Inventory and warehouse control / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_stock_2"
+    },
+    {
+      "id": "enterprise-review/views/erd_stock_3.ddn#diagram",
+      "entry": "enterprise-review/views/erd_stock_3.ddn",
+      "view": "diagram",
+      "title": "Inventory and warehouse control / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_stock_3"
+    },
+    {
+      "id": "enterprise-review/views/erd_stock_4.ddn#diagram",
+      "entry": "enterprise-review/views/erd_stock_4.ddn",
+      "view": "diagram",
+      "title": "Inventory and warehouse control / 4",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.erd_stock_4"
+    },
+    {
+      "id": "enterprise-review/views/etl.ddn#diagram",
+      "entry": "enterprise-review/views/etl.ddn",
+      "view": "diagram",
+      "title": "ETL, report certification and restricted HR",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.etl"
+    },
+    {
+      "id": "enterprise-review/views/events_financial.ddn#diagram",
+      "entry": "enterprise-review/views/events_financial.ddn",
+      "view": "diagram",
+      "title": "Financial and restricted event contracts",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.events_financial"
+    },
+    {
+      "id": "enterprise-review/views/events_operations.ddn#diagram",
+      "entry": "enterprise-review/views/events_operations.ddn",
+      "view": "diagram",
+      "title": "Operational event contracts",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.events_operations"
+    },
+    {
+      "id": "enterprise-review/views/form_ui02.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui02.ddn",
+      "view": "diagram",
+      "title": "Journal workbench / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui02"
+    },
+    {
+      "id": "enterprise-review/views/form_ui03.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui03.ddn",
+      "view": "diagram",
+      "title": "Supplier invoice and match / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui03"
+    },
+    {
+      "id": "enterprise-review/views/form_ui11.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui11.ddn",
+      "view": "diagram",
+      "title": "Purchase-order release / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui11"
+    },
+    {
+      "id": "enterprise-review/views/form_ui21.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui21.ddn",
+      "view": "diagram",
+      "title": "Blind count and adjustment / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui21"
+    },
+    {
+      "id": "enterprise-review/views/form_ui25.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui25.ddn",
+      "view": "diagram",
+      "title": "Shop-floor issue and completion / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui25"
+    },
+    {
+      "id": "enterprise-review/views/form_ui33.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui33.ddn",
+      "view": "diagram",
+      "title": "Compensation and bank change / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui33"
+    },
+    {
+      "id": "enterprise-review/views/form_ui39.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui39.ddn",
+      "view": "diagram",
+      "title": "Payroll gross-to-net review / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui39"
+    },
+    {
+      "id": "enterprise-review/views/form_ui43.ddn#diagram",
+      "entry": "enterprise-review/views/form_ui43.ddn",
+      "view": "diagram",
+      "title": "Integration exception and replay / interaction contract",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.form_ui43"
+    },
+    {
+      "id": "enterprise-review/views/hr_boundary.ddn#diagram",
+      "entry": "enterprise-review/views/hr_boundary.ddn",
+      "view": "diagram",
+      "title": "Purpose-limited workforce publication",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.hr_boundary"
+    },
+    {
+      "id": "enterprise-review/views/hr_history.ddn#diagram",
+      "entry": "enterprise-review/views/hr_history.ddn",
+      "view": "diagram",
+      "title": "Effective workforce and compensation",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.hr_history"
+    },
+    {
+      "id": "enterprise-review/views/hybrid.ddn#diagram",
+      "entry": "enterprise-review/views/hybrid.ddn",
+      "view": "diagram",
+      "title": "Cloud / local: single financial authority",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.hybrid"
+    },
+    {
+      "id": "enterprise-review/views/kafka.ddn#diagram",
+      "entry": "enterprise-review/views/kafka.ddn",
+      "view": "diagram",
+      "title": "Outbox, keyed transport and independent consumers",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.kafka"
+    },
+    {
+      "id": "enterprise-review/views/lot_trace.ddn#diagram",
+      "entry": "enterprise-review/views/lot_trace.ddn",
+      "view": "diagram",
+      "title": "Many-to-many production genealogy",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.lot_trace"
+    },
+    {
+      "id": "enterprise-review/views/notes.ddn#diagram",
+      "entry": "enterprise-review/views/notes.ddn",
+      "view": "diagram",
+      "title": "Architecture decisions and review caveats",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.notes"
+    },
+    {
+      "id": "enterprise-review/views/offline.ddn#diagram",
+      "entry": "enterprise-review/views/offline.ddn",
+      "view": "diagram",
+      "title": "Offline delegation and reconciliation",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.offline"
+    },
+    {
+      "id": "enterprise-review/views/overview.ddn#diagram",
+      "entry": "enterprise-review/views/overview.ddn",
+      "view": "diagram",
+      "title": "Enterprise responsibility and capability map",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.overview"
+    },
+    {
+      "id": "enterprise-review/views/payroll_links.ddn#diagram",
+      "entry": "enterprise-review/views/payroll_links.ddn",
+      "view": "diagram",
+      "title": "Payroll inputs, result and accounting",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.payroll_links"
+    },
+    {
+      "id": "enterprise-review/views/process_map.ddn#diagram",
+      "entry": "enterprise-review/views/process_map.ddn",
+      "view": "diagram",
+      "title": "End-to-end process map",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.process_map"
+    },
+    {
+      "id": "enterprise-review/views/production_cost.ddn#diagram",
+      "entry": "enterprise-review/views/production_cost.ddn",
+      "view": "diagram",
+      "title": "Production WIP and payroll clearance",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.production_cost"
+    },
+    {
+      "id": "enterprise-review/views/references_001.ddn#diagram",
+      "entry": "enterprise-review/views/references_001.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 1",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_001"
+    },
+    {
+      "id": "enterprise-review/views/references_002.ddn#diagram",
+      "entry": "enterprise-review/views/references_002.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 2",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_002"
+    },
+    {
+      "id": "enterprise-review/views/references_003.ddn#diagram",
+      "entry": "enterprise-review/views/references_003.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 3",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_003"
+    },
+    {
+      "id": "enterprise-review/views/references_004.ddn#diagram",
+      "entry": "enterprise-review/views/references_004.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 4",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_004"
+    },
+    {
+      "id": "enterprise-review/views/references_005.ddn#diagram",
+      "entry": "enterprise-review/views/references_005.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 5",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_005"
+    },
+    {
+      "id": "enterprise-review/views/references_006.ddn#diagram",
+      "entry": "enterprise-review/views/references_006.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 6",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_006"
+    },
+    {
+      "id": "enterprise-review/views/references_007.ddn#diagram",
+      "entry": "enterprise-review/views/references_007.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 7",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_007"
+    },
+    {
+      "id": "enterprise-review/views/references_008.ddn#diagram",
+      "entry": "enterprise-review/views/references_008.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 8",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_008"
+    },
+    {
+      "id": "enterprise-review/views/references_009.ddn#diagram",
+      "entry": "enterprise-review/views/references_009.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 9",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_009"
+    },
+    {
+      "id": "enterprise-review/views/references_010.ddn#diagram",
+      "entry": "enterprise-review/views/references_010.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 10",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_010"
+    },
+    {
+      "id": "enterprise-review/views/references_011.ddn#diagram",
+      "entry": "enterprise-review/views/references_011.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 11",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_011"
+    },
+    {
+      "id": "enterprise-review/views/references_012.ddn#diagram",
+      "entry": "enterprise-review/views/references_012.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 12",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_012"
+    },
+    {
+      "id": "enterprise-review/views/references_013.ddn#diagram",
+      "entry": "enterprise-review/views/references_013.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 13",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_013"
+    },
+    {
+      "id": "enterprise-review/views/references_014.ddn#diagram",
+      "entry": "enterprise-review/views/references_014.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 14",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_014"
+    },
+    {
+      "id": "enterprise-review/views/references_015.ddn#diagram",
+      "entry": "enterprise-review/views/references_015.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 15",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_015"
+    },
+    {
+      "id": "enterprise-review/views/references_016.ddn#diagram",
+      "entry": "enterprise-review/views/references_016.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 16",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_016"
+    },
+    {
+      "id": "enterprise-review/views/references_017.ddn#diagram",
+      "entry": "enterprise-review/views/references_017.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 17",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_017"
+    },
+    {
+      "id": "enterprise-review/views/references_018.ddn#diagram",
+      "entry": "enterprise-review/views/references_018.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 18",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_018"
+    },
+    {
+      "id": "enterprise-review/views/references_019.ddn#diagram",
+      "entry": "enterprise-review/views/references_019.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 19",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_019"
+    },
+    {
+      "id": "enterprise-review/views/references_020.ddn#diagram",
+      "entry": "enterprise-review/views/references_020.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 20",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_020"
+    },
+    {
+      "id": "enterprise-review/views/references_021.ddn#diagram",
+      "entry": "enterprise-review/views/references_021.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 21",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_021"
+    },
+    {
+      "id": "enterprise-review/views/references_022.ddn#diagram",
+      "entry": "enterprise-review/views/references_022.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 22",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_022"
+    },
+    {
+      "id": "enterprise-review/views/references_023.ddn#diagram",
+      "entry": "enterprise-review/views/references_023.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 23",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_023"
+    },
+    {
+      "id": "enterprise-review/views/references_024.ddn#diagram",
+      "entry": "enterprise-review/views/references_024.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 24",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_024"
+    },
+    {
+      "id": "enterprise-review/views/references_025.ddn#diagram",
+      "entry": "enterprise-review/views/references_025.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 25",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_025"
+    },
+    {
+      "id": "enterprise-review/views/references_026.ddn#diagram",
+      "entry": "enterprise-review/views/references_026.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 26",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_026"
+    },
+    {
+      "id": "enterprise-review/views/references_027.ddn#diagram",
+      "entry": "enterprise-review/views/references_027.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 27",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_027"
+    },
+    {
+      "id": "enterprise-review/views/references_028.ddn#diagram",
+      "entry": "enterprise-review/views/references_028.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 28",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_028"
+    },
+    {
+      "id": "enterprise-review/views/references_029.ddn#diagram",
+      "entry": "enterprise-review/views/references_029.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 29",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_029"
+    },
+    {
+      "id": "enterprise-review/views/references_030.ddn#diagram",
+      "entry": "enterprise-review/views/references_030.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 30",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_030"
+    },
+    {
+      "id": "enterprise-review/views/references_031.ddn#diagram",
+      "entry": "enterprise-review/views/references_031.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 31",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_031"
+    },
+    {
+      "id": "enterprise-review/views/references_032.ddn#diagram",
+      "entry": "enterprise-review/views/references_032.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 32",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_032"
+    },
+    {
+      "id": "enterprise-review/views/references_033.ddn#diagram",
+      "entry": "enterprise-review/views/references_033.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 33",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_033"
+    },
+    {
+      "id": "enterprise-review/views/references_034.ddn#diagram",
+      "entry": "enterprise-review/views/references_034.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 34",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_034"
+    },
+    {
+      "id": "enterprise-review/views/references_035.ddn#diagram",
+      "entry": "enterprise-review/views/references_035.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 35",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_035"
+    },
+    {
+      "id": "enterprise-review/views/references_036.ddn#diagram",
+      "entry": "enterprise-review/views/references_036.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 36",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_036"
+    },
+    {
+      "id": "enterprise-review/views/references_037.ddn#diagram",
+      "entry": "enterprise-review/views/references_037.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 37",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_037"
+    },
+    {
+      "id": "enterprise-review/views/references_038.ddn#diagram",
+      "entry": "enterprise-review/views/references_038.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 38",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_038"
+    },
+    {
+      "id": "enterprise-review/views/references_039.ddn#diagram",
+      "entry": "enterprise-review/views/references_039.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 39",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_039"
+    },
+    {
+      "id": "enterprise-review/views/references_040.ddn#diagram",
+      "entry": "enterprise-review/views/references_040.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 40",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_040"
+    },
+    {
+      "id": "enterprise-review/views/references_041.ddn#diagram",
+      "entry": "enterprise-review/views/references_041.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 41",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_041"
+    },
+    {
+      "id": "enterprise-review/views/references_042.ddn#diagram",
+      "entry": "enterprise-review/views/references_042.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 42",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_042"
+    },
+    {
+      "id": "enterprise-review/views/references_043.ddn#diagram",
+      "entry": "enterprise-review/views/references_043.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 43",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_043"
+    },
+    {
+      "id": "enterprise-review/views/references_044.ddn#diagram",
+      "entry": "enterprise-review/views/references_044.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 44",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_044"
+    },
+    {
+      "id": "enterprise-review/views/references_045.ddn#diagram",
+      "entry": "enterprise-review/views/references_045.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 45",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_045"
+    },
+    {
+      "id": "enterprise-review/views/references_046.ddn#diagram",
+      "entry": "enterprise-review/views/references_046.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 46",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_046"
+    },
+    {
+      "id": "enterprise-review/views/references_047.ddn#diagram",
+      "entry": "enterprise-review/views/references_047.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 47",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_047"
+    },
+    {
+      "id": "enterprise-review/views/references_048.ddn#diagram",
+      "entry": "enterprise-review/views/references_048.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 48",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_048"
+    },
+    {
+      "id": "enterprise-review/views/references_049.ddn#diagram",
+      "entry": "enterprise-review/views/references_049.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 49",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_049"
+    },
+    {
+      "id": "enterprise-review/views/references_050.ddn#diagram",
+      "entry": "enterprise-review/views/references_050.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 50",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_050"
+    },
+    {
+      "id": "enterprise-review/views/references_051.ddn#diagram",
+      "entry": "enterprise-review/views/references_051.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 51",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_051"
+    },
+    {
+      "id": "enterprise-review/views/references_052.ddn#diagram",
+      "entry": "enterprise-review/views/references_052.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 52",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_052"
+    },
+    {
+      "id": "enterprise-review/views/references_053.ddn#diagram",
+      "entry": "enterprise-review/views/references_053.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 53",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_053"
+    },
+    {
+      "id": "enterprise-review/views/references_054.ddn#diagram",
+      "entry": "enterprise-review/views/references_054.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 54",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_054"
+    },
+    {
+      "id": "enterprise-review/views/references_055.ddn#diagram",
+      "entry": "enterprise-review/views/references_055.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 55",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_055"
+    },
+    {
+      "id": "enterprise-review/views/references_056.ddn#diagram",
+      "entry": "enterprise-review/views/references_056.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 56",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_056"
+    },
+    {
+      "id": "enterprise-review/views/references_057.ddn#diagram",
+      "entry": "enterprise-review/views/references_057.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 57",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_057"
+    },
+    {
+      "id": "enterprise-review/views/references_058.ddn#diagram",
+      "entry": "enterprise-review/views/references_058.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 58",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_058"
+    },
+    {
+      "id": "enterprise-review/views/references_059.ddn#diagram",
+      "entry": "enterprise-review/views/references_059.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 59",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_059"
+    },
+    {
+      "id": "enterprise-review/views/references_060.ddn#diagram",
+      "entry": "enterprise-review/views/references_060.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 60",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_060"
+    },
+    {
+      "id": "enterprise-review/views/references_061.ddn#diagram",
+      "entry": "enterprise-review/views/references_061.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 61",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_061"
+    },
+    {
+      "id": "enterprise-review/views/references_062.ddn#diagram",
+      "entry": "enterprise-review/views/references_062.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 62",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_062"
+    },
+    {
+      "id": "enterprise-review/views/references_063.ddn#diagram",
+      "entry": "enterprise-review/views/references_063.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 63",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_063"
+    },
+    {
+      "id": "enterprise-review/views/references_064.ddn#diagram",
+      "entry": "enterprise-review/views/references_064.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 64",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_064"
+    },
+    {
+      "id": "enterprise-review/views/references_065.ddn#diagram",
+      "entry": "enterprise-review/views/references_065.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 65",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_065"
+    },
+    {
+      "id": "enterprise-review/views/references_066.ddn#diagram",
+      "entry": "enterprise-review/views/references_066.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 66",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_066"
+    },
+    {
+      "id": "enterprise-review/views/references_067.ddn#diagram",
+      "entry": "enterprise-review/views/references_067.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 67",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_067"
+    },
+    {
+      "id": "enterprise-review/views/references_068.ddn#diagram",
+      "entry": "enterprise-review/views/references_068.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 68",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_068"
+    },
+    {
+      "id": "enterprise-review/views/references_069.ddn#diagram",
+      "entry": "enterprise-review/views/references_069.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 69",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_069"
+    },
+    {
+      "id": "enterprise-review/views/references_070.ddn#diagram",
+      "entry": "enterprise-review/views/references_070.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 70",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_070"
+    },
+    {
+      "id": "enterprise-review/views/references_071.ddn#diagram",
+      "entry": "enterprise-review/views/references_071.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 71",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_071"
+    },
+    {
+      "id": "enterprise-review/views/references_072.ddn#diagram",
+      "entry": "enterprise-review/views/references_072.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 72",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_072"
+    },
+    {
+      "id": "enterprise-review/views/references_073.ddn#diagram",
+      "entry": "enterprise-review/views/references_073.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 73",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_073"
+    },
+    {
+      "id": "enterprise-review/views/references_074.ddn#diagram",
+      "entry": "enterprise-review/views/references_074.ddn",
+      "view": "diagram",
+      "title": "Cross-domain references / 74",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.references_074"
+    },
+    {
+      "id": "enterprise-review/views/replication.ddn#diagram",
+      "entry": "enterprise-review/views/replication.ddn",
+      "view": "diagram",
+      "title": "Copies, placement and recovery are different",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.replication"
+    },
+    {
+      "id": "enterprise-review/views/reports_finance.ddn#diagram",
+      "entry": "enterprise-review/views/reports_finance.ddn",
+      "view": "diagram",
+      "title": "Report obligations / finance",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.reports_finance"
+    },
+    {
+      "id": "enterprise-review/views/reports_operations.ddn#diagram",
+      "entry": "enterprise-review/views/reports_operations.ddn",
+      "view": "diagram",
+      "title": "Report obligations / operations",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.reports_operations"
+    },
+    {
+      "id": "enterprise-review/views/reports_people.ddn#diagram",
+      "entry": "enterprise-review/views/reports_people.ddn",
+      "view": "diagram",
+      "title": "Report obligations / people",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.reports_people"
+    },
+    {
+      "id": "enterprise-review/views/samples.ddn#diagram",
+      "entry": "enterprise-review/views/samples.ddn",
+      "view": "diagram",
+      "title": "Worked records: money, stock and late knowledge",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.samples"
+    },
+    {
+      "id": "enterprise-review/views/stock_cost.ddn#diagram",
+      "entry": "enterprise-review/views/stock_cost.ddn",
+      "view": "diagram",
+      "title": "Quantity and valuation are distinct",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.stock_cost"
+    },
+    {
+      "id": "enterprise-review/views/treasury.ddn#diagram",
+      "entry": "enterprise-review/views/treasury.ddn",
+      "view": "diagram",
+      "title": "Payment allocation: explicit AP or AR target",
+      "collection": "enterprise-review",
+      "module": "meridian.erp.views.treasury"
+    },
+    {
+      "id": "examples/01-customer.ddn#compact",
+      "entry": "examples/01-customer.ddn",
+      "view": "compact",
+      "title": "Customer data / compact view",
+      "collection": "examples",
+      "module": "ddn.examples.customer-views"
+    },
+    {
+      "id": "examples/01-customer.ddn#overview",
+      "entry": "examples/01-customer.ddn",
+      "view": "overview",
+      "title": "Customer data / a shared model",
+      "collection": "examples",
+      "module": "ddn.examples.customer-views"
+    },
+    {
+      "id": "examples/01-customer.ddn#print",
+      "entry": "examples/01-customer.ddn",
+      "view": "print",
+      "title": "Customer data / print rendition",
+      "collection": "examples",
+      "module": "ddn.examples.customer-views"
+    },
+    {
+      "id": "examples/02-elements.ddn#classic",
+      "entry": "examples/02-elements.ddn",
+      "view": "classic",
+      "title": "Classic / fixed semantic notation",
+      "collection": "examples",
+      "module": "ddn.examples.elements"
+    },
+    {
+      "id": "examples/02-elements.ddn#dark",
+      "entry": "examples/02-elements.ddn",
+      "view": "dark",
+      "title": "Dark canvas / fixed contrast palette",
+      "collection": "examples",
+      "module": "ddn.examples.elements"
+    },
+    {
+      "id": "examples/02-elements.ddn#forest",
+      "entry": "examples/02-elements.ddn",
+      "view": "forest",
+      "title": "Forest canvas / hand-drawn treatment",
+      "collection": "examples",
+      "module": "ddn.examples.elements"
+    },
+    {
+      "id": "examples/02-elements.ddn#handDrawn",
+      "entry": "examples/02-elements.ddn",
+      "view": "handDrawn",
+      "title": "Hand drawn / the same model",
+      "collection": "examples",
+      "module": "ddn.examples.elements"
+    },
+    {
+      "id": "examples/02-elements.ddn#neo",
+      "entry": "examples/02-elements.ddn",
+      "view": "neo",
+      "title": "Neo / the same model",
+      "collection": "examples",
+      "module": "ddn.examples.elements"
+    },
+    {
+      "id": "examples/02-elements.ddn#neutral",
+      "entry": "examples/02-elements.ddn",
+      "view": "neutral",
+      "title": "Neutral / print-safe symbols",
+      "collection": "examples",
+      "module": "ddn.examples.elements"
+    },
+    {
+      "id": "examples/03-routing.ddn#bridge",
+      "entry": "examples/03-routing.ddn",
+      "view": "bridge",
+      "title": "Orthogonal crossing / round bridge",
+      "collection": "examples",
+      "module": "ddn.examples.routing"
+    },
+    {
+      "id": "examples/03-routing.ddn#gap",
+      "entry": "examples/03-routing.ddn",
+      "view": "gap",
+      "title": "Orthogonal crossing / disconnected gap",
+      "collection": "examples",
+      "module": "ddn.examples.routing"
+    },
+    {
+      "id": "examples/03-routing.ddn#square_bridge",
+      "entry": "examples/03-routing.ddn",
+      "view": "square_bridge",
+      "title": "Orthogonal crossing / square bridge",
+      "collection": "examples",
+      "module": "ddn.examples.routing"
+    },
+    {
+      "id": "examples/03-routing.ddn#straight",
+      "entry": "examples/03-routing.ddn",
+      "view": "straight",
+      "title": "Straight routing / relation family unchanged",
+      "collection": "examples",
+      "module": "ddn.examples.routing"
+    },
+    {
+      "id": "examples/04-hybrid.ddn#deployment",
+      "entry": "examples/04-hybrid.ddn",
+      "view": "deployment",
+      "title": "Hybrid deployment / fragments are not copies",
+      "collection": "examples",
+      "module": "ddn.examples.hybrid"
+    },
+    {
+      "id": "examples/04-hybrid.ddn#namespaces",
+      "entry": "examples/04-hybrid.ddn",
+      "view": "namespaces",
+      "title": "Namespace / the same data, a different concern",
+      "collection": "examples",
+      "module": "ddn.examples.hybrid"
+    },
+    {
+      "id": "examples/05-flow.ddn#flow",
+      "entry": "examples/05-flow.ddn",
+      "view": "flow",
+      "title": "Capture, transport and transformation are different",
+      "collection": "examples",
+      "module": "ddn.examples.flow"
+    },
+    {
+      "id": "examples/06-temporal.ddn#temporal",
+      "entry": "examples/06-temporal.ddn",
+      "view": "temporal",
+      "title": "Two time axes / not the same as recovery",
+      "collection": "examples",
+      "module": "ddn.examples.temporal"
+    },
+    {
+      "id": "examples/07-documents.ddn#documents",
+      "entry": "examples/07-documents.ddn",
+      "view": "documents",
+      "title": "Document structure / presence versus null",
+      "collection": "examples",
+      "module": "ddn.examples.documents"
+    },
+    {
+      "id": "examples/08-subdiagrams.ddn#detail",
+      "entry": "examples/08-subdiagrams.ddn",
+      "view": "detail",
+      "title": "Storage detail",
+      "collection": "examples",
+      "module": "ddn.examples.subdiagrams"
+    },
+    {
+      "id": "examples/08-subdiagrams.ddn#inline",
+      "entry": "examples/08-subdiagrams.ddn",
+      "view": "inline",
+      "title": "An embedded view retains its own composition",
+      "collection": "examples",
+      "module": "ddn.examples.subdiagrams"
+    },
+    {
+      "id": "examples/08-subdiagrams.ddn#overview",
+      "entry": "examples/08-subdiagrams.ddn",
+      "view": "overview",
+      "title": "A view can link to another view",
+      "collection": "examples",
+      "module": "ddn.examples.subdiagrams"
+    },
+    {
+      "id": "examples/09-look-comparison.ddn#classic",
+      "entry": "examples/09-look-comparison.ddn",
+      "view": "classic",
+      "title": "Classic / precise single strokes",
+      "collection": "examples",
+      "module": "ddn.examples.lookcomparison"
+    },
+    {
+      "id": "examples/09-look-comparison.ddn#handDrawn",
+      "entry": "examples/09-look-comparison.ddn",
+      "view": "handDrawn",
+      "title": "Hand drawn / organic pen strokes",
+      "collection": "examples",
+      "module": "ddn.examples.lookcomparison"
+    },
+    {
+      "id": "examples/09-look-comparison.ddn#neo",
+      "entry": "examples/09-look-comparison.ddn",
+      "view": "neo",
+      "title": "Neo / raised, precise cards",
+      "collection": "examples",
+      "module": "ddn.examples.lookcomparison"
+    },
+    {
+      "id": "examples/10-handdrawn-routing.ddn#bridge",
+      "entry": "examples/10-handdrawn-routing.ddn",
+      "view": "bridge",
+      "title": "Hand-drawn crossing / round bridge",
+      "collection": "examples",
+      "module": "ddn.examples.routinghand"
+    },
+    {
+      "id": "examples/10-handdrawn-routing.ddn#gap",
+      "entry": "examples/10-handdrawn-routing.ddn",
+      "view": "gap",
+      "title": "Hand-drawn crossing / disconnected gap",
+      "collection": "examples",
+      "module": "ddn.examples.routinghand"
+    },
+    {
+      "id": "examples/10-handdrawn-routing.ddn#square_bridge",
+      "entry": "examples/10-handdrawn-routing.ddn",
+      "view": "square_bridge",
+      "title": "Hand-drawn crossing / square bridge",
+      "collection": "examples",
+      "module": "ddn.examples.routinghand"
+    },
+    {
+      "id": "examples/10-handdrawn-routing.ddn#straight",
+      "entry": "examples/10-handdrawn-routing.ddn",
+      "view": "straight",
+      "title": "Hand-drawn straight routing / relation family unchanged",
+      "collection": "examples",
+      "module": "ddn.examples.routinghand"
+    },
+    {
+      "id": "examples/11-native-layouts.ddn#grid",
+      "entry": "examples/11-native-layouts.ddn",
+      "view": "grid",
+      "title": "Native grid / no coordinates",
+      "collection": "examples",
+      "module": "ddn.examples.native-layouts"
+    },
+    {
+      "id": "examples/11-native-layouts.ddn#grouped",
+      "entry": "examples/11-native-layouts.ddn",
+      "view": "grouped",
+      "title": "Native grouped / no coordinates",
+      "collection": "examples",
+      "module": "ddn.examples.native-layouts"
+    },
+    {
+      "id": "examples/11-native-layouts.ddn#layered",
+      "entry": "examples/11-native-layouts.ddn",
+      "view": "layered",
+      "title": "Native layered / no coordinates",
+      "collection": "examples",
+      "module": "ddn.examples.native-layouts"
+    },
+    {
+      "id": "examples/11-native-layouts.ddn#mindmap",
+      "entry": "examples/11-native-layouts.ddn",
+      "view": "mindmap",
+      "title": "Native mind-map / no coordinates",
+      "collection": "examples",
+      "module": "ddn.examples.native-layouts"
+    },
+    {
+      "id": "examples/11-native-layouts.ddn#tree",
+      "entry": "examples/11-native-layouts.ddn",
+      "view": "tree",
+      "title": "Native tree / no coordinates",
+      "collection": "examples",
+      "module": "ddn.examples.native-layouts"
+    },
+    {
+      "id": "examples/12-nested-fields.ddn#collapsed",
+      "entry": "examples/12-nested-fields.ddn",
+      "view": "collapsed",
+      "title": "Hidden nested rows / preserved endpoint identities",
+      "collection": "examples",
+      "module": "ddn.examples.nested"
+    },
+    {
+      "id": "examples/12-nested-fields.ddn#detailed",
+      "entry": "examples/12-nested-fields.ddn",
+      "view": "detailed",
+      "title": "Nested fields / domains and representations",
+      "collection": "examples",
+      "module": "ddn.examples.nested"
+    },
+    {
+      "id": "examples/12-nested-fields.ddn#large",
+      "entry": "examples/12-nested-fields.ddn",
+      "view": "large",
+      "title": "20px base / measured wrapping",
+      "collection": "examples",
+      "module": "ddn.examples.nested"
+    },
+    {
+      "id": "examples/13-publication.ddn#paper",
+      "entry": "examples/13-publication.ddn",
+      "view": "paper",
+      "title": "A4 / explicit minimum text",
+      "collection": "examples",
+      "module": "ddn.examples.publication"
+    },
+    {
+      "id": "examples/13-publication.ddn#screen",
+      "entry": "examples/13-publication.ddn",
+      "view": "screen",
+      "title": "Content-sized / same semantic model",
+      "collection": "examples",
+      "module": "ddn.examples.publication"
+    },
+    {
+      "id": "examples/14-authorized-export.ddn#private",
+      "entry": "examples/14-authorized-export.ddn",
+      "view": "private",
+      "title": "Private source / hiding is not redaction",
+      "collection": "examples",
+      "module": "ddn.examples.export"
+    },
+    {
+      "id": "examples/14-authorized-export.ddn#public",
+      "entry": "examples/14-authorized-export.ddn",
+      "view": "public",
+      "title": "Allowlisted publication",
+      "collection": "examples",
+      "module": "ddn.examples.export"
+    },
+    {
+      "id": "examples/15-process-contracts.ddn#balanced",
+      "entry": "examples/15-process-contracts.ddn",
+      "view": "balanced",
+      "title": "Balanced interfaces / declared state and verification",
+      "collection": "examples",
+      "module": "ddn.examples.process"
+    },
+    {
+      "id": "examples/16-enterprise-gates.ddn#external",
+      "entry": "examples/16-enterprise-gates.ddn",
+      "view": "external",
+      "title": "External gates / required evidence",
+      "collection": "examples",
+      "module": "ddn.enterprise.readiness"
+    },
+    {
+      "id": "examples/16-enterprise-gates.ddn#software",
+      "entry": "examples/16-enterprise-gates.ddn",
+      "view": "software",
+      "title": "Software changes / independent review checklist",
+      "collection": "examples",
+      "module": "ddn.enterprise.readiness"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#bidirectional",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "bidirectional",
+      "title": "Curved request, response and internal action",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#crossing_bridge",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "crossing_bridge",
+      "title": "Curved disconnected crossing / rounded jump",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#crossing_gap",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "crossing_gap",
+      "title": "Curved disconnected crossing / gap",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#crossing_square",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "crossing_square",
+      "title": "Curved disconnected crossing / local square jump",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#mindmap_angular",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "mindmap_angular",
+      "title": "Same mind-map / orthogonal routes",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#mindmap_classic",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "mindmap_classic",
+      "title": "Curved mind-map / classic",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#mindmap_handdrawn",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "mindmap_handdrawn",
+      "title": "Curved mind-map / handDrawn",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#mindmap_neo",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "mindmap_neo",
+      "title": "Curved mind-map / neo",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#mindmap_rounded",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "mindmap_rounded",
+      "title": "Same mind-map / rounded corridor corners",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#mixed",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "mixed",
+      "title": "One view / independent per-relation route overrides",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/17-curved-relations.ddn#obstacle",
+      "entry": "examples/17-curved-relations.ddn",
+      "view": "obstacle",
+      "title": "Curved detour / no relation to the middle database",
+      "collection": "examples",
+      "module": "ddn.examples.curved-relations"
+    },
+    {
+      "id": "examples/18-routing-comparison.ddn#bezier",
+      "entry": "examples/18-routing-comparison.ddn",
+      "view": "bezier",
+      "title": "Curved / broad cubic branches",
+      "collection": "examples",
+      "module": "ddn.examples.routing-comparison"
+    },
+    {
+      "id": "examples/18-routing-comparison.ddn#orthogonal",
+      "entry": "examples/18-routing-comparison.ddn",
+      "view": "orthogonal",
+      "title": "Orthogonal / sharp corners",
+      "collection": "examples",
+      "module": "ddn.examples.routing-comparison"
+    },
+    {
+      "id": "examples/18-routing-comparison.ddn#rounded",
+      "entry": "examples/18-routing-comparison.ddn",
+      "view": "rounded",
+      "title": "Curved / softened route corners",
+      "collection": "examples",
+      "module": "ddn.examples.routing-comparison"
+    },
+    {
+      "id": "examples/18-routing-comparison.ddn#straight",
+      "entry": "examples/18-routing-comparison.ddn",
+      "view": "straight",
+      "title": "Straight / direct segments",
+      "collection": "examples",
+      "module": "ddn.examples.routing-comparison"
+    },
+    {
+      "id": "examples/field-guide/c4-components.ddn#diagram",
+      "entry": "examples/field-guide/c4-components.ddn",
+      "view": "diagram",
+      "title": "Component responsibilities / order API internals",
+      "collection": "examples",
+      "module": "ddn.guide.c4-components"
+    },
+    {
+      "id": "examples/field-guide/c4-containers.ddn#diagram",
+      "entry": "examples/field-guide/c4-containers.ddn",
+      "view": "diagram",
+      "title": "Container view / independently runnable responsibilities",
+      "collection": "examples",
+      "module": "ddn.guide.c4-containers"
+    },
+    {
+      "id": "examples/field-guide/c4-context.ddn#diagram",
+      "entry": "examples/field-guide/c4-context.ddn",
+      "view": "diagram",
+      "title": "System context / order service",
+      "collection": "examples",
+      "module": "ddn.guide.c4-context"
+    },
+    {
+      "id": "examples/field-guide/c4-landscape.ddn#diagram",
+      "entry": "examples/field-guide/c4-landscape.ddn",
+      "view": "diagram",
+      "title": "System landscape / manufacturing enterprise",
+      "collection": "examples",
+      "module": "ddn.guide.c4-landscape"
+    },
+    {
+      "id": "examples/field-guide/concept-map.ddn#diagram",
+      "entry": "examples/field-guide/concept-map.ddn",
+      "view": "diagram",
+      "title": "Concept map / inventory meaning",
+      "collection": "examples",
+      "module": "ddn.guide.concept-map"
+    },
+    {
+      "id": "examples/field-guide/cost-breakdown.ddn#diagram",
+      "entry": "examples/field-guide/cost-breakdown.ddn",
+      "view": "diagram",
+      "title": "Cost breakdown / capital project",
+      "collection": "examples",
+      "module": "ddn.guide.cost-breakdown"
+    },
+    {
+      "id": "examples/field-guide/decision-tree.ddn#diagram",
+      "entry": "examples/field-guide/decision-tree.ddn",
+      "view": "diagram",
+      "title": "Decision tree / a qualitative shipment review",
+      "collection": "examples",
+      "module": "ddn.guide.decision-tree"
+    },
+    {
+      "id": "examples/field-guide/family-tree.ddn#diagram",
+      "entry": "examples/field-guide/family-tree.ddn",
+      "view": "diagram",
+      "title": "Family relationships / non-clinical example",
+      "collection": "examples",
+      "module": "ddn.guide.family-tree"
+    },
+    {
+      "id": "examples/field-guide/five-whys.ddn#diagram",
+      "entry": "examples/field-guide/five-whys.ddn",
+      "view": "diagram",
+      "title": "Five Whys / a testable causal hypothesis",
+      "collection": "examples",
+      "module": "ddn.guide.five-whys"
+    },
+    {
+      "id": "examples/field-guide/functional-decomposition.ddn#diagram",
+      "entry": "examples/field-guide/functional-decomposition.ddn",
+      "view": "diagram",
+      "title": "Functional decomposition / fulfil an order",
+      "collection": "examples",
+      "module": "ddn.guide.functional-decomposition"
+    },
+    {
+      "id": "examples/field-guide/network-topology.ddn#diagram",
+      "entry": "examples/field-guide/network-topology.ddn",
+      "view": "diagram",
+      "title": "Network topology / a hybrid site",
+      "collection": "examples",
+      "module": "ddn.guide.network-topology"
+    },
+    {
+      "id": "examples/field-guide/organization.ddn#diagram",
+      "entry": "examples/field-guide/organization.ddn",
+      "view": "diagram",
+      "title": "Organization / reporting responsibilities",
+      "collection": "examples",
+      "module": "ddn.guide.organization"
+    },
+    {
+      "id": "examples/field-guide/product-breakdown.ddn#diagram",
+      "entry": "examples/field-guide/product-breakdown.ddn",
+      "view": "diagram",
+      "title": "Product breakdown / pump assembly",
+      "collection": "examples",
+      "module": "ddn.guide.product-breakdown"
+    },
+    {
+      "id": "examples/field-guide/resource-breakdown.ddn#diagram",
+      "entry": "examples/field-guide/resource-breakdown.ddn",
+      "view": "diagram",
+      "title": "Resource breakdown / production programme",
+      "collection": "examples",
+      "module": "ddn.guide.resource-breakdown"
+    },
+    {
+      "id": "examples/field-guide/risk-breakdown.ddn#diagram",
+      "entry": "examples/field-guide/risk-breakdown.ddn",
+      "view": "diagram",
+      "title": "Risk breakdown / supply continuity",
+      "collection": "examples",
+      "module": "ddn.guide.risk-breakdown"
+    },
+    {
+      "id": "examples/field-guide/sitemap.ddn#diagram",
+      "entry": "examples/field-guide/sitemap.ddn",
+      "view": "diagram",
+      "title": "Sitemap / self-service portal",
+      "collection": "examples",
+      "module": "ddn.guide.sitemap"
+    },
+    {
+      "id": "examples/field-guide/source-tables.ddn#costs",
+      "entry": "examples/field-guide/source-tables.ddn",
+      "view": "costs",
+      "title": "Delta and checkpoint records behind the waterfall",
+      "collection": "examples",
+      "module": "ddn.guide.source_tables"
+    },
+    {
+      "id": "examples/field-guide/source-tables.ddn#series",
+      "entry": "examples/field-guide/source-tables.ddn",
+      "view": "series",
+      "title": "Stage-by-plant records behind the series charts",
+      "collection": "examples",
+      "module": "ddn.guide.source_tables"
+    },
+    {
+      "id": "examples/field-guide/source-tables.ddn#targets",
+      "entry": "examples/field-guide/source-tables.ddn",
+      "view": "targets",
+      "title": "Actual and target records behind the layered chart",
+      "collection": "examples",
+      "module": "ddn.guide.source_tables"
+    },
+    {
+      "id": "examples/field-guide/user-flow.ddn#diagram",
+      "entry": "examples/field-guide/user-flow.ddn",
+      "view": "diagram",
+      "title": "User flow / order entry screens",
+      "collection": "examples",
+      "module": "ddn.guide.user-flow"
+    },
+    {
+      "id": "examples/field-guide/work-breakdown.ddn#diagram",
+      "entry": "examples/field-guide/work-breakdown.ddn",
+      "view": "diagram",
+      "title": "Work breakdown / warehouse opening",
+      "collection": "examples",
+      "module": "ddn.guide.work-breakdown"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#auth_contracts",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "auth_contracts",
+      "title": "26 / Authentication and verification contracts",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#authentication",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "authentication",
+      "title": "24A / Connect, primary factor, 2FA and vector",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#authentication_sketch",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "authentication_sketch",
+      "title": "24A / Authentication - hand-drawn interaction",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#authorization",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "authorization",
+      "title": "24B / Pool handoff and engine verification",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#first_query",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "first_query",
+      "title": "24D / First SQL request and response",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#full_exchange",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "full_exchange",
+      "title": "24 / Complete ordered exchange trace",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#negotiation",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "negotiation",
+      "title": "24C / Negotiate, validate and become SQL-ready",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#overview",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "overview",
+      "title": "23 / Session bootstrap - overview DFD",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#overview_sketch",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "overview_sketch",
+      "title": "23 / Session bootstrap - overview DFD",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "session-bootstrap/views.ddn#session_state",
+      "entry": "session-bootstrap/views.ddn",
+      "view": "session_state",
+      "title": "25 / Ready session, settings and parser context",
+      "collection": "session-bootstrap",
+      "module": "ddn.examples.session-bootstrap.views"
+    },
+    {
+      "id": "use-cases/01-whiteboard.ddn#diagram",
+      "entry": "use-cases/01-whiteboard.ddn",
+      "view": "diagram",
+      "title": "01 / Whiteboard sketch",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.whiteboard"
+    },
+    {
+      "id": "use-cases/02-business-erd.ddn#diagram",
+      "entry": "use-cases/02-business-erd.ddn",
+      "view": "diagram",
+      "title": "02 / Business concepts",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.business-erd"
+    },
+    {
+      "id": "use-cases/03-relational.ddn#compact",
+      "entry": "use-cases/03-relational.ddn",
+      "view": "compact",
+      "title": "03b / Same schema, compact sketch",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.relational"
+    },
+    {
+      "id": "use-cases/03-relational.ddn#diagram",
+      "entry": "use-cases/03-relational.ddn",
+      "view": "diagram",
+      "title": "03 / Logical relational schema",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.relational"
+    },
+    {
+      "id": "use-cases/03-relational.ddn#neo",
+      "entry": "use-cases/03-relational.ddn",
+      "view": "neo",
+      "title": "03c / Same schema, precise neo look",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.relational"
+    },
+    {
+      "id": "use-cases/04-sql-dependencies.ddn#diagram",
+      "entry": "use-cases/04-sql-dependencies.ddn",
+      "view": "diagram",
+      "title": "04 / SQL object dependencies",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.sql-dependencies"
+    },
+    {
+      "id": "use-cases/05-documents.ddn#diagram",
+      "entry": "use-cases/05-documents.ddn",
+      "view": "diagram",
+      "title": "05 / Nested document structure",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.documents"
+    },
+    {
+      "id": "use-cases/06-graph-schema.ddn#diagram",
+      "entry": "use-cases/06-graph-schema.ddn",
+      "view": "diagram",
+      "title": "06 / Property-graph schema",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.graph-schema"
+    },
+    {
+      "id": "use-cases/07-keyed-storage.ddn#diagram",
+      "entry": "use-cases/07-keyed-storage.ddn",
+      "view": "diagram",
+      "title": "07 / Key-value design",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.keyed-storage"
+    },
+    {
+      "id": "use-cases/07-keyed-storage.ddn#wide_column",
+      "entry": "use-cases/07-keyed-storage.ddn",
+      "view": "wide_column",
+      "title": "07b / Wide-column access pattern",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.keyed-storage"
+    },
+    {
+      "id": "use-cases/08-domains.ddn#diagram",
+      "entry": "use-cases/08-domains.ddn",
+      "view": "diagram",
+      "title": "08 / Domain discovery and binding",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.domains"
+    },
+    {
+      "id": "use-cases/09-namespaces.ddn#diagram",
+      "entry": "use-cases/09-namespaces.ddn",
+      "view": "diagram",
+      "title": "09 / Namespace organization",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.namespaces"
+    },
+    {
+      "id": "use-cases/10-hybrid-deployment.ddn#diagram",
+      "entry": "use-cases/10-hybrid-deployment.ddn",
+      "view": "diagram",
+      "title": "10 / Shards, copies and placement",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.hybrid-deployment"
+    },
+    {
+      "id": "use-cases/11-data-flow.ddn#diagram",
+      "entry": "use-cases/11-data-flow.ddn",
+      "view": "diagram",
+      "title": "11 / Data-flow diagram",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.data-flow"
+    },
+    {
+      "id": "use-cases/12-streaming.ddn#diagram",
+      "entry": "use-cases/12-streaming.ddn",
+      "view": "diagram",
+      "title": "12 / Event publication and consumers",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.streaming"
+    },
+    {
+      "id": "use-cases/13-lineage.ddn#diagram",
+      "entry": "use-cases/13-lineage.ddn",
+      "view": "diagram",
+      "title": "13 / Dataset lineage",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.lineage"
+    },
+    {
+      "id": "use-cases/14-temporal.ddn#diagram",
+      "entry": "use-cases/14-temporal.ddn",
+      "view": "diagram",
+      "title": "14 / Valid time and recorded time",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.temporal"
+    },
+    {
+      "id": "use-cases/15-warehouse.ddn#diagram",
+      "entry": "use-cases/15-warehouse.ddn",
+      "view": "diagram",
+      "title": "15 / Dimensional warehouse",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.warehouse"
+    },
+    {
+      "id": "use-cases/16-vector-lineage.ddn#diagram",
+      "entry": "use-cases/16-vector-lineage.ddn",
+      "view": "diagram",
+      "title": "16 / Vector and embedding lineage",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.vector-lineage"
+    },
+    {
+      "id": "use-cases/17-governance.ddn#diagram",
+      "entry": "use-cases/17-governance.ddn",
+      "view": "diagram",
+      "title": "17 / Data products and contracts",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.governance"
+    },
+    {
+      "id": "use-cases/18-security.ddn#diagram",
+      "entry": "use-cases/18-security.ddn",
+      "view": "diagram",
+      "title": "18 / Data handling boundaries",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.security"
+    },
+    {
+      "id": "use-cases/19-recovery.ddn#diagram",
+      "entry": "use-cases/19-recovery.ddn",
+      "view": "diagram",
+      "title": "19 / Backup and restore design",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.recovery"
+    },
+    {
+      "id": "use-cases/20-migration.ddn#diagram",
+      "entry": "use-cases/20-migration.ddn",
+      "view": "diagram",
+      "title": "20 / Migration and target design",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.migration"
+    },
+    {
+      "id": "use-cases/21-quality.ddn#diagram",
+      "entry": "use-cases/21-quality.ddn",
+      "view": "diagram",
+      "title": "21 / Example-driven data quality",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.quality"
+    },
+    {
+      "id": "use-cases/22-linked-documentation.ddn#business_detail",
+      "entry": "use-cases/22-linked-documentation.ddn",
+      "view": "business_detail",
+      "title": "22c / Business concepts",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.linked-documentation"
+    },
+    {
+      "id": "use-cases/22-linked-documentation.ddn#diagram",
+      "entry": "use-cases/22-linked-documentation.ddn",
+      "view": "diagram",
+      "title": "22 / Navigable design documentation",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.linked-documentation"
+    },
+    {
+      "id": "use-cases/22-linked-documentation.ddn#logical_detail",
+      "entry": "use-cases/22-linked-documentation.ddn",
+      "view": "logical_detail",
+      "title": "22b / Logical detail",
+      "collection": "use-cases",
+      "module": "ddn.usecases.views.linked-documentation"
+    }
+  ]
+}

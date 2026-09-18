@@ -1,0 +1,31 @@
+ddn "0.3";
+module "ddn.usecases.views.relational";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+
+// Which fields reference which identifiers?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "03 / Logical relational schema" {
+    data: [@c.tables, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@c.tables.line, @c.tables.orders, @c.tables.customer];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "tables.r_line_order": 1, "tables.r_order_customer": 2 }; }
+}
+
+// Same model and relationship keys; only the display and look change.
+view compact "03b / Same schema, compact sketch" {
+    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;
+    style: @fmt.shared.sketch;
+    display: @fmt.shared.compact;
+    select: [@c.tables.line, @c.tables.orders, @c.tables.customer];
+    legend { keys: { "tables.r_line_order": 1, "tables.r_order_customer": 2 }; }
+}
+view neo "03c / Same schema, precise neo look" {
+    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;
+    style: @fmt.shared.neo;
+    select: [@c.tables.line, @c.tables.orders, @c.tables.customer];
+    legend { keys: { "tables.r_line_order": 1, "tables.r_order_customer": 2 }; }
+}

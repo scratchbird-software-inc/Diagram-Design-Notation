@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Notation test suites
+        run: npm --prefix notation test
+
+      - name: CLI smoke test
+        run: |
+          node notation/cli/cli.js check examples/basics/01-customer.ddn --workspace .
+          node notation/cli/cli.js render examples/basics/01-customer.ddn --workspace . --out /tmp/customer.svg
+          test -s /tmp/customer.svg
+
+      - name: Registry/schema JSON sanity
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          root = pathlib.Path('.')
+          for p in list((root/'standard').rglob('*.json')) + list((root/'examples').rglob('*.json')) + list((root/'designer/contracts').rglob('*.json')):
+              json.loads(p.read_text(encoding='utf-8'))
+              print('ok', p)
+          PY

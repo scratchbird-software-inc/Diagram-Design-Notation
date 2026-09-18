@@ -1,0 +1,254 @@
+ddn "0.5";
+module "meridian.quality.views";
+import "./model.ddn" as m;
+import "./details.ddn" as d;
+import "./formats.ddn" as f;
+
+view fishbone "01 / Possible causes" {
+    data: [@m.causes];
+    format: @f.shared.common;
+    projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @m.causes.effect; relation: "quality.cause"; }
+
+}
+
+view fishbone_sketch "01 / Possible causes — sketch" {
+    data: [@m.causes];
+    format: @f.shared.common;
+    projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @m.causes.effect; relation: "quality.cause"; }
+    style { look:handDrawn; theme:night; }
+}
+
+view heat_numeric "02 / Review score — numeric" {
+    data: [@m.responsibilities];
+    format: @f.shared.common;
+    projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.heatmap@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "numeric", "domain": [0, 10], "palette": "blue" }; }
+    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];
+
+}
+
+view heat_bands "02 / Review score — bands" {
+    data: [@m.responsibilities];
+    format: @f.shared.common;
+    projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.heatmap@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "bands", "boundaries": [0, 3, 7, 11], "labels": ["Low", "Watch", "Action"], "palette": "blue" }; }
+    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];
+
+}
+
+view heat_categories "02 / Review score — categories" {
+    data: [@m.responsibilities];
+    format: @f.shared.common;
+    projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.heatmap@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: "assoc"; value: "x_record.status"; encoding: { "mode": "category", "values": ["Good", "Monitor", "Action"], "labels": ["Good", "Monitor", "Action"], "palette": "blue" }; }
+    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];
+
+}
+
+view raci "03 / Quality responsibility assignments" {
+    data: [@m.responsibilities];
+    format: @f.shared.common;
+    projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.raci@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.inspector, @m.responsibilities.engineer, @m.responsibilities.manager]; relation: "analysis.assignment"; value: "x_assignment.code"; }
+    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.inspector, @m.responsibilities.engineer, @m.responsibilities.manager];
+
+}
+
+view crud "04 / Inspection data access" {
+    data: [@m.responsibilities];
+    format: @f.shared.common;
+    projection { kind: "matrix"; write_data: @m.responsibilities; profile: "matrix.crud@1"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.lot, @m.responsibilities.check, @m.responsibilities.action]; relation: "analysis.access"; value: "x_assignment.code"; }
+    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.lot, @m.responsibilities.check, @m.responsibilities.action];
+
+}
+
+view responsibility_graph "05 / Same assignments as a graph" {
+    data: [@m.responsibilities];
+    format: @f.shared.common;
+    projection { kind: "graph"; profile: "ddn@1"; }
+    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.inspector, @m.responsibilities.engineer, @m.responsibilities.manager];
+
+}
+
+view grouped_bars "06 / Defects — grouped bars" {
+    data: [@m.series];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "group"; }
+
+}
+
+view stacked_bars "06 / Defects — stacked bars" {
+    data: [@m.series];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "stack"; }
+
+}
+
+view percent_bars "06 / Defects — percent bars" {
+    data: [@m.series];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "percent"; }
+
+}
+
+view multiseries_line "06 / Defects — multiseries line" {
+    data: [@m.series];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "line"; arrangement: "overlay"; }
+
+}
+
+view multiseries_area "06 / Defects — multiseries area" {
+    data: [@m.series];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "area"; arrangement: "stack"; }
+
+}
+
+view actual_target "07 / Actual versus target" {
+    data: [@m.targets];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.targets.s0_0, @m.targets.s0_1, @m.targets.s0_2, @m.targets.s1_0, @m.targets.s1_1, @m.targets.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "overlay"; layers: [{ "series": "Actual", "mark": "bar" }, { "series": "Target", "mark": "line" }]; }
+
+}
+
+view histogram "08 / Dimension measurements — count" {
+    data: [@m.measurements];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; transform: "histogram"; mark: "bar"; y: "x_record.value"; unit: "mm"; bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3]; normalize: "count"; }
+
+}
+
+view histogram_density "08 / Dimension measurements — density" {
+    data: [@m.measurements];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; transform: "histogram"; mark: "bar"; y: "x_record.value"; unit: "mm"; bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3]; normalize: "density"; }
+
+}
+
+view pareto "09 / Defect priorities" {
+    data: [@m.defects];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.defects.d0, @m.defects.d1, @m.defects.d2, @m.defects.d3]; transform: "pareto"; mark: "bar"; x: "x_record.category"; y: "x_record.count"; unit: "defects"; }
+
+}
+
+view waterfall "10 / Cost-of-quality reconciliation" {
+    data: [@m.cost];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.cost.cost0, @m.cost.cost1, @m.cost.cost2, @m.cost.cost3, @m.cost.cost4, @m.cost.cost5]; transform: "waterfall"; mark: "bar"; x: "x_record.label"; y: "x_record.amount"; step: "x_record.step"; unit: "CAD"; }
+
+}
+
+view boxplot "11 / Machine variation — tukey_1_5" {
+    data: [@m.measurements];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; transform: "boxplot"; mark: "box"; x: "x_record.machine"; y: "x_record.value"; unit: "mm"; quartiles: "linear_r7"; whiskers: "tukey_1_5"; }
+
+}
+
+view boxplot_minmax "11 / Machine variation — minmax" {
+    data: [@m.measurements];
+    format: @f.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; transform: "boxplot"; mark: "box"; x: "x_record.machine"; y: "x_record.value"; unit: "mm"; quartiles: "linear_r7"; whiskers: "minmax"; }
+
+}
+
+view lifecycle "12 / Corrective-action lifecycle" {
+    data: [@m.lifecycle];
+    format: @f.shared.common;
+    projection { kind: "graph"; profile: "state.flat@1"; inputs: [{ "key": "passed", "type": "boolean", "optional": true }]; }
+
+}
+
+view lifecycle_trace "13 / Corrective-action retry trace" {
+    data: [@m.lifecycle];
+    format: @f.shared.common;
+    projection { kind: "graph"; profile: "state.flat@1"; inputs: [{ "key": "passed", "type": "boolean", "optional": true }]; traces: [{ "events": [{ "event": "submit" }, { "event": "accept" }, { "event": "investigated" }, { "event": "verify", "data": { "passed": false } }, { "event": "investigated" }, { "event": "verify", "data": { "passed": true } }, { "event": "close" }], "expected": @m.lifecycle.closed }]; }
+    style { look:neo; }
+}
+
+view decision_unique "14 / Disposition policy — unique" {
+    data: [@m.rules];
+    format: @f.shared.common;
+    projection { kind: "decision"; profile: "decision.rules@1"; records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }, { "key": "score", "type": "number", "min": 0, "max": 10 }]; outputs: ["route", "audit"]; hit_policy: "unique"; coverage: "complete"; analysis_budget: 4096; }
+    select: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];
+
+}
+
+view decision_first "14 / Disposition policy — first" {
+    data: [@m.rules];
+    format: @f.shared.common;
+    projection { kind: "decision"; profile: "decision.rules@1"; records: [@m.rules.high, @m.rules.default, @m.rules.low_pass]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }, { "key": "score", "type": "number", "min": 0, "max": 10 }]; outputs: ["route", "audit"]; hit_policy: "first"; coverage: "complete"; analysis_budget: 4096; }
+    select: [@m.rules.high, @m.rules.default, @m.rules.low_pass];
+
+}
+
+view decision_collect "14 / Disposition policy — collect" {
+    data: [@m.rules];
+    format: @f.shared.common;
+    projection { kind: "decision"; profile: "decision.rules@1"; records: [@m.rules.high, @m.rules.check, @m.rules.audit]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }, { "key": "score", "type": "number", "min": 0, "max": 10 }]; outputs: ["route", "audit"]; hit_policy: "collect"; coverage: "complete"; analysis_budget: 4096; }
+    select: [@m.rules.high, @m.rules.check, @m.rules.audit];
+
+}
+
+view measurement_table "15 / Shared measurement observations" {
+    data: [@m.measurements];
+    format: @f.shared.common;
+    projection { kind: "table"; profile: "table.records@1"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; columns: [{ "key": "name", "label": "Observation" }, { "key": "x_record.machine", "label": "Machine" }, { "key": "x_record.value", "label": "Diameter / mm" }]; }
+
+}
+
+view defect_table "16 / Shared defect counts" {
+    data: [@m.defects];
+    format: @f.shared.common;
+    projection { kind: "table"; profile: "table.records@1"; records: [@m.defects.d0, @m.defects.d1, @m.defects.d2, @m.defects.d3]; columns: [{ "key": "x_record.category", "label": "Defect category" }, { "key": "x_record.count", "label": "Count" }]; }
+
+}
+
+view dashboard_quality "17 / Dashboard Quality" {
+    data: [@m.notes];
+    format: @f.shared.common;
+    projection { kind: "panels"; profile: "panels.composed@1"; columns: 2; panels: [{ "id": "slot0", "title": "Pareto", "row": 0, "column": 0, "view": @pareto }, { "id": "slot1", "title": "Histogram", "row": 0, "column": 1, "view": @histogram }, { "id": "slot2", "title": "Heat Bands", "row": 1, "column": 0, "view": @heat_bands }, { "id": "slot3", "title": "Lifecycle", "row": 1, "column": 1, "view": @lifecycle }]; }
+
+}
+
+view dashboard_operations "17 / Dashboard Operations" {
+    data: [@m.notes];
+    format: @f.shared.common;
+    projection { kind: "panels"; profile: "panels.composed@1"; columns: 2; panels: [{ "id": "slot0", "title": "Grouped Bars", "row": 0, "column": 0, "view": @grouped_bars }, { "id": "slot1", "title": "Waterfall", "row": 0, "column": 1, "view": @waterfall }, { "id": "slot2", "title": "Raci", "row": 1, "column": 0, "view": @raci }, { "id": "slot3", "title": "Decision Unique", "row": 1, "column": 1, "view": @decision_unique }]; }
+
+}
+
+view dashboard_repeated "17 / Dashboard Repeated" {
+    data: [@m.notes];
+    format: @f.shared.common;
+    projection { kind: "panels"; profile: "panels.composed@1"; columns: 2; panels: [{ "id": "slot0", "title": "Pareto", "row": 0, "column": 0, "view": @pareto }, { "id": "slot1", "title": "Pareto", "row": 0, "column": 1, "view": @pareto }]; }
+
+}
+
+view chen_extended "18 / Binary Chen details" {
+    data: [@d.chen];
+    format: @f.shared.common;
+    projection { kind: "chen"; profile: "chen.binary@2"; }
+
+}
+
+view erd_shared "19 / Same entity definitions as cards" {
+    data: [@d.chen];
+    format: @f.shared.common;
+    projection { kind: "graph"; profile: "ddn@1"; }
+
+}
+
+view usecases_extended "20 / Use-case subjects and extension points" {
+    data: [@d.usecases];
+    format: @f.shared.common;
+    projection { kind: "graph"; profile: "uml.usecase@2"; }
+    select: [@d.usecases.inspector, @d.usecases.senior, @d.usecases.review, @d.usecases.record, @d.usecases.escalate];
+    layout { algorithm:grouped; group_by:"kind"; columns:1; gap:130px; }
+    frame subject { scope:@d.usecases.subject; members:[@d.usecases.review,@d.usecases.record,@d.usecases.escalate]; dimension:context; }
+}
+
+view flow_documented "21 / Documented cross-sheet control flow" {
+    data: [@d.flow];
+    format: @f.shared.common;
+    projection { kind: "graph"; profile: "flow.documented@2"; }
+
+}

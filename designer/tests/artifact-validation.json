@@ -1,0 +1,204 @@
+{
+  "scope": "Artifact contracts and prototype evidence; no production Designer acceptance claimed",
+  "passed": 36,
+  "total": 36,
+  "results": [
+    {
+      "name": "Valid JSON Schema: change-plan.schema.json",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Valid JSON Schema: command.schema.json",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Valid JSON Schema: editor-descriptor.schema.json",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Valid JSON Schema: session.schema.json",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Valid JSON Schema: shape-recipe.schema.json",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "editor-descriptor positive fixtures",
+      "pass": true,
+      "details": {
+        "fixtures": 4
+      }
+    },
+    {
+      "name": "command positive fixtures",
+      "pass": true,
+      "details": {
+        "fixtures": 4
+      }
+    },
+    {
+      "name": "shape-recipe positive fixtures",
+      "pass": true,
+      "details": {
+        "fixtures": 1
+      }
+    },
+    {
+      "name": "Missing revision rejected",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Field plus port ambiguity rejected",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Arbitrary command script rejected",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Unknown descriptor widget rejected",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Executable visibility expression rejected",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Recipe cannot ignore explicit endpoints",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "All188 kinds uniquely mapped",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "All109 relation definitions mapped",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "All relation mappings carry actual endpoint contracts",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Simple default property surface",
+      "pass": true,
+      "details": {
+        "maximum": 5
+      }
+    },
+    {
+      "name": "Descriptor basic controls at most six",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Eight navigation groups",
+      "pass": true,
+      "details": [
+        "Analysis",
+        "Data",
+        "Meaning",
+        "Notes & evidence",
+        "People & control",
+        "Process",
+        "Scopes",
+        "Systems"
+      ]
+    },
+    {
+      "name": "Native runtime copied without changes",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "No font files",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "All twenty specification chapters present",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "84 future acceptance cases labeled unexecuted",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Independent reviewers not fabricated",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "31 prototype browser checks completed",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Recorded localhost limitation",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Twelve authored interface screens",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Screens are valid raster files",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Unique HTML IDs: index.html",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Unique HTML IDs: DDN-Visual-Designer-Specification.html",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Unique HTML IDs: prototype/index.html",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Unique HTML IDs: DDN-Designer-Prototype.html",
+      "pass": true,
+      "details": null
+    },
+    {
+      "name": "Review/prototype local links valid",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "All audited baseline files unchanged",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "Runtime probe record has13 actual cases",
+      "pass": true,
+      "details": null
+    }
+  ]
+}

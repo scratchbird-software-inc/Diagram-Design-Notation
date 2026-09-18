@@ -1,0 +1,20 @@
+ddn "0.3";
+module "ddn.usecases.recovery";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object backup "Full backup artifact" {
+        kind: backup;
+        description: "A synthetic backup-artifact definition; test evidence would be a separate assertion.";
+    }
+    object restore "Restore into isolation" {
+        kind: activity;
+    }
+    object target "Restored database" {
+        kind: database;
+        level: instance;
+    }
+    relation r_restore @backup -> @restore { kind: restore; }
+    relation r_output @restore -> @target { kind: write; }
+}

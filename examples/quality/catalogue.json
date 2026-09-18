@@ -1,0 +1,240 @@
+[
+  {
+    "view": "fishbone",
+    "title": "01 / Possible causes",
+    "purpose": "Measured spine and category ribs; Calibration and its subcause appear twice but share identities.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "fishbone_sketch",
+    "title": "01 / Possible causes — sketch",
+    "purpose": "Measured spine and category ribs; Calibration and its subcause appear twice but share identities.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "heat_numeric",
+    "title": "02 / Review score — numeric",
+    "purpose": "Cell values remain visible; no-record is distinct from the known zero. Thresholds are declared policy, not inferred risk scores.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "heat_bands",
+    "title": "02 / Review score — bands",
+    "purpose": "Cell values remain visible; no-record is distinct from the known zero. Thresholds are declared policy, not inferred risk scores.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "heat_categories",
+    "title": "02 / Review score — categories",
+    "purpose": "Cell values remain visible; no-record is distinct from the known zero. Thresholds are declared policy, not inferred risk scores.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "raci",
+    "title": "03 / Quality responsibility assignments",
+    "purpose": "Click an empty cell in Studio to create a source assignment. Remove/update operations preserve rule validation and undo.",
+    "pair": "responsibility_graph",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "crud",
+    "title": "04 / Inspection data access",
+    "purpose": "04 / Inspection data access",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "responsibility_graph",
+    "title": "05 / Same assignments as a graph",
+    "purpose": "05 / Same assignments as a graph",
+    "pair": "raci",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "grouped_bars",
+    "title": "06 / Defects — grouped bars",
+    "purpose": "Multiple series share one scale. Percentage stacks are nonnegative and require a positive category total.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "stacked_bars",
+    "title": "06 / Defects — stacked bars",
+    "purpose": "Multiple series share one scale. Percentage stacks are nonnegative and require a positive category total.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "percent_bars",
+    "title": "06 / Defects — percent bars",
+    "purpose": "Multiple series share one scale. Percentage stacks are nonnegative and require a positive category total.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "multiseries_line",
+    "title": "06 / Defects — multiseries line",
+    "purpose": "Multiple series share one scale. Percentage stacks are nonnegative and require a positive category total.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "multiseries_area",
+    "title": "06 / Defects — multiseries area",
+    "purpose": "Multiple series share one scale. Percentage stacks are nonnegative and require a positive category total.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "actual_target",
+    "title": "07 / Actual versus target",
+    "purpose": "Bars and target lines use compatible supplied units and one y scale.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "histogram",
+    "title": "08 / Dimension measurements — count",
+    "purpose": "Declared unequal-width bins, left-closed except final upper endpoint included. Density integrates to one; counts are not density.",
+    "pair": "measurement_table",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "histogram_density",
+    "title": "08 / Dimension measurements — density",
+    "purpose": "Declared unequal-width bins, left-closed except final upper endpoint included. Density integrates to one; counts are not density.",
+    "pair": "measurement_table",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "pareto",
+    "title": "09 / Defect priorities",
+    "purpose": "Descending category totals and cumulative percentage from the same 44 synthetic observations.",
+    "pair": "defect_table",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "waterfall",
+    "title": "10 / Cost-of-quality reconciliation",
+    "purpose": "Subtotal and total are checkpoints, not additional cost deltas. Expected closing cost: 330 synthetic CAD.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "boxplot",
+    "title": "11 / Machine variation — tukey_1_5",
+    "purpose": "Same observations as the histogram. R7 interpolation and selected whisker convention are displayed explicitly.",
+    "pair": "measurement_table",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "boxplot_minmax",
+    "title": "11 / Machine variation — minmax",
+    "purpose": "Same observations as the histogram. R7 interpolation and selected whisker convention are displayed explicitly.",
+    "pair": "measurement_table",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "lifecycle",
+    "title": "12 / Corrective-action lifecycle",
+    "purpose": "States are not process steps. Same-event outcomes are distinguished by explicit typed guard values.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "lifecycle_trace",
+    "title": "13 / Corrective-action retry trace",
+    "purpose": "The trace is statically replayed through declared transitions. Actions are not executed.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "decision_unique",
+    "title": "14 / Disposition policy — unique",
+    "purpose": "Typed predicates with explicit finite domain analysis. The first-match example intentionally reports one shadowed rule.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "decision_first",
+    "title": "14 / Disposition policy — first",
+    "purpose": "Typed predicates with explicit finite domain analysis. The first-match example intentionally reports one shadowed rule.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "decision_collect",
+    "title": "14 / Disposition policy — collect",
+    "purpose": "Typed predicates with explicit finite domain analysis. The first-match example intentionally reports one shadowed rule.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "measurement_table",
+    "title": "15 / Shared measurement observations",
+    "purpose": "15 / Shared measurement observations",
+    "pair": "boxplot",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "defect_table",
+    "title": "16 / Shared defect counts",
+    "purpose": "16 / Shared defect counts",
+    "pair": "pareto",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "dashboard_quality",
+    "title": "17 / Dashboard Quality",
+    "purpose": "Real child views rendered at readable native scales with scoped IDs and original source provenance. One child-view level is supported.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "dashboard_operations",
+    "title": "17 / Dashboard Operations",
+    "purpose": "Real child views rendered at readable native scales with scoped IDs and original source provenance. One child-view level is supported.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "dashboard_repeated",
+    "title": "17 / Dashboard Repeated",
+    "purpose": "Real child views rendered at readable native scales with scoped IDs and original source provenance. One child-view level is supported.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "chen_extended",
+    "title": "18 / Binary Chen details",
+    "purpose": "Weak owner/partial key, composite attribute tree, multivalued and derived attributes, identifying relation and min/max participant labels.",
+    "pair": "erd_shared",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "erd_shared",
+    "title": "19 / Same entity definitions as cards",
+    "purpose": "19 / Same entity definitions as cards",
+    "pair": "chen_extended",
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "usecases_extended",
+    "title": "20 / Use-case subjects and extension points",
+    "purpose": "Subject membership and extension-point references are checked. Prose conditions remain specifications, not executable predicates.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  },
+  {
+    "view": "flow_documented",
+    "title": "21 / Documented cross-sheet control flow",
+    "purpose": "Annotations are not control nodes. Off-page pairs require explicit matching keys, directions and a continuation relationship.",
+    "pair": null,
+    "scope": "DDN 0.5 bounded profile; synthetic review data. Inspect the specification and diagnostics."
+  }
+]

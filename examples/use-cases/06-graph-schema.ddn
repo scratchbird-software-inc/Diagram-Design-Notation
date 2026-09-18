@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.graph-schema";
+import "formats.ddn" as fmt;
+import "data/graph.ddn" as g;
+
+// Can a relationship have properties of its own?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "06 / Property-graph schema" {
+    data: [@g.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.neo;
+    layout: @fmt.shared.row;
+    select: [@g.model.customer, @g.model.purchased, @g.model.product];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_source": 1, "model.r_target": 2 }; }
+}

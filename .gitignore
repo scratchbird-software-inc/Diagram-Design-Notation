@@ -1,0 +1,33 @@
+# Dependencies / environments
+node_modules/
+__pycache__/
+.venv/
+venv/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs and local reports
+*.log
+core-report.json
+notation/tests/core-report.json
+notation/tests/use-cases-report.json
+notation/tests/validation/
+/release/
+
+# Generated render/build output (notation/dist is deliberately committed)
+rendered/
+site/
+packages/
+*.zip
+
+# Browser-test downloads and artifacts
+tests/downloaded*
+tests/history/
+playwright-report/
+notation/validation/
+examples/use-cases/validation-report.json

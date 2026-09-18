@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.recovery";
+import "formats.ddn" as fmt;
+import "data/recovery.ddn" as r;
+
+// Which artifact is used to construct a recovery target?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "19 / Backup and restore design" {
+    data: [@r.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@r.model.backup, @r.model.restore, @r.model.target];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_restore": 1, "model.r_output": 2 }; }
+}

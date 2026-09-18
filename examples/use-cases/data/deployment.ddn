@@ -1,0 +1,40 @@
+ddn "0.3";
+module "ddn.usecases.deployment";
+import "commerce.ddn" as commerce;
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object shard "Orders / shard A" {
+        kind: shard;
+        level: fragment;
+    }
+    object primary "Primary copy" {
+        kind: replica;
+        level: copy;
+        role: primary;
+        location: local;
+    }
+    object follower "Follower copy" {
+        kind: replica;
+        level: copy;
+        role: follower;
+        location: cloud;
+    }
+    object local "Local SQL service" {
+        kind: service;
+        level: instance;
+        location: local;
+    }
+    object cloud "Cloud SQL service" {
+        kind: service;
+        level: instance;
+        location: cloud;
+    }
+    relation r_part @commerce.tables.orders -> @shard { kind: part; }
+    relation r_primary_fragment @primary -> @shard { kind: realizes; }
+    relation r_follower_fragment @follower -> @shard { kind: realizes; }
+    relation r_primary_host @primary -> @local { kind: placed; }
+    relation r_follower_host @follower -> @cloud { kind: placed; }
+    relation r_replication @primary -> @follower { kind: replicate; delivery: undecided; }
+}

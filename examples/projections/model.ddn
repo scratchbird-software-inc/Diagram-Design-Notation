@@ -1,0 +1,146 @@
+ddn "0.4";
+module "meridian.procurement.review";
+
+// One synthetic procurement model, reused by graph, matrix and time projections.
+data process {
+    object start "Purchase request" { kind: "flow.start"; }
+    object capture "Capture requested items" { kind: "flow.io"; }
+    object approve "Approval granted?" { kind: "flow.decision"; }
+    object order "Issue purchase order" {
+        kind: "flow.process";
+        x_record: { start: "2026-01-05", end: "2026-01-07", status: "Complete" };
+    }
+    object receive "Receive and inspect" {
+        kind: "flow.process";
+        x_record: { start: "2026-01-08", end: "2026-01-12", status: "Complete" };
+    }
+    object invoice "Matched supplier invoice" { kind: "flow.document"; }
+    object post "Post authorized liability" {
+        kind: "flow.subprocess";
+        x_record: { start: "2026-01-13", end: "2026-01-16", status: "Planned" };
+    }
+    object reject "Return for correction" { kind: "flow.process"; }
+    object close "Request closed" { kind: "flow.end"; }
+    relation p01 "Request" @start -> @capture { kind: "flow.next"; }
+    relation p02 "Submit" @capture -> @approve { kind: "flow.next"; }
+    relation p03 "Approved" @approve -> @order { kind: "flow.next"; x_diagram: { branch: "approved" }; }
+    relation p04 "Rejected" @approve -> @reject { kind: "flow.next"; x_diagram: { branch: "rejected" }; }
+    relation p05 "Receive" @order -> @receive { kind: "flow.next"; }
+    relation p06 "Match" @receive -> @invoice { kind: "flow.next"; }
+    relation p07 "Authorize" @invoice -> @post { kind: "flow.next"; }
+    relation p08 "Complete" @post -> @close { kind: "flow.next"; }
+    relation p09 "Notify requester" @reject -> @close { kind: "flow.next"; }
+}
+data roles {
+    object buyer "Buyer" { kind: "analysis.role"; }
+    object manager "Purchasing manager" { kind: "analysis.role"; }
+    object warehouse "Warehouse supervisor" { kind: "analysis.role"; }
+    object controller "Financial controller" { kind: "analysis.role"; }
+}
+data responsibilities {
+    relation order_r "Prepare order" @process.order -> @roles.buyer { kind: "analysis.assignment"; x_assignment: {code:"R"}; }
+    relation order_a "Approve purchase" @process.order -> @roles.manager { kind: "analysis.assignment"; x_assignment: {code:"A"}; }
+    relation receive_r "Accept goods" @process.receive -> @roles.warehouse { kind: "analysis.assignment"; x_assignment: {code:"R"}; }
+    relation receive_a "Own acceptance" @process.receive -> @roles.manager { kind: "analysis.assignment"; x_assignment: {code:"A"}; }
+    relation post_r "Prepare posting" @process.post -> @roles.buyer { kind: "analysis.assignment"; x_assignment: {code:"R"}; }
+    relation post_c "Provide receipt evidence" @process.post -> @roles.warehouse { kind: "analysis.assignment"; x_assignment: {code:"C"}; }
+    relation post_a "Own financial effect" @process.post -> @roles.controller { kind: "analysis.assignment"; x_assignment: {code:"A"}; }
+}
+data schedule {
+    relation order_before_receive "Order precedes receipt" @process.order -> @process.receive { kind: "analysis.precedes"; }
+    relation receive_before_post "Receipt precedes posting" @process.receive -> @process.post { kind: "analysis.precedes"; }
+}
+data schema {
+    object supplier "Supplier" { kind: entity; fields { field supplier_id { key: primary; } field name; } }
+    object po "Purchase order" { kind: entity; fields { field order_id { key: primary; } field approved_on; field total; } }
+    object receipt "Goods receipt" { kind: entity; fields { field receipt_id { key: primary; } field received_on; } }
+    relation supplied_by "Placed with" @po -> @supplier { kind: assoc; }
+    relation receipts_for "Fulfils" @receipt -> @po { kind: assoc; }
+}
+data access {
+    relation access_po "Create and read orders" @process.order -> @schema.po { kind: "analysis.access"; x_assignment: {code:"CR"}; }
+    relation access_supplier "Read suppliers" @process.order -> @schema.supplier { kind: "analysis.access"; x_assignment: {code:"R"}; }
+    relation access_receipt "Create receipts" @process.receive -> @schema.receipt { kind: "analysis.access"; x_assignment: {code:"C"}; }
+    relation access_match "Read receipts" @process.post -> @schema.receipt { kind: "analysis.access"; x_assignment: {code:"R"}; }
+    relation access_post "Read and update orders" @process.post -> @schema.po { kind: "analysis.access"; x_assignment: {code:"RU"}; }
+}
+data dfd {
+    object supplier "Supplier" { kind: "dfd.external"; }
+    object match "Match invoice" { kind: "dfd.process"; x_diagram: {number:"1.0",owner:"Accounts payable"}; }
+    object receipts "Accepted receipts" { kind: "dfd.store"; x_diagram: {number:"D1"}; }
+    object post "Post payable" { kind: "dfd.process"; x_diagram: {number:"2.0",owner:"Financial control"}; }
+    object ledger "Payables ledger" { kind: "dfd.store"; x_diagram: {number:"D2"}; }
+    object treasury "Treasury" { kind: "dfd.external"; }
+    relation a "Invoice" @supplier -> @match { kind: "dfd.data"; }
+    relation b "Receipt evidence" @receipts -> @match { kind: "dfd.data"; }
+    relation c "Matched obligation" @match -> @post { kind: "dfd.data"; }
+    relation d "Authorized posting" @post -> @ledger { kind: "dfd.data"; }
+    relation e "Payment request" @post -> @treasury { kind: "dfd.data"; }
+}
+data classes {
+    object order "PurchaseOrder" {
+        kind: "uml.class";
+        fields {
+            field id "id: OrderIdentifier" { x_member: {kind:"attribute",visibility:"private"}; }
+            field total "total: Money" { x_member: {kind:"attribute",visibility:"private"}; }
+            field approve "approve(actor): Decision" { x_member: {kind:"operation",visibility:"public"}; }
+            field cancel "cancel(reason): void" { x_member: {kind:"operation",visibility:"public"}; }
+        }
+    }
+    object audited "AuditedRecord" { kind: "uml.class"; fields {field version "version: Integer" { x_member:{kind:"attribute",visibility:"protected"}; }} }
+    object repo "OrderRepository" { kind: "uml.interface"; fields {field save "save(order): Result" {x_member:{kind:"operation",visibility:"public",abstract:true};}} }
+    object adapter "SqlOrderRepository" { kind: "uml.class"; fields {field save "save(order): Result" {x_member:{kind:"operation",visibility:"public"};}} }
+    object component "Purchasing service" { kind: "uml.component"; }
+    object package "Procurement" { kind: "uml.package"; }
+    relation base "Generalizes to" @order -> @audited { kind: "uml.generalization"; }
+    relation realization "Implements" @adapter -> @repo { kind: "uml.realization"; }
+    relation uses "Persists" @component -> @repo { kind: "uml.dependency"; }
+    relation dep "Depends on" @package -> @component { kind: "uml.dependency"; }
+}
+data usecases {
+    object buyer "Buyer" { kind: "uml.actor"; }
+    object create "Create purchase order" { kind: "uml.usecase"; }
+    object validate "Validate supplier" { kind: "uml.usecase"; }
+    object expedite "Expedite delivery" { kind: "uml.usecase"; }
+    relation uses "Participates" @buyer -> @create { kind: "uml.uses"; }
+    relation include "«include»" @create -> @validate { kind: "uml.include"; }
+    relation extend "«extend»" @expedite -> @create { kind: "uml.extend"; }
+}
+data requirements {
+    object approval "Authorized purchasing" { kind: "req.requirement"; x_diagram: {code:"REQ-01",text:"A purchase order must be approved by an authorized actor before issue."}; }
+    object matching "Evidence-backed posting" { kind: "req.requirement"; x_diagram: {code:"REQ-02",text:"Posting requires matched receipt and invoice evidence at an approved cutoff."}; }
+    object service "Purchasing command service" { kind: "req.implementation"; }
+    object test "Reject unapproved order" { kind: "req.test"; }
+    relation sat "Satisfies" @service -> @approval { kind: "req.satisfies"; }
+    relation verify "Verifies" @test -> @approval { kind: "req.verifies"; }
+    relation derive "Derived from" @matching -> @approval { kind: "req.derives"; }
+}
+
+data facts {
+    object m1 "Jan observation" { kind: record; x_record: {"month": "Jan", "date": "2026-01-01", "value": 420, "cost": 270, "count": 8, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m2 "Feb observation" { kind: record; x_record: {"month": "Feb", "date": "2026-02-01", "value": 570, "cost": 320, "count": 10, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m3 "Mar observation" { kind: record; x_record: {"month": "Mar", "date": "2026-03-01", "value": 510, "cost": 350, "count": 9, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m4 "Apr observation" { kind: record; x_record: {"month": "Apr", "date": "2026-04-01", "value": 690, "cost": 390, "count": 12, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m5 "May observation" { kind: record; x_record: {"month": "May", "date": "2026-05-01", "value": 810, "cost": 460, "count": 15, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m6 "Jun observation" { kind: record; x_record: {"month": "Jun", "date": "2026-06-01", "value": 750, "cost": 480, "count": 14, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+}
+data rules {
+    object rule1 "Rule 1" { kind: record; x_record: {"condition": "supplier inactive", "action": "Reject with supplier status message", "priority": 1}; }
+    object rule2 "Rule 2" { kind: record; x_record: {"condition": "approval absent", "action": "Request authorized approval", "priority": 2}; }
+    object rule3 "Rule 3" { kind: record; x_record: {"condition": "quantity exceeds tolerance", "action": "Hold for matching review", "priority": 3}; }
+    object rule4 "Rule 4" { kind: record; x_record: {"condition": "all guards pass", "action": "Post with immutable evidence reference", "priority": 4}; }
+}
+data notes {
+    object supplier "SUPPLIERS" { kind: note; description: "Approved suppliers provide invoice and delivery evidence."; }
+    object inputs "INPUTS" { kind: note; description: "Purchase authorization, item quantities and expected receipt."; }
+    object process "PROCESS" { kind: note; description: "Issue order; receive goods; match invoice; post liability."; }
+    object outputs "OUTPUTS" { kind: note; description: "Accepted receipt, approved obligation and audit reference."; }
+    object customers "CUSTOMERS" { kind: note; description: "Warehouse, accounts payable and the treasury team."; }
+    object strength "STRENGTHS" { kind: note; description: "Shared identifiers connect acceptance evidence to accounting."; }
+    object weakness "WEAKNESSES" { kind: note; description: "Supplier outages can delay acknowledgement and matching."; }
+    object opportunity "OPPORTUNITIES" { kind: note; description: "Publish purpose-scoped events for reconciliation."; }
+    object threat "THREATS" { kind: note; description: "Duplicate delivery, stale approval and unknown payment outcomes."; }
+    object journey "ACTOR EXPERIENCE" { kind: note; description: "Clear validation feedback and an actionable recovery path."; }
+    object verification "VERIFY" { kind: note; description: "Reconcile quantities and values at a named source cutoff."; }
+    object review "REVIEW NOTE" { kind: note; description: "This sample is a diagram/contract demonstration, not an implemented purchasing application."; }
+}

@@ -1,0 +1,36 @@
+(* DDN 0.5 syntactic core. Context and property restrictions are in spec/01-language.md.
+   Whitespace/comments are skipped between terminals. All files are UTF-8. *)
+document       = "ddn", string, ";", "module", string, ";", { import }, { top } ;
+import         = "import", string, "as", identifier, ";" ;
+top            = data | format | view ;
+data           = "data", identifier, [ string ], block ;
+format         = "format", identifier, [ string ], block ;
+view           = "view", identifier, [ string ], block ;
+block          = "{", { member }, "}", [ ";" ] ;
+member         = property | declaration | targetDeclaration | group ;
+property       = identifier, ":", value, ";" ;
+declaration    = identifier, identifier, [ string ], [ endpoints ], ( block | ";" ) ;
+targetDeclaration = ( "place" | "route" ), reference, block ;
+group          = identifier, block ;
+endpoints      = reference, "->", reference ;
+reference      = "@", identifier, { ".", identifier } ;
+value          = string | quantity | number | reference | atom | array | record ;
+array          = "[", [ value, { ",", value }, [ "," ] ], "]" ;
+record         = "{", [ entry, { ( "," | ";" ), entry }, [ "," | ";" ] ], "}" ;
+entry          = ( identifier | string ), ":", value ;
+atom           = identifier ;
+quantity       = number, unit ;
+unit           = "px" | "pt" | "mm" | "cm" | "in" | "ms" | "s" | "min" | "h" | "d" | "%" ;
+identifier     = ( letter | "_" ), { letter | digit | "_" | "-" } ;
+letter         = "A" … "Z" | "a" … "z" ;
+digit          = "0" … "9" ;
+number         = [ "-" ], ( "0" | nonzero, { digit } ), [ ".", digit, { digit } ], [ exponent ] ;
+nonzero        = "1" … "9" ;
+exponent       = ( "e" | "E" ), [ "+" | "-" ], digit, { digit } ;
+string         = '"', { jsonStringCharacter | jsonEscape }, '"' ;
+lineComment    = "//", { characterExceptLineEnd } ;
+blockComment   = "/*", { characterExceptClosingComment }, "*/" ;
+(* Strings use JSON escapes; surrogate pairs must be valid. Comments do not nest.
+   The maximal-munch lexer recognizes -> before punctuation and adjacent numeric units.
+   The generic declaration production is narrowed by legal child types in the specification.
+   Endpoint syntax is legal only on relation declarations in the core. *)

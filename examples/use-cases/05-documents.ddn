@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.documents";
+import "formats.ddn" as fmt;
+import "data/documents.ddn" as d;
+
+// What is embedded rather than independently stored?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "05 / Nested document structure" {
+    data: [@d.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@d.model.profiles, @d.model.contacts, @d.model.contact];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_a": 1, "model.r_b": 2 }; }
+}

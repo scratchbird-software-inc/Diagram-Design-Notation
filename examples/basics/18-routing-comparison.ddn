@@ -1,0 +1,31 @@
+ddn "0.3";
+module "ddn.examples.routing-comparison";
+import "shared.ddn" as shared;
+data model {
+ object scope "Shared definition" { kind: context; }
+ object logical "Logical view" { kind: dataset; }
+ object physical "Deployment view" { kind: dataset; }
+ relation a "Same model, first view" @scope -> @logical { kind: assoc; }
+ relation b "Same model, second view" @scope -> @physical { kind: assoc; }
+}
+format policies {
+ layout branch { algorithm: tree; root: @model.scope; hierarchy: [assoc]; gap: 250px; row_gap: 120px; }
+ publication screen { size: content; fit: none; minimum_text: 8pt; overflow: error; }
+ legend keys { mode: numbers; keys: { a: 1, b: 2 }; placement: right; width: 300px; }
+}
+view orthogonal "Orthogonal / sharp corners" {
+ data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
+ layout { routing: orthogonal; }
+}
+view straight "Straight / direct segments" {
+ data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
+ layout { routing: straight; }
+}
+view bezier "Curved / broad cubic branches" {
+ data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
+ layout { routing: curved; curve: bezier; curve_tension: 0.5; }
+}
+view rounded "Curved / softened route corners" {
+ data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;
+ layout { routing: curved; curve: rounded; curve_radius: 36px; }
+}

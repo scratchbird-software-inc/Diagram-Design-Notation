@@ -1,0 +1,1134 @@
+{
+  "patch": "ddn-endpoint-ordering@1",
+  "runtime": "0.5.0-draft.2",
+  "base": {
+    "baseArchive": "ddn-0.5-field-guide-complete.zip",
+    "baseArchiveSha256": "84822fca9656c39dafde2dcad482d913bd7a2a1ff5b06fb744034d440423abcb",
+    "originalRuntimeSha256": "4b4fc865aa29759c10250933b242e6dd66226b722b224a04532bd3dfe5b87561",
+    "patchedRuntimeSha256": "05ba94e1a9add994e16523f2b0f862b0b5dc3c733e293987aa287f1c6cc1585d",
+    "unchangedDdnSourceFiles": 323,
+    "allExistingDdnSourcesUnchanged": true,
+    "updatedEmbeddedRuntimePages": [
+      "dist/editor.html",
+      "enterprise-review/index.html",
+      "field-guide/DDN-0.5-Field-Guide-Studio.html",
+      "field-guide/portable.html",
+      "live/portable-editor.html",
+      "live/portable-gallery.html",
+      "projections/portable.html",
+      "quality/portable.html",
+      "release/index.html",
+      "session-bootstrap/index.html",
+      "use-cases/index.html",
+      "use-cases/portable-catalogue.html"
+    ]
+  },
+  "replaceAtProjectRoot": true,
+  "files": [
+    {
+      "path": "README.md",
+      "beforeSha256": "d408331939cd5185d84751a56084a41768b1214d8b00775bf36210f3794d34eb",
+      "afterSha256": "ef7932afe9dd730aea06ab8eddc777f4a9b82f5363918b0d9030d62bf7a081b8"
+    },
+    {
+      "path": "ROUTING-PATCH.md",
+      "beforeSha256": null,
+      "afterSha256": "af76fea2baaaf1a8bcc3cb6db9942798aeff440fd10d3003d2463b2a705c2a33"
+    },
+    {
+      "path": "dist/ddn.d.mts",
+      "beforeSha256": "820d40d16cb539f3bce32dd5beec92066dfcab286b239a2a78fedc4dca2f46f2",
+      "afterSha256": "2d9193c103dc92b5bea236dda6aecf635985f075443a9b18d948907d95bd08e6"
+    },
+    {
+      "path": "dist/ddn.d.ts",
+      "beforeSha256": "820d40d16cb539f3bce32dd5beec92066dfcab286b239a2a78fedc4dca2f46f2",
+      "afterSha256": "2d9193c103dc92b5bea236dda6aecf635985f075443a9b18d948907d95bd08e6"
+    },
+    {
+      "path": "dist/ddn.global.js",
+      "beforeSha256": "4b4fc865aa29759c10250933b242e6dd66226b722b224a04532bd3dfe5b87561",
+      "afterSha256": "05ba94e1a9add994e16523f2b0f862b0b5dc3c733e293987aa287f1c6cc1585d"
+    },
+    {
+      "path": "dist/editor.html",
+      "beforeSha256": "17f5142c460a5173dcdbaa88431a6481d1bacb72f3386f156b04dcbd3f8a5ca1",
+      "afterSha256": "c2fe71e06937fd77c10823f946e1c8d452403d892416a795b1d2cc00bf5b1c93"
+    },
+    {
+      "path": "enterprise-review/index.html",
+      "beforeSha256": "382300f928729ca5cea7454ee81862fcc99c9e96eae38ad7c7786a5c8ebc9bcb",
+      "afterSha256": "3492d38c96bb7108add35d8d5e94788a66ce3a9bd5bde77438065c036f886d7a"
+    },
+    {
+      "path": "field-guide/DDN-0.5-Field-Guide-Studio.html",
+      "beforeSha256": "7a5c9b55a614d3b11ac8e09a5c916ef0e977b9139554a0028e3cc665c713d88d",
+      "afterSha256": "368bcd1d93f78e110c3d7d8a70781152c6c0bf7b15119dfde73b45dd296527fa"
+    },
+    {
+      "path": "field-guide/FIELD-GUIDE.md",
+      "beforeSha256": "bcf771bcc5d60f7e6845e674ea9cb5ca27a9810bc6f24e538128557ad073ea0b",
+      "afterSha256": "2eef8d5cc4a66adfb5e4df8ed1459c5d13419c0bbb5f6bb55682ffff2127a211"
+    },
+    {
+      "path": "field-guide/FINDINGS.md",
+      "beforeSha256": "0e42d19204b13f5294c8d3fd35b9f5f40549c99ca5a528f035309b74986a1542",
+      "afterSha256": "ff5984185417dc889ad6f303ffdbe564d811cfcacad6446b5bca25615205e092"
+    },
+    {
+      "path": "field-guide/VERIFICATION.md",
+      "beforeSha256": "81e8c9ca26fc199f8768984078e7bd042ff96daeeb6362634e9d897e25f82be4",
+      "afterSha256": "24f9e491c84e93cc0053534353005d48335f488e3e7fe49278463fae5451cbb8"
+    },
+    {
+      "path": "field-guide/assets/guide-data.js",
+      "beforeSha256": "97251689750f3cd56915bdc9e640d0cf40180266f836e62b5663785d3d9a3fb8",
+      "afterSha256": "41f99241e849f385df393129987c98b9ef4f94b21df5f7a4fa86cfb7f0cb77fd"
+    },
+    {
+      "path": "field-guide/catalogue.json",
+      "beforeSha256": "3fe78a5304890e6b664e79b6a454b8c6f4dc47bbdc72133101c370bc42cc6faf",
+      "afterSha256": "71dc74ce11c386fd941189be5fa113f6376d6e87c4884ee1e6323fb06cf41a82"
+    },
+    {
+      "path": "field-guide/coverage.json",
+      "beforeSha256": "25a7249d354d40fa6dcb5994f489f5391dbf57bcb7ab1d9e91fcf0f2af08fe1a",
+      "afterSha256": "f10ec763983b48a863a00c552b2a629f46b53e9510f9de702fdc91a612382c38"
+    },
+    {
+      "path": "field-guide/example-index.json",
+      "beforeSha256": "f58c969256a322843ec2e85b2364683a31439d9e2d3e4afc5d9d3ab0f5ad7c82",
+      "afterSha256": "2df8fd4e7e2f65adbf7500f75de6f1c524012099ef4151c41216d257ec32ea67"
+    },
+    {
+      "path": "field-guide/index.html",
+      "beforeSha256": "d557960e805751b522a52507e62d8f7362edc900ab36dbe702b95eb8c6048f14",
+      "afterSha256": "493d9a2203bc4beb587d8cc6d5a4c642f3597928b06f59964bf705a2b26292dc"
+    },
+    {
+      "path": "field-guide/lessons/actual-target.html",
+      "beforeSha256": "8b1bbc0b7aaa2f53ec20874704b026e72f10e3e55284f18abbda7f8f5521eba5",
+      "afterSha256": "ec95d282a9eeca02bc681e6ccfb2fdda62c9c08b394febe3832b0e620fd3de7b"
+    },
+    {
+      "path": "field-guide/lessons/area.html",
+      "beforeSha256": "36b5e492780b6f0b50bb06574c6aa4b2e928c9955e93893f0d0bc195afbc2494",
+      "afterSha256": "04cab3000987e648ab8ec566de60b1f3417c7db4dd9e63753be31876837d3931"
+    },
+    {
+      "path": "field-guide/lessons/audit.html",
+      "beforeSha256": "9974e69db933079582c120fc53d286bc6837d92f8a52eac0adc0d7582f4e6936",
+      "afterSha256": "9ffc37d61a2ee9e8e2e59a0f9e133f7a9dca8e9ce543ca07b0611e23726585b6"
+    },
+    {
+      "path": "field-guide/lessons/bar.html",
+      "beforeSha256": "8762a9fb3ecf4efd8c418ae68bb26e4653678afa147663b7344943f0ee083428",
+      "afterSha256": "cd4985fdf05caea98c97b0651ed7c601e1f702ee631d6439ca1a4422b0ea9664"
+    },
+    {
+      "path": "field-guide/lessons/bitemporal.html",
+      "beforeSha256": "c1b454761df9cad40b6bf37a445c952ee71a2c759d43de6a0d3993bf7c6da8d2",
+      "afterSha256": "cc9ecbc0c477ed2838db7c27f7846005e0e3b7b6d68a486f813465d7a6b39c1b"
+    },
+    {
+      "path": "field-guide/lessons/boxplot.html",
+      "beforeSha256": "dc5fe15e4e422f1fc81ed0f4a5b5f2439316880a5da6d003d28b00425756359d",
+      "afterSha256": "58bf25601951866c3d88b74b3ddfade4028bbafeebac86576c718087e406be74"
+    },
+    {
+      "path": "field-guide/lessons/business-erd.html",
+      "beforeSha256": "1f13829c2ea443c30e3a597b83a10d92aadaee32bd7ad47e1bea7593a9a40bbf",
+      "afterSha256": "659d0d2107eead088faef27d72d4fa4f099909e174cdfd48d0ae635e0d8701e4"
+    },
+    {
+      "path": "field-guide/lessons/c4-components.html",
+      "beforeSha256": "945bdf90aea4f216c87afb8e75c67662535c0abcbf36f754f2ea63aee3e13c5d",
+      "afterSha256": "c99bcd686d42a3c458afdcd8a3906e369a116dd2e36da7348001665c7588c295"
+    },
+    {
+      "path": "field-guide/lessons/c4-containers.html",
+      "beforeSha256": "8e05a1cc482b24bdaae9e9d5b9e1775086ff9fcdc31e6dbdb7f42e86717dd845",
+      "afterSha256": "5bdea13832de5769634bea550128625d51413f75cce7e91350fe8f7246d3c213"
+    },
+    {
+      "path": "field-guide/lessons/c4-context.html",
+      "beforeSha256": "a391bc705b879d82bcc6caf03674ca1801c6ac6aead874b93c111f997dd17acc",
+      "afterSha256": "e518752e11fc5c4cbc03242016ef863595a26a740e898abc3dfe08f3fe1abc49"
+    },
+    {
+      "path": "field-guide/lessons/c4-landscape.html",
+      "beforeSha256": "614ce7fc17642ca9bd568537acb2c28015ecef9256de1325026363cad9a96942",
+      "afterSha256": "2f9706004fa92d835ec2d23d411f93a213aa28ea53aa731e5c263b76408d3c66"
+    },
+    {
+      "path": "field-guide/lessons/chen.html",
+      "beforeSha256": "499dec3b78cffffdeeb6c9b4f730c4c416902cf43a536d6081a5b1a6410486bd",
+      "afterSha256": "cfe6c869330b01be5d6f2bab4040fafa56297a065c918543fc72b3a691844ed5"
+    },
+    {
+      "path": "field-guide/lessons/class-interface.html",
+      "beforeSha256": "0336d4cbb15d4eaf3d09f761d515aba84b3e6d9b586b3800409b394909e53489",
+      "afterSha256": "7e6ac765780b9bf26ef794061eae2bdf96025659456987887be0eb6de20b4f9b"
+    },
+    {
+      "path": "field-guide/lessons/concept-map.html",
+      "beforeSha256": "ae3ef28b12e9f109ae3f9f066d7159cfa5cf12eeb048fdf7d53e2f149e2ef5f0",
+      "afterSha256": "3d03a8fe4c3bacbcf56dc99a4d65be17c0045fcd98953cb24d0c8b9e3c900dc5"
+    },
+    {
+      "path": "field-guide/lessons/cost-breakdown.html",
+      "beforeSha256": "8240a3304e5985b034a133e96f91443a1ac225fd986b0886c72d8e3d018379ff",
+      "afterSha256": "323d7ac16383fc61f003a4b8466df2c4f10e0f6084361478020f8397b55d3130"
+    },
+    {
+      "path": "field-guide/lessons/crossings.html",
+      "beforeSha256": "320f97dd0df2db367a05025fd42edfa4ec49d0e23390b6d494663f175cd0daef",
+      "afterSha256": "07b43c9a55923c6ba0e82da710d576198b79d0807d024fe76c48f6ec39846faa"
+    },
+    {
+      "path": "field-guide/lessons/crud.html",
+      "beforeSha256": "5d84483ef7f306e1d376e8b711ac53be5b87094b9389e59fc7b83941df056d74",
+      "afterSha256": "e295ab50b45ff7631a9c46784049495ebbe84a25faae74ce51848c9af33f4d82"
+    },
+    {
+      "path": "field-guide/lessons/dashboard.html",
+      "beforeSha256": "96d35490d2d83bb8f1ee115411cb5bef6fd494b1fecfb1557fd3ff8162bc4ef6",
+      "afterSha256": "8e70e3f6d42a4aade40abb7d9f6cd74dbf725c1301362c196a3fbdb42264281a"
+    },
+    {
+      "path": "field-guide/lessons/decision-collect.html",
+      "beforeSha256": "1faa70efee4a945e10b39f83e603d8bad854e7ddc7507e1ad08a6e695815c789",
+      "afterSha256": "de09af77a08ca834cbb0225b9fcb8f625aa4f475a9d340be7bed1b43b943cf98"
+    },
+    {
+      "path": "field-guide/lessons/decision-first.html",
+      "beforeSha256": "487dbdb66c929dfd26562087e60ce289e24b3fdbb54c067cde9f9ec1c48d026d",
+      "afterSha256": "9d04d8021d93c8606b891ec031d96b589aca2d0bca261a301c5e78abfaa12593"
+    },
+    {
+      "path": "field-guide/lessons/decision-table-text.html",
+      "beforeSha256": "42b4b3b01670c5c2b0b0b41ff50b7be4c6912c631424c6906edf65c7a7b05baa",
+      "afterSha256": "f45e311ca605258ee0127212f68dcac74fcc4c1bf6a2730b2caf4651974cdfa5"
+    },
+    {
+      "path": "field-guide/lessons/decision-tree.html",
+      "beforeSha256": "331efadbd871459444a43e162001458df37e987521928ffa6456f412a5fd7e78",
+      "afterSha256": "33db3d0c5f944ba7283975b7c9fcf12e3c6bcaeee0278fe010d3ec2740741309"
+    },
+    {
+      "path": "field-guide/lessons/decision-unique.html",
+      "beforeSha256": "97fd56d3e0964311d0000947593d692cc860227e2ab7de1071811e79f53acf02",
+      "afterSha256": "23eee50e277a631771323b9eaacfa002fd1161c51626467451621044cfcd179e"
+    },
+    {
+      "path": "field-guide/lessons/decomposed-dfd.html",
+      "beforeSha256": "3b80692bf9d183b0726d0ec2b1e50ef5e2024efdf6b81b785c727bf678a8aa5c",
+      "afterSha256": "bd6ec3116e41175b4a6555ce8cc4e1039ca9a55a40f43786769d8cce4376e1be"
+    },
+    {
+      "path": "field-guide/lessons/deployment.html",
+      "beforeSha256": "c83b04feacc443ae4304ad127636ef2402c52b4cc202afa1e05bc5d5e6b22ea6",
+      "afterSha256": "1446249bf1d9417c9c03c712123f37cf611a3667807621a256de6f25b111066c"
+    },
+    {
+      "path": "field-guide/lessons/dfd.html",
+      "beforeSha256": "943a7f41e7439ddca49100d8eeedfbfafcf73665e5de25f6024a26873e8cea2e",
+      "afterSha256": "40b8e6d0867c49f7bd131c6a1e8e31a43536f4f90e00401b2c44b8bfe655d0ba"
+    },
+    {
+      "path": "field-guide/lessons/document-structure.html",
+      "beforeSha256": "82df1d1b205fc21944cd8fcf0b08f606e6bfb1fc0067f571fdaba31c3746c503",
+      "afterSha256": "320a56b3acd6c19486f5879fcc88b6282325bec875c4f7a11a6e4c9913d6b506"
+    },
+    {
+      "path": "field-guide/lessons/documented-flow.html",
+      "beforeSha256": "ac5da9a366e6e75274d07fcac564a19b6a7aa2c4fb1c51edc939def6d762deaa",
+      "afterSha256": "f247c75bbc6894e72ad7435887b6ce137a665fcc6a78d245e29df67f461a106c"
+    },
+    {
+      "path": "field-guide/lessons/domains.html",
+      "beforeSha256": "c4b4d052198d6972360728255b7262b8f17e5b488aff9b20b8f8ab69e25716f2",
+      "afterSha256": "051faef2dfc87a8f2476f31c3c5859cf4f745d50654699559e25e12efaa59c76"
+    },
+    {
+      "path": "field-guide/lessons/donut.html",
+      "beforeSha256": "97663bb07d0c20e64911d1c460d08aa2344318ee5ebb52d3caed97dd1c3c8a5e",
+      "afterSha256": "bac5a2d1f74e7f5d44128a8c00666d72f0c1424bd2a86fc2f90b4d1eb619b804"
+    },
+    {
+      "path": "field-guide/lessons/etl.html",
+      "beforeSha256": "b24173afa93b894f9fe571eff9c9614716fc551ff52565802a195a847f71bc01",
+      "afterSha256": "73c1bada494b6fe8cbbb867ef32cb71f7123e690bcbbd5b04cf8f559285e9551"
+    },
+    {
+      "path": "field-guide/lessons/event-contract.html",
+      "beforeSha256": "aaa314f3a4d0383f3a24635eee6c6e9e7de64d3707c71bbc76be3f5fb4fb7b0a",
+      "afterSha256": "b45aa240196e98ef28867e3a193b92bcaef8382cb8048261358e2af0204eb21f"
+    },
+    {
+      "path": "field-guide/lessons/example-quality.html",
+      "beforeSha256": "707a41e9a31424fc40a84327e5268b17bfceab087bdf69dd35b06e042ea70a31",
+      "afterSha256": "858800bef1858bc86e22ecf9fad85775ab85f08ea153a495bd8bbe42e51885b6"
+    },
+    {
+      "path": "field-guide/lessons/family-tree.html",
+      "beforeSha256": "0f8e44c604ea5c07aa61e85a16289821409ca840841cebefa55587f7a99998e8",
+      "afterSha256": "85184fef5bdbe5806b1422e7cc7c4c150e6d0a1425c32cd8ed7aad2d505d08f4"
+    },
+    {
+      "path": "field-guide/lessons/fields-detail.html",
+      "beforeSha256": "8727f941bd48fceecf0c763eea87642d989ad0ac038ada315cf720b53bb0fa4d",
+      "afterSha256": "cdd53d1782829d100fec36bea8e64ee61f923b2976f14956eae446b3e6633d66"
+    },
+    {
+      "path": "field-guide/lessons/fishbone.html",
+      "beforeSha256": "7b79868be71675e6d09badf95bad44bf2fff2ba9cfe0cbe25057ed72c4eb53e6",
+      "afterSha256": "27b93f5dd9cc9a2f5b0b609ac88f18bc5ba0c549df7411ad3e90da3567a1fa40"
+    },
+    {
+      "path": "field-guide/lessons/five-whys.html",
+      "beforeSha256": "31fc99eb5708b20156292103786e1d10ee9d413c6fe7a8f4cbc038a5a0b76558",
+      "afterSha256": "a39975e637f122320e67848aa2215a5998b400a591661258aab9b874ac37511f"
+    },
+    {
+      "path": "field-guide/lessons/flowchart.html",
+      "beforeSha256": "aca9df1b72b695ee91e9aa68d900a53cc3ba7af5a3d218cfa25b1ce42de2f2c9",
+      "afterSha256": "8c5188d1ce2f565bbf14be38566b1607428cb901695ed9a519c4f832f767cd8c"
+    },
+    {
+      "path": "field-guide/lessons/form-contract.html",
+      "beforeSha256": "3e3ee3ac2d35e8775accaf0a25035ec88a0d37d53c26a861e047aa1d6af65e11",
+      "afterSha256": "de6d812b1b06972d87c9c6c95b13d7e93793b158a9b5cb6abffc6fcb5dacea21"
+    },
+    {
+      "path": "field-guide/lessons/functional-decomposition.html",
+      "beforeSha256": "057201f59a8dd8a60f66b6d96f08713ce502a68ab6629b7095436958aa627db1",
+      "afterSha256": "eed561d2c52dafadada9f241f50b28c5638d5b03da39ab8c9dc6d46d5afb5d9c"
+    },
+    {
+      "path": "field-guide/lessons/gane-sarson.html",
+      "beforeSha256": "3ff7b3c11fdff171b0da0fcfc8c73382f66bde5eefc366112cdc6074bb980426",
+      "afterSha256": "a862bdbc18d267c2f311116689e1c0ad25811a90f3a659280dcf4dd97f8b2c1c"
+    },
+    {
+      "path": "field-guide/lessons/gantt.html",
+      "beforeSha256": "7395d9b720388661efa0c22c6ff6060135c8be45cc804a1226230ac1ced7c2a5",
+      "afterSha256": "9470d14eed4a297b5ae08311becbf6448c487e80f4c09f540e3b1fe0e9db6b77"
+    },
+    {
+      "path": "field-guide/lessons/governance.html",
+      "beforeSha256": "ddfca11fa0361e37a9f393527e207f5c707bd8632cb7a94ca510b63cb0ffc262",
+      "afterSha256": "718c6c1f79534f0761f6b8112f29245648d92d0957305e4b6ebba00b02f8f278"
+    },
+    {
+      "path": "field-guide/lessons/grid-layout.html",
+      "beforeSha256": "6a01d8d4bdcb83860174a3b7a26cdf46ceaf390f896d4fe1cf0904b6fcebe2cd",
+      "afterSha256": "a9afaa7d67366322d659ee6ab9de80be370a0cb8b85e3141a710f0508dd2d02e"
+    },
+    {
+      "path": "field-guide/lessons/grouped-bars.html",
+      "beforeSha256": "c046ba0a4727b5fa199fc57ff532202cdd0a4295e80f5cb2ff34dde83436b99b",
+      "afterSha256": "bdb97c569736976c53578e988dd7440d65adfded44f5c03755ad9995f41fd4e3"
+    },
+    {
+      "path": "field-guide/lessons/heatmap-bands.html",
+      "beforeSha256": "a24d5b57aee7853c137a557a26f7295c733414a4deef962ca1bbba964647803b",
+      "afterSha256": "5599d11242eca842495b28e1a96c36aac9ca3e1b2485fa32c41e55a6cff744a6"
+    },
+    {
+      "path": "field-guide/lessons/heatmap-categories.html",
+      "beforeSha256": "5d78ace431c1ba86876254b637c08fc260a2e50a853bc61fc032754e81b2b3f4",
+      "afterSha256": "29e093270ed4df15e1689e7a8c8748ab17e23b0b3e5cb727f9ba1b5ab44d3c4f"
+    },
+    {
+      "path": "field-guide/lessons/heatmap-numeric.html",
+      "beforeSha256": "00428df584dc874ae072611a5149d224d63e21363a19f15d1d47820280786714",
+      "afterSha256": "e642ab3c0104b5e1f1615b1d8425c38458ffe2e2b5665b94ab2530728aa46377"
+    },
+    {
+      "path": "field-guide/lessons/histogram-density.html",
+      "beforeSha256": "39eb75639c2ca07ec0b59fe5f0cff076036a183a51bb2cfab93415209bcbce68",
+      "afterSha256": "db85eeb73dd1a1a7bf1e7699c9c96b60213238fc72e85e2084e6de8e79943b50"
+    },
+    {
+      "path": "field-guide/lessons/histogram.html",
+      "beforeSha256": "64ce67c4870c14370f292d1e6dff83d74c02db8c6689f16cfabbd7fdd10f4a32",
+      "afterSha256": "4ec21d0cb7f4c963f9a56c0162dd14b3863cfa2e9ff3818e9364adc646401897"
+    },
+    {
+      "path": "field-guide/lessons/inline-view.html",
+      "beforeSha256": "53cb8acfa322aeb4cdfe64aca8143b799d3c30b2845554d23a2fb8ca88491574",
+      "afterSha256": "08e80c00ade4851ef31f90b1ea11286efdd3f6e1cb1152126510badaa5e658d5"
+    },
+    {
+      "path": "field-guide/lessons/journey.html",
+      "beforeSha256": "07c09a556a3975f5353241e2b622f25aa7dee21df78a2cb5c78ea3aa9c30af17",
+      "afterSha256": "1451edaabca307cfcab9c2436d8f35cb23ea87abcf3c1e2c096f98a823f73da2"
+    },
+    {
+      "path": "field-guide/lessons/key-value.html",
+      "beforeSha256": "99eab35f22fad0393a04edfc317c1f6a20b07cf8a4560e953a58b9321d85d1c1",
+      "afterSha256": "d8df5dd8fcb4afbf4158e51298f5a92438c339d693fc556a051dfb6a25629a01"
+    },
+    {
+      "path": "field-guide/lessons/lifecycle-trace.html",
+      "beforeSha256": "0e547cbdd2f168d4a427952ee8f749d95976d0082b4b8ae4f969694d3d9c1233",
+      "afterSha256": "b364f32f84319701b882223cbf854adc3a36a785b2f14fab7a7cd2f1c74e23db"
+    },
+    {
+      "path": "field-guide/lessons/lifecycle.html",
+      "beforeSha256": "a61f46431ae40f5b20ba8e520b6bae588c8e0eee563751b66caea9f4c9836392",
+      "afterSha256": "3663fac26b9123a93126b8bcd253279d143fb0f6f20db1f0ff3856fd81014abe"
+    },
+    {
+      "path": "field-guide/lessons/line.html",
+      "beforeSha256": "52e21a30afbbdb630ec18622b054fc1b9714fe728084343064530d456b206a39",
+      "afterSha256": "af2dd6dec51b596b7d1d85b89f8127b09ab35b3ae1ac085b24c1afce93691eea"
+    },
+    {
+      "path": "field-guide/lessons/lineage.html",
+      "beforeSha256": "df441c5e9abe95b34b11ee2b24a4291b2e4f9c107cef0d879c392af3db2f82f8",
+      "afterSha256": "003a2b2f5875e2e6151f3b7191c865bd0008068ea475c1397b0f6d45daf556a6"
+    },
+    {
+      "path": "field-guide/lessons/linked-views.html",
+      "beforeSha256": "e69502b16fbf6f88d4cf847f11bed6a029f742e09416acd226b72febacdd62f7",
+      "afterSha256": "786d029a91ddea25c445cdbe737a9f3e61b090d2e2e9cc65d3b961cd4e67a504"
+    },
+    {
+      "path": "field-guide/lessons/migration.html",
+      "beforeSha256": "efe090751224d6bcdc2547ac7386ce7c8bdd320f025319678160138b2f4c63ee",
+      "afterSha256": "77f77b93bcdf342a19df4b205d40f8d9e94bad49dee52f37c6915407b9b67dc1"
+    },
+    {
+      "path": "field-guide/lessons/mindmap-layout.html",
+      "beforeSha256": "8ad092622af222de676e6b24a0b073660bbe1550dc74e36b100e4384727d79ba",
+      "afterSha256": "4982ff560a3f6c4fc3afffcc05402bef3370bf1a085bbfeedb4f022a4cd67f14"
+    },
+    {
+      "path": "field-guide/lessons/mindmap.html",
+      "beforeSha256": "6c79c251128d10586514b9f1a5d99f3ea77898143461415b57f82fce472a3cb2",
+      "afterSha256": "72d6d728eabce4cb4b54c11a65e6eaed70061e01626a89bcaaede854d5b58c72"
+    },
+    {
+      "path": "field-guide/lessons/multi-area.html",
+      "beforeSha256": "40821d66935c8965bad3483ac257a1a67b00047113758ead0b837e4b1e89738f",
+      "afterSha256": "e393b7cbebde4d755ea58bb8754356353ef97f2594edc51e8075229246aba4db"
+    },
+    {
+      "path": "field-guide/lessons/multi-line.html",
+      "beforeSha256": "ad357c07adfff670c6697750827a5de3cc0ba8174ee477ce8fafc5fedcc975c4",
+      "afterSha256": "b4008c988ffd02e876e64e95d674465484acc2f46d95777fa259849199e7b1e7"
+    },
+    {
+      "path": "field-guide/lessons/namespaces.html",
+      "beforeSha256": "0bb44384fc8dece78d003bd63f2d7326c3feb166d5c9214e46262c20534ccc6e",
+      "afterSha256": "39e565d23f381808c478be4316562def5928d7b20ac21c43f16e0ba6c7ac79dd"
+    },
+    {
+      "path": "field-guide/lessons/nested-fields.html",
+      "beforeSha256": "2467d212cd77b0093f4ab544a458f4fbe22e6652669caab14034ad1ff7a4508f",
+      "afterSha256": "a3f54359aa005eaff3ee0ffeba9c9e047f03175eaa63f00bc1d1bd20bb670846"
+    },
+    {
+      "path": "field-guide/lessons/network.html",
+      "beforeSha256": "4709a41aa3c5142c3789d0d3416fe5962a27c6917f6ad1e1a0218be69dc99ccf",
+      "afterSha256": "e95dabf231f880f7ae5ce54ff3ffe19df7550dcd9102c8b5edb348106d6aa461"
+    },
+    {
+      "path": "field-guide/lessons/night.html",
+      "beforeSha256": "7f18bc5ca979a75efaca1ab335673adc99a5c5d811fda7467aae16b08636a67b",
+      "afterSha256": "d02aefc5c56bf4ac4198641c6317c065dc75ace87a718299b4847c2b2f5737b0"
+    },
+    {
+      "path": "field-guide/lessons/notation-atlas.html",
+      "beforeSha256": "8b44855b77b028cb85ef78bf5e193de3ed28d3457516bf1444c51b7cede5ea76",
+      "afterSha256": "0f67adc2a21047d2fe6783394653afa6a6cc01add5c8abdb1cebf845157ed061"
+    },
+    {
+      "path": "field-guide/lessons/organization.html",
+      "beforeSha256": "942a3d55f947c1017ee16483e9ec5655d009166821e8d0e6853a288fb07483a6",
+      "afterSha256": "c83c60bed5dc08a40d6b4754a730e9814b51b6e1ce6ef18d1a28c17ae9efb1c0"
+    },
+    {
+      "path": "field-guide/lessons/page-size.html",
+      "beforeSha256": "acd4c8a3b5bea4f6e18cba4718a5020be7f33df230cb42089935703b825f9cba",
+      "afterSha256": "acfe957104c21b546f6e3d57b6519eb5427ca5b3ea66d1e0ca4f8f87cc209452"
+    },
+    {
+      "path": "field-guide/lessons/pareto.html",
+      "beforeSha256": "75498f19a0b2c651fe454e56dfe0717eb3ea574990a300729dc89b496c4e7849",
+      "afterSha256": "62a21c7dfd7f331e7d85e4b766c7a9ee1f4406bc7ecbf130718aaaa603888dc8"
+    },
+    {
+      "path": "field-guide/lessons/pause-placement.html",
+      "beforeSha256": "f2843350fc1e92cb3ebbe2a7af872b86a48e656e71bf58bef817ee78bf6499de",
+      "afterSha256": "a359847fcc4352a903d24d87602cf30845bd767044173f4116297d37d07e2c3e"
+    },
+    {
+      "path": "field-guide/lessons/percent-bars.html",
+      "beforeSha256": "662aa5b5313eee6a9c9421d6ab93391d24351e58a774793999c5b658bc626ac5",
+      "afterSha256": "acb58fdb7b03f5a2bb3db4f1264440544df9a74e8f76261e36e4288fbe76b1a6"
+    },
+    {
+      "path": "field-guide/lessons/physical-model.html",
+      "beforeSha256": "25ae3509b569dcf010f18c7a4ff1ccf8968d9f6b411f51ba85de4c71aa792566",
+      "afterSha256": "76b753652c11729a549478767a585dc23e0b2d818bc19a3463410e1c0c7d49b4"
+    },
+    {
+      "path": "field-guide/lessons/pie.html",
+      "beforeSha256": "135a93a3ac6bf991fe278fc31fe0c964635c86fdd0a70d6b574ecbaa981f7dae",
+      "afterSha256": "965cc84cb71ae735283435f40d4d803f94daba7a8773a01504e955f18216ebbe"
+    },
+    {
+      "path": "field-guide/lessons/pinned-circle.html",
+      "beforeSha256": "5c2b90c58e3370a7a292ddee76a256b51f38fef8e67b3d9c432c4260a2473b79",
+      "afterSha256": "ce779465db239c1e117b9f2aee3d2118da4178b60db25f899de88aaea38f29e6"
+    },
+    {
+      "path": "field-guide/lessons/pinned-grid.html",
+      "beforeSha256": "935806336aabbcef0735f55f68a68c2e3afb4d7b0c0a62e86465a3037cc9f97b",
+      "afterSha256": "6c35fd32c0cf53f9b0f2355ac0440fca4443322c3be80a4fc107930143aee1d2"
+    },
+    {
+      "path": "field-guide/lessons/pinned-layered.html",
+      "beforeSha256": "02c79f16e524aeec3863c7dcca5b5ec6765eaa02c646620169772d80e48edfad",
+      "afterSha256": "8746039b9e99875b7f4f1c084da4b56288a20315938c27d3da8a9976cc40d4e8"
+    },
+    {
+      "path": "field-guide/lessons/pinned-organic.html",
+      "beforeSha256": "89bd7611bd1fe264b4468a8aa8d415b02334bff8878095984db72e57a0f96de7",
+      "afterSha256": "27181058cb7136efadfe6465242d6a79d41442d882ed199444ebf594d8a53530"
+    },
+    {
+      "path": "field-guide/lessons/product-breakdown.html",
+      "beforeSha256": "02fcfd9cf2822b904c74b522f99ef9d32c8c1b5e987b1bf1dad90093c4b66b31",
+      "afterSha256": "86215b0ab52bc2f2560b0473da484edef8c1577176c6f5a93d99b112b8e5d4ea"
+    },
+    {
+      "path": "field-guide/lessons/property-graph.html",
+      "beforeSha256": "34ee7ab18d842fce890138a82a922e39c70b5ca0b79348fe1118bc112a15dac3",
+      "afterSha256": "ad8101508fafbcdb0136ea4b597d8436cf38e49200985bf4b7f348cc3133edb9"
+    },
+    {
+      "path": "field-guide/lessons/raci.html",
+      "beforeSha256": "fda0a86b1bebbc8ccf5a4563eb0a5ab524dd782218eb906680cda2fb9eedc436",
+      "afterSha256": "482048b5692b4a78660d008fc357ad57d0f1d0feb937903e4b66eebbc9ee7605"
+    },
+    {
+      "path": "field-guide/lessons/record-table.html",
+      "beforeSha256": "3174cb804d9b7bf89e2bfce279ed556e5b0d5be1e467bf10aeaf0dad20f590f8",
+      "afterSha256": "79cdf0d2354e175cb2796fd5eabaf210b8a1c0f70635579b9a82742ecceff02e"
+    },
+    {
+      "path": "field-guide/lessons/recovery.html",
+      "beforeSha256": "0c884182f7da021cfaa2081e5ccf701e32e211d1232b511071595b2010c9a9ec",
+      "afterSha256": "a8ff7aaa5988f058dde8a6a083ddeba7e893cee524f8d804b8f97af68ab40f00"
+    },
+    {
+      "path": "field-guide/lessons/reference-atlas.html",
+      "beforeSha256": "3660f97f65242af4e1598ebc7f94cad4ade347a212a51b4b5d3681a672ddfd09",
+      "afterSha256": "debc3ea79922bf18d4a6ccb970a40e7452fbc862aa17459c9cba5ed3ac87a449"
+    },
+    {
+      "path": "field-guide/lessons/relational.html",
+      "beforeSha256": "be78e11f62bd1fc0b3f7682efbec496209a804cc0ebd69deae936c8066dc1e1e",
+      "afterSha256": "56ceb78a67853330a9d5737184e53ce93668a6d92723eb1969ddb8f634cde360"
+    },
+    {
+      "path": "field-guide/lessons/relationship-matrix.html",
+      "beforeSha256": "adefde86b6d93397b280d7f9cd472bb6208f08bbb09d67656b8b59dd92c43ff3",
+      "afterSha256": "470b529c57c3274684a103d6feb883c058b370634ef406b9a3ebf6fd5d854216"
+    },
+    {
+      "path": "field-guide/lessons/report-contract.html",
+      "beforeSha256": "f1281e4a6fac4b2d6e2b0ce854684583cd6a25d2c0409121a49fb8024def3875",
+      "afterSha256": "01f1aa7d78892bd9e27fe7d8057b55269025bf64c39e7ba5885e6b027140272b"
+    },
+    {
+      "path": "field-guide/lessons/requirements.html",
+      "beforeSha256": "378dcecb3a78ffd974a0374a146de4219427366a49af7ab350c752548b19fcfc",
+      "afterSha256": "f5819961fda85dc6f84569f7c528ff9c17c776062ea4ea9fb88b168bcf35432b"
+    },
+    {
+      "path": "field-guide/lessons/resource-breakdown.html",
+      "beforeSha256": "79a775307985cf397197e6efa5dded1cdb7ce28e752e56bbae0fcb185ae0da62",
+      "afterSha256": "0fb4e435554e1d2dbf637ff27c88e629c42abe079c0be0e240aff380416e52c3"
+    },
+    {
+      "path": "field-guide/lessons/risk-breakdown.html",
+      "beforeSha256": "422d77e5a289a8f6cfa8aa554ac3a4fd2ecc9ea15583bd1d85c422cbff357274",
+      "afterSha256": "8f182133e786fd240bef943eb37391522a38cb68cfa83f5278ba903ba12b7632"
+    },
+    {
+      "path": "field-guide/lessons/route-options.html",
+      "beforeSha256": "1ffbe6b11f2e7c2f99df5f4a3322365b28803e4ce123b5aa8caeb5f225bf26a7",
+      "afterSha256": "0c25f46e522c5f0910e0daa06ad2a4da7167ab3d99b317dd69567a2e57c5f7a6"
+    },
+    {
+      "path": "field-guide/lessons/safe-export.html",
+      "beforeSha256": "0c21da087133cf81105eb912128862e85e5ed1eeef3da507c31501c136d794ff",
+      "afterSha256": "8df11d2702a083fa637fd0e73b830f20a06f47acf40a4919cf134f0e90c3ca16"
+    },
+    {
+      "path": "field-guide/lessons/sample-grid.html",
+      "beforeSha256": "3e1daf44a7a5c70df105a79c0f7d7079310454c81dbe179e8b445ce0ff752be9",
+      "afterSha256": "3f7ef39090b7c2d4440cbcafb39f2031cdfc1643cbe1c6d7a0f1532b26c07707"
+    },
+    {
+      "path": "field-guide/lessons/scatter-bubble.html",
+      "beforeSha256": "f1c1b7446913cc910dcbc1197357dec2e85c96068ab6de312967660b75730bc0",
+      "afterSha256": "41aab3b6ae3244789b3c57a69d60565a5aaf4f4409dd1b8546f7acc6f1733bef"
+    },
+    {
+      "path": "field-guide/lessons/security-boundary.html",
+      "beforeSha256": "de4541e2ebb1fae23aa7b7045dffdeab41b49b8606bf132f1da8272e21317d0b",
+      "afterSha256": "5d0e5ab2ab2019e3eb94ce8a5103d15b5ce801ce39981bc29bfd180afb142b1d"
+    },
+    {
+      "path": "field-guide/lessons/sequence.html",
+      "beforeSha256": "20be27d0d2c05225511ffab3fb3c5574d4b07007c4976ecf26f97fd8cab97d1c",
+      "afterSha256": "9a04e37a916c61524efec61226e8f26506f612ffda0c39306e2b09f20104e8c0"
+    },
+    {
+      "path": "field-guide/lessons/session-state.html",
+      "beforeSha256": "8b38d07d389e0b05ce86ccde2b2db86a45f960b6fd4b06bb13cf776ce5007df6",
+      "afterSha256": "db2b9e56ed249ae969dfd22bd5dc8e58340b5a57a6665011388e88402b6e3d0f"
+    },
+    {
+      "path": "field-guide/lessons/shards-replicas.html",
+      "beforeSha256": "c5915178b05e7b1c9143d2bcd603a924cf1027996323d91e98e3fa2a11ea9de3",
+      "afterSha256": "d3ff7328a157140d22f76713fa1e588507f6d8b0c23d6180b95ca07e3e90f750"
+    },
+    {
+      "path": "field-guide/lessons/sipoc.html",
+      "beforeSha256": "0f4d8adf9263b75e5898bfb4cc292b0453cbc2f6c3d7d40c9f365c7b86a5d99a",
+      "afterSha256": "a5d7cb709c3b61d895fa66c5e8c826726e6d8f47e5cec883062448e0f749b72e"
+    },
+    {
+      "path": "field-guide/lessons/sitemap.html",
+      "beforeSha256": "f612344e61b9a0d6c0469d853496b74f7bdcdbc408f205564b7bde168eb9e898",
+      "afterSha256": "0d83d5a18403dc1c6485f8704dce2edc8a2082e3999d4a854426d429e5582200"
+    },
+    {
+      "path": "field-guide/lessons/sql-dependencies.html",
+      "beforeSha256": "1ef395cf8f29198532cb07b4715095b6d0b3d6de380185a193654583c4fc7e07",
+      "afterSha256": "fef60a66c5a5d85b878ad2e37a0350e52fdda4386c476edaff7914022f99bf93"
+    },
+    {
+      "path": "field-guide/lessons/stacked-bars.html",
+      "beforeSha256": "a723f7c76c281c76784a271c2973343f5a2df39a6a97ad6c77d19130b80042c6",
+      "afterSha256": "938d5d607dfbc7b45eb9bd400e98929bf8060da4fdebbfe5dbc5e3c9b140c4ad"
+    },
+    {
+      "path": "field-guide/lessons/star-schema.html",
+      "beforeSha256": "9e0d5f90e5349b86b9381dcc74db51ed080c35ea978929dbde3cb0060c595b46",
+      "afterSha256": "cebeb084a7fab918deee2ddac22d658488d9219c0e7f43a2f8e683db616f4976"
+    },
+    {
+      "path": "field-guide/lessons/streaming.html",
+      "beforeSha256": "f68a75c92f2c9c8019bb28e43af72cd0eea2f62a55a06ec303e63dd592c1bb71",
+      "afterSha256": "72025a262efac370f2e9c492edbab7493b61c04bb948519c1f3014c617961b14"
+    },
+    {
+      "path": "field-guide/lessons/style-looks.html",
+      "beforeSha256": "fe728e41c843fca919a9980182a652517f506420eac2bf0a4439f9a1794ad015",
+      "afterSha256": "8051025c80f81f150b3d30ca60738e0f1ff128172184d5cb996db1ac04fe08ed"
+    },
+    {
+      "path": "field-guide/lessons/swimlane.html",
+      "beforeSha256": "ef90ff22a02f6fb655137fdceb6f4cbd809fc761e4ccb09f9b438115b675fc32",
+      "afterSha256": "5e86d445a8f01906e4f43cda4f281bc551d2613f46ca8841dee8764d047979b2"
+    },
+    {
+      "path": "field-guide/lessons/swot.html",
+      "beforeSha256": "919550e7e69243a83c25dfcee6241fc78d87e1f6e2f55a0cfac5e931a3644005",
+      "afterSha256": "07d4cead43b717d41fd9336be1bcf77184b307e9842e1698af166c0f59e114f1"
+    },
+    {
+      "path": "field-guide/lessons/time-series.html",
+      "beforeSha256": "7db9c4e59564c3cb1234f4fd590dc9bc7c4ec8480381bdedbdb8025272547170",
+      "afterSha256": "f909564ab685f62111a83198d2672adb564f2ea99495704a5d279e0c4dcf7927"
+    },
+    {
+      "path": "field-guide/lessons/timeline-roadmap.html",
+      "beforeSha256": "04ccc6b07b9949445b35786b6fe2d63eef37302f0726095bba965104bd7be974",
+      "afterSha256": "0792c418d2eb058780f710f37a3bd65fad15b3d9a7ff6b001ab3b580f0e4ca78"
+    },
+    {
+      "path": "field-guide/lessons/usecases.html",
+      "beforeSha256": "d13cccfd1e21657138f410e54352fe2ad4490073078b29f1971b85537f8a52a5",
+      "afterSha256": "da6d5f3ce592d75d6c4d2f1eb1ffdd174fa327447da377dc18f7e16478db5df7"
+    },
+    {
+      "path": "field-guide/lessons/user-flow.html",
+      "beforeSha256": "866b5ebee8b5b268ac75fa44d5f79f5b2b2e11cea2786ee12eb331343bc68f76",
+      "afterSha256": "c117f1544553f78e91d5cf20703274aa2eba6b864828f786d8422d86a24f6c5c"
+    },
+    {
+      "path": "field-guide/lessons/vector-lineage.html",
+      "beforeSha256": "51ca45bf1b4867b76cc6eeeea10a54a61ce4c4ed735f6f161a41766ff490b1c7",
+      "afterSha256": "51cf023eaab90b67874ee15efba59dd28dcf14a85fd4c1167f6e33743160aac4"
+    },
+    {
+      "path": "field-guide/lessons/verification-gates.html",
+      "beforeSha256": "b1e4174eae608b745fdb5e2eee8237f297eac994a6ddef53f4279fc00fe1c59f",
+      "afterSha256": "81f89fe3c7f4af4dbfbac22ce29a62854e541c1d565527237225bed200f946f1"
+    },
+    {
+      "path": "field-guide/lessons/waterfall.html",
+      "beforeSha256": "64e023decbc9cb1d9b54974262cb8c07cf75e47443352309c4ced8317cbeb059",
+      "afterSha256": "d3e0f1e337c6c665ced2886d928b17adc02fc75aa0e78be2317a5991f08feab7"
+    },
+    {
+      "path": "field-guide/lessons/whiteboard.html",
+      "beforeSha256": "16c9b6824b26b1bfa22aae6dc98079160267399af0a3626850d3425297f35169",
+      "afterSha256": "dd5f371a46bd6e17a5bd37a21ae92b6715b88b9feface54b2505d9339690de94"
+    },
+    {
+      "path": "field-guide/lessons/wide-column.html",
+      "beforeSha256": "ff3645e415dab3f959dd537c0125f3a3ddbb31b90c6c9db644ffea627819699a",
+      "afterSha256": "fea7cd438298327895f0953a7a8905d2b8ceb91836e9989a0f5e5c1274fca756"
+    },
+    {
+      "path": "field-guide/lessons/work-breakdown.html",
+      "beforeSha256": "a7f07f61b6d900571ffbb232fb0293bff65b7cb8f18e1c8a5b1dbbcc9c421b8a",
+      "afterSha256": "9101a9a04ad29be35e238b3281a8866bc3d604bed9b0a6d8c3dc8c79c9ffae56"
+    },
+    {
+      "path": "field-guide/lessons/yourdon.html",
+      "beforeSha256": "1336cbfea95e220bcbd5f668cb838ae675044da257393f75af1cdb1ae9178c57",
+      "afterSha256": "9722cfbc4908f97b14d8df5d2e42fbc0750eb9c3a692c07c70305211d10ca228"
+    },
+    {
+      "path": "field-guide/portable.html",
+      "beforeSha256": "cc78b2e8fc36e0ddb33a006097cf0fba15329bd23a9181c984e4fab1d083cc7a",
+      "afterSha256": "fa7db3c75d2abd9b8e6956f10c244847544ce40699ec13209d6b21144de71a2d"
+    },
+    {
+      "path": "field-guide/validation/browser.json",
+      "beforeSha256": "cf2aa9c81dfd9fe7694829ead924f6b57890be3722db926621e288e0e2c20d18",
+      "afterSha256": "ba2e6bee15906e5b30ee3072254016a9be84c0241b7796ea4052263930dfad99"
+    },
+    {
+      "path": "field-guide/validation/corpus.json",
+      "beforeSha256": "14c3f6ccee447029cf6d9eff2b833d3f6c998e5ac47c998627d6fc7552826431",
+      "afterSha256": "573ff0c71a247ab46715917db8bae458ee9a3a2b34d08b9e080c83e8d2e8fd1e"
+    },
+    {
+      "path": "field-guide/validation/field-guide-explanation-preview.png",
+      "beforeSha256": "d36852e0f6dbdae30cb0dc9da8a8d344d5b98a14b793c4cbcc81735de1132233",
+      "afterSha256": "1566ae4be237229914672e17ec2c3a6c862ddae0d2c312bf87cfb49896c6acdc"
+    },
+    {
+      "path": "field-guide/validation/field-guide-live-preview.png",
+      "beforeSha256": "b1119ea89c43ba9272625fd34c66538f7020807992845f069cf9908c21eb7869",
+      "afterSha256": "bbf928ca59b886925838b639d18ad5399f7e0f27f6171fb53ca152df24f5d0fe"
+    },
+    {
+      "path": "field-guide/validation/integrity.json",
+      "beforeSha256": "69b932a0b8be0875d1bd54df943170a7935b0f5c7021acfc2989146e9bd788b3",
+      "afterSha256": "ef637b6e9765300aa8f02e7481081dac9c5ce233eead6a2575d3232ee2096763"
+    },
+    {
+      "path": "field-guide/validation/lessons.json",
+      "beforeSha256": "21264e6c8ba681d33338fe49d23ffaf57da1e57eac8ec0d406475d3013c4c5f7",
+      "afterSha256": "86c08bc67fb9e2ce755fbe941e069b7c5b7277a29fef21c03462b69f40bfe61b"
+    },
+    {
+      "path": "field-guide/validation/site-build.json",
+      "beforeSha256": "a1c41906a895cf9ef0b700fd13e986d4265683c4bfa2a6e7849634e355037a4b",
+      "afterSha256": "75aeb06029a6c0e0c046a92bb3bc3c6aad94cf736bd6092b76f2c297d55601b2"
+    },
+    {
+      "path": "live/assets/workspaces.js",
+      "beforeSha256": "caa0ff3156b06b730befc2b5b96a17afb67bf051f939ff240d48d1f539614d31",
+      "afterSha256": "08e507c2a68daabdebc860a2e11ccfc394696f181849b9b0ff59fd0b636e2a16"
+    },
+    {
+      "path": "live/catalogue.json",
+      "beforeSha256": "0dd7355b38efc8a35afbcde82adf1cf1fb4bb3b31cf7aeb03fab28073cd77b51",
+      "afterSha256": "19b660b86eae9e7015d7ed35bdd4d0a343a6c39cf3544bc88259db1dd0551c75"
+    },
+    {
+      "path": "live/docs/INTEGRATION.md",
+      "beforeSha256": "32b0c84048cf682caca31262a46b505d775f00cf9a42f7192c685cb8aef308a1",
+      "afterSha256": "ba8c82d036c7dd3fb8825110f4d517d61bbbf199bc64c0b78bb597d2cf1d828c"
+    },
+    {
+      "path": "live/portable-editor.html",
+      "beforeSha256": "7a5c9b55a614d3b11ac8e09a5c916ef0e977b9139554a0028e3cc665c713d88d",
+      "afterSha256": "368bcd1d93f78e110c3d7d8a70781152c6c0bf7b15119dfde73b45dd296527fa"
+    },
+    {
+      "path": "live/portable-gallery.html",
+      "beforeSha256": "0f3ebd491ebaa4b38e2d87acf8dd67588801f0bd96219ef2655190b52257f472",
+      "afterSha256": "3c860bc3cc79d9dbaff3ae5b4689610ae0a4a9f60b749747f8c19773b211121b"
+    },
+    {
+      "path": "live/src/api.js",
+      "beforeSha256": "2abdb198a49641003fc508cc1c8cde5ea397a5b791de7279d373872b0c3983f7",
+      "afterSha256": "f9dc2db183878398ffe384c0472b8559500ee0df83fb4b94ee664200cb91121d"
+    },
+    {
+      "path": "live/src/public.d.ts",
+      "beforeSha256": "820d40d16cb539f3bce32dd5beec92066dfcab286b239a2a78fedc4dca2f46f2",
+      "afterSha256": "2d9193c103dc92b5bea236dda6aecf635985f075443a9b18d948907d95bd08e6"
+    },
+    {
+      "path": "package.json",
+      "beforeSha256": "454dbf4ee2577517d57a5a09d30d478bd4c313c44be9c59f7f6e27d61046a586",
+      "afterSha256": "07c341fbb3d46246e08d3691f54f03306bdd72e91de7546ec01ed6d97a5a0522"
+    },
+    {
+      "path": "patches/endpoint-ordering/FINDINGS.md",
+      "beforeSha256": null,
+      "afterSha256": "f99589304ed7b7828743d071b9dcb24b0dcfc11e67dd5a3ac59e555b2a560b52"
+    },
+    {
+      "path": "patches/endpoint-ordering/README.md",
+      "beforeSha256": null,
+      "afterSha256": "af76fea2baaaf1a8bcc3cb6db9942798aeff440fd10d3003d2463b2a705c2a33"
+    },
+    {
+      "path": "patches/endpoint-ordering/VERIFICATION.md",
+      "beforeSha256": null,
+      "afterSha256": "72b07fc80fba6b709bce70d09bf7863d3d287ce5ec456a25171951bd0da8ecee"
+    },
+    {
+      "path": "patches/endpoint-ordering/typecheck.mts",
+      "beforeSha256": null,
+      "afterSha256": "77c8ef4b2dc323a6c7b015b5c8482f0e753d20934b0071b21b609026c13e5516"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/accounting-node.scene.json",
+      "beforeSha256": null,
+      "afterSha256": "308b0a349ee480cae507c96481958951a04fdf35258be85e3217a4f8dd734235"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/accounting-node.svg",
+      "beforeSha256": null,
+      "afterSha256": "b7c776665bf3cca912312bc2591b5bc565aaf5f45503ae1366f8ca905a26145b"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/after-accounting.png",
+      "beforeSha256": null,
+      "afterSha256": "c2c1eccf238f449af466bb7b32b5b3857462f412d3de9463bcebd1aadc3097f8"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/after-accounting.scene.json",
+      "beforeSha256": null,
+      "afterSha256": "c06f6702128eee99d3802ea3eb38a331bf3479c4230eff2df8b3e2a9e071dc21"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/after-accounting.svg",
+      "beforeSha256": null,
+      "afterSha256": "3fb041859058ea7575845f1358ca75ee285ae679e4c72a4689449b574fce13c0"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/before-accounting.png",
+      "beforeSha256": null,
+      "afterSha256": "9000f437b4796b7355433d4d5215d9ce83313d02cc2cee592a1303147bb7aa69"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/before-accounting.scene.json",
+      "beforeSha256": null,
+      "afterSha256": "11703242cf19dc2e33b8a73183ae6a3c1e8ef7741a895beda4c32b2b63cc81ef"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/before-accounting.svg",
+      "beforeSha256": null,
+      "afterSha256": "66a2df92e77addd8b4fbbd8e9a0ad1d89fade544d82112118e6963e3fd90850b"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/browser-export.svg",
+      "beforeSha256": null,
+      "afterSha256": "7810959abac18622c2678d9521896da99df3cc98269048557511a7d7c99d35ce"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/browser.json",
+      "beforeSha256": null,
+      "afterSha256": "2d9ad8be98a32600dfe434a762e60800d57e6387f421a73cf5a44ab65293ee5b"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/corpus.json",
+      "beforeSha256": null,
+      "afterSha256": "8eac9d8a21d2bc3790d4ad875a72d67d97c2ff503ede119b499e8cb4336beefe"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/history/field-guide-integrity-preupdate.json",
+      "beforeSha256": null,
+      "afterSha256": "879eff798f687c81577571c5b88ce20f7b01f729777bd2241925dcf53ae110ab"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-field-guide-validation-browser.json",
+      "beforeSha256": null,
+      "afterSha256": "ba2e6bee15906e5b30ee3072254016a9be84c0241b7796ea4052263930dfad99"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-field-guide-validation-integrity.json",
+      "beforeSha256": null,
+      "afterSha256": "ef637b6e9765300aa8f02e7481081dac9c5ce233eead6a2575d3232ee2096763"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-field-guide-validation-lessons.json",
+      "beforeSha256": null,
+      "afterSha256": "86c08bc67fb9e2ce755fbe941e069b7c5b7277a29fef21c03462b69f40bfe61b"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-release-validation-pattern-tests.json",
+      "beforeSha256": null,
+      "afterSha256": "9aba48468b837fb5c278ac65e56ad78244e75be39829d0276632b041249c355c"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-release-validation-projections-tests.json",
+      "beforeSha256": null,
+      "afterSha256": "74377b81bee274613767fb323b8f56cd01a00d8ec4b90c73f87500dcb1376928"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-release-validation-quality-tests.json",
+      "beforeSha256": null,
+      "afterSha256": "5c71bb5f90e474967383462afc8ef3326b462d38baefd6e8939f7cc47ac39e9c"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-release-validation-routing-efficiency.json",
+      "beforeSha256": null,
+      "afterSha256": "9c90f891105b29b5650804e5a3b826c192e2ab3aa0b47714f9047214c4f33d9d"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-release-validation-sdk-tests.json",
+      "beforeSha256": null,
+      "afterSha256": "1c0508541a3dc8529c734c1509d76b06a8ea4dae8344ae84b000b7f9ea1c29f0"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-tests-core-report.json",
+      "beforeSha256": null,
+      "afterSha256": "7012bd1fab30b71edfdca5dd0e20232889a20b839d7206a1afc2f4785cd022f6"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-validation-0.3-regressions.json",
+      "beforeSha256": null,
+      "afterSha256": "3e8744b13b65425a85294d515a1faa8a649b159639220e0e0e7c605988498624"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/rerun-validation-curved-relations.json",
+      "beforeSha256": null,
+      "afterSha256": "d7e02d03413eb4cf7154eeb447a8b0332fb718c2c9f2213a403e2797750bb24c"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/source-and-embedded-integrity.json",
+      "beforeSha256": null,
+      "afterSha256": "7a38d391dd508c9f81928245bb1bcb8c34341703d592ce6777dc1b77823fb5e7"
+    },
+    {
+      "path": "patches/endpoint-ordering/validation/tests.json",
+      "beforeSha256": null,
+      "afterSha256": "1b51528b46635f9b02a16f75e31bdb40530ef03da43882eafc7eb6598b6c807f"
+    },
+    {
+      "path": "projections/portable.html",
+      "beforeSha256": "c26df1d0e1f51feab23e23d831266cdd147701d42fea7634858ce1e14b703a26",
+      "afterSha256": "614fabc0d3a14ba485ad85532ffd4f851a3c9f2a10abe14d62e4164fe32dd536"
+    },
+    {
+      "path": "quality/portable.html",
+      "beforeSha256": "118616bd6dfda6c0c8662db1df676be2ac91965ae0df23d4c5c1a3484a95af78",
+      "afterSha256": "2c9bc27c0feb8e5b1fbe63479909b2f98953cab4c8117c10079ff07b95fbf705"
+    },
+    {
+      "path": "reference/ENDPOINT-ORDERING.md",
+      "beforeSha256": null,
+      "afterSha256": "ddd45903d4cb3ba884c58d53a490d1a83403f7624805c4fa3b96e36f2283c12e"
+    },
+    {
+      "path": "reference/ddn-core.js",
+      "beforeSha256": "3b65e8f7c318e647d220127ba7e995f1a235896bef2574766b91f79cf722f02b",
+      "afterSha256": "536c707326699c0ef5534fe2e08f3a00b763c7b8e070a725ab02bb7f5c643a45"
+    },
+    {
+      "path": "reference/ddn-engine.js",
+      "beforeSha256": "b0556b57c9d1cf945f15ea6b95fbff5c61d014708a581d638223fe93517fc810",
+      "afterSha256": "931e866bfdea76ba270a806fdd841a57f2865b90f52d777258c9d4bf753b1608"
+    },
+    {
+      "path": "reference/ddn-layout.js",
+      "beforeSha256": "c05216ca4820dcdf476fd97e3d3f968c498d7a62b9ae2398c32587e2fcb93131",
+      "afterSha256": "be9101318ae8c4783564c949bb05febe60b5d70bbad7c34ddebcb1403ab735c9"
+    },
+    {
+      "path": "reference/ddn-placement.js",
+      "beforeSha256": "c516dc0e812cb166a82bc994cfb26127073ac6e5df2460584e171d6f26201328",
+      "afterSha256": "272cee6cd801cf775a980fa4c1c768d478a2ddc9b157050e6112549c77711fad"
+    },
+    {
+      "path": "reference/ddn-profile-quality.js",
+      "beforeSha256": "b0f6f5044546612929aa7926447841ec84f33ceeac6c02d89fc7405295236573",
+      "afterSha256": "bd03a425509e7f49b78cb0a9c411a097f1122ba3316d5ed942e3c1035c35887c"
+    },
+    {
+      "path": "reference/ddn-profiles.js",
+      "beforeSha256": "94dbc019b1084381450410fd24e4dcd3da4b0c010d14b1a59b5825360a08065f",
+      "afterSha256": "a7ee31914b9f63cd0115e54523ef5d6d4515436df9ea4f5d6ff5f6b8d4196767"
+    },
+    {
+      "path": "reference/ddn-projection-data.js",
+      "beforeSha256": "ba2a2c922171e1e088dde1b6967f18956ac24e2cc50e274dff5073828a6834aa",
+      "afterSha256": "a8e816018d321aae5a723c8bd58091ecd6314796416b6d81cc923080954ab30b"
+    },
+    {
+      "path": "reference/ddn-projections.js",
+      "beforeSha256": "54586a5a6ffa3319d721b0b5cf010d6aa033867cbe54c6b202c8daeab516caf6",
+      "afterSha256": "faefc5e6adc391cec33d69118648613e0c85a435daa98b10a10496eec84c9c89"
+    },
+    {
+      "path": "reference/ddn-quality-data.js",
+      "beforeSha256": "8ffec3b3ea03d7b920aa0d9979c0d844be073db804941fb641ca28973d7cdf02",
+      "afterSha256": "53bff5feff611bde503d5bae491610246bfc525edcebe5783c696afb0f824ac6"
+    },
+    {
+      "path": "reference/ddn-quality-render.js",
+      "beforeSha256": "8a16e8d9753d76e677c78e196221433e807308084192ed9f9101163cec611d0e",
+      "afterSha256": "801ec5b72973910f108fc6aac57e025c4e8831f3010678425acdc012b53060cc"
+    },
+    {
+      "path": "reference/ddn-shapes.js",
+      "beforeSha256": "fb6db894a7188002204bf7df661d51a32df04dc44c480867b107e8ac41233ada",
+      "afterSha256": "ba02d3f2f0812c95cd9fd763ad117662b8df71b9087a707e92f16ae427700b10"
+    },
+    {
+      "path": "registry/capabilities.json",
+      "beforeSha256": "500fcc7809ad1c9a833094c65f0a50d47c98e6303fc9752b14fbcfdd8428a2d6",
+      "afterSha256": "7fdedf068d6c5ea75b2409372260b781796ef023046b2c9b1567971df677eb31"
+    },
+    {
+      "path": "registry/extensions.json",
+      "beforeSha256": "6ed9ede742d03a063db01ce01c865aa49a60dfd82b70e6768765b86f8a3daeab",
+      "afterSha256": "0039b414f1cbae6ea729be7377c85aa2ae75c82347ae5bdaaf3cd0f2354b9a7e"
+    },
+    {
+      "path": "registry/profile-properties.json",
+      "beforeSha256": "97fec3d7756fdac607c82642f7803cc61f920f2b31835ee2aec8b5eba16c3e88",
+      "afterSha256": "c3dbfe16896cf5260affbca923536cb8e39237d6097b2256300eea41f7b98786"
+    },
+    {
+      "path": "registry/relation-constraints.json",
+      "beforeSha256": "0b32c3472ba07a7dbcf08aaaa1f42fd00bda48fd970bb72ba93c8e381a9095a8",
+      "afterSha256": "841a9d8439a0f1bd3630ccd034fb55130a3eaaccd151d3e7a98f1f62a2ed6f56"
+    },
+    {
+      "path": "release/index.html",
+      "beforeSha256": "78c013fd29866a44d6cde8bf1d4e346ba02beac83d3b046fd86ccafc953a3cea",
+      "afterSha256": "09dbeb05a64638913966d2130f4803a1247cf7eb8dfd338b629a2bd7c6dbf564"
+    },
+    {
+      "path": "release/validation/portable-build.json",
+      "beforeSha256": "db3fe94e14e5e043d39b5b21b702125cf55e946a8a16c068ef536293675434aa",
+      "afterSha256": "268312ba6c5eb3fe993517970fceb9015eee7f7ff27da308ea5e3870beda8759"
+    },
+    {
+      "path": "release/validation/projections-tests.json",
+      "beforeSha256": "426e0242925cdcf6197e2925128c044f782b63c775aea39e4cbbc006fc3781cb",
+      "afterSha256": "74377b81bee274613767fb323b8f56cd01a00d8ec4b90c73f87500dcb1376928"
+    },
+    {
+      "path": "release/validation/quality-tests.json",
+      "beforeSha256": "fa09c70ac2046ba8993c04cb61ccad5ab43ac24e48a6ef822370314d9ea7e562",
+      "afterSha256": "5c71bb5f90e474967383462afc8ef3326b462d38baefd6e8939f7cc47ac39e9c"
+    },
+    {
+      "path": "release/validation/routing-efficiency.json",
+      "beforeSha256": "07fb1f3b3f0be2dd095f5a8bd405c3d2b5c9d202d5bbf57d4f419f139ed4cfa4",
+      "afterSha256": "9c90f891105b29b5650804e5a3b826c192e2ab3aa0b47714f9047214c4f33d9d"
+    },
+    {
+      "path": "release/validation/routing-fix/after.scene.json",
+      "beforeSha256": "39e7791688b790c0343a03533446122a5b605b467ee6f090ba62102277540b83",
+      "afterSha256": "f75e1b938b6ce1abaa9c0cd2b2ce10daaeb358f11b344f6e8b89df506f9a608e"
+    },
+    {
+      "path": "release/validation/sdk-build.json",
+      "beforeSha256": "099ce213a701c5875b8eefb51be03f1ab7ca3e2b089d82862ab2a7e530955bad",
+      "afterSha256": "1553087d1745aaa83e99950a32892cfd4e46f201ac9caf8688dbb414b8296288"
+    },
+    {
+      "path": "release/validation/sdk-tests.json",
+      "beforeSha256": "3c14e214b01bf1d8796e675ac648054b7d0ceed7194755065906545889114db9",
+      "afterSha256": "1c0508541a3dc8529c734c1509d76b06a8ea4dae8344ae84b000b7f9ea1c29f0"
+    },
+    {
+      "path": "session-bootstrap/index.html",
+      "beforeSha256": "449a3891db27f505a0a6d737ec61a96f73372365129b0880fcf3bea5318c6004",
+      "afterSha256": "8f144e9457378fd43731427a1e813a3636048f31b0209e0917b7c89fe108af80"
+    },
+    {
+      "path": "spec/26-local-endpoint-ordering.md",
+      "beforeSha256": null,
+      "afterSha256": "74b02f2d119a265786961a86a3f30dca043d536d50bb34ecbe2d9753931df975"
+    },
+    {
+      "path": "tests/browser-endpoint-ordering.py",
+      "beforeSha256": null,
+      "afterSha256": "30a0eae85f11d02d0bf46b0d5e7663a524780551c2b55403c82ce312289efc8f"
+    },
+    {
+      "path": "tests/browser-field-guide.py",
+      "beforeSha256": "9cd4a849ec0337e971918246cb9b9f5d2b5a0525087bd484d0f8170a5a03704d",
+      "afterSha256": "135bba6b4eb1d83340b2fba0cbeedeaebf9bb25b7a33655f576e050f4f3311bb"
+    },
+    {
+      "path": "tests/core-report.json",
+      "beforeSha256": "6022c6c2087550e4935019d6a02d4fc35c868045a218c759581de2437b7805b6",
+      "afterSha256": "7012bd1fab30b71edfdca5dd0e20232889a20b839d7206a1afc2f4785cd022f6"
+    },
+    {
+      "path": "tests/endpoint-ordering.js",
+      "beforeSha256": null,
+      "afterSha256": "b6a3e437b0be7d81ce60a94e5f96cf7a1b0024b86e24890d06ec7b87ad9b6d85"
+    },
+    {
+      "path": "tests/field-guide-integrity.py",
+      "beforeSha256": "ea80d9d254f3bcd888d4bf3705e0fea9d6e450392af83a9f8eb33ac958b0aded",
+      "afterSha256": "2c7bd98ae67e65993eca7d2fa6037541461bd701a6125853d5cd4a6a0269ecce"
+    },
+    {
+      "path": "tests/field-guide.js",
+      "beforeSha256": "5679adab866baba28a9264ecb165328045caaee27bcbffc328d0fa567e576a86",
+      "afterSha256": "b1421f0453c71c5c27386d9f688ac66ab88176c37e4a317d2094979c975a41e5"
+    },
+    {
+      "path": "tools/build-capabilities.js",
+      "beforeSha256": "531608524b8885030dfa26a67018c540038da89d7d74d7ab9ab2cf792c0f34b7",
+      "afterSha256": "ff5e5191e0b73e37e1f03b813112a5fbf6a7bc76d1c5a7c05a201835c92d94a3"
+    },
+    {
+      "path": "tools/build-field-guide-site.py",
+      "beforeSha256": "b6fa6cd4f8efa903371e1fb4e1df4f9608d3091a608a2f63abd6f11c4793ae72",
+      "afterSha256": "76430e28204a1182e580645704cb241705673c09c4717685a470630712bbdf7a"
+    },
+    {
+      "path": "tools/build-release.js",
+      "beforeSha256": "1cad0cb3bc28479c13e837dde950d7f740b407a0fa1792251936f9773ef9be08",
+      "afterSha256": "6b0c3ec37eda41770fe02fcd0e295d6a0542ccbc54c86e6223eeba2c154f1b32"
+    },
+    {
+      "path": "use-cases/index.html",
+      "beforeSha256": "753a723dac730f00456a9926489e800a78ad3db2f184a7a6351057314e66280e",
+      "afterSha256": "45603d9204233e74ec7c11d1db827ebaea39b27f6c7624d25a783cf3042b3ce7"
+    },
+    {
+      "path": "use-cases/portable-catalogue.html",
+      "beforeSha256": "3987a5f48f78628190a7697d2c0e5144055c04d57a4b8534175ec9ff45676f0f",
+      "afterSha256": "9a9485905f28ccc2871750b299ee556e74179eb11dea40810348f15c0e6d9fa3"
+    },
+    {
+      "path": "validation/0.3-regressions.json",
+      "beforeSha256": "f0d40cb4e3f72aa06d4cc686f742c6d07853e2af62654f0ecfeb38caa69317af",
+      "afterSha256": "3e8744b13b65425a85294d515a1faa8a649b159639220e0e0e7c605988498624"
+    },
+    {
+      "path": "validation/curved-relations.json",
+      "beforeSha256": "4cc3129b5b3523271a86924c5dc672885a8bf0847abcd9f011a603af33e39dc4",
+      "afterSha256": "d7e02d03413eb4cf7154eeb447a8b0332fb718c2c9f2213a403e2797750bb24c"
+    }
+  ]
+}

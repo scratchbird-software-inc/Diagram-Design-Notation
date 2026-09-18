@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.whiteboard";
+import "formats.ddn" as fmt;
+import "data/sketch.ddn" as s;
+
+// What are the main things in this discussion?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "01 / Whiteboard sketch" {
+    data: [@s.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.sketch;
+    layout: @fmt.shared.row;
+    select: [@s.model.customer, @s.model.order, @s.model.shipment];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_a": 1, "model.r_b": 2 }; }
+}

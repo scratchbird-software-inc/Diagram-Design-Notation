@@ -1,0 +1,1252 @@
+{
+  "version": "0.3.0-draft.2",
+  "status": "proposed production property contract; reference decoder does not enforce every entry",
+  "unknown_policy": "Unknown namespaced properties are retained only under a declared extension profile; unknown unqualified properties produce a profile diagnostic. The permissive reference preservation path is not full M1 conformance.",
+  "record_policy": "Record paths describe nested metadata keys, not separate syntax keywords. A summary string may be accepted in sketch validation where explicitly stated; physical/observed validation requires the full record.",
+  "properties": [
+    {
+      "path": "uid",
+      "group": "Identity and evidence",
+      "targets": [
+        "element",
+        "field",
+        "port",
+        "relation"
+      ],
+      "value_shape": "nonempty string",
+      "constraint": "Workspace-unique stable identity; compare exactly, do not fetch it as a URL.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "description",
+      "group": "Identity and evidence",
+      "targets": [
+        "element",
+        "field",
+        "port",
+        "relation"
+      ],
+      "value_shape": "string",
+      "constraint": "Literal explanatory content, never executable markup.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "aliases",
+      "group": "Identity and evidence",
+      "targets": [
+        "element",
+        "field",
+        "port",
+        "relation"
+      ],
+      "value_shape": "string[]",
+      "constraint": "Alternative display/search names; do not introduce duplicate semantic identities.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "kind",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "registered kind keyword",
+      "constraint": "Canonical registry ID after alias resolution; display look cannot change it.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "level",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "concept/definition/instance/fragment/copy",
+      "constraint": "Omission is permitted in sketches; a view occurrence is not a data level.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "maturity",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "draft/review/approved/deprecated/retired/rejected or undecided",
+      "constraint": "Independent of style, runtime health and evidence.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "meaning",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "string",
+      "constraint": "Semantic definition; no implicit datatype selection.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "workload",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "array of oltp/olap/mixed/streaming/batch",
+      "constraint": "An explicitly mixed workload may carry multiple compatible values.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "role",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "authoritative/derived/cache/archive/primary/follower",
+      "constraint": "Include authority or replica scope where claimed; incompatible roles require distinct assertions.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "location",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "local/cloud/edge",
+      "constraint": "Applicable to deployment scopes and instances; not automatic placement for abstract concepts.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "distribution",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "hash/range/list/composite/unpartitioned",
+      "constraint": "Requires a declared partition policy before physical implementation claims.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "representation",
+      "group": "Element identity",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "reference or structured record",
+      "constraint": "Domain-to-platform representation, not a universal datatype.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "shape",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "scalar/object/record/array/map/set/variant",
+      "constraint": "Structural category; optional nested fields do not imply a separate stored object.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "key",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "primary/candidate/business/partition/clustering",
+      "constraint": "A shorthand single key role. Composite/multiple roles require referenced key definitions.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "domain",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "reference to semantic domain",
+      "constraint": "Established meaning binding, not a candidate suggestion or an SQL datatype.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "datatype",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "string or representation binding reference",
+      "constraint": "Physical profile interprets it; parser never assumes a vendor type universally exists.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "presence",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "required/optional",
+      "constraint": "Required presence and nullable values are independent.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "nullable",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "boolean",
+      "constraint": "True permits null; it does not mean the property can be absent.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "min_items",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "nonnegative integer",
+      "constraint": "Arrays/sets; must not exceed max_items when finite.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "max_items",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "nonnegative integer or unbounded",
+      "constraint": "Arrays/sets; is not maximum rows in a dataset.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "ordered",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "boolean",
+      "constraint": "A set defaults are not invented from examples; ordering scope must be explicit.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "unique",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "boolean",
+      "constraint": "State whether item identity/value uniqueness is intended; enforcement is separate.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "default",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "literal or expression record",
+      "constraint": "Record distinguishes a literal value from code; drawing never evaluates it.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "generated",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "expression record",
+      "constraint": "Name language, text and evaluation scope; no evaluation during rendering.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "discriminator",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "field reference",
+      "constraint": "Union variants must specify unique matching cases where closed/discriminated.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "variants",
+      "group": "Fields and shape",
+      "targets": [
+        "field"
+      ],
+      "value_shape": "reference[]",
+      "constraint": "Each target is a shape definition; mutual recursion must be represented without infinite expansion.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "allowed_values",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "literal[] or enumeration reference",
+      "constraint": "Exhaustive only when explicitly declared; never inferred from samples.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "unit",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "unit definition reference",
+      "constraint": "Quantity meaning, conversion and precision are defined by the unit profile.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "normalization",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "rule reference or record",
+      "constraint": "Does not silently transform identifiers or literal source sample values.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "equality",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "rule reference or string",
+      "constraint": "Explicit comparison scope; physical collation binding can differ by platform.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "platform",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "string",
+      "constraint": "Binding applicability, not a remote service to contact.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "platform_version",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "string",
+      "constraint": "Physical profile version; cannot be replaced silently by latest.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "precision",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "nonnegative integer",
+      "constraint": "Applicable representation specifies decimal/binary/significant-digit interpretation.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "scale",
+      "group": "Domains and bindings",
+      "targets": [
+        "domain",
+        "element"
+      ],
+      "value_shape": "integer",
+      "constraint": "Applicable numeric binding supplies units and valid range.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "kind",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "registered relation keyword",
+      "constraint": "Normalizes to a fixed family, verb, orientation and compatible endpoints.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "source_mark",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "registered structural endpoint",
+      "constraint": "Valid only where relation semantics permit participation or composition.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "target_mark",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "registered structural endpoint",
+      "constraint": "At target B describes how many B instances per one A; never packet count.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "enforcement",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "database/application/expected/none or undecided",
+      "constraint": "A drawn relation does not imply database enforcement.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "scope",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "string or reference",
+      "constraint": "Authority, delivery, ordering or other qualifier's named scope.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "source_min",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "nonnegative integer",
+      "constraint": "Structural participation lower bound at source; must not exceed finite source_max.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "source_max",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "nonnegative integer or unbounded",
+      "constraint": "Explicit bounds supersede compact endpoint shorthand only consistently.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "target_min",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "nonnegative integer",
+      "constraint": "Structural participation lower bound at target.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "target_max",
+      "group": "Relations",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "nonnegative integer or unbounded",
+      "constraint": "Explicit numeric limits must agree with compact displayed symbols.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "capture",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "cdc/snapshot/polling/application/manual",
+      "constraint": "Capture method is separate from transport and transformation.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "transport",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "string or channel reference",
+      "constraint": "For example kafka; no delivery guarantee is inferred from the name.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "transformation",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "string or activity reference",
+      "constraint": "An overview description should refine to activities when detailed validation is required.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "cadence",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "continuous/batch/microbatch/on_demand",
+      "constraint": "Schedule/timezone is additional when relevant.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "delivery",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "requirement/evidence record or undecided",
+      "constraint": "Delivery record fields required and verified remain independent assertions.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "payload",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "shape reference",
+      "constraint": "Payload identity/version, not a copy of the schema inside every connector.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "ordering",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "scope record",
+      "constraint": "Total/per-key/per-partition ordering must identify the relevant stream and key.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "initial_load",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "flow/activity reference",
+      "constraint": "Initial snapshot/catch-up coordination is not implied by CDC.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "delete_handling",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "rule/reference",
+      "constraint": "Explicit deletion/tombstone policy; drawing an arrow does not establish completeness.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "retry",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "policy record/reference",
+      "constraint": "Attempts, backoff and exhaustion target; not an execution loop inferred from geometry.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "freshness",
+      "group": "Flow contract",
+      "targets": [
+        "flow",
+        "relation"
+      ],
+      "value_shape": "duration requirement/evidence record",
+      "constraint": "Duration is measured relative to the declared clock and observation point.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "temporal",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "current/valid/recorded/bitemporal/event_history/snapshot",
+      "constraint": "Temporal categories do not imply PITR or complete reconstructability.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "structured time-axis record",
+      "constraint": "Keyed valid and recorded axes or overview descriptions; production requires field/system/interval details.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time.valid",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "axis record",
+      "constraint": "Contains start/end field refs, business clock, interval semantics and open-end representation.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time.recorded",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "axis record",
+      "constraint": "Contains start/end fields, named recording system and correction semantics.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time.retention",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "duration or policy reference",
+      "constraint": "Retention scope must identify which axes, rows, logs or snapshots it covers.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time.event",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "field reference",
+      "constraint": "Occurrence time; distinct from arrival and processing timestamps.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time.arrival",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "field reference",
+      "constraint": "Ingestion timestamp of a named system; not automatically business-valid time.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "time.processing",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "field reference",
+      "constraint": "Processing timestamp tied to an execution/system.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "snapshot_at",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "timestamp or version reference",
+      "constraint": "Consistency scope and source completeness must be explicit for recovery claims.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "recovery_window",
+      "group": "Time and recovery",
+      "targets": [
+        "element",
+        "flow"
+      ],
+      "value_shape": "interval/policy record",
+      "constraint": "PITR scope, oldest/newest recoverable state, backup/log evidence.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "provider",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "string",
+      "constraint": "Provider identity; never infer region or capabilities from a logo.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "region",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "reference or string",
+      "constraint": "Scope within provider/account; not a globally unique bare region token.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "environment",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "string/reference",
+      "constraint": "Intended environment; production does not imply healthy.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "partition_key",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "ordered field references",
+      "constraint": "All fields belong to the partitioned definition or an explicit mapping.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "partition_rule",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "rule reference/record",
+      "constraint": "Hash/range/version and boundaries are explicit policy information.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "replication_factor",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "positive integer",
+      "constraint": "State whether the primary is counted and which fragment/set the count applies to.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "replica_role",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "primary/follower/multiwriter",
+      "constraint": "Belongs to a copy with named coordination scope and observation time when observed.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "consistency",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "policy record",
+      "constraint": "Scope must specify read/write/replication semantics rather than one unlabeled word.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "residency",
+      "group": "Deployment",
+      "targets": [
+        "element"
+      ],
+      "value_shape": "policy/reference",
+      "constraint": "Allowed locations and evidence are separate; a frame alone is not proof.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "owner",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "responsible-party reference",
+      "constraint": "Responsibility relationship, not physical containment.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "classification",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "classification reference/string",
+      "constraint": "Inheritance only under an explicitly selected governance profile.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "contract",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "contract reference",
+      "constraint": "Contract version and producer/consumer roles remain resolvable.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "quality",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "rule/assertion references",
+      "constraint": "Validation result and requirement are independent.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "dialect",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "string",
+      "constraint": "SQL dialect/platform profile; syntax is not executed by the renderer.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "definition",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "text/code-reference record",
+      "constraint": "Explicit content/language; remote content is not fetched without resolver authority.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "parameters",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "parameter-definition references",
+      "constraint": "Parameters are not mislabeled as storage columns.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "refresh",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "policy record",
+      "constraint": "Materialized view refresh method, schedule and scope.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "index_method",
+      "group": "Governance and SQL metadata",
+      "targets": [
+        "element",
+        "field",
+        "relation"
+      ],
+      "value_shape": "string",
+      "constraint": "Validated only against the selected platform/version profile.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "mode",
+      "group": "Samples",
+      "targets": [
+        "sample"
+      ],
+      "value_shape": "synthetic/sanitized/observed/expected/counterexample",
+      "constraint": "A sample's role controls validation expectations and disclosure rules.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "columns",
+      "group": "Samples",
+      "targets": [
+        "sample"
+      ],
+      "value_shape": "ordered field references",
+      "constraint": "Every entry resolves to a field identity, not a coincidental displayed name.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "rows",
+      "group": "Samples",
+      "targets": [
+        "sample"
+      ],
+      "value_shape": "arrays of literal values",
+      "constraint": "Each row has exactly columns.length cells. Null and missing stay distinct.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "source",
+      "group": "Samples",
+      "targets": [
+        "sample"
+      ],
+      "value_shape": "evidence reference/string",
+      "constraint": "Required for observed samples; no implicit authorization to publish the contents.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "model_revision",
+      "group": "Samples",
+      "targets": [
+        "sample"
+      ],
+      "value_shape": "revision reference/string",
+      "constraint": "The design context of the example, not the time in its data cells.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "expected",
+      "group": "Samples",
+      "targets": [
+        "sample"
+      ],
+      "value_shape": "result/assertion references",
+      "constraint": "Required when a sample is promoted to an executable test fixture.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "subject",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "reference",
+      "constraint": "Object, field, relation or other asserted subject.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "property",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "property-path string",
+      "constraint": "Resolvable in the selected property/extension profile.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "value",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "typed value",
+      "constraint": "Must match the property's applicable value contract when known.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "state",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "known/undecided/not_applicable/conflicting",
+      "constraint": "Absent is no assertion; hidden is only a view operation.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "basis",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "intended/observed/inferred/measured/verified",
+      "constraint": "Requirements and measurements never overwrite each other implicitly.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "source",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "evidence reference/string",
+      "constraint": "Mandatory for observed/measured/verified assertions.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "observed_at",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "timestamp string",
+      "constraint": "Explicit timezone/offset for absolute instants; never guessed from browser locale.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "confidence",
+      "group": "Assertions",
+      "targets": [
+        "assertion"
+      ],
+      "value_shape": "number in [0,1] or confidence scheme",
+      "constraint": "Only meaningful with declared method; not a substitute for evidence.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "direction",
+      "group": "Ports",
+      "targets": [
+        "port"
+      ],
+      "value_shape": "input/output/inout",
+      "constraint": "Relation orientation still comes from the connector; direction restricts compatible use.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "payload",
+      "group": "Ports",
+      "targets": [
+        "port"
+      ],
+      "value_shape": "shape reference",
+      "constraint": "Names the contract at an interface.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "binding",
+      "group": "Ports",
+      "targets": [
+        "port"
+      ],
+      "value_shape": "field/port/element reference",
+      "constraint": "Balanced collapsed views map each external port to a real internal interface.",
+      "default": "absent / not asserted",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical unless constraint states physical, observed or publication"
+    }
+  ]
+}

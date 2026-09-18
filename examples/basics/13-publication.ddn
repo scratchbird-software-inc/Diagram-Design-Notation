@@ -1,0 +1,20 @@
+ddn "0.3";
+module "ddn.examples.publication";
+import "shared.ddn" as shared;
+data model {
+ object source "Order input" {kind: record; fields {field order_id;field amount;}}
+ object validated "Accepted order" {kind: record;fields {field order_id;field amount;}}
+ relation check "Validated input" @source -> @validated {kind: flow;}
+}
+view paper "A4 / explicit minimum text" {
+ data:[@model];format:@shared.styles.technical;
+ layout {algorithm: layered;}
+ display {fields: none;}
+ legend {mode: numbers;keys: {check: 1};placement: bottom;}
+ publication {size: a4;orientation: landscape;fit: reflow;margin: 8mm;minimum_text: 7pt;overflow: error;}
+}
+view screen "Content-sized / same semantic model" {
+ data:[@model];format:@shared.styles.technical;
+ layout {algorithm: layered;}
+ publication {size: content;fit: none;overflow: error;}
+}

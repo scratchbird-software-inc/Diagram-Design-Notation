@@ -1,0 +1,18 @@
+ddn "0.3";
+module "ddn.usecases.views.security";
+import "formats.ddn" as fmt;
+import "data/security.ddn" as s;
+
+// What must happen before data leaves a restricted context?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "18 / Data handling boundaries" {
+    data: [@s.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@s.model.source, @s.model.mask, @s.model.export];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_input": 1, "model.r_output": 2 }; }
+    frame restricted "RESTRICTED / view scope" { scope: @s.model.restricted; members: [@s.model.source]; }
+    frame review "REVIEW BEFORE RELEASE / view scope" { scope: @s.model.egress; members: [@s.model.export]; }
+}

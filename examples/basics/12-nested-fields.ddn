@@ -1,0 +1,44 @@
+ddn "0.3";
+module "ddn.examples.nested";
+import "shared.ddn" as shared;
+data model {
+ domain identifier "Customer identifier" { meaning: "Opaque identifier within the customer registry"; }
+ domain postal "Postal code" {meaning:"Postal routing code, with country context required";}
+ object customer "Customer profile / nested structure" {
+  kind: collection;
+  fields {
+   field customer_id {domain: @identifier; datatype: "string"; key: true; nullable: false;}
+   field address {shape: object; presence: optional; nullable: false;
+    fields { field street; field city; field postal_code {datatype: "string";} }
+   }
+   field contacts {shape: array; presence: optional;
+    fields {field kind {datatype: "string";} field value {datatype: "string";nullable: true;} }
+   }
+   field delivery {shape: variant; discriminator: "method"; variants: [pickup, courier];
+    fields {field method; field location {presence: optional;} }
+   }
+  }
+ }
+ object order "Order" {kind: table;fields {field order_id;field customer_id {domain: @identifier;}}}
+ relation owner @order.customer_id -> @customer.customer_id {kind: ref; enforcement: undecided;}
+ relation address_note @customer.address.postal_code -> @postal {kind: candidate;}
+}
+view detailed "Nested fields / domains and representations" {
+ data: [@model]; format: @shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
+ layout {algorithm: layered;}
+ display {domains: show; datatypes: show; depth: 8;}
+ legend {mode: numbers; keys: {owner: 7,address_note: 12};}
+ publication {size: content;fit: none;overflow: error;}
+}
+view large "20px base / measured wrapping" {
+ data: [@model]; format: @shared.styles.technical; select: [@model.customer];
+ style {font_size: 20px;}
+ display {domains: show;datatypes: show;}
+ publication {size: content;fit: none;overflow: error;}
+}
+view collapsed "Hidden nested rows / preserved endpoint identities" {
+ data: [@model]; format: @shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
+ display {depth: 0;fields: names;}
+ layout {algorithm: layered;}
+ publication {size: content;fit: none;overflow: error;}
+}

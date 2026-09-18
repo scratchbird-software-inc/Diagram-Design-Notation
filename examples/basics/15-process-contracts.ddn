@@ -1,0 +1,36 @@
+ddn "0.3";
+module "ddn.examples.process";
+import "shared.ddn" as shared;
+data model {
+ object request "Stock-transfer command" {kind: message;fields {field command_id;field source_id;field target_id;}}
+ object result "Transfer decision" {kind: message;fields {field command_id;field state;}}
+ object transfer "Transfer boundary" {kind: pipeline;
+  ports {port input {direction: in;payload: @request;} port output {direction: out;payload: @result;}}
+  x_boundary: {ports:[@transfer.input,@transfer.output],bindings:[{external:@transfer.input,internal:@validate.input},{external:@transfer.output,internal:@validate.output}]};
+ }
+ object validate "Validate and reserve" {kind: activity;
+  ports {port input {direction: in;payload: @request;} port output {direction: out;payload: @result;}}
+  x_workflow: {
+   states:[pending,accepted,rejected,compensated],initial:pending,terminal:[rejected,compensated],
+   transitions:[
+    {id:approve,from:pending,to:accepted,event:decide,guard:{field:"approved",op:eq,value:true}},
+    {id:deny,from:pending,to:rejected,event:decide,guard:{field:"approved",op:eq,value:false}},
+    {id:cancel,from:accepted,to:compensated,event:cancel,guard:true}
+   ]
+  };
+  x_reconciliation: {owner:"Inventory command service",idempotency_key:"command_id",states:[pending,accepted,rejected,compensated],timeout:"PT5M",compensation:"release allocation once",evidence:"durable decision and recovery checkpoint"};
+ }
+ object deployment_gate "Operational verification pending" {kind: rule;
+  x_requirement: {id:"R-OPS",owner:"SRE reviewer",acceptance:"Run outage, duplicate delivery and replay tests against real infrastructure",state:required};
+ }
+ relation input @request -> @transfer.input {kind: flow;}
+ relation internal @transfer -> @validate {kind: depends;}
+ relation output @transfer.output -> @result {kind: flow;}
+ relation gate @validate -> @deployment_gate {kind: depends;}
+}
+view balanced "Balanced interfaces / declared state and verification" {
+ data: [@model];format:@shared.styles.technical;
+ layout {algorithm: layered;}
+ legend {mode:numbers;keys:{input:1,internal:2,output:3,gate:4};}
+ publication {size:content;fit:none;overflow:error;}
+}

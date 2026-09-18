@@ -1,0 +1,62 @@
+ddn "0.3";
+module "ddn.examples.routinghand";
+import "shared.ddn" as shared;
+
+data model {
+    object west "West source" { kind: dataset; }
+    object east "East target" { kind: dataset; }
+    object north "North source" { kind: dataset; }
+    object south "South target" { kind: dataset; }
+    relation horizontal @west -> @east { kind: flow; }
+    relation vertical @north -> @south { kind: flow; }
+}
+
+view gap "Hand-drawn crossing / disconnected gap" {
+    data: [@model]; format: @shared.styles.technical; style: @shared.styles.hand;
+    display: @shared.styles.compact;
+    layout { crossings: gap; }
+    legend { mode: numbers; keys: { "model.horizontal": 4, "model.vertical": 9 }; }
+    publication { width: 1300px; height: 850px; }
+    place @model.west { at: [0px, 220px]; size: [240px, 100px]; }
+    place @model.east { at: [630px, 220px]; size: [240px, 100px]; }
+    place @model.north { at: [315px, 0px]; size: [240px, 100px]; }
+    place @model.south { at: [315px, 450px]; size: [240px, 100px]; }
+    route @model.horizontal { source_side: east; target_side: west; via: [[435px,270px]]; callout: [300px, 270px]; }
+    route @model.vertical { source_side: south; target_side: north; via: [[435px,270px]]; callout: [435px, 365px]; }
+}
+
+view bridge "Hand-drawn crossing / round bridge" {
+    data: [@model]; format: @shared.styles.technical; style: @shared.styles.hand;
+    display: @shared.styles.compact;
+    layout { crossings: bridge; }
+    legend { mode: numbers; keys: { "model.horizontal": 4, "model.vertical": 9 }; }
+    publication { width: 1300px; height: 850px; }
+    place @model.west { at: [0px, 220px]; size: [240px, 100px]; }
+    place @model.east { at: [630px, 220px]; size: [240px, 100px]; }
+    place @model.north { at: [315px, 0px]; size: [240px, 100px]; }
+    place @model.south { at: [315px, 450px]; size: [240px, 100px]; }
+    route @model.horizontal { source_side: east; target_side: west; via: [[435px,270px]]; callout: [300px, 270px]; }
+    route @model.vertical { source_side: south; target_side: north; via: [[435px,270px]]; callout: [435px, 365px]; }
+}
+
+view square_bridge "Hand-drawn crossing / square bridge" {
+    data: [@model]; format: @shared.styles.technical; style: @shared.styles.hand;
+    display: @shared.styles.compact;
+    layout { crossings: square_bridge; }
+    legend { mode: numbers; keys: { "model.horizontal": 4, "model.vertical": 9 }; }
+    publication { width: 1300px; height: 850px; }
+    place @model.west { at: [0px, 220px]; size: [240px, 100px]; }
+    place @model.east { at: [630px, 220px]; size: [240px, 100px]; }
+    place @model.north { at: [315px, 0px]; size: [240px, 100px]; }
+    place @model.south { at: [315px, 450px]; size: [240px, 100px]; }
+    route @model.horizontal { source_side: east; target_side: west; via: [[435px,270px]]; callout: [300px, 270px]; }
+    route @model.vertical { source_side: south; target_side: north; via: [[435px,270px]]; callout: [435px, 365px]; }
+}
+
+view straight "Hand-drawn straight routing / relation family unchanged" {
+    data: [@model]; format: @shared.styles.technical; style: @shared.styles.hand;
+    select: [@model.west, @model.east];
+    layout { routing: straight; }
+    place @model.west { at: [0px, 0px]; }
+    place @model.east { at: [520px, 240px]; }
+}

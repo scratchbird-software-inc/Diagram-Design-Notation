@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:workspace:1",
+  "title": "DDN source workspace snapshot",
+  "type": "object",
+  "required": [
+    "format",
+    "files",
+    "entry",
+    "view"
+  ],
+  "properties": {
+    "format": {
+      "const": "ddn-workspace@1"
+    },
+    "files": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1500,
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 2000000
+      }
+    },
+    "entry": {
+      "type": "string"
+    },
+    "view": {
+      "type": "string"
+    },
+    "overrides": {
+      "type": "object"
+    },
+    "layoutState": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "description": "Serialization schema only. The runtime additionally checks safe .ddn paths, UTF-8, aggregate budgets, source resolution, view scope and option contracts. File snapshots are internal source, not redacted exports."
+}

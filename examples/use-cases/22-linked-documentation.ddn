@@ -1,0 +1,26 @@
+ddn "0.3";
+module "ddn.usecases.views.linked-documentation";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+
+// One overview links to two independently selectable views.
+// No object or subdiagram coordinates are specified.
+view diagram "22 / Navigable design documentation" {
+    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;
+    display: @fmt.shared.compact;
+    select: [@c.tables.orders, @c.tables.customer];
+    publication { width: 1580px; height: 780px; }
+    legend { keys: { "tables.r_order_customer": 1 }; }
+    subdiagram logical { view: @logical_detail; mode: reference; label: "Logical detail"; }
+    subdiagram business { view: @business_detail; mode: reference; label: "Business concepts"; }
+}
+view logical_detail "22b / Logical detail" {
+    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;
+    select: [@c.tables.orders, @c.tables.customer];
+    legend { keys: { "tables.r_order_customer": 1 }; }
+}
+view business_detail "22c / Business concepts" {
+    data: [@c.concepts]; format: @fmt.shared.technical;
+    select: [@c.concepts.customer, @c.concepts.order];
+    legend { keys: { "concepts.r_places": 1 }; }
+}

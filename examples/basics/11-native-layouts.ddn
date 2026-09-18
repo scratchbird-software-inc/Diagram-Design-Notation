@@ -1,0 +1,44 @@
+ddn "0.3";
+module "ddn.examples.native-layouts";
+import "shared.ddn" as shared;
+data model {
+ object enterprise "Meridian Works" { kind: context; role: authoritative; }
+ object finance "Finance" { kind: application; role: authoritative; }
+ object plant "Plant operations" { kind: application; role: authoritative; }
+ object journal "Posted journals" { kind: table; role: authoritative; fields { field journal_id; field period_id; } }
+ object stock "Stock movements" { kind: table; role: authoritative; fields { field movement_id; field lot_id; } }
+ object analytics "Warehouse projection" { kind: dataset; role: derived; }
+ relation f1 @enterprise -> @finance { kind: assoc; }
+ relation f2 @enterprise -> @plant { kind: assoc; }
+ relation f3 @finance -> @journal { kind: assoc; }
+ relation f4 @plant -> @stock { kind: assoc; }
+ relation f5 @plant -> @analytics { kind: assoc; }
+}
+format options {
+ layout grid { algorithm: grid; columns: 3; }
+ layout layered { algorithm: layered; direction: right; }
+ layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
+ layout mindmap { algorithm: mindmap; routing: curved; curve: bezier; root: @model.enterprise; hierarchy: [assoc]; }
+ layout groups { algorithm: grouped; group_by: role; columns: 2; }
+ legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
+}
+view grid "Native grid / no coordinates" {
+ data: [@model]; format: @shared.styles.technical; layout: @options.grid; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view layered "Native layered / no coordinates" {
+ data: [@model]; format: @shared.styles.technical; layout: @options.layered; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view tree "Native tree / no coordinates" {
+ data: [@model]; format: @shared.styles.technical; layout: @options.tree; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view mindmap "Native mind-map / no coordinates" {
+ data: [@model]; format: @shared.styles.technical; layout: @options.mindmap; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view grouped "Native grouped / no coordinates" {
+ data: [@model]; format: @shared.styles.technical; layout: @options.groups; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

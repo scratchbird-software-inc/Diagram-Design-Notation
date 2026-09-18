@@ -1,0 +1,28 @@
+ddn "0.3";
+module "ddn.usecases.documents";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object profiles "Customer profile" {
+        kind: collection;
+        fields {
+            field customer_id;
+            field contacts { shape: array; }
+        }
+    }
+    object contacts "Contacts array" {
+        kind: array;
+        description: "Embedded collection value, not an independently stored table.";
+    }
+    object contact "Contact item" {
+        kind: document;
+        fields {
+            field kind;
+            field value;
+            field preferred { presence: optional; nullable: false; }
+        }
+    }
+    relation r_a @profiles -> @contacts { kind: emb; }
+    relation r_b "item shape" @contacts -> @contact { kind: mem; }
+}

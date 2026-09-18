@@ -1,0 +1,30 @@
+ddn "0.3";
+module "ddn.usecases.views.streaming";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+import "data/flow.ddn" as f;
+
+// How can one change stream feed independent projections?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "12 / Event publication and consumers" {
+    data: [@f.stream, @c.tables, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.teaching;
+    select: [@f.stream.source, @f.stream.capture, @f.stream.topic, @f.stream.hist_job, @f.stream.search_job, @f.stream.history, @f.stream.search];
+    publication { width: 1640px; height: 1090px; }
+    legend { keys: { "stream.r_capture": 1, "stream.r_publish": 2, "stream.r_history_delivery": 3, "stream.r_search_delivery": 4, "stream.r_history_write": 5, "stream.r_search_write": 6 }; }
+    display { fields: none; badges: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}

@@ -1,0 +1,159 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later. Data-bound SVG projections using one shared model and publication contract. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-core'),require('./ddn-projection-data'),require('./ddn-render'),require('./ddn-text'),require('./ddn-palette'),require('./ddn-quality-render'));else root.DDNProjections=factory(root.DDN,root.DDNProjectionData,root.DDNRender,root.DDNText,root.DDNPalette,root.DDNQualityRender);})(typeof globalThis!=='undefined'?globalThis:this,function(D,Data,R,Text,Palette,QualityRender){
+'use strict';
+const esc=R.esc,f=n=>Number(n.toFixed(3)),q=D.quantity,clone=x=>JSON.parse(JSON.stringify(x));
+function chen(ir,reg,glyphs,options){
+ const projected=clone(ir),selected=new Set(ir.view.selected),nodes=ir.elements.filter(n=>selected.has(n.id)),edges=ir.relations.filter(r=>ir.view.relations.includes(r.id));
+ if(nodes.some(n=>n.kind!=='entity')||edges.some(r=>!['assoc','ref'].includes(r.kind)||r.from.member||r.to.member))throw new D.DDNError('DDN-PJ050','Chen subset requires entity objects and binary object-level assoc/ref relationships');
+ const extended=ir.view.profiles.projection.profile==='chen.binary@2';
+ if(!extended&&nodes.some(n=>n.fields.some(f=>f.depth||f.properties.shape&&f.properties.shape!=='scalar')))throw new D.DDNError('DDN-PJ050','Chen scalar subset does not silently flatten nested or repeated fields');
+ const out=[],rels=[],mapping=[];
+ function node(source,kind,name){const k=D.kindEntry(reg,kind),n={...clone(source),name,kind,kindCode:k.code,fields:[],ports:[],type:'object'};out.push(n);mapping.push({occurrence:n.id,source:source.id});return n;}
+ function connect(id,a,b,source,label='',double=false){rels.push({id,ref:id,name:label,kind:'assoc',kindCode:'ASSOC',from:{element:a},to:{element:b},properties:{x_chen_total:double},_visualLabel:!!label});mapping.push({occurrence:id,source});}
+ for(const n of nodes){node(n,'chen.entity',n.name);for(const fld of n.fields){const a=node({...fld,ref:fld.id,local:fld.local,properties:fld.properties},'chen.attribute',fld.name);connect('occ:attribute:'+fld.id,extended&&fld.parent?fld.parent:n.id,a.id,fld.id);}}
+ for(const r of edges){const x=extended?r.properties.x_chen||{}:{};node({...r,properties:{x_chen:{identifying:!!x.identifying}},local:r.id,ref:r.id},'chen.association',r.name);const label=m=>m?'('+m.min+'..'+(m.max==='many'?'N':m.max)+')':'';connect('occ:from:'+r.id,r.from.element,r.id,r.id,label(x.from),extended&&x.identifying&&x.weak?.$ref===r.from.element);connect('occ:to:'+r.id,r.id,r.to.element,r.id,label(x.to),extended&&x.identifying&&x.weak?.$ref===r.to.element);}
+ projected.elements=out;projected.relations=rels;projected.view.selected=out.map(n=>n.id);projected.view.relations=rels.map(r=>r.id);projected.view.keys={};projected.view.profiles.projection={kind:'graph',profile:'ddn@1'};projected.view.profiles.legend={...projected.view.profiles.legend,mode:'text',placement:'none'};
+ const result=R.render(projected,reg,glyphs,options);result.scene.projection={kind:'chen',profile:ir.view.profiles.projection.profile,mapping};result._ir=ir;result.diagnostics.push({code:'DDN-PJW01',severity:'info',message:(extended?'Extended binary Chen; ':'Chen scalar/binary subset; ')+ ' attribute and relationship occurrences are projections, not copied semantic entities.'});return result;
+}
+function render(ir,reg,glyphs='',options={}){
+ const plan=Data.plan(ir,D.DDNError),p=ir.view.profiles,pr=p.projection;
+ if(plan.kind==='chen')return chen(ir,reg,glyphs,options);
+ if(plan.kind==='graph')return R.render(ir,reg,glyphs,options);
+ if(options.layoutState)throw new D.DDNError('DDN-PJ051','Retained graph positions cannot override data-bound projection coordinates');
+ const t=Palette.themes[p.style.theme],s=q(p.style.font_size,16)/16,stats=Text.stats(),marks=[],diagnostics=[...ir.diagnostics],numbers=[],S=24*s;
+ let body='',W=q(pr.width,1050),H=500,smallest=11*s;
+ const text=(x,y,value,size=13,weight=400,anchor='start',extra='')=>{const txt=String(value??'');Text.measure(txt,size*s,p.style.font,weight);smallest=Math.min(smallest,size*s);return `<text x="${f(x)}" y="${f(y)}" font-size="${size*s}" fill="${t.ink}" font-weight="${weight}" text-anchor="${anchor}" ${extra}>${esc(txt)}</text>`;};
+ const lines=(ls,x,y,size=13,weight=400,anchor='start')=>ls.map((v,i)=>text(x,y+i*(size+6)*s,v,size,weight,anchor)).join('');
+ const wrap=(str,w,size=13,weight=400)=>Text.wrap(str,w,size*s,p.style.font,weight);
+ const line=(x,y,xx,yy,colour=t.rule,width=1,dash='')=>`<path d="M${f(x)} ${f(y)}L${f(xx)} ${f(yy)}" stroke="${colour}" stroke-width="${width}" fill="none"${dash?` stroke-dasharray="${dash}"`:''}/>`;
+ const rect=(x,y,w,h,fill=t.surface,stroke=t.rule,semantic=false)=>R.rect(x,y,w,h,stroke,fill,semantic?'classic':p.style.look,ir.view.id+':'+x+':'+y,0,{...p.style,hachure:false});
+ const group=(id,ids,content,box={},key)=>{const mid='mark:'+ir.view.id+':'+marks.length;marks.push({id:mid,sourceIds:ids,...box,...(key?{property:key}:{})});return `<g class="ddn-mark" data-id="${esc(id||ids[0]||'')}" data-source-ids="${esc(JSON.stringify(ids))}" data-projection-mark="${esc(mid)}"${box.rowId?` data-matrix-row="${esc(box.rowId)}" data-matrix-column="${esc(box.columnId)}"`:''}${key?` data-property="${esc(key)}"`:''} tabindex="0" role="group">${content}</g>`;};
+ const colours=['#337DB7','#34976E','#AC6538','#8259B1','#967421','#347D8E','#AC5573'];
+ const colour=i=>Palette.semantic(colours[i%colours.length],t);
+ let composedSubs=[];
+ const qualityBody=QualityRender.draw(plan,ir,{text,lines,wrap,line,rect,group,colour,s,theme:t,W,H:q(pr.height,600*s)});
+ if(qualityBody){body=qualityBody.body;W=qualityBody.W;H=qualityBody.H;}
+ if(plan.kind==='matrix'&&!qualityBody){
+  const rowW=Math.max(230*s,Math.min(390*s,Math.max(...plan.rows.map(n=>Text.measure(n.name,13*s,p.style.font,600).width))+32*s)),cw=Math.max(130*s,(W-rowW)/plan.columns.length);W=rowW+cw*plan.columns.length;
+  const heads=plan.columns.map(n=>wrap(n.name,cw-24*s,13,600)),hh=Math.max(75*s,(Math.max(...heads.map(x=>x.length))*19+30)*s);let y=hh;
+  body+=rect(0,0,W,hh)+text(16*s,28*s,pr.profile==='matrix.raci@1'?'ACTIVITY / RESPONSIBILITY':pr.profile==='matrix.crud@1'?'PROCESS / DATA ACCESS':'RELATIONSHIP MATRIX',11,650);
+  for(let j=0;j<plan.columns.length;j++){body+=line(rowW+j*cw,0,rowW+j*cw,hh);body+=group(plan.columns[j].id,[plan.columns[j].id],lines(heads[j],rowW+j*cw+12*s,28*s,13,600),{x:rowW+j*cw,y:0,w:cw,h:hh});}
+  for(let i=0;i<plan.rows.length;i++){const label=wrap(plan.rows[i].name,rowW-28*s),cellLines=plan.cells[i].map(c=>wrap(c.map(a=>a.value).join(' / ')||'—',cw-24*s,pr.profile==='matrix.relations@1'?13:17,650)),rh=Math.max(62*s,(Math.max(label.length,...cellLines.map(a=>a.length))*23+25)*s);body+=rect(0,y,W,rh,i%2?t.background:t.surface);body+=group(plan.rows[i].id,[plan.rows[i].id],lines(label,14*s,y+25*s),{x:0,y,w:rowW,h:rh});
+   for(let j=0;j<plan.columns.length;j++){body+=line(rowW+j*cw,y,rowW+j*cw,y+rh);const c=plan.cells[i][j],v=c.map(a=>a.value).join(' / ')||'—',ids=c.map(a=>a.id),x=rowW+j*cw;body+=group(ids[0]||plan.rows[i].id,ids,`<rect x="${x}" y="${y}" width="${cw}" height="${rh}" fill="transparent" pointer-events="all"/>`+lines(cellLines[j],x+cw/2,y+(rh-(cellLines[j].length-1)*23*s)/2+5*s,pr.profile==='matrix.relations@1'?13:17,650,'middle'),{x,y,w:cw,h:rh,rowId:plan.rows[i].id,columnId:plan.columns[j].id,relationKind:pr.relation},pr.value);}
+   y+=rh;
+  }H=y+52*s;body+=text(0,H-15*s,pr.profile==='matrix.raci@1'?'R responsible · A accountable · C consulted · I informed. One A and at least one R per row.':pr.profile==='matrix.crud@1'?'C create · R read · U update · D delete. Cells are shared relationship records.':'Cells derive from declared relationships; an empty cell is not an invented relation.',11);
+ }
+ if(plan.kind==='table'){
+  const cols=plan.columns.length,cw=Math.max(140*s,W/cols);W=cw*cols;const hs=plan.columns.map(c=>wrap(c.label,cw-24*s,12,650)),hh=(Math.max(...hs.map(a=>a.length))*18+28)*s;let y=hh;body+=rect(0,0,W,hh);
+  for(let j=0;j<cols;j++)body+=lines(hs[j],j*cw+12*s,25*s,12,650)+line(j*cw,0,j*cw,hh);
+  for(let i=0;i<plan.rows.length;i++){const cs=plan.rows[i].map(c=>wrap(c,cw-24*s)),rh=Math.max(54*s,(Math.max(...cs.map(a=>a.length))*19+22)*s);body+=rect(0,y,W,rh,i%2?t.background:t.surface);
+   for(let j=0;j<cols;j++)body+=line(j*cw,y,j*cw,y+rh)+group(plan.records[i].id,[plan.records[i].id],lines(cs[j],j*cw+12*s,y+24*s),{x:j*cw,y,w:cw,h:rh},plan.columns[j].key);y+=rh;
+  }H=y+38*s;body+=text(0,H-9*s,'Source-bound table · no expression or decision-rule execution is implied.',11);
+ }
+ if(plan.kind==='panels'&&!plan.panels.some(v=>v.child)){
+  const gap=22*s,cw=Math.max(230*s,(W-gap*(plan.columns-1))/plan.columns);W=cw*plan.columns+gap*(plan.columns-1);
+  let rowCount=Math.max(...plan.panels.map(p=>p.row+p.rowspan)),heights=Array(rowCount).fill(160*s);
+  const measured=plan.panels.map(panel=>{const width=cw*panel.colspan+gap*(panel.colspan-1),items=panel.items.map(i=>({item:i,label:wrap(i.node.name,width-36*s,14,650),content:wrap(i.text,width-36*s,12)}));const title=wrap(panel.title,width-32*s,14,700),titleHeight=(title.length*20+24)*s;const needed=titleHeight+20*s+items.reduce((h,i)=>h+(i.label.length*20+i.content.length*18+25)*s,0);return{panel,width,items,needed,title,titleHeight};});
+  for(const m of measured.sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const available=heights.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(available<m.needed){const delta=(m.needed-available)/m.panel.rowspan;for(let r=m.panel.row;r<m.panel.row+m.panel.rowspan;r++)heights[r]+=delta;}}
+  const tops=[0];heights.forEach(h=>tops.push(tops.at(-1)+h+gap));
+  for(const m of measured){const {panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);let yy=y+titleHeight+28*s;
+   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}
+  H=tops.at(-1)-gap+32*s;
+ }
+ const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
+ if(plan.kind==='chart'&&!qualityBody){
+  H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s,right=W-55*s,plotH=bottom-top,plotW=right-left;
+  if(['pie','donut'].includes(plan.mark)){
+   const radius=Math.min((H-85*s)/2,W*.24),cx=radius+50*s,cy=radius+35*s,inner=plan.mark==='donut'?radius*(pr.inner_radius??.56):0,total=pts.reduce((s,p)=>s+p.y,0);let angle=-Math.PI/2,ly=50*s;
+   for(let i=0;i<pts.length;i++){const pt=pts[i],span=pt.y/total*2*Math.PI,end=angle+span,col=colour(i);let d='';const xy=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
+    if(span>0){const slices=span>=Math.PI*2-.000001?2:1,step=span/slices;let start=xy(angle,radius);d=`M${f(start[0])} ${f(start[1])}`;for(let z=1;z<=slices;z++){const b=xy(angle+step*z,radius);d+=`A${radius} ${radius} 0 ${step>Math.PI?1:0} 1 ${f(b[0])} ${f(b[1])}`;}
+     if(inner){const b=xy(end,inner);d+=`L${f(b[0])} ${f(b[1])}`;for(let z=1;z<=slices;z++){const b=xy(end-step*z,inner);d+=`A${inner} ${inner} 0 ${step>Math.PI?1:0} 0 ${f(b[0])} ${f(b[1])}`;}}else d+=`L${cx} ${cy}`;d+='Z';
+     body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><path data-value="${pt.y}" d="${d}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`,{cx,cy,radius,startAngle:angle,endAngle:end,value:pt.y},pr.y);}
+    const xx=2*radius+100*s,label=wrap(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit,W-xx-35*s,12);body+=`<rect x="${xx}" y="${ly-12*s}" width="${14*s}" height="${14*s}" fill="${col}"/>`+lines(label,xx+24*s,ly,12);ly+=Math.max(35*s,label.length*18*s+12*s);angle=end;
+   }H=Math.max(H,ly+40*s);body+=text(20*s,H-20*s,'Total '+fmtNumber(total)+' '+plan.unit+' · angles encode values; zero entries have no sector.',11);
+  }else{
+   const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
+   if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;
+   else{const xs=pts.map(p=>p.x),min=Math.min(...xs),max=Math.max(...xs);fx=x=>max===min?left+plotW/2:left+(x-min)/(max-min)*plotW;}
+   for(let j=0;j<=5;j++){const v=lo+(hi-lo)*(j/5),y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
+   body+=line(left,top,left,bottom,t.ink,1.4)+line(left,fy(0),right,fy(0),t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+   let coords=pts.map((pt,i)=>({pt,x:fx(pt.x,i),y:fy(pt.y)}));
+   if(['line','area'].includes(plan.mark)){
+    const d=coords.map((a,i)=>(i?'L':'M')+f(a.x)+' '+f(a.y)).join(' ');
+    if(plan.mark==='area')body+=`<path d="${d}L${f(coords.at(-1).x)} ${f(fy(0))}L${f(coords[0].x)} ${f(fy(0))}Z" fill="${colour(0)}" opacity=".18"/>`;
+    body+=`<path d="${d}" fill="none" stroke="${colour(0)}" stroke-width="2.5"/>`;
+   }
+   for(let i=0;i<coords.length;i++){const{x,y,pt}=coords[i],col=colour(plan.mark==='bar'?i:0);let content=`<title>${esc(String(pt.rawX)+': '+fmtNumber(pt.y)+' '+plan.unit)}</title>`,box;
+    if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
+    else {const radius=plan.mark==='point'&&pr.size?21*Math.sqrt(pt.size/Math.max(Number.MIN_VALUE,...pts.map(p=>p.size))):4;content+=`<circle data-value="${pt.y}" cx="${f(x)}" cy="${f(y)}" r="${f(radius)}" fill="${col}" fill-opacity=".82" stroke="${t.surface}"/>`;box={x:x-radius,y:y-radius,w:radius*2,h:radius*2};}
+    body+=group(pt.sourceIds[0],pt.sourceIds,content,{...box,value:pt.y,dataX:pt.x},pr.y);
+    if(plan.xType==='category'){const label=wrap(String(pt.rawX),plotW/pts.length-8*s,11);body+=lines(label,x,bottom+25*s,11,400,'middle');}
+   }
+   if(plan.xType!=='category'){const min=Math.min(...pts.map(p=>p.x)),max=Math.max(...pts.map(p=>p.x));for(let j=0;j<=(min===max?0:4);j++){const v=min+(max-min)*(j/4);body+=text(fx(v),bottom+25*s,plan.xType==='date'?new Date(v).toISOString().slice(0,10):fmtNumber(v),11,400,'middle');}}
+   body+=text(left,H-15*s,'Source-bound '+plan.mark+' · '+pts.length+' marks'+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · supplied data, not a financial calculation certificate.',11);
+  }
+  diagnostics.push({code:'DDN-PJW02',severity:'info',message:'Quantitative mark coordinates remain exact in every drawing style; styling does not change values.'});
+ }
+ if(plan.kind==='timeline'){
+  W=Math.max(W,900*s);const lw=250*s,right=W-65*s,top=70*s,rowH=70*s,bottom=top+rowH*plan.items.length,lo=Math.min(...plan.items.map(n=>n.a)),hi0=Math.max(...plan.items.map(n=>n.b)),hi=hi0===lo?lo+86400000:hi0,fx=t=>lw+(t-lo)/(hi-lo)*(right-lw);H=bottom+65*s;
+  const day=86400000,step=Math.max(1,Math.ceil((hi-lo)/day/5)),ticks=[];for(let d=lo;d<hi;d+=step*day)ticks.push(d);ticks.push(hi);for(const d of ticks){const x=fx(d);body+=line(x,top-15*s,x,bottom)+text(x,35*s,new Date(d).toISOString().slice(0,10),11,400,'middle');}
+  const positions=new Map();for(let i=0;i<plan.items.length;i++){const n=plan.items[i],y=top+i*rowH,xx=fx(n.a),end=fx(n.b),cy=y+rowH/2;positions.set(n.id,{start:[xx,cy],end:[end,cy],y});body+=line(0,y+rowH,W,y+rowH)+group(n.id,[n.id],lines(wrap(n.label,lw-35*s),12*s,cy,13,600),{x:0,y,w:lw-15*s,h:rowH});
+   const box=n.a===n.b?`<path d="M${xx} ${cy-10*s}L${xx+10*s} ${cy}L${xx} ${cy+10*s}L${xx-10*s} ${cy}Z" fill="${colour(i)}"/>`:`<rect x="${f(xx)}" y="${f(cy-12*s)}" width="${f(end-xx)}" height="${24*s}" rx="3" fill="${colour(i)}"/>`;
+   body+=group(n.id,[n.id],`<title>${esc(n.label+' · ['+n.start+', '+n.end+') UTC')}</title>`+box,{x:xx,y:cy-12*s,w:end-xx,h:24*s,start:n.start,end:n.end},pr.start);
+  }
+  for(let i=0;i<plan.dependencies.length;i++){const r=plan.dependencies[i],a=positions.get(r.from.element),b=positions.get(r.to.element),x=Math.min(right+15*s,a.end[0]+16*s),yy=b.start[1],d=`M${f(a.end[0])} ${f(a.end[1])}H${f(x)}V${f(yy-23*s)}H${f(b.start[0])}V${f(yy-12*s)}`;body+=group(r.id,[r.id],`<path d="${d}" stroke="${t.ink}" fill="none" stroke-width="1.2"/>`+R.endMark([b.start[0],yy-12*s],90,'filled',t.ink,t.surface));}
+  body+=text(0,H-20*s,'UTC dates · end-exclusive intervals · diamonds are milestones · supplied schedule, not a scheduling solver.',11);
+ }
+ if(plan.kind==='panels'&&plan.panels.some(v=>v.child)){
+  if(typeof options.renderChild!=='function')throw new D.DDNError('DDN-QP004','Child panels require the unified engine dispatcher');
+  const gap=24*s,pad=18*s,measured=[];let cw=Math.max(260*s,(W-gap*(plan.columns-1))/plan.columns);
+  function scopeSVG(svg,prefix,font){
+   svg=svg.replace(/<\?xml[^?]*\?>/g,'').replace(/<style>[\s\S]*?<\/style>/g,'');const ids=new Map();
+   svg.replace(/\sid="([^"]+)"/g,(_,id)=>{ids.set(id,prefix+id);return _;});
+   svg=svg.replace(/(\s)id="([^"]+)"/g,(_,a,id)=>a+'id="'+ids.get(id)+'"').replace(/url\(#([^)]*)\)/g,(_,id)=>'url(#'+(ids.get(id)||id)+')').replace(/(href=")#([^"]+)"/g,(_,a,id)=>a+'#'+(ids.get(id)||id)+'"').replace(/(aria-labelledby|aria-describedby)="([^"]*)"/g,(_,a,ls)=>a+'="'+ls.split(/\s+/).map(x=>ids.get(x)||x).join(' ')+'"').replace(/data-projection-mark="([^"]+)"/g,(_,id)=>'data-projection-mark="'+prefix+id+'"');
+   return svg.replace(/<svg\b/, '<svg font-family="'+esc(font)+'"');
+  }
+  for(const panel of plan.panels){let child=null;if(panel.child){const input=clone(panel.child);input.view.profiles.style={...input.view.profiles.style,look:p.style.look,theme:p.style.theme};input.view.profiles.publication={...input.view.profiles.publication,size:'content',fit:'none'};
+    child=options.renderChild(input,reg,glyphs,{...options,layoutState:null});diagnostics.push(...child.diagnostics.map(d=>({...d,message:'Child '+panel.title+': '+d.message})));cw=Math.max(cw,(child.scene.width+2*pad-gap*(panel.colspan-1))/panel.colspan);smallest=Math.min(smallest,child.scene.smallestText*child.scene.scale);
+   }measured.push({panel,child});}
+  W=cw*plan.columns+gap*(plan.columns-1);const nr=Math.max(...plan.panels.map(v=>v.row+v.rowspan)),rh=Array(nr).fill(180*s);
+  for(const m of measured){const pw=cw*m.panel.colspan+gap*(m.panel.colspan-1);m.title=wrap(m.panel.title,pw-2*pad,15,650);m.header=(m.title.length*21+26)*s;m.width=pw;
+   if(m.child)m.need=m.header+2*pad+m.child.scene.height;else{m.itemLines=m.panel.items.map(i=>({i,title:wrap(i.node.name,pw-2*pad,14,600),body:wrap(i.text,pw-2*pad,12)}));m.need=m.header+pad+m.itemLines.reduce((n,x)=>n+(x.title.length*20+x.body.length*18+24)*s,0);}}
+  for(const m of measured.slice().sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const avail=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(avail<m.need)for(let j=m.panel.row;j<m.panel.row+m.panel.rowspan;j++)rh[j]+=(m.need-avail)/m.panel.rowspan;}
+  const tops=[0];rh.forEach(h=>tops.push(tops.at(-1)+h+gap));
+  for(const m of measured){const x=m.panel.column*(cw+gap),y=tops[m.panel.row],height=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);body+=rect(x,y,m.width,height)+lines(m.title,x+pad,y+29*s,15,650)+line(x,y+m.header,x+m.width,y+m.header);
+   if(m.child){const cc=m.child.scene,xx=x+(m.width-cc.width)/2,yy=y+m.header+pad,prefix='child-'+R.hash(ir.view.id+':'+m.panel.id)+'-',svg=scopeSVG(m.child.svg,prefix,Text.FONTS[m.panel.child.view.profiles.style.font]);body+='<g data-child-view="'+esc(m.panel.child.view.id)+'">'+svg.replace(/<svg\b/,'<svg x="'+f(xx)+'" y="'+f(yy)+'"')+'</g>';
+    composedSubs.push({id:m.panel.id,target:m.panel.child.view.id,x:xx,y:yy,w:cc.width,h:cc.height,mode:'inline'});
+    for(const mark of cc.marks||[])marks.push({...mark,id:prefix+mark.id,x:xx+cc.origin[0]+(mark.x||0)*cc.scale,y:yy+cc.origin[1]+(mark.y||0)*cc.scale,w:(mark.w||0)*cc.scale,h:(mark.h||0)*cc.scale,childView:m.panel.child.view.id});
+    for(const node of cc.nodes||[])marks.push({id:prefix+node.id,sourceIds:[node.id],x:xx+cc.origin[0]+node.x*cc.scale,y:yy+cc.origin[1]+node.y*cc.scale,w:node.w*cc.scale,h:node.h*cc.scale,childView:m.panel.child.view.id});
+   }else{let yy=y+m.header+pad+18*s;for(const item of m.itemLines){body+=group(item.i.node.id,[item.i.node.id],lines(item.title,x+pad,yy,14,600)+lines(item.body,x+pad,yy+item.title.length*20*s,12),{x:x+pad,y:yy-16*s,w:m.width-2*pad,h:(item.title.length*20+item.body.length*18+24)*s});yy+=(item.title.length*20+item.body.length*18+24)*s;}}
+  }H=tops.at(-1)-gap+24*s;
+ }
+ if(!Number.isFinite(W)||!Number.isFinite(H)||W>50000||H>50000)throw new D.DDNError('DDN-PJ060','Projection extent exceeds bounded publication budget');
+ // Page composition: measurements and all visible labels participate, unlike CSS-only scaling.
+ const margin=q(p.publication.margin,32),titleLines=wrap(ir.view.name,W,24,650),header=Math.max(92*s,(titleLines.length*29+48)*s),footer=46*s;
+ let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
+ if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
+ const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
+ const scale=p.publication.fit==='none'?1:Math.min(1,aw/W,ah/H),min=q(p.publication.minimum_text,8*96/72),embed=p.publication.embedding_scale??1;
+ if(!Number.isFinite(embed)||embed<=0||embed>100)throw new D.DDNError('DDN-PJ062','embedding_scale must be a positive finite value <= 100');
+ const warnOrFail=(code,msg)=>{if(p.publication.overflow==='error')throw new D.DDNError(code,msg);diagnostics.push({code,severity:'warning',message:msg});};
+ if(W*scale>aw+.01||H*scale>ah+.01)warnOrFail('DDN074','Projection exceeds publication page; use content size or a larger page');
+ if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');
+ const tx=margin+(aw-W*scale)/2,ty=margin+header;
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
+ out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650)+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
+ out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end')+'</svg>';
+ const after=Text.stats(),estimated=after.estimated>stats.estimated;if(estimated){if(p.publication.metrics==='required')throw new D.DDNError('DDN077','Required measured fonts unavailable for projection');diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});}
+ const scene={width:pageW,height:pageH,smallestText:smallest,scale,origin:[tx,ty],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:composedSubs,marks,projection:{kind:plan.kind,profile:plan.profile,sourceIds:plan.sourceIds||[],quantitative:!!plan.quantitative},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:estimated?'estimated':'measured',requestedFont:p.style.font}};
+ return{svg:out,scene,diagnostics,_ir:ir};
+}
+function vegaLite(ir){
+ const plan=Data.plan(ir,D.DDNError),p=ir.view.profiles.projection;if(plan.quality)throw new D.DDNError('DDN-PJ070','Quality transforms are native; this optional adapter does not silently flatten them');if(!['chart','timeline'].includes(plan.kind))throw new D.DDNError('DDN-PJ070','Vega-Lite adapter supports chart/timeline only');
+ const spec={$schema:'https://vega.github.io/schema/vega-lite/v6.json',description:'DDN source-bound quantitative projection; local values only',width:q(p.width,900),height:q(p.height,450),usermeta:{ddnView:ir.view.id,profile:p.profile,sourceIds:plan.sourceIds}};
+ if(plan.kind==='timeline'){spec.data={values:plan.items.map(n=>({label:n.label,start:n.start,end:n.end,sourceId:n.id}))};spec.mark='bar';spec.encoding={y:{field:'label',type:'nominal'},x:{field:'start',type:'temporal',scale:{type:'utc'}},x2:{field:'end'}};spec.usermeta.omissions=['dependency overlay','milestones are zero-width intervals; native view displays diamonds'];}
+ else{spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
+ return spec;
+}
+return{VERSION:'0.5.0-draft.2',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};
+});

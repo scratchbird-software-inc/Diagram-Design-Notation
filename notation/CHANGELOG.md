@@ -1,0 +1,63 @@
+# Current release — 0.5.0-draft.1
+
+All four quality/lifecycle/reporting stages are implemented in the same source-driven runtime. Added nine profile versions (24 installed in total), 34 views from four shared files, heatmap and fishbone projections, shared empty-cell matrix authoring, chart series/layers and bounded transforms, typed decision analysis/evaluation, flat lifecycle traces, R7 boxplots, one-level child panels and selected notation completion. Existing 0.4 short-route/label regression, 0.3 safeguards and 336 previous views remain exercised. Read quality/SCOPE.md and quality/FINDINGS.md; native bounded capability does not imply external-standard/production approval.
+
+## Historical entries retained
+
+# Routing patch — 0.4.0-draft.2
+
+The purchasing Complete route now stays local (140 rather than 3509.493 units). Label fallback, detour-aware free anchors, candidate-versus-visibility search, strict waypoint preservation, and nonrectangular curved attachments are covered by regression tests. See [routing fix](release/ROUTING-FIX.md). Source grammar is unchanged.
+
+# Changelog
+
+## 0.4.0-draft.2 — profiles, shapes and source-bound projections
+
+Added a reusable projection concern, 15 trusted profiles, contour-aware shape/compartment recipes, scalar/binary Chen transformation, RACI/CRUD/general relation matrices, record tables and spanning panels. Added six native chart marks, numeric/date axes, area-proportional bubbles and UTC supplied-date schedules with dependency checks. Added source-bound inspector edits and capability-aware controls to the existing Studio/runtime. The 27 new views share three source files; the full catalogue has 336 views. Native quantitative output is dependency-free. Optional Vega export/adapter is scoped separately; actual third-party rendering was not verified. New profile/projection redacted output fails closed until authorized occurrence closure is implemented. Full standards, UI widgets, advanced interactions and engineering capabilities remain future work. See projections/FINDINGS.md, spec/16 through spec/20 and release/VERIFICATION.md.
+
+## 0.3.0-draft.1 — Enterprise remediation and curved geometry
+
+Native placement/routing, endpoint and extension checks, recursive field paths, domain/type display, font measurement provenance, publication guards, explicit allowlist export and process/assurance contracts are now executable in the bounded reference. Curved relations add broad Bézier and rounded-corner geometry, independent of look, with curve-aware crossing cuts/jumps and per-relation overrides. All active corpora and documentation have been rebuilt. Historical negative evidence remains in history; nine external professional/deployment gates remain unresolved. See release/CHANGE-REPORT.md and the current capability manifest.
+
+
+## Example-gallery addition / use-cases.1
+
+- 22 use-case scenarios, 27 renderer-generated views and reusable model/format modules.
+- Added a self-contained catalogue, live-editor entries, deterministic build and validation scripts.
+- Clarified local-server instructions and scoped the preview CSS to its outer SVG.
+- Reference decoder, renderer and sketch engine remain unchanged from draft.2.
+
+## 0.2.0-draft.2 — hand-drawn rendering correction
+
+- Irregular double-stroke outlines for tables, domains, samples, rounded activities, notes and frames.
+- Seeded bowed pen strokes for field separators, sample-grid rules and relationship bodies.
+- Optional light diagonal hatching, clipped inside each object, preserving registered semantic colours.
+- Explicit optional `font: handwriting` support using local fonts. No font files are redistributed or fetched.
+- Neo gets a clearer offset shadow and top-edge treatment; rectangular tables remain rectangular.
+- Endpoint marks, registry icons, numbered circles, crossing semantics and scene geometry remain stable.
+- Invalid roughness, hachure and seed values are diagnosed rather than silently ignored.
+
+
+See `HANDDRAWN-FIX.md` for executable syntax and integration details. Language declaration remains `ddn "0.2";`; no model identity or semantic registry meanings change.
+
+
+## 0.2.0-draft.1 — 7 September 2026
+
+Added an actual UTF-8 language/decoder with shared data, reusable formatting concerns and view composition; formal grammar; semantic/interchange contracts; a browsable proposed-standard website; local source editor; six appearance treatments; 21 source-derived views; orthogonal crossing examples; complete registry SVG plates; stable numbered relations and legends; page and subdiagram rules; regression tests; and a Codex implementation plan.
+
+Withdrawn: arbitrary per-view semantic colour aliases from the previous iconography-only draft. Fixed registry meanings now constrain every look and contrast mode.
+
+The baseline vocabulary remains 152 object kinds, 118 optional facets, 90 relation verbs, 165 descriptive properties and 20 view families. The definition of those vocabulary entries does not imply a complete platform-specific validation engine.
+
+
+## session-bootstrap.1 (add-on; core language remains 0.2)
+
+Added 54 explicitly sequenced events, ten compiled views, shared contracts and a standalone casebook. Added the opt-in interaction projection and validation tests. The core renderer gains only explicit visual boundary-anchor fractions for object-level endpoints; existing standard examples render byte-identically. The editor can select relation source, and its SVG CSS targets the outer preview. No new active core vocabulary or cryptographic protocol implementation is introduced.
+
+
+## Meridian ERP review baseline0.1
+
+Added synthetic enterprise model,198 compiled views, complete field/requirements dictionaries, portable review website, proposed SQL bindings, local economic/check probes,8 UI wireframes and26 evidence-led findings. Core semantics/rendering are not silently upgraded. The broad preview SVG CSS selector is narrowed to direct children.
+
+## 0.3.0-draft.2 — unified SDK, live examples and source Studio
+
+Merged the uploaded native 0.3 implementation with the later interactive/pinned-layout companion. Added one public bundle, TypeScript declarations, pin-centred patterns, paused free-node state, native route optimization and blue-grey low-light palettes. Added full-source editing, user-selected DDN/folder/ZIP/JSON opening, individual/workspace downloads, transactions, undo/redo, relative file moves and guided label/field/relation/pin operations. Regenerated current docs/examples; preserved prior evidence. `spanning_tree` distinguishes the former companion tree from original strict native `tree`. Language arrows can be adjacent to identifiers without a space, while hyphenated names remain valid. See current verification reports for actual results and limitations.

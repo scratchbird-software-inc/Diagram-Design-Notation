@@ -1,0 +1,131 @@
+ddn "0.3";
+module "ddn.examples.curved-relations";
+import "shared.ddn" as shared;
+
+// One semantic graph, several independent routing and drawing choices.
+data capabilities {
+ object enterprise "Meridian Works" { kind: context; }
+ object finance "Accounting" { kind: application; }
+ object inventory "Inventory control" { kind: application; }
+ object production "Production control" { kind: application; }
+ object logistics "Logistics" { kind: application; }
+ object workforce "Human resources" { kind: application; }
+ object journals "Journals and periods" { kind: dataset; }
+ object lots "Lots and reservations" { kind: dataset; }
+ object work_orders "Work orders and WIP" { kind: dataset; }
+ object shipments "Loads and delivery" { kind: dataset; }
+ object employment "Employment and payroll" { kind: dataset; }
+ relation f01 @enterprise -> @finance { kind: assoc; }
+ relation f02 @enterprise -> @inventory { kind: assoc; }
+ relation f03 @enterprise -> @production { kind: assoc; }
+ relation f04 @enterprise -> @logistics { kind: assoc; }
+ relation f05 @enterprise -> @workforce { kind: assoc; }
+ relation f06 @finance -> @journals { kind: assoc; }
+ relation f07 @inventory -> @lots { kind: assoc; }
+ relation f08 @production -> @work_orders { kind: assoc; }
+ relation f09 @logistics -> @shipments { kind: assoc; }
+ relation f10 @workforce -> @employment { kind: assoc; }
+}
+data exchange {
+ object client "Client" { kind: application; }
+ object manager "Connection manager" { kind: application; }
+ relation request "Connection request" @client -> @manager { kind: flow; }
+ relation response "Authentication prompt" @manager -> @client { kind: flow; }
+ relation verify "Validate negotiated settings" @manager -> @manager { kind: invoke; }
+}
+data crossing {
+ object a "Orders source" { kind: dataset; }
+ object b "Stock source" { kind: dataset; }
+ object c "Stock projection" { kind: dataset; }
+ object d "Orders projection" { kind: dataset; }
+ relation orders "Order projection input" @a -> @d { kind: flow; }
+ relation stock "Stock projection input" @b -> @c { kind: derives; }
+}
+data obstruction {
+ object source "Upstream" { kind: dataset; }
+ object unrelated "Unrelated database" { kind: database; }
+ object target "Downstream" { kind: dataset; }
+ relation deliver "Route around unrelated storage" @source -> @target { kind: flow; }
+}
+format options {
+ layout branch_layout { algorithm: mindmap; root: @capabilities.enterprise; hierarchy: [assoc]; routing: curved; curve: bezier; curve_tension: 0.5; crossings: gap; gap: 150px; row_gap: 100px; }
+ legend branches { mode: numbers; keys: { f01:1,f02:2,f03:3,f04:4,f05:5,f06:6,f07:7,f08:8,f09:9,f10:10 }; width: 350px; }
+ legend exchange { mode: numbers; keys: { request:1,response:2,verify:3 }; width: 350px; }
+ legend crossing { mode: numbers; keys: { orders:1,stock:2 }; width: 350px; }
+ publication screen { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view mindmap_classic "Curved mind-map / classic" {
+ data: [@capabilities]; format: @shared.styles.technical;
+ layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
+ display { fields: none; }
+}
+view mindmap_handdrawn "Curved mind-map / handDrawn" {
+ data: [@capabilities]; format: @shared.styles.technical;
+ layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
+ style { look: handDrawn; font: sans; seed: 42; }
+ display { fields: none; }
+}
+view mindmap_neo "Curved mind-map / neo" {
+ data: [@capabilities]; format: @shared.styles.technical;
+ layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
+ style { look: neo; }
+ display { fields: none; }
+}
+view mindmap_angular "Same mind-map / orthogonal routes" {
+ data: [@capabilities]; format: @shared.styles.technical;
+ layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
+ layout { routing: orthogonal; }
+ display { fields: none; }
+}
+view mindmap_rounded "Same mind-map / rounded corridor corners" {
+ data: [@capabilities]; format: @shared.styles.technical;
+ layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
+ layout { curve: rounded; curve_radius: 36px; }
+ display { fields: none; }
+}
+view mixed "One view / independent per-relation route overrides" {
+ data: [@capabilities]; format: @shared.styles.technical;
+ layout: @options.branch_layout; legend: @options.branches; publication: @options.screen;
+ display { fields: none; }
+ route @capabilities.f01 { routing: orthogonal; }
+ route @capabilities.f06 { routing: straight; }
+ route @capabilities.f03 { routing: curved; curve: rounded; curve_radius: 24px; }
+}
+view crossing_gap "Curved disconnected crossing / gap" {
+ data: [@crossing]; format: @shared.styles.technical;
+ legend: @options.crossing; publication: @options.screen;
+ layout { algorithm: manual; routing: curved; curve: bezier; crossings: gap; }
+ place @crossing.a { at: [0px,0px]; }
+ place @crossing.b { at: [0px,480px]; }
+ place @crossing.c { at: [800px,0px]; }
+ place @crossing.d { at: [800px,480px]; }
+}
+view crossing_bridge "Curved disconnected crossing / rounded jump" {
+ data: [@crossing]; format: @shared.styles.technical;
+ legend: @options.crossing; publication: @options.screen;
+ layout { algorithm: manual; routing: curved; curve: bezier; crossings: bridge; }
+ place @crossing.a { at: [0px,0px]; }
+ place @crossing.b { at: [0px,480px]; }
+ place @crossing.c { at: [800px,0px]; }
+ place @crossing.d { at: [800px,480px]; }
+}
+view crossing_square "Curved disconnected crossing / local square jump" {
+ data: [@crossing]; format: @shared.styles.technical;
+ legend: @options.crossing; publication: @options.screen;
+ layout { algorithm: manual; routing: curved; curve: bezier; crossings: square_bridge; }
+ place @crossing.a { at: [0px,0px]; }
+ place @crossing.b { at: [0px,480px]; }
+ place @crossing.c { at: [800px,0px]; }
+ place @crossing.d { at: [800px,480px]; }
+}
+view obstacle "Curved detour / no relation to the middle database" {
+ data: [@obstruction]; format: @shared.styles.technical;
+ publication: @options.screen;
+ layout { algorithm: grid; columns: 3; routing: curved; curve: bezier; }
+ legend { mode: numbers; keys: { deliver: 1 }; }
+}
+view bidirectional "Curved request, response and internal action" {
+ data: [@exchange]; format: @shared.styles.technical;
+ publication: @options.screen; legend: @options.exchange;
+ layout { algorithm: layered; routing: curved; curve: bezier; gap: 180px; }
+}

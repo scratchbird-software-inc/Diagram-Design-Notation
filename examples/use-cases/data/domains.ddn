@@ -1,0 +1,23 @@
+ddn "0.3";
+module "ddn.usecases.domains";
+import "commerce.ddn" as commerce;
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object support "Support ticket" {
+        kind: table;
+        fields {
+            field ticket_id;
+            field account_ref;
+        }
+    }
+    object binding "Customer ID / SQL" {
+        kind: binding;
+        platform: "SQL target not selected";
+        representation: undecided;
+    }
+    relation r_order_domain @commerce.tables.orders.customer_id -> @commerce.domains.customer_id { kind: domain; }
+    relation r_support_candidate @support.account_ref -> @commerce.domains.customer_id { kind: candidate; }
+    relation r_binding @commerce.domains.customer_id -> @binding { kind: binds; }
+}

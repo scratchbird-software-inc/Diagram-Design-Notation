@@ -1,0 +1,115 @@
+ddn "0.3";
+module "ddn.enterprise.readiness";
+import "shared.ddn" as shared;
+data gates {
+ object issue001 "Automatic grid routes through an unrelated object" {kind:rule;
+  description: "Native obstacle-aware router; A\u2192C avoids intervening B. Pins and infeasible clearances fail explicitly.";
+  x_requirement: {"id": "ERP-DDN-001", "owner": "DDN layout maintainer", "acceptance": "Native core routes the three-node counterexample without any unrelated box intersection; test adversarial ports and dense fields.", "state": "required"};
+ }
+ object issue002 "Shared connector tracks and callout interference remain" {kind:rule;
+  description: "Independent endpoint lanes, reserved ports and callout corridors; independent full-corpus scanner is now an error gate.";
+  x_requirement: {"id": "ERP-DDN-002", "owner": "DDN renderer maintainer / technical writer", "acceptance": "Distinguish shared port stubs from unrelated shared trunks, then require unique visible signatures and zero unrelated-callout masking across the corpus.", "state": "required"};
+ }
+ object issue003 "Relationship endpoint compatibility is not enforced" {kind:rule;
+  description: "Every relation has executable endpoint-kind/member/self constraints. Invalid known kind pairs fail before drawing.";
+  x_requirement: {"id": "ERP-DDN-003", "owner": "Language/compiler maintainer", "acceptance": "Reject invalid endpoint-kind pairs and preserve valid vendor-extension fallbacks without silently guessing.", "state": "required"};
+ }
+ object issue004 "Extension business metadata is preserved but not validated" {kind:rule;
+  description: "Registered typed x_erp and other extension validators reject malformed data. Unknown extensions are warned or rejected by strict mode.";
+  x_requirement: {"id": "ERP-DDN-004", "owner": "Language/ERP schema reviewers", "acceptance": "Reject malformed typed metadata, unknown semantics and invalid compound references, with field-level diagnostics.", "state": "required"};
+ }
+ object issue005 "Requested domain display is ignored" {kind:rule;
+  description: "Domain/datatype display resolves names without changing model identities.";
+  x_requirement: {"id": "ERP-DDN-005", "owner": "DDN renderer maintainer", "acceptance": "A visible domain badge/text resolves to the correct stable domain; toggling it preserves model hash.", "state": "required"};
+ }
+ object issue006 "fit:none with overflow:error can silently clip content" {kind:rule;
+  description: "Every implemented fit mode checks bounds and final text size; embedding/inline sizes are checked. Unsupported pagination is rejected.";
+  x_requirement: {"id": "ERP-DDN-006", "owner": "Publication maintainer", "acceptance": "Reject or reflow every out-of-bounds element/label under overflow:error; no hidden clipping in print.", "state": "required"};
+ }
+ object issue007 "Scalable fonts and accurate text measurement remain unsupported" {kind:rule;
+  description: "Variable base sizes and browser/pinned measurements are implemented; unknown runs have explicit warnings or fail under metrics:required. Cross-machine font/bidi qualification remains external.";
+  x_requirement: {"id": "ERP-DDN-007", "owner": "Typography/accessibility reviewer", "acceptance": "Measure resolved fonts and actual text runs; verify final embedding scale, Unicode shaping and no overflow in Chrome and Firefox.", "state": "required"};
+ }
+ object issue008 "Hidden detail remains in a full semantic export" {kind:rule;
+  description: "Shared allowlist export projector is used by SVG, JSON, CLI and editor. Hidden private source is not mistaken for public output.";
+  x_requirement: {"id": "ERP-DDN-008", "owner": "Security/privacy reviewer", "acceptance": "Authorized export closure excludes protected fields, examples and metadata from SVG/JSON/source/tooltips, with negative tests.", "state": "required"};
+ }
+ object issue009 "Nested field syntax is not yet executable" {kind:rule;
+  description: "Recursive fields have stable path/parent/depth identities and member endpoints. Variant/presence/null declarations remain explicit.";
+  x_requirement: {"id": "ERP-DDN-009", "owner": "Language maintainer", "acceptance": "Validate/render nested arrays, variants and optional/null states with stable field-level endpoints.", "state": "required"};
+ }
+ object issue010 "Layered layout appears in the specification but is rejected" {kind:rule;
+  description: "Native grid/manual/layered/tree/mindmap/grouped algorithms; executable capability manifest prevents unsupported enum drift.";
+  x_requirement: {"id": "ERP-DDN-010", "owner": "Specification editor", "acceptance": "Every documented enum value has an implemented conformance level or explicit unsupported status.", "state": "required"};
+ }
+ object issue011 "Derived datasets were initially labeled authoritative" {kind:rule;
+  description: "Corrected role/workload mapping; regression checks now cover projections and analytic facts.";
+  x_requirement: {"id": "ERP-MOD-011", "owner": "Data architect", "acceptance": "Re-run case-checks; inspect analytical run/evidence roles separately from business facts.", "state": "required"};
+ }
+ object issue012 "Finished-goods sample drifted from loaded labor costing" {kind:rule;
+  description: "Corrected source/generator and explicit expected stock value630 check.";
+  x_requirement: {"id": "ERP-MOD-012", "owner": "Cost accountant", "acceptance": "Changing labor input must update fixture and samples or fail validation.", "state": "required"};
+ }
+ object issue013 "Minute fields shared an elapsed-seconds domain" {kind:rule;
+  description: "Added explicit elapsed-minute domain; named minute fields now bind it.";
+  x_requirement: {"id": "ERP-MOD-013", "owner": "Manufacturing/data architect", "acceptance": "Verify every duration interface declares conversion; case-check minutes-domain test remains green.", "state": "required"};
+ }
+ object issue014 "Same-company keys do not cover all cross-entity affinity rules" {kind:rule;
+  description: "DDN x_affinity records explicit comparisons and enforcement responsibility; fixture checks are available. Target-engine race/affinity enforcement is still unverified.";
+  x_requirement: {"id": "ERP-MOD-014", "owner": "DBA / controller", "acceptance": "Negative tests for cross-company cost centre, wrong period/book, wrong warehouse owner and intentional intercompany exception.", "state": "required"};
+ }
+ object issue015 "Cross-database references require durable reconciliation" {kind:rule;
+  description: "DDN x_reconciliation requires idempotency, state outcomes, timeout, compensation and evidence. Real cross-service recovery remains unverified.";
+  x_requirement: {"id": "ERP-MOD-015", "owner": "Distributed-systems / workforce architect", "acceptance": "Inject outage, stale reference, revoked employment and duplicate acceptance; ensure no unmatched labor/payroll/ledger effect.", "state": "required"};
+ }
+ object issue016 "Jurisdictional accounting/payroll/privacy policies not approved" {kind:rule;
+  description: "Explicit required gate: approved jurisdiction policies and genuine expert evidence are absent; no diagram can manufacture them.";
+  x_requirement: {"id": "ERP-POL-016", "owner": "Controller / payroll specialist / privacy counsel", "acceptance": "Approve versioned jurisdiction matrix and independent calculation/evidence suites; document exclusions explicitly.", "state": "required"};
+ }
+ object issue017 "Full temporal/uniqueness/mutation enforcement is not implemented" {kind:rule;
+  description: "DDN x_constraint declares uniqueness, half-open interval and immutable-state contracts with fixture checks. Production database migrations remain review-only.";
+  x_requirement: {"id": "ERP-MOD-017", "owner": "DBA / data architect", "acceptance": "Execute migrations against selected engine; mutation/property tests for interval overlap, history correction and posted-line immutability.", "state": "required"};
+ }
+ object issue018 "No distributed load, broker, bank or restore drill has run" {kind:rule;
+  description: "Required operational evidence remains absent. No live broker, bank, load or restore drill is claimed.";
+  x_requirement: {"id": "ERP-OPS-018", "owner": "SRE / integration owner", "acceptance": "Measured failover fencing, recovery consistency, broker restart, bank-unknown-outcome reconciliation and peak contention tests.", "state": "required"};
+ }
+ object issue019 "UI/report requirements are not finished executable applications" {kind:rule;
+  description: "Typed x_ui/x_report can validate field/command/grain/cutoff contracts. The ERP screens and reports remain specifications/wireframes, not finished applications.";
+  x_requirement: {"id": "ERP-APP-019", "owner": "UX / report owner / application architect", "acceptance": "Authorize and test commands end-to-end; reconcile each production report at fixed source cuts; keyboard/assistive testing.", "state": "required"};
+ }
+ object issue020 "DFD steps are not an executable workflow or formal balanced DFD certification" {kind:rule;
+  description: "Balanced port/payload contracts and bounded branch/guard/retry fixtures added. Not an orchestration runtime or formal DFD certification.";
+  x_requirement: {"id": "ERP-DDN-020", "owner": "Process analyst / DDN standards reviewer", "acceptance": "Guard/branch/loop and boundary-balance fixtures including missing, duplicated and incompatible ports.", "state": "required"};
+ }
+ object issue021 "Mind-map and obstacle avoidance use a case-specific hint generator" {kind:rule;
+  description: "Native mindmap/tree/layered placement replaces the case-only helper. Current enterprise sources contain no generated placement/waypoint blocks.";
+  x_requirement: {"id": "ERP-DDN-021", "owner": "DDN layout maintainer", "acceptance": "Native reusable layout presets, deterministic stability and explicit failure diagnostics across unrelated inputs.", "state": "required"};
+ }
+ object issue022 "Hash-chain fixture is not tamper-proof evidence custody" {kind:rule;
+  description: "x_custody makes independent anchor/key/retention/hold/evidence responsibilities explicit; real custody and privileged-administrator testing remain required.";
+  x_requirement: {"id": "ERP-SEC-022", "owner": "Auditor / security engineer", "acceptance": "Adversarial administrator exercise plus independently verified retention/hold/export custody evidence.", "state": "required"};
+ }
+ object issue023 "Specialized financial/manufacturing algorithms remain bounded" {kind:rule;
+  description: "Specialized algorithms remain subject to scoped fixtures and policy approval; labels are not implementation evidence.";
+  x_requirement: {"id": "ERP-FIN-023", "owner": "Controller / manufacturing specialist", "acceptance": "Approved policies and adversarial numeric examples for every in-scope specialized operation.", "state": "required"};
+ }
+ object issue024 "No independent professional signoff yet" {kind:rule;
+  description: "Independent reviewer slots remain blank. Author tests do not sign on behalf of accountants, SREs, auditors or privacy counsel.";
+  x_requirement: {"id": "ERP-REV-024", "owner": "Review chair", "acceptance": "Each mandatory role signs exact model/spec/code hash and records accepted residual risk; unresolved critical items block production.", "state": "required"};
+ }
+ object issue025 "Whole-model A4 output correctly rejected" {kind:rule;
+  description: "Readability guard retained. Bounded linked views replace illegible whole-model paper output.";
+  x_requirement: {"id": "ERP-DDN-025", "owner": "Technical writer", "acceptance": "Retain rejection fixture and verify additional page/fit modes under ERP-DDN-006.", "state": "required"};
+ }
+ object issue026 "Findings filter option was malformed during initial build" {kind:rule;
+  description: "Corrected the HTML source and added explicit count/filter browser regression checks. Normal HTTP navigation is independently blocked by the test environment and is not counted as application success.";
+  x_requirement: {"id": "ERP-WEB-026", "owner": "Web editor maintainer", "acceptance": "All 26 findings selectable; nine external gates, 11 reference-verified fixes and one scoped typography item remain separately filterable in the 0.3 review site.", "state": "required"};
+ }
+}
+view external "External gates / required evidence" {data:[@gates];format:@shared.styles.technical;
+select:[@gates.issue014,@gates.issue015,@gates.issue016,@gates.issue017,@gates.issue018,@gates.issue019,@gates.issue022,@gates.issue023,@gates.issue024];
+layout {algorithm:grid;columns:3;} publication {size:content;fit:none;overflow:error;} }
+view software "Software changes / independent review checklist" {data:[@gates];format:@shared.styles.technical;
+select:[@gates.issue001,@gates.issue002,@gates.issue003,@gates.issue004,@gates.issue005,@gates.issue006,@gates.issue007,@gates.issue008,@gates.issue009,@gates.issue010,@gates.issue020,@gates.issue021];
+layout {algorithm:grid;columns:3;} publication {size:content;fit:none;overflow:error;} }

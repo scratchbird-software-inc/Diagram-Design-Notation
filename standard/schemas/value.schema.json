@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:schema:value:0.3",
+  "$ref": "#/$defs/value",
+  "$defs": {
+    "value": {
+      "oneOf": [
+        {
+          "type": [
+            "null",
+            "boolean",
+            "string",
+            "number"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "$ref"
+          ],
+          "properties": {
+            "$ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$state"
+          ],
+          "properties": {
+            "$state": {
+              "enum": [
+                "undecided",
+                "not_applicable",
+                "conflicting"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$missing"
+          ],
+          "properties": {
+            "$missing": {
+              "const": true
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "$quantity",
+            "unit"
+          ],
+          "properties": {
+            "$quantity": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "px",
+                "pt",
+                "mm",
+                "cm",
+                "in",
+                "ms",
+                "s",
+                "min",
+                "h",
+                "d",
+                "%"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[^$]"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        }
+      ]
+    }
+  }
+}

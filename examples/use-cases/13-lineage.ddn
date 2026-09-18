@@ -1,0 +1,17 @@
+ddn "0.3";
+module "ddn.usecases.views.lineage";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+import "data/lineage.ddn" as l;
+
+// Where did an analytical result come from?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "13 / Dataset lineage" {
+    data: [@c.tables, @l.model, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@c.tables.orders, @l.model.daily, @l.model.report];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_aggregate": 1, "model.r_report": 2 }; }
+}

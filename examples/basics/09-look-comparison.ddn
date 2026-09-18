@@ -1,0 +1,42 @@
+ddn "0.3";
+module "ddn.examples.lookcomparison";
+import "shared.ddn" as shared;
+
+// One model, three renderings. No at coordinates or manual route waypoints.
+data model {
+    object customer "Customer" {
+        kind: table; maturity: draft; workload: [oltp];
+        fields { field customer_id { key: primary; } field status; }
+    }
+    object builder "Build history" { kind: activity; }
+    object history "Customer history" {
+        kind: history; workload: [olap]; temporal: bitemporal;
+        fields { field customer_id; field valid_from; field recorded_from; }
+    }
+    relation capture @customer -> @builder { kind: captures_changes_into; capture: cdc; }
+    relation load @builder -> @history { kind: write; }
+}
+
+view classic "Classic / precise single strokes" {
+    data: [@model]; format: @shared.styles.technical;
+    style: @shared.styles.classic;
+    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
+    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
+    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
+}
+
+view handDrawn "Hand drawn / organic pen strokes" {
+    data: [@model]; format: @shared.styles.technical;
+    style: @shared.styles.hand;
+    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
+    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
+    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
+}
+
+view neo "Neo / raised, precise cards" {
+    data: [@model]; format: @shared.styles.technical;
+    style: @shared.styles.neo;
+    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
+    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
+    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
+}

@@ -1,0 +1,27 @@
+ddn "0.3";
+module "ddn.examples.temporal";
+import "shared.ddn" as shared;
+
+data model {
+    object history "Customer status history" {
+        kind: history; temporal: bitemporal; workload: [olap];
+        time: { valid: "business effective date", recorded: "warehouse knowledge date", retention: undecided };
+        fields { field customer_id; field status; field valid_from; field recorded_from; }
+    }
+    sample example "Late-arriving fact / synthetic example" {
+        mode: synthetic;
+        columns: [@history.customer_id, @history.status, @history.valid_from, @history.recorded_from];
+        rows: [["C001", "Active", "2026-03-01", "2026-03-05"], ["C002", "Suspended", "2026-03-02", "2026-03-02"]];
+    }
+    object recovery "Operational restore plan" { kind: recovery; description: "PITR is a restore capability, not the business-valid time axis."; }
+    relation illustration @example -> @history { kind: illustrates; }
+}
+view temporal "Two time axes / not the same as recovery" {
+    data: [@model]; format: @shared.styles.technical;
+    publication { width: 1480px; height: 800px; }
+    legend { mode: numbers; keys: { "illustration": 2 }; }
+    
+    
+    
+    
+}

@@ -1,0 +1,47 @@
+ddn "0.3";
+module "ddn.examples.hybrid";
+import "shared.ddn" as shared;
+
+data model {
+    object orders "Orders definition" { kind: table; level: definition; distribution: hash; fields { field tenant_id; field order_id; } }
+    object shard "Tenant shard A" { kind: shard; level: fragment; }
+    object primary "Orders / primary copy" { kind: replica; level: instance; role: primary; location: local; }
+    object follower "Orders / follower copy" { kind: replica; level: instance; role: follower; location: cloud; }
+    object local "Local database service" { kind: service; location: local; }
+    object cloud "Cloud database service" { kind: service; location: cloud; }
+    object schema "sales schema" { kind: schema; }
+    relation fragment @orders -> @shard { kind: partitioned_into; }
+    relation copy1 @primary -> @shard { kind: realizes; }
+    relation copy2 @follower -> @shard { kind: realizes; }
+    relation on_local @primary -> @local { kind: placed_on; }
+    relation on_cloud @follower -> @cloud { kind: placed_on; }
+    relation replica_stream @primary -> @follower { kind: replicates_to; delivery: undecided; }
+    relation member @orders -> @schema { kind: namespace_member; }
+}
+view deployment "Hybrid deployment / fragments are not copies" {
+    data: [@model]; format: @shared.styles.technical;
+    display: @shared.styles.compact;
+    select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];
+    publication { width: 1550px; height: 1050px; }
+    legend { mode: numbers; width: 300px; keys: { "fragment": 1, "copy1": 2, "copy2": 3, "on_local": 4, "on_cloud": 5, "replica_stream": 6 }; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    frame local_scope "ON-PREMISES" { members: [@model.primary, @model.local]; }
+    frame cloud_scope "CLOUD" { members: [@model.follower, @model.cloud]; }
+}
+view namespaces "Namespace / the same data, a different concern" {
+    data: [@model]; format: @shared.styles.technical;
+    select: [@model.orders, @model.schema];
+    
+    
+}

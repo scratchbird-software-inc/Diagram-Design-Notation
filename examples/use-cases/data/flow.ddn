@@ -1,0 +1,58 @@
+ddn "0.3";
+module "ddn.usecases.flow";
+import "commerce.ddn" as commerce;
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data dfd {
+    object incoming "Incoming orders" {
+        kind: dataset;
+    }
+    object validate "Validate orders" {
+        kind: activity;
+        description: "Transform and validate; no implied transaction boundary.";
+    }
+    object accepted "Accepted orders" {
+        kind: dataset;
+    }
+    relation r_input @incoming -> @validate { kind: read; }
+    relation r_output @validate -> @accepted { kind: write; }
+}
+
+data stream {
+    object source "Customer / production" {
+        kind: table;
+        level: instance;
+        role: authoritative;
+        workload: [oltp];
+    }
+    object capture "Capture changes" {
+        kind: activity;
+    }
+    object topic "customer.changed" {
+        kind: topic;
+        workload: [streaming];
+    }
+    object hist_job "Build customer history" {
+        kind: activity;
+    }
+    object search_job "Build customer search" {
+        kind: activity;
+    }
+    object history "Customer history" {
+        kind: history;
+        temporal: bitemporal;
+        role: derived;
+    }
+    object search "Customer search" {
+        kind: search_index;
+        role: derived;
+    }
+    relation r_source_definition @source -> @commerce.tables.customer { kind: instance; }
+    relation r_capture @source -> @capture { kind: capture; capture: cdc; }
+    relation r_publish @capture -> @topic { kind: publish; transport: "Kafka"; }
+    relation r_history_delivery @topic -> @hist_job { kind: deliver; scope: "history consumer"; }
+    relation r_search_delivery @topic -> @search_job { kind: deliver; scope: "search consumer"; }
+    relation r_history_write @hist_job -> @history { kind: write; }
+    relation r_search_write @search_job -> @search { kind: write; }
+}

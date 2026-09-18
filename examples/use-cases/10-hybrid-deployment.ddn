@@ -1,0 +1,31 @@
+ddn "0.3";
+module "ddn.usecases.views.hybrid-deployment";
+import "formats.ddn" as fmt;
+import "data/commerce.ddn" as c;
+import "data/deployment.ddn" as d;
+
+// Which fragment is copied, and where are its copies?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "10 / Shards, copies and placement" {
+    data: [@c.tables, @d.model, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.teaching;
+    select: [@c.tables.orders, @d.model.shard, @d.model.primary, @d.model.follower, @d.model.local, @d.model.cloud];
+    publication { width: 1600px; height: 1080px; }
+    legend { keys: { "model.r_part": 1, "model.r_primary_fragment": 2, "model.r_follower_fragment": 3, "model.r_primary_host": 4, "model.r_follower_host": 5, "model.r_replication": 6 }; }
+    display { fields: none; badges: none; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    frame local "ON-PREMISES / placement view" { members: [@d.model.primary, @d.model.local]; }
+    frame cloud "CLOUD / placement view" { members: [@d.model.follower, @d.model.cloud]; }
+}

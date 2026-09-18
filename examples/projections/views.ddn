@@ -1,0 +1,197 @@
+ddn "0.4";
+module "meridian.procurement.views";
+import "./model.ddn" as m;
+import "./formats.ddn" as f;
+
+view flowchart "01 / Purchasing control flow" {
+    data: [@m.process];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"flow.basic@1"; }
+
+}
+
+view responsibility_graph "02 / Shared responsibility assignments" {
+    data: [@m.process, @m.roles, @m.responsibilities];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"ddn@1"; }
+    select: [@m.process.order, @m.process.receive, @m.process.post, @m.roles.buyer, @m.roles.manager, @m.roles.warehouse, @m.roles.controller];
+
+}
+
+view raci "03 / Model-derived RACI" {
+    data: [@m.process, @m.roles, @m.responsibilities];
+    format: @f.shared.common;
+    projection { kind:matrix;profile:"matrix.raci@1";rows:[@m.process.order, @m.process.receive, @m.process.post];columns:[@m.roles.buyer, @m.roles.manager, @m.roles.warehouse, @m.roles.controller];relation:"analysis.assignment";value:"x_assignment.code"; }
+
+}
+
+view crud "04 / Model-derived CRUD" {
+    data: [@m.process, @m.schema, @m.access];
+    format: @f.shared.common;
+    projection { kind:matrix;profile:"matrix.crud@1";rows:[@m.process.order, @m.process.receive, @m.process.post];columns:[@m.schema.supplier, @m.schema.po, @m.schema.receipt];relation:"analysis.access";value:"x_assignment.code"; }
+
+}
+
+view dfd_gane "05 / Numbered Gane\u2013Sarson-style DFD" {
+    data: [@m.dfd];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"dfd.gane_sarson@1"; }
+
+}
+
+view dfd_yourdon "06 / Yourdon-style DFD" {
+    data: [@m.dfd];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"dfd.yourdon@1"; }
+
+}
+
+view structure "07 / Declared class / interface subset" {
+    data: [@m.classes];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"uml.structure@1"; }
+
+}
+
+view usecases "08 / Actor and use-case subset" {
+    data: [@m.usecases];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"uml.usecase@1"; }
+
+}
+
+view requirements "09 / Requirement traceability" {
+    data: [@m.requirements];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"requirements.basic@1"; }
+
+}
+
+view erd "10 / Entity-field representation" {
+    data: [@m.schema];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"ddn@1"; }
+
+}
+
+view chen "11 / Chen binary projection" {
+    data: [@m.schema];
+    format: @f.shared.common;
+    projection { kind:chen;profile:"chen.basic@1"; }
+
+}
+
+view chart_bar "12 / Synthetic monthly value \u2014 bar" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:bar;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_line "13 / Synthetic monthly value \u2014 line" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:line;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_area "14 / Synthetic monthly value \u2014 area" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:area;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_pie "15 / Synthetic monthly value \u2014 pie" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:pie;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_donut "16 / Synthetic monthly value \u2014 donut" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:donut;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view scatter "17 / Cost versus recorded value" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:point;x:"x_record.cost";x_type:number;y:"x_record.value";size:"x_record.count";unit:"CAD"; }
+
+}
+
+view time_series "18 / UTC monthly observations" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:line;x:"x_record.date";x_type:date;y:"x_record.value";unit:"CAD"; }
+
+}
+
+view record_table "19 / Shared observation table" {
+    data: [@m.facts];
+    format: @f.shared.common;
+    projection { kind:table;profile:"table.records@1";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];columns:[{key:"x_record.month",label:"Month"},{key:"x_record.value",label:"Recorded value (CAD)"},{key:"x_record.cost",label:"Illustrative cost (CAD)"},{key:"x_record.count",label:"Count"}]; }
+
+}
+
+view decision_table "20 / Declarative decision-table presentation" {
+    data: [@m.rules];
+    format: @f.shared.common;
+    projection { kind:table;profile:"table.records@1";records:[@m.rules.rule1, @m.rules.rule2, @m.rules.rule3, @m.rules.rule4];columns:[{key:"x_record.priority",label:"Priority"},{key:"x_record.condition",label:"Condition"},{key:"x_record.action",label:"Expected action"}];width:1200px; }
+
+}
+
+view gantt "21 / Supplied-date procurement schedule" {
+    data: [@m.process, @m.schedule];
+    format: @f.shared.common;
+    projection { kind:timeline;profile:"timeline.basic@1";records:[@m.process.order, @m.process.receive, @m.process.post];start:"x_record.start";end:"x_record.end";dependencies:[@m.schedule.order_before_receive, @m.schedule.receive_before_post];width:1250px; }
+
+}
+
+view schedule_table "22 / Schedule source records" {
+    data: [@m.process];
+    format: @f.shared.common;
+    projection { kind:table;profile:"table.records@1";records:[@m.process.order, @m.process.receive, @m.process.post];columns:[{key:"name",label:"Task"},{key:"x_record.start",label:"Start UTC"},{key:"x_record.end",label:"End exclusive UTC"},{key:"x_record.status",label:"Status"}]; }
+
+}
+
+view swot "23 / Reusable SWOT panel template" {
+    data: [@m.notes];
+    format: @f.shared.common;
+    projection { kind:panels;profile:"panels.basic@1";columns:2;panels:[{id:"s",title:"STRENGTHS",row:0,column:0,rowspan:1,colspan:1,items:[@m.notes.strength]}, {id:"w",title:"WEAKNESSES",row:0,column:1,rowspan:1,colspan:1,items:[@m.notes.weakness]}, {id:"o",title:"OPPORTUNITIES",row:1,column:0,rowspan:1,colspan:1,items:[@m.notes.opportunity]}, {id:"t",title:"THREATS",row:1,column:1,rowspan:1,colspan:1,items:[@m.notes.threat]}]; }
+
+}
+
+view sipoc "24 / SIPOC from shared notes" {
+    data: [@m.notes];
+    format: @f.shared.common;
+    projection { kind:panels;profile:"panels.basic@1";columns:5;width:1650px;panels:[{id:"supplier",title:"SUPPLIER",row:0,column:0,rowspan:1,colspan:1,items:[@m.notes.supplier]}, {id:"inputs",title:"INPUTS",row:0,column:1,rowspan:1,colspan:1,items:[@m.notes.inputs]}, {id:"process",title:"PROCESS",row:0,column:2,rowspan:1,colspan:1,items:[@m.notes.process]}, {id:"outputs",title:"OUTPUTS",row:0,column:3,rowspan:1,colspan:1,items:[@m.notes.outputs]}, {id:"customers",title:"CUSTOMERS",row:0,column:4,rowspan:1,colspan:1,items:[@m.notes.customers]}]; }
+
+}
+
+view journey "25 / Service journey with spanning panels" {
+    data: [@m.notes];
+    format: @f.shared.common;
+    projection { kind:panels;profile:"panels.basic@1";columns:3;panels:[{id:"input",title:"INPUT AND EXPECTATION",row:0,column:0,rowspan:1,colspan:1,items:[@m.notes.inputs]}, {id:"p",title:"PROCESS",row:0,column:1,rowspan:1,colspan:1,items:[@m.notes.process]}, {id:"out",title:"OUTPUT",row:0,column:2,rowspan:1,colspan:1,items:[@m.notes.outputs]}, {id:"actor",title:"ACTOR EXPERIENCE",row:1,column:0,rowspan:1,colspan:3,items:[@m.notes.journey]}, {id:"verify",title:"VERIFICATION AND REVIEW",row:2,column:0,rowspan:1,colspan:3,items:[@m.notes.verification, @m.notes.review]}]; }
+
+}
+
+view matrix_general "26 / General relationship matrix" {
+    data: [@m.process, @m.roles, @m.responsibilities];
+    format: @f.shared.common;
+    projection { kind:matrix;profile:"matrix.relations@1";rows:[@m.process.order, @m.process.receive, @m.process.post];columns:[@m.roles.buyer, @m.roles.manager, @m.roles.warehouse, @m.roles.controller];relation:"analysis.assignment";value:"name"; }
+
+}
+
+view shape_atlas "27 / Composable semantic silhouettes" {
+    data: [@m.process, @m.usecases, @m.classes, @m.dfd];
+    format: @f.shared.common;
+    projection { kind:graph;profile:"ddn@1"; }
+    select: [@m.process.start, @m.process.capture, @m.process.approve, @m.process.order, @m.process.invoice, @m.process.post, @m.usecases.buyer, @m.usecases.create, @m.classes.package, @m.classes.component, @m.dfd.match, @m.dfd.receipts];
+    layout {algorithm:grid;columns:3;gap:120px;row_gap:100px;}
+    display {relations:none;}
+
+}

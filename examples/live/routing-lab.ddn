@@ -1,0 +1,29 @@
+ddn "0.3";
+module "ddn.live.routing-lab";
+// This is a diagram, not an executing order processing application.
+data model {
+    object intake "Order entry" { kind: application; role: "UI + client library"; }
+    object validation "Validate and reserve" { kind: activity; role: "Checks + inventory hold"; }
+    object orders "Accepted orders" { kind: table; workload: [oltp];
+        fields { field order_id { key: primary; } field customer_id; field accepted_at; }
+    }
+    object publish "Publish order event" { kind: topic; role: "Transactional outbox consumer"; }
+    relation submit "Submit proposed order" @intake -> @validation { kind: flow; }
+    relation accept "Persist an accepted order" @validation -> @orders { kind: flow; }
+    relation event "Publish order-accepted event" @orders -> @publish { kind: flow; }
+}
+format shared {
+    style engineering { look: classic; font: sans; seed: 42; }
+    layout routes { algorithm: manual; routing: orthogonal; crossings: gap; }
+    display detailed { fields: names; kind: icon_token; maturity: none; badges: tokens; }
+    publication web { size: figure; width: 2040px; height: 740px; minimum_text: 8pt; overflow: error; }
+    legend key { mode: numbers; placement: right; width: 350px; keys: { "model.submit": 1, "model.accept": 2, "model.event": 3 }; }
+    bundle technical { style: @engineering; layout: @routes; display: @detailed; publication: @web; legend: @key; }
+}
+view diagram "Order acceptance / illustration" {
+    data: [@model]; format: @shared.technical;
+    place @model.intake { at: [0px, 0px]; size: [290px, 170px]; }
+    place @model.validation { at: [420px, 240px]; size: [300px, 170px]; }
+    place @model.orders { at: [850px, 0px]; size: [310px, 190px]; }
+    place @model.publish { at: [1290px, 240px]; size: [290px, 170px]; }
+}

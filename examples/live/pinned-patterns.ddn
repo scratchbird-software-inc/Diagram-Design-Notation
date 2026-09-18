@@ -1,0 +1,90 @@
+ddn "0.3";
+module "ddn.live.pinned-patterns";
+// One shared model, six placement patterns. Only place.at locks a position.
+// Synthetic planning diagram, not a running integration architecture.
+data network {
+    object hub "Integration hub" { kind: application; fields { field request_id; field schema_version; } }
+    object store "Transaction store" { kind: table; fields { field transaction_id; field occurred_at; field status; } }
+    object client "Client application" { kind: application; }
+    object orders "Order service" { kind: application; fields { field order_id; } }
+    object inventory "Inventory" { kind: table; fields { field item_id; field quantity; } }
+    object production "Production control" { kind: application; }
+    object events "Event channel" { kind: topic; }
+    object history "Historical projection" { kind: table; workload: [olap]; role: derived; fields { field valid_from; field recorded_from; } }
+    object audit "Audit monitor" { kind: application; }
+    object note "Review note" { kind: note; description: "Layout does not establish timing, ownership, or authorization."; }
+    relation submit "Submit request" @client -> @hub { kind: flow; }
+    relation route "Dispatch order" @hub -> @orders { kind: flow; }
+    relation reserve "Check availability" @orders -> @inventory { kind: depends; }
+    relation plan "Production request" @orders -> @production { kind: flow; }
+    relation persist "Store transaction" @hub -> @store { kind: flow; }
+    relation publish "Publish outbox" @store -> @events { kind: flow; }
+    relation history_projection "Build history" @events -> @history { kind: flow; }
+    relation monitor "Observe event" @events -> @audit { kind: flow; }
+    relation document "Review design" @note -> @hub { kind: note; }
+}
+format patterns {
+    style day { look: classic; theme: default; font: sans; seed: 42; }
+    layout grid { algorithm: fit_grid; auto_place: true; center: pins; grid_step: 32px; gap: 80px; routing: curved; crossings: gap; }
+    layout circle { algorithm: circular; auto_place: true; center: pins; gap: 80px; routing: curved; crossings: gap; }
+    layout rings { algorithm: radial; auto_place: true; center: pins; gap: 80px; routing: curved; crossings: gap; }
+    layout hierarchy { algorithm: layered; auto_place: true; center: pins; direction: right; gap: 80px; routing: orthogonal; crossings: gap; }
+    layout breadth { algorithm: spanning_tree; auto_place: true; center: pins; direction: right; gap: 80px; routing: curved; crossings: gap; }
+    layout force { algorithm: organic; auto_place: true; center: pins; gap: 80px; routing: curved; crossings: gap; }
+    display detail { fields: names; kind: icon_token; maturity: none; badges: tokens; }
+    legend key { mode: numbers; placement: right; width: 330px; keys: {"network.submit":1,"network.route":2,"network.reserve":3,"network.plan":4,"network.persist":5,"network.publish":6,"network.history_projection":7,"network.monitor":8,"network.document":9}; }
+    publication page { size: content; fit: none; minimum_text: 8pt; overflow: error; }
+    bundle shared { style: @day; layout: @circle; display: @detail; legend: @key; publication: @page; }
+}
+view circular "Circular / two fixed pins" {
+    data: [@network]; format: @patterns.shared;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}
+view fit_grid "Fit to grid / around two pins" {
+    data: [@network]; format: @patterns.shared; layout: @patterns.grid;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}
+view radial "Radial / graph-distance rings" {
+    data: [@network]; format: @patterns.shared; layout: @patterns.rings;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}
+view layered "Hierarchical / directed layers" {
+    data: [@network]; format: @patterns.shared; layout: @patterns.hierarchy;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}
+view tree "Tree / breadth levels from fixed pins" {
+    data: [@network]; format: @patterns.shared; layout: @patterns.breadth;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}
+view organic "Organic / movable neighbours, fixed core" {
+    data: [@network]; format: @patterns.shared; layout: @patterns.force;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}
+view single_pin "One pin / circular neighbours" {
+    data: [@network]; format: @patterns.shared;
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { size: [270px, 170px]; }
+}
+view no_pins "No pins / deterministic radial root" {
+    data: [@network]; format: @patterns.shared; layout: @patterns.rings;
+    // The centre is an automatic drawing root, not a new semantic root.
+}
+view paused "Pause placement / retain the current scene" {
+    data: [@network]; format: @patterns.shared;
+    layout { auto_place: false; }
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+    // On first render a seed is needed; the live component then retains it.
+}
+view sketch_night "Same anchored circle / hand-drawn night" {
+    data: [@network]; format: @patterns.shared;
+    style { look: handDrawn; theme: night; }
+    place @network.hub { at: [580px, 400px]; size: [270px, 170px]; }
+    place @network.store { at: [930px, 400px]; size: [270px, 170px]; }
+}

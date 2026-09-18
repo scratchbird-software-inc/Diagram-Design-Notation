@@ -1,0 +1,34 @@
+ddn "0.3";
+module "ddn.usecases.security";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object source "Contact records" {
+        kind: dataset;
+        level: instance;
+        fields {
+            field customer_id;
+            field email;
+        }
+    }
+    object mask "Aggregate + remove IDs" {
+        kind: activity;
+    }
+    object export "Proposed cohort export" {
+        kind: dataset;
+        level: instance;
+        fields {
+            field cohort_id;
+            field count;
+        }
+    }
+    object restricted "Restricted processing" {
+        kind: security_zone;
+    }
+    object egress "Review before release" {
+        kind: security_zone;
+    }
+    relation r_input @source -> @mask { kind: read; }
+    relation r_output @mask -> @export { kind: write; }
+}

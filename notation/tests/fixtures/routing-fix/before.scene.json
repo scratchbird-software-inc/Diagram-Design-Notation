@@ -1,0 +1,551 @@
+{
+  "smallestText": 11,
+  "width": 3234,
+  "height": 1056,
+  "scale": 1,
+  "origin": [
+    42,
+    622
+  ],
+  "nodes": [
+    {
+      "id": "meridian.procurement.review::process.start",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Purchase request"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "terminal",
+      "x": 0,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.capture",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Capture requested",
+        "items"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "parallelogram",
+      "x": 410,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.approve",
+      "w": 270,
+      "h": 150.35,
+      "fields": [],
+      "titleLines": [
+        "Approval",
+        "granted?"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "diamond",
+      "x": 820,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.order",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Issue purchase",
+        "order"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "rect",
+      "x": 1230,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.receive",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Receive and",
+        "inspect"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "rect",
+      "x": 1640,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.invoice",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Matched supplier",
+        "invoice"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "document",
+      "x": 2050,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.post",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Post authorized",
+        "liability"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "subprocess",
+      "x": 2460,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.reject",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Return for",
+        "correction"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "rect",
+      "x": 1230,
+      "y": 230,
+      "fieldRows": []
+    },
+    {
+      "id": "meridian.procurement.review::process.close",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Request closed"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "silhouette": "terminal",
+      "x": 2870,
+      "y": 0,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "meridian.procurement.review::process.p01",
+      "points": [
+        [
+          270,
+          50
+        ],
+        [
+          431.6,
+          50
+        ]
+      ],
+      "label": {
+        "x": 313.92,
+        "y": 36,
+        "w": 73.75999999999999,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p02",
+      "points": [
+        [
+          658.4,
+          50
+        ],
+        [
+          702.4,
+          50
+        ],
+        [
+          702.4,
+          75.175
+        ],
+        [
+          820,
+          75.175
+        ]
+      ],
+      "label": {
+        "x": 729.96,
+        "y": 61.175,
+        "w": 62.48,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p03",
+      "points": [
+        [
+          955,
+          0
+        ],
+        [
+          955,
+          -44
+        ],
+        [
+          1186,
+          -44
+        ],
+        [
+          1186,
+          50
+        ],
+        [
+          1230,
+          50
+        ]
+      ],
+      "label": {
+        "x": 1029.78,
+        "y": -58,
+        "w": 81.44,
+        "h": 28
+      },
+      "source_side": "north",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p04",
+      "points": [
+        [
+          1090,
+          75.175
+        ],
+        [
+          1134,
+          75.175
+        ],
+        [
+          1134,
+          280
+        ],
+        [
+          1230,
+          280
+        ]
+      ],
+      "label": {
+        "x": 1093.28,
+        "y": 163.58749999999998,
+        "w": 81.44,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p05",
+      "points": [
+        [
+          1500,
+          50
+        ],
+        [
+          1640,
+          50
+        ]
+      ],
+      "label": {
+        "x": 1534.92,
+        "y": 36,
+        "w": 70.16,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p06",
+      "points": [
+        [
+          1910,
+          50
+        ],
+        [
+          2050,
+          50
+        ]
+      ],
+      "label": {
+        "x": 1949.24,
+        "y": 36,
+        "w": 61.52,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p07",
+      "points": [
+        [
+          2320,
+          50
+        ],
+        [
+          2460,
+          50
+        ]
+      ],
+      "label": {
+        "x": 2347.24,
+        "y": 36,
+        "w": 85.52,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p08",
+      "points": [
+        [
+          2730,
+          50
+        ],
+        [
+          2774,
+          50
+        ],
+        [
+          2774,
+          -496
+        ],
+        [
+          1638.92,
+          -496
+        ],
+        [
+          1638.92,
+          -508
+        ],
+        [
+          2826,
+          -508
+        ],
+        [
+          2826,
+          33.333
+        ],
+        [
+          2870,
+          33.333
+        ]
+      ],
+      "label": {
+        "x": 2193.54,
+        "y": -522,
+        "w": 77.84,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "meridian.procurement.review::process.p09",
+      "points": [
+        [
+          1500,
+          280
+        ],
+        [
+          2826,
+          280
+        ],
+        [
+          2826,
+          66.667
+        ],
+        [
+          2870,
+          66.667
+        ]
+      ],
+      "label": {
+        "x": 2095.16,
+        "y": 266,
+        "w": 135.68000000000004,
+        "h": 28
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "layered",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 2,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "failure": "DDN212"
+      },
+      {
+        "stage": "connection-points",
+        "trials": 4,
+        "accepted": 2,
+        "crossings": 0,
+        "length": 6619.026,
+        "bends": 15
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 6619.026,
+        "bends": 15
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 6619.026,
+        "bends": 15
+      }
+    ],
+    "portTrials": 4,
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.3.0-draft.2"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": -522,
+    "w": 3170,
+    "h": 882
+  },
+  "drawingArea": {
+    "x": 32,
+    "y": 90,
+    "w": 3170,
+    "h": 892
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "views.ddn#flowchart",
+    "positions": {
+      "meridian.procurement.review::process.start": [
+        0,
+        0
+      ],
+      "meridian.procurement.review::process.capture": [
+        410,
+        0
+      ],
+      "meridian.procurement.review::process.approve": [
+        820,
+        0
+      ],
+      "meridian.procurement.review::process.order": [
+        1230,
+        0
+      ],
+      "meridian.procurement.review::process.receive": [
+        1640,
+        0
+      ],
+      "meridian.procurement.review::process.invoice": [
+        2050,
+        0
+      ],
+      "meridian.procurement.review::process.post": [
+        2460,
+        0
+      ],
+      "meridian.procurement.review::process.reject": [
+        1230,
+        230
+      ],
+      "meridian.procurement.review::process.close": [
+        2870,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

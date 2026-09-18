@@ -1,0 +1,16 @@
+ddn "0.3";
+module "ddn.usecases.views.quality";
+import "formats.ddn" as fmt;
+import "data/quality.ddn" as q;
+
+// What is the expected outcome for a concrete invalid input?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "21 / Example-driven data quality" {
+    data: [@q.model];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@q.model.input, @q.model.check, @q.model.expected];
+    publication { width: 2130px; height: 440px; }
+    legend { keys: { "model.r_input": 1, "model.r_result": 2 }; }
+}

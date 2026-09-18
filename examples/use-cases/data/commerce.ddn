@@ -1,0 +1,69 @@
+ddn "0.3";
+module "ddn.usecases.commerce";
+
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data concepts {
+    object customer "Customer" {
+        kind: entity;
+    }
+    object order "Order" {
+        kind: entity;
+    }
+    object shipment "Shipment" {
+        kind: entity;
+    }
+    relation r_places "places" @customer -> @order { kind: assoc; source_mark: one; target_mark: zeromany; }
+    relation r_ships "fulfilled by" @order -> @shipment { kind: assoc; source_mark: one; target_mark: zeromany; }
+}
+
+data domains {
+    domain customer_id "Customer identifier" {
+        kind: domain;
+        meaning: "Identifies a customer in the registry.";
+        representation: undecided;
+    }
+    domain order_id "Order identifier" {
+        kind: domain;
+        meaning: "Identifies an order in the order book.";
+        representation: undecided;
+    }
+}
+
+data tables {
+    object customer "Customer" {
+        kind: table;
+        level: definition;
+        workload: [oltp];
+        role: authoritative;
+        description: "Authority for the customer registry, not for every customer attribute in all systems.";
+        fields {
+            field customer_id { key: primary; domain: @domains.customer_id; }
+            field display_name;
+            field status;
+        }
+    }
+    object orders "Orders" {
+        kind: table;
+        level: definition;
+        workload: [oltp];
+        fields {
+            field order_id { key: primary; domain: @domains.order_id; }
+            field customer_id { domain: @domains.customer_id; }
+            field ordered_at;
+        }
+    }
+    object line "Order line" {
+        kind: table;
+        level: definition;
+        workload: [oltp];
+        fields {
+            field line_id { key: primary; }
+            field order_id;
+            field sku;
+            field quantity;
+        }
+    }
+    relation r_line_order @line.order_id -> @orders.order_id { kind: ref; source_mark: many; target_mark: one; enforcement: undecided; }
+    relation r_order_customer @orders.customer_id -> @customer.customer_id { kind: ref; source_mark: zeromany; target_mark: one; enforcement: undecided; }
+}
