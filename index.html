@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Design Notation — DDN</title>
+<style>
+:root{--ink:#17263d;--muted:#607084;--line:#dde5ed;--accent:#146b7c;--bg:#eef2f7;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+body{margin:0;background:var(--bg)}
+header{padding:2.5rem 2rem 1.5rem;background:#fff;border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:2rem}
+header p{margin:.4rem 0 0;color:var(--muted);max-width:60rem}
+main{max-width:1100px;margin:0 auto;padding:2rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin:1.5rem 0}
+.card{display:block;background:#fff;border:1px solid var(--line);border-radius:10px;padding:1.2rem 1.4rem;text-decoration:none;color:inherit}
+.card:hover{border-color:var(--accent);box-shadow:0 2px 8px #17263d14}
+.card h2{margin:0 0 .3rem;font-size:1.15rem;color:var(--accent)}
+.card p{margin:0;color:var(--muted);font-size:.95rem}
+.card small{display:block;margin-top:.5rem;color:#8aa0b4}
+section.demo{background:#fff;border:1px solid var(--line);border-radius:10px;padding:1.2rem;margin:1.5rem 0}
+section.demo h2{margin-top:0;font-size:1.15rem}
+#demo{overflow:auto}
+#demo svg{max-width:100%;height:auto}
+#error{color:#923323;white-space:pre-wrap}
+footer{padding:1rem 2rem 2rem;color:var(--muted);font-size:.85rem;text-align:center}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+</style>
+</head>
+<body>
+<header>
+<h1>Data Design Notation <small style="font-size:1rem;color:var(--muted)">DDN 0.5.0-draft.2</small></h1>
+<p>A model-first diagram language and open standard proposal. Author data, format, and view declarations
+separately in plain-text <code>.ddn</code> files — one semantic model projects into ERDs, DFDs, flowcharts,
+C4, RACI/CRUD matrices, charts, Gantt timelines, fishbones, decision tables, and more. Pure JavaScript,
+zero dependencies, deterministic SVG. This page runs entirely from your local filesystem — no server needed.</p>
+</header>
+<main>
+<section class="demo">
+<h2>Live render — the diagram below is generated in your browser right now</h2>
+<div id="demo"><p id="error">Loading runtime…</p></div>
+</section>
+<div class="grid">
+<a class="card" href="notation/studio/portable-gallery.html">
+<h2>Diagram gallery — every diagram type</h2>
+<p>Self-contained gallery of the full example corpus: graphs, Chen ERDs, matrices, panels, charts,
+timelines, fishbones, decision tables, layouts, looks, and routing variants.</p>
+<small>standalone · no server</small>
+</a>
+<a class="card" href="designer/prototype/standalone.html">
+<h2>Visual designer — working prototype</h2>
+<p>Interactive visual-first editor prototype: draw nodes and connections, edit properties, and see the
+DDN source update live. Bounded prototype per the designer specification 0.1.</p>
+<small>standalone · no server</small>
+</a>
+<a class="card" href="notation/studio/portable-editor.html">
+<h2>Studio — source-first editor</h2>
+<p>Full-source editing with live rendering, guided graph edits, and workspace I/O. The reference editor
+for the notation.</p>
+<small>standalone · no server</small>
+</a>
+<a class="card" href="standard/plates/index.html">
+<h2>Notation plates</h2>
+<p>SVG plates of the vocabulary: object kinds, facets, relationship families, looks, and routing.</p>
+<small>standalone · no server</small>
+</a>
+<a class="card" href="standard/specification/00-status-and-scope.md">
+<h2>Proposed standard</h2>
+<p>27 specification chapters, the EBNF grammar, JSON schemas, and the machine-readable registry.
+Start with chapter 00 for status and scope.</p>
+<small>Markdown · best via <code>npm run serve</code></small>
+</a>
+<a class="card" href="examples/README.md">
+<h2>Examples</h2>
+<p>18 basics, projection corpora, and 22 use-case scenarios as runnable <code>.ddn</code> sources with
+golden outputs. Render any of them with the CLI.</p>
+<small>Markdown · best via <code>npm run serve</code></small>
+</a>
+</div>
+<p style="color:var(--muted);font-size:.9rem">Draft proposal, pre-1.0 — no UML/BPMN/DMN conformance claimed.
+More entry points when served (<code>npm run serve</code>): full Studio at
+<code>notation/studio/editor.html</code>, multi-file designer prototype at <code>designer/prototype/index.html</code>.
+License: GPL-2.0-or-later (see <a href="LICENSE">LICENSE</a>, <a href="NOTICE.md">NOTICE</a>).</p>
+</main>
+<footer>DDN 0.5.0-draft.2 · Proposed standard · GPL-2.0-or-later · All processing is local to this page.</footer>
+<script src="notation/dist/ddn.global.js"></script>
+<script>
+(function(){
+var source = [
+'ddn "0.5";',
+'module "portal.demo";',
+'data model {',
+'    object customer "Customer" { kind: table; fields { field id; field display_name; field status; } }',
+'    object orders "Order" { kind: table; fields { field id; field customer_id; field created_at; } }',
+'    object invoice "Invoice" { kind: table; fields { field id; field order_id; field issued_at; } }',
+'    relation order_customer "Customer reference" @model.orders.customer_id -> @model.customer.id { kind: ref; enforcement: undecided; }',
+'    relation invoice_order "Order reference" @model.invoice.order_id -> @model.orders.id { kind: ref; enforcement: undecided; }',
+'}',
+'format common {',
+'    style standard { look: classic; theme: default; font: sans; }',
+'    layout grid { algorithm: grid; columns: 2; gap: 130px; row_gap: 100px; routing: orthogonal; }',
+'    bundle design { style:@standard; layout:@grid; }',
+'}',
+'view overview "Customer orders" { data: [@model]; format: @common.design; }'
+].join('\n');
+try {
+  var ws = DDNLive.createWorkspace({'demo.ddn': source});
+  var r = ws.renderSync({entry:'demo.ddn', view:'overview'});
+  document.getElementById('demo').innerHTML = r.svg;
+} catch (e) {
+  document.getElementById('error').textContent = 'Render failed: ' + (e && e.message);
+}
+})();
+</script>
+</body>
+</html>

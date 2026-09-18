@@ -18,7 +18,9 @@ is the primary interface — distinct from the source-first Studio in
   `relation-ui-map.json` (all 188 kinds / 109 relation verbs),
   `ui-tokens.json`, `designer-api.d.ts`. **Proposals**, not implemented APIs.
 - `prototype/` — bounded working prototype (31/31 browser checks passed in
-  the source package). Loads the runtime from `../notation/dist/`.
+  the source package). `index.html` is the multi-file version loading the
+  runtime from `../../notation/dist/`; `standalone.html` is the single-file
+  version with everything inlined (works from `file://` anywhere).
 - `research/` — license-screened primary sources for interaction hosts.
 - `design/` — screen catalogue (`screens.json`), annotated screenshots.
 - `decisions/` — 10 ADRs (`DECISIONS.md`), verification record, sign-off template.

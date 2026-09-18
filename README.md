@@ -28,8 +28,15 @@ or security approval.
 
 ## Quick start
 
-Requires Node 22+ (no runtime dependencies; Python 3.12+ optional for doc
-tooling — see `tools/requirements-dev.txt`).
+**No server needed:** open `index.html` in any browser — it renders a live
+diagram in-page and links to every standalone page: the full diagram gallery
+(`notation/studio/portable-gallery.html`), the Studio editor
+(`notation/studio/portable-editor.html`), the working designer prototype
+(`designer/prototype/standalone.html`), and the notation plates
+(`standard/plates/index.html`). All work from `file://`.
+
+Requires Node 22+ for tests/tooling (no runtime dependencies; Python 3.12+
+optional — see `tools/requirements-dev.txt`).
 
 ```sh
 npm test                                  # notation test suites

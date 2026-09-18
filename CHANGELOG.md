@@ -6,6 +6,12 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Standalone readiness: root `index.html` landing page with live in-browser
+  render, `standard/plates/index.html` notation-plate browser, and
+  `designer/prototype/standalone.html` single-file designer prototype
+  (imported from the designer package, license header updated). Studio and
+  gallery nav links retargeted to in-repo destinations; all entry pages
+  verified over `file://` (headless Chromium: no console errors, all render).
 - Repository created as the DDN open-source monorepo:
   - Imported DDN 0.5.0-draft.2 sources (notation runtime, CLI, Studio,
     specification, grammar, schemas, registry, examples) from the previous
