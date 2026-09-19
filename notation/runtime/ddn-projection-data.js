@@ -53,10 +53,12 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  if(!['bar','line','area','point','pie','donut','radar','funnel'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel');
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
+  if(p.mark==='gauge'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Gauge caption requires categorical x (x_type must be category)');
+  if(p.mark==='gauge'&&p.series!==undefined)fail('DDN-PJ030','Gauge shows one value; do not set series');
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
   if(typeof p.x!=='string'||typeof p.y!=='string')fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
@@ -73,6 +75,8 @@ function plan(ir,ErrorClass=Error){
    if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else points.push({x,y,rawX,size,sourceIds:[n.id]});
   }
   if(!points.length)fail('DDN-PJ012','No chart points remain');
+  if(p.mark==='gauge'&&points.length!==1)fail('DDN-PJ074','Gauge requires exactly one record after filtering (the KPI); supply one record or filter to one');
+  if(p.mark==='gauge'){if(points[0].y<0||points[0].y>100)fail('DDN-PJ075','Gauge value must be a finite number in 0..100');if(p.target!==undefined&&(typeof p.target!=='number'||!Number.isFinite(p.target)||p.target<0||p.target>100))fail('DDN-PJ075','Gauge target must be a finite number in 0..100');}
   let funnelCategories;
   if(p.mark==='funnel'){
    if(points.length<2)fail('DDN-PJ073','Funnel needs at least 2 distinct stages (categories); supply more records or use another mark');
@@ -97,7 +101,7 @@ function plan(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return{kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(funnelCategories?{categories:funnelCategories}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(funnelCategories?{categories:funnelCategories}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});

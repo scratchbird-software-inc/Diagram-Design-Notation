@@ -7,11 +7,11 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 20 numbered examples (01-customer … 20-funnel-chart)
+- `basics/` — 21 numbered examples (01-customer … 21-gauge-chart)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, process contracts, enterprise gates, curved
-  relations, radar charts, funnel charts.
+  relations, radar charts, funnel charts, gauge charts.
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

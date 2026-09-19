@@ -1,0 +1,16 @@
+ddn "0.5";
+module "ddn.examples.gauge-chart";
+
+import "shared.ddn" as shared;
+
+// Synthetic SLA dataset: one KPI record for the gauge dial.
+// All data is synthetic.
+data sla {
+    object q1 "SLA attainment" { kind: record; x_record: {"kpi": "SLA attainment", "value": 87, "unit": "%"}; }
+}
+
+view gauge "Synthetic SLA attainment / gauge" {
+    data: [@sla]; format: @shared.styles.technical;
+    projection { kind:chart; profile:"chart.gauge@1"; records:[@sla.q1]; mark:gauge; x:"x_record.kpi"; y:"x_record.value"; unit:"%"; target:95; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

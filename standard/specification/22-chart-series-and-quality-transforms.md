@@ -116,7 +116,25 @@ projection {
 
 Funnel requires categorical `x` (`DDN-PJ030` otherwise), rejects any `series` binding (`DDN-PJ030`) and any aggregation (`DDN-PJ031`) — duplicate stage labels are rejected by the existing `DDN-PJ036` check since no aggregate is permitted. A funnel needs at least two distinct stages (`DDN-PJ073`) and every stage value must be a nonnegative number (`DDN-PJ107`); non-finite or missing values fail earlier with `DDN-PJ032`. Funnel has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. Limitations: per-stage conversion rates are not computed, and curved or necked funnel variants are unsupported.
 
-## 22.9 Unsupported combinations and publication
+## 22.9 Gauge/KPI dial
+
+```ddn
+projection {
+    kind: chart; profile: "chart.gauge@1";
+    records: [@sla.q1];
+    mark: gauge;
+    x: "x_record.kpi"; y: "x_record.value";
+    unit: "%"; target: 95;
+}
+```
+
+`mark: gauge` draws one semicircular 180° dial (from 180° at the left to 0° at the right) for a single percentage value. Four equal tick bands (0–25, 25–50, 50–75, 75–100) are drawn as concentric arc segments in registered palette order, tick labels 0/25/50/75/100 sit outside the arc, and a needle runs from the dial center at angle `π × (1 − y / 100)`. The center label reads the value plus `%` (plus `unit` when set and not already `%`), and the record's `x` value is rendered as the caption below the dial. When `target` (a plain number in 0..100) is set, a short radial tick is drawn on the outer arc at angle `π × (1 − target / 100)`.
+
+Exactly one record must remain after any `filter` — the KPI — otherwise `DDN-PJ074` is raised before the duplicate-`x` grouping, so two same-`x` records also fail with `DDN-PJ074`. Both the value and `target` must be finite numbers in 0..100 (`DDN-PJ075`); non-finite or missing values fail earlier with `DDN-PJ032`. Gauge requires categorical `x` (`DDN-PJ030`), rejects any `series` binding (`DDN-PJ030`) and any aggregation other than `none` (`DDN-PJ031`).
+
+`target` is the same chart property used by `chart.quality@1` (§22.1), where it is a numeric reference on the shared y scale. A gauge view bypasses the quality planner entirely (`chartRequested` returns false for `mark: gauge`), so gauge `target` keeps its own 0..100 dial semantics and never triggers a quality transform. Gauge has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. Unsupported: multi-needle dials, custom band colour thresholds, and full-circle dials.
+
+## 22.10 Unsupported combinations and publication
 
 Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.
 

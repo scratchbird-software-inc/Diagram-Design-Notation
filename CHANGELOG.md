@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Gauge/KPI dials via new profile `chart.gauge@1` (mark `gauge`), with
+  `DDN-PJ074`/`DDN-PJ075` validation.
+
 - Funnel charts via new profile `chart.funnel@1` (mark `funnel`), with
   `DDN-PJ073`/`DDN-PJ107` validation.
 

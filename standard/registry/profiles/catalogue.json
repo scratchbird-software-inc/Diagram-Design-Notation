@@ -1270,6 +1270,26 @@
         "all accounting stencils",
         "workflow execution"
       ]
+    },
+    {
+      "id": "chart.gauge@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Gauge/KPI dial"
+      ],
+      "scope": "One percentage value on a semicircular dial with an optional target marker; record provenance.",
+      "validation": [
+        "exactly one record after filtering (DDN-PJ074)",
+        "value and target finite numbers in 0..100 (DDN-PJ075)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)",
+        "no series binding (DDN-PJ030)"
+      ],
+      "unsupported": [
+        "multi-needle dials",
+        "custom band colour thresholds",
+        "full-circle dials"
+      ]
     }
   ],
   "shapes": [

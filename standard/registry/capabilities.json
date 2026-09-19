@@ -1865,6 +1865,26 @@
         "all accounting stencils",
         "workflow execution"
       ]
+    },
+    {
+      "id": "chart.gauge@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Gauge/KPI dial"
+      ],
+      "scope": "One percentage value on a semicircular dial with an optional target marker; record provenance.",
+      "validation": [
+        "exactly one record after filtering (DDN-PJ074)",
+        "value and target finite numbers in 0..100 (DDN-PJ075)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)",
+        "no series binding (DDN-PJ030)"
+      ],
+      "unsupported": [
+        "multi-needle dials",
+        "custom band colour thresholds",
+        "full-circle dials"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2027,7 +2047,8 @@
     "scoped review requirements and evidence",
     "content/figure/A4/Letter publication and final-size checks",
     "radar/spider marks via chart.radar@1 (shared scale, categorical spokes)",
-    "funnel marks via chart.funnel@1 (ordered trapezoid stage bands)"
+    "funnel marks via chart.funnel@1 (ordered trapezoid stage bands)",
+    "gauge/KPI dial marks via chart.gauge@1 (semicircular 0..100 dial, optional target)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

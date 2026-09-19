@@ -24,7 +24,7 @@ function helper(ir,E,get){
 function exactKeys(o,keys,fail,label){if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).some(k=>!keys.includes(k)))fail('DDN-Q005','Unknown or malformed '+label+' properties');}
 function unique(a){return [...new Set(a)];}
 function total(a,h,label='total'){const n=a.reduce((s,x)=>s+x,0);return h.finite(n,label);}
-function chartRequested(p){return p.profile==='chart.quality@1'||['series','arrangement','transform','layers','bins','normalize','whiskers','quartiles','step','target'].some(k=>p[k]!==undefined);}
+function chartRequested(p){if(p.mark==='gauge')return false;return p.profile==='chart.quality@1'||['series','arrangement','transform','layers','bins','normalize','whiskers','quartiles','step','target'].some(k=>p[k]!==undefined);}
 function chart(ir,E,get){
  const h=helper(ir,E,get),{p,fail,finite}=h;
  const tr=p.transform||'identity';if(!['identity','histogram','pareto','waterfall','boxplot'].includes(tr))fail('DDN-QC001','Unknown chart transform '+tr);
