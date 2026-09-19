@@ -33,6 +33,15 @@ function validate(ir,E){
   if(es.some(r=>!['flow.next','flow.annotation','flow.continues'].includes(r.kind)))fail('DDN-PX008','Unsupported relationship in documented flowchart');
   for(const n of fs.filter(n=>n.kind==='flow.annotation'))if(!es.some(r=>r.kind==='flow.annotation'&&r.from.element===n.id))fail('DDN-PX008','Annotation needs an explicit attachment',n);
  }
+ if(profile==='uml.communication@1'){
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.message')){
+   const seq=r.properties.x_message?.seq,ret=r.properties.x_return===true,dotted=/^\d+(\.\d+)+$/.test(seq||'');
+   if(typeof seq!=='string'||!seq)fail('DDN-PJ111','Message '+r.id+' lacks a declared sequence number (x_message.seq)',r);
+   if(!/^\d+(\.\d+)*$/.test(seq))fail('DDN-PJ111','Message '+r.id+' has malformed sequence number '+JSON.stringify(seq)+' (expected digits with optional dot segments)',r);
+   if(ret&&!dotted)fail('DDN-PJ111','Reply message '+r.id+' must be numbered dotted under its request (e.g. 2.1), got '+seq,r);
+   if(!ret&&dotted)fail('DDN-PJ111','Non-reply message '+r.id+' must carry a top-level number, got dotted '+seq,r);
+  }
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });

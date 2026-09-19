@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Communication/collaboration views via profile `uml.communication@1` with
+  declared message numbers (`x_message.seq`), `DDN-PJ111` validation. RFC-102.
+
 - Sequence-style interaction projection (`kind:sequence`, profile
   `uml.sequence@1`, verb `uml.message`, `x_return`), with
   `DDN-PJ110`/`DDN-PJW03` validation. RFC-101.

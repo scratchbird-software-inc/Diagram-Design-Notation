@@ -1,0 +1,29 @@
+ddn "0.5";
+module "ddn.examples.communication";
+
+import "shared.ddn" as shared;
+
+// Synthetic three-party order flow for the uml.communication@1 profile.
+// Same model shape as the sequence view (41-sequence-diagram.ddn), rendered as
+// a graph: participants are nodes, uml.message relations are edges labelled
+// with their author-declared sequence number (x_message.seq). Replies
+// (x_return) are dotted under their request: reserve_stock is 2, its reply is
+// 2.1. audit_log is a self-message on checkout.
+// All data is synthetic. This is profile-level coverage, not UML conformance.
+data flow {
+    object customer_app "Customer app" { kind: "application"; }
+    object checkout "Checkout" { kind: "service"; }
+    object inventory "Inventory" { kind: "service"; }
+    relation submit_order "Submit order" @customer_app -> @checkout { kind: "uml.message"; x_message: { seq: "1"; }; }
+    relation reserve_stock "Reserve stock" @checkout -> @inventory { kind: "uml.message"; x_message: { seq: "2"; }; }
+    relation reserve_stock_reply "Stock reserved" @inventory -> @checkout { kind: "uml.message"; x_return: true; x_message: { seq: "2.1"; }; }
+    relation audit_log "Audit log" @checkout -> @checkout { kind: "uml.message"; x_message: { seq: "3"; }; }
+    relation confirm "Confirm order" @checkout -> @customer_app { kind: "uml.message"; x_message: { seq: "4"; }; }
+}
+
+view communication "Synthetic order flow / communication" {
+    data: [@flow]; format: @shared.styles.technical;
+    projection { kind: graph; profile: "uml.communication@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

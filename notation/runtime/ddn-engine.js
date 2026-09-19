@@ -3,5 +3,7 @@
 'use strict';
 function render(ir,registry,glyphs,options={}){if(ir.view.profiles.projection.profile==='state.flat@1'){
  const next={...ir,relations:ir.relations.map(r=>{const x=r.properties.x_transition;if(!x?.event)return r;const guard=x.guard?Object.entries(x.guard).map(([k,v])=>k+' '+(v.op==='eq'?'= '+JSON.stringify(v.value):v.op==='interval'?'['+v.min+','+v.max+']':v.op)).join(' and '):'';return{...r,name:x.event+(guard?' ['+guard+']':'')};})};ir=next;}
+ if(ir.view.profiles.projection.profile==='uml.communication@1'){
+ const next={...ir,relations:ir.relations.map(r=>{const seq=r.properties.x_message?.seq;if(r.kind!=='uml.message'||!seq||!ir.view.relations.includes(r.id))return r;return{...r,name:seq+' · '+r.name};})};ir=next;}
  const opts={...options,renderChild:render};return ir.view.profiles.projection?.kind&&ir.view.profiles.projection.kind!=='graph'?Projections.render(ir,registry,glyphs,opts):Interaction.render(ir,registry,glyphs,opts);}
 return{VERSION:'0.5.0-draft.2',render};});

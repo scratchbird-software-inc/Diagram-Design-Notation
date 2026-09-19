@@ -714,6 +714,21 @@
         }
       }
     },
+    "x_message": {
+      "targets": {
+        "relation": {
+          "type": "object",
+          "required": ["seq"],
+          "properties": {
+            "seq": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
     "x_row_height": {
       "id": "interaction@0.1",
       "targets": {

@@ -19,6 +19,7 @@ function registry(base){
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
  out.extension_contracts.x_return=def({type:'boolean'},['relation']);
+ out.extension_contracts.x_message=def({type:'object',required:['seq'],properties:{seq:{type:'string',minLength:1}},additionalProperties:false},['relation']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);

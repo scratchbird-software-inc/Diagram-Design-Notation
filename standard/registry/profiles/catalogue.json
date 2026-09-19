@@ -1961,6 +1961,23 @@
         "gates, creation/destruction and execution specifications",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "uml.communication@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Communication/collaboration-style interaction"
+      ],
+      "scope": "Graph layout of interaction participants; author-declared message numbers on relation edges; replies dotted under their request.",
+      "validation": [
+        "every visible uml.message carries a well-formed x_message.seq (DDN-PJ111)",
+        "reply numbering is dotted under the request (DDN-PJ111)"
+      ],
+      "unsupported": [
+        "combined fragments",
+        "timing constraints",
+        "full UML conformance"
+      ]
     }
   ],
   "shapes": [
