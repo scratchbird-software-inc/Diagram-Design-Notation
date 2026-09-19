@@ -31,6 +31,50 @@ function project(ir){
  // Deliberately no counts or identifiers of excluded records: those can themselves disclose information.
  return output;
 }
-function serialize(ir){return JSON.stringify(project(ir),null,2)+'\n';}
-return {project,serialize};
+function sql(ir){
+ const policy=ir.view.profiles.export||{};
+ if(policy.mode!=='redacted')throw Object.assign(new Error('SQL export requires the redacted allowlist export profile (mode:redacted with explicit elements and fields)'),{code:'DDN150'});
+ project(ir); // authorization gate: throws DDN150-DDN154 on policy violations
+ const allowed=new Set(policy.elements.map(ref)),allowedFields=new Set((policy.fields||[]).map(ref));
+ const pkAllowed=new Set(policy.properties||[]).has('key');
+ const snake=v=>String(v).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+ const tables=new Map(),elementNotes=new Map(),relationNotes=[],tablesSeen=new Map();
+ for(const n of ir.elements){
+  if(!allowed.has(n.id)||n.type==='sample'||n.kind==='sample')continue;
+  if(n.kind!=='table'){elementNotes.set(n.id,`-- skipped: ${n.id} (kind ${n.kind} is not table)`);continue;}
+  const tname=snake(n.name);
+  if(!tname){elementNotes.set(n.id,`-- skipped: ${n.id} (name has no SQL identifier characters)`);continue;}
+  if(tablesSeen.has(tname))throw Object.assign(new Error('Duplicate SQL identifier after snake_case normalization: '+tname),{code:'DDN-PJ092'});
+  tablesSeen.set(tname,n.id);
+  const fields=n.fields.filter(f=>allowedFields.has(f.id)),colsSeen=new Map(),cols=[];
+  for(const f of fields){const c=snake(f.name||f.local);if(colsSeen.has(c))throw Object.assign(new Error('Duplicate SQL identifier after snake_case normalization: '+c),{code:'DDN-PJ092'});colsSeen.set(c,f.id);cols.push({id:f.id,col:c,primary:pkAllowed&&f.properties&&f.properties.key==='primary'});}
+  tables.set(n.id,{name:tname,cols,fks:[]});
+ }
+ for(const r of ir.relations){
+  if(!allowed.has(r.from.element)||!allowed.has(r.to.element))continue; // excluded records stay invisible: no counts or identifiers
+  if(!tables.has(r.from.element)||!tables.has(r.to.element)){relationNotes.push(`-- skipped: ${r.id} (endpoint is not an exported table)`);continue;}
+  if(r.kind!=='ref'){relationNotes.push(`-- skipped: ${r.id} (kind ${r.kind} is not ref)`);continue;}
+  if(!r.properties||r.properties.enforcement!=='database'){relationNotes.push(`-- skipped: ${r.id} (enforcement is not "database")`);continue;}
+  if(!r.from.member||!r.to.member){relationNotes.push(`-- skipped: ${r.id} (no field-level endpoints)`);continue;}
+  const from=tables.get(r.from.element),to=tables.get(r.to.element),fc=from.cols.find(c=>c.id===r.from.member),tc=to.cols.find(c=>c.id===r.to.member);
+  if(!allowedFields.has(r.from.member)||!allowedFields.has(r.to.member)||!fc||!tc){relationNotes.push(`-- skipped: ${r.id} (endpoint field outside field allowlist)`);continue;}
+  from.fks.push(`FOREIGN KEY (${fc.col}) REFERENCES ${to.name}(${tc.col})`);
+ }
+ if(!tables.size)throw Object.assign(new Error('SQL export found no allowlisted table objects; nothing to export'),{code:'DDN-PJ088'});
+ const blocks=['-- DDN SQL DDL export · TEXT columns · declaration order · synthetic illustrative DDL, not a deployable schema'];
+ const pushNote=text=>{if(blocks.at(-1).startsWith('-- ')&&blocks.length>1)blocks[blocks.length-1]+='\n'+text;else blocks.push(text);};
+ for(const n of ir.elements){
+  if(!allowed.has(n.id)||n.type==='sample'||n.kind==='sample')continue;
+  const t=tables.get(n.id);
+  if(!t){pushNote(elementNotes.get(n.id));continue;}
+  const lines=t.cols.map(c=>`  ${c.col} TEXT`),pk=t.cols.filter(c=>c.primary).map(c=>c.col);
+  if(pk.length)lines.push(`  PRIMARY KEY (${pk.join(', ')})`);
+  for(const fk of t.fks)lines.push(`  ${fk}`);
+  blocks.push(`CREATE TABLE ${t.name} (\n${lines.join(',\n')}\n);`);
+ }
+ for(const note of relationNotes)pushNote(note);
+ return blocks.join('\n\n')+'\n';
+}
+function serialize(ir){const policy=ir.view.profiles.export||{};if(policy.format==='sql')return sql(ir);return JSON.stringify(project(ir),null,2)+'\n';}
+return {project,serialize,sql};
 });

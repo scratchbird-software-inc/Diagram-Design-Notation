@@ -1,0 +1,24 @@
+ddn "0.3";
+module "ddn.examples.sql-ddl";
+import "shared.ddn" as shared;
+data shop {
+ object customer "Customer" { kind: table; fields { field customer_id { key: primary; } field display_name; } }
+ object purchase "Purchase" { kind: table; fields { field purchase_id { key: primary; } field customer_id; field ordered_on; } }
+ object note "Review note" { kind: note; description: "Synthetic DDL export example; not a deployable schema."; }
+ relation purchase_customer "purchase belongs to customer" @purchase.customer_id -> @customer.customer_id { kind: ref; source_mark: zeromany; target_mark: one; enforcement: database; }
+ relation note_customer "note annotates customer" @note -> @customer { kind: note; }
+}
+view publish "Synthetic shop / approved SQL DDL" {
+ data: [@shop];
+ format: @shared.styles.technical;
+ export {
+  mode: redacted;
+  format: sql;
+  identifier_mode: preserve;
+  elements: [@shop.customer, @shop.purchase, @shop.note];
+  fields: [@shop.customer.customer_id, @shop.customer.display_name, @shop.purchase.purchase_id, @shop.purchase.customer_id, @shop.purchase.ordered_on];
+  properties: [kind, key];
+  title: "Synthetic shop DDL";
+ }
+ publication {size: content; fit: none; overflow: error;}
+}

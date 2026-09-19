@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- SQL DDL export: `export { format: sql; … }` on the redacted allowlist profile
+  emits CREATE TABLE/PRIMARY KEY/FOREIGN KEY DDL with `-- skipped:` audit
+  comments (`DDN-PJ088`, `DDN-PJ092`; allowlist enforcement remains `DDN150`).
+
 - Crow's-foot ERD profile `erd.crowfoot@1`: obligatory `source_mark`/`target_mark`
   cardinality (`one`/`zeroone`/`many`/`zeromany`) on ref/assoc relations, validated
   with `DDN-PJ087` (unknown marks remain `DDN114`).

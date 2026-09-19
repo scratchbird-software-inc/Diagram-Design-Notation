@@ -7,10 +7,11 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 37 numbered examples (01-customer … 37-crows-foot-erd)
+- `basics/` — 38 numbered examples (01-customer … 38-sql-ddl-export)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
-  publication, authorized export, process contracts, enterprise gates, curved
+  publication, authorized export, authorized SQL DDL export, process contracts,
+  enterprise gates, curved
   relations, radar charts, funnel charts, gauge charts, candlestick charts,
   treemaps, Sankey diagrams, C4-style context/container/component views, and
   top-down organisation charts, work breakdown structures, mind maps,

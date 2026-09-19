@@ -101,7 +101,7 @@ The public live API retains its existing 128 selected-element/384 visible-relati
 
 ## 16.7 Export authorization
 
-View selection and `display` are NOT access control. The original core allowlist exporter remains supported for its existing graph domain. Profile-specific redacted projections, including quantitative/matrix/Chen and graphs using new extended kinds, fail closed with `DDN-PJ003`. They have not been qualified for complete occurrence/payload authorization closure. Supply a separately authorized source workspace instead. There is no fallback to an unredacted result.
+View selection and `display` are NOT access control. The original core allowlist exporter remains supported for its existing graph domain. Its `sql` export format rides the same allowlist gate as the existing JSON export. Profile-specific redacted projections, including quantitative/matrix/Chen and graphs using new extended kinds, fail closed with `DDN-PJ003`. They have not been qualified for complete occurrence/payload authorization closure. Supply a separately authorized source workspace instead. There is no fallback to an unredacted result.
 
 No confidential source should be sent to an unauthorized browser. Full workspace ZIP/JSON downloads contain the supplied source, including material hidden from a particular view. SVG source IDs, labels, values and provenance can themselves be sensitive.
 

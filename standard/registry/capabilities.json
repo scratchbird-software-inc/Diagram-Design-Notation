@@ -176,6 +176,10 @@
       "identifier_mode": [
         "opaque",
         "preserve"
+      ],
+      "format": [
+        "json",
+        "sql"
       ]
     }
   },
@@ -294,7 +298,8 @@
       "properties": [],
       "include_samples": false,
       "identifier_mode": "opaque",
-      "title": "Published data view"
+      "title": "Published data view",
+      "format": "json"
     }
   },
   "properties": [
@@ -1001,6 +1006,17 @@
       "default": "Published data view",
       "choices": null,
       "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "export.format",
+      "scope": "export",
+      "name": "format",
+      "default": "json",
+      "choices": [
+        "json",
+        "sql"
+      ],
+      "support": "implemented; scope-specific conditions documented in spec/06-publication-and-subdiagrams.md"
     },
     {
       "id": "projection.kind",
@@ -2502,7 +2518,8 @@
     "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation",
     "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)",
     "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
-    "crow's-foot cardinality ERD profile erd.crowfoot@1 (obligatory one/zeroone/many/zeromany endpoint marks, DDN-PJ087)"
+    "crow's-foot cardinality ERD profile erd.crowfoot@1 (obligatory one/zeroone/many/zeromany endpoint marks, DDN-PJ087)",
+    "allowlisted SQL DDL export (export format sql: CREATE TABLE/PRIMARY KEY/FOREIGN KEY, DDN-PJ088/PJ092)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
