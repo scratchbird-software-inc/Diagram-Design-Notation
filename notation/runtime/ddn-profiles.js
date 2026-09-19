@@ -14,6 +14,7 @@ function registry(base){
  out.extension_contracts.x_assignment=def({type:'object',required:['code'],properties:{code:{type:'string',minLength:1,maxLength:12}},additionalProperties:false},['relation']);
  out.extension_contracts.x_member=def({type:'object',properties:{kind:{enum:['attribute','operation']},visibility:{enum:['public','private','protected','package']},static:{type:'boolean'},abstract:{type:'boolean'}},additionalProperties:false},['field']);
  out.extension_contracts.x_diagram=def({type:'object',properties:{number:{type:'string',minLength:1},owner:{type:'string'},code:{type:'string'},text:{type:'string'},branch:{type:'string'},stereotype:{type:'string'}},additionalProperties:false},['object','relation']);
+ out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
@@ -26,6 +27,7 @@ function validate(ir,reg,ErrorClass){
   if(n.kind.startsWith('flow.')&&n.fields.length)fail('DDN-PF003','Flowchart symbols have labels, not attribute compartments',n);
   if(['uml.actor','uml.usecase'].includes(n.kind)&&n.fields.length)fail('DDN-PF003','Actor/use-case symbol does not support attribute fields',n);
   if(n.kind.startsWith('c4.')&&n.fields.length)fail('DDN-PF003','C4 symbols have labels, not attribute compartments',n);
+  if(n.kind.startsWith('epk.')&&n.fields.length)fail('DDN-PF003','EPC symbols have labels, not attribute compartments',n);
  }
  function acyclic(kinds,label){const es=rels.filter(r=>kinds.includes(r.kind)),kids=new Map();for(const r of es){if(!kids.has(r.from.element))kids.set(r.from.element,[]);kids.get(r.from.element).push(r.to.element);}const active=new Set(),seen=new Set();function visit(id){if(active.has(id))fail('DDN-PF004',label+' contains a cycle');if(seen.has(id))return;active.add(id);for(const c of kids.get(id)||[])visit(c);active.delete(id);seen.add(id);}for(const id of kids.keys())visit(id);}
  acyclic(['uml.generalization'],'Generalization');acyclic(['uml.include'],'Use-case include');acyclic(['req.derives'],'Requirement derivation');
@@ -85,6 +87,15 @@ function validate(ir,reg,ErrorClass){
    const bkind=p.profile==='c4.container@1'?'c4.system':'c4.container',frames=ir.view.frames,f=frames.length===1?frames[0]:null,bn=f?ns.find(n=>n.id===f.scope&&n.kind===bkind):null,inner=bn?ns.filter(n=>n!==bn&&!ext.includes(n.kind)):[];
    if(!bn||inner.some(n=>!f.members.includes(n.id)))fail('DDN-PJ101',p.profile+' requires exactly one frame scoped to a selected '+bkind+' boundary object whose members cover every selected interior node');
   }
+ }
+ if(p.profile==='epc.basic@1'){
+  if(ns.some(n=>!['epk.event','epk.function','epk.connector'].includes(n.kind)))fail('DDN-PF007','epc.basic@1 accepts epk.event, epk.function, epk.connector participants only');
+  if(es.some(r=>r.kind!=='epk.next'))fail('DDN-PF007','epc.basic@1 accepts epk.next links only');
+  for(const r of es){const a=nodes.get(r.from.element).kind,b=nodes.get(r.to.element).kind;
+   if((a==='epk.event'&&b==='epk.event')||(a==='epk.function'&&b==='epk.function'))fail('DDN-PJ105','EPC events and functions must alternate; connect '+a+' to '+b+' through a connector or the other symbol type',r);}
+  for(const n of ns){const op=n.properties.x_epc?.operator;
+   if(n.kind==='epk.connector'){if(!['and','or','xor'].includes(op))fail('DDN-PJ106','EPC connector must carry x_epc.operator of and, or or xor',n);}
+   else if(op!==undefined)fail('DDN-PJ106','x_epc.operator belongs on epk.connector nodes only',n);}
  }
  const codes=new Set();for(const n of ir.elements.filter(n=>n.kind==='req.requirement')){const c=n.properties.x_diagram?.code,t=n.properties.x_diagram?.text;if(!c||!t||codes.has(c))fail('DDN-PF014','Requirement needs unique code and nonempty text',n);codes.add(c);}
  if(p.kind!=='graph'){

@@ -2082,6 +2082,26 @@
         "automatic layout to ontology standards",
         "OWL/RDF export"
       ]
+    },
+    {
+      "id": "epc.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Event-driven process chain (EPC)"
+      ],
+      "scope": "Events and functions strictly alternating through and/or/xor connectors; control flow via epk.next.",
+      "validation": [
+        "participants limited to epk.event, epk.function, epk.connector (DDN-PF007)",
+        "epk.next links only (DDN-PF007)",
+        "events and functions must alternate; event-to-event and function-to-function edges are forbidden (DDN-PJ105)",
+        "every epk.connector carries x_epc.operator of and|or|xor; x_epc.operator on a non-connector is forbidden (DDN-PJ106)",
+        "EPC symbols have labels, not attribute compartments (DDN-PF003)"
+      ],
+      "unsupported": [
+        "process simulation",
+        "BPMN interchange",
+        "connector fan-in/fan-out balancing rules"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2257,7 +2277,8 @@
     "organisation charts via org.tree@1 (single-root reports_to trees, top-down native layout)",
     "work breakdown structures via wbs.tree@1 (analysis.decomposes trees)",
     "mind maps via mindmap.basic@1 (single-root alternating branches, curved routing)",
-    "concept maps via concept.map@1 (mandatory explicit relation labels)"
+    "concept maps via concept.map@1 (mandatory explicit relation labels)",
+    "EPC diagrams via epc.basic@1 (hexagon events, alternating functions, and/or/xor connectors)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

@@ -463,6 +463,39 @@
     "code": "C4COMPONENT",
     "glyph": "object",
     "aliases": []
+  },
+    {
+    "keyword": "epk.event",
+    "name": "Event",
+    "shape": "profile",
+    "silhouette": "hexagon",
+    "fallback": "object",
+    "family": "concept",
+    "code": "EVENT",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "epk.function",
+    "name": "Function",
+    "shape": "profile",
+    "silhouette": "round",
+    "fallback": "activity",
+    "family": "activity",
+    "code": "FUNCTION",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "epk.connector",
+    "name": "Connector",
+    "shape": "profile",
+    "silhouette": "circle",
+    "fallback": "gateway",
+    "family": "governance",
+    "code": "CONNECTOR",
+    "glyph": "object",
+    "aliases": []
   }
   ],
   "relationships": [
@@ -917,6 +950,28 @@
     ],
     "target": [
       "analysis.task"
+    ],
+    "allow_self": false,
+    "member_endpoints": false
+  },
+    {
+    "keyword": "epk.next",
+    "name": "Control passes to",
+    "verb": "Control passes to",
+    "family": "control",
+    "code": "EPKNEXT",
+    "start": "none",
+    "end": "filled",
+    "glyph": "link",
+    "source": [
+      "epk.event",
+      "epk.function",
+      "epk.connector"
+    ],
+    "target": [
+      "epk.event",
+      "epk.function",
+      "epk.connector"
     ],
     "allow_self": false,
     "member_endpoints": false
@@ -1599,6 +1654,26 @@
         "automatic layout to ontology standards",
         "OWL/RDF export"
       ]
+    },
+    {
+      "id": "epc.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Event-driven process chain (EPC)"
+      ],
+      "scope": "Events and functions strictly alternating through and/or/xor connectors; control flow via epk.next.",
+      "validation": [
+        "participants limited to epk.event, epk.function, epk.connector (DDN-PF007)",
+        "epk.next links only (DDN-PF007)",
+        "events and functions must alternate; event-to-event and function-to-function edges are forbidden (DDN-PJ105)",
+        "every epk.connector carries x_epc.operator of and|or|xor; x_epc.operator on a non-connector is forbidden (DDN-PJ106)",
+        "EPC symbols have labels, not attribute compartments (DDN-PF003)"
+      ],
+      "unsupported": [
+        "process simulation",
+        "BPMN interchange",
+        "connector fan-in/fan-out balancing rules"
+      ]
     }
   ],
   "shapes": [
@@ -1614,7 +1689,8 @@
     "store",
     "actor",
     "package",
-    "component"
+    "component",
+    "hexagon"
   ],
   "sources": [
     {

@@ -458,7 +458,10 @@
             "c4.container",
             "c4.store",
             "c4.queue",
-            "c4.component"
+            "c4.component",
+            "epk.event",
+            "epk.function",
+            "epk.connector"
           ]
         },
         "kindCode": {
@@ -656,7 +659,10 @@
             "C4CONTAINER",
             "C4STORE",
             "C4QUEUE",
-            "C4COMPONENT"
+            "C4COMPONENT",
+            "EVENT",
+            "FUNCTION",
+            "CONNECTOR"
           ]
         },
         "properties": {
@@ -839,7 +845,8 @@
             "flow.annotation",
             "flow.continues",
             "c4.rel",
-            "analysis.decomposes"
+            "analysis.decomposes",
+            "epk.next"
           ]
         },
         "kindCode": {
@@ -955,7 +962,8 @@
             "ANNOTATION",
             "CONTINUES",
             "C4REL",
-            "DECOMPOSES"
+            "DECOMPOSES",
+            "EPKNEXT"
           ]
         },
         "from": {

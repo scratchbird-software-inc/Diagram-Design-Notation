@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- EPC diagrams via new profile `epc.basic@1` with `epk.event`/`epk.function`/`epk.connector`
+  kinds, new `epk.next` verb, new `hexagon` silhouette, and `DDN-PJ105`/`DDN-PJ106`
+  validation.
 - Concept maps via new profile `concept.map@1` with mandatory explicit relation
   labels (`DDN-PJ104`).
 

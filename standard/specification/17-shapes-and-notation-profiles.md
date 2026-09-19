@@ -62,6 +62,20 @@ The `c4.context@1`, `c4.container@1` and `c4.component@1` profiles render C4-sty
 
 All links use `c4.rel` ("Uses / interacts with", open arrow). C4 kinds carry labels only — attribute compartments are rejected (`DDN-PF003`). Context views accept only people and systems and reject field-level member endpoints (`DDN-PJ100`). Container and component views require exactly one view frame scoped to a selected boundary object — a `c4.system` for `c4.container@1`, a `c4.container` for `c4.component@1` — whose members cover every selected interior node; violations raise `DDN-PJ101`. Participants outside the whitelist raise `DDN-PF007`. These are DDN profiles with C4-style silhouettes, not C4 specification conformance.
 
+## 17.6.1 EPC process chains
+
+`epc.basic@1` renders an Event-driven Process Chain on the graph projection: events and functions strictly alternating through logical connectors, read left-to-right with the layered layout (`direction: right`).
+
+The profile adds one silhouette, `hexagon`: a flat-topped six-point polygon whose points, for a measured box `(x, y, w, h)`, are `(x+0.25w, y)`, `(x+0.75w, y)`, `(x+w, y+0.5h)`, `(x+0.75w, y+h)`, `(x+0.25w, y+h)`, `(x, y+0.5h)`. It is a profile silhouette drawn by the generic polygon path, not a new primary form.
+
+| Kind | Silhouette | Core fallback | Role |
+|---|---|---|---|
+| `epk.event` | hexagon | `object` | Something that happens; starts and follows functions |
+| `epk.function` | round | `activity` | Work performed in response to events |
+| `epk.connector` | circle | `gateway` | Logical join/split carrying an `and`/`or`/`xor` operator |
+
+All links use `epk.next` ("Control passes to", filled arrow) between any two EPC symbols. Events and functions must alternate: an `epk.next` edge directly between two events or two functions raises `DDN-PJ105`; edges through connectors and connector chains are legal. Every `epk.connector` must carry `x_epc: { operator: "and"|"or"|"xor" }`; a missing, empty or unknown operator — or `x_epc.operator` on a non-connector node — raises `DDN-PJ106` (the extension contract deliberately carries no enum, so the value whitelist reports this code rather than a generic contract error). EPC kinds carry labels only; attribute compartments raise `DDN-PF003`, and participants or links outside the EPC vocabulary raise `DDN-PF007`. The published `flow.next` verb cannot be reused here: its registered endpoint contract accepts `flow.*` kinds only (`DDN102`), and widening it would be a language change requiring an RFC. This is a DDN profile with EPC conventions, not a claim of EPC specification conformance.
+
 ## 17.7 Authoring integration
 
 The installed catalogue feeds Studio's kind and relation selectors. Namespaced kinds are quoted when inserted. Guided edits invoke the same decoder/validators as source editing. Field visibility and static/abstract flags remain editable in source; this release has no dedicated graphical inspector for every profile property.
