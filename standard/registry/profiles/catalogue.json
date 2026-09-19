@@ -1855,6 +1855,24 @@
         "automatic sentiment analysis",
         "nested child views"
       ]
+    },
+    {
+      "id": "matrix.storymap@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "User story map"
+      ],
+      "scope": "Ordered release rows (top = first release) by ordered backbone-activity columns; cells are declared analysis.task story objects with provenance.",
+      "validation": [
+        "cells reference selected analysis.task stories (DDN-PJ093)",
+        "no story in two releases (DDN-PJ086)",
+        "existing matrix checks"
+      ],
+      "unsupported": [
+        "estimation/velocity math",
+        "backlog ranking",
+        "tracker synchronization"
+      ]
     }
   ],
   "shapes": [

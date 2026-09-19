@@ -2283,6 +2283,24 @@
         "automatic sentiment analysis",
         "nested child views"
       ]
+    },
+    {
+      "id": "matrix.storymap@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "User story map"
+      ],
+      "scope": "Ordered release rows (top = first release) by ordered backbone-activity columns; cells are declared analysis.task story objects with provenance.",
+      "validation": [
+        "cells reference selected analysis.task stories (DDN-PJ093)",
+        "no story in two releases (DDN-PJ086)",
+        "existing matrix checks"
+      ],
+      "unsupported": [
+        "estimation/velocity math",
+        "backlog ranking",
+        "tracker synchronization"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2464,7 +2482,8 @@
     "business model and lean canvas panel profiles (canvas.bmc@1, canvas.lean@1) with required-block validation",
     "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)",
     "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation",
-    "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)"
+    "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)",
+    "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

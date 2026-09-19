@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- User story maps via new profile
+  `matrix.storymap@1` (assoc cells carrying `x_story.task` references to
+  `analysis.task` stories), with `DDN-PJ086`/`DDN-PJ093` validation.
+
 - Journey maps via new profile
   `panels.journey@1` (phase/lane grid + straight-segment 1..5 emotion polyline), with
   `DDN-PJ084`/`DDN-PJ085` validation.

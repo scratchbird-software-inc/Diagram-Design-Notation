@@ -39,8 +39,19 @@ function plan(ir,ErrorClass=Error){
   if(typeof p.relation!=='string'||typeof p.value!=='string')fail('DDN-PJ014','Matrix needs a relation kind and a value binding');
   if(p.duplicates!==undefined&&!['error','join'].includes(p.duplicates))fail('DDN-PJ014','Unknown duplicate-cell policy');
   if(!['matrix.relations@1','matrix.bcg@1','matrix.ansoff@1','matrix.tows@1','matrix.storymap@1'].includes(p.profile)&&p.duplicates==='join')fail('DDN-PJ014','RACI/CRUD require one declared assignment per cell');
+  const storymap=p.profile==='matrix.storymap@1';if(storymap&&(p.relation!=='assoc'||p.value!=='x_story.task'))fail('DDN-PJ014','matrix.storymap@1 uses assoc cell relations carrying x_story.task');
   const ri=new Map(rows.map((n,i)=>[n.id,i])),ci=new Map(columns.map((n,i)=>[n.id,i])),cells=rows.map(()=>columns.map(()=>[]));
-  for(const r of ir.relations.filter(r=>r.kind===p.relation&&ri.has(r.from.element)&&ci.has(r.to.element))){const value=textValue(r,p.value);const c=cells[ri.get(r.from.element)][ci.get(r.to.element)];if(c.length&&p.duplicates!=='join')fail('DDN-PJ015','More than one assignment for the same row and column',r);c.push({id:r.id,value:String(value),raw:value});}
+  for(const r of ir.relations.filter(r=>r.kind===p.relation&&ri.has(r.from.element)&&ci.has(r.to.element))){
+   const story=storymap?resolve(r.properties.x_story&&r.properties.x_story.task,'element'):null;
+   if(storymap&&story.kind!=='analysis.task')fail('DDN-PJ093','Story map cells must reference analysis.task objects: '+r.id,r);
+   const value=storymap?story.name:textValue(r,p.value);
+   const c=cells[ri.get(r.from.element)][ci.get(r.to.element)];if(c.length&&p.duplicates!=='join')fail('DDN-PJ015','More than one assignment for the same row and column',r);c.push(storymap?{id:story.id,value:String(value),raw:value,relationId:r.id}:{id:r.id,value:String(value),raw:value});}
+  if(storymap){const seen=new Map();
+   for(let i=0;i<rows.length;i++)for(let j=0;j<columns.length;j++)for(const c of cells[i][j]){
+    const at=seen.get(c.id);
+    if(at&&at!==rows[i].id)fail('DDN-PJ086','Story placed in two releases: '+c.value+' is in '+rows.find(n=>n.id===at).name+' and '+rows[i].name,byRel.get(c.relationId));
+    if(at)fail('DDN-PJ086','Story placed twice: '+c.value+' appears in multiple cells of '+rows[i].name,byRel.get(c.relationId));
+    seen.set(c.id,rows[i].id);}}
   if(p.profile==='matrix.raci@1')for(let i=0;i<rows.length;i++){const vs=cells[i].flat().map(x=>x.value);if(vs.some(v=>!['R','A','C','I'].includes(v))||vs.filter(v=>v==='A').length!==1||!vs.includes('R'))fail('DDN-PJ016','RACI row requires exactly one A, at least one R, and only R/A/C/I codes: '+rows[i].name,rows[i]);}
   if(p.profile==='matrix.crud@1')for(const row of cells)for(const cell of row)for(const v of cell)if(!/^[CRUD]+$/.test(v.value)||new Set(v.value).size!==v.value.length)fail('DDN-PJ017','CRUD value must contain distinct C/R/U/D letters');
   return Quality.matrixEncoding({kind,profile:p.profile,rows,columns,cells,sourceIds:[...rows,...columns].map(n=>n.id).concat(cells.flat(2).map(c=>c.id))},p,ErrorClass);

@@ -10,6 +10,7 @@ function registry(base){
  for(const r of catalogue.relationships){const family=r.family==='data_flow'?'flow':r.family,b=base.relationships.find(x=>x.family===family)||base.relationships[0];out.relationships.push({...b,...r,family,id:'profile-relation.'+r.keyword,pattern:r.keyword==='uml.realization'?'7 5':r.keyword.startsWith('flow.')?'':b.pattern,aliases:[],endpoint_contract:{source:r.source,target:r.target,allow_self:r.allow_self,member_endpoints:r.member_endpoints}});}
  const def=(schema,targets=['object'])=>({targets:Object.fromEntries(targets.map(t=>[t,schema]))});
  out.extension_contracts.x_record=def({type:'object',additionalProperties:true},['object','relation']);
+ out.extension_contracts.x_story=def({type:'object',required:['task'],additionalProperties:true},['relation']);
  for(const key of ['x_rule','x_state','x_transition','x_usecase','x_chen','x_continuation'])out.extension_contracts[key]=def({type:'object',additionalProperties:true},key==='x_chen'?['object','field','relation']:['object','relation']);
  out.extension_contracts.x_assignment=def({type:'object',required:['code'],properties:{code:{type:'string',minLength:1,maxLength:12}},additionalProperties:false},['relation']);
  out.extension_contracts.x_category=def({type:'object',required:['axis','level'],properties:{axis:{type:'string',minLength:1},level:{type:'string',minLength:1}},additionalProperties:false},['object']);
