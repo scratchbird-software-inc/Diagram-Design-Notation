@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Empathy map and balanced scorecard via new profiles
+  `canvas.empathy@1`/`canvas.scorecard@1`, with `DDN-PJ083` required-panel
+  validation.
 - Matrix pack: BCG, Ansoff and TOWS profiles
   (`matrix.bcg@1`/`matrix.ansoff@1`/`matrix.tows@1`) with the registered `x_category`
   axis record and `DDN-PJ082` quadrant validation.

@@ -1264,6 +1264,39 @@
       ]
     },
     {
+      "id": "canvas.empathy@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Empathy map"
+      ],
+      "scope": "Says/thinks/does/feels quadrants around a center persona panel; panel items are declared notes.",
+      "validation": [
+        "all five required panels present (DDN-PJ083)",
+        "existing panels grid checks (DDN-PJ020/PJ021/PJ009)"
+      ],
+      "unsupported": [
+        "sentiment inference",
+        "UX research method certification"
+      ]
+    },
+    {
+      "id": "canvas.scorecard@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Balanced scorecard"
+      ],
+      "scope": "Four perspective panels (financial, customer, internal process, learning & growth); each item list states declared objectives.",
+      "validation": [
+        "all four required panels present (DDN-PJ083)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "KPI computation",
+        "target tracking",
+        "strategy execution"
+      ]
+    },
+    {
       "id": "table.records@1",
       "projection": "table",
       "diagramFamilies": [

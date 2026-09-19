@@ -1692,6 +1692,39 @@
       ]
     },
     {
+      "id": "canvas.empathy@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Empathy map"
+      ],
+      "scope": "Says/thinks/does/feels quadrants around a center persona panel; panel items are declared notes.",
+      "validation": [
+        "all five required panels present (DDN-PJ083)",
+        "existing panels grid checks (DDN-PJ020/PJ021/PJ009)"
+      ],
+      "unsupported": [
+        "sentiment inference",
+        "UX research method certification"
+      ]
+    },
+    {
+      "id": "canvas.scorecard@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Balanced scorecard"
+      ],
+      "scope": "Four perspective panels (financial, customer, internal process, learning & growth); each item list states declared objectives.",
+      "validation": [
+        "all four required panels present (DDN-PJ083)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "KPI computation",
+        "target tracking",
+        "strategy execution"
+      ]
+    },
+    {
       "id": "table.records@1",
       "projection": "table",
       "diagramFamilies": [
@@ -2410,7 +2443,8 @@
     "concept maps via concept.map@1 (mandatory explicit relation labels)",
     "EPC diagrams via epc.basic@1 (hexagon events, alternating functions, and/or/xor connectors)",
     "business model and lean canvas panel profiles (canvas.bmc@1, canvas.lean@1) with required-block validation",
-    "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)"
+    "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)",
+    "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
