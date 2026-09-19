@@ -1,0 +1,24 @@
+ddn "0.4";
+module "ddn.examples.pyramid";
+
+import "shared.ddn" as shared;
+
+// Synthetic support-tier pyramid (all data invented) demonstrating the
+// panels.pyramid@1 profile: four trapezoid bands stacked widest-at-bottom,
+// centered band labels, and side annotations on the annotated bands. The top
+// band declares no items, which is legal only under panels.pyramid@1.
+data tier_notes {
+    object ann_community "Community channel" { kind: note; description: "Synthetic: documentation and forum deflect most questions."; }
+    object ann_standard "Standard channel" { kind: note; description: "Synthetic: email channel with next-day target."; }
+    object ann_priority "Priority channel" { kind: note; description: "Synthetic: named queue with four-hour target."; }
+}
+
+view tiers "Support tiers / pyramid" {
+    data: [@tier_notes];
+    format: @shared.styles.technical;
+    projection { kind:panels; profile:"panels.pyramid@1"; columns:1; panels:[
+        {id:"dedicated",title:"DEDICATED ENGINEER",row:0,column:0,rowspan:1,colspan:1},
+        {id:"priority",title:"PRIORITY SUPPORT",row:1,column:0,rowspan:1,colspan:1,items:[@tier_notes.ann_priority]},
+        {id:"standard",title:"STANDARD SUPPORT",row:2,column:0,rowspan:1,colspan:1,items:[@tier_notes.ann_standard]},
+        {id:"community",title:"COMMUNITY & SELF-SERVICE",row:3,column:0,rowspan:1,colspan:1,items:[@tier_notes.ann_community]}]; }
+}

@@ -1891,6 +1891,23 @@
         "identifying-relationship semantics (see chen.binary@2)",
         "schema generation without an allowlist (see RT-020)"
       ]
+    },
+    {
+      "id": "panels.pyramid@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Pyramid / hierarchy tiers"
+      ],
+      "scope": "3..5 horizontal bands stacked widest-at-bottom as trapezoid polygons; centered band labels; optional per-band side annotations from declared items.",
+      "validation": [
+        "band count 3..5 and contiguous one-column rows (DDN-PJ089)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "3D/pyramidal charts with values",
+        "auto-sizing from data",
+        "nested child views"
+      ]
     }
   ],
   "shapes": [

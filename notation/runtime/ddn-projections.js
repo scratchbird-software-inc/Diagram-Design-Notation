@@ -50,7 +50,16 @@ function render(ir,reg,glyphs='',options={}){
    for(let j=0;j<cols;j++)body+=line(j*cw,y,j*cw,y+rh)+group(plan.records[i].id,[plan.records[i].id],lines(cs[j],j*cw+12*s,y+24*s),{x:j*cw,y,w:cw,h:rh},plan.columns[j].key);y+=rh;
   }H=y+38*s;body+=text(0,H-9*s,'Source-bound table · no expression or decision-rule execution is implied.',11);
  }
- if(plan.kind==='panels'&&!plan.panels.some(v=>v.child)){
+ if(plan.kind==='panels'&&plan.profile==='panels.pyramid@1'&&!plan.panels.some(v=>v.child)){
+  W=Math.max(W,560*s);const bandH=150*s,gap=10*s,cx=W/2,bands=[...plan.panels].sort((a,b)=>a.row-b.row),n=bands.length,widthAt=k=>W*(k+1)/(n+1);
+  for(let i=0;i<n;i++){const band=bands[i],tw=widthAt(i),bw=widthAt(i+1),y=i*(bandH+gap);
+   const poly=`<polygon points="${f(cx-tw/2)} ${f(y)} ${f(cx+tw/2)} ${f(y)} ${f(cx+bw/2)} ${f(y+bandH)} ${f(cx-bw/2)} ${f(y+bandH)}" fill="${colour(i)}" fill-opacity=".18" stroke="${colour(i)}" stroke-width="1.6"/>`;
+   body+=group(band.id,[band.id],poly+lines(wrap(band.title,Math.max(tw,60*s),13,700),cx,y+bandH/2,13,700,'middle'),{x:cx-tw/2,y:y,w:tw,h:bandH});
+   let ay=y+26*s;
+   for(const it of band.items){const block=wrap(it.node.name+': '+it.text,240*s,11);body+=group(it.node.id,[it.node.id],lines(block,cx+bw/2+18*s,ay,11),{x:cx+bw/2+18*s,y:ay-11*s,w:240*s,h:(block.length*17+10)*s});ay+=(block.length*17+10)*s;}
+  }
+  H=n*(bandH+gap)+40*s;
+ }else if(plan.kind==='panels'&&!plan.panels.some(v=>v.child)){
   const gap=22*s,cw=Math.max(230*s,(W-gap*(plan.columns-1))/plan.columns);W=cw*plan.columns+gap*(plan.columns-1);
   let rowCount=Math.max(...plan.panels.map(p=>p.row+p.rowspan)),heights=Array(rowCount).fill(160*s);
   const measured=plan.panels.map(panel=>{const width=cw*panel.colspan+gap*(panel.colspan-1),items=panel.items.map(i=>({item:i,label:wrap(i.node.name,width-36*s,14,650),content:wrap(i.text,width-36*s,12)}));const title=wrap(panel.title,width-32*s,14,700),titleHeight=(title.length*20+24)*s;const needed=titleHeight+20*s+items.reduce((h,i)=>h+(i.label.length*20+i.content.length*18+25)*s,0);return{panel,width,items,needed,title,titleHeight};});

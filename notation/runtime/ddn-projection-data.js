@@ -68,7 +68,7 @@ function plan(ir,ErrorClass=Error){
    if(Object.keys(v).some(k=>!['id','title','row','column','rowspan','colspan','items','view'].includes(k))||!v.id||ids.has(v.id)||typeof v.title!=='string'||![row,column,rs,cs].every(Number.isInteger)||row<0||row>100||column<0||rs<1||cs<1||row+rs>101||column+cs>p.columns)fail('DDN-PJ020','Invalid panel grid span/ID');ids.add(v.id);
    for(let y=row;y<row+rs;y++)for(let x=column;x<column+cs;x++){const key=y+':'+x;if(used.has(key))fail('DDN-PJ021','Overlapping panel spans');used.add(key);}
    if(v.view){if(v.items||p.profile!=='panels.composed@1')fail('DDN-QP001','A child-view panel requires panels.composed@1 and cannot also contain items');const child=ir.view.children?.find(c=>c.slot===v.id);if(!child)fail('DDN-QP001','Child view was not compiled');return{...v,rowspan:rs,colspan:cs,items:[],child:child.ir};}
-   const items=list(v.items,'panel items');return{...v,rowspan:rs,colspan:cs,items:items.map(n=>({node:n,text:p.value?String(textValue(n,p.value,'')):n.properties.description||n.properties.x_record?.description||''}))};});
+   const items=p.profile==='panels.pyramid@1'&&(!v.items||!v.items.length)?[]:list(v.items,'panel items');return{...v,rowspan:rs,colspan:cs,items:items.map(n=>({node:n,text:p.value?String(textValue(n,p.value,'')):n.properties.description||n.properties.x_record?.description||''}))};});
   const CANVAS={'canvas.bmc@1':{code:'DDN-PJ080',panels:[['kp','KEY PARTNERS'],['ka','KEY ACTIVITIES'],['kr','KEY RESOURCES'],['vp','VALUE PROPOSITIONS'],['cr','CUSTOMER RELATIONSHIPS'],['ch','CHANNELS'],['cs','CUSTOMER SEGMENTS'],['cost','COST STRUCTURE'],['rev','REVENUE STREAMS']]},'canvas.lean@1':{code:'DDN-PJ080',panels:[['problem','PROBLEM'],['solution','SOLUTION'],['keymetrics','KEY METRICS'],['uvp','UNIQUE VALUE PROPOSITION'],['unfair','UNFAIR ADVANTAGE'],['channels','CHANNELS'],['segments','CUSTOMER SEGMENTS'],['cost','COST STRUCTURE'],['revenue','REVENUE STREAMS']]},'canvas.pest@1':{code:'DDN-PJ081',panels:[['political','POLITICAL'],['economic','ECONOMIC'],['social','SOCIAL'],['technological','TECHNOLOGICAL']]},'canvas.pestle@1':{code:'DDN-PJ081',panels:[['political','POLITICAL'],['economic','ECONOMIC'],['social','SOCIAL'],['technological','TECHNOLOGICAL'],['legal','LEGAL'],['environmental','ENVIRONMENTAL']]},'canvas.porter5@1':{code:'DDN-PJ081',panels:[['entrants','THREAT OF NEW ENTRANTS'],['supplier','SUPPLIER POWER'],['rivalry','COMPETITIVE RIVALRY'],['buyer','BUYER POWER'],['substitutes','THREAT OF SUBSTITUTES']]},'canvas.empathy@1':{code:'DDN-PJ083',panels:[['says','SAYS'],['thinks','THINKS'],['persona','PERSONA'],['does','DOES'],['feels','FEELS']]},'canvas.scorecard@1':{code:'DDN-PJ083',panels:[['financial','FINANCIAL'],['customer','CUSTOMER'],['internal','INTERNAL PROCESS'],['learning','LEARNING & GROWTH']]}};
   const need=CANVAS[p.profile];if(need)for(const [id,title]of need.panels)if(!p.panels.some(v=>v.id===id))fail(need.code,p.profile+' requires panel "'+id+'" ('+title+'); declare all required blocks');
   let journeyPhases;
@@ -98,6 +98,13 @@ function plan(ir,ErrorClass=Error){
     const col=phases.indexOf(xr.phase);if(col<last)fail('DDN-PJ085','emotion items must follow the declared phase order; '+n.name+' (phase '+xr.phase+') follows a later phase',n);
     last=col;points.push({col,value:xr.value,nodeId:n.id});}
    em.emotionPoints=points;journeyPhases=phases;
+  }
+  if(p.profile==='panels.pyramid@1'){
+   const n=p.panels.length;
+   if(n<3||n>5)fail('DDN-PJ089','panels.pyramid@1 needs 3..5 bands; '+n+' declared');
+   if(p.columns!==1||panels.some(b=>b.column!==0||b.colspan!==1||b.rowspan!==1))fail('DDN-PJ089','pyramid bands stack in one column (columns:1, column:0, rowspan:1, colspan:1)');
+   const rows=panels.map(b=>b.row).sort((a,b)=>a-b);
+   if(rows.some((r,i)=>r!==i))fail('DDN-PJ089','pyramid band rows must be contiguous 0..'+(n-1)+' from top to bottom');
   }
   return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }

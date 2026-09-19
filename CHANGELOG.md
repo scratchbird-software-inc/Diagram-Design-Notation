@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Pyramid diagrams via new profile `panels.pyramid@1` (3..5 trapezoid bands
+  with optional side annotations), validated by `DDN-PJ089`.
+
 - SQL DDL export: `export { format: sql; … }` on the redacted allowlist profile
   emits CREATE TABLE/PRIMARY KEY/FOREIGN KEY DDL with `-- skipped:` audit
   comments (`DDN-PJ088`, `DDN-PJ092`; allowlist enforcement remains `DDN150`).
