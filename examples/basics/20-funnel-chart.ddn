@@ -1,0 +1,20 @@
+ddn "0.5";
+module "ddn.examples.funnel-chart";
+
+import "shared.ddn" as shared;
+
+// Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
+// All data is synthetic.
+data pipeline {
+    object s1 "Visits" { kind: record; x_record: {"stage": "Visits", "value": 1200, "unit": "deals"}; }
+    object s2 "Signups" { kind: record; x_record: {"stage": "Signups", "value": 480, "unit": "deals"}; }
+    object s3 "Trials" { kind: record; x_record: {"stage": "Trials", "value": 210, "unit": "deals"}; }
+    object s4 "Qualified" { kind: record; x_record: {"stage": "Qualified", "value": 96, "unit": "deals"}; }
+    object s5 "Closed" { kind: record; x_record: {"stage": "Closed", "value": 42, "unit": "deals"}; }
+}
+
+view funnel "Synthetic sales pipeline / funnel" {
+    data: [@pipeline]; format: @shared.styles.technical;
+    projection { kind:chart; profile:"chart.funnel@1"; records:[@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5]; mark:funnel; x:"x_record.stage"; y:"x_record.value"; unit:"deals"; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

@@ -1080,6 +1080,26 @@
       ]
     },
     {
+      "id": "chart.funnel@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Funnel"
+      ],
+      "scope": "Ordered stage bands; widths encode one value per stage; record provenance.",
+      "validation": [
+        "at least 2 distinct stages (DDN-PJ073)",
+        "nonnegative stage values (DDN-PJ107)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)",
+        "no series binding (DDN-PJ030)",
+        "duplicate stage labels rejected (DDN-PJ036)"
+      ],
+      "unsupported": [
+        "per-stage conversion rates",
+        "curved/necked funnel variants"
+      ]
+    },
+    {
       "id": "timeline.basic@1",
       "projection": "timeline",
       "diagramFamilies": [

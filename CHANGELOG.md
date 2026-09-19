@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Funnel charts via new profile `chart.funnel@1` (mark `funnel`), with
+  `DDN-PJ073`/`DDN-PJ107` validation.
+
 - Radar/spider charts via new profile `chart.radar@1` (mark `radar`), with
   `DDN-PJ071`/`DDN-PJ072` validation.
 

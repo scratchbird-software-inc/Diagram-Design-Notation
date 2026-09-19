@@ -100,7 +100,23 @@ projection {
 
 Radar requires categorical `x` (`DDN-PJ030` otherwise), rejects aggregation (`DDN-PJ031`), requires at least three distinct categories (`DDN-PJ071`), and requires every `y` to be a finite number greater than or equal to zero (`DDN-PJ072`). Radar has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. Unsupported: multi-axis scales and filled-curvature interpolation.
 
-## 22.8 Unsupported combinations and publication
+## 22.8 Funnel
+
+```ddn
+projection {
+    kind: chart; profile: "chart.funnel@1";
+    records: [@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5];
+    mark: funnel;
+    x: "x_record.stage"; y: "x_record.value";
+    unit: "deals";
+}
+```
+
+`mark: funnel` draws one horizontal band per stage, stacked top to bottom in declaration order (after any `filter`/`order`); the category axis value (`x`) is the stage label and one record supplies one value per stage. All bands share equal heights (`plotH / N`) and are centered on one vertical axis. Band `i` is a trapezoid whose top edge width is `plotW × yᵢ / maxY` and whose bottom edge width is `plotW × yᵢ₊₁ / maxY` for `i < N − 1`; the final band's bottom edge is `max(24 × scale, topWidth × 0.35)` wide — a fixed, deterministic taper. Each band is filled from the registered palette and stroked with the surface colour, labels read `stage: value unit` (centered inside the band when it fits, otherwise to the right), and a footer states the stage count and total.
+
+Funnel requires categorical `x` (`DDN-PJ030` otherwise), rejects any `series` binding (`DDN-PJ030`) and any aggregation (`DDN-PJ031`) — duplicate stage labels are rejected by the existing `DDN-PJ036` check since no aggregate is permitted. A funnel needs at least two distinct stages (`DDN-PJ073`) and every stage value must be a nonnegative number (`DDN-PJ107`); non-finite or missing values fail earlier with `DDN-PJ032`. Funnel has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. Limitations: per-stage conversion rates are not computed, and curved or necked funnel variants are unsupported.
+
+## 22.9 Unsupported combinations and publication
 
 Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.
 
