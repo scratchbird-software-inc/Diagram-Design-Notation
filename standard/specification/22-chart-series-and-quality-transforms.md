@@ -84,7 +84,23 @@ Each bar retains start, end, signed value, step role, its value source, and cumu
 
 The plot reports sample sizes, quartile method and whisker rule. It does not force zero onto a tightly clustered measurement scale; it includes the complete observed/outlier extent plus declared renderer padding. Single-value and tied samples produce degenerate boxes/whiskers, not division errors. Nonfinite derived quartiles, ranges or fences fail.
 
-## 22.7 Unsupported combinations and publication
+## 22.7 Radar/spider charts
+
+```ddn
+projection {
+    kind: chart; profile: "chart.radar@1";
+    records: [@facts.a1, @facts.a2, @facts.a3, @facts.n1, @facts.n2, @facts.n3];
+    mark: radar;
+    x: "x_record.criterion"; y: "x_record.score";
+    series: "x_record.product"; unit: "points";
+}
+```
+
+`mark: radar` arranges the distinct `x` categories as spokes at equal angles, starting at 12 o'clock and proceeding clockwise, in record order (no sorting). Four grid rings mark 25/50/75/100% of one shared `0 … max` scale computed over all points — per-axis normalization is deliberately not applied, so values on different spokes remain directly comparable. Each series (or the single implicit series when `series` is absent) is one closed polygon whose vertices sit at `radius × y / max` on each spoke, stroked in the registered palette with a 12% opacity fill; category labels sit outside the outer ring and the series legend matches the other chart families. A series with no observation on a spoke simply omits that vertex; no value is invented.
+
+Radar requires categorical `x` (`DDN-PJ030` otherwise), rejects aggregation (`DDN-PJ031`), requires at least three distinct categories (`DDN-PJ071`), and requires every `y` to be a finite number greater than or equal to zero (`DDN-PJ072`). Radar has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. Unsupported: multi-axis scales and filled-curvature interpolation.
+
+## 22.8 Unsupported combinations and publication
 
 Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.
 

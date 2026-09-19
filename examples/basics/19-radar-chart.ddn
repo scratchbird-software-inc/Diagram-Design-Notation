@@ -1,0 +1,33 @@
+ddn "0.4";
+module "ddn.examples.radar";
+
+// Synthetic product-evaluation dataset: 6 criteria x 2 products.
+data facts {
+    object a1 "Aurora / Battery" { kind: record; x_record: {"product": "Aurora", "criterion": "Battery", "score": 8, "unit": "points"}; }
+    object a2 "Aurora / Camera" { kind: record; x_record: {"product": "Aurora", "criterion": "Camera", "score": 6, "unit": "points"}; }
+    object a3 "Aurora / Display" { kind: record; x_record: {"product": "Aurora", "criterion": "Display", "score": 9, "unit": "points"}; }
+    object a4 "Aurora / Performance" { kind: record; x_record: {"product": "Aurora", "criterion": "Performance", "score": 7, "unit": "points"}; }
+    object a5 "Aurora / Durability" { kind: record; x_record: {"product": "Aurora", "criterion": "Durability", "score": 5, "unit": "points"}; }
+    object a6 "Aurora / Value" { kind: record; x_record: {"product": "Aurora", "criterion": "Value", "score": 6, "unit": "points"}; }
+    object n1 "Nimbus / Battery" { kind: record; x_record: {"product": "Nimbus", "criterion": "Battery", "score": 6, "unit": "points"}; }
+    object n2 "Nimbus / Camera" { kind: record; x_record: {"product": "Nimbus", "criterion": "Camera", "score": 9, "unit": "points"}; }
+    object n3 "Nimbus / Display" { kind: record; x_record: {"product": "Nimbus", "criterion": "Display", "score": 7, "unit": "points"}; }
+    object n4 "Nimbus / Performance" { kind: record; x_record: {"product": "Nimbus", "criterion": "Performance", "score": 8, "unit": "points"}; }
+    object n5 "Nimbus / Durability" { kind: record; x_record: {"product": "Nimbus", "criterion": "Durability", "score": 8, "unit": "points"}; }
+    object n6 "Nimbus / Value" { kind: record; x_record: {"product": "Nimbus", "criterion": "Value", "score": 4, "unit": "points"}; }
+}
+
+format shared {
+    style standard { look: classic; theme: default; font: sans; font_size: 16px; }
+    layout logical { algorithm: layered; direction: right; routing: orthogonal; gap: 140px; row_gap: 130px; }
+    display readable { kind: none; badges: none; fields: names; maturity: none; }
+    publication screen { size: content; fit: none; minimum_text: 8pt; }
+    legend key { mode: text; placement: none; }
+    bundle common { style: @standard; layout: @logical; display: @readable; publication: @screen; legend: @key; }
+}
+
+view radar "Product comparison / radar" {
+    data: [@facts];
+    format: @shared.common;
+    projection { kind: chart; profile: "chart.radar@1"; records: [@facts.a1, @facts.a2, @facts.a3, @facts.a4, @facts.a5, @facts.a6, @facts.n1, @facts.n2, @facts.n3, @facts.n4, @facts.n5, @facts.n6]; mark: radar; x: "x_record.criterion"; y: "x_record.score"; series: "x_record.product"; unit: "points"; width: 1050px; height: 700px; }
+}

@@ -5,7 +5,7 @@
   "description": "DDN reference runtime: parser, validation, layout/routing, deterministic SVG rendering, CLI, and Studio. Implements the standard in ../standard/.",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:routing-efficiency && npm run test:sdk && npm run test:endpoint-ordering",
+    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:routing-efficiency && npm run test:sdk && npm run test:endpoint-ordering",
     "test:core": "node tests/run.js",
     "test:remediation": "node tests/0.3-regressions.js",
     "test:curves": "node tests/curved-relations.js",
@@ -13,6 +13,7 @@
     "test:use-cases": "node tests/use-cases.js",
     "test:projections": "node tests/projections.js",
     "test:quality": "node tests/quality.js",
+    "test:radar": "node tests/radar-chart.js",
     "test:routing-efficiency": "node tests/routing-efficiency.js",
     "test:sdk": "node tests/sdk-consolidated.js",
     "test:endpoint-ordering": "node tests/endpoint-ordering.js",

@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Radar/spider charts via new profile `chart.radar@1` (mark `radar`), with
+  `DDN-PJ071`/`DDN-PJ072` validation.
+
 - Chrome/file:// fix: `index.html` and `standard/plates/index.html` are now
   single-file pages (runtime and plates inlined via
   `tools/build-standalone-pages.js`). Flatpak Chrome exposes only the opened

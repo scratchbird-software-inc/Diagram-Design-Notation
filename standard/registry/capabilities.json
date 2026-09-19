@@ -1657,6 +1657,24 @@
       ]
     },
     {
+      "id": "chart.radar@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Radar/spider"
+      ],
+      "scope": "Categorical axes on radial spokes; one shared 0..max scale over all points; one polygon per series; record provenance.",
+      "validation": [
+        "at least 3 distinct categories (DDN-PJ071)",
+        "finite numeric values, y >= 0 (DDN-PJ072)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)"
+      ],
+      "unsupported": [
+        "multi-axis scales",
+        "filled-curvature interpolation"
+      ]
+    },
+    {
       "id": "timeline.basic@1",
       "projection": "timeline",
       "diagramFamilies": [
@@ -1987,7 +2005,8 @@
     "bounded declarative workflow fixtures",
     "DFD interface balance contracts",
     "scoped review requirements and evidence",
-    "content/figure/A4/Letter publication and final-size checks"
+    "content/figure/A4/Letter publication and final-size checks",
+    "radar/spider marks via chart.radar@1 (shared scale, categorical spokes)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

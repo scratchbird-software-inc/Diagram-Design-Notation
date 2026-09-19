@@ -1062,6 +1062,24 @@
       ]
     },
     {
+      "id": "chart.radar@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Radar/spider"
+      ],
+      "scope": "Categorical axes on radial spokes; one shared 0..max scale over all points; one polygon per series; record provenance.",
+      "validation": [
+        "at least 3 distinct categories (DDN-PJ071)",
+        "finite numeric values, y >= 0 (DDN-PJ072)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)"
+      ],
+      "unsupported": [
+        "multi-axis scales",
+        "filled-curvature interpolation"
+      ]
+    },
+    {
       "id": "timeline.basic@1",
       "projection": "timeline",
       "diagramFamilies": [

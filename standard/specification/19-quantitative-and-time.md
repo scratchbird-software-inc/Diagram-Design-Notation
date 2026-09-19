@@ -41,7 +41,7 @@ Core named style/palette variants remain consistent. Series colors are a separat
 
 `adapters/vega-lite/adapter.mjs` demonstrates trusted host-supplied Vega/Vega-Lite modules and an AST expression interpreter, with external resource loading denied and temporary views finalized after SVG generation. Actual third-party execution was **not verified** here because package-registry/CDN access was unavailable. It is a prototype boundary, not a second claimed production renderer or an automatic library download mechanism.
 
-The native six marks and timeline were exercised directly through the DDN public runtime. Only the exported external-specification envelope is tested in the default suite. Pin and review compatible third-party versions, licensing and security policy before using the optional adapter.
+The native marks (the six `chart.basic@1` marks plus the `chart.radar@1` radar polygon) and timeline were exercised directly through the DDN public runtime. Only the exported external-specification envelope is tested in the default suite. Pin and review compatible third-party versions, licensing and security policy before using the optional adapter.
 
 Primary background references, checked 2026-09-08:
 - Vega-Lite compilation: https://vega.github.io/vega-lite/usage/compile.html
