@@ -28,9 +28,17 @@ function plan(ir,ErrorClass=Error){
  if(kind==='graph'||kind==='chen')return{kind,profile:p.profile};
  if(kind==='matrix'){
   const rows=list(p.rows,'rows'),columns=list(p.columns,'columns');if(rows.length*columns.length>5000||columns.length>40)fail('DDN-PJ013','Matrix limit: 5,000 cells and 40 columns');
+  const QUADRANTS={'matrix.bcg@1':{rows:['growth',['high','low']],columns:['share',['high','low']]},'matrix.ansoff@1':{rows:['market',['existing','new']],columns:['product',['existing','new']]},'matrix.tows@1':{rows:['internal',['strength','weakness']],columns:['external',['opportunity','threat']]}};
+  const quad=QUADRANTS[p.profile];
+  if(quad)for(const side of ['rows','columns']){const [axis,levels]=quad[side],els=side==='rows'?rows:columns;
+   if(els.length!==levels.length)fail('DDN-PJ082',p.profile+' '+side+' must be exactly the '+axis+' categories ['+levels.join(', ')+']');
+   const seen=new Set();
+   for(const el of els){const xc=el.properties.x_category;
+    if(!xc||xc.axis!==axis||!levels.includes(xc.level)||seen.has(xc.level))fail('DDN-PJ082',p.profile+' '+side+' must declare x_category {axis:"'+axis+'",level} covering ['+levels.join(', ')+']; check '+el.name,el);
+    seen.add(xc.level);}}
   if(typeof p.relation!=='string'||typeof p.value!=='string')fail('DDN-PJ014','Matrix needs a relation kind and a value binding');
   if(p.duplicates!==undefined&&!['error','join'].includes(p.duplicates))fail('DDN-PJ014','Unknown duplicate-cell policy');
-  if(p.profile!=='matrix.relations@1'&&p.duplicates==='join')fail('DDN-PJ014','RACI/CRUD require one declared assignment per cell');
+  if(!['matrix.relations@1','matrix.bcg@1','matrix.ansoff@1','matrix.tows@1','matrix.storymap@1'].includes(p.profile)&&p.duplicates==='join')fail('DDN-PJ014','RACI/CRUD require one declared assignment per cell');
   const ri=new Map(rows.map((n,i)=>[n.id,i])),ci=new Map(columns.map((n,i)=>[n.id,i])),cells=rows.map(()=>columns.map(()=>[]));
   for(const r of ir.relations.filter(r=>r.kind===p.relation&&ri.has(r.from.element)&&ci.has(r.to.element))){const value=textValue(r,p.value);const c=cells[ri.get(r.from.element)][ci.get(r.to.element)];if(c.length&&p.duplicates!=='join')fail('DDN-PJ015','More than one assignment for the same row and column',r);c.push({id:r.id,value:String(value),raw:value});}
   if(p.profile==='matrix.raci@1')for(let i=0;i<rows.length;i++){const vs=cells[i].flat().map(x=>x.value);if(vs.some(v=>!['R','A','C','I'].includes(v))||vs.filter(v=>v==='A').length!==1||!vs.includes('R'))fail('DDN-PJ016','RACI row requires exactly one A, at least one R, and only R/A/C/I codes: '+rows[i].name,rows[i]);}

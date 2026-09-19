@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Matrix pack: BCG, Ansoff and TOWS profiles
+  (`matrix.bcg@1`/`matrix.ansoff@1`/`matrix.tows@1`) with the registered `x_category`
+  axis record and `DDN-PJ082` quadrant validation.
 - Canvas pack B: PEST, PESTLE and Porter five-forces via new profiles
   `canvas.pest@1`/`canvas.pestle@1`/`canvas.porter5@1`, with `DDN-PJ081`
   required-panel validation.

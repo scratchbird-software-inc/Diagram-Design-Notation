@@ -33,6 +33,10 @@ The default duplicate-cell policy is `error`. `matrix.relations@1` can explicitl
 
 Column widths, row heights and wrapped captions derive from contents. A cell keeps its relationship provenance; a chart or matrix is not a separately maintained truth. Selecting a cell can reveal its assignments, and the inspector can edit an existing single assignment code. Creating an assignment in an empty cell and drag-based row/column editing remain source operations in this release.
 
+### Quadrant strategy matrices
+
+The profiles `matrix.bcg@1`, `matrix.ansoff@1` and `matrix.tows@1` reuse the same matrix projection as fixed 2×2 strategy matrices. Each declared row and column element carries the registered extension record `x_category: {axis, level}` naming the axis it sits on and its level on that axis. Each profile pins an exact category set: BCG rows are `growth` levels `high`/`low` and columns are `share` levels `high`/`low`; Ansoff rows are `market` levels `existing`/`new` and columns are `product` levels `existing`/`new`; TOWS rows are `internal` levels `strength`/`weakness` and columns are `external` levels `opportunity`/`threat`. A wrong count, a missing `x_category`, a wrong axis, or an unknown or duplicated level is rejected as `DDN-PJ082`; the declared `rows`/`columns` array order remains the display order. Cells are ordinary relations between a row category and a column category whose `name` is the item label, bound with `value:"name"`; these profiles allow `duplicates:join`, so several declared items can share one quadrant. Quadrant cells are declared items, not computed positions — the profiles do not compute market share, infer SWOT entries, or recommend strategy.
+
 ## 18.2 Record tables and decision-table presentations
 
 `table.records@1` declares `records` and a `columns` array of `{key,label}`. Keys must be distinct safe property paths. Values must be scalar; `null` is displayed explicitly, missing values error unless `missing:blank` is selected. This differs from missing versus null in a schema definition, which retains the original core semantics.

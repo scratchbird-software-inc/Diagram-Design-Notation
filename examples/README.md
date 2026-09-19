@@ -7,15 +7,16 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 32 numbered examples (01-customer … 32-canvas-pack-b)
+- `basics/` — 33 numbered examples (01-customer … 33-matrix-pack)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, process contracts, enterprise gates, curved
   relations, radar charts, funnel charts, gauge charts, candlestick charts,
   treemaps, Sankey diagrams, C4-style context/container/component views, and
   top-down organisation charts, work breakdown structures, mind maps,
-  concept maps, EPC process chains, and canvas packs (BMC/Lean plus
-  environmental-scan and five-forces canvases).
+  concept maps, EPC process chains, canvas packs (BMC/Lean plus
+  environmental-scan and five-forces canvases), and strategy quadrant
+  matrices (BCG/Ansoff/TOWS).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

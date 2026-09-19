@@ -1,0 +1,57 @@
+ddn "0.4";
+module "ddn.examples.matrix-pack";
+
+import "shared.ddn" as shared;
+
+// Synthetic product portfolio of the invented beverage company "Fizzberry" (all names
+// and data invented) for the matrix.bcg@1, matrix.ansoff@1 and matrix.tows@1 profiles.
+// Row/column category elements carry x_category {axis, level}; quadrant cells are
+// ordinary assoc relations from a row category to a column category, labeled by name.
+data axes {
+    object g_high "Market growth: high" { kind: record; x_category: {axis:"growth", level:"high"}; description: "Synthetic: fast-growing beverage segments in Fizzberry's markets."; }
+    object g_low "Market growth: low" { kind: record; x_category: {axis:"growth", level:"low"}; description: "Synthetic: flat or declining beverage segments in Fizzberry's markets."; }
+    object s_high "Relative share: high" { kind: record; x_category: {axis:"share", level:"high"}; description: "Synthetic: Fizzberry leads the segment versus the largest rival."; }
+    object s_low "Relative share: low" { kind: record; x_category: {axis:"share", level:"low"}; description: "Synthetic: Fizzberry trails the segment leader."; }
+    object m_existing "Market: existing" { kind: record; x_category: {axis:"market", level:"existing"}; description: "Synthetic: regions and channels Fizzberry already serves."; }
+    object m_new "Market: new" { kind: record; x_category: {axis:"market", level:"new"}; description: "Synthetic: regions and channels Fizzberry does not yet serve."; }
+    object p_existing "Product: existing" { kind: record; x_category: {axis:"product", level:"existing"}; description: "Synthetic: Fizzberry's current beverage lines."; }
+    object p_new "Product: new" { kind: record; x_category: {axis:"product", level:"new"}; description: "Synthetic: beverage lines Fizzberry has not launched yet."; }
+    object int_s "Internal: strength" { kind: record; x_category: {axis:"internal", level:"strength"}; description: "Synthetic: brand recognition for botanical sparkling drinks."; }
+    object int_w "Internal: weakness" { kind: record; x_category: {axis:"internal", level:"weakness"}; description: "Synthetic: limited cold-chain distribution inland."; }
+    object ext_o "External: opportunity" { kind: record; x_category: {axis:"external", level:"opportunity"}; description: "Synthetic: subscription delivery apps growing in coastal cities."; }
+    object ext_t "External: threat" { kind: record; x_category: {axis:"external", level:"threat"}; description: "Synthetic: proposed sugar levy on sweetened beverages."; }
+}
+
+data items {
+    relation bcg_star "Sparkling tea" @axes.g_high -> @axes.s_high { kind: assoc; }
+    relation bcg_star2 "Ginger sparkler" @axes.g_high -> @axes.s_high { kind: assoc; }
+    relation bcq_question "Nitro kombucha" @axes.g_high -> @axes.s_low { kind: assoc; }
+    relation bcg_cow "Classic cola" @axes.g_low -> @axes.s_high { kind: assoc; }
+    relation bcg_dog "Diet cream soda" @axes.g_low -> @axes.s_low { kind: assoc; }
+    relation an_penetration "Cola bundle promotion" @axes.m_existing -> @axes.p_existing { kind: assoc; }
+    relation an_market_dev "Coastal export launch" @axes.m_new -> @axes.p_existing { kind: assoc; }
+    relation an_product_dev "Botanical tonic line" @axes.m_existing -> @axes.p_new { kind: assoc; }
+    relation an_diversification "Kombucha subscription box" @axes.m_new -> @axes.p_new { kind: assoc; }
+    relation tows_so "Use brand strength in subscription channel" @axes.int_s -> @axes.ext_o { kind: assoc; }
+    relation tows_wo "Partner with delivery apps to bypass cold-chain gap" @axes.int_w -> @axes.ext_o { kind: assoc; }
+    relation tows_st "Lead low-sugar reformulation ahead of the levy" @axes.int_s -> @axes.ext_t { kind: assoc; }
+    relation tows_wt "Hedge sweetener sourcing before levy passes" @axes.int_w -> @axes.ext_t { kind: assoc; }
+}
+
+view bcg "Synthetic portfolio / BCG" {
+    data: [@axes, @items];
+    format: @shared.styles.technical;
+    projection { kind:matrix; profile:"matrix.bcg@1"; rows:[@axes.g_high, @axes.g_low]; columns:[@axes.s_high, @axes.s_low]; relation:"assoc"; value:"name"; duplicates:join; }
+}
+
+view ansoff "Synthetic portfolio / Ansoff" {
+    data: [@axes, @items];
+    format: @shared.styles.technical;
+    projection { kind:matrix; profile:"matrix.ansoff@1"; rows:[@axes.m_existing, @axes.m_new]; columns:[@axes.p_existing, @axes.p_new]; relation:"assoc"; value:"name"; duplicates:join; }
+}
+
+view tows "Synthetic portfolio / TOWS" {
+    data: [@axes, @items];
+    format: @shared.styles.technical;
+    projection { kind:matrix; profile:"matrix.tows@1"; rows:[@axes.int_s, @axes.int_w]; columns:[@axes.ext_o, @axes.ext_t]; relation:"assoc"; value:"name"; duplicates:join; }
+}

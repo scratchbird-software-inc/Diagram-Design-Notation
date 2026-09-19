@@ -2183,6 +2183,54 @@
         "BPMN interchange",
         "connector fan-in/fan-out balancing rules"
       ]
+    },
+    {
+      "id": "matrix.bcg@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "BCG growth-share matrix"
+      ],
+      "scope": "Two market-growth rows (high, low) by two relative-share columns (high, low); quadrant cells are declared relations with value-list content.",
+      "validation": [
+        "exact quadrant category sets per axis (DDN-PJ082)",
+        "existing matrix checks (DDN-PJ013/PJ014/PJ015)"
+      ],
+      "unsupported": [
+        "market-share computation",
+        "portfolio advice"
+      ]
+    },
+    {
+      "id": "matrix.ansoff@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "Ansoff matrix"
+      ],
+      "scope": "Market rows (existing, new) by product columns (existing, new); cells are declared strategy items.",
+      "validation": [
+        "exact quadrant category sets per axis (DDN-PJ082)",
+        "existing matrix checks (DDN-PJ013/PJ014/PJ015)"
+      ],
+      "unsupported": [
+        "strategy recommendation",
+        "market analysis"
+      ]
+    },
+    {
+      "id": "matrix.tows@1",
+      "projection": "matrix",
+      "diagramFamilies": [
+        "TOWS matrix"
+      ],
+      "scope": "Internal rows (strength, weakness) crossed with external columns (opportunity, threat); cells are strategy notes.",
+      "validation": [
+        "exact quadrant category sets per axis (DDN-PJ082)",
+        "existing matrix checks (DDN-PJ013/PJ014/PJ015)"
+      ],
+      "unsupported": [
+        "SWOT inference",
+        "strategy recommendation"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2320,6 +2368,7 @@
     "shape contours and classifier compartments",
     "binary scalar Chen source-linked occurrences",
     "derived RACI CRUD relation matrices",
+    "BCG/Ansoff/TOWS quadrant matrices via matrix.bcg@1, matrix.ansoff@1, matrix.tows@1 (declared category axes, DDN-PJ082)",
     "record tables with safe bindings and explicit missing policies",
     "spanning panel compositor",
     "native bar line area point pie donut and UTC intervals",
