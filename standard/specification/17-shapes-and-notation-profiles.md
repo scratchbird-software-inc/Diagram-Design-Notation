@@ -15,6 +15,8 @@ The drawing look can be classic, handDrawn or neo. Controlled pen variation chan
 
 The native `tree` layout honours `direction`: with `down` (or `up`, mirrored) depth advances vertically and siblings stack along x using subtree widths, so a single-root hierarchy hangs as a top-down org chart; with the default `right` (or `left`) the original horizontal geometry is retained byte-identically. Mind maps ignore `direction` and remain horizontal.
 
+The native `mindmap` layout has a single-root contract: with exactly one hierarchy root it centres that topic and alternates branches left and right in declaration order; with more than one root it silently falls back to ordinary tree stacking. The `mindmap.basic@1` profile enforces the contract up front — exactly one root (`DDN-PJ102`), an acyclic `assoc` hierarchy (`DDN-PF004`), and `layout.algorithm: mindmap` (`DDN-PF007`) — so a profiled mind map never degrades into a two-sided picture of a one-sided tree.
+
 ## 17.2 Basic flowcharts
 
 `flow.basic@1` uses `flow.start`, `flow.end`, `flow.process`, `flow.decision`, `flow.io`, `flow.document` and `flow.subprocess`, connected by `flow.next`.

@@ -1,0 +1,35 @@
+ddn "0.5";
+module "ddn.examples.mind-map";
+
+import "shared.ddn" as shared;
+
+// Synthetic meeting brainstorm for the mindmap.basic@1 profile.
+data ideas {
+    object root "Q3 launch brainstorm" { kind: object; }
+    object pricing "Pricing" { kind: object; }
+    object onboarding "Onboarding" { kind: object; }
+    object risks "Risks" { kind: object; }
+    object marketing "Marketing" { kind: object; }
+    object tiers "Usage tiers" { kind: term; }
+    object discount "Annual discount" { kind: term; }
+    object tour "Sample data tour" { kind: term; }
+    object creep "Scope creep" { kind: term; }
+    relation r1 @root -> @pricing { kind: assoc; }
+    relation r2 @root -> @onboarding { kind: assoc; }
+    relation r3 @root -> @risks { kind: assoc; }
+    relation r4 @root -> @marketing { kind: assoc; }
+    relation r5 @pricing -> @tiers { kind: assoc; }
+    relation r6 @pricing -> @discount { kind: assoc; }
+    relation r7 @onboarding -> @tour { kind: assoc; }
+    relation r8 @risks -> @creep { kind: assoc; }
+}
+
+format options {
+    layout mind { algorithm: mindmap; routing: curved; curve: bezier; root: @ideas.root; hierarchy: [assoc]; }
+}
+
+view mindmap "Synthetic brainstorm / mind map" {
+    data: [@ideas]; format: @shared.styles.technical; layout: @options.mind;
+    projection { kind: graph; profile: "mindmap.basic@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

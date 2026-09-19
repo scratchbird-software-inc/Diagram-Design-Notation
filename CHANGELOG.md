@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Mind maps via new profile `mindmap.basic@1` over the native mindmap layout
+  (shared `DDN-PJ102` single-root validation).
+
 - Work breakdown structures via new profile `wbs.tree@1` and new profile verb
   `analysis.decomposes` (reuses RT-008's top-down tree layout and `DDN-PJ102`
   single-root validation).

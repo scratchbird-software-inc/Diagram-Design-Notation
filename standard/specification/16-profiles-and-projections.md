@@ -73,6 +73,8 @@ The graph projection also carries `org.tree@1`: a single-root reporting hierarch
 
 The graph projection also carries `wbs.tree@1`: a deliverable-oriented work breakdown structure — a single-root decomposition tree of `analysis.task` participants linked only by the profile verb `analysis.decomposes` (parent deliverable → child deliverable), rendered top-down with the same native tree layout. Validation reuses the org-tree checks: non-task participants and links are rejected (`DDN-PF007`), decomposition cycles (`DDN-PF004`), anything but exactly one root (`DDN-PJ102`), and multiple parents per node (core `DDN201` at the layout stage).
 
+The graph projection also carries `mindmap.basic@1`: a mind map — a single central topic (`object`, `entity`, `term` or `domain` participants) with branches alternating left and right over plain `assoc` links, rendered with the native mindmap layout and curved connectors. Validation rejects non-concept participants and non-`assoc` links (`DDN-PF007`), any layout algorithm other than `mindmap` (`DDN-PF007`), branch cycles (`DDN-PF004`), and anything but exactly one root (`DDN-PJ102`, shared with the org-tree/WBS check); multiple parents and a root outside the hierarchy remain core `DDN201`/`DDN202` errors at the layout stage.
+
 ## 16.4 Explicit source collections and bindings
 
 This increment uses explicit arrays of model references for rows, columns, records and panel items. They are not arbitrary SQL-like queries or named collection-expression syntax. Each array has 1–500 unique references. Every bound element must be present in the view selection. A missing or excluded record is an error, never an empty invented row.

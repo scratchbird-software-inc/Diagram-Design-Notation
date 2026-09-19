@@ -1560,6 +1560,27 @@
         "Gantt conversion",
         "resource assignment"
       ]
+    },
+    {
+      "id": "mindmap.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Mind map"
+      ],
+      "scope": "Single central topic with alternating left/right branches over concept-family nodes; native mindmap layout.",
+      "validation": [
+        "participants limited to object, entity, term, domain (DDN-PF007)",
+        "assoc links only (DDN-PF007)",
+        "layout algorithm must be mindmap (DDN-PF007)",
+        "branch hierarchy is acyclic (DDN-PF004)",
+        "exactly one root — one node with no incoming assoc edge (DDN-PJ102)",
+        "no node has multiple parents; declared root must be a hierarchy root (DDN201, DDN202, layout stage)"
+      ],
+      "unsupported": [
+        "free-floating secondary roots",
+        "cross-links between branches",
+        "node images/icons"
+      ]
     }
   ],
   "shapes": [

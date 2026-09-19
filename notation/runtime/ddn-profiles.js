@@ -63,6 +63,13 @@ function validate(ir,reg,ErrorClass){
   acyclic(['analysis.decomposes'],'WBS');
   singleRoot(['analysis.decomposes'],'wbs.tree@1 requires exactly one root — one deliverable decomposes from nothing');
  }
+ if(p.profile==='mindmap.basic@1'){
+  if(ns.some(n=>!['object','entity','term','domain'].includes(n.kind)))fail('DDN-PF007','mindmap.basic@1 accepts object, entity, term, domain participants only');
+  if(es.some(r=>r.kind!=='assoc'))fail('DDN-PF007','mindmap.basic@1 accepts assoc links only');
+  if(ir.view.profiles.layout.algorithm!=='mindmap')fail('DDN-PF007','mindmap.basic@1 requires layout algorithm mindmap');
+  acyclic(['assoc'],'Mind map');
+  singleRoot(['assoc'],'mindmap.basic@1 requires exactly one root — one topic branches from nothing');
+ }
  if(p.profile.startsWith('c4.')){
   const ok={'c4.context@1':['c4.person','c4.system'],'c4.container@1':['c4.person','c4.system','c4.container','c4.store','c4.queue'],'c4.component@1':['c4.person','c4.system','c4.container','c4.store','c4.component']}[p.profile];
   const ext={'c4.container@1':['c4.person'],'c4.component@1':['c4.person','c4.system','c4.store']}[p.profile]||[];
