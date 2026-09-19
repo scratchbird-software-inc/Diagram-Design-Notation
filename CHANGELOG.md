@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Concept maps via new profile `concept.map@1` with mandatory explicit relation
+  labels (`DDN-PJ104`).
+
 - Mind maps via new profile `mindmap.basic@1` over the native mindmap layout
   (shared `DDN-PJ102` single-root validation).
 

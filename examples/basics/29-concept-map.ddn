@@ -1,0 +1,29 @@
+ddn "0.5";
+module "ddn.examples.concept-map";
+
+import "shared.ddn" as shared;
+
+// Synthetic order-to-cash domain concepts for the concept.map@1 profile.
+// Every relation carries an explicit author-written label — verb defaults are rejected (DDN-PJ104).
+data domain {
+    object order "Order" { kind: entity; }
+    object invoice "Invoice" { kind: entity; }
+    object payment "Payment" { kind: entity; }
+    object ledger "Ledger" { kind: entity; }
+    object shipment "Shipment" { kind: entity; }
+    relation r1 "bills" @order -> @invoice { kind: assoc; }
+    relation r2 "settles" @payment -> @invoice { kind: assoc; }
+    relation r3 "posts to" @invoice -> @ledger { kind: assoc; }
+    relation r4 "fulfilled by" @order -> @shipment { kind: assoc; }
+    relation r5 "books freight to" @shipment -> @ledger { kind: assoc; }
+}
+
+format options {
+    layout cmap { algorithm: layered; direction: right; routing: curved; curve: bezier; }
+}
+
+view concepts "Synthetic order-to-cash concepts / concept map" {
+    data: [@domain]; format: @shared.styles.technical; layout: @options.cmap;
+    projection { kind: graph; profile: "concept.map@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

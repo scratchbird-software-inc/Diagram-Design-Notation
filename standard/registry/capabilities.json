@@ -2064,6 +2064,24 @@
         "cross-links between branches",
         "node images/icons"
       ]
+    },
+    {
+      "id": "concept.map@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Concept map"
+      ],
+      "scope": "Concept-family nodes joined by explicitly labelled structural links; labels are mandatory, not inferred.",
+      "validation": [
+        "participants limited to object, entity, term, domain (DDN-PF007)",
+        "assoc and ref links only (DDN-PF007)",
+        "every selected relation carries an explicit author-written label, not the verb default (DDN-PJ104)"
+      ],
+      "unsupported": [
+        "label inference from endpoints",
+        "automatic layout to ontology standards",
+        "OWL/RDF export"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2238,7 +2256,8 @@
     "sankey flow diagrams via chart.sankey@1 (BFS depth columns, provenance ribbons)",
     "organisation charts via org.tree@1 (single-root reports_to trees, top-down native layout)",
     "work breakdown structures via wbs.tree@1 (analysis.decomposes trees)",
-    "mind maps via mindmap.basic@1 (single-root alternating branches, curved routing)"
+    "mind maps via mindmap.basic@1 (single-root alternating branches, curved routing)",
+    "concept maps via concept.map@1 (mandatory explicit relation labels)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

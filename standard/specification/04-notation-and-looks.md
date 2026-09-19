@@ -75,7 +75,7 @@ The reference examples use a 16px base design metric. The roles `sans`, `serif` 
 
 ## 7. Label modes and completeness
 
-Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support `text`, `tokens` and `numbers`. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them.
+Kind text, kind icons and discriminator tokens are independently optional subject to unambiguous recovery. Relation labels support `text`, `tokens` and `numbers`. Numbered mode replaces full midpoint wording, not direction or structural participation endpoints. A relation's legend entry includes its source, target, verb and selected qualifiers. The text alternative should include field-level endpoints even when the drawing collapses them. The `concept.map@1` profile proves relation labels are first-class: concept maps require an explicit author-written relation name on every link and reject bare verb defaults (`DDN-PJ104`).
 
 A legend is generated from the resolved view and profile, not manually reconstructed by an author. The complete registry key and the per-diagram relationship key are distinct sections. Compact figures may show only used vocabulary. No unused decorative colour should appear as though it represents a data fact.
 

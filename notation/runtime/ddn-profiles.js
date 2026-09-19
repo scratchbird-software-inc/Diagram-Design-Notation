@@ -70,6 +70,11 @@ function validate(ir,reg,ErrorClass){
   acyclic(['assoc'],'Mind map');
   singleRoot(['assoc'],'mindmap.basic@1 requires exactly one root — one topic branches from nothing');
  }
+ if(p.profile==='concept.map@1'){
+  if(ns.some(n=>!['object','entity','term','domain'].includes(n.kind)))fail('DDN-PF007','concept.map@1 accepts object, entity, term, domain participants only');
+  if(es.some(r=>!['assoc','ref'].includes(r.kind)))fail('DDN-PF007','concept.map@1 accepts assoc and ref links only');
+  for(const r of es){const def=reg.relationships.find(k=>k.keyword===r.kind)?.name;if(!r.name||r.name===def)fail('DDN-PJ104','concept.map@1 relations need an explicit domain label; "'+def+'" is only the verb default',r);}
+ }
  if(p.profile.startsWith('c4.')){
   const ok={'c4.context@1':['c4.person','c4.system'],'c4.container@1':['c4.person','c4.system','c4.container','c4.store','c4.queue'],'c4.component@1':['c4.person','c4.system','c4.container','c4.store','c4.component']}[p.profile];
   const ext={'c4.container@1':['c4.person'],'c4.component@1':['c4.person','c4.system','c4.store']}[p.profile]||[];
