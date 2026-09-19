@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- C4-style profile set (`c4.context@1`, `c4.container@1`, `c4.component@1`) with
+  six profile kinds, the `c4.rel` verb, boundary frames, and
+  `DDN-PJ100`/`DDN-PJ101` validation.
+
 - Sankey diagrams via new profile `chart.sankey@1` (mark `sankey`, reusing the
   chart `target` property as a binding), with `DDN-PJ079`/`DDN-PJ108`
   validation.

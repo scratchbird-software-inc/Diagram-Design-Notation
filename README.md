@@ -2,7 +2,7 @@
 
 A **model-first diagram language** and open standard proposal: you author data,
 format, and view declarations separately in plain-text `.ddn` files, and one
-semantic model projects into many diagram types (ERD, DFD, flowchart, C4,
+semantic model projects into many diagram types (ERD, DFD, flowchart, C4 context/container/component,
 matrix/RACI, chart, radar chart, funnel chart, gauge chart, candlestick chart, treemap, Sankey diagram, timeline, fishbone, decision, …) through versioned
 profiles and projections.
 

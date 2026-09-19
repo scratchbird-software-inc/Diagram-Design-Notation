@@ -43,7 +43,22 @@ Implemented links are association, generalization, realization and dependency. G
 
 This initial Chen profile rejects nested/repeated fields and member-endpoint links instead of pretending to flatten them. Weak entities, identifying relationships, n-ary associations, multivalued/derived attribute notation and complete cardinality placement are not implemented. The generated scalar/binary illustration is not a complete Chen metamodel conversion. Unknown cases must remain errors or use the original DDN representation.
 
-## 17.6 Authoring integration
+## 17.6 C4-style boundary profiles
+
+The `c4.context@1`, `c4.container@1` and `c4.component@1` profiles render C4-style views on the existing graph projection using six registered kinds and one verb; boundaries reuse the view `frame` mechanism rather than a new shape category.
+
+| Kind | Silhouette | Core fallback | Role in the profile set |
+|---|---|---|---|
+| `c4.person` | actor | `role` | External person in all three views |
+| `c4.system` | round | `application` | System; boundary object of `c4.container@1` |
+| `c4.container` | rect | `application` | App/service; boundary object of `c4.component@1` |
+| `c4.store` | cylinder | `dataset` | Data store |
+| `c4.queue` | rect | `queue` | Queue/topic |
+| `c4.component` | component | `application` | Component |
+
+All links use `c4.rel` ("Uses / interacts with", open arrow). C4 kinds carry labels only — attribute compartments are rejected (`DDN-PF003`). Context views accept only people and systems and reject field-level member endpoints (`DDN-PJ100`). Container and component views require exactly one view frame scoped to a selected boundary object — a `c4.system` for `c4.container@1`, a `c4.container` for `c4.component@1` — whose members cover every selected interior node; violations raise `DDN-PJ101`. Participants outside the whitelist raise `DDN-PF007`. These are DDN profiles with C4-style silhouettes, not C4 specification conformance.
+
+## 17.7 Authoring integration
 
 The installed catalogue feeds Studio's kind and relation selectors. Namespaced kinds are quoted when inserted. Guided edits invoke the same decoder/validators as source editing. Field visibility and static/abstract flags remain editable in source; this release has no dedicated graphical inspector for every profile property.
 

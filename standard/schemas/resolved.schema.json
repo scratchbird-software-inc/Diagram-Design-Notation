@@ -452,7 +452,13 @@
             "flow.connector",
             "flow.offpage",
             "flow.annotation",
-            "flow.storage"
+            "flow.storage",
+            "c4.person",
+            "c4.system",
+            "c4.container",
+            "c4.store",
+            "c4.queue",
+            "c4.component"
           ]
         },
         "kindCode": {
@@ -644,7 +650,13 @@
             "CONNECTOR",
             "OFFPAGE",
             "ANNOTATION",
-            "STORAGE"
+            "STORAGE",
+            "C4PERSON",
+            "C4SYSTEM",
+            "C4CONTAINER",
+            "C4STORE",
+            "C4QUEUE",
+            "C4COMPONENT"
           ]
         },
         "properties": {
@@ -824,7 +836,8 @@
             "quality.cause",
             "state.transition",
             "flow.annotation",
-            "flow.continues"
+            "flow.continues",
+            "c4.rel"
           ]
         },
         "kindCode": {
@@ -937,7 +950,8 @@
             "CAUSE",
             "TRANSITION",
             "ANNOTATION",
-            "CONTINUES"
+            "CONTINUES",
+            "C4REL"
           ]
         },
         "from": {

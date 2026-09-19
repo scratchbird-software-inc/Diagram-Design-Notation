@@ -21,6 +21,8 @@ A hand-drawn table remains a table. A precise diagram may still contain draft de
 
 A navigation reference has its own view-occurrence recipe and is not a seventh business-object category. A frame may collapse to a card without losing identity. Compound graphical representations may reveal structure, but shape complexity itself does not establish sharding, replication or authority.
 
+Registered notation-profile kinds extend this vocabulary additively rather than adding primary forms: the C4-style profiles (`c4.context@1`, `c4.container@1`, `c4.component@1`) map their six `c4.*` kinds onto existing actor, rounded-card, card, cylinder and component silhouettes with core-kind fallbacks, so the six forms above remain the only primary geometry contract.
+
 ## 3. Reserved indicator positions
 
 | Slot | Meaning |

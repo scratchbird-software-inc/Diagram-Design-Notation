@@ -25,6 +25,7 @@ function validate(ir,reg,ErrorClass){
  for(const n of ir.elements){
   if(n.kind.startsWith('flow.')&&n.fields.length)fail('DDN-PF003','Flowchart symbols have labels, not attribute compartments',n);
   if(['uml.actor','uml.usecase'].includes(n.kind)&&n.fields.length)fail('DDN-PF003','Actor/use-case symbol does not support attribute fields',n);
+  if(n.kind.startsWith('c4.')&&n.fields.length)fail('DDN-PF003','C4 symbols have labels, not attribute compartments',n);
  }
  function acyclic(kinds,label){const es=rels.filter(r=>kinds.includes(r.kind)),kids=new Map();for(const r of es){if(!kids.has(r.from.element))kids.set(r.from.element,[]);kids.get(r.from.element).push(r.to.element);}const active=new Set(),seen=new Set();function visit(id){if(active.has(id))fail('DDN-PF004',label+' contains a cycle');if(seen.has(id))return;active.add(id);for(const c of kids.get(id)||[])visit(c);active.delete(id);seen.add(id);}for(const id of kids.keys())visit(id);}
  acyclic(['uml.generalization'],'Generalization');acyclic(['uml.include'],'Use-case include');acyclic(['req.derives'],'Requirement derivation');
@@ -48,6 +49,17 @@ function validate(ir,reg,ErrorClass){
  if(p.profile.startsWith('dfd.')){
   if(ns.some(n=>!n.kind.startsWith('dfd.'))||es.some(r=>r.kind!=='dfd.data'))fail('DDN-PF011','DFD profile requires dfd participants and dfd.data links');
   const nums=new Set();for(const n of ns.filter(n=>n.kind==='dfd.process')){const num=n.properties.x_diagram?.number;if(!num||nums.has(num))fail('DDN-PF012','DFD process number must be nonempty and unique',n);nums.add(num);if(!es.some(r=>r.to.element===n.id)||!es.some(r=>r.from.element===n.id))fail('DDN-PF013','DFD process needs input and output',n);}
+ }
+ if(p.profile.startsWith('c4.')){
+  const ok={'c4.context@1':['c4.person','c4.system'],'c4.container@1':['c4.person','c4.system','c4.container','c4.store','c4.queue'],'c4.component@1':['c4.person','c4.system','c4.container','c4.store','c4.component']}[p.profile];
+  const ext={'c4.container@1':['c4.person'],'c4.component@1':['c4.person','c4.system','c4.store']}[p.profile]||[];
+  if(p.profile==='c4.context@1'&&es.some(r=>r.from.member||r.to.member))fail('DDN-PJ100','Context views show systems and people, not fields; remove member endpoints');
+  if(ns.some(n=>!ok.includes(n.kind)))fail('DDN-PF007',p.profile+' accepts '+ok.join(', ')+' participants only');
+  if(es.some(r=>r.kind!=='c4.rel'))fail('DDN-PF007',p.profile+' accepts c4.rel links only');
+  if(p.profile==='c4.container@1'||p.profile==='c4.component@1'){
+   const bkind=p.profile==='c4.container@1'?'c4.system':'c4.container',frames=ir.view.frames,f=frames.length===1?frames[0]:null,bn=f?ns.find(n=>n.id===f.scope&&n.kind===bkind):null,inner=bn?ns.filter(n=>n!==bn&&!ext.includes(n.kind)):[];
+   if(!bn||inner.some(n=>!f.members.includes(n.id)))fail('DDN-PJ101',p.profile+' requires exactly one frame scoped to a selected '+bkind+' boundary object whose members cover every selected interior node');
+  }
  }
  const codes=new Set();for(const n of ir.elements.filter(n=>n.kind==='req.requirement')){const c=n.properties.x_diagram?.code,t=n.properties.x_diagram?.text;if(!c||!t||codes.has(c))fail('DDN-PF014','Requirement needs unique code and nonempty text',n);codes.add(c);}
  if(p.kind!=='graph'){

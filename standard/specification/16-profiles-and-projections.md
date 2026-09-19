@@ -65,7 +65,9 @@ The implementation's semantic validator is authoritative for property applicabil
 
 `profiles/catalogue.json` is the machine-readable profile catalogue. The shipped profiles are fixed trusted definitions bundled at build time. This release does NOT implement downloading or installing arbitrary user-defined plugin code from DDN source. Developers can extend the catalogue/source, rebuild the library and add fixtures. Unrecognized profile IDs and incompatible projection kinds are errors.
 
-A profile describes a projection, eligible semantics, validation obligations, supported silhouettes, scope and exclusions. The profile library adds 24 kind definitions and 15 relationship definitions to the 152-kind/90-relation core without changing the latter's IDs. Three of the additional kind recipes are used by Chen-generated occurrences. An icon count is not a supported-diagram count.
+A profile describes a projection, eligible semantics, validation obligations, supported silhouettes, scope and exclusions. The profile library adds 42 kind definitions and 20 relationship definitions to the 152-kind/90-relation core without changing the latter's IDs. Three of the additional kind recipes are used by Chen-generated occurrences. An icon count is not a supported-diagram count.
+
+The graph-projection profiles now include the C4-style set: `c4.context@1` (people and systems only, no internal structure), `c4.container@1` (containers, stores and queues inside one system boundary frame) and `c4.component@1` (components inside one container boundary frame), using the six `c4.*` kinds and the `c4.rel` verb. These are DDN profiles on the existing graph projection, not a claim of C4 specification conformance.
 
 ## 16.4 Explicit source collections and bindings
 

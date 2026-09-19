@@ -397,7 +397,73 @@
       "code": "STORAGE",
       "glyph": "object",
       "aliases": []
-    }
+    },
+    {
+    "keyword": "c4.person",
+    "name": "Person",
+    "shape": "profile",
+    "silhouette": "actor",
+    "fallback": "role",
+    "family": "governance",
+    "code": "C4PERSON",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "c4.system",
+    "name": "System",
+    "shape": "profile",
+    "silhouette": "round",
+    "fallback": "application",
+    "family": "activity",
+    "code": "C4SYSTEM",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "c4.container",
+    "name": "Container (app/service)",
+    "shape": "profile",
+    "silhouette": "rect",
+    "fallback": "application",
+    "family": "activity",
+    "code": "C4CONTAINER",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "c4.store",
+    "name": "Data store",
+    "shape": "profile",
+    "silhouette": "cylinder",
+    "fallback": "dataset",
+    "family": "data",
+    "code": "C4STORE",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "c4.queue",
+    "name": "Queue/topic",
+    "shape": "profile",
+    "silhouette": "rect",
+    "fallback": "queue",
+    "family": "interface",
+    "code": "C4QUEUE",
+    "glyph": "object",
+    "aliases": []
+  },
+    {
+    "keyword": "c4.component",
+    "name": "Component",
+    "shape": "profile",
+    "silhouette": "component",
+    "fallback": "application",
+    "family": "concept",
+    "code": "C4COMPONENT",
+    "glyph": "object",
+    "aliases": []
+  }
   ],
   "relationships": [
     {
@@ -808,7 +874,35 @@
       ],
       "allow_self": false,
       "member_endpoints": false
-    }
+    },
+    {
+    "keyword": "c4.rel",
+    "name": "Uses / interacts with",
+    "verb": "Uses / interacts with",
+    "family": "dependency",
+    "code": "C4REL",
+    "start": "none",
+    "end": "open",
+    "glyph": "link",
+    "source": [
+      "c4.person",
+      "c4.system",
+      "c4.container",
+      "c4.store",
+      "c4.queue",
+      "c4.component"
+    ],
+    "target": [
+      "c4.person",
+      "c4.system",
+      "c4.container",
+      "c4.store",
+      "c4.queue",
+      "c4.component"
+    ],
+    "allow_self": false,
+    "member_endpoints": false
+  }
   ],
   "profiles": [
     {
@@ -1354,7 +1448,61 @@
         "multi-port nodes",
         "flow conservation auditing"
       ]
-    }
+    },
+    {
+    "id": "c4.context@1",
+    "projection": "graph",
+    "diagramFamilies": [
+      "C4 system context"
+    ],
+    "scope": "People and systems and their interactions; no internal structure, no field-level endpoints.",
+    "validation": [
+      "participants limited to c4.person and c4.system",
+      "c4.rel links only",
+      "no field-level (member) endpoints",
+      "no attribute fields on c4 kinds"
+    ],
+    "unsupported": [
+      "automatic model discovery",
+      "C4 notation-brand compliance"
+    ]
+  },
+    {
+    "id": "c4.container@1",
+    "projection": "graph",
+    "diagramFamilies": [
+      "C4 container"
+    ],
+    "scope": "Containers/stores/queues inside one system boundary frame.",
+    "validation": [
+      "participants limited to c4.container, c4.store, c4.queue plus boundary c4.system and external c4.person",
+      "c4.rel links only",
+      "exactly one frame scoped to a selected c4.system; members cover every selected interior node",
+      "no attribute fields on c4 kinds"
+    ],
+    "unsupported": [
+      "multiple boundary systems per view",
+      "deployment mapping"
+    ]
+  },
+    {
+    "id": "c4.component@1",
+    "projection": "graph",
+    "diagramFamilies": [
+      "C4 component"
+    ],
+    "scope": "Components inside one container boundary frame.",
+    "validation": [
+      "participants limited to c4.component plus boundary c4.container and external c4.person/c4.system/c4.store",
+      "c4.rel links only",
+      "exactly one frame scoped to a selected c4.container; members cover every selected interior node",
+      "no attribute fields on c4 kinds"
+    ],
+    "unsupported": [
+      "code introspection",
+      "multiple boundary containers per view"
+    ]
+  }
   ],
   "shapes": [
     "rect",

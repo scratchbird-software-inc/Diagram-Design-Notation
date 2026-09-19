@@ -1949,6 +1949,60 @@
         "multi-port nodes",
         "flow conservation auditing"
       ]
+    },
+    {
+      "id": "c4.context@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 system context"
+      ],
+      "scope": "People and systems and their interactions; no internal structure, no field-level endpoints.",
+      "validation": [
+        "participants limited to c4.person and c4.system",
+        "c4.rel links only",
+        "no field-level (member) endpoints",
+        "no attribute fields on c4 kinds"
+      ],
+      "unsupported": [
+        "automatic model discovery",
+        "C4 notation-brand compliance"
+      ]
+    },
+    {
+      "id": "c4.container@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 container"
+      ],
+      "scope": "Containers/stores/queues inside one system boundary frame.",
+      "validation": [
+        "participants limited to c4.container, c4.store, c4.queue plus boundary c4.system and external c4.person",
+        "c4.rel links only",
+        "exactly one frame scoped to a selected c4.system; members cover every selected interior node",
+        "no attribute fields on c4 kinds"
+      ],
+      "unsupported": [
+        "multiple boundary systems per view",
+        "deployment mapping"
+      ]
+    },
+    {
+      "id": "c4.component@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 component"
+      ],
+      "scope": "Components inside one container boundary frame.",
+      "validation": [
+        "participants limited to c4.component plus boundary c4.container and external c4.person/c4.system/c4.store",
+        "c4.rel links only",
+        "exactly one frame scoped to a selected c4.container; members cover every selected interior node",
+        "no attribute fields on c4 kinds"
+      ],
+      "unsupported": [
+        "code introspection",
+        "multiple boundary containers per view"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2070,6 +2124,7 @@
     ]
   },
   "implemented": [
+    "C4-style context/container/component views via c4.*@1 profiles with boundary frames",
     "geometry-ordered free endpoint slots and bounded coupled side/slot refinement",
     "fishbone source-linked cause occurrences",
     "numeric categorical and band encoded heatmaps",
