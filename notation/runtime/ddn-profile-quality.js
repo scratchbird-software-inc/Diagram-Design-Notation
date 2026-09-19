@@ -33,6 +33,14 @@ function validate(ir,E){
   if(es.some(r=>!['flow.next','flow.annotation','flow.continues'].includes(r.kind)))fail('DDN-PX008','Unsupported relationship in documented flowchart');
   for(const n of fs.filter(n=>n.kind==='flow.annotation'))if(!es.some(r=>r.kind==='flow.annotation'&&r.from.element===n.id))fail('DDN-PX008','Annotation needs an explicit attachment',n);
  }
+ if(profile==='uml.object@1'){
+  for(const n of ir.elements.filter(n=>n.properties.x_instance)){
+   const c=ns.get(n.properties.x_instance.classifier?.$ref);
+   if(!c||!c.fields||!c.fields.length)continue;
+   const names=new Set(c.fields.flatMap(f=>[f.name,f.local]));
+   for(const f of n.fields)if(!names.has(f.name)&&!names.has(f.local))fail('DDN-PJ112','Instance '+n.id+' declares slot '+(f.name||f.local)+' not present on classifier '+c.id,n);
+  }
+ }
  if(profile==='uml.communication@1'){
   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.message')){
    const seq=r.properties.x_message?.seq,ret=r.properties.x_return===true,dotted=/^\d+(\.\d+)+$/.test(seq||'');

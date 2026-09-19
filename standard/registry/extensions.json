@@ -729,6 +729,15 @@
         }
       }
     },
+    "x_instance": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": ["classifier"],
+          "additionalProperties": true
+        }
+      }
+    },
     "x_row_height": {
       "id": "interaction@0.1",
       "targets": {

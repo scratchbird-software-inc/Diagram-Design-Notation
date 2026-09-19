@@ -1,0 +1,48 @@
+ddn "0.5";
+module "ddn.examples.object";
+
+import "shared.ddn" as shared;
+
+// Synthetic object/instance snapshot for the uml.object@1 profile.
+// Classifiers Customer and Order are ordinary uml.class objects with declared
+// fields. Instances sample_customer and sample_order are kind:record objects
+// naming their classifier via x_instance; their slot fields must match the
+// classifier's field names (DDN-PJ112). One assoc link connects the two
+// instances. Slots render as the graph renderer's native field rows.
+// All data is synthetic. This is profile-level coverage, not UML conformance.
+data model {
+    object customer "Customer" { kind: "uml.class";
+        fields {
+            field customer_id { datatype: "string"; }
+            field name { datatype: "string"; }
+        }
+    }
+    object order "Order" { kind: "uml.class";
+        fields {
+            field order_id { datatype: "string"; }
+            field total { datatype: "number"; }
+        }
+    }
+    object sample_customer "sample_customer : Customer" {
+        kind: record; x_instance: { classifier: @model.customer; };
+        fields {
+            field customer_id "C-1001";
+            field name "Ada Example";
+        }
+    }
+    object sample_order "sample_order : Order" {
+        kind: record; x_instance: { classifier: @model.order; };
+        fields {
+            field order_id "O-4711";
+            field total "129.50";
+        }
+    }
+    relation placed "Placed" @sample_customer -> @sample_order { kind: assoc; }
+}
+
+view objects "Synthetic snapshot / objects" {
+    data: [@model]; format: @shared.styles.technical;
+    projection { kind: graph; profile: "uml.object@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

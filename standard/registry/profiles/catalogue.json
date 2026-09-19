@@ -1978,6 +1978,22 @@
         "timing constraints",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "uml.object@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Object/instance snapshot"
+      ],
+      "scope": "Record instances naming a classifier; slots rendered as field rows; plain assoc links between instances.",
+      "validation": [
+        "instance slots must exist on the classifier when the classifier declares fields (DDN-PJ112)"
+      ],
+      "unsupported": [
+        "object identity semantics beyond labels",
+        "slot datatype checking",
+        "full UML conformance"
+      ]
     }
   ],
   "shapes": [
