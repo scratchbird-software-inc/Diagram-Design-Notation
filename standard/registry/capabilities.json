@@ -2264,6 +2264,25 @@
         "SWOT inference",
         "strategy recommendation"
       ]
+    },
+    {
+      "id": "panels.journey@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Customer journey map"
+      ],
+      "scope": "Ordered phase columns; actions/touchpoints/opportunities lanes; one full-width emotions lane whose declared 1..5 values render as a straight-segment polyline.",
+      "validation": [
+        "phase grid contract (DDN-PJ085)",
+        "emotion values in 1..5 (DDN-PJ084)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "curve smoothing",
+        "per-channel heatmaps",
+        "automatic sentiment analysis",
+        "nested child views"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2444,7 +2463,8 @@
     "EPC diagrams via epc.basic@1 (hexagon events, alternating functions, and/or/xor connectors)",
     "business model and lean canvas panel profiles (canvas.bmc@1, canvas.lean@1) with required-block validation",
     "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)",
-    "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation"
+    "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation",
+    "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

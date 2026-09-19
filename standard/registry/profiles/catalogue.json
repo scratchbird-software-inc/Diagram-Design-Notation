@@ -1836,6 +1836,25 @@
         "SWOT inference",
         "strategy recommendation"
       ]
+    },
+    {
+      "id": "panels.journey@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Customer journey map"
+      ],
+      "scope": "Ordered phase columns; actions/touchpoints/opportunities lanes; one full-width emotions lane whose declared 1..5 values render as a straight-segment polyline.",
+      "validation": [
+        "phase grid contract (DDN-PJ085)",
+        "emotion values in 1..5 (DDN-PJ084)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "curve smoothing",
+        "per-channel heatmaps",
+        "automatic sentiment analysis",
+        "nested child views"
+      ]
     }
   ],
   "shapes": [

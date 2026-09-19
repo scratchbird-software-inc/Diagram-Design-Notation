@@ -60,7 +60,35 @@ function plan(ir,ErrorClass=Error){
    const items=list(v.items,'panel items');return{...v,rowspan:rs,colspan:cs,items:items.map(n=>({node:n,text:p.value?String(textValue(n,p.value,'')):n.properties.description||n.properties.x_record?.description||''}))};});
   const CANVAS={'canvas.bmc@1':{code:'DDN-PJ080',panels:[['kp','KEY PARTNERS'],['ka','KEY ACTIVITIES'],['kr','KEY RESOURCES'],['vp','VALUE PROPOSITIONS'],['cr','CUSTOMER RELATIONSHIPS'],['ch','CHANNELS'],['cs','CUSTOMER SEGMENTS'],['cost','COST STRUCTURE'],['rev','REVENUE STREAMS']]},'canvas.lean@1':{code:'DDN-PJ080',panels:[['problem','PROBLEM'],['solution','SOLUTION'],['keymetrics','KEY METRICS'],['uvp','UNIQUE VALUE PROPOSITION'],['unfair','UNFAIR ADVANTAGE'],['channels','CHANNELS'],['segments','CUSTOMER SEGMENTS'],['cost','COST STRUCTURE'],['revenue','REVENUE STREAMS']]},'canvas.pest@1':{code:'DDN-PJ081',panels:[['political','POLITICAL'],['economic','ECONOMIC'],['social','SOCIAL'],['technological','TECHNOLOGICAL']]},'canvas.pestle@1':{code:'DDN-PJ081',panels:[['political','POLITICAL'],['economic','ECONOMIC'],['social','SOCIAL'],['technological','TECHNOLOGICAL'],['legal','LEGAL'],['environmental','ENVIRONMENTAL']]},'canvas.porter5@1':{code:'DDN-PJ081',panels:[['entrants','THREAT OF NEW ENTRANTS'],['supplier','SUPPLIER POWER'],['rivalry','COMPETITIVE RIVALRY'],['buyer','BUYER POWER'],['substitutes','THREAT OF SUBSTITUTES']]},'canvas.empathy@1':{code:'DDN-PJ083',panels:[['says','SAYS'],['thinks','THINKS'],['persona','PERSONA'],['does','DOES'],['feels','FEELS']]},'canvas.scorecard@1':{code:'DDN-PJ083',panels:[['financial','FINANCIAL'],['customer','CUSTOMER'],['internal','INTERNAL PROCESS'],['learning','LEARNING & GROWTH']]}};
   const need=CANVAS[p.profile];if(need)for(const [id,title]of need.panels)if(!p.panels.some(v=>v.id===id))fail(need.code,p.profile+' requires panel "'+id+'" ('+title+'); declare all required blocks');
-  return{kind,profile:p.profile,columns:p.columns,panels,sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
+  let journeyPhases;
+  if(p.profile==='panels.journey@1'){
+   if(p.columns<2||p.columns>8)fail('DDN-PJ085','panels.journey@1 needs 2..8 phase columns; got '+p.columns);
+   const slug=/^[a-z][a-z0-9-]*$/,byId=new Map(panels.map(v=>[v.id,v])),lanes=['actions','touchpoints','opportunities'];
+   const phases=[];
+   for(let c=0;c<p.columns;c++){
+    const v=panels.find(v=>v.row===0&&v.column===c),ok=v&&v.rowspan===1&&v.colspan===1&&/^phase-/.test(v.id)&&slug.test(v.id.slice(6));
+    if(!ok)fail('DDN-PJ085','panels.journey@1 row 0 must declare the phase panels (phase-<slug>) in column order; missing phase slug at column '+c);
+    const s=v.id.slice(6);if(phases.includes(s))fail('DDN-PJ085','panels.journey@1 phase slugs must be unique; duplicate "'+s+'"');
+    phases.push(s);
+   }
+   if(panels.filter(v=>v.row===0).length!==p.columns)fail('DDN-PJ085','panels.journey@1 row 0 must declare exactly the '+p.columns+' phase panels (phase-<slug>) in column order');
+   for(let l=0;l<3;l++)for(let c=0;c<p.columns;c++){
+    const id=lanes[l]+'-'+phases[c],v=byId.get(id);
+    if(!v||v.row!==l+1||v.column!==c||v.rowspan!==1||v.colspan!==1)fail('DDN-PJ085','panels.journey@1 lane "'+lanes[l]+'" must declare panel "'+id+'" at row '+(l+1)+', column '+c+'; one panel per phase per lane');
+   }
+   const em=byId.get('emotions');
+   if(!em||em.row!==4||em.column!==0||em.rowspan!==1||em.colspan!==p.columns)fail('DDN-PJ085','panels.journey@1 row 4 must be the single full-width panel "emotions" (row:4, column:0, colspan:'+p.columns+')');
+   const expected=new Set([...phases.map(s=>'phase-'+s),...lanes.flatMap(l=>phases.map(s=>l+'-'+s)),'emotions']);
+   for(const v of panels)if(!expected.has(v.id))fail('DDN-PJ085','panels.journey@1 has unexpected panel "'+v.id+'"; the grid is phase headers, actions/touchpoints/opportunities lanes, and one emotions band');
+   let last=-1;const points=[];
+   for(const it of em.items){const n=it.node,xr=n.properties.x_record||{};
+    if(typeof xr.phase!=='string'||!phases.includes(xr.phase))fail('DDN-PJ085','emotion item '+n.name+' references unknown phase "'+xr.phase+'"',n);
+    if(typeof xr.value!=='number'||!Number.isFinite(xr.value)||xr.value<1||xr.value>5)fail('DDN-PJ084','emotion item '+n.name+' needs x_record.value in 1..5; got '+xr.value,n);
+    const col=phases.indexOf(xr.phase);if(col<last)fail('DDN-PJ085','emotion items must follow the declared phase order; '+n.name+' (phase '+xr.phase+') follows a later phase',n);
+    last=col;points.push({col,value:xr.value,nodeId:n.id});}
+   em.emotionPoints=points;journeyPhases=phases;
+  }
+  return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
   if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey');

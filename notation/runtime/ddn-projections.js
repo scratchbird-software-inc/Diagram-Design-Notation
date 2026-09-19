@@ -56,8 +56,15 @@ function render(ir,reg,glyphs='',options={}){
   const measured=plan.panels.map(panel=>{const width=cw*panel.colspan+gap*(panel.colspan-1),items=panel.items.map(i=>({item:i,label:wrap(i.node.name,width-36*s,14,650),content:wrap(i.text,width-36*s,12)}));const title=wrap(panel.title,width-32*s,14,700),titleHeight=(title.length*20+24)*s;const needed=titleHeight+20*s+items.reduce((h,i)=>h+(i.label.length*20+i.content.length*18+25)*s,0);return{panel,width,items,needed,title,titleHeight};});
   for(const m of measured.sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const available=heights.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(available<m.needed){const delta=(m.needed-available)/m.panel.rowspan;for(let r=m.panel.row;r<m.panel.row+m.panel.rowspan;r++)heights[r]+=delta;}}
   const tops=[0];heights.forEach(h=>tops.push(tops.at(-1)+h+gap));
-  for(const m of measured){const {panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);let yy=y+titleHeight+28*s;
-   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}
+  for(const m of measured){const {panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);
+   if(plan.profile==='panels.journey@1'&&panel.id==='emotions'){
+    const top=y+titleHeight+34*s,bottom=y+height-30*s,px=i=>x+i*(cw+gap)+cw/2,py=v=>bottom-(v-1)/4*(bottom-top);
+    for(let v=1;v<=5;v++)body+=line(x+8*s,py(v),x+width-8*s,py(v))+text(x+14*s,py(v)-4*s,String(v),10);
+    const pts=panel.emotionPoints;
+    body+=`<path d="${pts.map((pt,i)=>(i?'L':'M')+f(px(pt.col))+' '+f(py(pt.value))).join('')}" stroke="${colour(0)}" stroke-width="2.5" fill="none"/>`;
+    for(const pt of pts)body+=group(pt.nodeId,[pt.nodeId],`<circle cx="${f(px(pt.col))}" cy="${f(py(pt.value))}" r="${f(5*s)}" fill="${colour(0)}"/>`+text(px(pt.col),py(pt.value)-12*s,String(pt.value),12,700,'middle'),{x:px(pt.col)-8*s,y:py(pt.value)-8*s,w:16*s,h:16*s},'x_record.value');
+   }else{let yy=y+titleHeight+28*s;
+   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}}
   H=tops.at(-1)-gap+32*s;
  }
  const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);

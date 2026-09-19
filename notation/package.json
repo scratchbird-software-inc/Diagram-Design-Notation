@@ -5,7 +5,7 @@
   "description": "DDN reference runtime: parser, validation, layout/routing, deterministic SVG rendering, CLI, and Studio. Implements the standard in ../standard/.",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:funnel && npm run test:gauge && npm run test:candlestick && npm run test:treemap && npm run test:sankey && npm run test:c4 && npm run test:org && npm run test:wbs && npm run test:mindmap && npm run test:conceptmap && npm run test:epc && npm run test:canvas-pack-a && npm run test:canvas-pack-b && npm run test:matrix-pack && npm run test:empathy-scorecard && npm run test:routing-efficiency && npm run test:sdk && npm run test:endpoint-ordering",
+    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:funnel && npm run test:gauge && npm run test:candlestick && npm run test:treemap && npm run test:sankey && npm run test:c4 && npm run test:org && npm run test:wbs && npm run test:mindmap && npm run test:conceptmap && npm run test:epc && npm run test:canvas-pack-a && npm run test:canvas-pack-b && npm run test:matrix-pack && npm run test:empathy-scorecard && npm run test:journey-map && npm run test:routing-efficiency && npm run test:sdk && npm run test:endpoint-ordering",
     "test:core": "node tests/run.js",
     "test:remediation": "node tests/0.3-regressions.js",
     "test:curves": "node tests/curved-relations.js",
@@ -29,6 +29,7 @@
     "test:canvas-pack-b": "node tests/canvas-pack-b.js",
     "test:matrix-pack": "node tests/matrix-pack.js",
     "test:empathy-scorecard": "node tests/empathy-scorecard.js",
+    "test:journey-map": "node tests/journey-map.js",
     "test:routing-efficiency": "node tests/routing-efficiency.js",
     "test:sdk": "node tests/sdk-consolidated.js",
     "test:endpoint-ordering": "node tests/endpoint-ordering.js",

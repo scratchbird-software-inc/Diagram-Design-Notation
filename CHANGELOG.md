@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Journey maps via new profile
+  `panels.journey@1` (phase/lane grid + straight-segment 1..5 emotion polyline), with
+  `DDN-PJ084`/`DDN-PJ085` validation.
 - Empathy map and balanced scorecard via new profiles
   `canvas.empathy@1`/`canvas.scorecard@1`, with `DDN-PJ083` required-panel
   validation.
