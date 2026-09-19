@@ -421,104 +421,115 @@
       "aliases": []
     },
     {
-    "keyword": "c4.person",
-    "name": "Person",
-    "shape": "profile",
-    "silhouette": "actor",
-    "fallback": "role",
-    "family": "governance",
-    "code": "C4PERSON",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "c4.person",
+      "name": "Person",
+      "shape": "profile",
+      "silhouette": "actor",
+      "fallback": "role",
+      "family": "governance",
+      "code": "C4PERSON",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "c4.system",
-    "name": "System",
-    "shape": "profile",
-    "silhouette": "round",
-    "fallback": "application",
-    "family": "activity",
-    "code": "C4SYSTEM",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "c4.system",
+      "name": "System",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "activity",
+      "code": "C4SYSTEM",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "c4.container",
-    "name": "Container (app/service)",
-    "shape": "profile",
-    "silhouette": "rect",
-    "fallback": "application",
-    "family": "activity",
-    "code": "C4CONTAINER",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "c4.container",
+      "name": "Container (app/service)",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "C4CONTAINER",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "c4.store",
-    "name": "Data store",
-    "shape": "profile",
-    "silhouette": "cylinder",
-    "fallback": "dataset",
-    "family": "data",
-    "code": "C4STORE",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "c4.store",
+      "name": "Data store",
+      "shape": "profile",
+      "silhouette": "cylinder",
+      "fallback": "dataset",
+      "family": "data",
+      "code": "C4STORE",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "c4.queue",
-    "name": "Queue/topic",
-    "shape": "profile",
-    "silhouette": "rect",
-    "fallback": "queue",
-    "family": "interface",
-    "code": "C4QUEUE",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "c4.queue",
+      "name": "Queue/topic",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "queue",
+      "family": "interface",
+      "code": "C4QUEUE",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "c4.component",
-    "name": "Component",
-    "shape": "profile",
-    "silhouette": "component",
-    "fallback": "application",
-    "family": "concept",
-    "code": "C4COMPONENT",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "c4.component",
+      "name": "Component",
+      "shape": "profile",
+      "silhouette": "component",
+      "fallback": "application",
+      "family": "concept",
+      "code": "C4COMPONENT",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "epk.event",
-    "name": "Event",
-    "shape": "profile",
-    "silhouette": "hexagon",
-    "fallback": "object",
-    "family": "concept",
-    "code": "EVENT",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "epk.event",
+      "name": "Event",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "object",
+      "family": "concept",
+      "code": "EVENT",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "epk.function",
-    "name": "Function",
-    "shape": "profile",
-    "silhouette": "round",
-    "fallback": "activity",
-    "family": "activity",
-    "code": "FUNCTION",
-    "glyph": "object",
-    "aliases": []
-  },
+      "keyword": "epk.function",
+      "name": "Function",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "FUNCTION",
+      "glyph": "object",
+      "aliases": []
+    },
     {
-    "keyword": "epk.connector",
-    "name": "Connector",
-    "shape": "profile",
-    "silhouette": "circle",
-    "fallback": "gateway",
-    "family": "governance",
-    "code": "CONNECTOR",
-    "glyph": "object",
-    "aliases": []
-  }
+      "keyword": "epk.connector",
+      "name": "Connector",
+      "shape": "profile",
+      "silhouette": "circle",
+      "fallback": "gateway",
+      "family": "governance",
+      "code": "CONNECTOR",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "flow.gateway",
+      "name": "Gateway",
+      "shape": "profile",
+      "silhouette": "diamond",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "GATEWAY",
+      "glyph": "object",
+      "aliases": []
+    }
   ],
   "relationships": [
     {
@@ -686,8 +697,8 @@
     },
     {
       "keyword": "uml.include",
-      "name": "\u00abinclude\u00bb",
-      "verb": "\u00abinclude\u00bb",
+      "name": "«include»",
+      "verb": "«include»",
       "family": "dependency",
       "code": "INCLUDE",
       "start": "none",
@@ -704,8 +715,8 @@
     },
     {
       "keyword": "uml.extend",
-      "name": "\u00abextend\u00bb",
-      "verb": "\u00abextend\u00bb",
+      "name": "«extend»",
+      "verb": "«extend»",
       "family": "dependency",
       "code": "EXTEND",
       "start": "none",
@@ -931,121 +942,152 @@
       "member_endpoints": false
     },
     {
-    "keyword": "c4.rel",
-    "name": "Uses / interacts with",
-    "verb": "Uses / interacts with",
-    "family": "dependency",
-    "code": "C4REL",
-    "start": "none",
-    "end": "open",
-    "glyph": "link",
-    "source": [
-      "c4.person",
-      "c4.system",
-      "c4.container",
-      "c4.store",
-      "c4.queue",
-      "c4.component"
-    ],
-    "target": [
-      "c4.person",
-      "c4.system",
-      "c4.container",
-      "c4.store",
-      "c4.queue",
-      "c4.component"
-    ],
-    "allow_self": false,
-    "member_endpoints": false
-  },
+      "keyword": "c4.rel",
+      "name": "Uses / interacts with",
+      "verb": "Uses / interacts with",
+      "family": "dependency",
+      "code": "C4REL",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "c4.person",
+        "c4.system",
+        "c4.container",
+        "c4.store",
+        "c4.queue",
+        "c4.component"
+      ],
+      "target": [
+        "c4.person",
+        "c4.system",
+        "c4.container",
+        "c4.store",
+        "c4.queue",
+        "c4.component"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
     {
-    "keyword": "analysis.decomposes",
-    "name": "Decomposes into",
-    "verb": "Decomposes into",
-    "family": "structural",
-    "code": "DECOMPOSES",
-    "start": "none",
-    "end": "none",
-    "glyph": "link",
-    "source": [
-      "analysis.task"
-    ],
-    "target": [
-      "analysis.task"
-    ],
-    "allow_self": false,
-    "member_endpoints": false
-  },
+      "keyword": "analysis.decomposes",
+      "name": "Decomposes into",
+      "verb": "Decomposes into",
+      "family": "structural",
+      "code": "DECOMPOSES",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "analysis.task"
+      ],
+      "target": [
+        "analysis.task"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
     {
-    "keyword": "epk.next",
-    "name": "Control passes to",
-    "verb": "Control passes to",
-    "family": "control",
-    "code": "EPKNEXT",
-    "start": "none",
-    "end": "filled",
-    "glyph": "link",
-    "source": [
-      "epk.event",
-      "epk.function",
-      "epk.connector"
-    ],
-    "target": [
-      "epk.event",
-      "epk.function",
-      "epk.connector"
-    ],
-    "allow_self": false,
-    "member_endpoints": false
-  },
+      "keyword": "epk.next",
+      "name": "Control passes to",
+      "verb": "Control passes to",
+      "family": "control",
+      "code": "EPKNEXT",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "epk.event",
+        "epk.function",
+        "epk.connector"
+      ],
+      "target": [
+        "epk.event",
+        "epk.function",
+        "epk.connector"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
     {
-    "keyword": "uml.message",
-    "name": "Message",
-    "verb": "Message",
-    "family": "control",
-    "code": "MESSAGE",
-    "start": "none",
-    "end": "open",
-    "glyph": "link",
-    "source": [
-      "*"
-    ],
-    "target": [
-      "*"
-    ],
-    "allow_self": true,
-    "member_endpoints": false
-  },
+      "keyword": "uml.message",
+      "name": "Message",
+      "verb": "Message",
+      "family": "control",
+      "code": "MESSAGE",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": true,
+      "member_endpoints": false
+    },
     {
-    "keyword": "uml.flow",
-    "name": "Activity edge",
-    "verb": "Activity edge",
-    "family": "control",
-    "code": "FLOW",
-    "start": "none",
-    "end": "filled",
-    "glyph": "link",
-    "source": [
-      "flow.start",
-      "flow.end",
-      "flow.process",
-      "flow.decision",
-      "flow.io",
-      "flow.forkjoin",
-      "flow.objectnode"
-    ],
-    "target": [
-      "flow.start",
-      "flow.end",
-      "flow.process",
-      "flow.decision",
-      "flow.io",
-      "flow.forkjoin",
-      "flow.objectnode"
-    ],
-    "allow_self": false,
-    "member_endpoints": false
-  }
+      "keyword": "uml.flow",
+      "name": "Activity edge",
+      "verb": "Activity edge",
+      "family": "control",
+      "code": "FLOW",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "flow.start",
+        "flow.end",
+        "flow.process",
+        "flow.decision",
+        "flow.io",
+        "flow.forkjoin",
+        "flow.objectnode",
+        "flow.gateway"
+      ],
+      "target": [
+        "flow.start",
+        "flow.end",
+        "flow.process",
+        "flow.decision",
+        "flow.io",
+        "flow.forkjoin",
+        "flow.objectnode",
+        "flow.gateway"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "bpmn.messageflow",
+      "name": "Message flow",
+      "verb": "Message flow",
+      "family": "control",
+      "code": "MSGFLOW",
+      "pattern": "6 4",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "flow.start",
+        "flow.end",
+        "flow.process",
+        "flow.subprocess",
+        "flow.gateway",
+        "analysis.task"
+      ],
+      "target": [
+        "flow.start",
+        "flow.end",
+        "flow.process",
+        "flow.subprocess",
+        "flow.gateway",
+        "analysis.task"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    }
   ],
   "profiles": [
     {
@@ -1082,7 +1124,7 @@
       "id": "dfd.gane_sarson@1",
       "projection": "graph",
       "diagramFamilies": [
-        "Gane\u2013Sarson DFD"
+        "Gane–Sarson DFD"
       ],
       "scope": "Numbered three-compartment processes; open-ended stores and external entities.",
       "validation": [
@@ -1103,7 +1145,7 @@
       ],
       "scope": "Circular processes; parallel-line stores; rectangular external entities.",
       "validation": [
-        "same structural checks as Gane\u2013Sarson"
+        "same structural checks as Gane–Sarson"
       ],
       "unsupported": [
         "complete SSADM lifecycle",
@@ -1707,59 +1749,59 @@
       ]
     },
     {
-    "id": "c4.context@1",
-    "projection": "graph",
-    "diagramFamilies": [
-      "C4 system context"
-    ],
-    "scope": "People and systems and their interactions; no internal structure, no field-level endpoints.",
-    "validation": [
-      "participants limited to c4.person and c4.system",
-      "c4.rel links only",
-      "no field-level (member) endpoints",
-      "no attribute fields on c4 kinds"
-    ],
-    "unsupported": [
-      "automatic model discovery",
-      "C4 notation-brand compliance"
-    ]
-  },
+      "id": "c4.context@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 system context"
+      ],
+      "scope": "People and systems and their interactions; no internal structure, no field-level endpoints.",
+      "validation": [
+        "participants limited to c4.person and c4.system",
+        "c4.rel links only",
+        "no field-level (member) endpoints",
+        "no attribute fields on c4 kinds"
+      ],
+      "unsupported": [
+        "automatic model discovery",
+        "C4 notation-brand compliance"
+      ]
+    },
     {
-    "id": "c4.container@1",
-    "projection": "graph",
-    "diagramFamilies": [
-      "C4 container"
-    ],
-    "scope": "Containers/stores/queues inside one system boundary frame.",
-    "validation": [
-      "participants limited to c4.container, c4.store, c4.queue plus boundary c4.system and external c4.person",
-      "c4.rel links only",
-      "exactly one frame scoped to a selected c4.system; members cover every selected interior node",
-      "no attribute fields on c4 kinds"
-    ],
-    "unsupported": [
-      "multiple boundary systems per view",
-      "deployment mapping"
-    ]
-  },
+      "id": "c4.container@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 container"
+      ],
+      "scope": "Containers/stores/queues inside one system boundary frame.",
+      "validation": [
+        "participants limited to c4.container, c4.store, c4.queue plus boundary c4.system and external c4.person",
+        "c4.rel links only",
+        "exactly one frame scoped to a selected c4.system; members cover every selected interior node",
+        "no attribute fields on c4 kinds"
+      ],
+      "unsupported": [
+        "multiple boundary systems per view",
+        "deployment mapping"
+      ]
+    },
     {
-    "id": "c4.component@1",
-    "projection": "graph",
-    "diagramFamilies": [
-      "C4 component"
-    ],
-    "scope": "Components inside one container boundary frame.",
-    "validation": [
-      "participants limited to c4.component plus boundary c4.container and external c4.person/c4.system/c4.store",
-      "c4.rel links only",
-      "exactly one frame scoped to a selected c4.container; members cover every selected interior node",
-      "no attribute fields on c4 kinds"
-    ],
-    "unsupported": [
-      "code introspection",
-      "multiple boundary containers per view"
-    ]
-  },
+      "id": "c4.component@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 component"
+      ],
+      "scope": "Components inside one container boundary frame.",
+      "validation": [
+        "participants limited to c4.component plus boundary c4.container and external c4.person/c4.system/c4.store",
+        "c4.rel links only",
+        "exactly one frame scoped to a selected c4.container; members cover every selected interior node",
+        "no attribute fields on c4 kinds"
+      ],
+      "unsupported": [
+        "code introspection",
+        "multiple boundary containers per view"
+      ]
+    },
     {
       "id": "org.tree@1",
       "projection": "graph",
@@ -1771,7 +1813,7 @@
         "participants limited to organization, team, role, analysis.role (DDN-PF007)",
         "reports_to links only (DDN-PF007)",
         "reporting hierarchy is acyclic (DDN-PF004)",
-        "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
+        "exactly one root — one node with no incoming reports_to edge (DDN-PJ102)",
         "no node has multiple managers (DDN201, layout stage)"
       ],
       "unsupported": [
@@ -2079,6 +2121,24 @@
         "interruptible regions",
         "pins and parameter sets",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "bpmn.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "BPMN-style process collaboration"
+      ],
+      "scope": "Pools and lanes as frames; typed start/end events; exclusive/parallel/inclusive gateways; dashed message flow allowed only across pools. Profile-level coverage, not BPMN conformance.",
+      "validation": [
+        "message flow within one pool rejected (DDN-PJ116)",
+        "gateways declare their type (DDN-PJ117)"
+      ],
+      "unsupported": [
+        "BPMN XML interchange",
+        "choreography and conversation diagrams",
+        "executable process semantics",
+        "full BPMN conformance"
       ]
     }
   ],

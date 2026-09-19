@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- BPMN-style process collaboration via profile `bpmn.basic@1` (pools/lanes,
+  typed events/gateways, cross-pool message flow; `DDN-PJ116`/`DDN-PJ117`).
+  Profile-level coverage, not BPMN conformance. RFC-106.
+
 - Activity-style views with partitions, fork/join and object nodes via profile
   `uml.activity@1` (`DDN-PJ114`/`DDN-PJ115`). RFC-105.
 

@@ -2455,6 +2455,24 @@
         "pins and parameter sets",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "bpmn.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "BPMN-style process collaboration"
+      ],
+      "scope": "Pools and lanes as frames; typed start/end events; exclusive/parallel/inclusive gateways; dashed message flow allowed only across pools. Profile-level coverage, not BPMN conformance.",
+      "validation": [
+        "message flow within one pool rejected (DDN-PJ116)",
+        "gateways declare their type (DDN-PJ117)"
+      ],
+      "unsupported": [
+        "BPMN XML interchange",
+        "choreography and conversation diagrams",
+        "executable process semantics",
+        "full BPMN conformance"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2652,7 +2670,8 @@
     "communication/collaboration interaction views via uml.communication@1 (declared message numbers)",
     "object/instance snapshots via uml.object@1 (classifier-checked slots)",
     "hierarchical state views via state.composite@1 (composite frames, dashed regions, per-region initial check)",
-    "activity-style flows with swimlane partitions, fork/join bars and object nodes via uml.activity@1"
+    "activity-style flows with swimlane partitions, fork/join bars and object nodes via uml.activity@1",
+    "BPMN-style pools, typed events, gateways and cross-pool message flow via bpmn.basic@1 (profile-level, not BPMN conformance)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

@@ -64,6 +64,17 @@ function validate(ir,E){
   const forks=bars.filter(n=>es2.filter(r=>r.from.element===n.id).length>=2).length,joins=bars.filter(n=>es2.filter(r=>r.to.element===n.id).length>=2).length;
   if(forks!==joins)fail('DDN-PJ115','Fork/join imbalance: '+forks+' fork(s) (>=2 outgoing uml.flow edges) versus '+joins+' join(s) (>=2 incoming uml.flow edges); counts must match');
  }
+ if(profile==='bpmn.basic@1'){
+  const pools=(ir.view.frames||[]).filter(f=>f.x_pool===true);
+  const poolOf=id=>pools.filter(p=>p.members.includes(id));
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='bpmn.messageflow')){
+   const a=poolOf(r.from.element),b=poolOf(r.to.element),same=a.find(p=>b.includes(p));
+   if(same)fail('DDN-PJ116','Message flow '+r.id+' has both endpoints inside pool '+(same.name||same.id)+'; message flow is allowed only across pools',r);
+   if(!a.length&&!b.length)fail('DDN-PJ116','Message flow '+r.id+' has both endpoints outside every x_pool frame; message flow is allowed only across pools',r);
+  }
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='flow.gateway'))
+   if(!['exclusive','parallel','inclusive'].includes(n.properties.x_gateway?.type))fail('DDN-PJ117','Gateway '+n.id+' lacks a valid x_gateway.type (exclusive, parallel or inclusive)',n);
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });

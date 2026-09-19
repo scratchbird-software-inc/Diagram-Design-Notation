@@ -7,7 +7,7 @@ function registry(base){
  if(cache.has(base))return cache.get(base);
  const out={...base,kinds:base.kinds.slice(),relationships:base.relationships.slice(),extension_contracts:{...base.extension_contracts}};
  for(const k of catalogue.kinds){const b=base.kinds.find(x=>x.keyword===k.fallback)||base.kinds[0],f=base.families[k.family]||base.families.concept;out.kinds.push({...b,...k,id:'profile-kind.'+k.keyword,aliases:[],colour:f.colour,fill:f.fill,text_label:k.name,slot:'NW',profileKind:true});}
- for(const r of catalogue.relationships){const family=r.family==='data_flow'?'flow':r.family,b=base.relationships.find(x=>x.family===family)||base.relationships[0];out.relationships.push({...b,...r,family,id:'profile-relation.'+r.keyword,pattern:r.keyword==='uml.realization'?'7 5':r.keyword.startsWith('flow.')?'':b.pattern,aliases:[],endpoint_contract:{source:r.source,target:r.target,allow_self:r.allow_self,member_endpoints:r.member_endpoints}});}
+ for(const r of catalogue.relationships){const family=r.family==='data_flow'?'flow':r.family,b=base.relationships.find(x=>x.family===family)||base.relationships[0];out.relationships.push({...b,...r,family,id:'profile-relation.'+r.keyword,pattern:r.pattern||(r.keyword==='uml.realization'?'7 5':r.keyword.startsWith('flow.')?'':b.pattern),aliases:[],endpoint_contract:{source:r.source,target:r.target,allow_self:r.allow_self,member_endpoints:r.member_endpoints}});}
  const def=(schema,targets=['object'])=>({targets:Object.fromEntries(targets.map(t=>[t,schema]))});
  out.extension_contracts.x_record=def({type:'object',additionalProperties:true},['object','relation']);
  out.extension_contracts.x_story=def({type:'object',required:['task'],additionalProperties:true},['relation']);
@@ -22,6 +22,8 @@ function registry(base){
  out.extension_contracts.x_message=def({type:'object',required:['seq'],properties:{seq:{type:'string',minLength:1}},additionalProperties:false},['relation']);
  out.extension_contracts.x_instance=def({type:'object',required:['classifier'],additionalProperties:true},['object']);
  out.extension_contracts.x_partition=def({type:'object',required:['lane'],properties:{lane:{type:'string',minLength:1}},additionalProperties:false},['object']);
+ out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','error']}},additionalProperties:false},['object']);
+ out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive']}},additionalProperties:false},['object']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);

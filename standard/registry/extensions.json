@@ -718,7 +718,9 @@
       "targets": {
         "relation": {
           "type": "object",
-          "required": ["seq"],
+          "required": [
+            "seq"
+          ],
           "properties": {
             "seq": {
               "type": "string",
@@ -733,7 +735,9 @@
       "targets": {
         "object": {
           "type": "object",
-          "required": ["classifier"],
+          "required": [
+            "classifier"
+          ],
           "additionalProperties": true
         }
       }
@@ -742,7 +746,9 @@
       "targets": {
         "object": {
           "type": "object",
-          "required": ["lane"],
+          "required": [
+            "lane"
+          ],
           "properties": {
             "lane": {
               "type": "string",
@@ -1141,6 +1147,47 @@
             },
             "stereotype": {
               "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "x_event": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "none",
+                "message",
+                "timer",
+                "error"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "x_gateway": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "exclusive",
+                "parallel",
+                "inclusive"
+              ]
             }
           },
           "additionalProperties": false
