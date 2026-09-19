@@ -1333,6 +1333,27 @@
         "zoomable/interactive drill-down",
         "colour-encoded secondary measure"
       ]
+    },
+    {
+      "id": "chart.sankey@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Sankey/flow diagram"
+      ],
+      "scope": "Explicit source→target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
+      "validation": [
+        "target is a property binding, not a numeric reference (DDN-PJ030)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation or series binding (DDN-PJ031, DDN-PJ030)",
+        "endpoints are distinct nonempty category text (DDN-PJ032)",
+        "flow values are positive finite numbers (DDN-PJ108, DDN-PJ032)",
+        "flow graph is acyclic (DDN-PJ079)"
+      ],
+      "unsupported": [
+        "cyclic flows",
+        "multi-port nodes",
+        "flow conservation auditing"
+      ]
     }
   ],
   "shapes": [

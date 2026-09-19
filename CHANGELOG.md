@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Sankey diagrams via new profile `chart.sankey@1` (mark `sankey`, reusing the
+  chart `target` property as a binding), with `DDN-PJ079`/`DDN-PJ108`
+  validation.
+
 - Treemaps via new profile `chart.treemap@1` (mark `treemap`), with
   `DDN-PJ078` validation.
 

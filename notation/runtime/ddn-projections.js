@@ -95,6 +95,25 @@ function render(ir,reg,glyphs='',options={}){
    }
    tiles.forEach((n,gi)=>{if(n.leaf)drawLeaf(n,gi);else drawGroup(n,gi);});
    body+=text(20*s,H-15*s,leafCount+' tiles · total '+fmtNumber(total)+' '+plan.unit+' · tile area encodes one value per record; slice-and-dice layout in declaration order; dotted paths nest tiles.',11);
+  }else if(plan.mark==='sankey'){
+   const flow=plan.flow,maxDepth=Math.max(...flow.nodes.map(n=>n.depth)),nodeW=14*s,gap=12*s,sPlotW=plotW-170*s,cx=d=>left+d*(sPlotW/Math.max(1,maxDepth));
+   const flowOf=i=>Math.max(flow.links.filter(l=>l.source===i).reduce((a,l)=>a+l.value,0),flow.links.filter(l=>l.target===i).reduce((a,l)=>a+l.value,0));
+   const rawMax=Math.max(...[...new Set(flow.nodes.map(n=>n.depth))].map(d=>{const col=flow.nodes.map((n,i)=>[n,i]).filter(([n])=>n.depth===d);return col.reduce((a,[n,i])=>a+flowOf(i),0)+gap*(col.length-1);}));
+   const k=plotH/rawMax,pos=[];
+   for(let d=0;d<=maxDepth;d++){let y=top+(plotH-(flow.nodes.map((n,i)=>[n,i]).filter(([n])=>n.depth===d).reduce((a,[n,i])=>a+flowOf(i)*k+gap,0)-gap))/2;
+    for(const [n,i] of flow.nodes.map((n,i)=>[n,i]).filter(([n])=>n.depth===d)){pos[i]={x:cx(d),y,w:nodeW,h:flowOf(i)*k};y+=flowOf(i)*k+gap;}}
+   const usedOut=flow.nodes.map(()=>0),usedIn=flow.nodes.map(()=>0);
+   flow.links.forEach((l,li)=>{
+    const a=pos[l.source],b=pos[l.target],th=l.value*k,x0=a.x+a.w,x1=b.x,y0=a.y+usedOut[l.source],y1=b.y+usedIn[l.target],mx=(x0+x1)/2;usedOut[l.source]+=th;usedIn[l.target]+=th;
+    const d=`M${f(x0)} ${f(y0)}C${f(mx)} ${f(y0)} ${f(mx)} ${f(y1)} ${f(x1)} ${f(y1)}L${f(x1)} ${f(y1+th)}C${f(mx)} ${f(y1+th)} ${f(mx)} ${f(y0+th)} ${f(x0)} ${f(y0+th)}Z`;
+    body+=group(l.sourceIds[0],l.sourceIds,`<title>${esc(flow.nodes[l.source].name+' → '+flow.nodes[l.target].name+': '+fmtNumber(l.value)+' '+plan.unit)}</title><path class="ddn-sankey-ribbon" data-value="${l.value}" d="${d}" fill="${colour(li)}" fill-opacity=".25" stroke="${colour(li)}" stroke-opacity=".6"/>`,{x:x0,y:Math.min(y0,y1),w:x1-x0,h:th,value:l.value},pr.y);
+   });
+   flow.nodes.forEach((n,i)=>{
+    const b=pos[i],total=flowOf(i);
+    body+=group(n.sourceIds[0],n.sourceIds,`<title>${esc(n.name+': '+fmtNumber(total)+' '+plan.unit)}</title><rect class="ddn-sankey-node" data-depth="${n.depth}" x="${f(b.x)}" y="${f(b.y)}" width="${f(b.w)}" height="${f(b.h)}" fill="${t.ink}" fill-opacity=".8"/>`,{x:b.x,y:b.y,w:b.w,h:b.h,depth:n.depth});
+    body+=text(n.depth===maxDepth?b.x+b.w+8*s:b.x-8*s,b.y+b.h/2+4*s,n.name+' · '+fmtNumber(total)+' '+plan.unit,12,600,n.depth===maxDepth?'start':'end');
+   });
+   body+=text(left,H-15*s,flow.nodes.length+' nodes · '+flow.links.length+' flows · '+(maxDepth+1)+' depth columns from pure sources · ribbon thickness encodes '+plan.unit+' value; duplicate source→target pairs stack in declaration order.',11);
   }else if(plan.mark==='funnel'){
    const N=pts.length,maxY=Math.max(...pts.map(p=>p.y))||1,bandH=plotH/N,cx=left+plotW/2,total=pts.reduce((s,p)=>s+p.y,0);
    for(let i=0;i<N;i++){const pt=pts[i],y=top+i*bandH,topW=plotW*pt.y/maxY,bottomW=i<N-1?plotW*pts[i+1].y/maxY:Math.max(24*s,topW*.35),col=colour(i);
@@ -218,7 +237,7 @@ function vegaLite(ir){
  const plan=Data.plan(ir,D.DDNError),p=ir.view.profiles.projection;if(plan.quality)throw new D.DDNError('DDN-PJ070','Quality transforms are native; this optional adapter does not silently flatten them');if(!['chart','timeline'].includes(plan.kind))throw new D.DDNError('DDN-PJ070','Vega-Lite adapter supports chart/timeline only');
  const spec={$schema:'https://vega.github.io/schema/vega-lite/v6.json',description:'DDN source-bound quantitative projection; local values only',width:q(p.width,900),height:q(p.height,450),usermeta:{ddnView:ir.view.id,profile:p.profile,sourceIds:plan.sourceIds}};
  if(plan.kind==='timeline'){spec.data={values:plan.items.map(n=>({label:n.label,start:n.start,end:n.end,sourceId:n.id}))};spec.mark='bar';spec.encoding={y:{field:'label',type:'nominal'},x:{field:'start',type:'temporal',scale:{type:'utc'}},x2:{field:'end'}};spec.usermeta.omissions=['dependency overlay','milestones are zero-width intervals; native view displays diamonds'];}
- else{if(['radar','funnel','gauge','candlestick','treemap'].includes(plan.mark))throw new D.DDNError('DDN-PJ070','Radar, funnel, gauge, candlestick and treemap marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projection');spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
+ else{if(['radar','funnel','gauge','candlestick','treemap','sankey'].includes(plan.mark))throw new D.DDNError('DDN-PJ070','Radar, funnel, gauge, candlestick, treemap and sankey marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projection');spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
  return spec;
 }
 return{VERSION:'0.5.0-draft.2',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};

@@ -174,7 +174,31 @@ Treemap requires categorical `x` (`DDN-PJ030`); any `aggregate` other than `none
 
 Unsupported: squarified layout, zoomable/interactive drill-down, and colour-encoded secondary measures.
 
-## 22.12 Unsupported combinations and publication
+## 22.12 Sankey
+
+```ddn
+projection {
+    kind: chart; profile: "chart.sankey@1";
+    records: [@energy.f1, @energy.f2, @energy.f3];
+    mark: sankey;
+    x: "x_record.source"; target: "x_record.target"; y: "x_record.value";
+    unit: "MWh";
+}
+```
+
+`mark: sankey` draws a flow diagram: one node per distinct endpoint name and one translucent ribbon per record, with ribbon thickness proportional to the record value. Each record is one explicit flow: `x` resolves to the source name, `target` to the target name and `y` to the flow value.
+
+The `target` property name is shared with `chart.quality@1`, with mark-scoped semantics: under `chart.quality@1` it is a numeric reference line on the shared y scale; under `mark: sankey` it MUST be a property binding string resolving to the target endpoint text — a numeric `target` is rejected (`DDN-PJ030`, "Sankey target is a property binding, not a numeric reference"). Sankey always sets `target`, so it is exempted from the quality-planner routing that `target` otherwise triggers; sankey plans bypass the quality chart planner entirely.
+
+Nodes are the distinct source/target names in declaration order of first appearance; each node carries its contributing record sourceIds. Columns are assigned by breadth-first depth from pure sources: nodes that never appear as a target are depth 0, and depth(n) = 1 + the maximum depth of its upstream nodes. A cycle makes this impossible and fails with `DDN-PJ079` ("Sankey flow graph contains a cycle"). Sources repeat legitimately across records, so sankey skips the duplicate-x grouping/aggregation path; duplicate (source,target) pairs are allowed and their ribbons stack in declaration order at both endpoints.
+
+Rendering: one column per depth; node boxes of fixed width `14 × s` whose height encodes max(inflow, outflow) on a scale chosen so the tallest column fills the plot height; nodes stack vertically in declaration order with `12 × s` gaps; labels sit left of the box (depth 0 and intermediate columns) or right of it (last depth). Each ribbon is a filled cubic-Bezier path from the source box's right edge to the target box's left edge at the same value scale, drawn at `fill-opacity=".25"` with the ribbon colour taken from the shared categorical palette by link index, and is a provenance mark carrying the flow value; each node box is a provenance mark carrying its aggregated record sourceIds. The footer reports node/flow counts, the depth-column count and the unit.
+
+Validation: categorical `x` only (`DDN-PJ030`); any `aggregate` other than `none` is rejected (`DDN-PJ031`) and any `series` binding is rejected (`DDN-PJ030`); endpoints must be distinct nonempty category text (`DDN-PJ032`, "Sankey endpoints are category text"); missing or non-finite values keep failing with `DDN-PJ032`; values must be positive — zero or negative flows fail with `DDN-PJ108` ("Sankey flows require positive values"). Sankey has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path.
+
+Unsupported: cyclic flows, multi-port nodes, and flow conservation auditing.
+
+## 22.13 Unsupported combinations and publication
 
 Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.
 

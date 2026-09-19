@@ -7,12 +7,12 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 23 numbered examples (01-customer … 23-treemap)
+- `basics/` — 24 numbered examples (01-customer … 24-sankey)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, process contracts, enterprise gates, curved
   relations, radar charts, funnel charts, gauge charts, candlestick charts,
-  treemaps.
+  treemaps, Sankey diagrams.
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

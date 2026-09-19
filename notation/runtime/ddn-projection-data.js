@@ -53,7 +53,7 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap');
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
@@ -64,6 +64,10 @@ function plan(ir,ErrorClass=Error){
   if(p.mark==='treemap'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Treemap paths require categorical x (x_type must be category)');
   if(p.mark==='treemap'&&p.series!==undefined)fail('DDN-PJ030','Treemap tiles encode one value per record; do not set series');
   if(p.mark==='treemap'&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Treemap tiles encode supplied values; aggregation is not available');
+  if(p.mark==='sankey'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Sankey sources require categorical x (x_type must be category)');
+  if(p.mark==='sankey'&&p.series!==undefined)fail('DDN-PJ030','Sankey encodes flows between endpoints; do not set series');
+  if(p.mark==='sankey'&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Sankey flows encode supplied values; aggregation is not available');
+  if(p.mark==='sankey'&&typeof p.target!=='string')fail('DDN-PJ030','Sankey target is a property binding, not a numeric reference');
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
   if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
@@ -82,6 +86,12 @@ function plan(ir,ErrorClass=Error){
    const type=p.x_type||'category',rawX=x;if(type==='number'){if(typeof x!=='number'||!Number.isFinite(x))fail('DDN-PJ032','Numeric x required',n);}else if(type==='date'){x=date(x);if(!Number.isFinite(x))fail('DDN-PJ033','Date x must be a real ISO YYYY-MM-DD date',n);}else if(typeof x!=='string'&&typeof x!=='number')fail('DDN-PJ032','Category x must be text or number',n);
    if(p.unit&&n.properties.x_record?.unit!==p.unit)fail('DDN-PJ034','Every record must declare matching x_record.unit: '+p.unit,n);
    const size=p.size?get(n,p.size):1;if(typeof size!=='number'||!Number.isFinite(size)||size<0)fail('DDN-PJ035','Point size must be a finite nonnegative value',n);
+   if(p.mark==='sankey'){
+    const tv=get(n,p.target);
+    if(typeof x!=='string'||!x.trim()||typeof tv!=='string'||!tv.trim()||x===tv)fail('DDN-PJ032','Sankey endpoints are category text',n);
+    if(y<=0)fail('DDN-PJ108','Sankey flows require positive values',n);
+    points.push({x,y,rawX,target:tv,size:1,sourceIds:[n.id]});continue;
+   }
    if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else points.push({x,y,rawX,size,sourceIds:[n.id]});
   }
   if(!points.length)fail('DDN-PJ012','No chart points remain');
@@ -96,7 +106,7 @@ function plan(ir,ErrorClass=Error){
   }
   if(p.mark==='point'&&(p.x_type||'category')!=='number')fail('DDN-PJ030','Scatter/bubble requires x_type:number');
   if(['pie','donut','bar','radar','funnel'].includes(p.mark)&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Bars, arcs, radar spokes and funnel stages currently require categorical x');
-  const groups=new Map();if(!['point','radar'].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
+  const groups=new Map();if(!['point','radar','sankey'].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
   if([...groups.values()].some(a=>a.length>1)){
    if(!p.aggregate||p.aggregate==='none')fail('DDN-PJ036','Duplicate x/category: supply an explicit aggregate or distinct coordinates');
    points=[...groups.values()].map(v=>({x:v[0].x,rawX:v[0].rawX,size:1,y:p.aggregate==='count'?v.length:p.aggregate==='sum'?v.reduce((s,p)=>s+p.y,0):p.aggregate==='mean'?v.reduce((s,p)=>s+p.y,0)/v.length:p.aggregate==='min'?Math.min(...v.map(p=>p.y)):Math.max(...v.map(p=>p.y)),sourceIds:v.flatMap(p=>p.sourceIds)}));
@@ -114,6 +124,20 @@ function plan(ir,ErrorClass=Error){
    const sum=n=>{if(!n.leaf){n.value=n.children.reduce((s,c)=>s+sum(c),0);n.sourceIds=n.children.flatMap(c=>c.sourceIds);}return n.value;};
    roots.forEach(sum);treemapTiles=roots;
   }
+  let sankeyFlow;
+  if(p.mark==='sankey'){
+   const names=[],ix=new Map(),links=[];
+   for(const pt of points){
+    for(const nm of [String(pt.rawX),pt.target])if(!ix.has(nm)){ix.set(nm,names.length);names.push(nm);}
+    links.push({source:ix.get(String(pt.rawX)),target:ix.get(pt.target),value:pt.y,sourceIds:pt.sourceIds});
+   }
+   const depth=new Array(names.length).fill(-1);
+   for(let i=0;i<names.length;i++)if(!links.some(l=>l.target===i))depth[i]=0;
+   let moved=true;
+   for(let pass=0;moved&&pass<=names.length;pass++){moved=false;for(const l of links)if(depth[l.source]>=0&&depth[l.target]<depth[l.source]+1){depth[l.target]=depth[l.source]+1;moved=true;}}
+   if(moved||depth.some(d=>d<0))fail('DDN-PJ079','Sankey flow graph contains a cycle');
+   sankeyFlow={nodes:names.map((name,i)=>({name,depth:depth[i],sourceIds:[...new Set(links.filter(l=>l.source===i||l.target===i).flatMap(l=>l.sourceIds))]})),links};
+  }
   if(['pie','donut'].includes(p.mark)&&(points.some(p=>p.y<0)||!Number.isFinite(points.reduce((s,p)=>s+p.y,0))||points.reduce((s,p)=>s+p.y,0)<=0))fail('DDN-PJ037','Arcs require nonnegative values and a positive total');
   if(!Number.isFinite(Math.max(0,...points.map(n=>n.y))-Math.min(0,...points.map(n=>n.y))))fail('DDN-PJ032','Quantitative axis range overflow');
   if((p.x_type==='number')&&!Number.isFinite(Math.max(...points.map(n=>n.x))-Math.min(...points.map(n=>n.x))))fail('DDN-PJ032','Quantitative x range overflow');
@@ -124,7 +148,7 @@ function plan(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return{kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
