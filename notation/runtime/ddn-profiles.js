@@ -21,6 +21,7 @@ function registry(base){
  out.extension_contracts.x_return=def({type:'boolean'},['relation']);
  out.extension_contracts.x_message=def({type:'object',required:['seq'],properties:{seq:{type:'string',minLength:1}},additionalProperties:false},['relation']);
  out.extension_contracts.x_instance=def({type:'object',required:['classifier'],additionalProperties:true},['object']);
+ out.extension_contracts.x_partition=def({type:'object',required:['lane'],properties:{lane:{type:'string',minLength:1}},additionalProperties:false},['object']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
@@ -43,10 +44,11 @@ function validate(ir,reg,ErrorClass){
  }
  if(ir.view.profiles.export.mode==='redacted'&&ir.elements.some(n=>n.kind.includes('.')))fail('DDN-PJ003','Profile-specific redacted projection is not qualified; provide a separately authorized workspace');
  const shown=new Set(ir.view.selected),ns=ir.elements.filter(n=>shown.has(n.id)),es=rels.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
- if(p.profile==='flow.basic@1'||p.profile==='flow.documented@2'){
+ if(p.profile==='flow.basic@1'||p.profile==='flow.documented@2'||p.profile==='uml.activity@1'){
   if(ns.some(n=>!n.kind.startsWith('flow.')))fail('DDN-PF007','Flowchart projection accepts flow.* participants only');
   if(p.profile==='flow.basic@1'&&es.some(r=>r.kind!=='flow.next'))fail('DDN-PF007','Flowchart projection accepts flow.next links only');
-  const control=es.filter(r=>['flow.next','flow.continues'].includes(r.kind)),activeNodes=ns.filter(n=>n.kind!=='flow.annotation');
+  if(p.profile==='uml.activity@1'&&es.some(r=>r.kind!=='uml.flow'))fail('DDN-PF007','Activity projection accepts uml.flow links only');
+  const control=es.filter(r=>(p.profile==='uml.activity@1'?['uml.flow']:['flow.next','flow.continues']).includes(r.kind)),activeNodes=ns.filter(n=>n.kind!=='flow.annotation');
   const incoming=id=>control.filter(r=>r.to.element===id),outgoing=id=>control.filter(r=>r.from.element===id),starts=ns.filter(n=>n.kind==='flow.start'),ends=ns.filter(n=>n.kind==='flow.end');
   if(!starts.length||!ends.length)fail('DDN-PF008','Closed flowchart needs a start and an end');
   for(const n of ns){if(n.kind==='flow.start'&&incoming(n.id).length)fail('DDN-PF008','Start cannot have incoming control',n);if(n.kind==='flow.end'&&outgoing(n.id).length)fail('DDN-PF008','End cannot have outgoing control',n);

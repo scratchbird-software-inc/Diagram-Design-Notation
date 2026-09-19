@@ -56,6 +56,14 @@ function validate(ir,E){
   for(const f of regions)collide(f);
   for(const f of frames){if(f.x_region===true)continue;if(ns.get(f.scope)?.kind!=='state.state')continue;if(regions.some(r=>r.members.length&&r.members.every(id=>f.members.includes(id))))continue;collide(f);}
  }
+ if(profile==='uml.activity@1'){
+  const frames=ir.view.frames||[],lanes=new Set(frames.flatMap(f=>[f.id,f.name,String(f.id).split('::').pop().split('.').pop()]));
+  const shown2=new Set(ir.view.selected),es2=ir.relations.filter(r=>shown2.has(r.from.element)&&shown2.has(r.to.element)&&r.kind==='uml.flow');
+  for(const n of ir.elements.filter(n=>shown2.has(n.id)&&n.properties.x_partition)){const lane=n.properties.x_partition.lane;if(!lanes.has(lane))fail('DDN-PJ114','Node '+n.id+' declares partition lane '+JSON.stringify(lane)+' but no frame of this view has that id or name',n);}
+  const bars=ir.elements.filter(n=>shown2.has(n.id)&&n.kind==='flow.forkjoin');
+  const forks=bars.filter(n=>es2.filter(r=>r.from.element===n.id).length>=2).length,joins=bars.filter(n=>es2.filter(r=>r.to.element===n.id).length>=2).length;
+  if(forks!==joins)fail('DDN-PJ115','Fork/join imbalance: '+forks+' fork(s) (>=2 outgoing uml.flow edges) versus '+joins+' join(s) (>=2 incoming uml.flow edges); counts must match');
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });

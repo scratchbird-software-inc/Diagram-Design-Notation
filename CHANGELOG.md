@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Activity-style views with partitions, fork/join and object nodes via profile
+  `uml.activity@1` (`DDN-PJ114`/`DDN-PJ115`). RFC-105.
+
 - Hierarchical state views via profile `state.composite@1` (composite frames,
   dashed regions, `DDN-PJ113`). RFC-104.
 

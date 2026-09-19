@@ -2438,6 +2438,23 @@
         "SCXML/UML conformance",
         "timers and executable actions"
       ]
+    },
+    {
+      "id": "uml.activity@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Activity-style flow with partitions"
+      ],
+      "scope": "Flow nodes plus fork/join bars and object nodes; swimlane partitions as view frames with declared node membership.",
+      "validation": [
+        "node in an unknown partition rejected (DDN-PJ114)",
+        "fork/join counts must balance (DDN-PJ115)"
+      ],
+      "unsupported": [
+        "interruptible regions",
+        "pins and parameter sets",
+        "full UML conformance"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2634,7 +2651,8 @@
     "sequence-style interaction diagrams via uml.sequence@1 (declaration-ordered lifelines, returns, activations)",
     "communication/collaboration interaction views via uml.communication@1 (declared message numbers)",
     "object/instance snapshots via uml.object@1 (classifier-checked slots)",
-    "hierarchical state views via state.composite@1 (composite frames, dashed regions, per-region initial check)"
+    "hierarchical state views via state.composite@1 (composite frames, dashed regions, per-region initial check)",
+    "activity-style flows with swimlane partitions, fork/join bars and object nodes via uml.activity@1"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

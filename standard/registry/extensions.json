@@ -738,6 +738,21 @@
         }
       }
     },
+    "x_partition": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": ["lane"],
+          "properties": {
+            "lane": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
     "x_row_height": {
       "id": "interaction@0.1",
       "targets": {

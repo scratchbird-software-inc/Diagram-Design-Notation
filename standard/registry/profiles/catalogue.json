@@ -399,6 +399,28 @@
       "aliases": []
     },
     {
+      "keyword": "flow.forkjoin",
+      "name": "Fork / join",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "FORKJOIN",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "flow.objectnode",
+      "name": "Object node",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "record",
+      "family": "data",
+      "code": "OBJNODE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
     "keyword": "c4.person",
     "name": "Person",
     "shape": "profile",
@@ -992,6 +1014,36 @@
       "*"
     ],
     "allow_self": true,
+    "member_endpoints": false
+  },
+    {
+    "keyword": "uml.flow",
+    "name": "Activity edge",
+    "verb": "Activity edge",
+    "family": "control",
+    "code": "FLOW",
+    "start": "none",
+    "end": "filled",
+    "glyph": "link",
+    "source": [
+      "flow.start",
+      "flow.end",
+      "flow.process",
+      "flow.decision",
+      "flow.io",
+      "flow.forkjoin",
+      "flow.objectnode"
+    ],
+    "target": [
+      "flow.start",
+      "flow.end",
+      "flow.process",
+      "flow.decision",
+      "flow.io",
+      "flow.forkjoin",
+      "flow.objectnode"
+    ],
+    "allow_self": false,
     "member_endpoints": false
   }
   ],
@@ -2010,6 +2062,23 @@
         "history pseudostates",
         "SCXML/UML conformance",
         "timers and executable actions"
+      ]
+    },
+    {
+      "id": "uml.activity@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Activity-style flow with partitions"
+      ],
+      "scope": "Flow nodes plus fork/join bars and object nodes; swimlane partitions as view frames with declared node membership.",
+      "validation": [
+        "node in an unknown partition rejected (DDN-PJ114)",
+        "fork/join counts must balance (DDN-PJ115)"
+      ],
+      "unsupported": [
+        "interruptible regions",
+        "pins and parameter sets",
+        "full UML conformance"
       ]
     }
   ],
