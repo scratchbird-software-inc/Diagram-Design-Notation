@@ -1994,6 +1994,23 @@
         "slot datatype checking",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "state.composite@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Hierarchical/composite state diagram"
+      ],
+      "scope": "Composite states as frames containing substates; dashed parallel regions; boundary-crossing transitions with event/guard labels.",
+      "validation": [
+        "at most one initial state per region (DDN-PJ113)"
+      ],
+      "unsupported": [
+        "trace evaluation (state.flat@1 only)",
+        "history pseudostates",
+        "SCXML/UML conformance",
+        "timers and executable actions"
+      ]
     }
   ],
   "shapes": [

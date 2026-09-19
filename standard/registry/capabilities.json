@@ -2146,7 +2146,7 @@
         "participants limited to organization, team, role, analysis.role (DDN-PF007)",
         "reports_to links only (DDN-PF007)",
         "reporting hierarchy is acyclic (DDN-PF004)",
-        "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
+        "exactly one root — one node with no incoming reports_to edge (DDN-PJ102)",
         "no node has multiple managers (DDN201, layout stage)"
       ],
       "unsupported": [
@@ -2421,6 +2421,23 @@
         "slot datatype checking",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "state.composite@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Hierarchical/composite state diagram"
+      ],
+      "scope": "Composite states as frames containing substates; dashed parallel regions; boundary-crossing transitions with event/guard labels.",
+      "validation": [
+        "at most one initial state per region (DDN-PJ113)"
+      ],
+      "unsupported": [
+        "trace evaluation (state.flat@1 only)",
+        "history pseudostates",
+        "SCXML/UML conformance",
+        "timers and executable actions"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2616,7 +2633,8 @@
     "2/3-set venn diagrams via panels.venn@1 (x_sets membership, fixed region geometry, DDN-PJ090/PJ091)",
     "sequence-style interaction diagrams via uml.sequence@1 (declaration-ordered lifelines, returns, activations)",
     "communication/collaboration interaction views via uml.communication@1 (declared message numbers)",
-    "object/instance snapshots via uml.object@1 (classifier-checked slots)"
+    "object/instance snapshots via uml.object@1 (classifier-checked slots)",
+    "hierarchical state views via state.composite@1 (composite frames, dashed regions, per-region initial check)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

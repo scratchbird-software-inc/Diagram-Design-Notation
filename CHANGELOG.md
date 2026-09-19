@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Hierarchical state views via profile `state.composite@1` (composite frames,
+  dashed regions, `DDN-PJ113`). RFC-104.
+
 - Object/instance snapshots via profile `uml.object@1` (`x_instance` classifier
   binding), `DDN-PJ112` slot validation. RFC-103.
 

@@ -50,6 +50,12 @@ function validate(ir,E){
    if(!ret&&dotted)fail('DDN-PJ111','Non-reply message '+r.id+' must carry a top-level number, got dotted '+seq,r);
   }
  }
+ if(profile==='state.composite@1'){
+  const frames=ir.view.frames||[],regions=frames.filter(f=>f.x_region===true);
+  const collide=f=>{const initials=f.members.map(id=>ns.get(id)).filter(n=>n?.kind==='state.initial');if(initials.length>1)fail('DDN-PJ113','Frame '+(f.name||f.id)+' declares '+initials.length+' initial states ('+initials.map(n=>n.id).join(', ')+'); at most one initial state per region');};
+  for(const f of regions)collide(f);
+  for(const f of frames){if(f.x_region===true)continue;if(ns.get(f.scope)?.kind!=='state.state')continue;if(regions.some(r=>r.members.length&&r.members.every(id=>f.members.includes(id))))continue;collide(f);}
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });
