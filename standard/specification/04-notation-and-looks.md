@@ -6,6 +6,8 @@ The registry fixes semantic form, object-kind recipe, indicator position, standa
 
 **DDN-R01.** A renderer MUST preserve exact distinctions with a registered unique glyph, token, full standard label or an explicit numbered relationship key. Colour alone is not the canonical meaning channel. Hiding a token is allowed only when the remaining glyph is unambiguous in the active registry/profile. In the supplied conservative renderer, `icon_token` is the default kind mode.
 
+Structural endpoint marks (`source_mark`/`target_mark`) are semantic channel content, not decoration: the crow's-foot marks (`one`, `zeroone`, `many`, `zeromany`) express cardinality and are drawn by the shared endpoint renderer for every look. Under the `erd.crowfoot@1` profile both marks are obligatory on every `ref`/`assoc` relation in the view.
+
 A hand-drawn table remains a table. A precise diagram may still contain draft decisions. A dark canvas does not imply an operational state. A round-corner activity cannot become a generic table just because another theme looks nicer with rounded rectangles.
 
 ## 2. Six primary forms

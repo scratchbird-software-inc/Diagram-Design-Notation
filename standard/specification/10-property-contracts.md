@@ -113,6 +113,8 @@ The machine contract is `registry/data-properties.json`. Its targets and validat
 
 | `target_mark` | relation | registered structural endpoint | At target B describes how many B instances per one A; never packet count. |
 
+The crow's-foot cardinality value set is `one` (exactly one — bar and bar), `zeroone` (zero or one — circle and bar), `many` (one or many — bar and crowfoot) and `zeromany` (zero or many — circle and crowfoot); the marks are drawn by the shared endpoint renderer. Under the `erd.crowfoot@1` profile every view relation must be `ref` or `assoc` and must carry both `source_mark` and `target_mark` from this set; violations fail with `DDN-PJ087`, while a lexically unknown mark string still fails with `DDN114` under any profile.
+
 | `enforcement` | relation | database/application/expected/none or undecided | A drawn relation does not imply database enforcement. |
 
 | `scope` | relation | string or reference | Authority, delivery, ordering or other qualifier's named scope. |

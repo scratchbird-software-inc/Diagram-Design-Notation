@@ -2301,6 +2301,24 @@
         "backlog ranking",
         "tracker synchronization"
       ]
+    },
+    {
+      "id": "erd.crowfoot@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Crow's-foot ERD"
+      ],
+      "scope": "Entity/table graph where every ref/assoc relation carries explicit crow's-foot source_mark and target_mark cardinality (one, zeroone, many, zeromany).",
+      "validation": [
+        "every view relation is ref or assoc with both cardinality marks (DDN-PJ087)",
+        "unknown mark strings remain DDN114",
+        "existing core contracts"
+      ],
+      "unsupported": [
+        "min/max beyond the four marks (use source_min/target_max properties)",
+        "identifying-relationship semantics (see chen.binary@2)",
+        "schema generation without an allowlist (see RT-020)"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2483,7 +2501,8 @@
     "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)",
     "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation",
     "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)",
-    "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)"
+    "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
+    "crow's-foot cardinality ERD profile erd.crowfoot@1 (obligatory one/zeroone/many/zeromany endpoint marks, DDN-PJ087)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

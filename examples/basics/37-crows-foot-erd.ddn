@@ -1,0 +1,70 @@
+ddn "0.3";
+module "ddn.examples.crows-foot";
+
+import "shared.ddn" as shared;
+
+// Synthetic orders/customers/invoices schema (all data invented) demonstrating the
+// erd.crowfoot@1 profile: every ref relation carries obligatory crow's-foot
+// source_mark/target_mark cardinality drawn from one, zeroone, many, zeromany.
+
+data sales {
+    object customer "Customer" {
+        kind: table;
+        fields {
+            field customer_id { key: primary; }
+            field display_name;
+        }
+    }
+    object purchase "Purchase" {
+        kind: table;
+        fields {
+            field purchase_id { key: primary; }
+            field customer_id;
+        }
+    }
+    object invoice "Invoice" {
+        kind: table;
+        fields {
+            field invoice_id { key: primary; }
+            field purchase_id;
+        }
+    }
+    object line "Invoice line" {
+        kind: table;
+        fields {
+            field line_id { key: primary; }
+            field invoice_id;
+        }
+    }
+    relation r_places "places" @customer -> @purchase {
+        kind: ref;
+        source_mark: one;
+        target_mark: zeromany;
+        enforcement: database;
+    }
+    relation r_billed "billed as" @purchase -> @invoice {
+        kind: ref;
+        source_mark: one;
+        target_mark: zeroone;
+        enforcement: database;
+    }
+    relation r_lists "lists" @invoice -> @line {
+        kind: ref;
+        source_mark: one;
+        target_mark: many;
+        enforcement: database;
+    }
+    relation r_customer_fk "purchase customer" @purchase.customer_id -> @customer.customer_id {
+        kind: ref;
+        source_mark: zeromany;
+        target_mark: one;
+        enforcement: database;
+    }
+}
+
+view erd "Synthetic sales / crow's-foot ERD" {
+    data: [@sales];
+    format: @shared.styles.technical;
+    projection { kind:graph; profile:"erd.crowfoot@1"; }
+    publication {size: content; fit: none; overflow: error;}
+}

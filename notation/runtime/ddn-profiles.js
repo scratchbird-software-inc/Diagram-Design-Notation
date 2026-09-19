@@ -99,6 +99,14 @@ function validate(ir,reg,ErrorClass){
    if(n.kind==='epk.connector'){if(!['and','or','xor'].includes(op))fail('DDN-PJ106','EPC connector must carry x_epc.operator of and, or or xor',n);}
    else if(op!==undefined)fail('DDN-PJ106','x_epc.operator belongs on epk.connector nodes only',n);}
  }
+ if(p.profile==='erd.crowfoot@1'){
+  const CARD=['one','zeroone','many','zeromany'];
+  for(const r of es){
+   if(!['ref','assoc'].includes(r.kind))fail('DDN-PJ087','erd.crowfoot@1 relations must be ref or assoc to carry crow\'s-foot cardinality; '+r.kind+' is not structural',r);
+   for(const side of ['source','target']){const m=r.properties[side+'_mark'];
+    if(!CARD.includes(m))fail('DDN-PJ087','Relation '+(r.name||r.id)+' needs '+side+'_mark from one|zeroone|many|zeromany (crow\'s-foot cardinality); found '+(m===undefined?'no mark':m),r);}
+  }
+ }
  const codes=new Set();for(const n of ir.elements.filter(n=>n.kind==='req.requirement')){const c=n.properties.x_diagram?.code,t=n.properties.x_diagram?.text;if(!c||!t||codes.has(c))fail('DDN-PF014','Requirement needs unique code and nonempty text',n);codes.add(c);}
  if(p.kind!=='graph'){
   if(Object.keys(ir.view.placements).length||Object.keys(ir.view.routes).length||ir.view.frames.length||ir.view.subdiagrams.length)fail('DDN-PJ002','Data-bound projections do not accept graph place/route/frame/subdiagram geometry; select a graph view');

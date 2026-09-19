@@ -1873,6 +1873,24 @@
         "backlog ranking",
         "tracker synchronization"
       ]
+    },
+    {
+      "id": "erd.crowfoot@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Crow's-foot ERD"
+      ],
+      "scope": "Entity/table graph where every ref/assoc relation carries explicit crow's-foot source_mark and target_mark cardinality (one, zeroone, many, zeromany).",
+      "validation": [
+        "every view relation is ref or assoc with both cardinality marks (DDN-PJ087)",
+        "unknown mark strings remain DDN114",
+        "existing core contracts"
+      ],
+      "unsupported": [
+        "min/max beyond the four marks (use source_min/target_max properties)",
+        "identifying-relationship semantics (see chen.binary@2)",
+        "schema generation without an allowlist (see RT-020)"
+      ]
     }
   ],
   "shapes": [

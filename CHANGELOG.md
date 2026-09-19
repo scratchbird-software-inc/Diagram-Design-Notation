@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Crow's-foot ERD profile `erd.crowfoot@1`: obligatory `source_mark`/`target_mark`
+  cardinality (`one`/`zeroone`/`many`/`zeromany`) on ref/assoc relations, validated
+  with `DDN-PJ087` (unknown marks remain `DDN114`).
+
 - User story maps via new profile
   `matrix.storymap@1` (assoc cells carrying `x_story.task` references to
   `analysis.task` stories), with `DDN-PJ086`/`DDN-PJ093` validation.
