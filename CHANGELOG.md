@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Canvas pack A: Business Model Canvas and Lean Canvas via new profiles
+  `canvas.bmc@1`/`canvas.lean@1` (panels projection), with `DDN-PJ080`
+  required-block validation.
 - EPC diagrams via new profile `epc.basic@1` with `epk.event`/`epk.function`/`epk.connector`
   kinds, new `epk.next` verb, new `hexagon` silhouette, and `DDN-PJ105`/`DDN-PJ106`
   validation.

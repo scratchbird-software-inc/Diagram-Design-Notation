@@ -1183,6 +1183,40 @@
       ]
     },
     {
+      "id": "canvas.bmc@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Business Model Canvas"
+      ],
+      "scope": "Nine canonical Business Model Canvas blocks on a fixed 10-column grid; span-aware panels with shared model references.",
+      "validation": [
+        "all nine required block panels present (DDN-PJ080)",
+        "existing panels grid checks (DDN-PJ020/PJ021/PJ009)"
+      ],
+      "unsupported": [
+        "strategy evaluation",
+        "method certification",
+        "image-rich cells"
+      ]
+    },
+    {
+      "id": "canvas.lean@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Lean Canvas"
+      ],
+      "scope": "Nine canonical Lean Canvas blocks on a fixed 10-column grid; span-aware panels with shared model references.",
+      "validation": [
+        "all nine required block panels present (DDN-PJ080)",
+        "existing panels grid checks (DDN-PJ020/PJ021/PJ009)"
+      ],
+      "unsupported": [
+        "strategy evaluation",
+        "method certification",
+        "image-rich cells"
+      ]
+    },
+    {
       "id": "table.records@1",
       "projection": "table",
       "diagramFamilies": [

@@ -49,6 +49,8 @@ Titles, item labels and descriptions wrap to measured panel width. Row heights e
 
 The examples provide SWOT, SIPOC and a service journey. Their conventional labels are templates over this reusable compositor. They do not automate strategy evaluation or represent independently certified method implementations.
 
+`canvas.bmc@1` and `canvas.lean@1` bind the two canonical nine-block strategy canvases to fixed 10-column panel grids. The BMC blocks are `kp` (key partners), `ka` (key activities), `kr` (key resources), `vp` (value propositions), `cr` (customer relationships), `ch` (channels), `cs` (customer segments), `cost` (cost structure) and `rev` (revenue streams); the Lean Canvas blocks are `problem`, `solution`, `keymetrics`, `uvp`, `unfair`, `channels`, `segments`, `cost` and `revenue`. All nine block panels must be present; the first absent block fails with `DDN-PJ080`, naming the missing panel id and title. Extra annotation panels are permitted; grid and span errors keep the generic `DDN-PJ020`/`DDN-PJ021`/`DDN-PJ009` codes. These profiles are templates over the panel compositor — they do not automate strategy evaluation or represent independently certified method implementations.
+
 ## 18.4 Editing and export
 
 Source remains editable as raw DDN with undo/redo and workspace import/export. The specialized record and assignment inspector writes validated source changes, not computed scene values. An aggregated mark has multiple contributor IDs; individual records can be inspected. It is never edited as an independent total.
