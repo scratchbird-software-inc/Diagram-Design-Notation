@@ -1645,6 +1645,53 @@
       ]
     },
     {
+      "id": "canvas.pest@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "PEST analysis"
+      ],
+      "scope": "Four macro-environment panels (political, economic, social, technological) in one strip.",
+      "validation": [
+        "all four required panels present (DDN-PJ081)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "environmental/legal extension (use canvas.pestle@1)",
+        "method certification"
+      ]
+    },
+    {
+      "id": "canvas.pestle@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "PESTLE analysis"
+      ],
+      "scope": "Six macro-environment panels in two rows of three.",
+      "validation": [
+        "all six required panels present (DDN-PJ081)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "method certification"
+      ]
+    },
+    {
+      "id": "canvas.porter5@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Porter five forces"
+      ],
+      "scope": "Center competitive-rivalry panel with the four surrounding force panels on a 3-column grid.",
+      "validation": [
+        "all five required panels present (DDN-PJ081)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "force-weight scoring",
+        "method certification"
+      ]
+    },
+    {
       "id": "table.records@1",
       "projection": "table",
       "diagramFamilies": [
@@ -2313,7 +2360,8 @@
     "mind maps via mindmap.basic@1 (single-root alternating branches, curved routing)",
     "concept maps via concept.map@1 (mandatory explicit relation labels)",
     "EPC diagrams via epc.basic@1 (hexagon events, alternating functions, and/or/xor connectors)",
-    "business model and lean canvas panel profiles (canvas.bmc@1, canvas.lean@1) with required-block validation"
+    "business model and lean canvas panel profiles (canvas.bmc@1, canvas.lean@1) with required-block validation",
+    "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

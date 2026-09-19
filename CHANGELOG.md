@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Canvas pack B: PEST, PESTLE and Porter five-forces via new profiles
+  `canvas.pest@1`/`canvas.pestle@1`/`canvas.porter5@1`, with `DDN-PJ081`
+  required-panel validation.
 - Canvas pack A: Business Model Canvas and Lean Canvas via new profiles
   `canvas.bmc@1`/`canvas.lean@1` (panels projection), with `DDN-PJ080`
   required-block validation.

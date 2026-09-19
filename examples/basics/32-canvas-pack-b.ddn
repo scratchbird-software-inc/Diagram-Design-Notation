@@ -1,0 +1,58 @@
+ddn "0.4";
+module "ddn.examples.canvas-pack-b";
+
+import "shared.ddn" as shared;
+
+// Synthetic regional market-entry study (all data invented): the fictional beverage
+// brand "Fizzberry" entering the fictional region of "Aurelia", for the
+// canvas.pest@1, canvas.pestle@1 and canvas.porter5@1 profiles.
+data scan {
+    object pest_political "Political" { kind: note; description: "Synthetic: Aurelia's stable coalition government is drafting a sugar-tax bill affecting soft drinks."; }
+    object pest_economic "Economic" { kind: note; description: "Synthetic: disposable income in Aurelia's coastal cities is rising while the currency stays weak against imports."; }
+    object pest_social "Social" { kind: note; description: "Synthetic: younger Aurelians favor low-sugar craft sodas and reusable packaging."; }
+    object pest_technological "Technological" { kind: note; description: "Synthetic: mobile ordering covers most urban Aurelian retail, but cold-chain logistics remain patchy inland."; }
+    object pestle_political "Political" { kind: note; description: "Synthetic: Aurelia's proposed sugar levy would add a per-litre duty on sweetened beverages by next year."; }
+    object pestle_economic "Economic" { kind: note; description: "Synthetic: regional GDP growth near four percent supports premium pricing despite import-cost pressure."; }
+    object pestle_social "Social" { kind: note; description: "Synthetic: health-conscious urban consumers are shifting from colas toward botanical sparkling drinks."; }
+    object pestle_technological "Technological" { kind: note; description: "Synthetic: direct-to-consumer delivery apps reach most of Aurelia's cities within a day."; }
+    object pestle_legal "Legal" { kind: note; description: "Synthetic: Aurelian labeling law requires front-of-pack sugar warnings and a deposit-return scheme for bottles."; }
+    object pestle_environmental "Environmental" { kind: note; description: "Synthetic: coastal water-stress rules cap bottling-plant extraction during Aurelia's dry season."; }
+    object p5_entrants "Threat of new entrants" { kind: note; description: "Synthetic: low bottling capital costs and contract packers make new local soda brands easy to launch."; }
+    object p5_supplier "Supplier power" { kind: note; description: "Synthetic: two Aurelian bottling-glass works hold most capacity, giving them strong price leverage."; }
+    object p5_rivalry "Competitive rivalry" { kind: note; description: "Synthetic: three entrenched cola brands discount aggressively each summer in Aurelia's coastal cities."; }
+    object p5_buyer "Buyer power" { kind: note; description: "Synthetic: Aurelia's two supermarket chains control most shelf space and demand listing fees."; }
+    object p5_substitutes "Threat of substitutes" { kind: note; description: "Synthetic: tap-water carbonation devices and kombucha stalls are gaining share with Aurelian households."; }
+}
+
+view pest "Fizzberry in Aurelia / PEST scan" {
+    data: [@scan];
+    format: @shared.styles.technical;
+    projection { kind:panels; profile:"canvas.pest@1"; columns:4; panels:[
+        {id:"political",title:"POLITICAL",row:0,column:0,rowspan:1,colspan:1,items:[@scan.pest_political]},
+        {id:"economic",title:"ECONOMIC",row:0,column:1,rowspan:1,colspan:1,items:[@scan.pest_economic]},
+        {id:"social",title:"SOCIAL",row:0,column:2,rowspan:1,colspan:1,items:[@scan.pest_social]},
+        {id:"technological",title:"TECHNOLOGICAL",row:0,column:3,rowspan:1,colspan:1,items:[@scan.pest_technological]}]; }
+}
+
+view pestle "Fizzberry in Aurelia / PESTLE scan" {
+    data: [@scan];
+    format: @shared.styles.technical;
+    projection { kind:panels; profile:"canvas.pestle@1"; columns:3; panels:[
+        {id:"political",title:"POLITICAL",row:0,column:0,rowspan:1,colspan:1,items:[@scan.pestle_political]},
+        {id:"economic",title:"ECONOMIC",row:0,column:1,rowspan:1,colspan:1,items:[@scan.pestle_economic]},
+        {id:"social",title:"SOCIAL",row:0,column:2,rowspan:1,colspan:1,items:[@scan.pestle_social]},
+        {id:"technological",title:"TECHNOLOGICAL",row:1,column:0,rowspan:1,colspan:1,items:[@scan.pestle_technological]},
+        {id:"legal",title:"LEGAL",row:1,column:1,rowspan:1,colspan:1,items:[@scan.pestle_legal]},
+        {id:"environmental",title:"ENVIRONMENTAL",row:1,column:2,rowspan:1,colspan:1,items:[@scan.pestle_environmental]}]; }
+}
+
+view porter5 "Fizzberry in Aurelia / five forces" {
+    data: [@scan];
+    format: @shared.styles.technical;
+    projection { kind:panels; profile:"canvas.porter5@1"; columns:3; panels:[
+        {id:"entrants",title:"THREAT OF NEW ENTRANTS",row:0,column:1,rowspan:1,colspan:1,items:[@scan.p5_entrants]},
+        {id:"supplier",title:"SUPPLIER POWER",row:1,column:0,rowspan:1,colspan:1,items:[@scan.p5_supplier]},
+        {id:"rivalry",title:"COMPETITIVE RIVALRY",row:1,column:1,rowspan:1,colspan:1,items:[@scan.p5_rivalry]},
+        {id:"buyer",title:"BUYER POWER",row:1,column:2,rowspan:1,colspan:1,items:[@scan.p5_buyer]},
+        {id:"substitutes",title:"THREAT OF SUBSTITUTES",row:2,column:1,rowspan:1,colspan:1,items:[@scan.p5_substitutes]}]; }
+}

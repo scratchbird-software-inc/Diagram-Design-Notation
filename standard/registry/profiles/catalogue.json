@@ -1217,6 +1217,53 @@
       ]
     },
     {
+      "id": "canvas.pest@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "PEST analysis"
+      ],
+      "scope": "Four macro-environment panels (political, economic, social, technological) in one strip.",
+      "validation": [
+        "all four required panels present (DDN-PJ081)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "environmental/legal extension (use canvas.pestle@1)",
+        "method certification"
+      ]
+    },
+    {
+      "id": "canvas.pestle@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "PESTLE analysis"
+      ],
+      "scope": "Six macro-environment panels in two rows of three.",
+      "validation": [
+        "all six required panels present (DDN-PJ081)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "method certification"
+      ]
+    },
+    {
+      "id": "canvas.porter5@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Porter five forces"
+      ],
+      "scope": "Center competitive-rivalry panel with the four surrounding force panels on a 3-column grid.",
+      "validation": [
+        "all five required panels present (DDN-PJ081)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "force-weight scoring",
+        "method certification"
+      ]
+    },
+    {
       "id": "table.records@1",
       "projection": "table",
       "diagramFamilies": [
