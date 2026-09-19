@@ -2023,6 +2023,26 @@
         "dotted-line reports",
         "HR-system synchronisation"
       ]
+    },
+    {
+      "id": "wbs.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Work breakdown structure"
+      ],
+      "scope": "Deliverable-oriented single-root decomposition tree of analysis.task nodes; top-down native tree layout.",
+      "validation": [
+        "participants limited to analysis.task (DDN-PF007)",
+        "analysis.decomposes links only (DDN-PF007)",
+        "decomposition is acyclic (DDN-PF004)",
+        "exactly one root — one node with no incoming analysis.decomposes edge (DDN-PJ102)",
+        "no node has multiple parents (DDN201, layout stage)"
+      ],
+      "unsupported": [
+        "effort/cost rollups",
+        "Gantt conversion",
+        "resource assignment"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2195,7 +2215,8 @@
     "candlestick/OHLC marks via chart.candlestick@1 (open/high/low/close bindings)",
     "treemaps via chart.treemap@1 (dotted-path hierarchy, slice-and-dice)",
     "sankey flow diagrams via chart.sankey@1 (BFS depth columns, provenance ribbons)",
-    "organisation charts via org.tree@1 (single-root reports_to trees, top-down native layout)"
+    "organisation charts via org.tree@1 (single-root reports_to trees, top-down native layout)",
+    "work breakdown structures via wbs.tree@1 (analysis.decomposes trees)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

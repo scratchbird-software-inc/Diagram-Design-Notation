@@ -902,6 +902,24 @@
     ],
     "allow_self": false,
     "member_endpoints": false
+  },
+    {
+    "keyword": "analysis.decomposes",
+    "name": "Decomposes into",
+    "verb": "Decomposes into",
+    "family": "structural",
+    "code": "DECOMPOSES",
+    "start": "none",
+    "end": "none",
+    "glyph": "link",
+    "source": [
+      "analysis.task"
+    ],
+    "target": [
+      "analysis.task"
+    ],
+    "allow_self": false,
+    "member_endpoints": false
   }
   ],
   "profiles": [
@@ -1521,6 +1539,26 @@
         "matrix organizations (multiple parents)",
         "dotted-line reports",
         "HR-system synchronisation"
+      ]
+    },
+    {
+      "id": "wbs.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Work breakdown structure"
+      ],
+      "scope": "Deliverable-oriented single-root decomposition tree of analysis.task nodes; top-down native tree layout.",
+      "validation": [
+        "participants limited to analysis.task (DDN-PF007)",
+        "analysis.decomposes links only (DDN-PF007)",
+        "decomposition is acyclic (DDN-PF004)",
+        "exactly one root — one node with no incoming analysis.decomposes edge (DDN-PJ102)",
+        "no node has multiple parents (DDN201, layout stage)"
+      ],
+      "unsupported": [
+        "effort/cost rollups",
+        "Gantt conversion",
+        "resource assignment"
       ]
     }
   ],

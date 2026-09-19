@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Work breakdown structures via new profile `wbs.tree@1` and new profile verb
+  `analysis.decomposes` (reuses RT-008's top-down tree layout and `DDN-PJ102`
+  single-root validation).
+
 - Org charts via new profile `org.tree@1` and new core verb `reports_to`;
   native tree layout now honours `direction: down`; `DDN-PJ102` single-root
   validation.

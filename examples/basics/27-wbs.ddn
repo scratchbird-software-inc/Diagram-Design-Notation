@@ -1,0 +1,37 @@
+ddn "0.5";
+module "ddn.examples.wbs";
+
+import "shared.ddn" as shared;
+
+// Synthetic project work breakdown structure for the wbs.tree@1 profile.
+data plan {
+    object project "Website relaunch (synthetic)" { kind: "analysis.task"; }
+    object design "Design" { kind: "analysis.task"; }
+    object build "Build" { kind: "analysis.task"; }
+    object launch "Launch" { kind: "analysis.task"; }
+    object wireframes "Wireframes" { kind: "analysis.task"; }
+    object visual "Visual design" { kind: "analysis.task"; }
+    object pages "Page build" { kind: "analysis.task"; }
+    object cms "CMS wiring" { kind: "analysis.task"; }
+    object beta "Beta window" { kind: "analysis.task"; }
+    object golive "Go-live" { kind: "analysis.task"; }
+    relation r1 @project -> @design { kind: "analysis.decomposes"; }
+    relation r2 @project -> @build { kind: "analysis.decomposes"; }
+    relation r3 @project -> @launch { kind: "analysis.decomposes"; }
+    relation r4 @design -> @wireframes { kind: "analysis.decomposes"; }
+    relation r5 @design -> @visual { kind: "analysis.decomposes"; }
+    relation r6 @build -> @pages { kind: "analysis.decomposes"; }
+    relation r7 @build -> @cms { kind: "analysis.decomposes"; }
+    relation r8 @launch -> @beta { kind: "analysis.decomposes"; }
+    relation r9 @launch -> @golive { kind: "analysis.decomposes"; }
+}
+
+format options {
+    layout wbs { algorithm: tree; direction: down; root: @plan.project; hierarchy: ["analysis.decomposes"]; }
+}
+
+view wbs "Synthetic project / work breakdown structure" {
+    data: [@plan]; format: @shared.styles.technical; layout: @options.wbs;
+    projection { kind: graph; profile: "wbs.tree@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

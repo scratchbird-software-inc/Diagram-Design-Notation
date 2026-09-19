@@ -65,11 +65,13 @@ The implementation's semantic validator is authoritative for property applicabil
 
 `profiles/catalogue.json` is the machine-readable profile catalogue. The shipped profiles are fixed trusted definitions bundled at build time. This release does NOT implement downloading or installing arbitrary user-defined plugin code from DDN source. Developers can extend the catalogue/source, rebuild the library and add fixtures. Unrecognized profile IDs and incompatible projection kinds are errors.
 
-A profile describes a projection, eligible semantics, validation obligations, supported silhouettes, scope and exclusions. The profile library adds 42 kind definitions and 20 relationship definitions to the 152-kind/91-relation core without changing the latter's IDs. Three of the additional kind recipes are used by Chen-generated occurrences. An icon count is not a supported-diagram count.
+A profile describes a projection, eligible semantics, validation obligations, supported silhouettes, scope and exclusions. The profile library adds 42 kind definitions and 21 relationship definitions to the 152-kind/91-relation core without changing the latter's IDs. Three of the additional kind recipes are used by Chen-generated occurrences. An icon count is not a supported-diagram count.
 
 The graph-projection profiles now include the C4-style set: `c4.context@1` (people and systems only, no internal structure), `c4.container@1` (containers, stores and queues inside one system boundary frame) and `c4.component@1` (components inside one container boundary frame), using the six `c4.*` kinds and the `c4.rel` verb. These are DDN profiles on the existing graph projection, not a claim of C4 specification conformance.
 
 The graph projection also carries `org.tree@1`: a single-root reporting hierarchy of `organization`, `team`, `role` and `analysis.role` participants linked only by the core governance verb `reports_to`, rendered top-down with the native tree layout. Validation rejects non-org participants and links (`DDN-PF007`), reporting cycles (`DDN-PF004`), anything but exactly one root (`DDN-PJ102`), and multiple managers per node (core `DDN201` at the layout stage).
+
+The graph projection also carries `wbs.tree@1`: a deliverable-oriented work breakdown structure — a single-root decomposition tree of `analysis.task` participants linked only by the profile verb `analysis.decomposes` (parent deliverable → child deliverable), rendered top-down with the same native tree layout. Validation reuses the org-tree checks: non-task participants and links are rejected (`DDN-PF007`), decomposition cycles (`DDN-PF004`), anything but exactly one root (`DDN-PJ102`), and multiple parents per node (core `DDN201` at the layout stage).
 
 ## 16.4 Explicit source collections and bindings
 

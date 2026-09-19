@@ -838,7 +838,8 @@
             "state.transition",
             "flow.annotation",
             "flow.continues",
-            "c4.rel"
+            "c4.rel",
+            "analysis.decomposes"
           ]
         },
         "kindCode": {
@@ -953,7 +954,8 @@
             "TRANSITION",
             "ANNOTATION",
             "CONTINUES",
-            "C4REL"
+            "C4REL",
+            "DECOMPOSES"
           ]
         },
         "from": {

@@ -57,6 +57,12 @@ function validate(ir,reg,ErrorClass){
   acyclic(['reports_to'],'Org chart');
   singleRoot(['reports_to'],'org.tree@1 requires exactly one root — one person reports to nobody');
  }
+ if(p.profile==='wbs.tree@1'){
+  if(ns.some(n=>n.kind!=='analysis.task'))fail('DDN-PF007','wbs.tree@1 accepts analysis.task participants only');
+  if(es.some(r=>r.kind!=='analysis.decomposes'))fail('DDN-PF007','wbs.tree@1 accepts analysis.decomposes links only');
+  acyclic(['analysis.decomposes'],'WBS');
+  singleRoot(['analysis.decomposes'],'wbs.tree@1 requires exactly one root — one deliverable decomposes from nothing');
+ }
  if(p.profile.startsWith('c4.')){
   const ok={'c4.context@1':['c4.person','c4.system'],'c4.container@1':['c4.person','c4.system','c4.container','c4.store','c4.queue'],'c4.component@1':['c4.person','c4.system','c4.container','c4.store','c4.component']}[p.profile];
   const ext={'c4.container@1':['c4.person'],'c4.component@1':['c4.person','c4.system','c4.store']}[p.profile]||[];
