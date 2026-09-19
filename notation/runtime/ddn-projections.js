@@ -50,7 +50,24 @@ function render(ir,reg,glyphs='',options={}){
    for(let j=0;j<cols;j++)body+=line(j*cw,y,j*cw,y+rh)+group(plan.records[i].id,[plan.records[i].id],lines(cs[j],j*cw+12*s,y+24*s),{x:j*cw,y,w:cw,h:rh},plan.columns[j].key);y+=rh;
   }H=y+38*s;body+=text(0,H-9*s,'Source-bound table · no expression or decision-rule execution is implied.',11);
  }
- if(plan.kind==='panels'&&plan.profile==='panels.pyramid@1'&&!plan.panels.some(v=>v.child)){
+ if(plan.kind==='panels'&&plan.profile==='panels.venn@1'&&!plan.panels.some(v=>v.child)){
+  W=Math.max(W,640*s);H=Math.max(q(pr.height,600*s),440*s);
+  const sets=plan.venn.sets,N=sets.length,cx=W/2,cy=H/2+10*s,r=Math.min(W,H)*0.3,G=[cx,cy];
+  let C;
+  if(N===2)C=[[cx-r/2,cy],[cx+r/2,cy]];
+  else{const d=3*r/5,k=0.866*d;C=[[cx-k,cy-0.5*d],[cx+k,cy-0.5*d],[cx,cy+d]];}
+  const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),idx=id=>sets.findIndex(v=>v.id===id);
+  for(let i=0;i<N;i++)body+=group(sets[i].id,plan.panels[i].items.map(it=>it.node.id),`<circle cx="${f(C[i][0])}" cy="${f(C[i][1])}" r="${f(r)}" fill="${colour(i)}" fill-opacity=".16" stroke="${colour(i)}" stroke-width="1.8"/>`,{x:C[i][0]-r,y:C[i][1]-r,w:2*r,h:2*r});
+  for(let i=0;i<N;i++){const d=dist(C[i],G),L=[C[i][0]+(C[i][0]-G[0])*(r+18*s)/d,C[i][1]+(C[i][1]-G[1])*(r+18*s)/d];
+   body+=group(sets[i].id,[sets[i].id],text(L[0],L[1],sets[i].title,13,700,'middle'),{x:L[0]-60*s,y:L[1]-10*s,w:120*s,h:20*s});}
+  const keys=[];const combs=(k,start,cur)=>{if(cur.length===k){keys.push([...cur].sort().join('+'));return;}for(let j=start;j<N;j++)combs(k,j+1,[...cur,sets[j].id]);};
+  for(let k=1;k<=N;k++)combs(k,0,[]);
+  for(const key of keys){const rg=plan.venn.regions[key],parts=key.split('+');let L;
+   if(parts.length===1){const i=idx(parts[0]),d=dist(C[i],G);L=[C[i][0]+(C[i][0]-G[0])*(0.62*r)/d,C[i][1]+(C[i][1]-G[1])*(0.62*r)/d];}
+   else if(parts.length===2){const i=idx(parts[0]),j=idx(parts[1]),M=[(C[i][0]+C[j][0])/2,(C[i][1]+C[j][1])/2];L=[M[0]+(M[0]-G[0])*0.8,M[1]+(M[1]-G[1])*0.8];}
+   else L=G;
+   body+=group(key,rg.ids,text(L[0],L[1],rg.count,16,700,'middle'),{x:L[0]-14*s,y:L[1]-10*s,w:28*s,h:20*s},'x_sets');}
+ }else if(plan.kind==='panels'&&plan.profile==='panels.pyramid@1'&&!plan.panels.some(v=>v.child)){
   W=Math.max(W,560*s);const bandH=150*s,gap=10*s,cx=W/2,bands=[...plan.panels].sort((a,b)=>a.row-b.row),n=bands.length,widthAt=k=>W*(k+1)/(n+1);
   for(let i=0;i<n;i++){const band=bands[i],tw=widthAt(i),bw=widthAt(i+1),y=i*(bandH+gap);
    const poly=`<polygon points="${f(cx-tw/2)} ${f(y)} ${f(cx+tw/2)} ${f(y)} ${f(cx+bw/2)} ${f(y+bandH)} ${f(cx-bw/2)} ${f(y+bandH)}" fill="${colour(i)}" fill-opacity=".18" stroke="${colour(i)}" stroke-width="1.6"/>`;

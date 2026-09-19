@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Venn diagrams (2 or 3 sets) via new profile `panels.venn@1` with registered
+  `x_sets` membership, fixed region-count geometry, and `DDN-PJ090`/`DDN-PJ091`
+  validation.
+
 - Pyramid diagrams via new profile `panels.pyramid@1` (3..5 trapezoid bands
   with optional side annotations), validated by `DDN-PJ089`.
 

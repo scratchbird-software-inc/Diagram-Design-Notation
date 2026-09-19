@@ -3,7 +3,7 @@
 A **model-first diagram language** and open standard proposal: you author data,
 format, and view declarations separately in plain-text `.ddn` files, and one
 semantic model projects into many diagram types (ERD (incl. crow's-foot cardinality), DFD, flowchart, C4 context/container/component,
-matrix/RACI, chart, radar chart, funnel chart, gauge chart, candlestick chart, treemap, Sankey diagram, timeline, fishbone, decision, org charts, work breakdown structures, mind maps, concept maps, EPC process chains, business-model/lean canvases, PESTLE/five-forces canvases, BCG/Ansoff/TOWS matrices, empathy maps and balanced scorecards, journey maps, story maps, pyramids, …) through versioned
+matrix/RACI, chart, radar chart, funnel chart, gauge chart, candlestick chart, treemap, Sankey diagram, timeline, fishbone, decision, org charts, work breakdown structures, mind maps, concept maps, EPC process chains, business-model/lean canvases, PESTLE/five-forces canvases, BCG/Ansoff/TOWS matrices, empathy maps and balanced scorecards, journey maps, story maps, pyramids, venn diagrams, …) through versioned
 profiles and projections. Publication is allowlist-gated: approved views export an explicit JSON projection or an allowlisted SQL DDL export.
 
 This repository is a monorepo with four components:

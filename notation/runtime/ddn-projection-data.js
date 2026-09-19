@@ -106,7 +106,25 @@ function plan(ir,ErrorClass=Error){
    const rows=panels.map(b=>b.row).sort((a,b)=>a-b);
    if(rows.some((r,i)=>r!==i))fail('DDN-PJ089','pyramid band rows must be contiguous 0..'+(n-1)+' from top to bottom');
   }
-  return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
+  let venn;
+  if(p.profile==='panels.venn@1'){
+   const sets=panels.map(v=>v.id);
+   if(sets.length<2||sets.length>3)fail('DDN-PJ090','panels.venn@1 draws exactly 2 or 3 sets; '+sets.length+' declared');
+   const membership=new Map();
+   for(const v of panels)for(const i of v.items){
+    const n=i.node,xs=get(n,'x_sets');
+    if(!Array.isArray(xs)||xs.length<1||xs.length>3||new Set(xs).size!==xs.length||xs.some(x=>typeof x!=='string'||!x.length||!sets.includes(x)))fail('DDN-PJ091','venn membership of '+n.name+' disagrees with its x_sets declaration (x_sets must be an array of 1..3 unique declared set ids)',n);
+    if(!membership.has(n.id))membership.set(n.id,{node:n,xs,listed:new Set()});
+    membership.get(n.id).listed.add(v.id);
+   }
+   for(const {node,xs,listed} of membership.values())if(listed.size!==xs.length||!xs.every(x=>listed.has(x)))fail('DDN-PJ091','venn membership of '+node.name+' disagrees with its x_sets declaration',node);
+   const keys=[];const combs=(k,start,cur)=>{if(cur.length===k){keys.push([...cur].sort().join('+'));return;}for(let j=start;j<sets.length;j++)combs(k,j+1,[...cur,sets[j]]);};
+   for(let k=1;k<=sets.length;k++)combs(k,0,[]);
+   const regions={};for(const key of keys)regions[key]={count:0,ids:[]};
+   for(const [id,{xs}] of membership){const key=[...xs].sort().join('+');regions[key].count++;regions[key].ids.push(id);}
+   venn={sets:panels.map(v=>({id:v.id,title:v.title})),regions};
+  }
+  return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),...(venn?{venn}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
   if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey');

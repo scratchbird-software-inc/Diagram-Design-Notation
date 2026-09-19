@@ -1908,6 +1908,24 @@
         "auto-sizing from data",
         "nested child views"
       ]
+    },
+    {
+      "id": "panels.venn@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Venn diagram (2 or 3 sets)"
+      ],
+      "scope": "Two or three declared set panels; members declare x_sets; region labels show declared membership counts at fixed positions.",
+      "validation": [
+        "exactly 2 or 3 sets (DDN-PJ090)",
+        "x_sets present and consistent with panel listings (DDN-PJ091)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "4+ sets",
+        "area-proportional geometry",
+        "item names inside regions (counts only in v1)"
+      ]
     }
   ],
   "shapes": [

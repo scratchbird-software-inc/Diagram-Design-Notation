@@ -2352,6 +2352,24 @@
         "auto-sizing from data",
         "nested child views"
       ]
+    },
+    {
+      "id": "panels.venn@1",
+      "projection": "panels",
+      "diagramFamilies": [
+        "Venn diagram (2 or 3 sets)"
+      ],
+      "scope": "Two or three declared set panels; members declare x_sets; region labels show declared membership counts at fixed positions.",
+      "validation": [
+        "exactly 2 or 3 sets (DDN-PJ090)",
+        "x_sets present and consistent with panel listings (DDN-PJ091)",
+        "existing panels grid checks"
+      ],
+      "unsupported": [
+        "4+ sets",
+        "area-proportional geometry",
+        "item names inside regions (counts only in v1)"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2537,7 +2555,8 @@
     "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
     "crow's-foot cardinality ERD profile erd.crowfoot@1 (obligatory one/zeroone/many/zeromany endpoint marks, DDN-PJ087)",
     "allowlisted SQL DDL export (export format sql: CREATE TABLE/PRIMARY KEY/FOREIGN KEY, DDN-PJ088/PJ092)",
-    "pyramid/tier diagrams via panels.pyramid@1 (3..5 trapezoid bands, side annotations, DDN-PJ089)"
+    "pyramid/tier diagrams via panels.pyramid@1 (3..5 trapezoid bands, side annotations, DDN-PJ089)",
+    "2/3-set venn diagrams via panels.venn@1 (x_sets membership, fixed region geometry, DDN-PJ090/PJ091)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
