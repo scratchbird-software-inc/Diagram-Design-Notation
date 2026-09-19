@@ -21,7 +21,8 @@
         "timeline",
         "fishbone",
         "decision",
-        "sequence"
+        "sequence",
+        "timing"
       ]
     },
     "style": {
@@ -2473,6 +2474,22 @@
         "executable process semantics",
         "full BPMN conformance"
       ]
+    },
+    {
+      "id": "uml.timing@1",
+      "projection": "timing",
+      "diagramFamilies": [
+        "Timing/state-over-time diagram"
+      ],
+      "scope": "One band per participant; state plateaus from declared time points; numeric time axis; supplied data only.",
+      "validation": [
+        "x_states present, well-formed and strictly chronological (DDN-PJ118)"
+      ],
+      "unsupported": [
+        "duration and slew-rate annotations",
+        "clock/unit conversion",
+        "full UML conformance"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2597,6 +2614,12 @@
       "profile",
       "width",
       "height"
+    ],
+    "timing": [
+      "kind",
+      "profile",
+      "width",
+      "height"
     ]
   },
   "implemented": [
@@ -2671,7 +2694,8 @@
     "object/instance snapshots via uml.object@1 (classifier-checked slots)",
     "hierarchical state views via state.composite@1 (composite frames, dashed regions, per-region initial check)",
     "activity-style flows with swimlane partitions, fork/join bars and object nodes via uml.activity@1",
-    "BPMN-style pools, typed events, gateways and cross-pool message flow via bpmn.basic@1 (profile-level, not BPMN conformance)"
+    "BPMN-style pools, typed events, gateways and cross-pool message flow via bpmn.basic@1 (profile-level, not BPMN conformance)",
+    "timing/state-over-time diagrams via uml.timing@1 (declared time points, plateau bands)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

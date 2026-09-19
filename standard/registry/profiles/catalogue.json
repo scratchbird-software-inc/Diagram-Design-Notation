@@ -2140,6 +2140,22 @@
         "executable process semantics",
         "full BPMN conformance"
       ]
+    },
+    {
+      "id": "uml.timing@1",
+      "projection": "timing",
+      "diagramFamilies": [
+        "Timing/state-over-time diagram"
+      ],
+      "scope": "One band per participant; state plateaus from declared time points; numeric time axis; supplied data only.",
+      "validation": [
+        "x_states present, well-formed and strictly chronological (DDN-PJ118)"
+      ],
+      "unsupported": [
+        "duration and slew-rate annotations",
+        "clock/unit conversion",
+        "full UML conformance"
+      ]
     }
   ],
   "shapes": [

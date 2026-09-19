@@ -2,7 +2,7 @@
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-quality-data'));else root.DDNProjectionData=factory(root.DDNQualityData);})(typeof globalThis!=='undefined'?globalThis:this,function(Quality){
 'use strict';
 const common=['kind','profile','width','height'];
-const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common]};
+const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common]};
 const ref=x=>typeof x==='string'?x:x?.$ref;
 function get(record,path){
  if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
@@ -239,6 +239,19 @@ function plan(ir,ErrorClass=Error){
    if(!n||n.type!=='object'||!byParticipant.has(n.id))fail('DDN-PJ110','Sequence message '+(r.name||r.id)+' has a '+label+' endpoint that is not a selected object declaration: '+ep.element,r);
   }
   return{kind,profile:p.profile,participants,messages,sourceIds:participants.map(n=>n.id).concat(messages.map(r=>r.id))};
+ }
+ if(kind==='timing'){
+  const participants=orderedParticipants(ir,shown).map(n=>{
+   const xs=n.properties.x_states;
+   if(!Array.isArray(xs)||!xs.length)fail('DDN-PJ118','Timing participant '+n.name+' must carry x_states with at least one {at,state} entry',n);
+   const states=xs.map((e,i)=>{
+    if(!e||typeof e!=='object'||!Number.isFinite(e.at)||typeof e.state!=='string'||!e.state.length)fail('DDN-PJ118','Timing participant '+n.name+' has a malformed x_states entry at index '+i+': at must be a finite number and state a nonempty string',n);
+    if(i&&!(e.at>xs[i-1].at))fail('DDN-PJ118','Timing participant '+n.name+' x_states entry at index '+i+' (at='+e.at+') is not strictly after the previous entry (at='+xs[i-1].at+')',n);
+    return{at:e.at,state:e.state};
+   });
+   return{node:n,states};
+  });
+  return{kind,profile:p.profile,participants,sourceIds:participants.map(x=>x.node.id)};
  }
 }
 function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}

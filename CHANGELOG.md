@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Timing/state-over-time projection (`kind:timing`, profile `uml.timing@1`,
+  `x_states`), with `DDN-PJ118` validation. RFC-107.
+
 - BPMN-style process collaboration via profile `bpmn.basic@1` (pools/lanes,
   typed events/gateways, cross-pool message flow; `DDN-PJ116`/`DDN-PJ117`).
   Profile-level coverage, not BPMN conformance. RFC-106.

@@ -1193,6 +1193,13 @@
           "additionalProperties": false
         }
       }
+    },
+    "x_states": {
+      "targets": {
+        "object": {
+          "type": "array"
+        }
+      }
     }
   }
 }

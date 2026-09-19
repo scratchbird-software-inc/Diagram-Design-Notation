@@ -7,7 +7,7 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 46 numbered examples (01-customer … 46-bpmn)
+- `basics/` — 47 numbered examples (01-customer … 47-timing-diagram)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, authorized SQL DDL export, process contracts,
@@ -21,7 +21,7 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   story maps, crow's-foot ERD, pyramid diagrams, venn diagrams,
   sequence-style and communication interaction diagrams, and object/instance
   snapshots, hierarchical state machines, activity diagrams with partitions,
-  and BPMN-style collaborations.
+  BPMN-style collaborations, and timing/state-over-time diagrams.
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

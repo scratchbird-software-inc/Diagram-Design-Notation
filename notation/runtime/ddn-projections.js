@@ -254,6 +254,34 @@ function render(ir,reg,glyphs='',options={}){
   });
   body+=text(0,H-15*s,'Declaration order, not a verified protocol · '+parts.length+' participants · '+msgs.length+' messages · dashed arrows are x_return replies · bars are receiver activations.',11);
  }
+ if(plan.kind==='timing'){
+  const parts=plan.participants;
+  W=Math.max(W,900*s);
+  const labelW=Math.max(110*s,Math.max(...parts.map(x=>Text.measure(x.node.name,13*s,p.style.font,600).width))+40*s);
+  const right=W-60*s,top=64*s,bandH=96*s,pad=12*s,bottom=top+bandH*parts.length;
+  const lo=Math.min(...parts.flatMap(x=>x.states.map(e=>e.at))),hi0=Math.max(...parts.flatMap(x=>x.states.map(e=>e.at))),hi=hi0===lo?lo+1:hi0;
+  const fx=v=>labelW+(v-lo)/(hi-lo)*(right-labelW);
+  H=bottom+80*s;
+  parts.forEach((part,i)=>{
+   const y=top+i*bandH,n=part.node;
+   const order=[],level=new Map();
+   for(const e of part.states)if(!level.has(e.state)){level.set(e.state,order.length);order.push(e.state);}
+   const step=(bandH-2*pad)/order.length,ly=j=>y+pad+j*step;
+   body+=group(n.id,[n.id],lines(wrap(n.name,labelW-30*s,13,600),12*s,y+bandH/2+5*s,13,600)+line(0,y+bandH,W,y+bandH),{x:0,y,w:labelW-15*s,h:bandH});
+   let d='';
+   part.states.forEach((e,m)=>{
+    const x0=fx(e.at),x1=m+1<part.states.length?fx(part.states[m+1].at):fx(hi),yy=ly(level.get(e.state));
+    d+=(m?'L':'M')+f(x0)+' '+f(yy)+'L'+f(x1)+' '+f(yy);
+    const content=`<title>${esc(n.name+': '+e.state+' from '+fmtNumber(e.at))}</title><path class="ddn-timing-plateau" data-at="${e.at}" data-state="${esc(e.state)}" d="M${f(x0)} ${f(yy)}L${f(x1)} ${f(yy)}" stroke="${colour(level.get(e.state))}" stroke-width="2.5" fill="none"/>`;
+    body+=group(n.id,[n.id],content+text((x0+x1)/2,yy-8*s,e.state,11,400,'middle'),{x:x0,y:yy-16*s,w:x1-x0,h:20*s,at:e.at,state:e.state},'x_states');
+   });
+   body+=`<path class="ddn-timing-trace" d="${d}" stroke="${t.ink}" stroke-width="1.4" fill="none"/>`;
+   for(let m=1;m<part.states.length;m++){const xx=fx(part.states[m].at);body+=line(xx,ly(level.get(part.states[m-1].state)),xx,ly(level.get(part.states[m].state)),t.ink,1.4);}
+  });
+  body+=line(labelW,bottom,right,bottom,t.ink,1.4);
+  for(const v of [lo,hi0]){const x=fx(v);body+=line(x,bottom,x,bottom+8*s,t.ink,1.2)+text(x,bottom+26*s,fmtNumber(v),11,400,'middle');}
+  body+=text(labelW,H-15*s,'Supplied time points, not a simulation · '+parts.length+' participants · abstract numeric time axis in the author\'s unit.',11);
+ }
  if(plan.kind==='panels'&&plan.panels.some(v=>v.child)){
   if(typeof options.renderChild!=='function')throw new D.DDNError('DDN-QP004','Child panels require the unified engine dispatcher');
   const gap=24*s,pad=18*s,measured=[];let cw=Math.max(260*s,(W-gap*(plan.columns-1))/plan.columns);

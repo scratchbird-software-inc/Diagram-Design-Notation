@@ -1,0 +1,24 @@
+ddn "0.5";
+module "ddn.examples.timing";
+
+import "shared.ddn" as shared;
+
+// Synthetic traffic-light timing for the uml.timing@1 profile.
+// One band per participant in declaration order; x_states entries are
+// {at, state} time points — "from `at` onward the participant is in `state`
+// until the next entry". Time is an abstract numeric axis (seconds here).
+// All data is synthetic. This is profile-level coverage, not UML conformance.
+data signals {
+    object controller "Controller" { kind: "application";
+        x_states: [{at: 0, state: "red"}, {at: 25, state: "green"}, {at: 55, state: "amber"}];
+    }
+    object pedestrian_signal "Pedestrian signal" { kind: "application";
+        x_states: [{at: 0, state: "wait"}, {at: 25, state: "walk"}, {at: 45, state: "wait"}];
+    }
+}
+
+view timing "Synthetic traffic lights / timing (seconds)" {
+    data: [@signals]; format: @shared.styles.technical;
+    projection { kind: timing; profile: "uml.timing@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
