@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-render.js');
+const DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-render.js'),Engine=require('../runtime/ddn-engine.js');
 const root=path.resolve(__dirname,'..'),reg=JSON.parse(fs.readFileSync(path.join(root,'../standard/registry/catalogue.json'),'utf8'));
 const defs=fs.readFileSync(path.join(root,'../standard/registry/glyph-library.svg'),'utf8').match(/<defs>([\s\S]*?)<\/defs>/)[1];
 const results=[];function test(name,fn){try{fn();results.push({name,status:'pass'});console.log('PASS',name);}catch(e){results.push({name,status:'fail',message:e.stack});console.error('FAIL',name,e.message);}}
@@ -56,7 +56,7 @@ test('hide fields preserves field identity',()=>{const ir=compile(base.replace('
 test('unsafe SVG label escapes',()=>{const svg=Render.render(compile(base.replace('Alpha','<script>bad</script>')),reg,defs).svg;assert.ok(!svg.includes('<script>'));assert.ok(svg.includes('&lt;script&gt;'));});
 test('deterministic SVG output',()=>{const ir=compile();assert.equal(Render.render(ir,reg,defs).svg,Render.render(ir,reg,defs).svg);});
 const files={};for(const f of fs.readdirSync(path.join(root,'../examples/basics')).filter(f=>f.endsWith('.ddn')))files['examples/'+f]=fs.readFileSync(path.join(root,'../examples/basics',f),'utf8');
-const byView={};for(const [entry,s]of Object.entries(files).filter(([f])=>/\/\d\d-/.test(f)))for(const v of DDN.parse(s,entry).declarations.filter(x=>x.type==='view'))test('example '+path.basename(entry)+'#'+v.id,()=>{const {ir}=DDN.build(files,entry,v.id,reg);const result=Render.render(ir,reg,defs);assert.ok(result.svg.startsWith('<?xml'));byView[path.basename(entry)+'#'+v.id]={ir,...result};});
+const byView={};for(const [entry,s]of Object.entries(files).filter(([f])=>/\/\d\d-/.test(f)))for(const v of DDN.parse(s,entry).declarations.filter(x=>x.type==='view'))test('example '+path.basename(entry)+'#'+v.id,()=>{const {ir}=DDN.build(files,entry,v.id,reg);const result=Engine.render(ir,reg,defs);assert.ok(result.svg.startsWith('<?xml'));byView[path.basename(entry)+'#'+v.id]={ir,...result};});
 test('look matrix shares one semantic model',()=>{const a=byView['02-elements.ddn#classic'];for(const k of ['handDrawn','neo','dark','neutral','forest'])assert.deepEqual(DDN.semanticJSON(a.ir),DDN.semanticJSON(byView['02-elements.ddn#'+k].ir));});
 test('gap crossing is one geometric crossing, no added relation',()=>{const a=byView['03-routing.ddn#gap'];assert.equal(a.scene.crossings.length,1);assert.equal(a.ir.relations.length,2);});
 test('round bridge same topology as gap',()=>assert.deepEqual(DDN.semanticJSON(byView['03-routing.ddn#gap'].ir),DDN.semanticJSON(byView['03-routing.ddn#bridge'].ir)));

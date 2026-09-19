@@ -2,7 +2,7 @@
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-quality-data'));else root.DDNProjectionData=factory(root.DDNQualityData);})(typeof globalThis!=='undefined'?globalThis:this,function(Quality){
 'use strict';
 const common=['kind','profile','width','height'];
-const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order']};
+const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common]};
 const ref=x=>typeof x==='string'?x:x?.$ref;
 function get(record,path){
  if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
@@ -231,6 +231,16 @@ function plan(ir,ErrorClass=Error){
   const seen=new Set(),active=new Set();function visit(id){if(active.has(id))fail('DDN-PJ043','Timeline dependency cycle');if(seen.has(id))return;active.add(id);dependencies.filter(r=>r.from.element===id).forEach(r=>visit(r.to.element));active.delete(id);seen.add(id);}items.forEach(x=>visit(x.id));
   return{kind,profile:p.profile,items,dependencies,sourceIds:items.map(i=>i.id).concat(dependencies.map(d=>d.id)),quantitative:true};
  }
+ if(kind==='sequence'){
+  const participants=orderedParticipants(ir,shown),byParticipant=new Map(participants.map(n=>[n.id,n]));
+  const messages=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.message');
+  for(const r of messages)for(const [label,ep]of [['source',r.from],['target',r.to]]){
+   const n=byId.get(ep.element);
+   if(!n||n.type!=='object'||!byParticipant.has(n.id))fail('DDN-PJ110','Sequence message '+(r.name||r.id)+' has a '+label+' endpoint that is not a selected object declaration: '+ep.element,r);
+  }
+  return{kind,profile:p.profile,participants,messages,sourceIds:participants.map(n=>n.id).concat(messages.map(r=>r.id))};
+ }
 }
-return{VERSION:'0.5.0-draft.2',get,date,plan,supported,quality:Quality};
+function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}
+return{VERSION:'0.5.0-draft.2',get,date,plan,supported,participants:orderedParticipants,quality:Quality};
 });

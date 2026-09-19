@@ -707,6 +707,13 @@
         }
       }
     },
+    "x_return": {
+      "targets": {
+        "relation": {
+          "type": "boolean"
+        }
+      }
+    },
     "x_row_height": {
       "id": "interaction@0.1",
       "targets": {

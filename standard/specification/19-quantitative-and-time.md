@@ -27,7 +27,7 @@ The reference accepts real ISO date strings in YYYY-MM-DD form and validates the
 
 `timeline.basic@1` binds records to start and end dates. The interval is end-exclusive `[start,end)`; end before start is an error. Equal dates produce a diamond milestone. Optional predecessor relationships must use `precede` or `analysis.precedes`, connect selected tasks, form an acyclic graph and satisfy finish-to-start under the supplied dates. No dates are automatically rescheduled to satisfy an invalid dependency.
 
-Rendering a Gantt-style supplied-date schedule is distinct from critical-path calculation, float, calendars, resource leveling, finite-capacity scheduling and project execution. Those capabilities are not inferred from a valid picture. UML timing waveforms/state-duration tracks and general causal sequence diagrams remain separate projection work.
+Rendering a Gantt-style supplied-date schedule is distinct from critical-path calculation, float, calendars, resource leveling, finite-capacity scheduling and project execution. Those capabilities are not inferred from a valid picture. UML timing waveforms/state-duration tracks remain separate projection work; sequence-style interaction diagrams are covered by the `uml.sequence@1` profile (chapter 27).
 
 ## 19.4 Measurement, presentation and publication
 

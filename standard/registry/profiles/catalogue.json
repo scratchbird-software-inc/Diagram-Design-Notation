@@ -975,6 +975,24 @@
     ],
     "allow_self": false,
     "member_endpoints": false
+  },
+    {
+    "keyword": "uml.message",
+    "name": "Message",
+    "verb": "Message",
+    "family": "control",
+    "code": "MESSAGE",
+    "start": "none",
+    "end": "open",
+    "glyph": "link",
+    "source": [
+      "*"
+    ],
+    "target": [
+      "*"
+    ],
+    "allow_self": true,
+    "member_endpoints": false
   }
   ],
   "profiles": [
@@ -1925,6 +1943,23 @@
         "4+ sets",
         "area-proportional geometry",
         "item names inside regions (counts only in v1)"
+      ]
+    },
+    {
+      "id": "uml.sequence@1",
+      "projection": "sequence",
+      "diagramFamilies": [
+        "Sequence-style interaction"
+      ],
+      "scope": "Participants in declaration order with lifelines; messages in declaration order with dashed returns and activation bars; record provenance.",
+      "validation": [
+        "message endpoints are selected participant objects (DDN-PJ110)",
+        "participants without messages warn (DDN-PJW03)"
+      ],
+      "unsupported": [
+        "combined fragments (alt/loop/opt)",
+        "gates, creation/destruction and execution specifications",
+        "full UML conformance"
       ]
     }
   ],

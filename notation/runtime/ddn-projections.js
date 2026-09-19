@@ -222,6 +222,38 @@ function render(ir,reg,glyphs='',options={}){
   for(let i=0;i<plan.dependencies.length;i++){const r=plan.dependencies[i],a=positions.get(r.from.element),b=positions.get(r.to.element),x=Math.min(right+15*s,a.end[0]+16*s),yy=b.start[1],d=`M${f(a.end[0])} ${f(a.end[1])}H${f(x)}V${f(yy-23*s)}H${f(b.start[0])}V${f(yy-12*s)}`;body+=group(r.id,[r.id],`<path d="${d}" stroke="${t.ink}" fill="none" stroke-width="1.2"/>`+R.endMark([b.start[0],yy-12*s],90,'filled',t.ink,t.surface));}
   body+=text(0,H-20*s,'UTC dates · end-exclusive intervals · diamonds are milestones · supplied schedule, not a scheduling solver.',11);
  }
+ if(plan.kind==='sequence'){
+  const parts=plan.participants,msgs=plan.messages,px=new Map();
+  const headH=52*s,pitch=64*s,firstRow=headH+66*s;
+  const labelW=Math.max(0,...parts.map(n=>Text.measure(n.name,13*s,p.style.font,600).width));
+  const gap=Math.max(230*s,labelW+100*s),left=110*s;
+  parts.forEach((n,i)=>px.set(n.id,left+i*gap));
+  const bottom=firstRow+Math.max(msgs.length,1)*pitch-20*s;H=bottom+64*s;W=Math.max(W,left*2+(parts.length-1)*gap);
+  for(const n of parts){
+   const x=px.get(n.id),hw=Math.max(130*s,Text.measure(n.name,13*s,p.style.font,600).width+36*s);
+   const used=msgs.some(r=>r.from.element===n.id||r.to.element===n.id);
+   if(!used)diagnostics.push({code:'DDN-PJW03',severity:'warning',message:'Sequence participant '+n.name+' has no incident messages; it is drawn with an empty lifeline.'});
+   body+=group(n.id,[n.id],rect(x-hw/2,0,hw,headH,t.surface,t.ink)+lines(wrap(n.name,hw-20*s,13,600),x,headH/2+5*s,13,600,'middle')+line(x,headH,x,bottom,t.rule,1.2,'5 5'),{x:x-hw/2,y:0,w:hw,h:bottom});
+  }
+  const bars=new Map();
+  msgs.forEach((r,i)=>{
+   const recv=r.to.element,next=msgs.findIndex((m,j)=>j>i&&m.from.element===recv),key=recv+':'+i+':'+(next<0?msgs.length-1:next);
+   if(!bars.has(key))bars.set(key,{id:recv,from:i,to:next<0?msgs.length-1:next});
+  });
+  for(const a of bars.values()){const x=px.get(a.id),y0=firstRow+a.from*pitch-16*s,y1=firstRow+a.to*pitch+16*s;
+   body+=group(a.id,[a.id],`<rect x="${f(x-5*s)}" y="${f(y0)}" width="${f(10*s)}" height="${f(y1-y0)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`,{x:x-5*s,y:y0,w:10*s,h:y1-y0});}
+  msgs.forEach((r,i)=>{
+   const y=firstRow+i*pitch,ret=r.properties.x_return===true,xs=px.get(r.from.element),xt=px.get(r.to.element),num=(i+1)+'. ';
+   if(r.from.element===r.to.element){
+    const lw=48*s,lh=26*s,d=`M${f(xs)} ${f(y)}H${f(xs+lw)}V${f(y+lh)}H${f(xs+9*s)}`;
+    body+=group(r.id,[r.id],`<path d="${d}" stroke="${ret?t.rule:t.ink}" stroke-width="1.4" fill="none"${ret?' stroke-dasharray="5 4"':''}/>`+R.endMark([xs+9*s,y+lh],90,'open',ret?t.rule:t.ink,t.surface)+text(xs+lw/2+12*s,y-10*s,num+r.name,12,400,'middle'),{x:xs,y:y-20*s,w:lw+14*s,h:lh+22*s});
+   }else{
+    const dir=xt>xs?0:180,ex=xt+(xt>xs?-2:2)*s;
+    body+=group(r.id,[r.id],line(xs,y,ex,y,ret?t.rule:t.ink,1.4,ret?'5 4':'')+R.endMark([ex,y],dir,ret?'open':'filled',ret?t.rule:t.ink,t.surface)+text((xs+xt)/2,y-10*s,num+r.name,12,400,'middle'),{x:Math.min(xs,xt),y:y-20*s,w:Math.abs(xt-xs),h:24*s});
+   }
+  });
+  body+=text(0,H-15*s,'Declaration order, not a verified protocol · '+parts.length+' participants · '+msgs.length+' messages · dashed arrows are x_return replies · bars are receiver activations.',11);
+ }
  if(plan.kind==='panels'&&plan.panels.some(v=>v.child)){
   if(typeof options.renderChild!=='function')throw new D.DDNError('DDN-QP004','Child panels require the unified engine dispatcher');
   const gap=24*s,pad=18*s,measured=[];let cw=Math.max(260*s,(W-gap*(plan.columns-1))/plan.columns);

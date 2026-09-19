@@ -1,0 +1,26 @@
+ddn "0.5";
+module "ddn.examples.sequence";
+
+import "shared.ddn" as shared;
+
+// Synthetic three-party order flow for the uml.sequence@1 profile.
+// Participants are lifelines in declaration order; uml.message relations are
+// numbered messages top-to-bottom in declaration order. reserve_stock_reply is
+// a dashed return (x_return); audit_log is a self-message on checkout.
+// All data is synthetic. This is profile-level coverage, not UML conformance.
+data flow {
+    object customer_app "Customer app" { kind: "application"; }
+    object checkout "Checkout" { kind: "service"; }
+    object inventory "Inventory" { kind: "service"; }
+    relation submit_order "Submit order" @customer_app -> @checkout { kind: "uml.message"; }
+    relation reserve_stock "Reserve stock" @checkout -> @inventory { kind: "uml.message"; }
+    relation reserve_stock_reply "Stock reserved" @inventory -> @checkout { kind: "uml.message"; x_return: true; }
+    relation audit_log "Audit log" @checkout -> @checkout { kind: "uml.message"; }
+    relation confirm "Confirm order" @checkout -> @customer_app { kind: "uml.message"; }
+}
+
+view sequence "Synthetic order flow / sequence" {
+    data: [@flow]; format: @shared.styles.technical;
+    projection { kind: sequence; profile: "uml.sequence@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

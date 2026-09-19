@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Sequence-style interaction projection (`kind:sequence`, profile
+  `uml.sequence@1`, verb `uml.message`, `x_return`), with
+  `DDN-PJ110`/`DDN-PJW03` validation. RFC-101.
+
 - Venn diagrams (2 or 3 sets) via new profile `panels.venn@1` with registered
   `x_sets` membership, fixed region-count geometry, and `DDN-PJ090`/`DDN-PJ091`
   validation.

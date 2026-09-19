@@ -18,6 +18,7 @@ function registry(base){
  out.extension_contracts.x_diagram=def({type:'object',properties:{number:{type:'string',minLength:1},owner:{type:'string'},code:{type:'string'},text:{type:'string'},branch:{type:'string'},stereotype:{type:'string'}},additionalProperties:false},['object','relation']);
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
+ out.extension_contracts.x_return=def({type:'boolean'},['relation']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
