@@ -1312,6 +1312,27 @@
         "volume columns",
         "financial advice/computation"
       ]
+    },
+    {
+      "id": "chart.treemap@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Treemap"
+      ],
+      "scope": "Hierarchical tiles from dotted category paths; slice-and-dice layout; area encodes one value; record provenance.",
+      "validation": [
+        "tile values nonnegative finite numbers (DDN-PJ078, DDN-PJ032)",
+        "dotted paths of at most 3 levels (DDN-PJ030)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)",
+        "no series binding (DDN-PJ030)",
+        "duplicate full path rejected (DDN-PJ036)"
+      ],
+      "unsupported": [
+        "squarified layout",
+        "zoomable/interactive drill-down",
+        "colour-encoded secondary measure"
+      ]
     }
   ],
   "shapes": [

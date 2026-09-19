@@ -71,6 +71,30 @@ function render(ir,reg,glyphs='',options={}){
      body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><path data-value="${pt.y}" d="${d}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`,{cx,cy,radius,startAngle:angle,endAngle:end,value:pt.y},pr.y);}
     const xx=2*radius+100*s,label=wrap(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit,W-xx-35*s,12);body+=`<rect x="${xx}" y="${ly-12*s}" width="${14*s}" height="${14*s}" fill="${col}"/>`+lines(label,xx+24*s,ly,12);ly+=Math.max(35*s,label.length*18*s+12*s);angle=end;
    }H=Math.max(H,ly+40*s);body+=text(20*s,H-20*s,'Total '+fmtNumber(total)+' '+plan.unit+' · angles encode values; zero entries have no sector.',11);
+  }else if(plan.mark==='treemap'){
+   const tiles=plan.tiles,gap=4*s,headH=22*s,tx=left+10*s,ty=top+5*s,tw=W-left-20*s,th=bottom-ty-40*s,total=tiles.reduce((s,n)=>s+n.value,0)||1,groupLeaf=[];let leafCount=0;
+   function tileLayout(nodes,x,y,w,h,depth){
+    const sum=nodes.reduce((s,n)=>s+n.value,0)||1,vertical=depth%2===0;let off=0;
+    for(const n of nodes){const share=n.value/sum,cw=vertical?w*share:w,ch=vertical?h:h*share,cx=x+(vertical?off:0),cy=y+(vertical?0:off);n.box={x:cx,y:cy,w:cw,h:ch};off+=vertical?cw:ch;
+     if(!n.leaf)tileLayout(n.children,cx,cy+headH,cw,Math.max(0,ch-headH),depth+1);}
+   }
+   tileLayout(tiles,tx,ty,tw,th,0);
+   function drawGroup(n,gi){
+    const b=n.box,ix=b.x+2*s,iy=b.y+2*s,iw=Math.max(0,b.w-4*s),ih=Math.max(0,b.h-4*s);
+    body+=`<rect class="ddn-treemap-group" data-path="${esc(n.path)}" x="${f(b.x)}" y="${f(b.y)}" width="${f(b.w)}" height="${f(b.h)}" fill="transparent" stroke="${t.rule}" stroke-width="1"/>`;
+    body+=`<rect class="ddn-treemap-header" data-path="${esc(n.path)}" x="${f(ix)}" y="${f(iy)}" width="${f(iw)}" height="${f(headH-4*s)}" fill="${t.surface}" stroke="${t.rule}" stroke-width="1"/>`;
+    body+=text(ix+8*s,iy+headH-8*s,n.name+' · '+fmtNumber(n.value)+' '+plan.unit,12,650);
+    for(const c of n.children)if(c.leaf)drawLeaf(c,gi);else drawGroup(c,gi);
+   }
+   function drawLeaf(n,gi){
+    const b=n.box,i=(groupLeaf[gi]||0);groupLeaf[gi]=i+1;leafCount++;const col=colour(gi+i),label=n.name+': '+fmtNumber(n.value)+' '+plan.unit,ix=b.x+2*s,iy=b.y+2*s,iw=Math.max(0,b.w-4*s),ih=Math.max(0,b.h-4*s);
+    let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title><rect data-value="${n.value}" x="${f(ix)}" y="${f(iy)}" width="${f(iw)}" height="${f(ih)}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`;
+    const fitted=wrap(label,iw-16*s,12);
+    if(ih>=(fitted.length*15+10)*s&&fitted.every(v=>Text.measure(v,12*s,p.style.font,400).width<=iw-16*s))content+=lines(fitted,ix+8*s,iy+18*s,12,400);
+    body+=group(n.sourceIds[0],n.sourceIds,content,{x:b.x,y:b.y,w:b.w,h:b.h,value:n.value,path:n.path},pr.y);
+   }
+   tiles.forEach((n,gi)=>{if(n.leaf)drawLeaf(n,gi);else drawGroup(n,gi);});
+   body+=text(20*s,H-15*s,leafCount+' tiles · total '+fmtNumber(total)+' '+plan.unit+' · tile area encodes one value per record; slice-and-dice layout in declaration order; dotted paths nest tiles.',11);
   }else if(plan.mark==='funnel'){
    const N=pts.length,maxY=Math.max(...pts.map(p=>p.y))||1,bandH=plotH/N,cx=left+plotW/2,total=pts.reduce((s,p)=>s+p.y,0);
    for(let i=0;i<N;i++){const pt=pts[i],y=top+i*bandH,topW=plotW*pt.y/maxY,bottomW=i<N-1?plotW*pts[i+1].y/maxY:Math.max(24*s,topW*.35),col=colour(i);
@@ -194,7 +218,7 @@ function vegaLite(ir){
  const plan=Data.plan(ir,D.DDNError),p=ir.view.profiles.projection;if(plan.quality)throw new D.DDNError('DDN-PJ070','Quality transforms are native; this optional adapter does not silently flatten them');if(!['chart','timeline'].includes(plan.kind))throw new D.DDNError('DDN-PJ070','Vega-Lite adapter supports chart/timeline only');
  const spec={$schema:'https://vega.github.io/schema/vega-lite/v6.json',description:'DDN source-bound quantitative projection; local values only',width:q(p.width,900),height:q(p.height,450),usermeta:{ddnView:ir.view.id,profile:p.profile,sourceIds:plan.sourceIds}};
  if(plan.kind==='timeline'){spec.data={values:plan.items.map(n=>({label:n.label,start:n.start,end:n.end,sourceId:n.id}))};spec.mark='bar';spec.encoding={y:{field:'label',type:'nominal'},x:{field:'start',type:'temporal',scale:{type:'utc'}},x2:{field:'end'}};spec.usermeta.omissions=['dependency overlay','milestones are zero-width intervals; native view displays diamonds'];}
- else{if(['radar','funnel','gauge','candlestick'].includes(plan.mark))throw new D.DDNError('DDN-PJ070','Radar, funnel, gauge and candlestick marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projection');spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
+ else{if(['radar','funnel','gauge','candlestick','treemap'].includes(plan.mark))throw new D.DDNError('DDN-PJ070','Radar, funnel, gauge, candlestick and treemap marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projection');spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
  return spec;
 }
 return{VERSION:'0.5.0-draft.2',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};

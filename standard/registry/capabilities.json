@@ -1907,6 +1907,27 @@
         "volume columns",
         "financial advice/computation"
       ]
+    },
+    {
+      "id": "chart.treemap@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Treemap"
+      ],
+      "scope": "Hierarchical tiles from dotted category paths; slice-and-dice layout; area encodes one value; record provenance.",
+      "validation": [
+        "tile values nonnegative finite numbers (DDN-PJ078, DDN-PJ032)",
+        "dotted paths of at most 3 levels (DDN-PJ030)",
+        "categorical x only (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)",
+        "no series binding (DDN-PJ030)",
+        "duplicate full path rejected (DDN-PJ036)"
+      ],
+      "unsupported": [
+        "squarified layout",
+        "zoomable/interactive drill-down",
+        "colour-encoded secondary measure"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2075,7 +2096,8 @@
     "radar/spider marks via chart.radar@1 (shared scale, categorical spokes)",
     "funnel marks via chart.funnel@1 (ordered trapezoid stage bands)",
     "gauge/KPI dial marks via chart.gauge@1 (semicircular 0..100 dial, optional target)",
-    "candlestick/OHLC marks via chart.candlestick@1 (open/high/low/close bindings)"
+    "candlestick/OHLC marks via chart.candlestick@1 (open/high/low/close bindings)",
+    "treemaps via chart.treemap@1 (dotted-path hierarchy, slice-and-dice)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

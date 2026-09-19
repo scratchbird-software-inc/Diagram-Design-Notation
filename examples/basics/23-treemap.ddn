@@ -1,0 +1,21 @@
+ddn "0.5";
+module "ddn.examples.treemap";
+
+import "shared.ddn" as shared;
+
+// Synthetic storage dataset: six tables grouped by dotted domain paths.
+// All data is synthetic.
+data storage {
+    object r1 "analytics.events" { kind: record; x_record: {"path": "analytics.events", "value": 55, "unit": "GB"}; }
+    object r2 "analytics.sessions" { kind: record; x_record: {"path": "analytics.sessions", "value": 25, "unit": "GB"}; }
+    object r3 "core.orders" { kind: record; x_record: {"path": "core.orders", "value": 40, "unit": "GB"}; }
+    object r4 "core.customers" { kind: record; x_record: {"path": "core.customers", "value": 20, "unit": "GB"}; }
+    object r5 "ops.logs" { kind: record; x_record: {"path": "ops.logs", "value": 30, "unit": "GB"}; }
+    object r6 "ops.metrics" { kind: record; x_record: {"path": "ops.metrics", "value": 10, "unit": "GB"}; }
+}
+
+view treemap "Synthetic storage by domain and table / treemap" {
+    data: [@storage]; format: @shared.styles.technical;
+    projection { kind:chart; profile:"chart.treemap@1"; records:[@storage.r1, @storage.r2, @storage.r3, @storage.r4, @storage.r5, @storage.r6]; mark:treemap; x:"x_record.path"; y:"x_record.value"; unit:"GB"; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

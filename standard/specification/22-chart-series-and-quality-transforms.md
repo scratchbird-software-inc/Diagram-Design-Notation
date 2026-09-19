@@ -154,7 +154,27 @@ Every record must supply finite numeric open/high/low/close values (`DDN-PJ076`)
 
 `chart.basic@1` continues to list candlestick in its `unsupported` set; the capability ships as the new `chart.candlestick@1` profile rather than by editing a published profile. Unsupported: intraday tick aggregation, volume columns, and financial advice/computation.
 
-## 22.11 Unsupported combinations and publication
+## 22.11 Treemap
+
+```ddn
+projection {
+    kind: chart; profile: "chart.treemap@1";
+    records: [@storage.r1, @storage.r2, @storage.r3];
+    mark: treemap;
+    x: "x_record.path"; y: "x_record.value";
+    unit: "GB";
+}
+```
+
+`mark: treemap` draws nested rectangular tiles whose areas are proportional to record values. The hierarchy lives in the `x` value, not the binding: the resolved category string is split on `.`, so `"analytics.events"` nests tile `events` inside group `analytics`, and a plain category (`"logs"`) is a single-level tile. Paths have at most 3 levels; deeper or empty-segment paths are rejected (`DDN-PJ030`, "Treemap paths have at most 3 levels"). Declaration order (after `filter`/`order`) is preserved at every level — siblings are never re-sorted by value.
+
+The layout is slice-and-dice: a node's rectangle is split among its children in proportion to their values, and the cut direction alternates by depth (depth 0 vertical cuts = side-by-side columns, depth 1 horizontal, depth 2 vertical again). Internal group values are the sums of their descendant leaf values; groups get a header band with the group name and total plus a transparent outline, and every leaf tile is a provenance mark carrying its full dotted `path` and `value`. A fixed inner gap of `4 × s` separates sibling tiles and group headers visually; the allotted tile boxes remain exactly proportional to values. Leaf labels show the last path segment plus the formatted value, wrapped and dropped when the tile is too small; the `<title>` tooltip always carries the full label. The footer reports the tile count and grand total.
+
+Treemap requires categorical `x` (`DDN-PJ030`); any `aggregate` other than `none` is rejected (`DDN-PJ031`), any `series` binding is rejected (`DDN-PJ030`), and duplicate full paths keep failing with `DDN-PJ036`. Tile values must be nonnegative finite numbers: negative values fail with `DDN-PJ078`, missing or non-numeric values with `DDN-PJ032`. Treemap has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path.
+
+Unsupported: squarified layout, zoomable/interactive drill-down, and colour-encoded secondary measures.
+
+## 22.12 Unsupported combinations and publication
 
 Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.
 

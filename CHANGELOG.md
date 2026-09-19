@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Treemaps via new profile `chart.treemap@1` (mark `treemap`), with
+  `DDN-PJ078` validation.
+
 - Candlestick/OHLC charts via new profile `chart.candlestick@1` (mark
   `candlestick`, new chart properties `open`/`high`/`low`/`close`), with
   `DDN-PJ076`/`DDN-PJ077` validation.
