@@ -134,7 +134,27 @@ Exactly one record must remain after any `filter` — the KPI — otherwise `DDN
 
 `target` is the same chart property used by `chart.quality@1` (§22.1), where it is a numeric reference on the shared y scale. A gauge view bypasses the quality planner entirely (`chartRequested` returns false for `mark: gauge`), so gauge `target` keeps its own 0..100 dial semantics and never triggers a quality transform. Gauge has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. Unsupported: multi-needle dials, custom band colour thresholds, and full-circle dials.
 
-## 22.10 Unsupported combinations and publication
+## 22.10 Candlestick/OHLC
+
+```ddn
+projection {
+    kind: chart; profile: "chart.candlestick@1";
+    records: [@trading.d1, @trading.d2, @trading.d3, @trading.d4];
+    mark: candlestick;
+    x: "x_record.day"; x_type: date;
+    open: "x_record.open"; high: "x_record.high";
+    low: "x_record.low"; close: "x_record.close";
+    unit: "CAD";
+}
+```
+
+`mark: candlestick` draws one candle per record: a vertical wick line from `low` to `high` and a body rectangle from `open` to `close`, centred on the record's category slot. Four additive chart properties — `open`, `high`, `low`, `close` — are property bindings with the same grammar as `x`/`y` and are resolved per record. Candlestick binds `x`, `open`, `high`, `low` and `close`; it does not use `y` (the shared axis-range and unit machinery keeps working because each point's `y` is set to `close`). `x_type` is `category` (default) or `date`; a numeric `x` is rejected (`DDN-PJ030`). Aggregation is meaningless for OHLC, so any `aggregate` other than `none` is rejected (`DDN-PJ031`), any `series` binding is rejected (`DDN-PJ030`), and duplicate `x` values keep failing with `DDN-PJ036`.
+
+Every record must supply finite numeric open/high/low/close values (`DDN-PJ076`); `high` must be at least `low` and both `open` and `close` must lie within `[low, high]` (`DDN-PJ077`). The y scale spans `min(low) … max(high)` with the standard six grid lines and labels; a flat range is guarded by the usual `hi = lo + 1` idiom. Body width is `max(2, plotW / N × 0.5)`. Up sessions (`close ≥ open`) use palette colour 1 (green `#34976E`), down sessions palette colour 2 (`#AC6538`) — a fixed, deterministic assignment in both directions. Each candle is one provenance group carrying the record's open/high/low/close values, and tick labels show each session's category or ISO date. Candlestick has no faithful Vega-Lite mapping, so the optional adapter rejects it with `DDN-PJ070`; the native SVG projection is the render path. The footer reads "Source-bound candlestick · N marks · supplied data, not a financial calculation certificate."
+
+`chart.basic@1` continues to list candlestick in its `unsupported` set; the capability ships as the new `chart.candlestick@1` profile rather than by editing a published profile. Unsupported: intraday tick aggregation, volume columns, and financial advice/computation.
+
+## 22.11 Unsupported combinations and publication
 
 Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.
 

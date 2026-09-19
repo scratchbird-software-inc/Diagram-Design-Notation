@@ -2,7 +2,7 @@
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-quality-data'));else root.DDNProjectionData=factory(root.DDNQualityData);})(typeof globalThis!=='undefined'?globalThis:this,function(Quality){
 'use strict';
 const common=['kind','profile','width','height'];
-const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target'],timeline:[...common,'records','start','end','label','dependencies','filter','order']};
+const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order']};
 const ref=x=>typeof x==='string'?x:x?.$ref;
 function get(record,path){
  if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
@@ -22,7 +22,7 @@ function plan(ir,ErrorClass=Error){
  const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
  if(kind==='fishbone')return Quality.fishbone(ir,ErrorClass,get);
  if(kind==='decision')return Quality.decision(ir,ErrorClass,get);
- if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
+ if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
  if(kind==='graph'&&p.profile==='state.flat@1')return{kind,profile:p.profile,lifecycle:Quality.lifecycle(ir,ErrorClass,get)};
  if(kind==='graph'&&['inputs','analysis_budget','traces'].some(k=>p[k]!==undefined))fail('DDN-Q005','Lifecycle properties require state.flat@1');
  if(kind==='graph'||kind==='chen')return{kind,profile:p.profile};
@@ -53,26 +53,33 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge');
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
   if(p.mark==='gauge'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Gauge caption requires categorical x (x_type must be category)');
   if(p.mark==='gauge'&&p.series!==undefined)fail('DDN-PJ030','Gauge shows one value; do not set series');
+  if(p.mark==='candlestick'&&(p.x_type||'category')==='number')fail('DDN-PJ030','Candlestick requires categorical or date x (x_type must not be number)');
+  if(p.mark==='candlestick'&&p.series!==undefined)fail('DDN-PJ030','Candlestick shows one candle per record; do not set series');
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
-  if(typeof p.x!=='string'||typeof p.y!=='string')fail('DDN-PJ030','Chart needs explicit x and y bindings');
+  if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
   if(p.aggregate==='count'&&p.unit)fail('DDN-PJ034','Count is dimensionless; do not label it as currency or another input unit');
   if(p.aggregate&&p.aggregate!=='none'&&!['bar','pie','donut'].includes(p.mark))fail('DDN-PJ031','Aggregation is available on category bars/arcs only');
   if(p.missing!==undefined&&!['error','skip'].includes(p.missing))fail('DDN-PJ019','Chart missing policy is error or skip');
   if(p.inner_radius!==undefined&&(!Number.isFinite(p.inner_radius)||p.inner_radius<0||p.inner_radius>=.9))fail('DDN-PJ030','inner_radius is a radius fraction 0..0.9 exclusive');
   let points=[],skipped=[];for(const n of filtered()){
-   let x=get(n,p.x),y=get(n,p.y);if((x===undefined||x===null||y===undefined||y===null)&&p.missing==='skip'){skipped.push(n.id);continue;}
-   if(typeof y!=='number'||!Number.isFinite(y))fail('DDN-PJ032','Chart y must be finite numeric data; numeric strings are not coerced',n);
+   let x=get(n,p.x),y=p.mark==='candlestick'?undefined:get(n,p.y),ohlc=null;
+   if(p.mark==='candlestick'){const o=get(n,p.open),h=get(n,p.high),l=get(n,p.low),c=get(n,p.close);ohlc={o,h,l,c};y=c;}
+   if((x===undefined||x===null||y===undefined||y===null)&&p.missing==='skip'){skipped.push(n.id);continue;}
+   if(p.mark==='candlestick'){
+    if(![ohlc.o,ohlc.h,ohlc.l,ohlc.c].every(v=>typeof v==='number'&&Number.isFinite(v)))fail('DDN-PJ076','Candlestick requires finite numeric open/high/low/close on every record',n);
+    if(ohlc.h<ohlc.l||ohlc.o<ohlc.l||ohlc.o>ohlc.h||ohlc.c<ohlc.l||ohlc.c>ohlc.h)fail('DDN-PJ077','Candlestick requires high >= low and open/close within [low, high]',n);
+   }else if(typeof y!=='number'||!Number.isFinite(y))fail('DDN-PJ032','Chart y must be finite numeric data; numeric strings are not coerced',n);
    const type=p.x_type||'category',rawX=x;if(type==='number'){if(typeof x!=='number'||!Number.isFinite(x))fail('DDN-PJ032','Numeric x required',n);}else if(type==='date'){x=date(x);if(!Number.isFinite(x))fail('DDN-PJ033','Date x must be a real ISO YYYY-MM-DD date',n);}else if(typeof x!=='string'&&typeof x!=='number')fail('DDN-PJ032','Category x must be text or number',n);
    if(p.unit&&n.properties.x_record?.unit!==p.unit)fail('DDN-PJ034','Every record must declare matching x_record.unit: '+p.unit,n);
    const size=p.size?get(n,p.size):1;if(typeof size!=='number'||!Number.isFinite(size)||size<0)fail('DDN-PJ035','Point size must be a finite nonnegative value',n);
-   if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else points.push({x,y,rawX,size,sourceIds:[n.id]});
+   if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else points.push({x,y,rawX,size,sourceIds:[n.id]});
   }
   if(!points.length)fail('DDN-PJ012','No chart points remain');
   if(p.mark==='gauge'&&points.length!==1)fail('DDN-PJ074','Gauge requires exactly one record after filtering (the KPI); supply one record or filter to one');

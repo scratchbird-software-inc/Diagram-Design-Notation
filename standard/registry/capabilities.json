@@ -1885,6 +1885,28 @@
         "custom band colour thresholds",
         "full-circle dials"
       ]
+    },
+    {
+      "id": "chart.candlestick@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Candlestick/OHLC"
+      ],
+      "scope": "Supplied open/high/low/close per category or date; wick low-high, body open-close; record provenance.",
+      "validation": [
+        "finite numeric open/high/low/close on every record (DDN-PJ076)",
+        "high >= low and open/close within [low, high] (DDN-PJ077)",
+        "explicit x/open/high/low/close bindings (DDN-PJ030)",
+        "category or date x; numeric x rejected (DDN-PJ030)",
+        "no aggregation (DDN-PJ031)",
+        "no series binding (DDN-PJ030)",
+        "duplicate x/category rejected (DDN-PJ036)"
+      ],
+      "unsupported": [
+        "intraday tick aggregation",
+        "volume columns",
+        "financial advice/computation"
+      ]
     }
   ],
   "projectionProperties": {
@@ -1985,7 +2007,11 @@
       "quartiles",
       "step",
       "baseline",
-      "target"
+      "target",
+      "open",
+      "high",
+      "low",
+      "close"
     ],
     "timeline": [
       "kind",
@@ -2048,7 +2074,8 @@
     "content/figure/A4/Letter publication and final-size checks",
     "radar/spider marks via chart.radar@1 (shared scale, categorical spokes)",
     "funnel marks via chart.funnel@1 (ordered trapezoid stage bands)",
-    "gauge/KPI dial marks via chart.gauge@1 (semicircular 0..100 dial, optional target)"
+    "gauge/KPI dial marks via chart.gauge@1 (semicircular 0..100 dial, optional target)",
+    "candlestick/OHLC marks via chart.candlestick@1 (open/high/low/close bindings)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

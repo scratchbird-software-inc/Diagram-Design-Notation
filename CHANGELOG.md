@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Candlestick/OHLC charts via new profile `chart.candlestick@1` (mark
+  `candlestick`, new chart properties `open`/`high`/`low`/`close`), with
+  `DDN-PJ076`/`DDN-PJ077` validation.
+
 - Gauge/KPI dials via new profile `chart.gauge@1` (mark `gauge`), with
   `DDN-PJ074`/`DDN-PJ075` validation.
 
