@@ -50,6 +50,13 @@ function validate(ir,reg,ErrorClass){
   if(ns.some(n=>!n.kind.startsWith('dfd.'))||es.some(r=>r.kind!=='dfd.data'))fail('DDN-PF011','DFD profile requires dfd participants and dfd.data links');
   const nums=new Set();for(const n of ns.filter(n=>n.kind==='dfd.process')){const num=n.properties.x_diagram?.number;if(!num||nums.has(num))fail('DDN-PF012','DFD process number must be nonempty and unique',n);nums.add(num);if(!es.some(r=>r.to.element===n.id)||!es.some(r=>r.from.element===n.id))fail('DDN-PF013','DFD process needs input and output',n);}
  }
+ function singleRoot(kinds,message){const incoming=new Set(es.filter(r=>kinds.includes(r.kind)).map(r=>r.to.element));if(ns.filter(n=>!incoming.has(n.id)).length!==1)fail('DDN-PJ102',message);}
+ if(p.profile==='org.tree@1'){
+  if(ns.some(n=>!['organization','team','role','analysis.role'].includes(n.kind)))fail('DDN-PF007','org.tree@1 accepts organization, team, role, analysis.role participants only');
+  if(es.some(r=>r.kind!=='reports_to'))fail('DDN-PF007','org.tree@1 accepts reports_to links only');
+  acyclic(['reports_to'],'Org chart');
+  singleRoot(['reports_to'],'org.tree@1 requires exactly one root — one person reports to nobody');
+ }
  if(p.profile.startsWith('c4.')){
   const ok={'c4.context@1':['c4.person','c4.system'],'c4.container@1':['c4.person','c4.system','c4.container','c4.store','c4.queue'],'c4.component@1':['c4.person','c4.system','c4.container','c4.store','c4.component']}[p.profile];
   const ext={'c4.container@1':['c4.person'],'c4.component@1':['c4.person','c4.system','c4.store']}[p.profile]||[];

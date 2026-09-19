@@ -48,6 +48,7 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
   let major=0;for(const layer of layers){let minor=0,extent=0;for(const n of layer){if(horizontal){n.x=major;n.y=minor;minor+=n.h+rowGap;extent=Math.max(extent,n.w);}else{n.x=minor;n.y=major;minor+=n.w+gap;extent=Math.max(extent,n.h);}}major+=extent+(horizontal?gap:rowGap);}
   if(components.some(c=>c.length>1))diag.push({code:'DDN-LW01',severity:'info',message:'Directed cycles retained as same-rank strongly connected groups; no model edge reversed.'});
  }else if(['tree','mindmap'].includes(p.algorithm)){
+  const vertical=p.algorithm==='tree'&&['down','up'].includes(p.direction);
   const hierarchy=Array.isArray(p.hierarchy)?p.hierarchy:null,es=hierarchy?edges.filter(e=>hierarchy.includes(e.kind)):edges;
   const incoming=new Map(nodes.map(n=>[n.id,0])),kids=new Map(nodes.map(n=>[n.id,[]]));for(const e of es){if(kids.get(e.from.element).includes(e.to.element))continue;kids.get(e.from.element).push(e.to.element);incoming.set(e.to.element,incoming.get(e.to.element)+1);}
   for(const [id,n]of incoming)if(n>1)throw new ErrorClass('DDN201','Tree hierarchy has multiple parents: '+id+'; select hierarchy relationship kinds or use layered.');
@@ -55,8 +56,12 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
   if(root&&!ids.has(root))throw new ErrorClass('DDN202','Layout root is outside selected view');if(!roots.length&&nodes.length)throw new ErrorClass('DDN201','Tree hierarchy contains a cycle');
   const seen=new Set(),active=new Set();function height(id){if(active.has(id))throw new ErrorClass('DDN201','Tree hierarchy contains a cycle');active.add(id);seen.add(id);const n=byId.get(id),ch=kids.get(id),h=Math.max(n.h,ch.reduce((sum,c)=>sum+height(c)+rowGap,0)-(ch.length?rowGap:0));active.delete(id);n.subtreeHeight=h;return h;}roots.forEach(height);if(seen.size!==nodes.length)throw new ErrorClass('DDN201','Unreachable hierarchy cycle');
   const levelWidth=Math.max(270,...nodes.map(n=>n.w))+gap;function tree(id,depth,top,sign=1){const n=byId.get(id);n.x=depth*levelWidth*sign;n.y=top+(n.subtreeHeight-n.h)/2;let y=top;for(const c of kids.get(id)){tree(c,depth+1,y,sign);y+=byId.get(c).subtreeHeight+rowGap;}}
+  const levelDepth=Math.max(...nodes.map(n=>n.h))+rowGap;function width(id){const n=byId.get(id),ch=kids.get(id),w=Math.max(n.w,ch.reduce((sum,c)=>sum+width(c)+gap,0)-(ch.length?gap:0));n.subtreeWidth=w;return w;}
+  function vtree(id,depth,left){const n=byId.get(id);n.y=depth*levelDepth;n.x=left+(n.subtreeWidth-n.w)/2;let x=left;for(const c of kids.get(id)){vtree(c,depth+1,x);x+=byId.get(c).subtreeWidth+gap;}}
   if(p.algorithm==='mindmap'&&roots.length===1){const id=root||roots[0];if(incoming.get(id)!==0)throw new ErrorClass('DDN202','Mind-map root must be a hierarchy root');const n=byId.get(id),ch=kids.get(id),left=ch.filter((_,i)=>i%2),right=ch.filter((_,i)=>!(i%2));const span=a=>a.reduce((s,id)=>s+byId.get(id).subtreeHeight+rowGap,0)-(a.length?rowGap:0),full=Math.max(n.h,span(left),span(right));n.x=0;n.y=(full-n.h)/2;for(const [a,sign]of [[left,-1],[right,1]]){let y=(full-span(a))/2;for(const c of a){tree(c,1,y,sign);y+=byId.get(c).subtreeHeight+rowGap;}}}
+  else if(vertical){roots.forEach(width);let x=0;for(const id of roots){vtree(id,0,x);x+=byId.get(id).subtreeWidth+gap;}}
   else {let y=0;for(const id of roots){tree(id,0,y);y+=byId.get(id).subtreeHeight+rowGap;}}
+  if(vertical&&p.direction==='up'){const max=Math.max(...nodes.map(n=>n.y+n.h));nodes.forEach(n=>n.y=max-n.y-n.h);}
   const minX=Math.min(0,...nodes.map(n=>n.x));nodes.forEach(n=>n.x-=minX);
  }else if(p.algorithm==='grouped'){
   const path=String(p.group_by||'kind').split('.'),read=n=>path.reduce((v,k)=>v?.[k],n.properties)??path.reduce((v,k)=>v?.[k],n.n?.properties)??n.n?.kind??'unassigned';
@@ -66,7 +71,7 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
  const pinned=[];for(const n of nodes){const at=placements[n.id]?.at;if(at){n.x=q(at[0]);n.y=q(at[1]);pinned.push(n);}}
  for(let i=0;i<pinned.length;i++)for(let j=i+1;j<pinned.length;j++)if(overlap(pinned[i],pinned[j]))throw new ErrorClass('DDN204','Conflicting hard placements: '+pinned[i].id+' / '+pinned[j].id);
  const settled=[...pinned];for(const n of nodes.filter(n=>!placements[n.id]?.at)){let tries=0;while(settled.some(o=>overlap(n,o,20))){n.y+=n.h+rowGap;if(++tries>nodes.length+2)throw new ErrorClass('DDN204','Unable to honor pinned geometry');}settled.push(n);}
- for(const n of nodes){n.x=round(n.x);n.y=round(n.y);delete n.subtreeHeight;}
+ for(const n of nodes){n.x=round(n.x);n.y=round(n.y);delete n.subtreeHeight;delete n.subtreeWidth;}
  return {nodes,diagnostics:diag};
 }
 // Endpoint identity and a boundary slot are different. Only slots belonging to

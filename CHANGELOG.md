@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Org charts via new profile `org.tree@1` and new core verb `reports_to`;
+  native tree layout now honours `direction: down`; `DDN-PJ102` single-root
+  validation.
+
 - C4-style profile set (`c4.context@1`, `c4.container@1`, `c4.component@1`) with
   six profile kinds, the `c4.rel` verb, boundary frames, and
   `DDN-PJ100`/`DDN-PJ101` validation.

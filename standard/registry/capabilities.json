@@ -2003,6 +2003,26 @@
         "code introspection",
         "multiple boundary containers per view"
       ]
+    },
+    {
+      "id": "org.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Organisation chart"
+      ],
+      "scope": "Single-root reporting hierarchy of org/team/role participants, rendered with the native tree layout.",
+      "validation": [
+        "participants limited to organization, team, role, analysis.role (DDN-PF007)",
+        "reports_to links only (DDN-PF007)",
+        "reporting hierarchy is acyclic (DDN-PF004)",
+        "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
+        "no node has multiple managers (DDN201, layout stage)"
+      ],
+      "unsupported": [
+        "matrix organizations (multiple parents)",
+        "dotted-line reports",
+        "HR-system synchronisation"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2174,7 +2194,8 @@
     "gauge/KPI dial marks via chart.gauge@1 (semicircular 0..100 dial, optional target)",
     "candlestick/OHLC marks via chart.candlestick@1 (open/high/low/close bindings)",
     "treemaps via chart.treemap@1 (dotted-path hierarchy, slice-and-dice)",
-    "sankey flow diagrams via chart.sankey@1 (BFS depth columns, provenance ribbons)"
+    "sankey flow diagrams via chart.sankey@1 (BFS depth columns, provenance ribbons)",
+    "organisation charts via org.tree@1 (single-root reports_to trees, top-down native layout)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

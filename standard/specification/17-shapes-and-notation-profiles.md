@@ -13,6 +13,8 @@ The initial reusable recipes are rectangle, rounded rectangle, terminal, decisio
 
 The drawing look can be classic, handDrawn or neo. Controlled pen variation changes outlines, not the nominal obstacle/attachment model. Quantitative data marks do not inherit rough coordinates. Registered line families and dark/night color variants remain fixed; shapes do not reuse the meaning of an unrelated badge position.
 
+The native `tree` layout honours `direction`: with `down` (or `up`, mirrored) depth advances vertically and siblings stack along x using subtree widths, so a single-root hierarchy hangs as a top-down org chart; with the default `right` (or `left`) the original horizontal geometry is retained byte-identically. Mind maps ignore `direction` and remain horizontal.
+
 ## 17.2 Basic flowcharts
 
 `flow.basic@1` uses `flow.start`, `flow.end`, `flow.process`, `flow.decision`, `flow.io`, `flow.document` and `flow.subprocess`, connected by `flow.next`.

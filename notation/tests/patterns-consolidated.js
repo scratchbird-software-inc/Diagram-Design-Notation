@@ -17,6 +17,6 @@ t('Retained-state coordinates must be finite',()=>{const a=JSON.parse(JSON.strin
 t('No-pin graph has no fabricated focus',()=>assert.ok(!renders.no_pins.scene.focus));
 t('Wrong declared-tree graph is not silently treated as spanning forest',()=>{assert.throws(()=>w.renderSync({entry,view:'circular',overrides:{placement:'tree'}}));});
 const reg=require('../../standard/registry/catalogue.json');let contrast=[];for(const name of ['dark','night'])for(const r of reg.relationships){const theme=P.themes[name],c=P.semantic(r.colour,theme);contrast.push({theme:name,id:r.id,colour:c,canvas:P.contrast(c,theme.background),surface:P.contrast(c,theme.surface)});}
-t('All 90 registered relation colours contrast on both low-light surfaces',()=>{assert.equal(contrast.length,180);assert.ok(contrast.every(c=>c.canvas>=4.5&&c.surface>=4.5));});
+t('All registered relation colours contrast on both low-light surfaces',()=>{assert.equal(contrast.length,reg.relationships.length*2);assert.ok(contrast.every(c=>c.canvas>=4.5&&c.surface>=4.5));});
 fs.mkdirSync(root+'/tests/validation',{recursive:true});fs.writeFileSync(root+'/tests/validation/palette-contrast.json',JSON.stringify(contrast,null,2));
 const report={passed:out.filter(x=>x.pass).length,total:out.length,failed:out.filter(r=>!r.pass).length,results:out};fs.writeFileSync(root+'/tests/validation/pattern-tests.json',JSON.stringify(report,null,2));console.log('Patterns',report.passed+'/'+report.total);process.exitCode=report.passed===report.total?0:1;

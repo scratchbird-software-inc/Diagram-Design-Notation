@@ -14600,6 +14600,42 @@
         "member_endpoints": true,
         "unknown_kind": "defer_in_sketch_error_in_strict"
       }
+    },
+    {
+      "id": "relation.reports_to",
+      "code": "REPORTS",
+      "name": "has direct report",
+      "glyph": "people",
+      "family": "governance",
+      "meaning": "Manager/lead to direct report in an organisational tree; direction is parent to child (like emb), so tree roots are nodes with no incoming reports_to edge.",
+      "pattern": "",
+      "width": 2,
+      "colour": "#526525",
+      "start": "none",
+      "end": "none",
+      "slot": "M",
+      "text_label": "has direct report",
+      "glyph_base": "people",
+      "token_required_when_ambiguous": true,
+      "keyword": "reports_to",
+      "aliases": [],
+      "endpoint_contract": {
+        "source": [
+          "organization",
+          "team",
+          "role",
+          "analysis.role"
+        ],
+        "target": [
+          "organization",
+          "team",
+          "role",
+          "analysis.role"
+        ],
+        "allow_self": false,
+        "member_endpoints": false,
+        "unknown_kind": "defer_in_sketch_error_in_strict"
+      }
     }
   ],
   "endpoints": [

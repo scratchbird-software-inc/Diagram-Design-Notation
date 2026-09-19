@@ -1502,7 +1502,27 @@
       "code introspection",
       "multiple boundary containers per view"
     ]
-  }
+  },
+    {
+      "id": "org.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Organisation chart"
+      ],
+      "scope": "Single-root reporting hierarchy of org/team/role participants, rendered with the native tree layout.",
+      "validation": [
+        "participants limited to organization, team, role, analysis.role (DDN-PF007)",
+        "reports_to links only (DDN-PF007)",
+        "reporting hierarchy is acyclic (DDN-PF004)",
+        "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
+        "no node has multiple managers (DDN201, layout stage)"
+      ],
+      "unsupported": [
+        "matrix organizations (multiple parents)",
+        "dotted-line reports",
+        "HR-system synchronisation"
+      ]
+    }
   ],
   "shapes": [
     "rect",

@@ -23,6 +23,8 @@ A navigation reference has its own view-occurrence recipe and is not a seventh b
 
 Registered notation-profile kinds extend this vocabulary additively rather than adding primary forms: the C4-style profiles (`c4.context@1`, `c4.container@1`, `c4.component@1`) map their six `c4.*` kinds onto existing actor, rounded-card, card, cylinder and component silhouettes with core-kind fallbacks, so the six forms above remain the only primary geometry contract.
 
+Relation verbs are likewise registered additively. The core governance verb set includes `reports_to` ("has direct report"): although the English keyword reads subordinate→manager, the registered meaning fixes the direction as parent→child (manager to direct report, like `emb`), so native tree layouts root at the node with no incoming `reports_to` edge and org charts hang downward from it. Its endpoints are plain (no arrowheads), per the org-chart convention.
+
 ## 3. Reserved indicator positions
 
 | Slot | Meaning |
