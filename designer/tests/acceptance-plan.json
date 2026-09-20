@@ -538,13 +538,15 @@
       "title": "Same-view alias",
       "action": "Request second occurrence in same view",
       "expected": "Native occurrence ID or explicit unsupported response, never clone disguised as alias",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-009-occurrence-addressing.js",
+      "coveredIn": "ED-009"
     },
     {
       "id": "VE-AC-037",

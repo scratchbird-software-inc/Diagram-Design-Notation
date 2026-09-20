@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: occurrence addressing layer (`occ:` ids,
+  add-existing/remove/move/override commands with explicit restriction
+  responses) (ED-009; covers VE-AC-036).
 - Designer prototype: relation reconnection command with impact preview (drag
   + inspector paths), closing the AUD-003 reconnection gap (ED-008; covers
   VE-AC-023).

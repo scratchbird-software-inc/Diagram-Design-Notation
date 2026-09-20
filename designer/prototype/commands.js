@@ -649,7 +649,15 @@ function editViewBodyProperty(D,t,entry,view,{key,value}){
    let j=i+2,d2=1;
    while(j<close){if(tokens[j].type==='{'||tokens[j].type==='[')d2++;if(tokens[j].type==='}'||tokens[j].type===']')d2--;if(tokens[j].type===';'&&d2===1)break;j++;}
    if(j>=close)fail('DDN-I033','The existing view property is not terminated.');
-   edit={file:span.file,start:tok.start,end:tokens[j].end,text:render};break;
+   let start=tok.start,end=tokens[j].end;
+   if(removing){
+    // Whole-line removal: when the property owns its line(s), take the leading
+    // indentation and the newline run after ';' so a remove+restore cycle of
+    // the only occurrence restores byte-identical source.
+    const ls=text.lastIndexOf('\n',start-1)+1;
+    if(/^[ \t]*$/.test(text.slice(ls,start))){const tail=text.slice(end).match(/^([ \t]*\n)+/);if(tail){start=ls;end+=tail[0].length;}}
+   }
+   edit={file:span.file,start,end,text:render};break;
   }
  }
  if(!edit){if(removing)return{key,removed:false};edit={file:span.file,start:tokens[close].start,end:tokens[close].start,text:render+' '};}
@@ -842,5 +850,173 @@ function previewReconnect(D,ws,entry,view,args,relationMap){
   return {relationId:plan.relation.id,end:plan.end,file:plan.edit.file,previous:plan.previousRef,proposed:plan.newRef,diagnostics,error,routes};
  }finally{t.destroy();}
 }
-return{createInView,editProjectionProperty,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Occurrence addressing layer (ED-009; spec ch.10–11, AUD-004; charter Terms
+// "**Definition**: a model object, field, relation, rule, record, or domain.
+// **Occurrence**: one visual appearance of a definition in a named view.
+// **Instance**: a distinct modeled/deployed instance; not a synonym for
+// occurrence."). occurrenceId = 'occ:' + viewUid + ':' + definitionId —
+// deterministic, reversible and unique because the one-appearance-per-view
+// restriction holds (the ch.11 scoping sentence this layer implements;
+// VE-004: "A repeated appearance is not a replica."). The layer adds no source
+// syntax (VE-008) and never creates a duplicate definition: a same-view alias
+// request focuses/restores and answers with the fixed restriction response.
+// Relation occurrences are derived: in 0.5 a relation appearance exists
+// exactly while both endpoints are shown (ddn-core visibleRelations; there is
+// no independent relation-hide), so relation-occurrence removal and unrelated
+// descriptor overrides answer with an explicit unsupported response instead of
+// a fake replica or a silent endpoint edit.
+const OCC_RESTRICTION='one-appearance-per-view';
+const occurrenceIdFor=(viewUid,definitionId)=>'occ:'+viewUid+':'+definitionId;
+function parseOccurrenceId(occurrenceId){
+ const m=typeof occurrenceId==='string'?/^occ:([^:]+)::([^:]+):(.+)$/.exec(occurrenceId):null;
+ if(!m)fail('DDN-I033','Malformed occurrence id '+JSON.stringify(occurrenceId)+'; the format is occ:<viewId>:<definitionId>. Nothing was changed.');
+ return{viewId:m[1]+'::'+m[2],definitionId:m[3]};
+}
+function listOccurrences(D,ws,entry,viewId){
+ const ir=ws.resolve(entry,viewId),viewUid=ir.view.id;
+ return[
+  ...ir.view.selected.map(definitionId=>({viewId:viewUid,occurrenceId:occurrenceIdFor(viewUid,definitionId),definitionId,role:'element'})),
+  ...ir.view.relations.map(definitionId=>({viewId:viewUid,occurrenceId:occurrenceIdFor(viewUid,definitionId),definitionId,role:'relation'})),
+ ];
+}
+function resolveOccurrence(D,ws,entry,viewId,occurrenceId){
+ const parsed=parseOccurrenceId(occurrenceId);
+ const ir=ws.resolve(entry,viewId);
+ if(parsed.viewId!==ir.view.id)fail('DDN-I033','Occurrence '+occurrenceId+' does not belong to view '+viewId+'. Nothing was changed.');
+ const el=ir.elements.find(n=>n.id===parsed.definitionId);
+ if(el)return{definitionId:parsed.definitionId,role:'element',node:el};
+ const rel=ir.relations.find(r=>r.id===parsed.definitionId);
+ if(rel)return{definitionId:parsed.definitionId,role:'relation',node:rel};
+ fail('DDN-E002','Definition not found.');
+}
+// Refs of a view-body list property (select/exclude/data) as source strings,
+// or null when the property is not declared. Lexed from the view source span.
+function viewListRefs(D,ws,entry,viewId,key){
+ const ir=ws.resolve(entry,viewId),span=ir.view.source,text=ws.getFiles()[span.file];
+ const tokens=D.lex(text,span.file).filter(t=>t.start>=span.start&&t.end<=span.end);
+ for(let i=0,d=0;i<tokens.length;i++){
+  const tok=tokens[i];
+  if(tok.type==='{'||tok.type==='[')d++;
+  if(tok.type==='}'||tok.type===']')d--;
+  if(d===1&&tok.type==='id'&&tok.value===key&&tokens[i+1]?.type===':'&&tokens[i+2]?.type==='['){
+   const refs=[];let d2=1;
+   for(let j=i+3;j<tokens.length&&d2>0;j++){
+    const t2=tokens[j];
+    if(t2.type==='[')d2++;
+    if(t2.type===']'){d2--;if(!d2)break;}
+    if(t2.type==='@'&&d2===1){const tail=text.slice(t2.end).match(/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*/);if(tail)refs.push(tail[0]);}
+   }
+   return refs;
+  }
+ }
+ return null;
+}
+// View-node select/exclude/data list planner, used by the occurrence commands;
+// the span edit itself is editViewBodyProperty (mirrors authoring.js's
+// property() rewrite of one view-body property).
+function editViewProperty(D,ws,entry,view,args){
+ const {key,value}=args||{};
+ if(!['select','exclude','data'].includes(key))fail('DDN-D001','Unknown or unsupported view property key: '+String(key));
+ return stage(D,ws,entry,view,t=>editViewBodyProperty(D,t,entry,view,{key,value}));
+}
+// addExistingToView: (a) already shown → the VE-AC-036 explicit response, no
+// clone, focus it (ch.06: "If the same definition is already in this view,
+// focus it by default"); (b) excluded → remove its ref from exclude (un-hide);
+// (c) explicit select list → append its ref, appending the owning data-block
+// ref first when the block is outside the view's data list (the addLocal
+// pattern). Cross-file without an existing import rejects DDN-E003 (ch.11
+// "Imports and write destinations": imports are never added silently).
+// Caller-supplied occurrenceId must equal the computed one — never invented.
+function addExistingToView(D,ws,entry,args){
+ const {definitionId,viewId,occurrenceId}=args||{};
+ if(typeof definitionId!=='string'||!definitionId||typeof viewId!=='string'||!viewId)fail('DDN-I033','addExistingToView needs a definition id and a target view id. Nothing was changed.');
+ const ir=ws.resolve(entry,viewId),viewUid=ir.view.id;
+ const computed=occurrenceIdFor(viewUid,definitionId);
+ if(occurrenceId!==undefined&&occurrenceId!==computed)fail('DDN-I033','Caller-supplied occurrenceId '+JSON.stringify(occurrenceId)+' does not equal the computed '+JSON.stringify(computed)+' — the contract never invents ids. Nothing was changed.');
+ if(ir.view.selected.includes(definitionId))return{status:'already-present',restriction:OCC_RESTRICTION,occurrenceId:computed,select:definitionId};
+ if(ir.relations.some(r=>r.id===definitionId))return{status:'unsupported',reason:'Relation occurrences are derived from endpoint visibility in 0.5; show the endpoint elements instead. The source is unchanged.'};
+ const ref=sourceRef(ws,entry,definitionId);
+ const selectRefs=viewListRefs(D,ws,entry,viewId,'select');
+ const inScope=ir.elements.some(n=>n.id===definitionId);
+ if(inScope&&selectRefs===null){
+  // (b) excluded: the view selects all in-scope elements, so absence from the
+  // selection means an exclude entry — remove exactly that ref.
+  const excludeRefs=viewListRefs(D,ws,entry,viewId,'exclude')||[];
+  if(!excludeRefs.includes(ref))fail('DDN-I033','Definition '+definitionId+' is in scope but neither selected nor excluded in view '+viewId+'; the view source needs a manual look. Nothing was changed.');
+  const kept=excludeRefs.filter(r=>r!==ref);
+  return stage(D,ws,entry,viewId,t=>{
+   editViewBodyProperty(D,t,entry,viewId,{key:'exclude',value:kept.length?kept.map(r=>({$ref:r})):undefined});
+   return{status:'restored',occurrenceId:computed,select:definitionId};
+  });
+ }
+ // (c) explicit select list, or out of scope entirely: append the ref (and the
+ // owning block ref to data when it is outside the data list).
+ const blockUid=definitionId.split('::')[0]+'::'+definitionId.split('::')[1].split('.')[0];
+ const dataRefs=viewListRefs(D,ws,entry,viewId,'data');
+ if(dataRefs===null)fail('DDN-I033','The target view’s data list is not an editable array form. Nothing was changed.');
+ const blockRef=inScope?null:sourceRef(ws,entry,blockUid);
+ if(blockRef&&!dataRefs.includes(blockRef))fail('DDN-I033','The definition’s data block '+blockUid+' is outside the view’s data list; adding it changes the view’s scope and is a separate reviewed command. Nothing was changed.');
+ if(selectRefs===null)fail('DDN-I033','Definition '+definitionId+' is outside the view’s resolved elements and there is no explicit select list to extend. Nothing was changed.');
+ if(selectRefs.includes(ref))fail('DDN-I033','The select list already references '+definitionId+' but it does not resolve into the view; fix the view source. Nothing was changed.');
+ return stage(D,ws,entry,viewId,t=>{
+  editViewBodyProperty(D,t,entry,viewId,{key:'select',value:[...selectRefs,ref].map(r=>({$ref:r}))});
+  return{status:'added',occurrenceId:computed,select:definitionId};
+ });
+}
+// removeOccurrence: element occurrences hide (exclude append — the shared
+// definition survives, VE-004/VE-008); incident relation appearances vanish
+// transitively (documented in the ch.11 status note). Relation occurrences
+// answer with an explicit unsupported response: no source change, no fake
+// replica (VE-AC-036's allowed alternative).
+function removeOccurrence(D,ws,entry,args){
+ const {viewId,occurrenceId}=args||{};
+ const r=resolveOccurrence(D,ws,entry,viewId,occurrenceId);
+ if(r.role==='relation')return{status:'unsupported',reason:'The 0.5 runtime has no independent relation-hide: a relation occurrence can only disappear with an endpoint or via display { relations:none; }. The source is unchanged.'};
+ return stage(D,ws,entry,viewId,t=>{
+  D.authoring.hide(t,entry,viewId,r.definitionId);
+  return{status:'removed',occurrenceId,removed:r.definitionId};
+ });
+}
+// moveOccurrences: one staged transaction for the whole positions array
+// (schema caps at 128). pin:false releases the place block. Pin-by-occurrence
+// is pin-by-definition under the one-appearance-per-view restriction (the
+// mapping is recorded in the ch.11 status note).
+function moveOccurrences(D,ws,entry,args){
+ const {viewId,positions}=args||{};
+ if(!Array.isArray(positions)||positions.length<1||positions.length>128)fail('DDN-E007','moveOccurrences needs 1..128 position records');
+ const resolved=positions.map(p=>{
+  if(!p||typeof p!=='object'||Array.isArray(p))fail('DDN-E007','Invalid position record');
+  const r=resolveOccurrence(D,ws,entry,viewId,p.occurrenceId);
+  if(r.role!=='element')fail('DDN-I033','Relation occurrences are derived from endpoint visibility in 0.5; there is no independent geometry to pin. Nothing was changed.');
+  if(p.pin===false)return{...r,release:true};
+  if(!Number.isFinite(p.x)||!Number.isFinite(p.y))fail('DDN-E001','Position must be finite, bounded world coordinates.');
+  return{...r,x:p.x,y:p.y};
+ });
+ return stage(D,ws,entry,viewId,t=>{
+  for(const r of resolved)if(r.release)D.authoring.unpin(t,entry,viewId,r.definitionId);else D.authoring.pin(t,entry,viewId,r.definitionId,r.x,r.y);
+  return{moved:resolved.length};
+ });
+}
+// setViewOverride restricted descriptor set: visibility (set = restore, remove
+// = hide) and pin (set with value [x,y] = place, remove = unplace). Anything
+// else is the ch.11 occurrence-contract RFC's scope → explicit unsupported.
+function setViewOverride(D,ws,entry,args){
+ const {viewId,occurrenceId,descriptorId,action,value}=args||{};
+ if(action!=='set'&&action!=='remove')fail('DDN-I033','setViewOverride action is set or remove. Nothing was changed.');
+ const r=resolveOccurrence(D,ws,entry,viewId,occurrenceId);
+ if(descriptorId==='visibility'){
+  if(r.role==='relation')return{status:'unsupported',reason:'The 0.5 runtime has no independent relation-hide: a relation occurrence can only disappear with an endpoint or via display { relations:none; }. The source is unchanged.'};
+  if(action==='remove')return stage(D,ws,entry,viewId,t=>{D.authoring.hide(t,entry,viewId,r.definitionId);return{status:'applied',descriptorId,action,occurrenceId};});
+  return addExistingToView(D,ws,entry,{definitionId:r.definitionId,viewId});
+ }
+ if(descriptorId==='pin'){
+  if(r.role!=='element')return{status:'unsupported',reason:'Relation occurrences are derived from endpoint visibility in 0.5; there is no independent geometry to pin. The source is unchanged.'};
+  if(action==='remove')return stage(D,ws,entry,viewId,t=>{D.authoring.unpin(t,entry,viewId,r.definitionId);return{status:'applied',descriptorId,action,occurrenceId};});
+  if(!Array.isArray(value)||value.length!==2||!value.every(Number.isFinite))fail('DDN-E001','The pin descriptor needs value [x, y] of finite world coordinates.');
+  return moveOccurrences(D,ws,entry,{viewId,positions:[{occurrenceId,x:value[0],y:value[1],pin:true}]});
+ }
+ return{status:'unsupported',reason:'Per-occurrence '+JSON.stringify(descriptorId)+' overrides are the ch.11 occurrence-contract RFC’s scope; the 0.5 runtime has no source form for them. The source is unchanged.'};
+}
+const occurrences={occurrenceIdFor,parse:parseOccurrenceId,list:listOccurrences,resolve:resolveOccurrence,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride};
+return{createInView,editProjectionProperty,editViewProperty,occurrences,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

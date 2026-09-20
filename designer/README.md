@@ -89,4 +89,13 @@ views, scratch re-render diagnostics, retained identity and route overrides)
 and commit one atomic, revision-checked transaction that preserves the
 relation's id, label and properties, closing the AUD-003 reconnection gap
 (covers VE-AC-023). Direction reversal and attachment-policy editing remain
-proposed.
+proposed. ED-009 adds the occurrence addressing layer: every visual appearance
+of a definition in a named view gets a deterministic, verifiable
+`occ:<viewId>:<definitionId>` id (`Commands.occurrences` in
+`prototype/commands.js`); add-existing/remove/move/override commands run
+against those ids with explicit responses — same-view alias requests answer
+`already-present · one-appearance-per-view` and focus, never clone (covers
+VE-AC-036) — the inspector header shows the selection's occurrence id and the
+Model shelf gains a per-item "Add to view…" action. This layer is the
+foundation for ED-010 (draft validation addresses issues to occurrence ids)
+and ED-012 (sequence lifelines/messages as occurrences).
