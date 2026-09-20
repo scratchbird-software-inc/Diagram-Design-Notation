@@ -22,3 +22,4 @@ Approval should record exact artifact hashes and accepted residual scope. Use `s
 | ADR | Implementation | Notes |
 |---|---|---|
 | ADR-05 | Implemented in prototype by ED-001 (2026-09-20) | Eight groups come from kind-ui-map.json palette_group; all 188 kinds searchable. |
+| ADR-09 | Matrix cells edited via structured sheet, never drag, by ED-002 (2026-09-20) | RACI/CRUD/relations cells commit one `setMatrixAssignments` batch transaction; cell contributors select the assignment in the companion graph view. |

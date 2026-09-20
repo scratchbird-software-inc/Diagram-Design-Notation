@@ -6,6 +6,7 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const initial=JSON.parse($('#sourceFiles').textContent), ws=D.createWorkspace(initial);
 let entry='model.ddn',view='overview',ir=null,result=null,selected='designer.sample::model.customer',tab='meaning',left='add',mode='select',connectFrom=null,zoom=1,toastTimer,drag=null,counter=1;
 let overrides={page:'content',look:'classic',theme:'default'},renderFailure=false;
+let mPlan=null,mSel=null,mBatch=[];
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -32,17 +33,85 @@ function draw(){
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();updateInspector();updateLeft();highlight();updateSource();
+  bindCanvas();renderMatrixSheet();updateInspector();updateLeft();highlight();updateSource();
  }catch(e){renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
 // The production plan/impact/draft service is specified separately, not implemented here.
 function transaction(label,fn){
  const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;draw();announce(label+' · source updated · Undo available');return true;}catch(e){announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
+// Matrix sheet (spec ch.09 structured sheets): the editing surface for
+// kind:matrix projections. Every commit is one setMatrixAssignments transaction.
+const matrixProfile=()=>ir?.view.profiles.projection?.kind==='matrix'?ir.view.profiles.projection:null;
+const MATRIX_KEYS=p=>p.profile==='matrix.raci@1'?['R','A','C','I']:p.profile==='matrix.crud@1'?['C','R','U','D']:null;
+function matrixWriteTarget(p){
+ if(p.write_data)return String(p.write_data.$ref)+' (projection.write_data)';
+ const rowId=p.rows?.[0]?.$ref,el=ir?.elements.find(n=>n.id===rowId),block=rowId?String(rowId).split('::')[1].split('.')[0]:'';
+ return 'data '+block+(el?.source?.file?' · '+el.source.file:'')+' (owning block of the first matrix row)';
+}
+function stagedFor(ri,ci){if(!mPlan)return null;const row=mPlan.rows[ri].id,col=mPlan.columns[ci].id;return mBatch.find(b=>b.rowId===row&&b.columnId===col)||null;}
+function cellDisplay(ri,ci){const staged=stagedFor(ri,ci);if(staged)return{value:staged.remove?'':String(staged.value??''),staged:true,assignments:[]};const cell=mPlan.cells[ri][ci];return{value:cell.map(a=>a.value).join(' '),staged:false,assignments:cell};}
+function renderMatrixSheet(){
+ const sheet=$('#matrixSheet'),p=matrixProfile();
+ mPlan=null;
+ if(!p){sheet.hidden=true;sheet.innerHTML='';return;}
+ sheet.hidden=false;
+ let plan;try{plan=ws.projectionPlan(entry,view);}catch(e){mSel=null;mBatch=[];sheet.innerHTML='<div class="notice">'+esc((e.code||'PLAN')+': '+e.message)+' The sheet stays read-only; the source is unchanged.</div>';return;}
+ mPlan=plan;
+ if(mSel&&(mSel.r>=plan.rows.length||mSel.c>=plan.columns.length))mSel=null;
+ const keys=MATRIX_KEYS(p),editable=String(p.value||'').split('.')[0].startsWith('x_');
+ let h='<div class="sheet-head"><span class="tag teal">MATRIX SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Writes <code>'+esc(matrixWriteTarget(p))+'</code> · relation <code>'+esc(p.relation)+'</code> · value <code>'+esc(p.value)+'</code></span></div>';
+ h+='<table aria-label="Assignment matrix"><thead><tr><th>'+esc(p.profile)+'</th>'+plan.columns.map(c=>'<th>'+esc(c.name)+'</th>').join('')+'</tr></thead><tbody>';
+ for(let ri=0;ri<plan.rows.length;ri++){
+  h+='<tr><th>'+esc(plan.rows[ri].name)+'</th>';
+  for(let ci=0;ci<plan.columns.length;ci++){
+   const d=cellDisplay(ri,ci),cls=((mSel&&mSel.r===ri&&mSel.c===ci)?'sel':'')+(d.staged?' staged':'');
+   h+='<td class="'+cls+'"><button class="mcell" data-r="'+ri+'" data-c="'+ci+'" aria-label="'+esc(plan.rows[ri].name+' / '+plan.columns[ci].name)+'">'+esc(d.value||'·')+'</button></td>';
+  }
+  h+='</tr>';
+ }
+ h+='</tbody></table>';
+ if(editable&&keys)h+='<div class="sheet-head" style="margin-top:10px"><span class="small muted">Selected cell:</span><span class="keypad">'+keys.map(k=>'<button data-key="'+k+'">'+k+'</button>').join('')+'<button data-key="clear">Clear</button></span><span class="small muted">Keys '+(p.profile==='matrix.crud@1'?'toggle letters':'assign')+' · arrows move · Enter commits the batch · Esc discards</span></div>';
+ else if(!editable)h+='<p class="help small muted" style="margin-top:10px">Cell editing needs an extension-property (<code>x_*</code>) value binding; this view binds <code>'+esc(p.value)+'</code>. The sheet is read-only.</p>';
+ h+='<div class="batchbar"><span class="tag '+(mBatch.length?'amber':'')+'">BATCH · '+mBatch.length+' staged</span>'+mBatch.map((b,i)=>{const r=plan.rows.find(x=>x.id===b.rowId)?.name||b.rowId,c=plan.columns.find(x=>x.id===b.columnId)?.name||b.columnId;return '<span class="chip">'+esc(r+' → '+c+': '+(b.remove?'clear':String(b.value)))+'<button data-unstage="'+i+'" aria-label="Remove staged change">×</button></span>';}).join('')+'<button id="commitBatch" class="primary" '+(mBatch.length?'':'disabled')+'>Commit as one transaction</button><button id="discardBatch" '+(mBatch.length?'':'disabled')+'>Discard</button></div>';
+ sheet.innerHTML=h;
+ sheet.querySelectorAll('.mcell').forEach(b=>b.onclick=()=>{mSel={r:+b.dataset.r,c:+b.dataset.c};renderMatrixSheet();updateInspector();});
+ sheet.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{if(!mSel){announce('Select a cell first.',true);return;}stageKey(b.dataset.key);});
+ sheet.querySelectorAll('[data-unstage]').forEach(b=>b.onclick=()=>{mBatch.splice(+b.dataset.unstage,1);renderMatrixSheet();updateInspector();});
+ $('#commitBatch').onclick=commitMatrixBatch;$('#discardBatch').onclick=()=>{mBatch=[];renderMatrixSheet();updateInspector();announce('Staged matrix changes discarded; source unchanged.');};
+ sheet.onkeydown=matrixKey;
+}
+function stageKey(key){
+ const p=matrixProfile();if(!p||!mSel||!mPlan)return;
+ const d=cellDisplay(mSel.r,mSel.c),row=mPlan.rows[mSel.r].id,col=mPlan.columns[mSel.c].id;
+ const stage=ch=>{mBatch=mBatch.filter(b=>!(b.rowId===row&&b.columnId===col));if(ch)mBatch.push({rowId:row,columnId:col,...ch});renderMatrixSheet();updateInspector();};
+ if(key==='clear'){if(!d.assignments.length&&!d.staged)return;stage({remove:true});return;}
+ const k=key.toUpperCase();
+ if(p.profile==='matrix.crud@1'){const set=new Set((d.value||'').split(''));set.has(k)?set.delete(k):set.add(k);const next=['C','R','U','D'].filter(x=>set.has(x)).join('');stage(next?{value:next}:(d.assignments.length?{remove:true}:null));return;}
+ if(!d.staged&&d.value===k)return;
+ stage({value:k});
+}
+function matrixKey(e){
+ const p=matrixProfile();if(!p||!mPlan)return;
+ const keys=MATRIX_KEYS(p);
+ if(e.key.startsWith('Arrow')&&mSel){e.preventDefault();const d={ArrowUp:[-1,0],ArrowDown:[1,0],ArrowLeft:[0,-1],ArrowRight:[0,1]}[e.key];mSel={r:Math.min(mPlan.rows.length-1,Math.max(0,mSel.r+d[0])),c:Math.min(mPlan.columns.length-1,Math.max(0,mSel.c+d[1]))};renderMatrixSheet();updateInspector();return;}
+ if(e.key==='Enter'){e.preventDefault();commitMatrixBatch();return;}
+ if(e.key==='Escape'){e.preventDefault();mBatch=[];renderMatrixSheet();updateInspector();announce('Staged matrix changes discarded; source unchanged.');return;}
+ if(!mSel||!String(p.value||'').split('.')[0].startsWith('x_'))return;
+ if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();stageKey('clear');return;}
+ if(e.key.length===1&&/[a-z]/i.test(e.key)){const k=e.key.toUpperCase();if(keys&&!keys.includes(k))return;e.preventDefault();stageKey(k);}
+}
+function commitMatrixBatch(){
+ if(!mBatch.length||!mPlan)return;
+ if(mPlan.rows.length*mPlan.columns.length>5000||mPlan.columns.length>40){announce('DDN-PJ013: Matrix limit: 5,000 cells and 40 columns',true);return;}
+ const changes=mBatch.map(b=>({...b}));
+ const ok=transaction('Set matrix assignments ('+changes.length+' cell'+(changes.length>1?'s':'')+' as one batch)',t=>CMD.setMatrixAssignments(D,t,entry,view,{changes}));
+ if(ok){mBatch=[];renderMatrixSheet();}
+}
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -72,7 +141,18 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
  p.innerHTML='<div class="sectionlabel" style="margin-top:0">Details on demand</div><p class="help">Required properties appear in Meaning. Specialized implementation, evidence and scope stay discoverable here.</p>'+(sel?'<label>Source identity</label><div class="subtle"><code>'+esc(sel.sourceId)+'</code></div><label>Applicable groups</label><div class="control-stack"><button data-story="properties">Domain & representation</button><button data-story="properties">Scope & ownership</button><button data-story="properties">Constraints & evidence</button></div>':'<div class="notice">The projection determines which operations are meaningful. A record value is not a freehand position.</div>')+'<hr><h3>Current render diagnostics</h3>'+result.diagnostics.slice(0,5).map(d=>'<p class="help"><strong>'+esc(d.code)+'</strong><br>'+esc(d.message)+'</p>').join('')+'<button id="inspectSource" class="wide">Inspect actual source</button><p class="help">Advanced group screens are design proposals, not implemented specialized property editors.</p>';p.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));$('#inspectSource').onclick=openSource;return;
  }
  if(!graph()){
- p.innerHTML='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale.</div>'+(view==='raci'?'<h3>Responsibility matrix</h3><label>Rows</label><div class="subtle">Order · Receive · Post</div><label>Columns</label><div class="subtle">Buyer · Manager · Warehouse · Controller</div><label>Cell meaning</label><div class="subtle">Shared assignment / x_assignment.code</div><p class="help">Select a cell to inspect its source. The production assignment editor is described in the specification.</p>':'<h3>Supplied values</h3><label>Source</label><div class="subtle">m.facts · six synthetic records</div><label>Category</label><div class="subtle">x_record.month</div><label>Value</label><div class="subtle">x_record.value · CAD</div><p class="help">Changing the chart mark is live under This view. Binding wizards are specified, not implemented in this prototype.</p>')+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;return;
+ const mp=matrixProfile();
+ if(mp){
+  let mh='<div class="notice">Data-bound projection. A cell is a projection of a shared assignment relation — editing it edits source, never a UI-only fact.</div><h3>'+esc(mp.profile)+'</h3><label>Binding</label><div class="subtle">'+esc(mp.relation)+' · '+esc(mp.value)+'</div><label>Write target</label><div class="subtle">'+esc(matrixWriteTarget(mp))+'</div>';
+  const cell=mSel&&mPlan?{row:mPlan.rows[mSel.r],column:mPlan.columns[mSel.c],...cellDisplay(mSel.r,mSel.c)}:null;
+  if(cell&&cell.assignments.length)mh+='<label>Selected cell</label><div class="subtle">'+esc(cell.row.name)+' → '+esc(cell.column.name)+'</div><label>Contributors</label>'+cell.assignments.map(a=>'<div class="endpoint-card"><code>'+esc(a.id)+'</code><br>value <code>'+esc(a.value)+'</code></div>').join('')+'<button id="cellInGraph" class="wide primary">Select assignment in graph</button>';
+  else if(cell)mh+='<label>Selected cell</label><div class="subtle">'+esc(cell.row.name)+' → '+esc(cell.column.name)+' · '+(cell.staged?'staged “'+esc(cell.value||'clear')+'”':'empty')+'</div><p class="help">Type a code letter or use the sheet keypad to stage an assignment, then commit the batch as one transaction.</p>';
+  else mh+='<label>Rows</label><div class="subtle">'+esc(mPlan?mPlan.rows.map(r=>r.name).join(' · '):'')+'</div><label>Columns</label><div class="subtle">'+esc(mPlan?mPlan.columns.map(c=>c.name).join(' · '):'')+'</div><p class="help">Click a cell in the sheet under the diagram. Keyboard and pointer are equivalent; every commit is one source transaction.</p>';
+  p.innerHTML=mh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  if($('#cellInGraph'))$('#cellInGraph').onclick=()=>{const id=cell.assignments[0].id;setView('responsibility_graph');choose(id);announce('Assignment selected in the responsibility graph.');};
+  return;
+ }
+ p.innerHTML='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale.</div>'+'<h3>Supplied values</h3><label>Source</label><div class="subtle">m.facts · six synthetic records</div><label>Category</label><div class="subtle">x_record.month</div><label>Value</label><div class="subtle">x_record.value · CAD</div><p class="help">Changing the chart mark is live under This view. Binding wizards are specified, not implemented in this prototype.</p>'+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;return;
  }
  if(!sel){p.innerHTML='<h3>Select an object or relation</h3><p class="help">Choose a palette starter to insert. Use Model for keyboard selection. All new objects are synthetic local design definitions.</p>';return;}
  p.innerHTML='<label for="nameEdit">'+(sel.kind==='field'?'Field label':'Name')+'</label><input id="nameEdit" value="'+esc(sel.name)+'"><div class="row" style="margin-top:8px"><button id="applyName" class="primary">Apply label</button><button id="moreReview">Used in views…</button></div><p class="help">Changes the display label, not the stable identifier.</p>';

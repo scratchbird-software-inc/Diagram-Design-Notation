@@ -112,5 +112,27 @@ function applyCreationAction(D,ws,entry,view,args){
  }
  fail('DDN-I033','Unsupported creation action '+String(action)+' for kind '+kind+'.');
 }
-return{createInView,editProjectionProperty,applyCreationAction,PROJECTION_PROPERTY_KEYS};
+// Profile cell alphabets, checked before delegation so the UI can disable
+// illegal keys on the click path. Rule violations below this level (duplicate
+// cells, joined cells, RACI/CRUD row rules) surface the runtime's own codes.
+const MATRIX_ALPHABETS={
+ 'matrix.raci@1':v=>['R','A','C','I'].includes(v),
+ 'matrix.crud@1':v=>typeof v==='string'&&/^[CRUD]+$/.test(v)&&new Set(v).size===v.length,
+};
+function setMatrixAssignments(D,ws,entry,view,args){
+ const changes=(args||{}).changes;
+ if(!Array.isArray(changes)||!changes.length||changes.length>100)fail('DDN-E007','Matrix changes need a matrix view and 1..100 cell operations');
+ const p=ws.resolve(entry,view).view.profiles.projection||{};
+ if(p.kind!=='matrix')fail('DDN-E007','Matrix changes need a matrix view and 1..100 cell operations');
+ const alphabet=MATRIX_ALPHABETS[p.profile];
+ for(const c of changes){
+  if(!c||typeof c!=='object'||Array.isArray(c))fail('DDN-E007','Invalid matrix operation');
+  if(!c.remove&&alphabet&&!alphabet(c.value))fail('DDN-I033','Value '+JSON.stringify(c.value)+' is outside the '+p.profile+' cell alphabet. Nothing was changed.');
+ }
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.setMatrixCells(t,entry,view,changes.map(c=>({row:c.rowId,column:c.columnId,...(c.remove?{remove:true}:{value:c.value}),...(c.id?{id:c.id}:{})})));
+  return{changes:changes.length};
+ });
+}
+return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,PROJECTION_PROPERTY_KEYS};
 });

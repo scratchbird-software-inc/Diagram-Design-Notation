@@ -731,13 +731,15 @@
       "title": "Empty assignment",
       "action": "Click empty RACI cell, add C",
       "expected": "Create shared assignment; graph updates",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-002-matrix-editor.js",
+      "coveredIn": "ED-002"
     },
     {
       "id": "VE-AC-050",
@@ -746,13 +748,15 @@
       "title": "Batch valid",
       "action": "Move accountability between roles",
       "expected": "Single validated transaction avoids invalid intermediate committed state",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-002-matrix-editor.js",
+      "coveredIn": "ED-002"
     },
     {
       "id": "VE-AC-051",

@@ -32,7 +32,8 @@ is the primary interface — distinct from the source-first Studio in
 - `tests/` — 84-case production acceptance plan and artifact-validation
   checks; the Node-based designer suite (`npm --prefix designer test`, started
   by ED-001's `ed-001-full-kind-palette.js`, which covers VE-AC-002 and
-  VE-AC-064); Playwright harnesses (optional).
+  VE-AC-064, and extended by ED-002's `ed-002-matrix-editor.js`, which covers
+  VE-AC-049 and VE-AC-050); Playwright harnesses (optional).
 - `src/` — future implementation home (empty).
 
 ## Status and boundaries
@@ -42,4 +43,8 @@ editor. The runtime audit baseline is 0.5.0-draft.2; known gaps (draft
 validation API, occurrence addressing, safe kind conversion, full projection
 editors) are listed in the specification. Source-preserving transactions and
 keeping the Studio intact are hard requirements (ADR-02: DDN-native SVG/scene
-as first host).
+as first host). Beyond the graph canvas, the prototype now includes a matrix
+editor (ED-002): RACI/CRUD/relations cells are editable by keyboard and click
+through a structured sheet under the diagram, staged changes commit as one
+atomic batch transaction, and a filled cell's contributors can be selected in
+the companion graph view.

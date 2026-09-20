@@ -17,10 +17,15 @@ The editor advertises full coverage of supported DDN definitions through visual 
 | Fishbone | Add category/cause under selected parent; attach an existing cause. | Cause hierarchy/provenance and repeated occurrence semantics. |
 | Decision | Add/edit typed inputs, predicates, rule priority and outcomes; evaluate fixtures. | Rule order is meaningful for first-match policies. |
 
+Implementation status (ED-002): matrix cell editing, atomic batch commits and
+contributor inspection ("select assignment in graph") are implemented in the
+prototype against the runtime `setMatrixCells` helper; row/column source
+pickers remain proposed.
+
 The experimental interaction renderer is a separate mode of graph-family display. Its inspector edits participant/step/payload/causal data, not vertical pixels as time. Adding steps must generate actual occurrence and predecessor records. Full combined fragments are not claimed by this specification.
 
 ## Structured sheets
-A chart Source sheet has source records, category/value/series bindings, units and missing-data policy in a guided order. Only then offer marks and approved transforms. A rule sheet has declared inputs/domains, conditions, outcomes, hit policy, and analysis result. A matrix sheet has row/column selectors, relation/value binding, duplicate policy and write target. Each sheet writes the shared definitions or view policies explicitly.
+A chart Source sheet has source records, category/value/series bindings, units and missing-data policy in a guided order. Only then offer marks and approved transforms. A rule sheet has declared inputs/domains, conditions, outcomes, hit policy, and analysis result. A matrix sheet has row/column selectors, relation/value binding, duplicate policy and write target. Each sheet writes the shared definitions or view policies explicitly. The matrix sheet's relation/value binding and write target are live in the prototype (ED-002: keyboard + click cell editing, one-transaction batch bar); row/column selectors and the duplicate-policy control remain proposed.
 
 ## Derived selection
 Every selected mark exposes its contributors. A single source record may be edited through a field control; an aggregate opens its inputs, not an arbitrary editable total. A formula/target definition is distinct from measured input. A heatmap colour changes only through its value or scale policy. A hidden value remains in the source until an authorized export policy removes it.

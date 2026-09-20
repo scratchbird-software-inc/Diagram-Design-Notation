@@ -12,6 +12,8 @@ CreateDefinition; CreateOccurrence; AddMember; UpdateMember; MoveMember; UpdateP
 
 The existing authoring functions are wrapped where sufficient. Commands with source dependencies require new planners; do not compose several committing helpers and call that atomic. A create-plus-pin gesture is one command. A property slider's many intermediate values are one command. A multi-row assignment fix is one batch.
 
+Implementation status (ED-002): `SetMatrixCells` is exercised through the prototype's `setMatrixAssignments` command mapping (`prototype/commands.js`, contract payload `setMatrixAssignments`) with profile alphabet pre-checks and one-transaction batch commits; the public prepare/commit seam above remains proposed.
+
 ## Drafts without semantic corruption
 The current runtime builds strict profile contracts during guided edits. Introduce a **draft inspection** path that preserves syntactically valid incomplete records and reports missing obligations. Hard failures include invalid references introduced by a reconnect, duplicate stable IDs, invalid property types, illegal filesystem paths and unauthorized writes. Soft draft issues include an unfinished flow path, missing decision branches, an unassigned RACI role or unchosen datatype.
 

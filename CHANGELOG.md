@@ -6,6 +6,8 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: matrix (RACI/CRUD/relations) cell editor with atomic
+  batch commits (ED-002; covers VE-AC-049/050).
 - Designer prototype: full 188-kind palette driven by `kind-ui-map.json`,
   descriptor-driven inspector header, separable `commands.js` command layer,
   and a Node-based designer test suite (ED-001).
