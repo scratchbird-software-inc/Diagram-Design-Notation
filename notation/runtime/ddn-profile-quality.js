@@ -86,6 +86,14 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ if(profile==='archimate.basic@1'){
+  const LAYERS=['business','application','technology'],layer=k=>{const m=/^archi\.(business|application|technology)_/.exec(k||'');return m?m[1]:null;};
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='archi.rel')){
+   const a=ns.get(r.from.element),b=ns.get(r.to.element),la=layer(a?.kind),lb=layer(b?.kind);
+   if(!la||!lb)fail('DDN-PJ123','Relation '+r.id+' (archi.rel) endpoint kind '+(la?b?.kind:a?.kind)+' is outside the nine registered archi.* kinds (endpoint layers '+(la||'none')+' -> '+(lb||'none')+')',r);
+   if(LAYERS.indexOf(la)<LAYERS.indexOf(lb))fail('DDN-PJ123','Relation '+r.id+' (archi.rel) links '+la+' -> '+lb+'; the fixed layer-pair table allows same-layer and upward (serving) links only',r);
+  }
+ }
  if(profile==='cmmn.basic@1'){
   const stages=(ir.view.frames||[]).filter(f=>ns.get(f.scope)?.kind==='cmmn.stage');
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='cmmn.sentry')){

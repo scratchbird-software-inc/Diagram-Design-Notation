@@ -584,6 +584,105 @@
       "code": "CONSTRAINT",
       "glyph": "object",
       "aliases": []
+    },
+    {
+      "keyword": "archi.business_actor",
+      "name": "Business actor",
+      "shape": "profile",
+      "silhouette": "actor",
+      "fallback": "team",
+      "family": "governance",
+      "code": "BIZ_ACTOR",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.business_role",
+      "name": "Business role",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "team",
+      "family": "governance",
+      "code": "BIZ_ROLE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.business_process",
+      "name": "Business process",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "activity",
+      "family": "governance",
+      "code": "BIZ_PROCESS",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.business_service",
+      "name": "Business service",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "governance",
+      "code": "BIZ_SERVICE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.business_interface",
+      "name": "Business interface",
+      "shape": "profile",
+      "silhouette": "ellipse",
+      "fallback": "application",
+      "family": "governance",
+      "code": "BIZ_INTERFACE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.application_component",
+      "name": "Application component",
+      "shape": "profile",
+      "silhouette": "component",
+      "fallback": "application",
+      "family": "interface",
+      "code": "APP_COMPONENT",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.application_service",
+      "name": "Application service",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "interface",
+      "code": "APP_SERVICE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.technology_node",
+      "name": "Technology node",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "host",
+      "family": "deployment",
+      "code": "TECH_NODE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "archi.technology_service",
+      "name": "Technology service",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "deployment",
+      "code": "TECH_SERVICE",
+      "glyph": "object",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -1160,6 +1259,40 @@
       ],
       "allow_self": false,
       "member_endpoints": true
+    },
+    {
+      "keyword": "archi.rel",
+      "name": "serves / relates to",
+      "verb": "serves / relates to",
+      "family": "structural",
+      "code": "ARCHIREL",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "archi.business_actor",
+        "archi.business_role",
+        "archi.business_process",
+        "archi.business_service",
+        "archi.business_interface",
+        "archi.application_component",
+        "archi.application_service",
+        "archi.technology_node",
+        "archi.technology_service"
+      ],
+      "target": [
+        "archi.business_actor",
+        "archi.business_role",
+        "archi.business_process",
+        "archi.business_service",
+        "archi.business_interface",
+        "archi.application_component",
+        "archi.application_service",
+        "archi.technology_node",
+        "archi.technology_service"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
     }
   ],
   "profiles": [
@@ -2309,6 +2442,22 @@
         "equation solving or evaluation",
         "SysML XMI interchange",
         "full SysML conformance"
+      ]
+    },
+    {
+      "id": "archimate.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Layered enterprise-architecture overview"
+      ],
+      "scope": "Fixed nine-kind business/application/technology vocabulary; family-palette layer colours; viewpoints as named views; serving links upward only. Profile-level coverage, not ArchiMate conformance.",
+      "validation": [
+        "relation layer pair must be legal per the fixed 3×3 table (DDN-PJ123)"
+      ],
+      "unsupported": [
+        "ArchiMate exchange format",
+        "relationship derivation machinery",
+        "full ArchiMate conformance"
       ]
     }
   ],

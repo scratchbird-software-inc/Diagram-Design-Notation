@@ -1,0 +1,44 @@
+ddn "0.5";
+module "ddn.examples.archimate";
+
+import "shared.ddn" as shared;
+
+// Synthetic ArchiMate-style layered view for the archimate.basic@1 profile.
+// Three layers — business (governance family), application (interface
+// family), technology (deployment family) — coloured from the registered
+// family palette. archi.rel serving links point upward only: technology
+// serves application serves business; downward links are rejected as
+// DDN-PJ123. The business_viewpoint view is a viewpoint as a named view
+// (select of the business-layer objects only). All data is synthetic. This
+// is profile-level coverage, not ArchiMate conformance.
+data m {
+    object service_agent "Service agent" { kind: "archi.business_actor"; }
+    object order_desk "Order desk" { kind: "archi.business_role"; }
+    object order_handling "Order handling" { kind: "archi.business_process"; }
+    object order_api "Order API" { kind: "archi.application_component"; }
+    object order_service "Order service" { kind: "archi.application_service"; }
+    object db_node "Database node" { kind: "archi.technology_node"; }
+    object db_service "Database service" { kind: "archi.technology_service"; }
+
+    relation staffing "staffs" @service_agent -> @order_desk { kind: "archi.rel"; }
+    relation handling "runs" @order_desk -> @order_handling { kind: "archi.rel"; }
+    relation serving_process "serves" @order_service -> @order_handling { kind: "archi.rel"; }
+    relation exposed_on "realised by" @order_service -> @order_api { kind: "archi.rel"; }
+    relation serving_app "serves" @db_service -> @order_api { kind: "archi.rel"; }
+    relation hosted_on "hosted on" @db_service -> @db_node { kind: "archi.rel"; }
+}
+
+view landscape "Order platform landscape" {
+    data: [@m]; format: @shared.styles.technical;
+    projection { kind: graph; profile: "archimate.basic@1"; }
+    layout { algorithm: layered; direction: up; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view business_viewpoint "Order platform business viewpoint" {
+    data: [@m]; format: @shared.styles.technical;
+    projection { kind: graph; profile: "archimate.basic@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    select: [@m.service_agent, @m.order_desk, @m.order_handling];
+}

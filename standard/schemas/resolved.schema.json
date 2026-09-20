@@ -469,7 +469,16 @@
             "cmmn.milestone",
             "cmmn.sentry",
             "sysml.block",
-            "sysml.constraint"
+            "sysml.constraint",
+            "archi.business_actor",
+            "archi.business_role",
+            "archi.business_process",
+            "archi.business_service",
+            "archi.business_interface",
+            "archi.application_component",
+            "archi.application_service",
+            "archi.technology_node",
+            "archi.technology_service"
           ]
         },
         "kindCode": {
@@ -678,7 +687,16 @@
             "MILESTONE",
             "SENTRY",
             "BLOCK",
-            "CONSTRAINT"
+            "CONSTRAINT",
+            "BIZ_ACTOR",
+            "BIZ_ROLE",
+            "BIZ_PROCESS",
+            "BIZ_SERVICE",
+            "BIZ_INTERFACE",
+            "APP_COMPONENT",
+            "APP_SERVICE",
+            "TECH_NODE",
+            "TECH_SERVICE"
           ]
         },
         "properties": {
@@ -866,7 +884,8 @@
             "uml.message",
             "uml.flow",
             "bpmn.messageflow",
-            "sysml.flow"
+            "sysml.flow",
+            "archi.rel"
           ]
         },
         "kindCode": {
@@ -987,7 +1006,8 @@
             "MESSAGE",
             "FLOW",
             "MSGFLOW",
-            "ITEMFLOW"
+            "ITEMFLOW",
+            "ARCHIREL"
           ]
         },
         "from": {

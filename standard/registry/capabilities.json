@@ -2571,6 +2571,22 @@
         "SysML XMI interchange",
         "full SysML conformance"
       ]
+    },
+    {
+      "id": "archimate.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Layered enterprise-architecture overview"
+      ],
+      "scope": "Fixed nine-kind business/application/technology vocabulary; family-palette layer colours; viewpoints as named views; serving links upward only. Profile-level coverage, not ArchiMate conformance.",
+      "validation": [
+        "relation layer pair must be legal per the fixed 3×3 table (DDN-PJ123)"
+      ],
+      "unsupported": [
+        "ArchiMate exchange format",
+        "relationship derivation machinery",
+        "full ArchiMate conformance"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2779,7 +2795,8 @@
     "timing/state-over-time diagrams via uml.timing@1 (declared time points, plateau bands)",
     "interaction overview flowcharts with view-referencing ref nodes via uml.interaction_overview@1",
     "CMMN-style case views via cmmn.basic@1 (stages, milestones, entry/exit sentries; profile-level, not CMMN conformance)",
-    "SysML-style block definition, internal block (ports/flows) and parametric constraint views via sysml.bdd@1/sysml.ibd@1/sysml.parametric@1 (profile-level, not SysML conformance)"
+    "SysML-style block definition, internal block (ports/flows) and parametric constraint views via sysml.bdd@1/sysml.ibd@1/sysml.parametric@1 (profile-level, not SysML conformance)",
+    "ArchiMate-style layered architecture views via archimate.basic@1 (nine-kind vocabulary, layer-pair legality; profile-level, not ArchiMate conformance)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

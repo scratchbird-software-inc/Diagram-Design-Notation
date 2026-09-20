@@ -104,7 +104,11 @@ function validate(ir,registry,ErrorClass){
    if(n.kind==='object'&&!allowed.includes('object')&&!allowed.includes('*')){
     if(mode==='strict')fail('DDN102','Unspecified '+label+' kind cannot satisfy '+rel.kind,rel);
     warn('DDN-W102','Endpoint-kind check deferred for sketch object '+n.id,rel);
-   }else if(!allowed.includes('*')&&!allowed.includes(n.kind))fail('DDN102',rel.kind+' cannot use '+n.kind+' as '+label,rel);
+   }else if(!allowed.includes('*')&&!allowed.includes(n.kind)){
+    // Under archimate.basic@1, archi.rel endpoint legality (non-archi kinds and
+    // downward layer pairs) is judged as DDN-PJ123 by the profile-quality pass.
+    if(!(rel.kind==='archi.rel'&&ir.view.profiles.projection?.profile==='archimate.basic@1'))fail('DDN102',rel.kind+' cannot use '+n.kind+' as '+label,rel);
+   }
    if(contract.member_endpoints===false&&ep.member)fail('DDN102',rel.kind+' requires object endpoints',rel);
   }
   if(contract.allow_self===false&&a.id===b.id)fail('DDN102',rel.kind+' requires distinct object identities',rel);

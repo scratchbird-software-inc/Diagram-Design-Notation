@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- ArchiMate-style layered views via profile `archimate.basic@1` (nine-kind
+  vocabulary, `DDN-PJ123` layer-pair legality). Profile-level coverage, not
+  ArchiMate conformance. RFC-111.
 - SysML-style profiles `sysml.bdd@1`/`sysml.ibd@1`/`sysml.parametric@1`
   (blocks, ports, flows, constraints; `DDN-PJ121`/`DDN-PJ122`).
   Profile-level coverage, not SysML conformance. RFC-110.
