@@ -2604,6 +2604,38 @@
         "calendar-aware scheduling",
         "probabilistic (three-point) estimation"
       ]
+    },
+    {
+      "id": "fault.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Fault tree"
+      ],
+      "scope": "AND/OR gate decomposition of a top event into basic events; tree layout.",
+      "validation": [
+        "every gate declares and/or and has at least two inputs (DDN-PJ126)"
+      ],
+      "unsupported": [
+        "probability quantification",
+        "minimal cut-set computation",
+        "reliability certification"
+      ]
+    },
+    {
+      "id": "event.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Event tree"
+      ],
+      "scope": "Initiating event followed forward through gate branches to outcomes; tree layout.",
+      "validation": [
+        "every gate declares and/or and has at least two inputs (DDN-PJ126)"
+      ],
+      "unsupported": [
+        "probability quantification",
+        "sequence branching fractions",
+        "reliability certification"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2814,7 +2846,8 @@
     "CMMN-style case views via cmmn.basic@1 (stages, milestones, entry/exit sentries; profile-level, not CMMN conformance)",
     "SysML-style block definition, internal block (ports/flows) and parametric constraint views via sysml.bdd@1/sysml.ibd@1/sysml.parametric@1 (profile-level, not SysML conformance)",
     "ArchiMate-style layered architecture views via archimate.basic@1 (nine-kind vocabulary, layer-pair legality; profile-level, not ArchiMate conformance)",
-    "PERT/CPM critical-path views via pert.cpm@1 (computed forward/backward pass, zero-slack accent)"
+    "PERT/CPM critical-path views via pert.cpm@1 (computed forward/backward pass, zero-slack accent)",
+    "fault tree and event tree views via fault.tree@1/event.tree@1 (AND/OR gates, two-input check)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

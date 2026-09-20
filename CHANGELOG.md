@@ -6,6 +6,8 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Fault tree and event tree views via profiles `fault.tree@1`/`event.tree@1`
+  (`tree.gate`/`tree.event`, `x_gate`, `DDN-PJ126`). RFC-113.
 - PERT/CPM critical-path views via profile `pert.cpm@1` (`x_estimate`,
   computed passes, `DDN-PJ124`/`DDN-PJ125`); removes 'critical-path
   scheduling' from capabilities `unsupported[]`. RFC-112.

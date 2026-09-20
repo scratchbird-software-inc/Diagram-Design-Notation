@@ -683,6 +683,28 @@
       "code": "TECH_SERVICE",
       "glyph": "object",
       "aliases": []
+    },
+    {
+      "keyword": "tree.gate",
+      "name": "Logic gate",
+      "shape": "profile",
+      "silhouette": "diamond",
+      "fallback": "gateway",
+      "family": "activity",
+      "code": "GATE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "tree.event",
+      "name": "Basic event",
+      "shape": "profile",
+      "silhouette": "circle",
+      "fallback": "object",
+      "family": "concept",
+      "code": "EVENT",
+      "glyph": "object",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -1290,6 +1312,25 @@
         "archi.application_service",
         "archi.technology_node",
         "archi.technology_service"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "tree.input",
+      "name": "has input",
+      "verb": "has input",
+      "family": "control",
+      "code": "TREEINPUT",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "tree.gate"
+      ],
+      "target": [
+        "tree.gate",
+        "tree.event"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -2475,6 +2516,38 @@
         "resource leveling",
         "calendar-aware scheduling",
         "probabilistic (three-point) estimation"
+      ]
+    },
+    {
+      "id": "fault.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Fault tree"
+      ],
+      "scope": "AND/OR gate decomposition of a top event into basic events; tree layout.",
+      "validation": [
+        "every gate declares and/or and has at least two inputs (DDN-PJ126)"
+      ],
+      "unsupported": [
+        "probability quantification",
+        "minimal cut-set computation",
+        "reliability certification"
+      ]
+    },
+    {
+      "id": "event.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Event tree"
+      ],
+      "scope": "Initiating event followed forward through gate branches to outcomes; tree layout.",
+      "validation": [
+        "every gate declares and/or and has at least two inputs (DDN-PJ126)"
+      ],
+      "unsupported": [
+        "probability quantification",
+        "sequence branching fractions",
+        "reliability certification"
       ]
     }
   ],

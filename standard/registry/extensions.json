@@ -1243,6 +1243,25 @@
           "type": "number"
         }
       }
+    },
+    "x_gate": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "and",
+                "or"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
     }
   }
 }

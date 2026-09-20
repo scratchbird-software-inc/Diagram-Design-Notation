@@ -478,7 +478,9 @@
             "archi.application_component",
             "archi.application_service",
             "archi.technology_node",
-            "archi.technology_service"
+            "archi.technology_service",
+            "tree.gate",
+            "tree.event"
           ]
         },
         "kindCode": {
@@ -696,7 +698,9 @@
             "APP_COMPONENT",
             "APP_SERVICE",
             "TECH_NODE",
-            "TECH_SERVICE"
+            "TECH_SERVICE",
+            "GATE",
+            "EVENT"
           ]
         },
         "properties": {
@@ -885,7 +889,8 @@
             "uml.flow",
             "bpmn.messageflow",
             "sysml.flow",
-            "archi.rel"
+            "archi.rel",
+            "tree.input"
           ]
         },
         "kindCode": {
@@ -1007,7 +1012,8 @@
             "FLOW",
             "MSGFLOW",
             "ITEMFLOW",
-            "ARCHIREL"
+            "ARCHIREL",
+            "TREEINPUT"
           ]
         },
         "from": {

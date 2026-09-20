@@ -28,6 +28,7 @@ function registry(base){
  out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']}},additionalProperties:false},['object']);
  out.extension_contracts.x_estimate=def({type:'number'},['object']);
+ out.extension_contracts.x_gate=def({type:'object',required:['type'],properties:{type:{enum:['and','or']}},additionalProperties:false},['object']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);

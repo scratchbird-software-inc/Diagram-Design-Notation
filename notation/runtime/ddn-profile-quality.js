@@ -101,6 +101,13 @@ function validate(ir,E){
    if(!['entry','exit'].includes(n.properties.x_sentry?.on))fail('DDN-PJ120','Sentry '+(n.name||n.id)+' lacks a valid x_sentry.on (entry or exit)',n);
   }
  }
+ if(['fault.tree@1','event.tree@1'].includes(profile)){
+  const es=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='tree.input');
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='tree.gate')){
+   const count=es.filter(r=>r.from.element===n.id).length,type=n.properties.x_gate?.type;
+   if(!['and','or'].includes(type)||count<2)fail('DDN-PJ126','Gate '+(n.name||n.id)+' has '+count+' visible tree.input edge(s) and declared type '+(type||'none')+'; every gate must declare x_gate.type (and/or) and have at least two inputs',n);
+  }
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });
