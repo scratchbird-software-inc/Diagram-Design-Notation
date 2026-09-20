@@ -604,13 +604,15 @@
       "title": "Frames",
       "action": "Drag table inside a server frame",
       "expected": "No placement relationship inferred without explicit action",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-011-lane-editing.js",
+      "coveredIn": "ED-011"
     },
     {
       "id": "VE-AC-041",

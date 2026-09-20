@@ -93,3 +93,9 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .problem-row .problem-msg{flex:1}
 .problem-row.sev-error code{color:#b3392f}
 .problem-row.sev-incomplete code{color:#8a6206}
+.lane-card{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0}
+.lane-card .row{margin:6px 0}
+.lane-card .lane-rect{grid-template-columns:repeat(4,1fr)}
+.lane-card .lane-rect label{margin:0 0 3px}
+.lane-card .lane-members .chip{display:inline-flex;align-items:center;gap:6px;background:#eaf3ff;border:1px solid #b9d2ee;border-radius:6px;padding:3px 8px;font-size:11px;margin:2px 4px 2px 0}
+.lane-card .lane-members .chip button{border:0;background:transparent;min-height:0;padding:0 2px;font-size:12px}

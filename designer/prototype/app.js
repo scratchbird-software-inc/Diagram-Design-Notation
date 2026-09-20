@@ -12,6 +12,7 @@ let timelineNotice=null,tDrag=null;
 let fishboneNotice=null;
 let panelsNotice=null,panelsSel=null;
 let decisionNotice=null,decisionFixture=null;
+let laneNotice=null;
 let rDrag=null;
 let pendingViews=new Set(),wsIssues=[],problemsOpen=false,incompleteBadge=false;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
@@ -678,7 +679,7 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['flowchart','raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['flowchart','raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;laneNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -689,6 +690,81 @@ function updateLeft(){
  }else if(left==='model'){
  pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas. “＋ view” adds the existing definition to another (or this) view as one occurrence — never a clone (ED-009).</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<span class="model-row"><button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button><button class="addview" data-addview="${esc(n.id)}" title="Add this existing definition to a view (addExistingToView)">＋ view</button></span>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));pane.querySelectorAll('[data-addview]').forEach(b=>b.onclick=()=>addToView(b.dataset.addview));
  }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey','decision'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels',decision:'Decision table'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+}
+// Lane editing (ED-011; spec ch.08 "Scope versus visual grouping"; VE-003/
+// VE-005/VE-008). Lanes are this view's `frame` declarations in canonical
+// source — view-local visual groups, never namespaces, scopes, or security
+// boundaries. Every assignment (drag- or picker-driven) opens the same
+// preview modal stating the exact member changes and that no semantic
+// containment, ownership, or placement relationship is created; under
+// uml.activity@1 the preview also lists the exact x_partition writes
+// (DDN-PJ114 re-checked on commit).
+function laneTxn(label,fn){lastEditError=null;const ok=transaction(label,fn);laneNotice=ok?null:(lastEditError?(lastEditError.code||'EDIT')+': '+lastEditError.message:'Edit rejected; source unchanged.');if(!ok)updateInspector();return ok;}
+function laneFrameOf(frameId){return (ir?.view.frames||[]).find(f=>f.id===frameId||String(f.id).split('.').pop()===frameId||f.name===frameId)||null;}
+function lanesSectionHTML(){
+ const frames=ir.view.frames||[],activity=ir.view.profiles.projection?.profile==='uml.activity@1';
+ const sceneRect=id=>(result.scene.frames||[]).find(f=>f.id===id);
+ let h='<hr><h3>Lanes · view frames</h3><p class="help">Lanes are this view’s <code>frame</code> declarations — view-local visual groups, never namespaces, scopes, or security boundaries (spec ch.08 “Scope versus visual grouping”). Semantic scope membership stays the separate typed-relationship path.'+(activity?' This view’s profile is <code>uml.activity@1</code>: assignment also maintains the registered <code>x_partition</code> lane property.':'')+'</p>';
+ if(laneNotice)h+='<div class="notice error">'+esc(laneNotice)+'</div>';
+ for(const f of frames){
+  const r=sceneRect(f.id);
+  h+='<div class="lane-card" data-lanecard="'+esc(f.id)+'"><div class="row"><input data-lanelabel value="'+esc(f.name)+'" aria-label="Lane '+esc(f.name)+' label"><button data-lanerename>Rename</button></div>';
+  h+='<div class="kv lane-rect">'+['x','y','w','h'].map(k=>'<div><label>'+k.toUpperCase()+' · px</label><input type="number" data-lanerect="'+k+'" value="'+Math.round(r?r[k]:0)+'"></div>').join('')+'</div>';
+  h+='<div class="row"><button data-laneresize>Apply X/Y/W/H</button><button data-lanefit title="Remove explicit at/size; the frame auto-fits its members">Fit to members</button></div>';
+  h+='<div class="lane-members">'+f.members.map(m=>'<span class="chip">'+esc(sourceLabel(m))+'<button data-laneunassign="'+esc(m)+'" aria-label="Remove '+esc(sourceLabel(m))+' from lane">×</button></span>').join('')+'</div>';
+  const candidates=ir.elements.filter(n=>ir.view.selected.includes(n.id)&&!f.members.includes(n.id));
+  h+='<div class="row"><select data-lanepick>'+candidates.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><button data-laneassign '+(candidates.length?'':'disabled')+'>Assign…</button></div></div>';
+ }
+ h+='<div class="lane-card"><div class="row"><span class="tag">NEW LANE</span></div><div class="row"><input id="laneNewId" placeholder="lane_id" aria-label="New lane identifier"><input id="laneNewLabel" placeholder="Label" aria-label="New lane label"></div><div class="kv lane-rect">'+[['laneNewX','X'],['laneNewY','Y'],['laneNewW','W'],['laneNewH','H']].map(([id,k])=>'<div><label>'+k+' · px</label><input id="'+id+'" type="number" value="0"></div>').join('')+'</div><div class="row"><button id="laneAdd">＋ New lane</button></div><p class="help">An empty lane needs explicit X/Y/W/H to render where you place it; assigning members is a separate previewed step.</p></div>';
+ return h;
+}
+function wireLanesSection(){
+ const pane=$('#inspectorBody');
+ pane.querySelectorAll('[data-lanecard]').forEach(card=>{
+  const fid=card.dataset.lanecard,f=laneFrameOf(fid);
+  const rect=k=>{const inp=card.querySelector('[data-lanerect="'+k+'"]');return inp.value===''?undefined:Number(inp.value);};
+  card.querySelector('[data-lanerename]').onclick=()=>{
+   const label=card.querySelector('[data-lanelabel]').value;
+   if(label!==f.name)laneTxn('Rename lane '+f.name+' (this view only)',t=>CMD.renameLane(D,t,entry,view,{frameId:f.id,label}));
+  };
+  card.querySelector('[data-laneresize]').onclick=()=>{
+   const x=rect('x'),y=rect('y'),w=rect('w'),h=rect('h');
+   if(![x,y,w,h].every(Number.isFinite)||w<=0||h<=0){laneNotice='DDN-I033: Lane X/Y/W/H are required finite numbers with positive W/H. Nothing was changed.';updateInspector();return;}
+   laneTxn('Resize lane '+f.name+' (this view only)',t=>CMD.resizeLane(D,t,entry,view,{frameId:f.id,at:{x,y},size:{w,h}}));
+  };
+  card.querySelector('[data-lanefit]').onclick=()=>laneTxn('Fit lane '+f.name+' to its members (this view only)',t=>CMD.resizeLane(D,t,entry,view,{frameId:f.id,fit:true}));
+  card.querySelectorAll('[data-laneunassign]').forEach(b=>b.onclick=()=>laneTxn('Remove '+sourceLabel(b.dataset.laneunassign)+' from lane '+f.name,t=>CMD.unassignFromLane(D,t,entry,view,{frameId:f.id,elementIds:[b.dataset.laneunassign]})));
+  const assignBtn=card.querySelector('[data-laneassign]');
+  if(assignBtn)assignBtn.onclick=()=>{const pick=card.querySelector('[data-lanepick]').value;if(pick)laneAssignPreview(f.id,[pick],null);};
+ });
+ const add=$('#laneAdd');
+ if(add)add.onclick=()=>{
+  const id=$('#laneNewId').value.trim(),label=$('#laneNewLabel').value.trim();
+  const at={x:Number($('#laneNewX').value),y:Number($('#laneNewY').value)},size={w:Number($('#laneNewW').value),h:Number($('#laneNewH').value)};
+  if(!id||!label||![at.x,at.y,size.w,size.h].every(Number.isFinite)||size.w<=0||size.h<=0){laneNotice='DDN-I033: A new lane needs an identifier, a label and finite X/Y/W/H with positive W/H. Nothing was changed.';updateInspector();return;}
+  laneTxn('Create lane '+label+' (this view only)',t=>CMD.createLane(D,t,entry,view,{id,label,at,size}));
+ };
+}
+function laneAssignPreview(frameId,elementIds,pinPos){
+ const frame=laneFrameOf(frameId);if(!frame)return;
+ const activity=ir.view.profiles.projection?.profile==='uml.activity@1';
+ const adds=elementIds.filter(id=>!frame.members.includes(id));
+ const removals=(ir.view.frames||[]).filter(f=>f.id!==frame.id).flatMap(f=>f.members.filter(m=>elementIds.includes(m)).map(m=>({frame:f,id:m})));
+ const laneKey=String(frame.id).split('.').pop();
+ const body='<div class="scope-banner" style="margin:0 0 4px">Lane <strong>'+esc(frame.name)+'</strong> · view <code>'+esc(entry+' # '+view)+'</code> · commits against revision '+ws.revision+'</div>'
+ +'<h3>Exact member changes</h3>'
+ +(adds.length?'<p>Add to <strong>'+esc(frame.name)+'</strong>: '+adds.map(id=>esc(sourceLabel(id))).join(', ')+'</p>':'<p>No additions (already a member).</p>')
+ +(removals.length?'<p>Remove from '+removals.map(r=>'<strong>'+esc(r.frame.name)+'</strong> ← '+esc(sourceLabel(r.id))).join(' · ')+' (one-lane-per-element policy)</p>':'<p>No removals from other lanes.</p>')
+ +(pinPos?'<p>Pin '+esc(sourceLabel(elementIds[0]))+' at ('+Math.round(pinPos.x)+', '+Math.round(pinPos.y)+') in the same transaction.</p>':'')
+ +'<p class="help">Frame membership is view placement; no semantic containment, ownership, or placement relationship is created.</p>'
+ +(activity?'<p class="help">uml.activity@1 partition writes in the same transaction: <code>x_partition: { "lane": "'+esc(laneKey)+'" }</code> on '+elementIds.map(id=>esc(sourceLabel(id))).join(', ')+'. DDN-PJ114 is re-checked by the commit-time render.</p>':'');
+ modal('Assign to lane '+frame.name+' · preview',body,[{label:'Cancel',action:closeModal},{label:'Commit assignment',primary:true,action:()=>{
+  const ok=laneTxn('Assign '+elementIds.map(id=>sourceLabel(id)).join(', ')+' to lane '+frame.name,t=>{
+   if(pinPos)A.pin(t,entry,view,elementIds[0],pinPos.x,pinPos.y);
+   return CMD.assignToLane(D,t,entry,view,{frameId:frame.id,elementIds});
+  });
+  if(ok)closeModal();
+ }}]);
 }
 function selectControl(id,label,values,current){return `<label for="${id}">${label}</label><select id="${id}">`+values.map(([v,l])=>`<option value="${v}" ${v===current?'selected':''}>${l}</option>`).join('')+'</select>';}
 // Add existing definition to a view (ED-009; spec ch.06 "Reuse, copy and
@@ -719,7 +795,9 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
  p.innerHTML+='<hr><p class="help">Look and palette use live renderer overrides in this prototype. Production source-write and inherited/reset rules are specified separately.</p><button id="resetStyle" class="wide">Reset this preview</button>';
  const change=(id,key)=>{const el=$('#'+id);if(el)el.onchange=()=>{overrides[key]=el.value;document.body.classList.toggle('night',overrides.theme==='night');draw();};};change('lookSetting','look');change('themeSetting','theme');change('fieldsSetting','fields');change('routeSetting','routing');change('markSetting','mark');$('#resetStyle').onclick=()=>{overrides={page:'content',look:'classic',theme:'default'};document.body.classList.remove('night');draw();};
  // Rebind position actions after innerHTML append recreated them.
- if($('#pinApply')){$('#pinApply').onclick=()=>transaction('Set this view position',t=>A.pin(t,entry,view,sel.sourceId,Number($('#pinX').value),Number($('#pinY').value)));$('#unpinApply').onclick=()=>transaction('Release source pin',t=>A.unpin(t,entry,view,sel.sourceId));}return;
+ if($('#pinApply')){$('#pinApply').onclick=()=>transaction('Set this view position',t=>A.pin(t,entry,view,sel.sourceId,Number($('#pinX').value),Number($('#pinY').value)));$('#unpinApply').onclick=()=>transaction('Release source pin',t=>A.unpin(t,entry,view,sel.sourceId));}
+ if(graph()){p.innerHTML+=lanesSectionHTML();wireLanesSection();}
+ return;
  }
  if(tab==='details'){
  p.innerHTML='<div class="sectionlabel" style="margin-top:0">Details on demand</div><p class="help">Required properties appear in Meaning. Specialized implementation, evidence and scope stay discoverable here.</p>'+(sel?'<label>Source identity</label><div class="subtle"><code>'+esc(sel.sourceId)+'</code></div><label>Applicable groups</label><div class="control-stack"><button data-story="properties">Domain & representation</button><button data-story="properties">Scope & ownership</button><button data-story="properties">Constraints & evidence</button></div>':'<div class="notice">The projection determines which operations are meaningful. A record value is not a freehand position.</div>')+'<hr><h3>Current render diagnostics</h3>'+result.diagnostics.slice(0,5).map(d=>'<p class="help"><strong>'+esc(d.code)+'</strong><br>'+esc(d.message)+'</p>').join('')+'<button id="inspectSource" class="wide">Inspect actual source</button><p class="help">Advanced group screens are design proposals, not implemented specialized property editors.</p>';p.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));$('#inspectSource').onclick=openSource;return;
@@ -1003,7 +1081,16 @@ function bindCanvas(){
    }
    return;
   }
-  if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
+  if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved){
+   const nx=d.x+d.dx,ny=d.y+d.dy,node=result.scene.nodes.find(n=>n.id===d.id);
+   // Lane drop (ED-011): a node dropped fully inside a scene frame rect is
+   // offered the assignment preview instead of only pinning; committing
+   // composes pin + assign in one transaction. Never an inferred relationship.
+   const hit=node?(result.scene.frames||[]).find(f=>nx>=f.x&&ny>=f.y&&nx+node.w<=f.x+f.w&&ny+node.h<=f.y+f.h):null;
+   const frame=hit?laneFrameOf(hit.id):null;
+   if(frame&&!frame.members.includes(d.id)){laneAssignPreview(frame.id,[d.id],{x:nx,y:ny});}
+   else transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,nx,ny));
+  }};
  $('#paper').onpointercancel=()=>{cancelReconnectDrag();cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
  $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}if(decisionProfile())renderDecisionSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':decisionProfile()?'Rule selected — its row is highlighted in the Decision sheet; conditions and outcomes are shared-model edits.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }

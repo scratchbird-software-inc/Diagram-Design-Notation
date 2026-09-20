@@ -1113,5 +1113,106 @@ function pendingViewsAfterCommit(D,ws,entry,activeView){
   if(!(e.file===entry&&v.id===activeView))out.push(e.file+'::'+v.id);
  return out.sort();
 }
-return{createInView,editProjectionProperty,editViewProperty,occurrences,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Lane editing commands (ED-011; spec ch.08 "Scope versus visual grouping";
+// charter VE-003/VE-005/VE-008). A lane is a view `frame` declaration in
+// canonical source — no parallel UI grouping model (ADR-03) and no new source
+// syntax: frames are existing 0.5 machinery (ddn-core ir.view.frames,
+// ddn-render scene frames). Lane membership is the frame's members list; the
+// one-lane-per-element policy removes an assigned element from every other
+// frame of the view inside the same transaction. Frame edits are view-scope;
+// assignment never infers a semantic containment, ownership or placement
+// relationship (VE-AC-040: relation spans stay byte-identical). Under the
+// RT-105 uml.activity@1 profile the same commands additionally maintain the
+// registered x_partition:{lane:"<frame id>"} membership property; the
+// commit-time strict build and scratch re-render keep DDN-PJ114 as the
+// authority that the lane resolves. UML-activity partitions stay blocked
+// until RT-105 lands — the test suite gates on the landed artifacts and
+// fails loudly when they are absent.
+function laneFrames(D,ws,entry,view){return ws.resolve(entry,view).view.frames||[];}
+function findLane(D,ws,entry,view,frameId){
+ const f=laneFrames(D,ws,entry,view).find(x=>x.id===frameId||String(x.id).split('.').pop()===frameId||x.name===frameId);
+ if(!f)fail('DDN-I033','Lane '+String(frameId)+' is not declared as a frame of this view. Nothing was changed.');
+ return f;
+}
+function laneActivityProfile(D,ws,entry,view){return ws.resolve(entry,view).view.profiles.projection?.profile==='uml.activity@1';}
+function laneElements(D,ws,entry,view,elementIds){
+ if(!Array.isArray(elementIds)||!elementIds.length||elementIds.length>128||new Set(elementIds).size!==elementIds.length)fail('DDN-E007','Lane assignment needs 1..128 distinct element ids');
+ const ir=ws.resolve(entry,view);
+ for(const id of elementIds)if(typeof id!=='string'||!ir.elements.some(n=>n.id===id))fail('DDN-E002','Definition not found.');
+}
+const lanePx=v=>{if(typeof v!=='number'||!Number.isFinite(v)||Math.abs(v)>1e7)fail('DDN-E001','Position must be finite, bounded world coordinates.');return{$quantity:Math.round(v*1000)/1000,unit:'px'};};
+function createLane(D,ws,entry,view,args){
+ const {id,label,at,size}=args||{};
+ if(typeof id!=='string'||!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(id)||['__proto__','constructor','prototype'].includes(id))fail('DDN-I033','A lane needs a valid, nonreserved identifier. Nothing was changed.');
+ if(typeof label!=='string'||!label)fail('DDN-I033','A lane label is a non-empty string. Nothing was changed.');
+ if(laneFrames(D,ws,entry,view).some(f=>String(f.id).split('.').pop()===id||f.name===id||f.name===label))fail('DDN-I033','A lane with this id or name already exists in this view. Nothing was changed.');
+ let body='members: [];';
+ if(at)body+=' at: '+D.authoring.value([lanePx(at.x),lanePx(at.y)])+';';
+ if(size)body+=' size: '+D.authoring.value([lanePx(size.w),lanePx(size.h)])+';';
+ return stage(D,ws,entry,view,t=>{
+  const span=t.resolve(entry,view).view.source;
+  if(!span||span.bodyEnd===undefined)fail('DDN-I033','The active view declaration has no editable source span.');
+  t.applyEdits([{file:span.file,start:span.bodyEnd,end:span.bodyEnd,text:'\n    frame '+id+' '+JSON.stringify(label)+' { '+body+' }\n'}],{expectedRevision:t.revision,entry,view});
+  const made=t.resolve(entry,view).view.frames.find(f=>String(f.id).split('.').pop()===id);
+  if(!made)fail('DDN-I033','Created lane not found in the resolved view.');
+  return{select:made.id};
+ });
+}
+function renameLane(D,ws,entry,view,args){
+ const {frameId,label}=args||{};
+ const frame=findLane(D,ws,entry,view,frameId);
+ if(typeof label!=='string'||!label)fail('DDN-I033','A lane label is a non-empty string. Nothing was changed.');
+ return stage(D,ws,entry,view,t=>{D.authoring.setLabel(t,entry,view,frame.id,label);return{select:frame.id};});
+}
+// at/size write [{$quantity,unit:'px'}] pairs; fit:true removes both keys so
+// the renderer falls back to member bounds (property removal per authoring.js).
+function resizeLane(D,ws,entry,view,args){
+ const {frameId,at,size,fit}=args||{};
+ const frame=findLane(D,ws,entry,view,frameId);
+ if(fit!==true&&!at&&!size)fail('DDN-I033','Resizing a lane needs an at/size pair, or fit:true to auto-fit the lane to its members. Nothing was changed.');
+ return stage(D,ws,entry,view,t=>{
+  if(fit===true){D.authoring.setProperty(t,entry,view,frame.id,'at',undefined);D.authoring.setProperty(t,entry,view,frame.id,'size',undefined);}
+  else{
+   if(at)D.authoring.setProperty(t,entry,view,frame.id,'at',[lanePx(at.x),lanePx(at.y)]);
+   if(size)D.authoring.setProperty(t,entry,view,frame.id,'size',[lanePx(size.w),lanePx(size.h)]);
+  }
+  return{select:frame.id};
+ });
+}
+function assignToLane(D,ws,entry,view,args){
+ const {frameId,elementIds}=args||{};
+ const frame=findLane(D,ws,entry,view,frameId);
+ laneElements(D,ws,entry,view,elementIds);
+ const activity=laneActivityProfile(D,ws,entry,view),laneKey=String(frame.id).split('.').pop();
+ return stage(D,ws,entry,view,t=>{
+  const tir=t.resolve(entry,view),files=t.getFiles(),file=tir.view.source.file;
+  for(const f of tir.view.frames){
+   const kept=f.members.filter(m=>!elementIds.includes(m));
+   if(f.id===frame.id)for(const id of elementIds)if(!kept.includes(id))kept.push(id);
+   const changed=kept.length!==f.members.length||kept.some((m,i)=>m!==f.members[i]);
+   if(changed)D.authoring.setProperty(t,entry,view,f.id,'members',kept.map(uid=>({$ref:refForFile(files,file,uid)})));
+  }
+  if(activity)for(const id of elementIds)D.authoring.setProperty(t,entry,view,id,'x_partition',{lane:laneKey});
+  // The strict re-render is the authority: under uml.activity@1 a lane name
+  // that does not resolve fails DDN-PJ114 here, before any real commit.
+  t.renderSync({entry,view});
+  return{select:elementIds[0],frame:frame.id};
+ });
+}
+function unassignFromLane(D,ws,entry,view,args){
+ const {frameId,elementIds}=args||{};
+ const frame=findLane(D,ws,entry,view,frameId);
+ laneElements(D,ws,entry,view,elementIds);
+ const present=elementIds.filter(id=>frame.members.includes(id));
+ if(!present.length)fail('DDN-I033','None of the given elements is a member of lane '+String(frame.name)+'. Nothing was changed.');
+ const activity=laneActivityProfile(D,ws,entry,view);
+ return stage(D,ws,entry,view,t=>{
+  const tir=t.resolve(entry,view),files=t.getFiles(),file=tir.view.source.file;
+  D.authoring.setProperty(t,entry,view,frame.id,'members',frame.members.filter(m=>!elementIds.includes(m)).map(uid=>({$ref:refForFile(files,file,uid)})));
+  if(activity)for(const id of present)D.authoring.setProperty(t,entry,view,id,'x_partition',undefined);
+  t.renderSync({entry,view});
+  return{frame:frame.id,removed:present.length};
+ });
+}
+return{createInView,editProjectionProperty,editViewProperty,occurrences,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: lane editing on view frames (create/rename/resize/assign
+  with previews; `x_partition` for `uml.activity@1`) (ED-011; covers
+  VE-AC-040).
 - Designer prototype: draft validation UX (Problems strip, incomplete typing,
   workspace review scope, occurrence-addressed navigation) (ED-010; covers
   VE-AC-006/007).

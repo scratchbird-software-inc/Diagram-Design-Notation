@@ -108,4 +108,14 @@ always `error` and renderer diagnostics passed through; a committed draft
 whose re-render fails a completeness check gains an amber INCOMPLETE badge
 over the dimmed last good render while export stays blocked; a workspace
 review scope revalidates every view and clears the session-only pending set
-(covers VE-AC-006/007).
+(covers VE-AC-006/007). ED-011 adds lane editing on view frames (spec ch.08
+"Scope versus visual grouping"): a Lanes section in the This-view inspector
+creates, renames, resizes (X/Y/W/H plus fit-to-members) and populates the
+view's `frame` declarations, and dropping a node fully inside a lane
+rectangle offers the same assignment preview — the exact member changes plus
+the sentence that no semantic containment, ownership, or placement
+relationship is created (covers VE-AC-040), with pin + assign composing in
+one transaction. Assignment follows a one-lane-per-element policy; under the
+RT-105 `uml.activity@1` profile the same commands additionally maintain the
+registered `x_partition:{lane:"…"}` property with DDN-PJ114 re-checked on
+commit (UML-activity partitions stayed blocked until RT-105 landed).

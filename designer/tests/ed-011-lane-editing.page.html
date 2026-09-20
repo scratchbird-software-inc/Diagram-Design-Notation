@@ -1,0 +1,67 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-2.0-or-later.
+     ED-011 driver page: lane editing on view frames. Renders
+     examples/basics/04-hybrid.ddn's deployment view (two frame lanes), then
+     performs the VE-AC-040 test-5 assignment live through Commands.assignToLane
+     (model.cloud: cloud_scope -> local_scope) and shows the exact preview modal
+     text as DOM: member additions/removals plus the sentence "Frame membership
+     is view placement; no semantic containment, ownership, or placement
+     relationship is created". Before/after SVGs prove the lane rectangle and
+     that no relation changed. Screenshot evidence per PROCESS.md section 0. -->
+<html lang="en"><head><meta charset="utf-8"><title>ED-011 lane editing driver</title>
+<style>
+body{font:14px/1.45 system-ui,sans-serif;margin:18px;color:#17263d;background:#f2f5f9}
+h1{font-size:17px}code{font-family:ui-monospace,Consolas,monospace;font-size:12px}
+.tag{display:inline-block;border:1px solid #b2d5d2;background:#e5f4f3;color:#146879;border-radius:5px;font-size:11px;font-weight:650;padding:2px 6px}
+.tag.amber{background:#fff5de;border-color:#dfcba4;color:#7e5716}
+section{background:#fff;border:1px solid #dde5ed;border-radius:9px;padding:14px 16px;margin-bottom:12px}
+.svgbox{background:#fff;border:1px solid #dde5ed;border-radius:6px;margin:8px 0;overflow:auto}
+.svgbox svg{max-width:100%}
+.preview{border:1px solid #bccbd8;border-radius:13px;box-shadow:0 8px 30px #12243d22;max-width:690px;margin:8px 0}
+.preview header{padding:12px 18px;border-bottom:1px solid #dde5ed;font-weight:700}
+.preview .body{padding:12px 18px}
+.preview h3{font-size:13px;margin:12px 0 6px}
+.help{font-size:12px;color:#5b6b7f}
+.diffok{color:#146879;font-weight:650}
+</style></head><body>
+<h1>ED-011 · Lane editing — frame lanes before/after assignment, preview text as DOM</h1>
+<span class="tag">LIVE · REAL SOURCE</span> <span class="tag amber">VE-AC-040 · no inferred relationship</span>
+<section><h3 style="font-size:13px;margin:4px 0">1 · Preview modal text (exactly what the assignment dialog shows)</h3>
+<div class="preview"><header id="pvTitle"></header><div class="body" id="pvBody"></div></div></section>
+<section><h3 style="font-size:13px;margin:4px 0">2 · Before — the two authored frame lanes (ON-PREMISES / CLOUD)</h3><div class="svgbox" id="before"></div></section>
+<section><h3 style="font-size:13px;margin:4px 0">3 · After — model.cloud assigned to the ON-PREMISES lane (committed source transaction)</h3><div class="svgbox" id="after"></div><p class="help" id="proof"></p></section>
+<script type="application/json" id="files">{"04-hybrid.ddn":"ddn \"0.3\";\nmodule \"ddn.examples.hybrid\";\nimport \"shared.ddn\" as shared;\n\ndata model {\n    object orders \"Orders definition\" { kind: table; level: definition; distribution: hash; fields { field tenant_id; field order_id; } }\n    object shard \"Tenant shard A\" { kind: shard; level: fragment; }\n    object primary \"Orders / primary copy\" { kind: replica; level: instance; role: primary; location: local; }\n    object follower \"Orders / follower copy\" { kind: replica; level: instance; role: follower; location: cloud; }\n    object local \"Local database service\" { kind: service; location: local; }\n    object cloud \"Cloud database service\" { kind: service; location: cloud; }\n    object schema \"sales schema\" { kind: schema; }\n    relation fragment @orders -> @shard { kind: partitioned_into; }\n    relation copy1 @primary -> @shard { kind: realizes; }\n    relation copy2 @follower -> @shard { kind: realizes; }\n    relation on_local @primary -> @local { kind: placed_on; }\n    relation on_cloud @follower -> @cloud { kind: placed_on; }\n    relation replica_stream @primary -> @follower { kind: replicates_to; delivery: undecided; }\n    relation member @orders -> @schema { kind: namespace_member; }\n}\nview deployment \"Hybrid deployment / fragments are not copies\" {\n    data: [@model]; format: @shared.styles.technical;\n    display: @shared.styles.compact;\n    select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];\n    publication { width: 1550px; height: 1050px; }\n    legend { mode: numbers; width: 300px; keys: { \"fragment\": 1, \"copy1\": 2, \"copy2\": 3, \"on_local\": 4, \"on_cloud\": 5, \"replica_stream\": 6 }; }\n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    frame local_scope \"ON-PREMISES\" { members: [@model.primary, @model.local]; }\n    frame cloud_scope \"CLOUD\" { members: [@model.follower, @model.cloud]; }\n}\nview namespaces \"Namespace / the same data, a different concern\" {\n    data: [@model]; format: @shared.styles.technical;\n    select: [@model.orders, @model.schema];\n    \n    \n}\n","shared.ddn":"ddn \"0.3\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core { registry: \"ddn-core@0.3\"; }\n    style classic { look: classic; theme: default; font: sans; seed: 42; }\n    style hand { look: handDrawn; theme: default; font: handwriting; seed: 42; roughness: 1.8; hachure: true; }\n    style neo { look: neo; theme: default; font: sans; seed: 42; }\n    style dark { look: classic; theme: dark; font: sans; seed: 42; }\n    style neutral { look: classic; theme: neutral; font: mono; seed: 42; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; seed: 42; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; routing: orthogonal; crossings: gap; direction: right; gap: 80px; }\n    display detailed { fields: names; kind: icon_token; maturity: token; badges: tokens; }\n    display compact { fields: none; kind: icon_token; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { mode: text; placement: right; width: 280px; }\n    legend numbers { mode: numbers; placement: right; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"}</script>
+<script src="../../notation/dist/ddn.global.js"></script>
+<script src="../prototype/commands.js"></script>
+<script>
+"use strict";
+const D=window.DDNLive,CMD=window.DesignerCommands;
+const esc=x=>String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const files=JSON.parse(document.getElementById("files").textContent);
+const ENTRY="04-hybrid.ddn",VIEW="deployment",CLOUD="ddn.examples.hybrid::model.cloud";
+const label=id=>(ir.elements.find(n=>n.id===id)||{}).name||id;
+const wsBefore=D.createWorkspace(files);
+document.getElementById("before").innerHTML=wsBefore.renderSync({entry:ENTRY,view:VIEW}).svg.replace(/<script/gi,"&lt;script");
+const ws=D.createWorkspace(files);
+const ir=ws.resolve(ENTRY,VIEW);
+const frame=ir.view.frames.find(f=>f.id.endsWith("local_scope"));
+const oldLane=ir.view.frames.find(f=>f.members.includes(CLOUD));
+const activity=ir.view.profiles.projection&&ir.view.profiles.projection.profile==="uml.activity@1";
+const laneKey=String(frame.id).split(".").pop();
+document.getElementById("pvTitle").textContent="Assign to lane "+frame.name+" · preview";
+document.getElementById("pvBody").innerHTML=
+ "<h3>Exact member changes</h3>"
+ +"<p>Add to <strong>"+esc(frame.name)+"</strong>: "+esc(label(CLOUD))+"</p>"
+ +"<p>Remove from <strong>"+esc(oldLane.name)+"</strong> ← "+esc(label(CLOUD))+" (one-lane-per-element policy)</p>"
+ +"<p class=\"help\">Frame membership is view placement; no semantic containment, ownership, or placement relationship is created.</p>"
+ +(activity?"<p class=\"help\">uml.activity@1 partition writes: <code>x_partition: { \"lane\": \""+esc(laneKey)+"\" }</code>.</p>":"");
+const beforeSrc=ws.getFiles()[ENTRY];
+CMD.assignToLane(D,ws,ENTRY,VIEW,{frameId:frame.id,elementIds:[CLOUD]});
+const afterSrc=ws.getFiles()[ENTRY];
+document.getElementById("after").innerHTML=ws.renderSync({entry:ENTRY,view:VIEW}).svg.replace(/<script/gi,"&lt;script");
+const rel=s=>s.split("\n").filter(l=>l.includes("relation "));
+const nonFrame=s=>s.split("\n").filter(l=>!/^\s*frame /.test(l));
+const same=JSON.stringify(rel(afterSrc))===JSON.stringify(rel(beforeSrc))&&JSON.stringify(nonFrame(afterSrc))===JSON.stringify(nonFrame(beforeSrc));
+document.getElementById("proof").innerHTML=same?"<span class=\"diffok\">Byte proof: every relation span and every non-frame line is identical — no placement relationship inferred without explicit action (VE-AC-040).</span>":"<span>BYTE PROOF FAILED</span>";
+
+</script></body></html>
