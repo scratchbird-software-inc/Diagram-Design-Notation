@@ -10,6 +10,7 @@ let mPlan=null,mSel=null,mBatch=[];
 let chartSel=null,chartNotice=null,dragGuard=null,lastEditError=null;
 let timelineNotice=null,tDrag=null;
 let fishboneNotice=null;
+let panelsNotice=null,panelsSel=null;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -32,11 +33,11 @@ function draw(){
   $('#status').textContent='Live render · '+Math.round(next.milliseconds)+' ms · '+next.diagnostics.length+' reported warning(s)';
   $('#saved').textContent='Memory revision '+ws.revision;$('#undo').disabled=!ws.history().canUndo;$('#redo').disabled=!ws.history().canRedo;
   $('#canvasEyebrow').textContent=graph()?'SYNTHETIC COMMERCE MODEL / LIVE GRAPH':'SHARED PROCUREMENT MODEL / DATA-BOUND VIEW';
-  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures'}[view]||view;
+  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures',swot:'Reusable SWOT panel template',sipoc:'SIPOC from shared notes',journey:'Service journey with spanning panels'}[view]||view;
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();updateInspector();updateLeft();highlight();updateSource();
+  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();updateInspector();updateLeft();highlight();updateSource();
  }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
@@ -309,6 +310,98 @@ function renderFishboneSheet(){
   fishboneTxn('Remove one fishbone rib (definition kept)',t=>CMD.removeFishboneCause(D,t,entry,view,{relationId:b.dataset.fbRemove}));
  });
 }
+// Panels sheet (spec ch.09 structured sheets; ED-006): a grid mirror of the
+// view's panels plus one editor card per panel — title, grid span, items with a
+// move-to-panel picker, an add-item row, a delete action and, for composed
+// profiles, the child-view slot binder. Panels/grid writes are view-scope; item
+// definitions are shared (new notes land in the view's editor_data block — the
+// AUD-002 M2 destination limitation). Fixed-grid canvas profiles lock the
+// required blocks' title/span/delete controls; the scratch re-plan stays the
+// authority (DDN-PJ080/081/083).
+const panelsProfile=()=>ir?.view.profiles.projection?.kind==='panels'?ir.view.profiles.projection:null;
+const CANVAS_REQUIRED={'canvas.bmc@1':['kp','ka','kr','vp','cr','ch','cs','cost','rev'],'canvas.lean@1':['problem','solution','keymetrics','uvp','unfair','channels','segments','cost','revenue'],'canvas.pest@1':['political','economic','social','technological'],'canvas.pestle@1':['political','economic','social','technological','legal','environmental'],'canvas.porter5@1':['entrants','supplier','rivalry','buyer','substitutes'],'canvas.empathy@1':['says','thinks','persona','does','feels'],'canvas.scorecard@1':['financial','customer','internal','learning']};
+function panelsTxn(label,fn){lastEditError=null;const ok=transaction(label,fn);panelsNotice=ok?null:(lastEditError?(lastEditError.code||'EDIT')+': '+lastEditError.message:'Edit rejected; source unchanged.');if(!ok)renderPanelsSheet();return ok;}
+function openChildView(id){const files=ws.getFiles(),hit=Object.keys(files).find(f=>files[f].includes('view '+id+' '));if(!hit){announce('View '+id+' is not declared in this workspace.',true);return;}entry=hit;view=id;selected=null;zoom=1;updateZoom();mode='select';draw();announce('Opened child view '+id+' — slots stay named-view references; child geometry is never edited through the parent.');}
+function renderPanelsSheet(){
+ const sheet=$('#panelsSheet');
+ if(!sheet)return;
+ const p=panelsProfile();
+ if(!p){sheet.hidden=true;sheet.innerHTML='';panelsSel=null;return;}
+ sheet.hidden=false;
+ let plan=null,planError=null;
+ try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
+ const required=CANVAS_REQUIRED[p.profile]||[];
+ const childCount=(p.panels||[]).filter(v=>v.view!==undefined).length;
+ let h='<div class="sheet-head"><span class="tag teal">PANELS SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Grid, titles, spans and item lists edit <strong>this view only</strong> (<code>projection.panels</code>) · item notes are <strong>shared definitions</strong> (new notes land in the view’s <code>editor_data</code> block — AUD-002 M2 destination)'+(!plan&&planError?' · plan invalid: '+esc(planError):'')+'</span></div>';
+ if(panelsNotice)h+='<div class="notice error">'+esc(panelsNotice)+'</div>';
+ if(planError)h+='<div class="notice error">'+esc(planError)+' The source stays committed and saveable; the checks fire again at render/review. Fix the panel set below or in source.</div>';
+ const source=p.panels||[];
+ if(plan){
+  const rows=Math.max(...plan.panels.map(v=>v.row+v.rowspan));
+  h+='<div class="panel-grid" style="grid-template-columns:repeat('+p.columns+',1fr)">';
+  for(const v of plan.panels){
+   const fixed=required.includes(v.id),child=!!v.child;
+   h+='<button class="panel-cell'+(panelsSel===v.id?' sel':'')+(fixed?' fixed':'')+'" data-panel="'+esc(v.id)+'" style="grid-row:'+(v.row+1)+' / span '+v.rowspan+';grid-column:'+(v.column+1)+' / span '+v.colspan+'" title="'+esc(v.id)+'"><strong>'+esc(v.title)+'</strong><span class="small muted">'+esc(v.id)+' · '+v.rowspan+'×'+v.colspan+(child?' · child view: '+esc(v.child.view.id):' · '+v.items.length+' item(s)')+(fixed?' · fixed canvas block':'')+'</span></button>';
+  }
+  h+='</div>';
+ }
+ for(const v of source){
+  const planned=plan?.panels.find(x=>x.id===v.id),fixed=required.includes(v.id),isChild=v.view!==undefined;
+  h+='<div class="panel-card'+(panelsSel===v.id?' sel':'')+'" data-card="'+esc(v.id)+'"><div class="sheet-head"><span class="tag'+(fixed?' amber':'')+'">'+esc(v.id)+(fixed?' · FIXED CANVAS BLOCK':'')+(isChild?' · CHILD-VIEW SLOT':'')+'</span>'+(fixed?'<span class="small muted">fixed canvas block — title, span and delete are locked; the runtime’s DDN-PJ080/081/083 re-plan is the backstop</span>':'')+'</div>';
+  h+='<div class="panel-form"><label>Title</label><input data-ptitle="'+esc(v.id)+'" value="'+esc(v.title)+'" '+(fixed?'disabled':'')+' aria-label="Panel '+esc(v.id)+' title">';
+  for(const k of ['row','column','rowspan','colspan'])h+='<label>'+k+'</label><input type="number" min="0" data-pspan="'+esc(v.id)+':'+k+'" value="'+esc(String(v[k]??(k==='rowspan'||k==='colspan'?1:0)))+'" '+(fixed?'disabled':'')+' aria-label="Panel '+esc(v.id)+' '+k+'">';
+  h+='<button data-pspanapply="'+esc(v.id)+'" '+(fixed?'disabled':'')+'>Apply span</button><button data-pdel="'+esc(v.id)+'" '+(fixed?'disabled title="fixed canvas block"':'')+'>Delete panel</button></div>';
+  if(isChild){
+   const childId=String(v.view?.$ref??v.view).split('::').pop();
+   h+='<div class="panel-items"><span class="small muted">Bound child view <code>'+esc(childId)+'</code> — a named-view reference, never an inline copy of child geometry (spec ch.09 Composition).</span><button data-popen="'+esc(childId)+'">Open child view</button>';
+   const others=ws.views(entry).filter(x=>x.id!==view&&x.id!==childId);
+   h+='<span class="small muted">Rebind slot ('+childCount+'/12 child slots):</span><select data-pbindpick="'+esc(v.id)+'">'+others.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id)+'</option>').join('')+'</select><button data-pbind="'+esc(v.id)+'">Bind view</button></div>';
+  }else{
+   const itemPanels=source.filter(x=>x.view===undefined&&x.id!==v.id);
+   h+='<div class="panel-items">'+(planned?planned.items.map(it=>{
+    const nid=it.node.id;
+    return '<span class="chip'+(panelsSel===nid?' sel':'')+'" data-pitem="'+esc(nid)+'">'+esc(it.node.name)+' <select data-pmove="'+esc(nid)+'" title="Move to another item-panel" aria-label="Move '+esc(it.node.name)+' to another panel"><option value="">move to…</option>'+itemPanels.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join('')+'</select></span>';
+   }).join(''):'<span class="small muted">items unavailable while the plan is invalid</span>')+'</div>';
+   h+='<div class="panel-form"><input data-paddid="'+esc(v.id)+'" placeholder="note_id" aria-label="New note identifier"><input data-paddlabel="'+esc(v.id)+'" placeholder="Label" aria-label="New note label"><input data-padddesc="'+esc(v.id)+'" placeholder="Description" aria-label="New note description"><button data-padd="'+esc(v.id)+'">＋ Add item</button></div>';
+  }
+  h+='</div>';
+ }
+ h+='<div class="batchbar"><span class="tag">ADD PANEL</span><input id="pNewId" placeholder="panel_id" aria-label="New panel identifier"><input id="pNewTitle" placeholder="Title" aria-label="New panel title"><input id="pNewRow" type="number" min="0" placeholder="row" aria-label="New panel row"><input id="pNewCol" type="number" min="0" placeholder="column" aria-label="New panel column"><input id="pNewNote" placeholder="First item label (required — empty panels reject DDN-PJ009)" aria-label="First item label"><button id="pAddPanel">＋ Add panel</button><span class="small muted">One transaction: a shared note definition plus the new panel holding it. Overlaps reject DDN-PJ021; fixed-grid canvas profiles keep their required blocks (DDN-PJ080/081/083).</span></div>';
+ sheet.innerHTML=h;
+ sheet.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>{panelsSel=b.dataset.panel;renderPanelsSheet();updateInspector();});
+ sheet.querySelectorAll('[data-pitem]').forEach(c=>c.onclick=e=>{if(e.target.tagName==='SELECT')return;panelsSel=c.dataset.pitem;renderPanelsSheet();updateInspector();});
+ sheet.querySelectorAll('[data-ptitle]').forEach(inp=>inp.onchange=()=>{const id=inp.dataset.ptitle,cur=source.find(v=>v.id===id);if(inp.value!==cur.title)panelsTxn('Rename panel '+id+' (this view only)',t=>CMD.renamePanel(D,t,entry,view,{panelId:id,title:inp.value}));});
+ sheet.querySelectorAll('[data-pspanapply]').forEach(b=>b.onclick=()=>{
+  const id=b.dataset.pspanapply,num=k=>{const el=sheet.querySelector('[data-pspan="'+id+':'+k+'"]');return el.value===''?undefined:Number(el.value);};
+  const row=num('row'),column=num('column');
+  if(!Number.isInteger(row)||!Number.isInteger(column)){panelsNotice='DDN-I033: row and column are required integers. Nothing was changed.';renderPanelsSheet();return;}
+  panelsTxn('Move panel '+id+' on the grid (this view only)',t=>CMD.movePanelSpan(D,t,entry,view,{panelId:id,row,column,rowspan:num('rowspan'),colspan:num('colspan')}));
+ });
+ sheet.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>panelsTxn('Remove panel '+b.dataset.pdel+' (this view only)',t=>CMD.removePanel(D,t,entry,view,{panelId:b.dataset.pdel})));
+ sheet.querySelectorAll('[data-pmove]').forEach(sel=>sel.onchange=()=>{
+  if(!sel.value)return;
+  const from=source.find(v=>v.id===sel.closest('.panel-card').dataset.card);
+  panelsTxn('Move item to panel '+from.title+' → '+sel.value+' (this view only; definition shared)',t=>CMD.movePanelItem(D,t,entry,view,{itemId:sel.dataset.pmove,fromPanelId:from.id,toPanelId:sel.value}));
+ });
+ sheet.querySelectorAll('[data-padd]').forEach(b=>b.onclick=()=>{
+  const id=b.dataset.padd,nid=sheet.querySelector('[data-paddid="'+id+'"]').value.trim(),label=sheet.querySelector('[data-paddlabel="'+id+'"]').value.trim(),desc=sheet.querySelector('[data-padddesc="'+id+'"]').value;
+  if(!nid){panelsNotice='DDN-I033: A new item needs an identifier. Nothing was changed.';renderPanelsSheet();return;}
+  panelsTxn('Add item to panel '+id+' (shared note + view list, one transaction)',t=>CMD.addPanelItem(D,t,entry,view,{panelId:id,id:nid,label:label||nid,description:desc||undefined}));
+ });
+ sheet.querySelectorAll('[data-pbind]').forEach(b=>b.onclick=()=>{const pick=sheet.querySelector('[data-pbindpick="'+b.dataset.pbind+'"]');panelsTxn('Bind child view into slot '+b.dataset.pbind+' (named reference)',t=>CMD.bindPanelChildView(D,t,entry,view,{panelId:b.dataset.pbind,childViewId:pick.value}));});
+ sheet.querySelectorAll('[data-popen]').forEach(b=>b.onclick=()=>openChildView(b.dataset.popen));
+ $('#pAddPanel').onclick=()=>{
+  const id=$('#pNewId').value.trim(),title=$('#pNewTitle').value.trim(),row=Number($('#pNewRow').value),column=Number($('#pNewCol').value),note=$('#pNewNote').value.trim();
+  if(!id||!Number.isInteger(row)||!Number.isInteger(column)||!note){panelsNotice='DDN-I033: A new panel needs an identifier, integer row/column and a first item — an empty panel rejects DDN-PJ009. Nothing was changed.';renderPanelsSheet();return;}
+  panelsTxn('Add panel '+id+' with its first item (one transaction)',t=>{
+   D.authoring.addElement(t,entry,view,{id:id+'_note',name:note,kind:'note'});
+   const n=t.resolve(entry,view).elements.find(e=>e.local===id+'_note');
+   if(!n)throw Object.assign(new Error('Created note not found in the resolved view.'),{code:'DDN-I033'});
+   CMD.addPanel(D,t,entry,view,{id,title:title||id,row,column,items:[n.id]});
+   return{select:n.id};
+  });
+ };
+}
 function cancelTimelineDrag(silent){
  if(!tDrag)return;
  try{tDrag.el.removeAttribute('transform');}catch{}
@@ -319,7 +412,7 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -329,7 +422,7 @@ function updateLeft(){
  $('#paletteSearch').oninput=e=>{const q=e.target.value.toLowerCase();let shown=0;pane.querySelectorAll('[data-add]').forEach(b=>{const hit=!q||b.dataset.search.includes(q);b.hidden=!hit;if(hit)shown++;});pane.querySelectorAll('.palette-group').forEach(d=>{const visible=[...d.querySelectorAll('[data-add]')].filter(b=>!b.hidden);d.open=!!q&&visible.length>0||!q;d.hidden=!!q&&!visible.length;const badge=d.querySelector('[data-group-count]');if(badge)badge.textContent=q?visible.length+'/'+d.querySelectorAll('[data-add]').length:visible.length;});$('#paletteCount').textContent=shown+'/'+KINDMAP.kinds.length;};pane.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));
  }else if(left==='model'){
  pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas.</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));
- }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+ }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
 }
 function selectControl(id,label,values,current){return `<label for="${id}">${label}</label><select id="${id}">`+values.map(([v,l])=>`<option value="${v}" ${v===current?'selected':''}>${l}</option>`).join('')+'</select>';}
 function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$('#inspectorBody');
@@ -384,6 +477,21 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   }
   fh+='<p class="help">Edit the effect statement and ribs in the Fishbone sheet under the canvas. A reused cause is listed with every occurrence path; the renderer marks carry the same occurrence strings.</p>';
   p.innerHTML=fh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  return;
+ }
+ const pp=panelsProfile();
+ if(pp){
+  let ph='<div class="notice">Data-bound projection. Every panel and item maps to this view’s <code>projection.panels</code> array and shared note definitions — grid, title, span and item-list edits are view-scope source writes; item notes are shared. A move that would empty a panel rejects DDN-PJ009; overlaps reject DDN-PJ021; fixed-grid canvas blocks stay locked (DDN-PJ080/081/083).</div><h3>'+esc(pp.profile)+' · '+esc(String(pp.columns))+' columns</h3>';
+  let pplan=null;try{pplan=ws.projectionPlan(entry,view);}catch{}
+  if(pplan){
+   ph+='<label>Panels</label><div class="subtle">'+pplan.panels.map(v=>esc(v.title)).join(' · ')+'</div>';
+   const required=CANVAS_REQUIRED[pp.profile]||[];
+   if(required.length)ph+='<label>Fixed canvas blocks</label><div class="subtle">'+required.map(esc).join(' · ')+'</div>';
+   const hit=pplan.panels.find(v=>v.id===panelsSel)||pplan.panels.find(v=>v.items.some(i=>i.node.id===panelsSel));
+   if(hit)ph+='<label>Selected</label><div class="subtle">'+esc(hit.title)+' · row '+hit.row+', column '+hit.column+' · '+hit.rowspan+'×'+hit.colspan+(hit.child?' · child view '+esc(hit.child.view.id):' · '+hit.items.length+' item(s)')+'</div>';
+  }
+  ph+='<p class="help">Edit panels, items and child-view slots in the Panels sheet under the canvas. Composed slots stay named-view references — “Open child view” switches the editor instead of editing child geometry through the parent (VE-003; spec ch.09 Composition).</p>';
+  p.innerHTML=ph+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const cp=chartProfile();
@@ -522,7 +630,7 @@ function bindCanvas(){
   }
   if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
  $('#paper').onpointercancel=()=>{cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
- $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
+ $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
 $('#viewport').ondrop=e=>{const kind=e.dataTransfer.getData('application/x-ddn-kind');if(!kindEntry(kind))return;e.preventDefault();const p=worldPoint(e)||{x:0,y:0};addNode(kind,{x:p.x-80,y:p.y-25});};

@@ -31,6 +31,21 @@ dependency list is a view-scope edit and relations stay shared. Milestone and
 duration conveniences (one-click zero-length, duration-preserving moves
 beyond the whole-interval drag) remain proposed.
 
+Implementation status (ED-006): the panels row is implemented in the
+prototype — a Panels sheet mirrors the declared grid and edits titles, spans
+and item lists as view-scope `projection.panels` writes (rename, respan,
+add/remove panel, ordered item moves between item-panels, add-item), with
+overlaps (DDN-PJ021), invalid spans (DDN-PJ020) and empty item lists
+(DDN-PJ009) rejecting before commit. Fixed-grid canvas profiles
+(`canvas.bmc@1`/`lean@1` and successors) lock their required blocks'
+title/span/delete controls; the runtime's DDN-PJ080/081/083 re-plan remains
+the backstop. Composition: child-view slots are bound as named-view
+references only, the one-level (DDN-QP002) and 12-children (DDN-QP003) limits
+are enforced at the command layer with the count shown in the bind row, and
+"Open child view" switches the editor rather than editing child geometry
+through the parent. New item notes land in the view's `editor_data` block
+(the AUD-002 M2 destination limitation).
+
 Implementation status (ED-005): the fishbone row is implemented in the
 prototype — effect-statement editing, category-bone creation (1..12 cap),
 cause creation under a chosen parent (4-level depth cap), attach of an
@@ -51,6 +66,14 @@ Every selected mark exposes its contributors. A single source record may be edit
 
 ## Composition
 Panel child views reference named views rather than copying records. Selection offers “Open child view” or inspect a mapped contributor. Do not write a child plot's coordinates into the parent's graph placements. Preserve current limits: one child level and 12 children until a separate engine expansion is approved. Unknown compositions remain viewable/read-only when possible and retain source otherwise.
+
+Implementation status (ED-006): composed panel slots are editable in the
+prototype as references only — a slot binder lists the workspace's named views
+with the current child count, DDN-QP002 (recursive dashboards) and DDN-QP003
+(13th child) refuse before commit, and moving a child panel in the parent grid
+changes only the parent view's `panels` array (VE-AC-055); child geometry is
+never written through the parent.
+
 
 ## Profile-aware creation
 Blank precise diagrams may be incomplete: a RACI row needs assignments, a decision table needs coverage, a flowchart needs a path to an end. Structured task sheets can build complete atomic objects where convenient, but users may save drafts. Review-time obligations remain visible. The inspector must not encourage false default semantics to make an incomplete object pass.

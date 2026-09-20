@@ -34,7 +34,7 @@ function createInView(D,ws,entry,view,args){
   return{select:n.id};
  });
 }
-const PROJECTION_PROPERTY_KEYS=['mark','records','dependencies','x','y','unit','x_type','aggregate','missing','series'];
+const PROJECTION_PROPERTY_KEYS=['mark','records','dependencies','x','y','unit','x_type','aggregate','missing','series','panels'];
 function editProjectionProperty(D,ws,entry,view,args){
  const {key,value}=args||{};
  if(!PROJECTION_PROPERTY_KEYS.includes(key))fail('DDN-D001','Unknown or unsupported projection property key: '+String(key));
@@ -376,5 +376,122 @@ function removeFishboneCause(D,ws,entry,view,args){
   return{relationId};
  });
 }
-return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Panels editor commands (ED-006). setPanels is the single write path: the
+// candidate array is validated (keys, id/title, integer spans inside columns,
+// no overlaps), serialized through D.authoring.value, and written as the whole
+// projection.panels property; the commit-time workspace validation plus the
+// scratch re-plan then let the runtime's own DDN-PJ020/021/PJ009/QP001/002/003
+// and canvas DDN-PJ080/081/083 codes reject before any real commit. Empty item
+// lists stay strict DDN-PJ009 (landed guards: notation/tests/pyramid.js,
+// canvas-pack-a/b, empathy-scorecard), so a move that would empty its source
+// panel and a panel added without an initial item are refused, coded, before
+// commit. Item definitions are shared-model writes through
+// D.authoring.addElement (destination: the view's editor_data block — the
+// AUD-002 M2 limitation documented by ED-001).
+function panelsProjection(D,ws,entry,view){
+ const p=ws.resolve(entry,view).view.profiles.projection||{};
+ if(p.kind!=='panels')fail('DDN-E006','Panels editing needs a panels projection');
+ return p;
+}
+const PANEL_KEYS=['id','title','row','column','rowspan','colspan','items','view'];
+const refOf=x=>typeof x==='string'?x:x?.$ref;
+function checkPanelCandidate(p,candidate){
+ if(!Array.isArray(candidate)||!candidate.length||candidate.length>80)fail('DDN-PJ020','Panels need 1..12 columns and 1..80 panels');
+ const used=new Set(),ids=new Set();
+ for(const v of candidate){
+  if(!v||typeof v!=='object'||Array.isArray(v)||Object.keys(v).some(k=>!PANEL_KEYS.includes(k)))fail('DDN-PJ020','Invalid panel grid span/ID');
+  const rs=v.rowspan??1,cs=v.colspan??1;
+  if(!v.id||ids.has(v.id)||typeof v.title!=='string'||![v.row,v.column,rs,cs].every(Number.isInteger)||v.row<0||v.row>100||v.column<0||rs<1||cs<1||v.row+rs>101||v.column+cs>p.columns)fail('DDN-PJ020','Invalid panel grid span/ID');
+  ids.add(v.id);
+  for(let y=v.row;y<v.row+rs;y++)for(let x=v.column;x<v.column+cs;x++){const key=y+':'+x;if(used.has(key))fail('DDN-PJ021','Overlapping panel spans');used.add(key);}
+  if(v.view&&v.items)fail('DDN-QP001','A child-view panel requires panels.composed@1 and cannot also contain items');
+ }
+}
+function writePanels(D,t,ws,entry,view,candidate){
+ const p=panelsProjection(D,t,entry,view);
+ checkPanelCandidate(p,candidate);
+ const value=candidate.map(v=>{
+  const out={id:String(v.id),title:v.title,row:v.row,column:v.column,rowspan:v.rowspan??1,colspan:v.colspan??1};
+  if(v.view!==undefined)out.view={$ref:sourceRef(ws,entry,refOf(v.view))};
+  else out.items=(v.items||[]).map(r=>({$ref:sourceRef(ws,entry,refOf(r))}));
+  return out;
+ });
+ editProjectionProperty(D,t,entry,view,{key:'panels',value});
+ t.projectionPlan(entry,view);
+}
+function currentPanels(D,ws,entry,view){return panelsProjection(D,ws,entry,view).panels.map(v=>({...v}));}
+function setPanels(D,ws,entry,view,args){
+ const candidate=(args||{}).panels;
+ panelsProjection(D,ws,entry,view);
+ checkPanelCandidate(ws.resolve(entry,view).view.profiles.projection,candidate);
+ return stage(D,ws,entry,view,t=>{writePanels(D,t,ws,entry,view,candidate);return{panels:candidate.length};});
+}
+function renamePanel(D,ws,entry,view,args){
+ const {panelId,title}=args||{};
+ const panels=currentPanels(D,ws,entry,view);
+ if(!panels.some(v=>v.id===panelId))fail('DDN-I033','Panel '+String(panelId)+' is not declared in this view. Nothing was changed.');
+ if(typeof title!=='string'||!title)fail('DDN-I033','A panel title is a non-empty string. Nothing was changed.');
+ return setPanels(D,ws,entry,view,{panels:panels.map(v=>v.id===panelId?{...v,title}:v)});
+}
+function movePanelSpan(D,ws,entry,view,args){
+ const {panelId,row,column,rowspan,colspan}=args||{};
+ const panels=currentPanels(D,ws,entry,view);
+ if(!panels.some(v=>v.id===panelId))fail('DDN-I033','Panel '+String(panelId)+' is not declared in this view. Nothing was changed.');
+ return setPanels(D,ws,entry,view,{panels:panels.map(v=>v.id===panelId?{...v,row,column,...(rowspan!==undefined?{rowspan}:{}),...(colspan!==undefined?{colspan}:{})}:v)});
+}
+function addPanel(D,ws,entry,view,args){
+ const {id,title,row,column,rowspan,colspan,items}=args||{};
+ const panels=currentPanels(D,ws,entry,view);
+ if(panels.some(v=>v.id===id))fail('DDN-PJ020','Invalid panel grid span/ID');
+ return setPanels(D,ws,entry,view,{panels:[...panels,{id,title:title||String(id),row,column,...(rowspan!==undefined?{rowspan}:{}),...(colspan!==undefined?{colspan}:{}),items:items||[]}]});
+}
+function removePanel(D,ws,entry,view,args){
+ const {panelId}=args||{};
+ const panels=currentPanels(D,ws,entry,view);
+ if(!panels.some(v=>v.id===panelId))fail('DDN-I033','Panel '+String(panelId)+' is not declared in this view. Nothing was changed.');
+ return setPanels(D,ws,entry,view,{panels:panels.filter(v=>v.id!==panelId)});
+}
+function movePanelItem(D,ws,entry,view,args){
+ const {itemId,fromPanelId,toPanelId,beforeId}=args||{};
+ const panels=currentPanels(D,ws,entry,view);
+ const from=panels.find(v=>v.id===fromPanelId),to=panels.find(v=>v.id===toPanelId);
+ if(!from||!to)fail('DDN-I033','Both the source and the target panel must be declared in this view. Nothing was changed.');
+ if(to.view!==undefined)fail('DDN-QP001','A child-view panel requires panels.composed@1 and cannot also contain items');
+ const fromItems=(from.items||[]).map(refOf);
+ if(!fromItems.includes(itemId))fail('DDN-I033','Item '+String(itemId)+' is not in panel '+String(fromPanelId)+'. Nothing was changed.');
+ const toItems=(to.items||[]).map(refOf).filter(x=>x!==itemId);
+ const at=beforeId!==undefined?toItems.indexOf(beforeId):-1;
+ toItems.splice(at<0?toItems.length:at,0,itemId);
+ return setPanels(D,ws,entry,view,{panels:panels.map(v=>v.id===fromPanelId?{...v,items:fromItems.filter(x=>x!==itemId)}:v.id===toPanelId?{...v,items:toItems}:v)});
+}
+function addPanelItem(D,ws,entry,view,args){
+ const {panelId,id,label,description}=args||{};
+ const panels=currentPanels(D,ws,entry,view);
+ const panel=panels.find(v=>v.id===panelId);
+ if(!panel)fail('DDN-I033','Panel '+String(panelId)+' is not declared in this view. Nothing was changed.');
+ if(panel.view!==undefined)fail('DDN-QP001','A child-view panel requires panels.composed@1 and cannot also contain items');
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addElement(t,entry,view,{id,name:label||id,kind:'note'});
+  const n=t.resolve(entry,view).elements.find(e=>e.local===id);
+  if(!n)fail('DDN-I033','Created note not found in the resolved view.');
+  if(description!==undefined)D.authoring.setProperty(t,entry,view,n.id,'description',description);
+  writePanels(D,t,ws,entry,view,panels.map(v=>v.id===panelId?{...v,items:[...(v.items||[]).map(refOf),n.id]}:v));
+  return{select:n.id};
+ });
+}
+function bindPanelChildView(D,ws,entry,view,args){
+ const {panelId,childViewId}=args||{};
+ const p=panelsProjection(D,ws,entry,view);
+ if(p.profile!=='panels.composed@1')fail('DDN-QP001','A child-view panel requires panels.composed@1 and cannot also contain items');
+ const panels=currentPanels(D,ws,entry,view);
+ const panel=panels.find(v=>v.id===panelId);
+ if(!panel)fail('DDN-I033','Panel '+String(panelId)+' is not declared in this view. Nothing was changed.');
+ if(!ws.views(entry).some(v=>v.id===childViewId))fail('DDN-QP001','Panel view must resolve to a named view');
+ if(panel.view===undefined&&panels.filter(v=>v.view!==undefined).length>=12)fail('DDN-QP003','At most twelve embedded child views are permitted');
+ if(panel.items&&panel.items.length)fail('DDN-QP001','A child-view panel requires panels.composed@1 and cannot also contain items');
+ const child=ws.resolve(entry,childViewId);
+ if(child.view.profiles.projection?.kind==='panels'&&child.view.children?.length)fail('DDN-QP002','Composed panels support one child-view level; recursive dashboards are not supported');
+ return setPanels(D,ws,entry,view,{panels:panels.map(v=>v.id===panelId?(()=>{const{items,...rest}=v;return{...rest,view:childViewId};})():v)});
+}
+return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

@@ -6,6 +6,8 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: panels editor (grid, item moves, child-view slots,
+  canvas fixed-grid guards) (ED-006; covers VE-AC-055/056).
 - Designer prototype: fishbone editor (effect/category/cause commands,
   attach-existing-cause with distinct occurrence paths) (ED-005; covers
   VE-AC-057).

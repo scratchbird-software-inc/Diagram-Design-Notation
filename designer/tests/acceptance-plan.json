@@ -833,7 +833,9 @@
       "title": "Reorder children",
       "action": "Move child panel in dashboard grid",
       "expected": "Only parent occurrence layout changes",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
+      "coveredBy": "designer/tests/ed-006-panels-editor.js",
+      "coveredIn": "ED-006",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
@@ -848,7 +850,9 @@
       "title": "Depth",
       "action": "Insert child composition beyond supported nesting",
       "expected": "Explicit limit before commit",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
+      "coveredBy": "designer/tests/ed-006-panels-editor.js",
+      "coveredIn": "ED-006",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",

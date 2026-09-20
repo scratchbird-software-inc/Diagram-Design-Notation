@@ -64,4 +64,12 @@ fishbone editor: a Fishbone sheet under fishbone views edits the effect
 statement (shared definition), adds category bones and nested causes under a
 chosen parent, attaches an existing cause to a second branch (relation only —
 one identity, distinct occurrence paths), and removes single ribs; the
-prototype fixture now includes a fishbone view.
+prototype fixture now includes a fishbone view. ED-006 adds the panels
+editor: a Panels sheet under panels views mirrors the declared grid and edits
+panel titles, spans and item lists (view-scope `projection.panels` writes),
+moves items between item-panels, adds notes (shared definitions, one
+transaction), adds/removes panels, and binds child-view slots as named-view
+references with the one-level/12-children limits enforced at the command
+layer; fixed-grid canvas profiles keep their required blocks locked
+(DDN-PJ080/081/083), and the prototype now wires SWOT, SIPOC and journey
+views.
