@@ -7,9 +7,9 @@ Open `../DDN-Designer-Prototype.html` for the self-contained version. `index.htm
 ## Working actions
 
 - Select graph objects and named fields in the canvas or model list.
-- Click a palette starter for automatic placement, or drag/drop for an explicit position and pin.
+- Click any palette kind for automatic placement, or drag/drop for an explicit position and pin. The Add shelf lists all 188 kinds from `../contracts/kind-ui-map.json`, grouped by its eight palette groups with name/keyword/code search; each kind's `creation_action` drives creation (plain semantic elements, fishbone causes under a selected parent, decision rule rows, Chen attributes as entity fields, Chen relationships through Connect).
 - Drag an existing object header to pin it; alternatively use the numeric X/Y controls under This view.
-- Edit labels and add untyped fields. Labels are not stable-ID refactoring.
+- Edit labels, descriptions and untyped fields. Labels are not stable-ID refactoring.
 - Create a relationship with two selected endpoints or through Connect's source/target selectors. Named fields remain the actual semantic endpoints.
 - Undo and redo source transactions, including the prototype's staged create-plus-pin transaction.
 - Hide an appearance without deleting the shared definition.
@@ -17,11 +17,11 @@ Open `../DDN-Designer-Prototype.html` for the self-contained version. `index.htm
 - Switch between two views of shared commerce definitions, and inspect an actual source-bound RACI matrix or chart.
 - Inspect actual source and download DDN, the source workspace ZIP, or the current successful SVG.
 
-The prototype stages existing helper operations in a temporary workspace, then commits the resulting changed source files through `applyEdits`. This offers one undo step for its narrow supported gestures; it is not the production incremental command/impact/draft service defined in the specification.
+The prototype stages operations through the shared command layer (`commands.js`: `createInView`, `editProjectionProperty`, `applyCreationAction`) in a temporary workspace, then commits the resulting changed source files through `applyEdits`. This offers one undo step for its narrow supported gestures; it is not the production incremental command/impact/draft service defined in the specification. `index.html` and `standalone.html` are regenerated deterministically by `build-standalone.mjs`; the contract maps are wrapped for `file://` script loading by `build-ui-maps.mjs`. Behavior is covered by the Node suite `../tests/ed-001-full-kind-palette.js` (`npm --prefix designer test`).
 
 ## Explicit limitations
 
-The eight starter buttons are a sample, not 188 complete palettes. Generic additions still use the current helper's local `editor_data`; production destination selection remains required. Reconnection, kind conversion, detailed domain/key/constraint editing, comprehensive projection editors, partial-profile draft construction, cross-view impact analysis, multiple same-view occurrences, true worker cancellation and production accessibility/security are NOT implemented by this prototype. Their dialogs are prominently labeled **PROPOSED WORKFLOW / NOT EXECUTED**.
+The inspector is descriptor-driven from `kind-ui-map.json`: label, description, fields (kinds whose descriptor template is `data-structure`), pin, connect and hide are live; every other descriptor property (basic controls, advanced groups, mapping status) renders read-only with source navigation and is never rewritten. Generic additions still use the current helper's local `editor_data`; production destination selection remains required. Reconnection, kind conversion, detailed domain/key/constraint editing, comprehensive projection editors (fishbone/decision sheets), partial-profile draft construction, cross-view impact analysis, multiple same-view occurrences, true worker cancellation and production accessibility/security are NOT implemented by this prototype. Their dialogs are prominently labeled **PROPOSED WORKFLOW / NOT EXECUTED**. One kind (`req.requirement`) is created with an explicit, visible `x_diagram` placeholder (code plus "Undecided requirement statement") because the runtime validator requires both at creation; edit them in source or the inspector.
 
 Projection bindings are inspectable; the matrix and chart are real runtime renders, not editable implementations of every future form. The intended complete upload/round-trip workflow belongs to the unchanged Studio today and to the new Designer specification. This prototype downloads its synthetic source; it is not an arbitrary-project importer. It uses a conservative SVG sanitizer for its reviewed fixtures, not a certified untrusted-document security boundary.
 

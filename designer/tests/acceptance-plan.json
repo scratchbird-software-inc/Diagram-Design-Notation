@@ -24,13 +24,15 @@
       "title": "Enumerate all types",
       "action": "Load core plus installed profiles",
       "expected": "188 audited kinds and109 relation definitions have inspectable descriptors or explicit unsupported editor status",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-001-full-kind-palette.js",
+      "coveredIn": "ED-001"
     },
     {
       "id": "VE-AC-003",
@@ -954,13 +956,15 @@
       "title": "All installed",
       "action": "Open each kind with fixture",
       "expected": "No unsupported property silently applied; basic inspector within bound",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-001-full-kind-palette.js",
+      "coveredIn": "ED-001"
     },
     {
       "id": "VE-AC-065",

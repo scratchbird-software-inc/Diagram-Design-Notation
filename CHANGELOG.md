@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: full 188-kind palette driven by `kind-ui-map.json`,
+  descriptor-driven inspector header, separable `commands.js` command layer,
+  and a Node-based designer test suite (ED-001).
 - Family tree / genealogy views via profile `family.tree@1`
   (`family.person`/`family.union`, `family.partner_of`/`family.parent_of`,
   `x_birth`/`x_death`, `DDN-PJ129`/`DDN-PJ130`). RFC-116.

@@ -3,5 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "description": "DDN visual designer: specification, proposed contracts, and bounded prototype for a visual-first DDN editor. Proposal — not a production editor.",
-  "license": "GPL-2.0-or-later"
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "test": "node tests/ed-001-full-kind-palette.js"
+  }
 }

@@ -1,0 +1,34 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>ED-001 driver — full kind palette</title>
+<style>body{font:13px/1.5 system-ui,sans-serif;margin:18px;color:#17263d}h1{font-size:17px}h2{font-size:14px;margin:16px 0 4px}.groups{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:1100px}.groups div{border:1px solid #ccd6e0;border-radius:6px;padding:6px 9px;background:#f4f8fb}.ok{color:#146b7c;font-weight:650}#paper{border:1px solid #d5dfe8;margin-top:12px;max-width:1100px;overflow:auto}code{background:#eef3f7;padding:1px 4px;border-radius:3px}</style></head><body>
+<h1>ED-001 driver: one object per palette group head kind, created through <code>DesignerCommands.createInView</code></h1>
+<p id="summary">Loading…</p>
+<div class="groups" id="groups"></div>
+<div id="paper"></div>
+<script type="application/json" id="sourceFiles">{"model.ddn": "ddn \"0.5\";\nmodule \"designer.sample\";\n// Synthetic design; no production/customer information.\n// Shared definition edits must preserve this comment.\ndata model {\n    object customer \"Customer\" {\n        kind: table;\n        description: \"A customer in the commerce domain\";\n        fields { field id; field display_name; field status; }\n    }\n    object orders \"Order\" {\n        kind: table;\n        fields { field id; field customer_id; field created_at; }\n    }\n    object invoice \"Invoice\" {\n        kind: table;\n        fields { field id; field order_id; field issued_at; }\n    }\n    object posting \"Post to ledger\" { kind: activity; }\n    relation order_customer \"Customer reference\" @model.orders.customer_id -> @model.customer.id { kind: ref; enforcement: undecided; }\n    relation invoice_order \"Order reference\" @model.invoice.order_id -> @model.orders.id { kind: ref; enforcement: undecided; }\n    relation invoice_post \"Approved invoice\" @model.invoice -> @model.posting { kind: flow; }\n}\nformat common {\n    style standard { look: classic; theme: default; font: sans; }\n    layout grid { algorithm: grid; columns: 2; gap: 130px; row_gap: 100px; routing: orthogonal; }\n    legend compact { mode: tokens; placement: none; }\n    publication screen { size: content; fit: none; }\n    bundle design { style:@standard; layout:@grid; legend:@compact; publication:@screen; }\n}\nview overview \"Customer orders / structural view\" {\n    data: [@model]; format: @common.design;\n}\nview names \"Customer orders / compact view\" {\n    data: [@model]; format: @common.design;\n    display { fields:none; }\n}\n"}</script>
+<script src="../../notation/dist/ddn.global.js"></script>
+<script src="../prototype/kind-ui-map.js"></script>
+<script src="../prototype/commands.js"></script>
+<script>
+(() => {
+'use strict';
+const D = window.DDNLive, KINDMAP = window.DDNKindUIMap, CMD = window.DesignerCommands;
+const GROUPS = ['Meaning', 'Data', 'Process', 'Systems', 'Scopes', 'People & control', 'Notes & evidence', 'Analysis'];
+const ws = D.createWorkspace(JSON.parse(document.getElementById('sourceFiles').textContent));
+const lines = [];
+let created = 0;
+for (const g of GROUPS) {
+  const kinds = KINDMAP.kinds.filter(k => k.palette_group === g);
+  const head = kinds[0];
+  const made = CMD.createInView(D, ws, 'model.ddn', 'overview', { id: 'driver_' + created, name: 'New ' + head.name, kind: head.kind });
+  const ir = ws.resolve('model.ddn', 'overview');
+  const el = ir.elements.find(e => e.id === made.select);
+  lines.push('<div><strong>' + g + '</strong> (' + kinds.length + ' kinds)<br>head: <code>' + head.kind + '</code> → created ' + (el ? '✓ ' + el.kind : '✗') + '</div>');
+  created++;
+}
+const out = ws.renderSync({ entry: 'model.ddn', view: 'overview' });
+document.getElementById('groups').innerHTML = lines.join('');
+document.getElementById('paper').innerHTML = out.svg;
+document.getElementById('summary').innerHTML = '<span class="ok">' + KINDMAP.kinds.length + ' kinds mapped · ' + GROUPS.length + ' palette groups · ' + created + ' group-head objects created and rendered below.</span> Fixture: designer/prototype/workspace.json model.ddn.';
+})();
+</script>
+</body></html>

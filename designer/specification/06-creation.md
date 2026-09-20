@@ -8,6 +8,8 @@ Start with a valid minimal module, shared data block, shared default format and 
 ## Creation destination
 The Add shelf displays “Create in model.ddn / model.” A project default can preselect it. New objects go to that selected data block, even when the visual view is in another file. Create the necessary import and view selection atomically. Creating a local-only object is a deliberate alternative labeled “Only this view's local data.” Do not reuse the current helper's `editor_data` behavior as the universal policy.
 
+> Implementation status (ED-001): the prototype still writes every creation through the current helper's local `editor_data` block in the view's source file. Destination selection (“Create in …”) is unimplemented M2 work and AUD-002 remains open; the prototype labels this in its creation dialogs.
+
 ## Drag and click insertion
 Dragging a template shows a ghost, applicable drop zones and pin intent. The default pointer drop means **Place here and pin** because the position was deliberately chosen; show the pin badge and a one-click “Let layout move it” action. The Insert button or keyboard action means **Add automatically**, creating an unpinned object. The project can remember the alternate drop preference, but it remains visible during the gesture. No auto-layout runs while the user is holding a pointer.
 

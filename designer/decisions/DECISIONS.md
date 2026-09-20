@@ -16,3 +16,9 @@ This is an author-proposed baseline. Independent user research and professional 
 | ADR-10 | Production operations use prepared, revision-checked change plans. | Undo, imports, members and references remain atomic. | Calling several committing helpers creates partial failure and confusing history. |
 
 Approval should record exact artifact hashes and accepted residual scope. Use `signoff-template.json`; do not prefill reviewer identities or approvals.
+
+## Implementation log
+
+| ADR | Implementation | Notes |
+|---|---|---|
+| ADR-05 | Implemented in prototype by ED-001 (2026-09-20) | Eight groups come from kind-ui-map.json palette_group; all 188 kinds searchable. |

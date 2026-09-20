@@ -9,7 +9,7 @@
     "designer"
   ],
   "scripts": {
-    "test": "npm --prefix notation test",
+    "test": "npm --prefix notation test && npm --prefix designer test",
     "test:core": "npm --prefix notation run test:core",
     "build:sdk": "npm --prefix notation run build:sdk",
     "serve": "node tools/serve.js"

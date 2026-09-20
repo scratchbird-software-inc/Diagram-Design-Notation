@@ -30,6 +30,8 @@ Appearance-only settings must not write semantic properties. Changing a type cal
 
 The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 188 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
 
+> Implementation status (ED-001): the prototype palette now renders `contracts/kind-ui-map.json` directly (registry code plus map name per kind). Kind conversion remains the reviewed Change… dialog (the AUD-006 conversion path), not a dropdown.
+
 ## Compact-versus-expanded contract
 Default to at most six expanded *top-level* controls, as a usability design target. A field-list control can contain many rows, but each row initially shows only name, role/domain shortcut and its connection affordance. Do not hide validation errors to satisfy a visual count. A complex required form opens a task-specific sheet with a completion summary; it does not grow the generic inspector indefinitely.
 

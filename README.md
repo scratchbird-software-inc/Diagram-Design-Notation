@@ -12,7 +12,7 @@ This repository is a monorepo with four components:
 |---|---|---|
 | `standard/` | **Proposed DDN standard** | Normative specification chapters, EBNF grammar, JSON schemas, the notation vocabulary registry, notation plates, governance |
 | `notation/` | **Notation project** | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests |
-| `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype, research, decisions |
+| `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, research, decisions |
 | `examples/` | **Example diagrams** | 19 basics, projection and quality corpora, 22 use-case scenarios |
 
 Supporting directories: `docs/` (project documentation and website, TBD) and

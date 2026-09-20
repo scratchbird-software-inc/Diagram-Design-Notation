@@ -15,6 +15,8 @@ Three tabs: **Add**, **Model**, **Views**. Add offers the current profile's comm
 
 Add never shows 188 equally weighted shapes. The initial generic shelf has eight task groups: Meaning; Data; Process; Systems; Scopes; People & control; Notes & evidence; Analysis. A specialized profile shows 6–12 relevant templates. “All installed” and exact-name search retain discoverability. Favorite templates are user preferences, not new semantic kinds.
 
+> Implementation status (ED-001): the full 188-kind mapped shelf is implemented in `designer/prototype/` — the Add tab renders the eight `palette_group` sections and every kind from `contracts/kind-ui-map.json` with search and per-kind `creation_action` dispatch. Profile-filtered specialized shelves remain proposed.
+
 ## Right inspector
 Selection header: friendly name, semantic kind, source location, and “Used in n views.” Three tabs remain stable:
 - **Meaning:** identity-independent name, kind, meaningful content and required profile properties.
