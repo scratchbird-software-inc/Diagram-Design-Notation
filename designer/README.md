@@ -81,3 +81,12 @@ bounded analysis (witnesses, overlaps, shadowed rules, budget) beside the
 table, and a read-only fixture evaluator; an overlapping unique-hit rule
 commits as a draft with the DDN-QD004 witness displayed and export
 blocked (VE-007), and the prototype fixture now includes a decision view.
+ED-008 adds edge reconnection: a selected edge's endpoint can be dragged onto
+another object or field, or re-picked in the relation inspector's From/To
+selects (the keyboard/click equivalent); both paths open the five-part
+shared-impact preview (source owner, exact before/after endpoints, affected
+views, scratch re-render diagnostics, retained identity and route overrides)
+and commit one atomic, revision-checked transaction that preserves the
+relation's id, label and properties, closing the AUD-003 reconnection gap
+(covers VE-AC-023). Direction reversal and attachment-policy editing remain
+proposed.

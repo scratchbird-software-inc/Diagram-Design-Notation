@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: relation reconnection command with impact preview (drag
+  + inspector paths), closing the AUD-003 reconnection gap (ED-008; covers
+  VE-AC-023).
 - Designer prototype: decision table editor (`rule.row` rows, typed
   predicates, hit-policy command, analysis and fixture evaluation) (ED-007;
   covers VE-AC-059/060).

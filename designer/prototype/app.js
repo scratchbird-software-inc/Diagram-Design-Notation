@@ -12,8 +12,9 @@ let timelineNotice=null,tDrag=null;
 let fishboneNotice=null;
 let panelsNotice=null,panelsSel=null;
 let decisionNotice=null,decisionFixture=null;
+let rDrag=null;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
-const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
+const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands,RELMAP=window.DDNRelationUIMap;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
 const kindsByGroup=PALETTE_GROUPS.map(g=>({group:g,kinds:KINDMAP.kinds.filter(k=>k.palette_group===g)}));
 const kindEntry=kind=>KINDMAP.kinds.find(k=>k.kind===kind);
@@ -753,13 +754,45 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
  p.innerHTML+='<label>Owner</label><div class="subtle">'+esc(sel.node.name)+'</div><label>Meaning / domain</label><button class="wide" data-story="properties">Choose a domain… <span class="tag amber">DESIGN</span></button><p class="help">Prototype only edits the label and connects this field. Domain/type/key editing is specified in the descriptor contract.</p><button id="connectSelected" class="wide primary">Connect this field</button><button id="selectParent" class="wide">Back to '+esc(sel.node.name)+'</button>';
  }else{
  const r=sel.relation;const end=e=>e.field||e.member||e.port||e.element;
- p.innerHTML+='<label>Meaning</label><div class="subtle">'+esc(r.kind)+'</div><label>From</label><div class="endpoint-card">'+esc(sourceLabel(end(r.from)))+'</div><label>To</label><div class="endpoint-card">'+esc(sourceLabel(end(r.to)))+'</div><p class="help">Field identity and visual anchor are separate. Reconnection needs its own reviewed source transaction.</p><button id="reconnectReview" class="wide">Review reconnection design…</button>';
+ p.innerHTML+='<label>Meaning</label><div class="subtle">'+esc(r.kind)+'</div><label>From</label><div class="endpoint-card">'+esc(sourceLabel(end(r.from)))+'</div><label>To</label><div class="endpoint-card">'+esc(sourceLabel(end(r.to)))+'</div><p class="help">Field identity and visual anchor are separate. Reconnecting an endpoint is one reviewed source transaction that keeps the relation’s identity, label and properties.</p>'
+ +'<hr><h3>Reconnect an endpoint</h3><label for="reconnectFrom">From endpoint</label><select id="reconnectFrom">'+endpointOptions(end(r.from))+'</select><label for="reconnectTo">To endpoint</label><select id="reconnectTo">'+endpointOptions(end(r.to))+'</select><div class="row" style="margin-top:8px"><button id="reconnectPreviewFrom" class="primary">Preview from…</button><button id="reconnectPreviewTo" class="primary">Preview to…</button></div><p class="help">The same move works by dragging a selected edge’s endpoint onto another object or field. Reversing direction stays a separate proposed operation — it is not two reconnects. <button class="ghost" id="reconnectDesign" style="min-height:0;padding:0;font-size:inherit;text-decoration:underline">Reconnection design notes</button></p>';
  }
  $('#applyName').onclick=()=>transaction('Rename shared label',t=>A.setLabel(t,entry,view,sel.sourceId,$('#nameEdit').value));$('#nameEdit').onkeydown=e=>{if(e.key==='Enter')$('#applyName').click();if(e.key==='Escape')e.target.value=sel.name;};$('#moreReview').onclick=()=>story('impact');if($('#convertBtn'))$('#convertBtn').onclick=()=>story('conversion');
  if($('#applyDesc'))$('#applyDesc').onclick=()=>transaction('Set description',t=>A.setProperty(t,entry,view,sel.sourceId,'description',$('#descEdit').value));
  p.querySelectorAll('[data-field]').forEach(x=>x.onclick=e=>{if(!e.target.closest('button'))choose(x.dataset.field);});p.querySelectorAll('[data-start]').forEach(x=>x.onclick=()=>beginConnect(x.dataset.start));p.querySelectorAll('[data-story]').forEach(x=>x.onclick=()=>story(x.dataset.story));
  if($('#addField'))$('#addField').onclick=()=>{const id=$('#newField').value;transaction('Add untyped field',t=>A.addField(t,entry,view,sel.sourceId,{id}));};
- if($('#connectSelected'))$('#connectSelected').onclick=()=>beginConnect(sel.sourceId);if($('#selectParent'))$('#selectParent').onclick=()=>choose(sel.node.id);if($('#hideSelected'))$('#hideSelected').onclick=()=>{transaction('Remove appearance, retain definition',t=>A.hide(t,entry,view,sel.sourceId));selected=null;updateInspector();};if($('#reconnectReview'))$('#reconnectReview').onclick=()=>story('connection');
+ if($('#connectSelected'))$('#connectSelected').onclick=()=>beginConnect(sel.sourceId);if($('#selectParent'))$('#selectParent').onclick=()=>choose(sel.node.id);if($('#hideSelected'))$('#hideSelected').onclick=()=>{transaction('Remove appearance, retain definition',t=>A.hide(t,entry,view,sel.sourceId));selected=null;updateInspector();};if($('#reconnectPreviewFrom'))$('#reconnectPreviewFrom').onclick=()=>inspectorReconnect('from');if($('#reconnectPreviewTo'))$('#reconnectPreviewTo').onclick=()=>inspectorReconnect('to');if($('#reconnectDesign'))$('#reconnectDesign').onclick=()=>story('connection');
+}
+// Edge reconnection (ED-008): the inspector pickers are the full keyboard/click
+// equivalent of the edge-endpoint drag (VE-006). Both paths run the same
+// command-layer validation and open the same five-part impact preview; the
+// commit inside the preview is one revision-checked transaction.
+function endpointArg(id){const owner=selectionOwner(id);return owner&&owner!==id?{elementId:owner,memberId:id}:{elementId:id};}
+function reconnectViews(id){return ws.views(entry).filter(v=>{try{const p=ws.resolve(entry,v.id);return p.view.selected.includes(selectionOwner(id)||id)||p.view.relations.includes(id);}catch{return false;}});}
+function inspectorReconnect(endKey){
+ const sel=findSelection();if(sel?.kind!=='relation')return;
+ const end=e=>e.field||e.member||e.port||e.element;
+ const value=$('#reconnect'+(endKey==='from'?'From':'To')).value;
+ if(value===end(sel.relation[endKey])){announce('That is already the '+endKey+' endpoint; nothing to reconnect.');return;}
+ reconnectModal({relationId:sel.relation.id,end:endKey,endpoint:endpointArg(value)});
+}
+function reconnectModal(args){
+ let plan;try{plan=CMD.previewReconnect(D,ws,entry,view,args,RELMAP);}catch(e){announce((e.code||'EDIT')+': '+e.message,true);return;}
+ const r=ir.relations.find(x=>x.id===args.relationId),end=e=>e.field||e.member||e.port||e.element;
+ const prevId=end(r[args.end]),nextId=args.endpoint.memberId||args.endpoint.portId||args.endpoint.elementId;
+ const views=reconnectViews(r.id);
+ const body='<div class="scope-banner" style="margin:0 0 4px">Source owner: <code>'+esc(plan.file)+'</code> · writable in this workspace · commits against revision '+ws.revision+'</div>'
+ +'<h3>Endpoint change</h3><div class="row" style="align-items:stretch"><div class="endpoint-card" style="flex:1">'+esc(sourceLabel(prevId))+'<br><code>@'+esc(plan.previous)+'</code></div><strong style="align-self:center">→</strong><div class="endpoint-card proposed" style="flex:1">'+esc(sourceLabel(nextId))+'<br><code>@'+esc(plan.proposed)+'</code></div></div>'
+ +'<h3>Affected views ('+views.length+')</h3><p>'+(views.length?views.map(v=>'<code>'+esc(v.id)+'</code>').join(' '):'None beyond this view.')+'</p>'
+ +'<h3>Scratch re-render diagnostics</h3>'+(plan.error?'<div class="notice">'+esc(plan.error.code+': '+plan.error.message)+'</div>':plan.diagnostics.length?plan.diagnostics.map(d=>'<p class="help"><strong>'+esc(d.code)+'</strong> · '+esc(d.message)+'</p>').join(''):'<p class="help">None — the proposed source validates and re-renders cleanly.</p>')
+ +'<h3>Retained by this move</h3><p class="help">Relation id <code>'+esc(r.id)+'</code>, label “'+esc(r.name)+'”, properties ('+esc(Object.keys(r.properties).join(', '))+') and the other endpoint stay byte-identical.'+(plan.routes.length?'<br>Routing overrides retained and still resolving: '+plan.routes.map(x=>'<code>route @'+esc(x.target)+'</code> ('+esc(x.file)+')').join(' '):'')+'</p>'
+ +(plan.error?'<div class="notice">Commit is blocked: the scratch re-render failed validation. Nothing was changed.</div>':'');
+ modal('Reconnect '+args.end+' endpoint · impact preview',body,plan.error?[{label:'Cancel',primary:true,action:closeModal}]:[{label:'Cancel',action:closeModal},{label:'Commit reconnection',primary:true,action:()=>{const ok=transaction('Reconnect '+r.name+' · '+args.end+' → '+sourceLabel(nextId),t=>CMD.reconnectRelation(D,t,entry,view,args,RELMAP));if(ok){selected=r.id;closeModal();}}}]);
+}
+function cancelReconnectDrag(silent){
+ if(!rDrag)return;
+ rDrag.ghost?.remove();rDrag.tip?.remove();rDrag=null;
+ if(!silent)announce('Reconnect cancelled; source unchanged.');
 }
 function addNode(kind,at){
  const descriptor=kindEntry(kind);
@@ -818,9 +851,45 @@ function bindCanvas(){
   }
   const member=e.target.closest('[data-member]'),el=e.target.closest('.ddn-node[data-id]'),edge=e.target.closest('.ddn-edge[data-id]');const id=member?.dataset.member||el?.dataset.id||edge?.dataset.id;
   if(mode==='connect'&&id){e.preventDefault();if(!connectFrom){connectFrom=id;announce('From '+sourceLabel(id)+'. Select the destination.');}else showConnection(connectFrom,id);return;}
-  if(id)choose(id);if(!el||member||mode!=='select')return;const n=result.scene.nodes.find(n=>n.id===el.dataset.id);if(!n)return;const point=worldPoint(e);drag={el,id:n.id,x:n.x,y:n.y,start:point,pointer:e.pointerId,moved:false};el.setPointerCapture(e.pointerId);
+  // Reconnect-drag: after an edge is selected, pointerdown within 14 world-px
+  // of either scene-route endpoint starts it — tested against scene geometry
+  // (the visual endpoint may sit under the node it attaches to). Escape or a
+  // drop off a node/field cancels with no source change.
+  if(mode==='select'&&ir.relations.some(r=>r.id===selected)){
+   const route=(result.scene.routes||[]).find(x=>x.id===selected),pt=worldPoint(e);
+   if(route&&pt&&Array.isArray(route.points)&&route.points.length>1){
+    const first=route.points[0],last=route.points[route.points.length-1];
+    const near=a=>Math.hypot(a[0]-pt.x,a[1]-pt.y)<=14;
+    if(near(first)||near(last)){
+     const drawing=$('#paper svg #drawing')||$('#paper svg');
+     const ghost=document.createElementNS('http://www.w3.org/2000/svg','line');
+     ghost.setAttribute('class','reconnect-ghost');drawing.appendChild(ghost);
+     const tip=document.createElement('div');tip.className='drag-tip';document.body.appendChild(tip);
+     rDrag={relationId:selected,end:near(first)?'from':'to',fixed:near(first)?last:first,pointer:e.pointerId,ghost,tip,hover:null};
+     e.preventDefault();return;
+    }
+   }
+  }
+  if(id)choose(id);
+  if(!el||member||mode!=='select')return;const n=result.scene.nodes.find(n=>n.id===el.dataset.id);if(!n)return;const point=worldPoint(e);drag={el,id:n.id,x:n.x,y:n.y,start:point,pointer:e.pointerId,moved:false};el.setPointerCapture(e.pointerId);
  };
  $('#paper').onpointermove=e=>{
+  if(rDrag&&e.pointerId===rDrag.pointer){
+   const pt=worldPoint(e);if(!pt)return;
+   rDrag.ghost.setAttribute('x1',rDrag.fixed[0]);rDrag.ghost.setAttribute('y1',rDrag.fixed[1]);
+   rDrag.ghost.setAttribute('x2',pt.x);rDrag.ghost.setAttribute('y2',pt.y);
+   const m=e.target.closest('[data-member]'),n=e.target.closest('.ddn-node[data-id]');
+   const target=m?.dataset.member||n?.dataset.id||null;
+   if(target!==rDrag.hover){
+    rDrag.hover=target;
+    let verdict=null;
+    if(target){try{CMD.prepareReconnect(D,ws,entry,view,{relationId:rDrag.relationId,end:rDrag.end,endpoint:endpointArg(target)},RELMAP);verdict={ok:true};}catch(x){verdict={ok:false,reason:x.message};}}
+    rDrag.ghost.classList.toggle('invalid',!!(verdict&&!verdict.ok));
+    rDrag.tip.textContent=target?sourceLabel(target)+(verdict.ok?' · legal '+(rDrag.end==='from'?'source':'target'):' · '+verdict.reason):'Drop on an object or field · Escape cancels';
+   }
+   rDrag.tip.style.left=(e.clientX+14)+'px';rDrag.tip.style.top=(e.clientY+14)+'px';
+   return;
+  }
   if(tDrag&&e.pointerId===tDrag.pointer){
    const pt=worldPoint(e);if(!pt)return;
    const DAY=86400000,shift=(iso,d)=>new Date(Date.parse(iso+'T00:00:00Z')+d*DAY).toISOString().slice(0,10);
@@ -845,6 +914,15 @@ function bindCanvas(){
   }
   if(!drag||e.pointerId!==drag.pointer)return;const p=worldPoint(e);const dx=p.x-drag.start.x,dy=p.y-drag.start.y;if(Math.abs(dx)+Math.abs(dy)<5&&!drag.moved)return;drag.moved=true;drag.dx=dx;drag.dy=dy;drag.el.setAttribute('transform','translate('+dx+' '+dy+')');};
  $('#paper').onpointerup=e=>{
+  if(rDrag&&e.pointerId===rDrag.pointer){
+   const d=rDrag;rDrag=null;
+   d.ghost.remove();d.tip.remove();
+   const m=e.target.closest('[data-member]'),n=e.target.closest('.ddn-node[data-id]');
+   const target=m?.dataset.member||n?.dataset.id||null;
+   if(target)reconnectModal({relationId:d.relationId,end:d.end,endpoint:endpointArg(target)});
+   else announce('Reconnect cancelled; source unchanged.');
+   return;
+  }
   if(tDrag&&e.pointerId===tDrag.pointer){
    const d=tDrag;tDrag=null;
    try{d.el.releasePointerCapture(e.pointerId);}catch{}
@@ -859,7 +937,7 @@ function bindCanvas(){
    return;
   }
   if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
- $('#paper').onpointercancel=()=>{cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
+ $('#paper').onpointercancel=()=>{cancelReconnectDrag();cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
  $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}if(decisionProfile())renderDecisionSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':decisionProfile()?'Rule selected — its row is highlighted in the Decision sheet; conditions and outcomes are shared-model edits.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
@@ -890,7 +968,7 @@ $('#undo').onclick=()=>{ws.undo();draw();announce('Undo · source restored');};$
 $('#selectTool').onclick=()=>{mode='select';connectFrom=null;$('#selectTool').classList.add('active');$('#connectTool').classList.remove('active');announce('Select objects or fields. Drag a selected object to pin it.');};$('#connectTool').onclick=()=>{mode='connect';connectFrom=null;$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Click a source, then a destination. Escape cancels.');};
 $('#fitBtn').onclick=()=>{const svg=$('#paper>svg'),v=svg?.viewBox.baseVal,port=$('#viewport');if(v?.width&&v?.height){const availableW=port.clientWidth-48,availableH=port.clientHeight-75;zoom=Math.min(1,(availableH/v.height)/(availableW/v.width));}else zoom=1;updateZoom();};$('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom+.2);updateZoom();};$('#zoomOut').onclick=()=>{zoom=Math.max(.4,zoom-.2);updateZoom();};$('#arrangeBtn').onclick=arrange;$('#addAuto').onclick=()=>addNode('table');
 $('#exportBtn').onclick=()=>{modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio.</p>',[{label:'Current DDN',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},{label:'Workspace ZIP',primary:true,action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},{label:'Current SVG',action:()=>{if(renderFailure)return announce('Current render is invalid; export blocked.',true);D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}}]);};
-window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelTimelineDrag();connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
 window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides}),select:choose,setView,story,draw,transaction};
 draw();
 })();

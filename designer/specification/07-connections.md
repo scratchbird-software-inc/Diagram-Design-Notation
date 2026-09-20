@@ -21,6 +21,8 @@ The default generic relation is permitted only in a generic sketch profile and v
 ## Reconnection and inversion
 Dragging an endpoint is a `ReconnectRelation` command. If the semantic target changes, show the before/after field or object and affected views. Moving the visual anchor along the same compatible boundary is only a `SetAttachmentPolicy` command. These are different modes and cursors. “Reverse” changes the directed semantic relationship and validates endpoint compatibility; merely flipping an arrowhead is not allowed for fixed notation.
 
+**Implementation status (ED-008):** endpoint reconnection is implemented in the prototype — drag a selected edge's endpoint onto another object or field, or pick the new endpoint in the relation inspector (the keyboard/click equivalent). Both paths show the five-part shared-impact preview (source owner, exact before/after endpoints, affected views, scratch re-render diagnostics, retained identity/route overrides) and commit one atomic, revision-checked source transaction that preserves the relation's id, label and properties; invalid targets reject with a plain-language reason before anything writes. Attachment-policy editing and Reverse remain proposed.
+
 Cardinality is authored by endpoint meaning, not which side looks left. Two directions are two separate relations unless a registered symmetric kind explicitly says otherwise. Parallel relations retain identities and independent labels. Self-references are supported with the same endpoint policies and router constraints.
 
 ## Append and insert

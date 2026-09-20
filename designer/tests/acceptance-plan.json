@@ -341,13 +341,15 @@
       "title": "Reconnect",
       "action": "Move existing relation endpoint to another legal field",
       "expected": "Preserve relation identity; preview affected semantics; one undo",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-008-edge-reconnection.js",
+      "coveredIn": "ED-008"
     },
     {
       "id": "VE-AC-024",

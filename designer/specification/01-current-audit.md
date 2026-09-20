@@ -18,7 +18,7 @@ The public API supplies workspaces, revision checks, source-span edits, undo/red
 
 **AUD-002 — Generic creation has a fixed write target.** `addElement` and `addRelation` use a local `editor_data` block. The audit confirms a newly created object is not automatically shared with the second view. The new editor needs an explicit creation destination and an atomic create-plus-occurrence transaction.
 
-**AUD-003 — Public commands are incomplete.** There are no dedicated public operations for reconnecting a relation, safe kind conversion, deep field reorder/reparent, multiple occurrences of one object in one view, or arbitrary typed scope membership changes. A generic property setter is not sufficient for their multi-file effects.
+**AUD-003 — Public commands are incomplete.** There are no dedicated public operations for reconnecting a relation, safe kind conversion, deep field reorder/reparent, multiple occurrences of one object in one view, or arbitrary typed scope membership changes. A generic property setter is not sufficient for their multi-file effects. **Status (ED-008, 2026-09-20):** relation reconnection now has a prototype command (`reconnectRelation` in `prototype/commands.js`, with drag + inspector paths and the five-part impact preview; covers VE-AC-023). The remaining AUD-003 operations — kind conversion, deep field reorder/reparent, multi-occurrence and scope membership — stay open; ED-009 covers multi-occurrence addressing.
 
 **AUD-004 — No independent occurrence address.** Ordinary graph placements are keyed by model ID. Before supporting two appearances in one view, add an explicit occurrence layer; do not create duplicate model records as a workaround.
 

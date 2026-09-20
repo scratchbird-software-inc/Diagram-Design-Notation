@@ -78,3 +78,6 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .decision-sheet .fixture-form select,.decision-sheet .fixture-form input{min-height:28px;font-size:12px}
 .decision-sheet .fixture-result{font-size:12px;margin:6px 0}
 .decision-sheet tr.stale td{opacity:.55}
+.reconnect-ghost{stroke:#146b7c;stroke-width:2.5;stroke-dasharray:7 4;pointer-events:none}
+.reconnect-ghost.invalid{stroke:#b3392f}
+.endpoint-card.proposed{background:#e5f4f3;border-color:#9fd2ca}

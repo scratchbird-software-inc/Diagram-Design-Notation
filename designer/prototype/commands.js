@@ -719,5 +719,128 @@ function evaluateDecisionFixture(D,ws,entry,view,args){
  decisionProjection(D,ws,entry,view);
  return ws.evaluateDecision(entry,view,(args||{}).input);
 }
-return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Edge reconnection commands (ED-008; spec ch.07 "Reconnection and inversion",
+// ch.12 shared-impact preview; AUD-003 reconnection gap). One reconnection is a
+// single atomic, revision-checked source transaction that preserves the
+// relation's identity: the id, label token, body properties and the other
+// endpoint span stay byte-identical; only the moved endpoint's @-path changes.
+// Candidates are validated before staging against the relation kind's
+// semantic_contract in designer/contracts/relation-ui-map.json (member XOR port,
+// member_endpoints, allow_self, source[]/target[] kind lists); rejections carry
+// a plain-language reason and the real workspace never changes (VE-007). The
+// runtime's ddn-contracts endpoint checks remain the backstop on commit.
+// Shortest-import-chain reference path for uid as seen from file — the
+// re-implementation of authoring.js refFor (it is not exported): module-local
+// definitions map to their declaration path; cross-file definitions map
+// through the workspace's own import declarations; no path → coded error
+// telling the user to add the import explicitly (never silently added, ch.11).
+function refForFile(files,file,uid){
+ if(!String(uid).includes('::'))return uid;
+ const [mod,path]=String(uid).split('::');
+ const info={};
+ for(const [name,text]of Object.entries(files)){
+  const dir=name.includes('/')?name.slice(0,name.lastIndexOf('/')+1):'';
+  const imports=[];
+  for(const x of text.matchAll(/import\s+"([^"]+)"\s+as\s+([A-Za-z_][A-Za-z0-9_-]*)/g))imports.push({file:dir+x[1].replace(/^\.\//,''),alias:x[2]});
+  info[name]={module:(text.match(/module\s+"([^"]+)"/)||[])[1],imports};
+ }
+ if(info[file]?.module===mod)return path;
+ const seen=new Set([file]),queue=[{f:file,prefix:''}];
+ while(queue.length){
+  const {f,prefix}=queue.shift();
+  for(const imp of info[f]?.imports||[]){
+   if(seen.has(imp.file))continue;seen.add(imp.file);
+   const next=(prefix?prefix+'.':'')+imp.alias;
+   if(info[imp.file]?.module===mod)return next+'.'+path;
+   queue.push({f:imp.file,prefix:next});
+  }
+ }
+ fail('DDN-E003','The edited source does not import the target definition. Add the required import explicitly.');
+}
+// The endpoint spans are lexically locatable: `@` is its own token type and the
+// two header endpoints are the first (from) and second (to) @-path token
+// sequences before the relation body `{` (or terminating `;`).
+function endpointSpan(D,text,relation,end){
+ const span=relation.source;
+ if(!span||span.start===undefined)fail('DDN-I033','The relation has no editable source span. Nothing was changed.');
+ const tokens=D.lex(text,span.file).filter(t=>t.start>=span.start&&t.end<=span.end);
+ let limit=span.end;
+ for(const t of tokens)if(t.type==='{'||t.type===';'){limit=t.start;break;}
+ const ats=tokens.filter(t=>t.type==='@'&&t.start<limit);
+ if(ats.length<2)fail('DDN-I033','The relation header does not expose two endpoint references. Nothing was changed.');
+ const at=end==='from'?ats[0]:ats[ats.length-1];
+ const tail=text.slice(at.end).match(/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*/);
+ if(!tail)fail('DDN-I033','The endpoint reference is not an editable path. Nothing was changed.');
+ return {file:span.file,start:at.end,end:at.end+tail[0].length,text:tail[0]};
+}
+// Pure validation + edit computation: no workspace is mutated. Shared by the
+// commit path, the non-committing preview, and the drag hover check.
+function prepareReconnect(D,ws,entry,view,args,relationMap){
+ const {relationId,end,endpoint}=args||{};
+ if(end!=='from'&&end!=='to')fail('DDN-I033','Reconnection names the moved end as "from" or "to". Nothing was changed.');
+ if(!endpoint||typeof endpoint!=='object'||Array.isArray(endpoint)||typeof endpoint.elementId!=='string'||!endpoint.elementId)fail('DDN-I033','Reconnection needs an endpoint naming an element, optionally with one member or one port. Nothing was changed.');
+ if(endpoint.memberId!==undefined&&endpoint.portId!==undefined)fail('DDN-I033','An endpoint names a member or a port, never both. Nothing was changed.');
+ const ir=ws.resolve(entry,view);
+ const relation=ir.relations.find(r=>r.id===relationId);
+ if(!relation)fail('DDN-E002','Definition not found.');
+ const el=ir.elements.find(n=>n.id===endpoint.elementId);
+ if(!el)fail('DDN-E002','Definition not found.');
+ const contract=(relationMap?.relations||[]).find(x=>x.id===relation.kind)?.semantic_contract||null;
+ if(endpoint.memberId!==undefined){
+  if(contract&&contract.member_endpoints===false)fail('DDN-I033','A '+relation.kind+' relation attaches to whole objects; it does not accept a field endpoint such as '+el.name+'. Nothing was changed.');
+  if(!el.fields.some(f=>f.id===endpoint.memberId))fail('DDN-I033','Field '+String(endpoint.memberId).split('::').pop()+' does not belong to '+el.name+'. Nothing was changed.');
+ }
+ if(endpoint.portId!==undefined&&!(el.ports||[]).some(p=>p.id===endpoint.portId))fail('DDN-I033','Port '+String(endpoint.portId).split('::').pop()+' does not belong to '+el.name+'. Nothing was changed.');
+ const other=end==='from'?relation.to:relation.from;
+ if(contract&&contract.allow_self===false&&other.element===endpoint.elementId)fail('DDN-I033','A '+relation.kind+' relation cannot loop back to the object it already touches; the other endpoint is '+el.name+'. Nothing was changed.');
+ const list=contract&&(end==='from'?contract.source:contract.target);
+ if(list&&!list.includes('*')&&!list.includes(el.kind))fail('DDN-I033','A '+relation.kind+' '+(end==='from'?'source':'target')+' must be one of: '+list.join(', ')+'. '+el.name+' is a '+el.kind+'. Nothing was changed.');
+ const files=ws.getFiles(),span=endpointSpan(D,files[relation.source.file]||'',relation,end);
+ const refUid=endpoint.memberId||endpoint.portId||endpoint.elementId;
+ const newRef=refForFile(files,relation.source.file,refUid);
+ return {relation,end,edit:{file:span.file,start:span.start,end:span.end,text:newRef},previousRef:span.text,newRef};
+}
+// Byte-span of a `route @<relation> { … }` override in source (for the preview's
+// retained-items list); the scratch re-render is the authority that it still
+// resolves after the move.
+function routeBlockSpan(text,target){
+ const m=new RegExp('route\\s+@'+target.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*\\{').exec(text);
+ if(!m)return null;
+ let depth=0;
+ for(let i=m.index+m[0].length-1;i<text.length;i++){
+  if(text[i]==='{')depth++;
+  if(text[i]==='}'){depth--;if(!depth)return {start:m.index,end:i+1};}
+ }
+ return null;
+}
+function reconnectRelation(D,ws,entry,view,args,relationMap){
+ const plan=prepareReconnect(D,ws,entry,view,args,relationMap);
+ return stage(D,ws,entry,view,t=>{
+  t.applyEdits([plan.edit],{expectedRevision:t.revision,entry,view});
+  const out=t.renderSync({entry,view});
+  return {select:plan.relation.id,end:plan.end,previous:plan.previousRef,proposed:plan.newRef,diagnostics:out.diagnostics.map(d=>({code:d.code,message:d.message}))};
+ });
+}
+// Non-committing preview (ch.12): runs the same validation, stages on a scratch
+// workspace, re-renders the current view so semantic validators fire, and
+// reports the exact previous/proposed references, scratch diagnostics, and any
+// route overrides retained. The caller's workspace is never touched.
+function previewReconnect(D,ws,entry,view,args,relationMap){
+ const plan=prepareReconnect(D,ws,entry,view,args,relationMap);
+ const t=D.createWorkspace(ws.getFiles());
+ try{
+  let diagnostics=[],error=null;
+  try{
+   t.applyEdits([plan.edit],{expectedRevision:t.revision,entry,view});
+   diagnostics=t.renderSync({entry,view}).diagnostics.map(d=>({code:d.code,message:d.message}));
+  }catch(e){error={code:e.code||'EDIT',message:e.message};}
+  const routes=[];
+  for(const [name,text]of Object.entries(t.getFiles())){
+   const span=routeBlockSpan(text,plan.relation.ref);
+   if(span)routes.push({file:name,target:plan.relation.ref,text:text.slice(span.start,span.end)});
+  }
+  return {relationId:plan.relation.id,end:plan.end,file:plan.edit.file,previous:plan.previousRef,proposed:plan.newRef,diagnostics,error,routes};
+ }finally{t.destroy();}
+}
+return{createInView,editProjectionProperty,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });
