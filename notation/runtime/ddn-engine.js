@@ -15,4 +15,4 @@ function render(ir,registry,glyphs,options={}){if(['state.flat@1','state.composi
  const shown=new Set(ir.view.selected);
  const next={...ir,elements:ir.elements.map(n=>{if(n.kind!=='family.person'||!shown.has(n.id))return n;const b=n.properties.x_birth,d=n.properties.x_death;if(b===undefined&&d===undefined)return n;const years=b!==undefined&&d!==undefined?b+'-'+d:b!==undefined?'b. '+b:'d. '+d;return{...n,name:n.name+' ('+years+')'};})};ir=next;}
  const opts={...options,renderChild:render};return ir.view.profiles.projection?.kind&&ir.view.profiles.projection.kind!=='graph'?Projections.render(ir,registry,glyphs,opts):Interaction.render(ir,registry,glyphs,opts);}
-return{VERSION:'0.5.0-draft.2',render};});
+return{VERSION:'0.6.0-beta.1',render};});

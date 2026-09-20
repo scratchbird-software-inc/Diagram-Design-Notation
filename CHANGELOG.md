@@ -6,6 +6,13 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+## [0.6.0-beta.1] - 2026-09-20
+
+Beta 1: 38 runtime items, 13 designer items — see item history. Runtime and
+standard packaging release: every version stamp moves from `0.5.0-draft.2`
+(designer `0.1.0`) to `0.6.0-beta.1` (designer `0.2.0-beta.1`). Not a language
+change — `ddn "0.5"` sources and `ddn-core@0.3` are untouched.
+
 - Designer prototype: canvas template starters (BMC, Lean, SWOT, PEST, PESTLE,
   Porter 5, empathy, scorecard) generating pre-populated panels views in one
   command (ED-013).

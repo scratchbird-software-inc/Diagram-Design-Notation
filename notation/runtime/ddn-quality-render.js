@@ -98,5 +98,5 @@ function draw(plan,ir,c){
  body+=lines(wrap(foot,W-24*s,11),12*s,H-43*s,11)+text(12*s,H-14*s,'Supplied synthetic observations / source-bound marks / finite JavaScript arithmetic, not certified financial computation.',11);
  return{body,W,H};
 }
-return{VERSION:'0.5.0-draft.2',draw,encodedColour};
+return{VERSION:'0.6.0-beta.1',draw,encodedColour};
 });

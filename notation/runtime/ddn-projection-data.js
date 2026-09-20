@@ -256,5 +256,5 @@ function plan(ir,ErrorClass=Error){
  }
 }
 function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}
-return{VERSION:'0.5.0-draft.2',get,date,plan,supported,participants:orderedParticipants,quality:Quality};
+return{VERSION:'0.6.0-beta.1',get,date,plan,supported,participants:orderedParticipants,quality:Quality};
 });

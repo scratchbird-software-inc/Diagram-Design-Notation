@@ -1,6 +1,6 @@
 # Implementation milestones, acceptance and rollout
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Work packages
 **M0 — Contract and adapter spike.** Freeze runtime/hash, generate complete descriptors, expose selection/port geometry, demonstrate a command path that keeps source authoritative. Retain Studio compatibility tests. Compare the DDN-native SVG host and, only if useful, a diagram-js adapter against the same fixtures.

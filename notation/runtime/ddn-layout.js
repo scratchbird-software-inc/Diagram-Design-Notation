@@ -4,7 +4,7 @@
  */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-shapes'));else root.DDNLayout=factory(root.DDNShapes);})(typeof globalThis!=='undefined'?globalThis:this,function(Shapes){
 'use strict';
-const VERSION='0.5.0-draft.2',EPS=.01;
+const VERSION='0.6.0-beta.1',EPS=.01;
 const q=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
 const round=x=>Math.round(x*1000)/1000;
 const same=(a,b)=>Math.abs(a[0]-b[0])<EPS&&Math.abs(a[1]-b[1])<EPS;

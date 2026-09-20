@@ -1,6 +1,6 @@
 # Layout, pins, groups and appearance
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Defaults
 Use content-dependent automatic layout for unpinned graph elements. Expose one Arrange menu with Preset, Scope, Spacing and Preview. Keep advanced optimization parameters out of the basic inspector. Available patterns come from the runtime capability contract: auto/grid/manual/fit-grid/circular/radial/layered/tree/spanning-tree/mindmap/grouped/organic as actually supported.

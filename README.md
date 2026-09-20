@@ -20,7 +20,7 @@ Supporting directories: `docs/` (project documentation and website, TBD) and
 
 ## Status
 
-Draft proposal, pre-1.0. Language/runtime/registry at **0.5.0-draft.2**,
+Draft proposal, pre-1.0. Language/runtime/registry at **0.6.0-beta.1**,
 designer specification at **0.1.0**. See `standard/specification/00-status-and-scope.md`
 and `designer/specification/00-charter.md`. This project does not claim UML,
 BPMN, or DMN conformance, and local fixture tests are not legal, accounting,
@@ -56,7 +56,7 @@ fonts or third-party runtime code are vendored — see `NOTICE.md`.
 
 ## Legacy path mapping
 
-Documents imported from the 0.5.0-draft.2 monolith and the designer
+Documents imported from the 0.6.0-beta.1 monolith and the designer
 specification 0.1 package may still reference their original paths. Mapping:
 
 | Legacy path | Current path |

@@ -1,6 +1,6 @@
 {
   "version": "designer-ui@0.1",
-  "baseline": "0.5.0-draft.2 + field-guide.1",
+  "baseline": "0.6.0-beta.1 + field-guide.1",
   "kindCount": 188,
   "kinds": [
     {

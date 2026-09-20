@@ -1,6 +1,6 @@
 # 31. Activity diagrams (profile `uml.activity@1` on projection `graph`)
 
-Status: implemented in runtime 0.5.0-draft.2, governed by RFC-105
+Status: implemented in runtime 0.6.0-beta.1, governed by RFC-105
 (`standard/governance/rfcs/RFC-105-activity-diagram.md`). Source grammar
 remains DDN 0.5; kinds and verbs are registry entries and `x_partition` is an
 `x_*` extension property, so this chapter is a semantic addition, not a

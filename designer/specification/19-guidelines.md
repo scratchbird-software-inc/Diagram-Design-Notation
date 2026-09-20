@@ -1,6 +1,6 @@
 # Design guidelines and practical authoring walkthroughs
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Twelve working guidelines
 1. Ask what something **is** before asking how to draw it.

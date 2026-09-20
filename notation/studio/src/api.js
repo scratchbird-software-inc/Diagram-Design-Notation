@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Public SDK on the consolidated DDN 0.3 core. */
 function makeLiveAPI(backend,assets){
 'use strict';
-const VERSION='0.5.0-draft.2',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
+const VERSION='0.6.0-beta.1',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
 assets={...assets,registry:D.profiles.registry(assets.registry)};
 const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction.VERSION,layout:backend.Placement.VERSION,palette:'blue-grey@1'};
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}

@@ -1,6 +1,6 @@
 {
   "name": "@ddn/notation",
-  "version": "0.5.0-draft.2",
+  "version": "0.6.0-beta.1",
   "private": true,
   "description": "DDN reference runtime: parser, validation, layout/routing, deterministic SVG rendering, CLI, and Studio. Implements the standard in ../standard/.",
   "license": "GPL-2.0-or-later",

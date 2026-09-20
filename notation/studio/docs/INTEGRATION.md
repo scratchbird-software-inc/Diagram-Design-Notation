@@ -92,6 +92,6 @@ DDNLive.authoring.setMatrixCells(workspace, "views.ddn", "raci", [
 
 Matrix creation uses the projection's `write_data` shared block or an unambiguous shared row block, not a display-only cell. Transactions validate the current view before commit and are undoable; other dependent views validate on their next render. Rule evaluation is pure, typed and budgeted; transition actions are never executed. Chart values/dates and matrix cell coordinates cannot be dragged or re-laid out as graph nodes. Unsupported quality mark overrides and redacted projections fail explicitly.
 
-## Endpoint-ordering policy (0.5.0-draft.2)
+## Endpoint-ordering policy (0.6.0-beta.1)
 
 Free compatible slots are optimized by default. The optional overlay `endpointOrdering: "preserve"` selects the legacy stable-ID slot order; `"source"` follows the DDN layout. This does not change field identities, pins, or quantitative coordinate meaning. See `../../spec/26-local-endpoint-ordering.md`.

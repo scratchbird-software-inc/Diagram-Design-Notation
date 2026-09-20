@@ -1,6 +1,6 @@
 {
   "name": "data-design-notation",
-  "version": "0.5.0-draft.2",
+  "version": "0.6.0-beta.1",
   "private": true,
   "description": "Data Design Notation (DDN): a model-first diagram language, reference runtime, visual designer proposal, and open standard draft.",
   "license": "GPL-2.0-or-later",

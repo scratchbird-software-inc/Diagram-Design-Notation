@@ -1,6 +1,6 @@
 # 26. Local endpoint ordering (DDN 0.5 routing patch)
 
-Status: implemented bounded routing policy in runtime 0.5.0-draft.2. Source grammar
+Status: implemented bounded routing policy in runtime 0.6.0-beta.1. Source grammar
 remains DDN 0.5; existing files need no rewrite. This chapter supplements chapters
 on native layout, curved routes, and source-preserving placement.
 

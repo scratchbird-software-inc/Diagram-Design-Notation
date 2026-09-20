@@ -13,7 +13,7 @@ publishing/export, Studio, designer, or docs.
 - **Language, registry, or visual-meaning changes:** write an RFC using
   `standard/governance/RFC-TEMPLATE.md`. Do not silently rewrite existing
   vocabulary (152 object kinds, 90 relation verbs, 118 facets are the
-  0.5.0-draft.2 baseline).
+  0.6.0-beta.1 baseline).
 - **Designer changes:** follow `designer/specification/00-charter.md` and its
   non-negotiables (VE-001…VE-008); record decisions as ADRs in
   `designer/decisions/`.

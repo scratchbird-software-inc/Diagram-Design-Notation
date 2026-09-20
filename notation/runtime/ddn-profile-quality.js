@@ -136,5 +136,5 @@ function validate(ir,E){
   }
  }
 }
-return{VERSION:'0.5.0-draft.2',validate};
+return{VERSION:'0.6.0-beta.1',validate};
 });

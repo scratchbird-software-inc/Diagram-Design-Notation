@@ -1,6 +1,6 @@
 # Creation, selection, inline editing and clipboard
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Blank workspace
 Start with a valid minimal module, shared data block, shared default format and one empty named view. Offer Sketch, Data model, Process, Architecture, Matrix/report, or open existing. A template selects profile and defaults explicitly; it does not inject a complete invented business model. Friendly names are editable while stable IDs are generated separately.

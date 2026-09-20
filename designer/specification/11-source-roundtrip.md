@@ -1,6 +1,6 @@
 # Source identity, imports, view occurrences and round trips
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Canonical files
 Continue to use UTF-8 `.ddn` with shared data, format and view declarations. A new visual project uses separate `model.ddn`, `formats.ddn` and `views.ddn` by default; a single-file project remains valid. Do not force existing users through a reformatter on opening. Preserve comments, literal values, ordering, unknown fields and line endings outside the changed spans.

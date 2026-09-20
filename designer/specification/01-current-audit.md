@@ -1,9 +1,9 @@
 # Current DDN audit and implementation gaps
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## What was inspected
-The complete field-guide archive was extracted into an analysis copy and overlaid with the supplied routing patch. The resulting runtime identifies as 0.5.0-draft.2 and matches the patch's published hash. We read the registry, profile catalogue, shape code, source editor/authoring code, declaration files, capabilities, and representative examples. `tools/audit-runtime.cjs` reproduces the read-only public-API probes. Their observed results are not a full regression rerun.
+The complete field-guide archive was extracted into an analysis copy and overlaid with the supplied routing patch. The resulting runtime identifies as 0.6.0-beta.1 and matches the patch's published hash. We read the registry, profile catalogue, shape code, source editor/authoring code, declaration files, capabilities, and representative examples. `tools/audit-runtime.cjs` reproduces the read-only public-API probes. Their observed results are not a full regression rerun.
 
 ## Inventory
 The audited core has **152 kinds**, **90 relation verbs**, **118 facet entries**, and **179 registered glyph recipes**. The profile catalogue adds **36 kinds** and **19 relationships** across **24 versioned profiles**. That is **188 kind definitions** and **109 relationship definitions**, not 188 necessary palette buttons. The core uses five registered body forms: 108 cards, 26 frames, 10 activities, six notes, and two sample forms. Ports are an independent interaction form. Profile kinds use 18 distinct silhouettes. There are 99 semantic-property and 118 format-property catalogue records; record count is not proof of complete enforcement.

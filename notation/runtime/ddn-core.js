@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * DDN reference decoder, 0.5.0-draft.2. No runtime dependencies.
+ * DDN reference decoder, 0.6.0-beta.1. No runtime dependencies.
  * This is an executable core demonstrator, NOT a complete conformance implementation.
  */
 (function (root, factory) {
@@ -7,7 +7,7 @@
   else root.DDN = factory(root.DDNContracts,root.DDNProfiles);
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (Contracts,Profiles) {
   'use strict';
-  const VERSION = '0.5.0-draft.2';
+  const VERSION = '0.6.0-beta.1';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
   class DDNError extends Error {
     constructor(code, message, source, offset) {

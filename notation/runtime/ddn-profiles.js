@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. DDN profile packs: data-only definitions and bounded validators. */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('../../standard/registry/profiles/catalogue.json'),require('./ddn-projection-data'),require('./ddn-profile-quality'));else root.DDNProfiles=factory(root.DDNProfileCatalogue,root.DDNProjectionData,root.DDNProfileQuality);})(typeof globalThis!=='undefined'?globalThis:this,function(catalogue,Bindings,Extra){
 'use strict';
-const VERSION='0.5.0-draft.2';
+const VERSION='0.6.0-beta.1';
 const cache=new WeakMap();
 function registry(base){
  if(cache.has(base))return cache.get(base);

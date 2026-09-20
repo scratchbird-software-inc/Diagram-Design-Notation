@@ -143,5 +143,5 @@ function render(g,p,theme){
  if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
  return out+'</g>';
 }
-return{VERSION:'0.5.0-draft.2',measure,render,anchor,polygon,shapeOf,segmentInterior};
+return{VERSION:'0.6.0-beta.1',measure,render,anchor,polygon,shapeOf,segmentInterior};
 });

@@ -1,4 +1,4 @@
-# DDN 0.5.0-draft.2 — endpoint-ordering replacement patch
+# DDN 0.6.0-beta.1 — endpoint-ordering replacement patch
 
 This patch targets the runtime in **ddn-0.5-field-guide** (field-guide.1, previously
 0.5.0-draft.1). It is built from that actual archive, not from an older companion.
@@ -12,7 +12,7 @@ It changes routing, not the authored business model or field order.
    The patch archive has project-relative paths, not an additional project folder.
 3. Close the old tab and reload the site (or hard refresh with Ctrl+Shift+R).
    Restart `npm run serve` if it was running. No npm dependency install is needed.
-4. The public version is now `DDNLive.VERSION === "0.5.0-draft.2"`.
+4. The public version is now `DDNLive.VERSION === "0.6.0-beta.1"`.
 
 `dist/ddn.global.js` is the deployable single-file library. `dist/ddn.mjs` imports
 that same file; the declarations are beside it. The updated `reference/` and

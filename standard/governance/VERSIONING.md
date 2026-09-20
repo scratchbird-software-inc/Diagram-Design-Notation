@@ -5,11 +5,17 @@ DDN is a pre-1.0 draft standard. Versioning is layered:
 | Layer | Mechanism | Current |
 |---|---|---|
 | Language source version | `ddn "0.x";` declaration at the top of every `.ddn` file; runtime accepts a fixed set (`ddn-core.js` `SOURCE_VERSIONS`) | 0.2 – 0.5 |
-| Runtime / notation package | semver with `-draft.N` prereleases; git tags `notation/vX.Y.Z` | 0.5.0-draft.2 |
+| Runtime / notation package | semver with `-beta.N` prereleases; git tags `notation/vX.Y.Z` | 0.6.0-beta.1 |
 | Core registry | pinned identifier `ddn-core@0.3` inside `registry/catalogue.json` | ddn-core@0.3 |
 | Profiles | `name@version` identifiers, listed in `registry/profiles/catalogue.json` | 24 installed |
-| Standard documents | chapter set per language version; git tags `standard/vX.Y.Z` | 0.5.0-draft.2 |
-| Designer specification | independent semver; git tags `designer/vX.Y.Z` | 0.1.0 |
+| Standard documents | chapter set per language version; git tags `standard/vX.Y.Z` | 0.6.0-beta.1 |
+| Designer specification | independent semver; git tags `designer/vX.Y.Z` | 0.2.0-beta.1 |
+
+The prerelease series moved from `-draft.N` to `-beta.N` at 0.6.0-beta.1
+(2026-09-20): this is a runtime/standard packaging release, not a language
+change — the language source version stays at `0.2 – 0.5` and `ddn-core@0.3`
+is untouched. The designer keeps its independent semver and also carries
+`beta.1`.
 
 ## Rules
 

@@ -4,7 +4,7 @@
  */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-layout.js'),require('./ddn-patterns.js'));else root.DDNPlacement=factory(root.DDNLayout,root.DDNPinPlacement);})(typeof globalThis!=='undefined'?globalThis:this,function(Layout,Patterns){
 'use strict';
-const VERSION='0.5.0-draft.2',q=Layout.q,clone=x=>JSON.parse(JSON.stringify(x));
+const VERSION='0.6.0-beta.1',q=Layout.q,clone=x=>JSON.parse(JSON.stringify(x));
 function fail(code,message){throw Object.assign(new Error(message),{code});}
 const center=g=>[g.x+g.w/2,g.y+g.h/2];
 const same=(a,b)=>Math.abs(a[0]-b[0])<.001&&Math.abs(a[1]-b[1])<.001;

@@ -1,6 +1,6 @@
 {
   "name": "@ddn/designer",
-  "version": "0.1.0",
+  "version": "0.2.0-beta.1",
   "private": true,
   "description": "DDN visual designer: specification, proposed contracts, and bounded prototype for a visual-first DDN editor. Proposal \u2014 not a production editor.",
   "license": "GPL-2.0-or-later",

@@ -4,7 +4,7 @@
  */
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNQualityData=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
-const VERSION='0.5.0-draft.2';
+const VERSION='0.6.0-beta.1';
 const MISSING=Object.freeze({$missing:true});
 const isMissing=v=>v===undefined||v?.$missing===true;
 const primitive=v=>v===null||['string','boolean','number'].includes(typeof v);

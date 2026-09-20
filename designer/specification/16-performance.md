@@ -1,6 +1,6 @@
 # Responsiveness, measurements and deterministic behavior
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Proposed budgets, not current claims
 On a declared reference desktop, aim for pointer feedback within one animation frame during a drag; do not route the entire graph on every pointermove. Target small-view postcommit render feedback under 250ms and medium bounded views under 1s, with a visible cancellable busy state beyond that. These are acceptance targets to be benchmarked, not measurements of the finished editor or arbitrary hardware guarantees.

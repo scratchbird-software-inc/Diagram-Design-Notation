@@ -1,6 +1,6 @@
 # 36. SysML-style block profiles (`sysml.bdd@1`, `sysml.ibd@1`, `sysml.parametric@1` on projection `graph`)
 
-Status: implemented in runtime 0.5.0-draft.2, governed by RFC-110
+Status: implemented in runtime 0.6.0-beta.1, governed by RFC-110
 (`standard/governance/rfcs/RFC-110-sysml.md`). Source grammar remains DDN
 0.5; blocks and constraints are registry kinds, the item flow is a registry
 verb, and ports reuse the existing `ports {}` group and member-endpoint

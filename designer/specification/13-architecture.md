@@ -1,6 +1,6 @@
 # Runtime architecture and extension contracts
 
-**DDN Designer specification 0.1 — proposed; baseline audited 0.5.0-draft.2.**
+**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
 
 ## Modules
 The proposed architecture has a visual application shell, descriptor service, command service, source workspace adapter, selection/occurrence index, interaction state machine, layout worker bridge, projection-specific editors, persistence adapter and export/review service. These are not a second parser or semantic registry.
