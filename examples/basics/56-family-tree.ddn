@@ -1,0 +1,34 @@
+ddn "0.5";
+module "ddn.examples.familytree";
+
+// Fictional three-generation family for the family.tree@1 profile.
+// Partnerships join through small family.union nodes: alex and miriam via
+// union_am, sam and jo via union_sj. family.parent_of edges run from a
+// union down to a child, so the layered downward layout stacks the
+// generations — grandparents' union at the top, the child generation
+// below, the grandchild at the bottom. Persons carry optional x_birth
+// (and one x_death) years. All persons and dates are fictional.
+data m {
+    object alex "Alex" { kind: "family.person"; x_birth: 1948; x_death: 2019; }
+    object miriam "Miriam" { kind: "family.person"; x_birth: 1951; }
+    object union_am { kind: "family.union"; }
+    object sam "Sam" { kind: "family.person"; x_birth: 1976; }
+    object jo "Jo" { kind: "family.person"; x_birth: 1978; }
+    object union_sj { kind: "family.union"; }
+    object robin "Robin" { kind: "family.person"; x_birth: 2005; }
+
+    relation partner_alex "partner of" @alex -> @union_am { kind: "family.partner_of"; }
+    relation partner_miriam "partner of" @miriam -> @union_am { kind: "family.partner_of"; }
+    relation partner_sam "partner of" @sam -> @union_sj { kind: "family.partner_of"; }
+    relation partner_jo "partner of" @jo -> @union_sj { kind: "family.partner_of"; }
+    relation child_sam "parent of" @union_am -> @sam { kind: "family.parent_of"; }
+    relation child_robin "parent of" @union_sj -> @robin { kind: "family.parent_of"; }
+}
+
+view family "Three generations" {
+    data: [@m];
+    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
+    projection { kind: graph; profile: "family.tree@1"; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

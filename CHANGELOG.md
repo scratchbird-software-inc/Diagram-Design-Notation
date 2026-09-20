@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Family tree / genealogy views via profile `family.tree@1`
+  (`family.person`/`family.union`, `family.partner_of`/`family.parent_of`,
+  `x_birth`/`x_death`, `DDN-PJ129`/`DDN-PJ130`). RFC-116.
 - Low-fidelity UI wireframes via profile `wireframe.ui@1` (seven-control
   stencil, scoped-frame nesting, warning `DDN-PJ128`). RFC-115.
 - Network/bus and rack views via profiles `network.basic@1`/`network.rack@1`

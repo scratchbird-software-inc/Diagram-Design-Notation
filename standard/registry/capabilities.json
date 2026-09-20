@@ -2685,6 +2685,23 @@
         "pixel-exact mockup fidelity",
         "image fetching"
       ]
+    },
+    {
+      "id": "family.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Family tree / genealogy"
+      ],
+      "scope": "Persons with optional birth/death years; partnerships via partner links or small union join nodes; ancestors above descendants; acyclic lineage with at most two parents.",
+      "validation": [
+        "parent_of cycles rejected (DDN-PJ129)",
+        "more than two parents rejected (DDN-PJ130)"
+      ],
+      "unsupported": [
+        "GEDCOM or other external interchange",
+        "adoption/step-family nuance beyond the two-parent rule",
+        "records verification"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2898,7 +2915,8 @@
     "PERT/CPM critical-path views via pert.cpm@1 (computed forward/backward pass, zero-slack accent)",
     "fault tree and event tree views via fault.tree@1/event.tree@1 (AND/OR gates, two-input check)",
     "network/bus overviews and rack elevations via network.basic@1/network.rack@1 (original glyphs, declared attachments; routing-geometry junctions remain rejected)",
-    "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)"
+    "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)",
+    "family tree / genealogy views via family.tree@1 (union join nodes, acyclic two-parent lineage)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

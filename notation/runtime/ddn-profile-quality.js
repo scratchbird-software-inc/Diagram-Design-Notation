@@ -125,6 +125,16 @@ function validate(ir,E){
    if(!['and','or'].includes(type)||count<2)fail('DDN-PJ126','Gate '+(n.name||n.id)+' has '+count+' visible tree.input edge(s) and declared type '+(type||'none')+'; every gate must declare x_gate.type (and/or) and have at least two inputs',n);
   }
  }
+ if(profile==='family.tree@1'){
+  const included=ir.elements.filter(n=>shown.has(n.id)),pes=ir.relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element)&&r.kind==='family.parent_of');
+  const kids=new Map();for(const r of pes){if(!kids.has(r.from.element))kids.set(r.from.element,[]);kids.get(r.from.element).push(r.to.element);}
+  const active=new Set(),seen=new Set();function visit(id){if(active.has(id)){const n=ns.get(id);fail('DDN-PJ129','Lineage cycle: '+(n?.name||id)+' cannot be its own ancestor; family.parent_of edges must be acyclic',n);}if(seen.has(id))return;active.add(id);for(const c of kids.get(id)||[])visit(c);active.delete(id);seen.add(id);}
+  for(const n of included)visit(n.id);
+  for(const n of included.filter(n=>n.kind==='family.person')){
+   const parents=new Set(pes.filter(r=>r.to.element===n.id).map(r=>r.from.element));
+   if(parents.size>2)fail('DDN-PJ130','Person '+(n.name||n.id)+' has '+parents.size+' distinct family.parent_of sources; at most two parents can be drawn faithfully — split extra parentage into separate unions/partners',n);
+  }
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });

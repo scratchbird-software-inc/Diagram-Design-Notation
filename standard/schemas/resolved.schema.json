@@ -491,7 +491,9 @@
             "ui.button",
             "ui.image",
             "ui.checkbox",
-            "ui.list"
+            "ui.list",
+            "family.person",
+            "family.union"
           ]
         },
         "kindCode": {
@@ -722,7 +724,9 @@
             "UI_BUTTON",
             "UI_IMAGE",
             "UI_CHECKBOX",
-            "UI_LIST"
+            "UI_LIST",
+            "PERSON",
+            "UNION"
           ]
         },
         "properties": {
@@ -913,7 +917,9 @@
             "sysml.flow",
             "archi.rel",
             "tree.input",
-            "network.attaches"
+            "network.attaches",
+            "family.partner_of",
+            "family.parent_of"
           ]
         },
         "kindCode": {
@@ -1037,7 +1043,9 @@
             "ITEMFLOW",
             "ARCHIREL",
             "TREEINPUT",
-            "ATTACHES"
+            "ATTACHES",
+            "PARTNEROF",
+            "PARENTOF"
           ]
         },
         "from": {

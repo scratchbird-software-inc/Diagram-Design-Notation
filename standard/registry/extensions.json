@@ -1280,6 +1280,20 @@
           "additionalProperties": false
         }
       }
+    },
+    "x_birth": {
+      "targets": {
+        "object": {
+          "type": "integer"
+        }
+      }
+    },
+    "x_death": {
+      "targets": {
+        "object": {
+          "type": "integer"
+        }
+      }
     }
   }
 }

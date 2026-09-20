@@ -826,6 +826,28 @@
       "code": "UI_LIST",
       "glyph": "object",
       "aliases": []
+    },
+    {
+      "keyword": "family.person",
+      "name": "Family person",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "object",
+      "family": "concept",
+      "code": "PERSON",
+      "glyph": "person",
+      "aliases": []
+    },
+    {
+      "keyword": "family.union",
+      "name": "Partnership union",
+      "shape": "profile",
+      "silhouette": "circle",
+      "fallback": "object",
+      "family": "concept",
+      "code": "UNION",
+      "glyph": "object",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -1473,6 +1495,44 @@
       ],
       "allow_self": false,
       "member_endpoints": true
+    },
+    {
+      "keyword": "family.partner_of",
+      "name": "partner of",
+      "verb": "partner of",
+      "family": "structural",
+      "code": "PARTNEROF",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "family.person"
+      ],
+      "target": [
+        "family.person",
+        "family.union"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "family.parent_of",
+      "name": "parent of",
+      "verb": "parent of",
+      "family": "lineage",
+      "code": "PARENTOF",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "family.person",
+        "family.union"
+      ],
+      "target": [
+        "family.person"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
     }
   ],
   "profiles": [
@@ -2736,6 +2796,23 @@
         "real widget toolkit export",
         "pixel-exact mockup fidelity",
         "image fetching"
+      ]
+    },
+    {
+      "id": "family.tree@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Family tree / genealogy"
+      ],
+      "scope": "Persons with optional birth/death years; partnerships via partner links or small union join nodes; ancestors above descendants; acyclic lineage with at most two parents.",
+      "validation": [
+        "parent_of cycles rejected (DDN-PJ129)",
+        "more than two parents rejected (DDN-PJ130)"
+      ],
+      "unsupported": [
+        "GEDCOM or other external interchange",
+        "adoption/step-family nuance beyond the two-parent rule",
+        "records verification"
       ]
     }
   ],
