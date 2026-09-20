@@ -35,6 +35,7 @@ function registry(base){
 const get=id=>catalogue.profiles.find(x=>x.id===id);
 function validate(ir,reg,ErrorClass){
  const p=ir.view.profiles.projection||{kind:'graph',profile:'ddn@1'},profile=get(p.profile),nodes=new Map(ir.elements.map(n=>[n.id,n])),rels=ir.relations;
+ const diagnostics=[];
  const fail=(code,message,n)=>{throw new ErrorClass(code,message,n?.source?.file||ir.view.source?.file,n?.source?.start||ir.view.source?.start);};
  if(!profile)fail('DDN-PF001','Unknown or uninstalled diagram profile '+p.profile);
  if(profile.projection!==p.kind)fail('DDN-PF002',p.profile+' requires projection '+profile.projection+', not '+p.kind);
@@ -128,9 +129,14 @@ function validate(ir,reg,ErrorClass){
   if(ir.view.profiles.export.mode==='redacted')fail('DDN-PJ003','Redacted non-graph projections require a separately authorized input workspace; unsupported export fails closed');
  }
  if(p.kind==='matrix'&&!reg.relationships.some(r=>r.keyword===p.relation))fail('DDN-PJ014','Matrix relation must name an installed relationship kind');
+ if(p.profile==='wireframe.ui@1'){
+  const covered=new Set();
+  for(const frame of ir.view.frames){if(nodes.get(frame.scope)?.kind==='ui.frame')for(const id of frame.members)covered.add(id);}
+  for(const n of ns)if(n.kind.startsWith('ui.')&&n.kind!=='ui.frame'&&!covered.has(n.id))diagnostics.push({code:'DDN-PJ128',severity:'warning',message:'Control '+n.id+' is declared outside any ui.frame',source:n.source?.file||'',offset:n.source?.start||0});
+ }
  Extra.validate(ir,ErrorClass);
  Bindings.plan(ir,ErrorClass);
- return [];
+ return diagnostics;
 }
 return{VERSION,registry,validate,catalogue,get};
 });

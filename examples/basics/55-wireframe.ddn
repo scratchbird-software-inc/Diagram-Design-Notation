@@ -1,0 +1,35 @@
+ddn "0.5";
+module "ddn.examples.wireframe";
+
+// Synthetic settings-screen mock for the wireframe.ui@1 profile. The
+// screen area is a ui.frame object; the contained controls are members of
+// a view frame scoped to it. Drawn as plain rect variants in the classic
+// look with the neutral grey palette — clean low-fi boxes, not a widget
+// toolkit. All data is synthetic.
+data m {
+    object settings "Settings" { kind: "ui.frame"; }
+    object profile_label "Profile" { kind: "ui.label"; }
+    object display_name "Display name" { kind: "ui.input"; }
+    object email_notifications "Email notifications" { kind: "ui.checkbox"; }
+    object timezone_list "Timezone" { kind: "ui.list";
+        fields { field utc; field berlin; field tokyo; }
+    }
+    object avatar_placeholder "Avatar" { kind: "ui.image"; }
+    object save_button "Save" { kind: "ui.button"; }
+}
+
+view settings "Settings screen" {
+    data: [@m];
+    select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];
+    projection { kind: graph; profile: "wireframe.ui@1"; }
+    style { look: classic; theme: neutral; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame settings_area "Settings" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }
+    place @m.profile_label { at: [0px, 0px]; }
+    place @m.display_name { at: [0px, 120px]; }
+    place @m.email_notifications { at: [0px, 240px]; }
+    place @m.timezone_list { at: [0px, 360px]; }
+    place @m.avatar_placeholder { at: [300px, 0px]; }
+    place @m.save_button { at: [300px, 360px]; }
+}

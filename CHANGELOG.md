@@ -6,6 +6,8 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Low-fidelity UI wireframes via profile `wireframe.ui@1` (seven-control
+  stencil, scoped-frame nesting, warning `DDN-PJ128`). RFC-115.
 - Network/bus and rack views via profiles `network.basic@1`/`network.rack@1`
   (four original glyphs, `network.attaches`, `x_rack`, `DDN-PJ127`);
   removes 'native bus/junction-network drawing' from capabilities

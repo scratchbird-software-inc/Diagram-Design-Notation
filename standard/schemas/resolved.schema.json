@@ -484,7 +484,14 @@
             "network.bus",
             "network.switch",
             "network.server",
-            "network.rack"
+            "network.rack",
+            "ui.frame",
+            "ui.label",
+            "ui.input",
+            "ui.button",
+            "ui.image",
+            "ui.checkbox",
+            "ui.list"
           ]
         },
         "kindCode": {
@@ -708,7 +715,14 @@
             "BUS",
             "SWITCH",
             "SERVER",
-            "RACK"
+            "RACK",
+            "UI_FRAME",
+            "UI_LABEL",
+            "UI_INPUT",
+            "UI_BUTTON",
+            "UI_IMAGE",
+            "UI_CHECKBOX",
+            "UI_LIST"
           ]
         },
         "properties": {

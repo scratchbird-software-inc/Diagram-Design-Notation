@@ -749,6 +749,83 @@
       "code": "RACK",
       "glyph": "network-rack",
       "aliases": []
+    },
+    {
+      "keyword": "ui.frame",
+      "name": "Wireframe frame",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_FRAME",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "ui.label",
+      "name": "Wireframe label",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_LABEL",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "ui.input",
+      "name": "Wireframe input",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_INPUT",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "ui.button",
+      "name": "Wireframe button",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_BUTTON",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "ui.image",
+      "name": "Wireframe image placeholder",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_IMAGE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "ui.checkbox",
+      "name": "Wireframe checkbox",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_CHECKBOX",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "ui.list",
+      "name": "Wireframe list",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UI_LIST",
+      "glyph": "object",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -2642,6 +2719,23 @@
       "unsupported": [
         "exact 1U geometric rendering",
         "weight/power/thermal planning"
+      ]
+    },
+    {
+      "id": "wireframe.ui@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Low-fidelity UI wireframe"
+      ],
+      "scope": "Fixed seven-control stencil as plain rect variants; nesting via scoped frames; classic look with neutral grey palette.",
+      "validation": [
+        "controls outside any ui.frame produce warning DDN-PJ128"
+      ],
+      "unsupported": [
+        "responsive behavior",
+        "real widget toolkit export",
+        "pixel-exact mockup fidelity",
+        "image fetching"
       ]
     }
   ],

@@ -2668,6 +2668,23 @@
         "exact 1U geometric rendering",
         "weight/power/thermal planning"
       ]
+    },
+    {
+      "id": "wireframe.ui@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Low-fidelity UI wireframe"
+      ],
+      "scope": "Fixed seven-control stencil as plain rect variants; nesting via scoped frames; classic look with neutral grey palette.",
+      "validation": [
+        "controls outside any ui.frame produce warning DDN-PJ128"
+      ],
+      "unsupported": [
+        "responsive behavior",
+        "real widget toolkit export",
+        "pixel-exact mockup fidelity",
+        "image fetching"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2880,7 +2897,8 @@
     "ArchiMate-style layered architecture views via archimate.basic@1 (nine-kind vocabulary, layer-pair legality; profile-level, not ArchiMate conformance)",
     "PERT/CPM critical-path views via pert.cpm@1 (computed forward/backward pass, zero-slack accent)",
     "fault tree and event tree views via fault.tree@1/event.tree@1 (AND/OR gates, two-input check)",
-    "network/bus overviews and rack elevations via network.basic@1/network.rack@1 (original glyphs, declared attachments; routing-geometry junctions remain rejected)"
+    "network/bus overviews and rack elevations via network.basic@1/network.rack@1 (original glyphs, declared attachments; routing-geometry junctions remain rejected)",
+    "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
