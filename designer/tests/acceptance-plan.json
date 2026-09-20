@@ -816,7 +816,9 @@
       "title": "Dates",
       "action": "Change task start through date editor",
       "expected": "Axis position updates; movement not an arbitrary pin",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
+      "coveredBy": "designer/tests/ed-004-timeline-editor.js",
+      "coveredIn": "ED-004",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",

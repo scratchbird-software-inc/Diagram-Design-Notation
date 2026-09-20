@@ -8,6 +8,7 @@ let entry='model.ddn',view='overview',ir=null,result=null,selected='designer.sam
 let overrides={page:'content',look:'classic',theme:'default'},renderFailure=false;
 let mPlan=null,mSel=null,mBatch=[];
 let chartSel=null,chartNotice=null,dragGuard=null,lastEditError=null;
+let timelineNotice=null,tDrag=null;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -30,11 +31,11 @@ function draw(){
   $('#status').textContent='Live render · '+Math.round(next.milliseconds)+' ms · '+next.diagnostics.length+' reported warning(s)';
   $('#saved').textContent='Memory revision '+ws.revision;$('#undo').disabled=!ws.history().canUndo;$('#redo').disabled=!ws.history().canRedo;
   $('#canvasEyebrow').textContent=graph()?'SYNTHETIC COMMERCE MODEL / LIVE GRAPH':'SHARED PROCUREMENT MODEL / DATA-BOUND VIEW';
-  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values'}[view]||view;
+  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule'}[view]||view;
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();renderMatrixSheet();renderChartSheet();updateInspector();updateLeft();highlight();updateSource();
+  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();updateInspector();updateLeft();highlight();updateSource();
  }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
@@ -192,10 +193,67 @@ function renderChartSheet(){
  sheet.querySelectorAll('[data-contrib]').forEach(b=>b.onclick=()=>{chartSel=b.dataset.contrib;renderChartSheet();updateInspector();sheet.querySelector('[data-recrow="'+CSS.escape(chartSel)+'"]')?.scrollIntoView({block:'nearest'});});
  $('#addChartRecord').onclick=()=>chartTxn('Add chart record',t=>CMD.addChartRecord(D,t,entry,view,{id:'record_'+counter++,name:'New record'}));
 }
+// Timeline sheet (spec ch.09 structured sheets; ED-004): one row per plan item with
+// validated date controls (shared-model edits) plus the dependency list (view-scope
+// projection edit). Illegal input is rejected at the control; nothing is staged.
+const timelineProfile=()=>ir?.view.profiles.projection?.kind==='timeline'?ir.view.profiles.projection:null;
+function timelineTxn(label,fn){lastEditError=null;const ok=transaction(label,fn);timelineNotice=ok?null:(lastEditError?(lastEditError.code||'EDIT')+': '+lastEditError.message:'Edit rejected; source unchanged.');if(!ok)renderTimelineSheet();return ok;}
+function renderTimelineSheet(){
+ const sheet=$('#timelineSheet');
+ if(!sheet)return;
+ const p=timelineProfile();
+ if(!p){sheet.hidden=true;sheet.innerHTML='';return;}
+ sheet.hidden=false;
+ let plan=null,planError=null;
+ try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
+ let h='<div class="sheet-head"><span class="tag teal">TIMELINE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Dates edit the <strong>shared model</strong> (<code>'+esc(String(p.start))+'</code> / <code>'+esc(String(p.end))+'</code>) · dependencies edit <strong>this view only</strong> (<code>projection.dependencies</code>); relations stay shared</span></div>';
+ if(timelineNotice)h+='<div class="notice error">'+esc(timelineNotice)+'</div>';
+ if(planError){h+='<div class="notice error">'+esc(planError)+' The sheet stays read-only; the source is unchanged.</div>';sheet.innerHTML=h;return;}
+ const depsOf=id=>plan.dependencies.filter(r=>r.from.element===id||r.to.element===id);
+ h+='<table aria-label="Timeline tasks"><thead><tr><th>task</th><th>start (UTC)</th><th>end (exclusive, UTC)</th><th>dependencies touching this task</th></tr></thead><tbody>';
+ for(const it of plan.items){
+  const milestone=it.a===it.b;
+  h+='<tr><th>'+esc(it.label)+(milestone?' <span class="tag amber" title="Zero-length interval renders as a diamond">MILESTONE</span>':'')+'<br><code class="id">'+esc(it.id.split('::').pop())+'</code></th>';
+  h+='<td><input type="date" data-trec="'+esc(it.id)+'" data-tkey="start" value="'+esc(it.start)+'" aria-label="'+esc(it.label+' start')+'"></td>';
+  h+='<td><input type="date" data-trec="'+esc(it.id)+'" data-tkey="end" value="'+esc(it.end)+'" aria-label="'+esc(it.label+' end')+'"></td>';
+  h+='<td class="deps">'+depsOf(it.id).map(r=>'<span class="chip">'+esc(r.name||r.id.split('::').pop())+' <button data-unlink="'+esc(r.id)+'" title="Remove from this view’s dependency list; the shared relation is kept" aria-label="Unlink '+esc(r.name||r.id)+'">×</button></span>').join('')+'<button data-linkfrom="'+esc(it.id)+'" title="Link a new predecessor dependency starting here">＋ link</button></td></tr>';
+ }
+ h+='</tbody></table>';
+ h+='<div class="batchbar"><span class="tag">ADD TASK</span><input id="tlNewId" placeholder="task_id" aria-label="New task identifier"><input id="tlNewLabel" placeholder="Label" aria-label="New task label"><input id="tlNewStart" type="date" aria-label="New task start"><input id="tlNewEnd" type="date" aria-label="New task end"><button id="addTimelineRecord">＋ Add record</button><span class="small muted">A zero-length interval (start = end) is a legal milestone. Bars drag whole days with a preview; the SVG stays authoritative until commit.</span></div>';
+ sheet.innerHTML=h;
+ sheet.querySelectorAll('input[data-trec]').forEach(inp=>{
+  inp.onchange=()=>{
+   const id=inp.dataset.trec,key=inp.dataset.tkey,it=plan.items.find(i=>i.id===id);
+   if(inp.value===it[key])return;
+   timelineTxn('Edit '+it.label+' '+key+' date (shared model)',t=>CMD.setTimelineDates(D,t,entry,view,{recordId:id,[key]:inp.value}));
+  };
+ });
+ sheet.querySelectorAll('[data-unlink]').forEach(b=>b.onclick=()=>{timelineTxn('Unlink dependency from this view (relation kept)',t=>CMD.unlinkTimelineDependency(D,t,entry,view,{relationId:b.dataset.unlink}));});
+ sheet.querySelectorAll('[data-linkfrom]').forEach(b=>b.onclick=()=>{
+  const fromId=b.dataset.linkfrom,others=plan.items.filter(i=>i.id!==fromId);
+  modal('Link a timeline dependency','<p>Creates one shared <code>analysis.precedes</code> relation and appends it to this view’s <code>projection.dependencies</code> — one transaction. Contradictions (DDN-PJ042) and cycles (DDN-PJ043) reject before commit.</p><label for="tlLinkFrom">Predecessor</label><select id="tlLinkFrom">'+plan.items.map(i=>'<option value="'+esc(i.id)+'" '+(i.id===fromId?'selected':'')+'>'+esc(i.label)+'</option>').join('')+'</select><div class="preview-arrow">↓</div><label for="tlLinkTo">Successor</label><select id="tlLinkTo">'+others.map(i=>'<option value="'+esc(i.id)+'">'+esc(i.label)+'</option>').join('')+'</select><label for="tlLinkLabel">Label</label><input id="tlLinkLabel" value="Precedes">',[{label:'Cancel',action:closeModal},{label:'Create dependency',primary:true,action:()=>{
+   const from=$('#tlLinkFrom').value,to=$('#tlLinkTo').value,name=$('#tlLinkLabel').value;
+   const ok=timelineTxn('Link timeline dependency',t=>CMD.linkTimelineDependency(D,t,entry,view,{id:'precedes_'+counter++,label:name,fromId:from,toId:to}));
+   if(ok)closeModal();
+  }}]);
+ });
+ $('#addTimelineRecord').onclick=()=>{
+  const id=$('#tlNewId').value.trim(),label=$('#tlNewLabel').value.trim(),start=$('#tlNewStart').value,end=$('#tlNewEnd').value;
+  if(!id||!start||!end){timelineNotice='DDN-I033: A new task needs an identifier and both dates. Nothing was changed.';renderTimelineSheet();return;}
+  timelineTxn('Add timeline record',t=>CMD.addTimelineRecord(D,t,entry,view,{id,label:label||id,start,end}));
+ };
+}
+function cancelTimelineDrag(silent){
+ if(!tDrag)return;
+ try{tDrag.el.removeAttribute('transform');}catch{}
+ tDrag.tip?.remove();
+ tDrag=null;
+ if(!silent)announce('Date drag cancelled; source unchanged.');
+}
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -205,7 +263,7 @@ function updateLeft(){
  $('#paletteSearch').oninput=e=>{const q=e.target.value.toLowerCase();let shown=0;pane.querySelectorAll('[data-add]').forEach(b=>{const hit=!q||b.dataset.search.includes(q);b.hidden=!hit;if(hit)shown++;});pane.querySelectorAll('.palette-group').forEach(d=>{const visible=[...d.querySelectorAll('[data-add]')].filter(b=>!b.hidden);d.open=!!q&&visible.length>0||!q;d.hidden=!!q&&!visible.length;const badge=d.querySelector('[data-group-count]');if(badge)badge.textContent=q?visible.length+'/'+d.querySelectorAll('[data-add]').length:visible.length;});$('#paletteCount').textContent=shown+'/'+KINDMAP.kinds.length;};pane.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));
  }else if(left==='model'){
  pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas.</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));
- }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+ }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
 }
 function selectControl(id,label,values,current){return `<label for="${id}">${label}</label><select id="${id}">`+values.map(([v,l])=>`<option value="${v}" ${v===current?'selected':''}>${l}</option>`).join('')+'</select>';}
 function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$('#inspectorBody');
@@ -236,9 +294,17 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   if($('#cellInGraph'))$('#cellInGraph').onclick=()=>{const id=cell.assignments[0].id;setView('responsibility_graph');choose(id);announce('Assignment selected in the responsibility graph.');};
   return;
  }
+ const tp=timelineProfile();
+ if(tp){
+  let th='<div class="notice">Data-bound projection. A bar is a projection of shared record dates — dragging it is a whole-day date edit with a preview, never a pin. Dates commit through the sheet or the drag gesture; dependencies are view-scope list edits over shared relations.</div><h3>'+esc(tp.profile)+'</h3><label>Bindings</label><div class="subtle">start <code>'+esc(String(tp.start))+'</code> · end <code>'+esc(String(tp.end))+'</code></div>';
+  let tplan=null;try{tplan=ws.projectionPlan(entry,view);}catch{}
+  if(tplan)th+='<label>Tasks</label><div class="subtle">'+tplan.items.map(i=>esc(i.label)).join(' · ')+'</div><label>Dependencies</label><div class="subtle">'+tplan.dependencies.map(r=>esc(r.name||r.id)).join(' · ')+'</div>';
+  th+='<p class="help">Drag a bar horizontally to move both dates in whole days; drag near an edge (or hold Shift for the end edge) to move one date. Escape cancels with no source change. The sheet under the canvas offers the equivalent date controls.</p>';
+  p.innerHTML=th+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  return;
+ }
  const cp=chartProfile();
- if(cp){
-  let ch='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale. Edit the record in the Source sheet; dragging a mark is disabled.</div><h3>'+esc(cp.profile)+' · '+esc(String(cp.mark??'source mark'))+'</h3><label>Bindings</label><div class="subtle">x <code>'+esc(String(cp.x??'—'))+'</code> · y <code>'+esc(String(cp.y??'—'))+'</code> · unit <code>'+esc(String(cp.unit??'—'))+'</code>'+(cp.aggregate?'<br>aggregate <code>'+esc(String(cp.aggregate))+'</code>':'')+'</div>';
+ if(cp){  let ch='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale. Edit the record in the Source sheet; dragging a mark is disabled.</div><h3>'+esc(cp.profile)+' · '+esc(String(cp.mark??'source mark'))+'</h3><label>Bindings</label><div class="subtle">x <code>'+esc(String(cp.x??'—'))+'</code> · y <code>'+esc(String(cp.y??'—'))+'</code> · unit <code>'+esc(String(cp.unit??'—'))+'</code>'+(cp.aggregate?'<br>aggregate <code>'+esc(String(cp.aggregate))+'</code>':'')+'</div>';
   let cplan=null;try{cplan=ws.projectionPlan(entry,view);}catch{}
   const point=cplan&&chartSel?cplan.points.find(pt=>(pt.sourceIds||[]).includes(chartSel)):null;
   if(point){
@@ -305,6 +371,28 @@ function bindCanvas(){
   if(e.button!==0)return;
   if(!graph()){
    if(chartProfile()){const m=e.target.closest('[data-id],[data-source]');if(m)dragGuard={x:e.clientX,y:e.clientY,id:m.getAttribute('data-id')||m.getAttribute('data-source'),pointer:e.pointerId,fired:false};}
+   if(timelineProfile()){
+    const g=e.target.closest('.ddn-mark[data-id]');
+    if(!g)return;
+    let plan;try{plan=ws.projectionPlan(entry,view);}catch{return;}
+    const item=plan.items.find(i=>i.id===g.dataset.id);
+    if(!item)return;
+    // Bar drag is a data-edit gesture: px-per-day is derived from the rendered
+    // bars' own scene boxes versus their source dates, never from renderer constants.
+    const DAY=86400000,bars=(result.scene.marks||[]).filter(m=>m.start&&m.end&&m.w>0);
+    const ref=bars.find(m=>m.start===item.start&&m.end===item.end)||bars[0];
+    const scale=ref?ref.w/((Date.parse(ref.end+'T00:00:00Z')-Date.parse(ref.start+'T00:00:00Z'))/DAY):NaN;
+    if(!Number.isFinite(scale)||scale<=0){announce('No dated bar on this axis to derive the day scale from; use the date controls.',true);return;}
+    const pt=worldPoint(e);if(!pt)return;
+    const own=bars.find(m=>m.start===item.start&&m.end===item.end);
+    let mode='move';
+    if(e.shiftKey)mode='end';
+    else if(own&&own.w>0){if(pt.x-own.x<10)mode='start';else if(own.x+own.w-pt.x<10)mode='end';}
+    const tip=document.createElement('div');tip.className='drag-tip';document.body.appendChild(tip);
+    tDrag={el:g,item,scale,mode,pointer:e.pointerId,startX:pt.x,days:0,tip};
+    g.setPointerCapture(e.pointerId);
+    e.preventDefault();
+   }
    return;
   }
   const member=e.target.closest('[data-member]'),el=e.target.closest('.ddn-node[data-id]'),edge=e.target.closest('.ddn-edge[data-id]');const id=member?.dataset.member||el?.dataset.id||edge?.dataset.id;
@@ -312,6 +400,20 @@ function bindCanvas(){
   if(id)choose(id);if(!el||member||mode!=='select')return;const n=result.scene.nodes.find(n=>n.id===el.dataset.id);if(!n)return;const point=worldPoint(e);drag={el,id:n.id,x:n.x,y:n.y,start:point,pointer:e.pointerId,moved:false};el.setPointerCapture(e.pointerId);
  };
  $('#paper').onpointermove=e=>{
+  if(tDrag&&e.pointerId===tDrag.pointer){
+   const pt=worldPoint(e);if(!pt)return;
+   const DAY=86400000,shift=(iso,d)=>new Date(Date.parse(iso+'T00:00:00Z')+d*DAY).toISOString().slice(0,10);
+   const span=(Date.parse(tDrag.item.end)-Date.parse(tDrag.item.start))/DAY;
+   let days=Math.round((pt.x-tDrag.startX)/tDrag.scale);
+   if(tDrag.mode==='start')days=Math.min(days,span);
+   if(tDrag.mode==='end')days=Math.max(days,-span);
+   tDrag.days=days;
+   tDrag.el.setAttribute('transform','translate('+(days*tDrag.scale)+' 0)');
+   const ns=shift(tDrag.item.start,tDrag.mode==='end'?0:days),ne=shift(tDrag.item.end,tDrag.mode==='start'?0:days);
+   tDrag.tip.textContent=tDrag.item.label+' · ['+ns+', '+ne+')'+(ns===ne?' · milestone':'')+(tDrag.mode!=='move'?' · '+tDrag.mode+' only':'');
+   tDrag.tip.style.left=(e.clientX+14)+'px';tDrag.tip.style.top=(e.clientY+14)+'px';
+   return;
+  }
   if(dragGuard&&e.pointerId===dragGuard.pointer){
    if(!dragGuard.fired&&Math.abs(e.clientX-dragGuard.x)+Math.abs(e.clientY-dragGuard.y)>6){
     dragGuard.fired=true;
@@ -321,8 +423,22 @@ function bindCanvas(){
    return;
   }
   if(!drag||e.pointerId!==drag.pointer)return;const p=worldPoint(e);const dx=p.x-drag.start.x,dy=p.y-drag.start.y;if(Math.abs(dx)+Math.abs(dy)<5&&!drag.moved)return;drag.moved=true;drag.dx=dx;drag.dy=dy;drag.el.setAttribute('transform','translate('+dx+' '+dy+')');};
- $('#paper').onpointerup=e=>{if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
- $('#paper').onpointercancel=()=>{dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
+ $('#paper').onpointerup=e=>{
+  if(tDrag&&e.pointerId===tDrag.pointer){
+   const d=tDrag;tDrag=null;
+   try{d.el.releasePointerCapture(e.pointerId);}catch{}
+   d.tip.remove();d.el.removeAttribute('transform');
+   if(d.days){
+    const DAY=86400000,shift=(iso,n)=>new Date(Date.parse(iso+'T00:00:00Z')+n*DAY).toISOString().slice(0,10);
+    const args={recordId:d.item.id};
+    if(d.mode!=='end')args.start=shift(d.item.start,d.days);
+    if(d.mode!=='start')args.end=shift(d.item.end,d.days);
+    timelineTxn('Drag '+d.item.label+' '+(d.days>0?'+':'')+d.days+' day(s) · date edit (shared model)',t=>CMD.setTimelineDates(D,t,entry,view,args));
+   }
+   return;
+  }
+  if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
+ $('#paper').onpointercancel=()=>{cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
  $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
@@ -353,7 +469,7 @@ $('#undo').onclick=()=>{ws.undo();draw();announce('Undo · source restored');};$
 $('#selectTool').onclick=()=>{mode='select';connectFrom=null;$('#selectTool').classList.add('active');$('#connectTool').classList.remove('active');announce('Select objects or fields. Drag a selected object to pin it.');};$('#connectTool').onclick=()=>{mode='connect';connectFrom=null;$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Click a source, then a destination. Escape cancels.');};
 $('#fitBtn').onclick=()=>{const svg=$('#paper>svg'),v=svg?.viewBox.baseVal,port=$('#viewport');if(v?.width&&v?.height){const availableW=port.clientWidth-48,availableH=port.clientHeight-75;zoom=Math.min(1,(availableH/v.height)/(availableW/v.width));}else zoom=1;updateZoom();};$('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom+.2);updateZoom();};$('#zoomOut').onclick=()=>{zoom=Math.max(.4,zoom-.2);updateZoom();};$('#arrangeBtn').onclick=arrange;$('#addAuto').onclick=()=>addNode('table');
 $('#exportBtn').onclick=()=>{modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio.</p>',[{label:'Current DDN',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},{label:'Workspace ZIP',primary:true,action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},{label:'Current SVG',action:()=>{if(renderFailure)return announce('Current render is invalid; export blocked.',true);D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}}]);};
-window.addEventListener('keydown',e=>{if(e.key==='Escape'){connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelTimelineDrag();connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
 window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides}),select:choose,setView,story,draw,transaction};
 draw();
 })();

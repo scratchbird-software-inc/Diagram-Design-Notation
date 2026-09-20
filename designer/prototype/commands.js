@@ -217,5 +217,82 @@ function setChartBinding(D,ws,entry,view,args){
  chartProjection(D,ws,entry,view);
  return editProjectionProperty(D,ws,entry,view,{key,value:remove?undefined:value});
 }
-return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Timeline editor commands (ED-004). Date writes are shared-model edits through
+// D.authoring.setRecordValue; the dependency list is a view-scope projection edit.
+// Dates mirror the runtime date() helper (ddn-projection-data.js): real ISO
+// YYYY-MM-DD, end >= start (equal is a legal milestone). The scratch re-plan lets
+// DDN-PJ040/041/042/043 reject before any real commit.
+function timelineProjection(D,ws,entry,view){
+ const p=ws.resolve(entry,view).view.profiles.projection||{};
+ if(p.kind!=='timeline')fail('DDN-E006','Timeline editing needs a timeline projection');
+ return p;
+}
+// Shape + real-calendar check identical to the runtime helper; no Date-object coercion of the value.
+const timelineDateOK=s=>{if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;const t=Date.parse(s+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===s;};
+function timelineCheckDates(start,end){
+ for(const [k,v]of [['start',start],['end',end]])if(!timelineDateOK(v))fail('DDN-I033','Timeline dates need a real ISO YYYY-MM-DD value; got '+JSON.stringify(v)+' for '+k+'. Nothing was changed.');
+ if(end<start)fail('DDN-I033','Timeline end must be on or after start (equal dates are a legal zero-length milestone). Nothing was changed.');
+}
+function timelineKeys(p){return{start:String(p.start||'x_record.start').split('.').at(-1),end:String(p.end||'x_record.end').split('.').at(-1)};}
+function setTimelineDates(D,ws,entry,view,args){
+ const {recordId,start,end}=args||{};
+ const p=timelineProjection(D,ws,entry,view),keys=timelineKeys(p);
+ const el=ws.resolve(entry,view).elements.find(n=>n.id===recordId);
+ if(!el)fail('DDN-E002','Definition not found.');
+ const current=el.properties.x_record;
+ if(!current||typeof current!=='object')fail('DDN-E006','Selected object has no x_record value record');
+ const nextStart=start!==undefined?start:current[keys.start],nextEnd=end!==undefined?end:current[keys.end];
+ timelineCheckDates(nextStart,nextEnd);
+ return stage(D,ws,entry,view,t=>{
+  // A two-key change commits as one merged x_record write: sequential single-key
+  // writes can pass through an intermediate end < start state that the commit-time
+  // re-validation (correctly) refuses.
+  if(start!==undefined&&end!==undefined)D.authoring.setProperty(t,entry,view,recordId,'x_record',{...current,[keys.start]:start,[keys.end]:end});
+  else if(start!==undefined)D.authoring.setRecordValue(t,entry,view,recordId,keys.start,start);
+  else D.authoring.setRecordValue(t,entry,view,recordId,keys.end,end);
+  t.projectionPlan(entry,view);
+  return{select:recordId};
+ });
+}
+function addTimelineRecord(D,ws,entry,view,args){
+ const {id,label,start,end}=args||{};
+ const p=timelineProjection(D,ws,entry,view),keys=timelineKeys(p);
+ timelineCheckDates(start,end);
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addElement(t,entry,view,{id,name:label||id,kind:'record'});
+  const n=t.resolve(entry,view).elements.find(e=>e.local===id);
+  if(!n)fail('DDN-I033','Created record not found in the resolved view.');
+  D.authoring.setProperty(t,entry,view,n.id,'x_record',{[keys.start]:start,[keys.end]:end});
+  const current=sourceRecords(ws,entry,p.records);
+  editProjectionProperty(D,t,entry,view,{key:'records',value:[...current,{$ref:'editor_data.'+id}]});
+  t.projectionPlan(entry,view);
+  return{select:n.id};
+ });
+}
+function linkTimelineDependency(D,ws,entry,view,args){
+ const {id,label,fromId,toId}=args||{};
+ const p=timelineProjection(D,ws,entry,view);
+ if(!fromId||!toId||fromId===toId)fail('DDN-I033','A timeline dependency links two different timeline records. Nothing was changed.');
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addRelation(t,entry,view,{id,name:label||id,kind:'analysis.precedes',from:fromId,to:toId});
+  const current=sourceRecords(ws,entry,p.dependencies);
+  editProjectionProperty(D,t,entry,view,{key:'dependencies',value:[...current,{$ref:'editor_data.'+id}]});
+  t.projectionPlan(entry,view);
+  return{select:id};
+ });
+}
+function unlinkTimelineDependency(D,ws,entry,view,args){
+ const {relationId,deleteDefinition}=args||{};
+ const p=timelineProjection(D,ws,entry,view);
+ return stage(D,ws,entry,view,t=>{
+  const current=sourceRecords(ws,entry,p.dependencies),local=sourceRef(ws,entry,relationId);
+  const kept=current.filter(r=>String(r.$ref)!==local);
+  if(kept.length===current.length)fail('DDN-I033','Relation '+String(relationId)+' is not in this view’s dependency list. Nothing was changed.');
+  editProjectionProperty(D,t,entry,view,{key:'dependencies',value:kept.length?kept:undefined});
+  if(deleteDefinition)D.authoring.deleteDefinition(t,entry,view,relationId);
+  t.projectionPlan(entry,view);
+  return{relationId,deleted:!!deleteDefinition};
+ });
+}
+return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

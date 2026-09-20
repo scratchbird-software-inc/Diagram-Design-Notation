@@ -6,6 +6,8 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: timeline editor (date controls, drag-as-date-edit with
+  preview, `analysis.precedes` dependency linking) (ED-004; covers VE-AC-054).
 - Designer prototype: chart editor (record sheet, profile-legal mark
   switching, binding pickers, contributor inspection) and a
   `setProjectionBinding` command contract (ED-003; covers VE-AC-051/052/053).

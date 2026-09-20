@@ -34,7 +34,8 @@ is the primary interface — distinct from the source-first Studio in
   by ED-001's `ed-001-full-kind-palette.js`, which covers VE-AC-002 and
   VE-AC-064, and extended by ED-002's `ed-002-matrix-editor.js`, which covers
   VE-AC-049 and VE-AC-050, and by ED-003's `ed-003-chart-editor.js`, which
-  covers VE-AC-051, VE-AC-052 and VE-AC-053); Playwright harnesses
+  covers VE-AC-051, VE-AC-052 and VE-AC-053, and by ED-004's
+  `ed-004-timeline-editor.js`, which covers VE-AC-054); Playwright harnesses
   (optional).
 - `src/` — future implementation home (empty).
 
@@ -53,4 +54,9 @@ the companion graph view. ED-003 adds the chart editor: a Source sheet under
 chart views edits bound records (shared model), switches the mark within the
 profile's legal `capabilities.marks` set, and rebinds `x`/`y`/`unit` (view
 scope); clicking a mark lists its contributing records, and drag gestures stay
-disabled (values set geometry).
+disabled (values set geometry). ED-004 adds the timeline editor: a Timeline
+sheet under gantt views edits task start/end dates with validated date
+controls (shared model), links and unlinks `analysis.precedes` dependencies
+(view-scope list edits; relations stay shared), adds task records, and turns a
+horizontal bar drag into a whole-day date edit with a live interval preview —
+never a free geometric move.

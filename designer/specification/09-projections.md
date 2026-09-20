@@ -22,6 +22,15 @@ contributor inspection ("select assignment in graph") are implemented in the
 prototype against the runtime `setMatrixCells` helper; row/column source
 pickers remain proposed.
 
+Implementation status (ED-004): the timeline row is implemented in the
+prototype — a date sheet with validated start/end controls per task, a
+validated bar-drag-as-date-edit gesture with a live interval preview (whole
+days; edge handles or Shift move one date; Escape cancels with no source
+change), and `analysis.precedes` dependency linking/unlinking where the
+dependency list is a view-scope edit and relations stay shared. Milestone and
+duration conveniences (one-click zero-length, duration-preserving moves
+beyond the whole-interval drag) remain proposed.
+
 The experimental interaction renderer is a separate mode of graph-family display. Its inspector edits participant/step/payload/causal data, not vertical pixels as time. Adding steps must generate actual occurrence and predecessor records. Full combined fragments are not claimed by this specification.
 
 ## Structured sheets

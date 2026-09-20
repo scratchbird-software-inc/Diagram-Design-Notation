@@ -25,12 +25,22 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .chart-sheet td input{width:88px;border:0;background:transparent;min-height:32px;text-align:center;font-size:12px}
 .chart-sheet td input:focus{background:#eaf3ff;outline:2px solid #2469d5;outline-offset:-2px}
 .chart-sheet tr.sel th{background:#eaf3ff;box-shadow:inset 3px 0 0 #2469d5}
+/* Timeline sheet + bar date-drag (ED-004). */
+.timeline-sheet td{padding:4px 8px}
+.timeline-sheet td input[type=date]{border:1px solid var(--line);border-radius:5px;background:#fff;min-height:30px;padding:2px 6px;font-size:12px}
+.timeline-sheet td input[type=date]:focus{outline:2px solid #2469d5;outline-offset:-1px}
+.timeline-sheet td.deps{text-align:left;white-space:normal}
+.timeline-sheet td.deps .chip{display:inline-flex;align-items:center;gap:4px;background:#eaf3ff;border:1px solid #b9d2ee;border-radius:6px;padding:2px 7px;font-size:11px;margin:2px 4px 2px 0}
+.timeline-sheet td.deps .chip button{border:0;background:transparent;min-height:0;padding:0 2px;font-size:12px}
+.timeline-sheet .notice.error{background:#fdeeee;border-color:#e5b8b8;color:#8a3030}
+.timeline-sheet .batchbar input{border:1px solid var(--line);border-radius:5px;min-height:30px;padding:2px 8px;font-size:12px}
+.drag-tip{position:fixed;z-index:60;pointer-events:none;background:#17263d;color:#fff;border-radius:6px;padding:5px 9px;font-size:12px;box-shadow:0 4px 14px rgba(20,40,60,.3)}
 </style></head><body><header class="projectbar">
  <div class="brand"><div class="mark">D</div><div><strong>DDN Designer <span class="tag teal">DESIGN PROTOTYPE</span></strong><small>Visual authoring · separate from Studio</small></div></div>
  <div class="actions"><span class="small muted" id="saved">In-memory sample</span><button id="undo" title="Undo" aria-label="Undo">↶</button><button id="redo" title="Redo" aria-label="Redo">↷</button><button id="sourceBtn">Source & changes</button><button id="reviewBtn">Review impact</button><button id="exportBtn" class="primary">Download</button></div>
 </header>
 <nav class="toolbar" aria-label="Diagram tools">
- <div class="row"><button id="selectTool" class="active">↖ Select</button><button id="connectTool">↗ Connect</button><span class="divider"></span><div class="viewtabs" role="group" aria-label="Example views"><button class="active" data-view="overview">Structure</button><button data-view="names">Compact</button><button data-view="raci">Responsibilities</button><button data-view="chart_bar">Report</button></div></div>
+ <div class="row"><button id="selectTool" class="active">↖ Select</button><button id="connectTool">↗ Connect</button><span class="divider"></span><div class="viewtabs" role="group" aria-label="Example views"><button class="active" data-view="overview">Structure</button><button data-view="names">Compact</button><button data-view="raci">Responsibilities</button><button data-view="chart_bar">Report</button><button data-view="gantt">Timeline</button></div></div>
  <div class="screen-controls"><label class="small muted" for="reviewScreen">Review screen</label><select id="reviewScreen"><option value="live">Live canvas</option><option value="conversion">Kind conversion</option><option value="draft">Incomplete design</option><option value="connection">Connection design</option><option value="export">Export policy</option></select></div>
 </nav>
 <div class="prototype-note">Working review prototype with the unchanged 0.5.0-draft.2 runtime. Graph edits, connections and downloads are live. Future workflows are explicitly labeled design screens.</div>
@@ -45,6 +55,7 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
   <div class="canvas-actions"><button id="fitBtn">Fit</button><button id="zoomOut" aria-label="Zoom out">−</button><span id="zoomLabel" class="small muted" style="min-width:40px;align-self:center;text-align:center">100%</span><button id="zoomIn" aria-label="Zoom in">+</button><span class="divider"></span><button id="arrangeBtn">Arrange…</button><button id="addAuto">＋ Add table</button></div>
   <section id="matrixSheet" class="matrix-sheet" hidden aria-label="Matrix editing sheet"></section>
   <section id="chartSheet" class="matrix-sheet chart-sheet" hidden aria-label="Chart source editing sheet"></section>
+  <section id="timelineSheet" class="matrix-sheet timeline-sheet" hidden aria-label="Timeline editing sheet"></section>
  </main>
  <aside class="inspector" aria-label="Selected element properties"><div id="selectionHeader"></div><div class="tabs"><button data-tab="meaning" class="active">Meaning</button><button data-tab="view">This view</button><button data-tab="details">Details</button></div><div class="pane" id="inspectorBody"></div></aside>
 </div>

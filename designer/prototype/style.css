@@ -25,3 +25,13 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .chart-sheet td input{width:88px;border:0;background:transparent;min-height:32px;text-align:center;font-size:12px}
 .chart-sheet td input:focus{background:#eaf3ff;outline:2px solid #2469d5;outline-offset:-2px}
 .chart-sheet tr.sel th{background:#eaf3ff;box-shadow:inset 3px 0 0 #2469d5}
+/* Timeline sheet + bar date-drag (ED-004). */
+.timeline-sheet td{padding:4px 8px}
+.timeline-sheet td input[type=date]{border:1px solid var(--line);border-radius:5px;background:#fff;min-height:30px;padding:2px 6px;font-size:12px}
+.timeline-sheet td input[type=date]:focus{outline:2px solid #2469d5;outline-offset:-1px}
+.timeline-sheet td.deps{text-align:left;white-space:normal}
+.timeline-sheet td.deps .chip{display:inline-flex;align-items:center;gap:4px;background:#eaf3ff;border:1px solid #b9d2ee;border-radius:6px;padding:2px 7px;font-size:11px;margin:2px 4px 2px 0}
+.timeline-sheet td.deps .chip button{border:0;background:transparent;min-height:0;padding:0 2px;font-size:12px}
+.timeline-sheet .notice.error{background:#fdeeee;border-color:#e5b8b8;color:#8a3030}
+.timeline-sheet .batchbar input{border:1px solid var(--line);border-radius:5px;min-height:30px;padding:2px 8px;font-size:12px}
+.drag-tip{position:fixed;z-index:60;pointer-events:none;background:#17263d;color:#fff;border-radius:6px;padding:5px 9px;font-size:12px;box-shadow:0 4px 14px rgba(20,40,60,.3)}
