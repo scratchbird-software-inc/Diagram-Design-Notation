@@ -5,7 +5,7 @@
   "description": "DDN reference runtime: parser, validation, layout/routing, deterministic SVG rendering, CLI, and Studio. Implements the standard in ../standard/.",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:funnel && npm run test:gauge && npm run test:candlestick && npm run test:treemap && npm run test:sankey && npm run test:c4 && npm run test:org && npm run test:wbs && npm run test:mindmap && npm run test:conceptmap && npm run test:epc && npm run test:canvas-pack-a && npm run test:canvas-pack-b && npm run test:matrix-pack && npm run test:empathy-scorecard && npm run test:journey-map && npm run test:story-map && npm run test:crows-foot && npm run test:sql-export && npm run test:pyramid && npm run test:venn && npm run test:sequence && npm run test:communication && npm run test:object-diagram && npm run test:routing-efficiency && npm run test:sdk && npm run test:hierarchical-state && npm run test:endpoint-ordering && npm run test:activity && npm run test:bpmn && npm run test:timing",
+    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:funnel && npm run test:gauge && npm run test:candlestick && npm run test:treemap && npm run test:sankey && npm run test:c4 && npm run test:org && npm run test:wbs && npm run test:mindmap && npm run test:conceptmap && npm run test:epc && npm run test:canvas-pack-a && npm run test:canvas-pack-b && npm run test:matrix-pack && npm run test:empathy-scorecard && npm run test:journey-map && npm run test:story-map && npm run test:crows-foot && npm run test:sql-export && npm run test:pyramid && npm run test:venn && npm run test:sequence && npm run test:communication && npm run test:object-diagram && npm run test:routing-efficiency && npm run test:sdk && npm run test:hierarchical-state && npm run test:endpoint-ordering && npm run test:activity && npm run test:bpmn && npm run test:timing && npm run test:interaction-overview",
     "test:core": "node tests/run.js",
     "test:remediation": "node tests/0.3-regressions.js",
     "test:curves": "node tests/curved-relations.js",
@@ -46,7 +46,8 @@
     "test:hierarchical-state": "node tests/hierarchical-state.js",
     "test:activity": "node tests/activity-diagram.js",
     "test:bpmn": "node tests/bpmn.js",
-    "test:timing": "node tests/timing-diagram.js"
+    "test:timing": "node tests/timing-diagram.js",
+    "test:interaction-overview": "node tests/interaction-overview.js"
   },
   "engines": {
     "node": ">=22"

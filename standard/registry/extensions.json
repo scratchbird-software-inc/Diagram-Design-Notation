@@ -1200,6 +1200,23 @@
           "type": "array"
         }
       }
+    },
+    "x_subdiagram": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": [
+            "view"
+          ],
+          "properties": {
+            "view": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      }
     }
   }
 }

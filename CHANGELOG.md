@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Interaction overview views via profile `uml.interaction_overview@1`
+  (`x_subdiagram` view references, `DDN-PJ119`). RFC-108.
+
 - Timing/state-over-time projection (`kind:timing`, profile `uml.timing@1`,
   `x_states`), with `DDN-PJ118` validation. RFC-107.
 

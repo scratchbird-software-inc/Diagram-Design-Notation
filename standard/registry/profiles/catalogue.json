@@ -2156,6 +2156,21 @@
         "clock/unit conversion",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "uml.interaction_overview@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Interaction overview"
+      ],
+      "scope": "Flowchart of interaction steps; flow nodes may reference other workspace views and render a ref badge; targets are not expanded.",
+      "validation": [
+        "referenced views must exist in the workspace (DDN-PJ119)"
+      ],
+      "unsupported": [
+        "inline expansion of referenced views",
+        "full UML conformance"
+      ]
     }
   ],
   "shapes": [
