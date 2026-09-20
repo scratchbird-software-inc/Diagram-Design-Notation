@@ -15764,6 +15764,22 @@
     "zone": {
       "base": "zone",
       "viewBox": "0 0 24 24"
+    },
+    "network-bus": {
+      "base": "network-bus",
+      "viewBox": "0 0 24 24"
+    },
+    "network-switch": {
+      "base": "network-switch",
+      "viewBox": "0 0 24 24"
+    },
+    "network-server": {
+      "base": "network-server",
+      "viewBox": "0 0 24 24"
+    },
+    "network-rack": {
+      "base": "network-rack",
+      "viewBox": "0 0 24 24"
     }
   },
   "rendering": {

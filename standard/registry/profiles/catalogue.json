@@ -705,6 +705,50 @@
       "code": "EVENT",
       "glyph": "object",
       "aliases": []
+    },
+    {
+      "keyword": "network.bus",
+      "name": "Network bus",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "network",
+      "family": "deployment",
+      "code": "BUS",
+      "glyph": "network-bus",
+      "aliases": []
+    },
+    {
+      "keyword": "network.switch",
+      "name": "Network switch",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "router",
+      "family": "deployment",
+      "code": "SWITCH",
+      "glyph": "network-switch",
+      "aliases": []
+    },
+    {
+      "keyword": "network.server",
+      "name": "Network server",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "host",
+      "family": "deployment",
+      "code": "SERVER",
+      "glyph": "network-server",
+      "aliases": []
+    },
+    {
+      "keyword": "network.rack",
+      "name": "Equipment rack",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "device",
+      "family": "deployment",
+      "code": "RACK",
+      "glyph": "network-rack",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -1334,6 +1378,24 @@
       ],
       "allow_self": false,
       "member_endpoints": false
+    },
+    {
+      "keyword": "network.attaches",
+      "name": "attaches to",
+      "verb": "attaches to",
+      "family": "structural",
+      "code": "ATTACHES",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
     }
   ],
   "profiles": [
@@ -2548,6 +2610,38 @@
         "probability quantification",
         "sequence branching fractions",
         "reliability certification"
+      ]
+    },
+    {
+      "id": "network.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Network/bus overview"
+      ],
+      "scope": "Bus segment with declared attachments; switch/server kinds; original DDN glyphs.",
+      "validation": [
+        "attachments target a bus or a port (DDN-PJ127)"
+      ],
+      "unsupported": [
+        "routing-geometry bus/junction networks (DDN046 remains)",
+        "vendor icon sets",
+        "auto-discovery/topology scanning"
+      ]
+    },
+    {
+      "id": "network.rack@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Rack elevation"
+      ],
+      "scope": "Rack frames with declared 1U slot numbers; devices pinned bottom-up.",
+      "validation": [
+        "attachments target a bus or a port (DDN-PJ127)",
+        "slot numbers within rack height and unique per rack (DDN-PJ127)"
+      ],
+      "unsupported": [
+        "exact 1U geometric rendering",
+        "weight/power/thermal planning"
       ]
     }
   ],

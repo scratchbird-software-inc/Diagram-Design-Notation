@@ -8,6 +8,8 @@ The registry fixes semantic form, object-kind recipe, indicator position, standa
 
 Structural endpoint marks (`source_mark`/`target_mark`) are semantic channel content, not decoration: the crow's-foot marks (`one`, `zeroone`, `many`, `zeromany`) express cardinality and are drawn by the shared endpoint renderer for every look. Under the `erd.crowfoot@1` profile both marks are obligatory on every `ref`/`assoc` relation in the view.
 
+The shared glyph library (`standard/registry/glyph-library.svg`) holds original DDN line-art symbols (`stroke="currentColor"`, 24×24 viewBox); no vendor or cloud-provider artwork is distributed. The network profiles (spec 40) add four original glyphs to this summary: `network-bus` (horizontal trunk with three drop lines), `network-switch` (rectangular bar with opposing arrows), `network-server` (two stacked trays with indicator dots) and `network-rack` (tall frame with three shelf separators), referenced by the `network.bus`, `network.switch`, `network.server` and `network.rack` kinds.
+
 A hand-drawn table remains a table. A precise diagram may still contain draft decisions. A dark canvas does not imply an operational state. A round-corner activity cannot become a generic table just because another theme looks nicer with rounded rectangles.
 
 ## 2. Six primary forms

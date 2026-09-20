@@ -2636,6 +2636,38 @@
         "sequence branching fractions",
         "reliability certification"
       ]
+    },
+    {
+      "id": "network.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Network/bus overview"
+      ],
+      "scope": "Bus segment with declared attachments; switch/server kinds; original DDN glyphs.",
+      "validation": [
+        "attachments target a bus or a port (DDN-PJ127)"
+      ],
+      "unsupported": [
+        "routing-geometry bus/junction networks (DDN046 remains)",
+        "vendor icon sets",
+        "auto-discovery/topology scanning"
+      ]
+    },
+    {
+      "id": "network.rack@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Rack elevation"
+      ],
+      "scope": "Rack frames with declared 1U slot numbers; devices pinned bottom-up.",
+      "validation": [
+        "attachments target a bus or a port (DDN-PJ127)",
+        "slot numbers within rack height and unique per rack (DDN-PJ127)"
+      ],
+      "unsupported": [
+        "exact 1U geometric rendering",
+        "weight/power/thermal planning"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2847,7 +2879,8 @@
     "SysML-style block definition, internal block (ports/flows) and parametric constraint views via sysml.bdd@1/sysml.ibd@1/sysml.parametric@1 (profile-level, not SysML conformance)",
     "ArchiMate-style layered architecture views via archimate.basic@1 (nine-kind vocabulary, layer-pair legality; profile-level, not ArchiMate conformance)",
     "PERT/CPM critical-path views via pert.cpm@1 (computed forward/backward pass, zero-slack accent)",
-    "fault tree and event tree views via fault.tree@1/event.tree@1 (AND/OR gates, two-input check)"
+    "fault tree and event tree views via fault.tree@1/event.tree@1 (AND/OR gates, two-input check)",
+    "network/bus overviews and rack elevations via network.basic@1/network.rack@1 (original glyphs, declared attachments; routing-geometry junctions remain rejected)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
@@ -2859,7 +2892,6 @@
     "curved routes in the fixed-lane experimental interaction profile (DDN-I031)",
     "redacted interaction SVG without an occurrence/payload closure (DDN-I032)",
     "automatic cross-page tiling or pagination",
-    "native bus/junction-network drawing",
     "arbitrary collapsed process visual ports",
     "universal Unicode/font fallback certification",
     "production ERP command execution",

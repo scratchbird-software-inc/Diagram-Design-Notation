@@ -101,6 +101,23 @@ function validate(ir,E){
    if(!['entry','exit'].includes(n.properties.x_sentry?.on))fail('DDN-PJ120','Sentry '+(n.name||n.id)+' lacks a valid x_sentry.on (entry or exit)',n);
   }
  }
+ if(['network.basic@1','network.rack@1'].includes(profile)){
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='network.attaches')){
+   const t=ns.get(r.to.element);
+   if(t?.kind!=='network.bus'&&!r.to.member)fail('DDN-PJ127','Attachment '+(r.name||r.id)+' targets '+(t?.name||r.to.element)+' ('+(t?.kind||'unknown')+'); a network.attaches relation must target a network.bus element or a port member',r);
+  }
+  if(profile==='network.rack@1'){
+   for(const f of (ir.view.frames||[]).filter(f=>ns.get(f.scope)?.kind==='network.rack')){
+    const rack=ns.get(f.scope),units=rack.properties.x_rack?.units,seen=new Map();
+    for(const id of f.members){const n=ns.get(id),unit=n?.properties.x_rack?.unit;
+     if(unit===undefined)continue;
+     if(!Number.isSafeInteger(units)||unit<1||unit>units)fail('DDN-PJ127','Device '+(n.name||n.id)+' declares rack slot unit '+unit+' but rack '+(rack.name||rack.id)+' has '+(units===undefined?'no declared x_rack.units':'x_rack.units '+units)+'; slot numbers must be >= 1 and within the rack height',n);
+     if(seen.has(unit))fail('DDN-PJ127','Devices '+(seen.get(unit).name||seen.get(unit).id)+' and '+(n.name||n.id)+' both declare rack slot unit '+unit+' in rack '+(rack.name||rack.id)+'; slot numbers must be unique per rack frame',n);
+     seen.set(unit,n);
+    }
+   }
+  }
+ }
  if(['fault.tree@1','event.tree@1'].includes(profile)){
   const es=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='tree.input');
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='tree.gate')){

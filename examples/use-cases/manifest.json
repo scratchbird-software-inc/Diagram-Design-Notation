@@ -17,7 +17,7 @@
         "use-cases/data/sketch.ddn": "e539db47973a5f3406fac887dbe14746ee55399f5b6a40c8228430842bee4680"
       },
       "semanticHash": "0b8c3c20b2e788d104d736f62f116428d3201bec23873c9d2d6c0e66a2f4f513",
-      "svgHash": "45af1c316b4863de2f80d9a1aae11ec06e60779ed45627659c90dac14e659e9f",
+      "svgHash": "3cb3b2a3424104401584eb814c4d0df83205a9e003fb1fed7239a92be454a007",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -41,7 +41,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "69f28dcfafb99db78e363d2cea79ae26402ee3932b3066a9763fe49bf3b3c805",
-      "svgHash": "c5c9bf0207beac6ad9a7f534a3991357031a0ec05f376597babc3c20f1b447a0",
+      "svgHash": "b4d474afbfafe473ac3bc44ad79b9339274b03703a364a88ec515f2bffa10814",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -65,7 +65,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
-      "svgHash": "e00ec3d8b91dedd1aa527c927badafd5778cc8c87a0e71965f295c79cbf2eb44",
+      "svgHash": "372f7dbdc4e9a078db5825fccc38da90a547828c381b642b6bec1a6749d780be",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -89,7 +89,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
-      "svgHash": "601ad9f019cf78772cc1a7016f7327b4bb9d2b8f4b0e93f0e5d30415a02a8911",
+      "svgHash": "bdb276aab9842239fde1f7a2a647f6982fa1838b556f31261dbeb520d3974895",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -113,7 +113,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
-      "svgHash": "16e64b6513be551cf7df685a8d5cd178905ac3b08425d300d10e50f528559208",
+      "svgHash": "a909d56adab00e6a3b0b37cbeb765fc55b89643a7df20639c7b6dc72362d5ca9",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -138,7 +138,7 @@
         "use-cases/data/sql.ddn": "968b8d781e53200c128d74e4a2fa834b707483d09094f1e6e78a59ba5a2d5bda"
       },
       "semanticHash": "cc56c73896cc48a3bfe36df13ee70c5995b8ac85b823b88d5987de605ba523ea",
-      "svgHash": "c15003ed4db1c5a8d6d98f45c26e5187ff90d94b0d4c7824538db13321484362",
+      "svgHash": "c269c64f70664de4fcc771f9ff22efe707d93fbddcbfb84abdabfe60dccd3e9c",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -162,7 +162,7 @@
         "use-cases/data/documents.ddn": "555602b31392b79c981aa7414eeb998bb779d2adad232561a9ea02bddc0a8cee"
       },
       "semanticHash": "7dacb9c233592cb20dcfa920e3528d199dc614a34316ff58b6c1ec2cb6ea0fa7",
-      "svgHash": "77bdcc7f24b748cf7d70e1cf7c291bab391a521636b369c2158dde1c4d4c6ec6",
+      "svgHash": "dbb99f71f93829c5f65ced14ebba0a2ead040c2d4f55657f260e161abe4de22f",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -186,7 +186,7 @@
         "use-cases/data/graph.ddn": "068f59c171cdd40aefacfeb6889ea15e4eba48d5205f364073ad526080a938ca"
       },
       "semanticHash": "9d03e23f0dc39947c38524b068ec7dec6cb7943717c7f72fc7150e475ad80861",
-      "svgHash": "86fb5f76c3fa31268e2b27b40d8ec55de2b8204dca912c2162e42c15ccc26ba0",
+      "svgHash": "ea939ce37af3e02548f2b7bc50e2ffebeb74a9494281135fedd3a5ae8ef9a2ff",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -210,7 +210,7 @@
         "use-cases/data/keyed.ddn": "24ac94ac6b92a3fb6ade76010a50f449e075249d657b3361677bd606293a2c28"
       },
       "semanticHash": "776bdc8a4659ae6ef2f0436f088027418d6b584bd807573619758e610d2dcda8",
-      "svgHash": "c84620b449f2849d30bb94c81c3bc78b121c07779b75eb0430e937a42bc4578b",
+      "svgHash": "b86159613f1f8170165811e92db98925bf7e3c6efcdf6e55e45ae2b4533c1f5b",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -234,7 +234,7 @@
         "use-cases/data/keyed.ddn": "24ac94ac6b92a3fb6ade76010a50f449e075249d657b3361677bd606293a2c28"
       },
       "semanticHash": "2a6695dbf397016818d3c6c4af3b46e7ecb9f05c701775d7257e78d9ec581ab1",
-      "svgHash": "8c5e4b9f55d3263ac89baf1c8f0d998c9185a7a74e5b7d8ac7be10bc48688099",
+      "svgHash": "b0e2be655ca623f3ba4a5d66474b9f1147294312a05e72941a428e3c57e5f9bf",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -259,7 +259,7 @@
         "use-cases/data/domains.ddn": "d4c7beb5334479ef08854e53dd65a318b33b957aba90f9adff6e85ec7aff807a"
       },
       "semanticHash": "c530734d353ce97333bfd976439db36f3765bb64e6e8e4cce84ca54aa0ce4b81",
-      "svgHash": "40edc0cf533d412f5b96084be441b9c37260ced5af6bc399a494950b3da18588",
+      "svgHash": "582e22e14f4096e26b22e9a11f3e9cceb5353acc70d9055adaacad5e3aa6b7f8",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -285,7 +285,7 @@
         "use-cases/data/namespace.ddn": "a3e1120259c4739018e18ed62215edcd725b7ffb67dd4429aa9783364a4ad5ed"
       },
       "semanticHash": "9a74eb34f0f8f6a978c84f59f5db2882546d4a0ef3d2d2ec3e6cbcc6f520b3a7",
-      "svgHash": "b687c2f2eccfb308350df0dbf31cd646b633a23fd4d578e83413e74e01d97908",
+      "svgHash": "dde6c77cd7960c648e7158d328a0462b1f7ef87daa51cc7ff6ffafd6196ffa1e",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -310,7 +310,7 @@
         "use-cases/data/deployment.ddn": "33be3397137aaa304d5c5f7ea49b3a7ee40a9d13a28f7ee60092be02a2f64562"
       },
       "semanticHash": "5d2fdb7212c8be4589d8478d8621611ab8dc58dcc9dfcf32f83e7d57b7e7f71f",
-      "svgHash": "eb4687af3cd0d5aa98d3fda24fc9ea4e37246a4636ab54e2bd40a21807bdccb3",
+      "svgHash": "a5d7e57ceafbcc2ec420b8e25b0524035cc567a4592802b7a840b1eaf540e048",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -335,7 +335,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "c1663576d0394dae0a45fa4938dd1d5a5368f47f48b1304539baed8ef48f4281",
-      "svgHash": "c081adcf9599eb3cf2f5a8bc96b329cd40dbca70aded0436097e09ce0047df28",
+      "svgHash": "31939becd7fed7411f42e0ed2e27ae0af956e2117d2098498654eda75fa932c2",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -360,7 +360,7 @@
         "use-cases/data/flow.ddn": "eb93fb9efe2c6922587d8a79d93db20c797b442d694d69f2c90c8c8e8cb654a7"
       },
       "semanticHash": "599d7da649e3e88ab4859f9ea77e1440ebc68e7811bac887ed178bd134816116",
-      "svgHash": "5040745a6c0abe03fa960ffed5da7de743700c03a894a5720fa8404dd95aa4e8",
+      "svgHash": "577df5c9141cd0421968ed793bb0573b59516b0f3914f3dba41d66f5b66f466f",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -385,7 +385,7 @@
         "use-cases/data/lineage.ddn": "2b7238897c2a10e349f7a1224b1d79e965fe9585b3366b030488a41336b2de8c"
       },
       "semanticHash": "2e8d0a3e33f58228829eae612ef3ef6b05011f429a02ff7e12c0dc7194add731",
-      "svgHash": "6416a4a762a68decdf5079f8af12df5bf88df40d62fd76ceff789f1413c15f3e",
+      "svgHash": "9a9c49a473d75204678d18b27c18e37ba48ef8639318675c6a17df58380394f9",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -409,7 +409,7 @@
         "use-cases/data/temporal.ddn": "794fe480720dc332a4865502304213e73239f1752beab653806920a5cdbdc302"
       },
       "semanticHash": "e09ba19ce1f6ee0dd0c373d83059fd713f0b090793e04a7cba9a9c3066131a1a",
-      "svgHash": "6e2be4fba497ba01bafe11d63fb6b787fc7fce18571830d53b7a87f89078aa7f",
+      "svgHash": "9d7b8f088bb51caa00daba502c371e4528633aa8b0d03d8eb38ae7b51c41eb64",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -433,7 +433,7 @@
         "use-cases/data/warehouse.ddn": "021e97d27b46f6e5680706c3d9a3c4b74a08a8f803616c2ec8625f9c21ce0c8c"
       },
       "semanticHash": "9af557e9622ad9edff17a4a770eb45e50a7ffb3e0dd1200eeb6a8bbc8b49e4fd",
-      "svgHash": "547f7d35ec60adc1f1be036cf14fb04a7d641cb72de65877cfea9ae3c6769473",
+      "svgHash": "9c4ae5b772c87d677df0e54c4f9da562818a6e514f66853bab0bfcc37752ccb1",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -457,7 +457,7 @@
         "use-cases/data/vectors.ddn": "d2475da6417ea69929c593c849520afe06ae7306fc27424c82f97e662e375af8"
       },
       "semanticHash": "86e3b5371c087918b4237cbec2538b6c8de806c3cbf6fab1e7517f3965102428",
-      "svgHash": "1cf57fd0484e7acc585bc3b9edfbfa1dd8dbed410dc3f5b7ea6d8ed01f79cbd4",
+      "svgHash": "60c72bcec45a6303faa05c72197c046c00493fd45222e47e5e1356bf7e7ba2e0",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -481,7 +481,7 @@
         "use-cases/data/governance.ddn": "a1fa016b126774581d8d2505107df5d7ff9df30405a0e4072ec92f83fbf13776"
       },
       "semanticHash": "3d160ffa378aa711bef97d6f046c802002c78654a024f88657a0203b820caf89",
-      "svgHash": "8f227e0cefade9da7ce5e751fad007a51c0523aae729032a8e071f40b718452a",
+      "svgHash": "c9552af6dbcea4bcb59d078a1d40228f65d7bc023931a5e0f50e5709ccfed035",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -505,7 +505,7 @@
         "use-cases/data/security.ddn": "6e49abc432a8f8b01ea08b5da163aff03589704c79a289ecf6377b78ee3de9c3"
       },
       "semanticHash": "c04e350f9ec76c6b9604301575b7fd73c9d8bf83b23f5ed8b26d6c36dd54e7ca",
-      "svgHash": "ec7c40f8b91166cd26b34351c85ac7da6a7ea27c917e30ed6f45ad4bcf605704",
+      "svgHash": "3c8ca9dfbfbed64a69da84845d7c4075aaca1fa29f55d8351474f06e3ae914c5",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -529,7 +529,7 @@
         "use-cases/data/recovery.ddn": "26671657179120963216c0d36f9397fe7be2d362a75803332238e4f5c27a6fa0"
       },
       "semanticHash": "a1618f85e6ff3b4470d153aeee643ca1d39c949d2e4ccefc2dd32669f3980f0d",
-      "svgHash": "a990388e3fc47524fe13d100e478c4847b2ca62eaffe93ba6b04bca29a9442d0",
+      "svgHash": "3d673d7962aff81d6bebd9e8863ae4777d199d8117e6e6eeff005604e25a9bd2",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -553,7 +553,7 @@
         "use-cases/data/migration.ddn": "bf26a9c39f23aab82400a0a713d14e61aaeb04fa8196ea3522c9fbff7a6d6e37"
       },
       "semanticHash": "c38e4d30532cc015781399cae380cbc707bd7c3154f767fdedb9ceb56d71e3d3",
-      "svgHash": "5cb8765d4880cdd772320fa18b1ca70f276730491da05297e0e14e6e7e0cddc0",
+      "svgHash": "d7feb532433a24888dc63dd211ef3ae9a34cd3e40cbd39ddbc186c7e51f75539",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -577,7 +577,7 @@
         "use-cases/data/quality.ddn": "d62d0881d4423ef60a2704acd503b8aaaa2573bf03ce17c1f1002ddce3cd294d"
       },
       "semanticHash": "44467ec30b87f9408758d4d55a6754d090c7a61692365d66135325f26879032e",
-      "svgHash": "2af516cb76c765565ffb90c68fc6a7cfd8003878f959dc8b5a9f5bec0fb1eff4",
+      "svgHash": "9ba75cfbc7397b3ae2c8f67a78f1093a1c9d4e2d79eb93d77417e7d2cdbba7c5",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -601,7 +601,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
-      "svgHash": "ca968a6ea8621f02188e55be5750db22e9c210c385d3820779d2f5bc12e5939b",
+      "svgHash": "95fb8a00f1f8c821f5d1c1467c970bbc309bc440a0ca7fc86937fcff20f8fbd2",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -625,7 +625,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
-      "svgHash": "ee7d2ae3e0bbca29c812afaa6aac9d75104e8a6410128c43fcf78518c2f6597d",
+      "svgHash": "993302a1ec83ba226799e6581efa903075aa6cb50e1ba2f50328564aee1dd6f7",
       "diagnostics": [
         {
           "code": "DDN-TW01",
@@ -649,7 +649,7 @@
         "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
       },
       "semanticHash": "69f28dcfafb99db78e363d2cea79ae26402ee3932b3066a9763fe49bf3b3c805",
-      "svgHash": "7af2e83f908b63331997025c6796ffb8cf8e018a96b597b199a182c5f9c9330c",
+      "svgHash": "2aa83f04c4805984f9eadef3435d65d4401c901c4e64f11d62710e6833a594af",
       "diagnostics": [
         {
           "code": "DDN-TW01",

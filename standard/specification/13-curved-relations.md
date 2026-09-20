@@ -97,7 +97,7 @@ For `gap`, the interrupted path is split into actual cubic pieces around the int
 
 For `bridge` and `square_bridge`, the renderer uses the local tangent to orient the jump, attaches it to the actual cut points, and checks that its local geometry does not obstruct an object or label. A square jump is an intentional local angular exception on an otherwise curved route. Jump direction does not indicate priority, authority, or data precedence.
 
-The reference rejects unresolved ambiguous close crossings and unsafe jump placement. Selecting gaps, increasing spacing, or separating a dense view are legitimate remedies. It does not silently paint a junction over the problem. Native bus/trunk junction-network semantics remain outside this release.
+The reference rejects unresolved ambiguous close crossings and unsafe jump placement. Selecting gaps, increasing spacing, or separating a dense view are legitimate remedies. It does not silently paint a junction over the problem. Native bus/trunk junction-network semantics remain outside this release. Declared bus membership via profile `network.basic@1` (spec 40) is notation, not routing geometry.
 
 ## 6. SVG and scene contract
 

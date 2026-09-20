@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Network/bus and rack views via profiles `network.basic@1`/`network.rack@1`
+  (four original glyphs, `network.attaches`, `x_rack`, `DDN-PJ127`);
+  removes 'native bus/junction-network drawing' from capabilities
+  `unsupported[]`. RFC-114.
 - Fault tree and event tree views via profiles `fault.tree@1`/`event.tree@1`
   (`tree.gate`/`tree.event`, `x_gate`, `DDN-PJ126`). RFC-113.
 - PERT/CPM critical-path views via profile `pert.cpm@1` (`x_estimate`,

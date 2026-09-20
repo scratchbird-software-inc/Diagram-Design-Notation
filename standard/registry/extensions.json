@@ -1262,6 +1262,24 @@
           "additionalProperties": false
         }
       }
+    },
+    "x_rack": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "properties": {
+            "units": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unit": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      }
     }
   }
 }

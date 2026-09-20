@@ -1,0 +1,53 @@
+ddn "0.5";
+module "ddn.examples.networkdiagram";
+
+import "shared.ddn" as shared;
+
+// Synthetic office network for the network.basic@1 / network.rack@1
+// profiles. The bus is an ordinary network.bus node (sized wide and thin
+// with a place pin) — declared membership, not routing geometry; the
+// DDN046 junction/shared-trunk guards are untouched. network.attaches
+// edges point from a device to the bus (the file server attaches via its
+// eth0 port member) and from the uplink router to the switch. The rack
+// view frames rack_a (4U) with the two servers as members carrying
+// declared x_rack.unit slot numbers, pinned bottom-up. All data is
+// synthetic; glyphs are original DDN line art.
+data m {
+    object office_bus "Office bus" { kind: "network.bus"; }
+    object core_switch "Core switch" { kind: "network.switch";
+        ports { port wan { direction: in; } }
+    }
+    object file_server "File server" { kind: "network.server"; x_rack: { unit: 1 };
+        ports { port eth0 { direction: out; } }
+    }
+    object app_server "App server" { kind: "network.server"; x_rack: { unit: 3 };
+        ports { port eth0 { direction: out; } }
+    }
+    object uplink "Uplink router" { kind: "router"; }
+    object rack_a "Rack A" { kind: "network.rack"; x_rack: { units: 4 }; }
+
+    relation attach_switch "attaches to" @core_switch -> @office_bus { kind: "network.attaches"; }
+    relation attach_file "attaches to" @file_server.eth0 -> @office_bus { kind: "network.attaches"; }
+    relation attach_app "attaches to" @app_server -> @office_bus { kind: "network.attaches"; }
+    relation attach_uplink "attaches to" @uplink -> @core_switch.wan { kind: "network.attaches"; }
+}
+
+view lan "Office LAN" {
+    data: [@m]; format: @shared.styles.technical;
+    select: [@m.office_bus, @m.core_switch, @m.file_server, @m.app_server, @m.uplink];
+    projection { kind: graph; profile: "network.basic@1"; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    place @m.office_bus { size: [420px, 28px]; }
+}
+
+view rack "Rack A elevation" {
+    data: [@m]; format: @shared.styles.technical;
+    select: [@m.file_server, @m.app_server];
+    projection { kind: graph; profile: "network.rack@1"; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame rack_a_frame "Rack A (4U)" { scope: @m.rack_a; members: [@m.file_server, @m.app_server]; }
+    place @m.file_server { at: [0px, 264px]; }
+    place @m.app_server { at: [0px, 88px]; }
+}

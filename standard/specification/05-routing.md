@@ -21,7 +21,7 @@ The native router uses deterministic orthogonal candidates and bounded A* over a
 
 ## Crossing semantics
 
-An unrelated crossing is not a connection. `gap`, rounded `bridge`, and `square_bridge` are visual crossing treatments. Endpoint semantics and model identities are unchanged. Rounded bridge geometry is a local exception to rectilinear segments. T contacts and shared independent trunks are rejected/avoided rather than drawn as accidental junctions. The reference does not implement arbitrary bus/network junction graphs; `shared_segments:declared` is explicitly rejected.
+An unrelated crossing is not a connection. `gap`, rounded `bridge`, and `square_bridge` are visual crossing treatments. Endpoint semantics and model identities are unchanged. Rounded bridge geometry is a local exception to rectilinear segments. T contacts and shared independent trunks are rejected/avoided rather than drawn as accidental junctions. The reference does not implement arbitrary bus/network junction graphs; `shared_segments:declared` is explicitly rejected. Declared bus membership via profile `network.basic@1` (spec 40) is notation, not routing geometry.
 
 ## Hints and diagnostics
 
