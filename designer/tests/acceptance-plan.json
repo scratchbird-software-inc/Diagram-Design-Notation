@@ -863,7 +863,9 @@
       "title": "Cause reuse",
       "action": "Use same cause in two branches",
       "expected": "One semantic identity with distinct safe occurrence IDs",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
+      "coveredBy": "designer/tests/ed-005-fishbone-editor.js",
+      "coveredIn": "ED-005",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",

@@ -59,4 +59,9 @@ sheet under gantt views edits task start/end dates with validated date
 controls (shared model), links and unlinks `analysis.precedes` dependencies
 (view-scope list edits; relations stay shared), adds task records, and turns a
 horizontal bar drag into a whole-day date edit with a live interval preview —
-never a free geometric move.
+never a free geometric move. ED-005 adds the
+fishbone editor: a Fishbone sheet under fishbone views edits the effect
+statement (shared definition), adds category bones and nested causes under a
+chosen parent, attaches an existing cause to a second branch (relation only —
+one identity, distinct occurrence paths), and removes single ribs; the
+prototype fixture now includes a fishbone view.

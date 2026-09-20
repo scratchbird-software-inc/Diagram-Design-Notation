@@ -31,6 +31,16 @@ dependency list is a view-scope edit and relations stay shared. Milestone and
 duration conveniences (one-click zero-length, duration-preserving moves
 beyond the whole-interval drag) remain proposed.
 
+Implementation status (ED-005): the fishbone row is implemented in the
+prototype — effect-statement editing, category-bone creation (1..12 cap),
+cause creation under a chosen parent (4-level depth cap), attach of an
+existing cause (a relation only: one semantic identity, distinct runtime
+occurrence paths; VE-AC-057), and remove-rib actions that delete only the
+relation. Every rib is bound to the fishbone metamodel and the view's named
+cause relation; the scratch re-plan lets the runtime's own DDN-QF001/002/003
+codes reject illegal ribs before commit. The occurrence-aware inspector
+display lists the runtime occurrence paths of a reused cause.
+
 The experimental interaction renderer is a separate mode of graph-family display. Its inspector edits participant/step/payload/causal data, not vertical pixels as time. Adding steps must generate actual occurrence and predecessor records. Full combined fragments are not claimed by this specification.
 
 ## Structured sheets

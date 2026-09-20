@@ -294,5 +294,87 @@ function unlinkTimelineDependency(D,ws,entry,view,args){
   return{relationId,deleted:!!deleteDefinition};
  });
 }
-return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Fishbone editor commands (ED-005). Every rib is a relation of the view's own
+// p.relation verb between real definitions — never a free-floating shape. Attach
+// creates only a relation, so a reused cause keeps one semantic identity with
+// distinct runtime occurrence paths (VE-AC-057). The scratch re-plan lets the
+// runtime's own DDN-QF001/002/003/004 codes reject before any real commit.
+function fishboneProjection(D,ws,entry,view){
+ const p=ws.resolve(entry,view).view.profiles.projection||{};
+ if(p.kind!=='fishbone')fail('DDN-E006','Fishbone editing needs a fishbone projection');
+ if(typeof p.relation!=='string'||!p.relation)fail('DDN-QF001','Fishbone requires a named cause-to-parent relation');
+ return p;
+}
+function fishboneParent(D,ws,entry,view,parentId){
+ const el=ws.resolve(entry,view).elements.find(n=>n.id===parentId);
+ if(!el)fail('DDN-E002','Definition not found.');
+ if(!['quality.effect','quality.category','quality.cause'].includes(el.kind))fail('DDN-I033','A fishbone rib attaches under the effect, a cause category, or a contributing cause — never under a '+el.kind+'. Nothing was changed.');
+ return el;
+}
+function setFishboneEffectLabel(D,ws,entry,view,args){
+ const {label}=args||{};
+ fishboneProjection(D,ws,entry,view);
+ const plan=ws.projectionPlan(entry,view);
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.setLabel(t,entry,view,plan.effect.id,label);
+  t.projectionPlan(entry,view);
+  return{select:plan.effect.id};
+ });
+}
+function addFishboneCategory(D,ws,entry,view,args){
+ const {id,label}=args||{};
+ const p=fishboneProjection(D,ws,entry,view);
+ const plan=ws.projectionPlan(entry,view);
+ if(plan.categories.length>=12)fail('DDN-QF003','Fishbone needs 1..12 root categories');
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addElement(t,entry,view,{id,name:label||id,kind:'quality.category'});
+  const n=t.resolve(entry,view).elements.find(e=>e.local===id);
+  if(!n)fail('DDN-I033','Created category not found in the resolved view.');
+  D.authoring.addRelation(t,entry,view,{id:id+'_to_effect',name:'Possible cause category',kind:p.relation,from:n.id,to:plan.effect.id});
+  const next=t.projectionPlan(entry,view);
+  if(next.categories.length>12)fail('DDN-QF003','Fishbone needs 1..12 root categories');
+  return{select:n.id};
+ });
+}
+function addFishboneCause(D,ws,entry,view,args){
+ const {id,label,parentId}=args||{};
+ const p=fishboneProjection(D,ws,entry,view);
+ fishboneParent(D,ws,entry,view,parentId);
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addElement(t,entry,view,{id,name:label||id,kind:'quality.cause'});
+  const n=t.resolve(entry,view).elements.find(e=>e.local===id);
+  if(!n)fail('DDN-I033','Created cause not found in the resolved view.');
+  D.authoring.addRelation(t,entry,view,{id:'c_'+id,name:'Possible contributing cause',kind:p.relation,from:n.id,to:parentId});
+  t.projectionPlan(entry,view);
+  return{select:n.id};
+ });
+}
+function attachExistingCause(D,ws,entry,view,args){
+ const {causeId,parentId,relationId}=args||{};
+ const p=fishboneProjection(D,ws,entry,view);
+ const el=ws.resolve(entry,view).elements.find(n=>n.id===causeId);
+ if(!el)fail('DDN-E002','Definition not found.');
+ if(!['quality.cause','quality.category'].includes(el.kind))fail('DDN-I033','Only an existing cause or category definition can be attached to a second branch — reuse never clones the definition. Nothing was changed.');
+ fishboneParent(D,ws,entry,view,parentId);
+ if(causeId===parentId)fail('DDN-I033','A rib cannot attach a definition to itself. Nothing was changed.');
+ const rid=relationId||('attach_'+String(causeId).split('::').pop().replace(/[^A-Za-z0-9_]+/g,'_'));
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addRelation(t,entry,view,{id:rid,name:'Same cause, second appearance',kind:p.relation,from:causeId,to:parentId});
+  t.projectionPlan(entry,view);
+  return{select:causeId};
+ });
+}
+function removeFishboneCause(D,ws,entry,view,args){
+ const {relationId}=args||{};
+ fishboneProjection(D,ws,entry,view);
+ const plan=ws.projectionPlan(entry,view);
+ const ribs=[];(function walk(n){for(const c of n.children||[]){ribs.push(c.relationId);walk(c);}})({children:plan.categories});
+ if(!ribs.includes(relationId))fail('DDN-I033','Relation '+String(relationId)+' is not a rib of this fishbone. Nothing was changed.');
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.deleteDefinition(t,entry,view,relationId);
+  t.projectionPlan(entry,view);
+  return{relationId};
+ });
+}
+return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

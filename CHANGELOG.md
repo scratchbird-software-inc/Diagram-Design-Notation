@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: fishbone editor (effect/category/cause commands,
+  attach-existing-cause with distinct occurrence paths) (ED-005; covers
+  VE-AC-057).
 - Designer prototype: timeline editor (date controls, drag-as-date-edit with
   preview, `analysis.precedes` dependency linking) (ED-004; covers VE-AC-054).
 - Designer prototype: chart editor (record sheet, profile-legal mark

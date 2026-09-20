@@ -9,6 +9,7 @@ let overrides={page:'content',look:'classic',theme:'default'},renderFailure=fals
 let mPlan=null,mSel=null,mBatch=[];
 let chartSel=null,chartNotice=null,dragGuard=null,lastEditError=null;
 let timelineNotice=null,tDrag=null;
+let fishboneNotice=null;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -31,11 +32,11 @@ function draw(){
   $('#status').textContent='Live render · '+Math.round(next.milliseconds)+' ms · '+next.diagnostics.length+' reported warning(s)';
   $('#saved').textContent='Memory revision '+ws.revision;$('#undo').disabled=!ws.history().canUndo;$('#redo').disabled=!ws.history().canRedo;
   $('#canvasEyebrow').textContent=graph()?'SYNTHETIC COMMERCE MODEL / LIVE GRAPH':'SHARED PROCUREMENT MODEL / DATA-BOUND VIEW';
-  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule'}[view]||view;
+  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures'}[view]||view;
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();updateInspector();updateLeft();highlight();updateSource();
+  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();updateInspector();updateLeft();highlight();updateSource();
  }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
@@ -243,6 +244,71 @@ function renderTimelineSheet(){
   timelineTxn('Add timeline record',t=>CMD.addTimelineRecord(D,t,entry,view,{id,label:label||id,start,end}));
  };
 }
+// Fishbone sheet (spec ch.09 structured sheets; ED-005): the effect label editor,
+// one section per category rib with its cause tree, add-cause / attach-existing
+// pickers and remove-rib actions. Every rib is a relation of the view's named
+// cause verb; attaching an existing cause creates only a relation, so reuse keeps
+// one semantic identity with distinct runtime occurrence paths (VE-AC-057).
+const fishboneProfile=()=>ir?.view.profiles.projection?.kind==='fishbone'?ir.view.profiles.projection:null;
+function fishboneTxn(label,fn){lastEditError=null;const ok=transaction(label,fn);fishboneNotice=ok?null:(lastEditError?(lastEditError.code||'EDIT')+': '+lastEditError.message:'Edit rejected; source unchanged.');if(!ok)renderFishboneSheet();return ok;}
+function fishboneOccurrences(plan){const m=new Map();(function walk(node){const id=node.node?.id;if(id){if(!m.has(id))m.set(id,[]);m.get(id).push(node.occurrence);}for(const c of node.children||[])walk(c);})({node:{id:plan.effect.id},occurrence:plan.effect.id,children:plan.categories});return m;}
+function renderFishboneSheet(){
+ const sheet=$('#fishboneSheet');
+ if(!sheet)return;
+ const p=fishboneProfile();
+ if(!p){sheet.hidden=true;sheet.innerHTML='';fishboneNotice=null;return;}
+ sheet.hidden=false;
+ let plan=null,planError=null;
+ try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
+ let h='<div class="sheet-head"><span class="tag teal">FISHBONE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Ribs are source relationships of the bound verb <code>relation: '+esc(p.relation)+'</code> — branches are source relationships · repeated appearances retain one identity. Attaching an existing cause creates a relation only; no UI path clones a definition.</span></div>';
+ if(fishboneNotice)h+='<div class="notice error">'+esc(fishboneNotice)+'</div>';
+ if(planError){h+='<div class="notice error">'+esc(planError)+' Incomplete bones stay saveable; profile checks run at review. Fix the rib set below or in source.</div>';sheet.innerHTML=h;return;}
+ const occ=fishboneOccurrences(plan);
+ const occNote=id=>{const list=occ.get(id)||[];return list.length>1?'<div class="occ">occurrences ('+list.length+'): '+list.map(o=>'<code>'+esc(o)+'</code>').join(' · ')+'</div>':'';};
+ h+='<table aria-label="Fishbone ribs"><tbody>';
+ h+='<tr'+(selected===plan.effect.id?' class="sel"':'')+'><th style="width:1%;white-space:nowrap">EFFECT</th><td><input id="fbEffectLabel" value="'+esc(plan.effect.name)+'" aria-label="Effect statement"></td><td class="fb-actions"><button id="fbEffectApply" class="primary">Apply label</button></td></tr>';
+ const actionCell=(parentId,relationId,depth)=>'<button data-fb-add="'+esc(parentId)+'" data-depth="'+depth+'" title="Create a new quality.cause under this rib — one transaction">＋ cause</button><button data-fb-attach="'+esc(parentId)+'" title="Attach an existing cause definition here; one identity, a second occurrence">attach…</button>'+(relationId?'<button data-fb-remove="'+esc(relationId)+'" title="Remove this rib only; the definition and its other occurrences survive">remove rib</button>':'');
+ const causeRows=(node,depth)=>{
+  let rows='<tr'+(selected===node.node.id?' class="sel"':'')+'><th><span class="fb-indent" style="--d:'+depth+'"></span>'+esc(node.node.name)+'</th><td><code class="id">'+esc(node.node.kind)+'</code>'+occNote(node.node.id)+'</td><td class="fb-actions">'+actionCell(node.node.id,node.relationId,depth+1)+'</td></tr>';
+  for(const c of node.children||[])rows+=causeRows(c,depth+1);
+  return rows;
+ };
+ for(const cat of plan.categories){
+  h+='<tr class="fb-cat'+(selected===cat.node.id?' sel':'')+'"><th>'+esc(cat.node.name)+'</th><td><code class="id">quality.category</code>'+occNote(cat.node.id)+'</td><td class="fb-actions">'+actionCell(cat.node.id,cat.relationId,1)+'</td></tr>';
+  for(const c of cat.children||[])h+=causeRows(c,1);
+ }
+ h+='</tbody></table>';
+ h+='<div class="batchbar"><span class="tag">ADD CATEGORY</span><input id="fbCatId" placeholder="category_id" aria-label="New category identifier"><input id="fbCatLabel" placeholder="Label" aria-label="New category label"><button id="fbAddCat">＋ Add category</button><span class="small muted">First-level ribs must be categories (1..12); causes nest at most 4 levels. Illegal ribs reject with the runtime’s own codes before any commit.</span></div>';
+ sheet.innerHTML=h;
+ $('#fbEffectApply').onclick=()=>{const label=$('#fbEffectLabel').value;if(label!==plan.effect.name)fishboneTxn('Rename fishbone effect (shared definition)',t=>CMD.setFishboneEffectLabel(D,t,entry,view,{label}));};
+ $('#fbEffectLabel').onkeydown=e=>{if(e.key==='Enter')$('#fbEffectApply').click();};
+ $('#fbAddCat').onclick=()=>{
+  const id=$('#fbCatId').value.trim(),label=$('#fbCatLabel').value.trim();
+  if(!id){fishboneNotice='DDN-I033: A new category needs an identifier. Nothing was changed.';renderFishboneSheet();return;}
+  fishboneTxn('Add fishbone category',t=>CMD.addFishboneCategory(D,t,entry,view,{id,label:label||id}));
+ };
+ sheet.querySelectorAll('[data-fb-add]').forEach(b=>b.onclick=()=>{
+  const parent=b.dataset.fbAdd,name=sourceLabel(parent);
+  modal('Add a cause under '+name,'<p>Creates one <code>quality.cause</code> definition and one <code>'+esc(p.relation)+'</code> rib to the chosen parent — one transaction. Depth and shape rules (DDN-QF001/002/003) reject before commit.</p><label for="fbCauseId">Identifier</label><input id="fbCauseId" value="cause_'+counter+'"><label for="fbCauseLabel">Label</label><input id="fbCauseLabel" value="New contributing cause">',[{label:'Cancel',action:closeModal},{label:'Create cause',primary:true,action:()=>{
+   const id=$('#fbCauseId').value.trim(),label=$('#fbCauseLabel').value.trim();
+   if(!id){announce('DDN-I033: A cause needs an identifier. Nothing was changed.',true);return;}
+   const ok=fishboneTxn('Add fishbone cause under '+name,t=>CMD.addFishboneCause(D,t,entry,view,{id,label:label||id,parentId:parent}));
+   if(ok){counter++;closeModal();}
+  }}]);
+ });
+ sheet.querySelectorAll('[data-fb-attach]').forEach(b=>b.onclick=()=>{
+  const parent=b.dataset.fbAttach,name=sourceLabel(parent);
+  const causes=ir.elements.filter(e=>e.kind==='quality.cause');
+  if(!causes.length){announce('No existing quality.cause definitions in this view’s sources to attach.',true);return;}
+  modal('Attach an existing cause under '+name,'<p>Creates <strong>only</strong> the <code>'+esc(p.relation)+'</code> relation — the cause definition is shared, so it keeps one semantic identity and gains a second, distinct occurrence path. No second object with the same name is ever created.</p><label for="fbAttachPick">Existing cause</label><select id="fbAttachPick">'+causes.map(c=>'<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>').join('')+'</select>',[{label:'Cancel',action:closeModal},{label:'Attach cause',primary:true,action:()=>{
+   const ok=fishboneTxn('Attach existing cause under '+name,t=>CMD.attachExistingCause(D,t,entry,view,{causeId:$('#fbAttachPick').value,parentId:parent,relationId:'attach_'+counter++}));
+   if(ok)closeModal();
+  }}]);
+ });
+ sheet.querySelectorAll('[data-fb-remove]').forEach(b=>b.onclick=()=>{
+  fishboneTxn('Remove one fishbone rib (definition kept)',t=>CMD.removeFishboneCause(D,t,entry,view,{relationId:b.dataset.fbRemove}));
+ });
+}
 function cancelTimelineDrag(silent){
  if(!tDrag)return;
  try{tDrag.el.removeAttribute('transform');}catch{}
@@ -253,7 +319,7 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -263,7 +329,7 @@ function updateLeft(){
  $('#paletteSearch').oninput=e=>{const q=e.target.value.toLowerCase();let shown=0;pane.querySelectorAll('[data-add]').forEach(b=>{const hit=!q||b.dataset.search.includes(q);b.hidden=!hit;if(hit)shown++;});pane.querySelectorAll('.palette-group').forEach(d=>{const visible=[...d.querySelectorAll('[data-add]')].filter(b=>!b.hidden);d.open=!!q&&visible.length>0||!q;d.hidden=!!q&&!visible.length;const badge=d.querySelector('[data-group-count]');if(badge)badge.textContent=q?visible.length+'/'+d.querySelectorAll('[data-add]').length:visible.length;});$('#paletteCount').textContent=shown+'/'+KINDMAP.kinds.length;};pane.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));
  }else if(left==='model'){
  pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas.</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));
- }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+ }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
 }
 function selectControl(id,label,values,current){return `<label for="${id}">${label}</label><select id="${id}">`+values.map(([v,l])=>`<option value="${v}" ${v===current?'selected':''}>${l}</option>`).join('')+'</select>';}
 function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$('#inspectorBody');
@@ -301,6 +367,23 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   if(tplan)th+='<label>Tasks</label><div class="subtle">'+tplan.items.map(i=>esc(i.label)).join(' · ')+'</div><label>Dependencies</label><div class="subtle">'+tplan.dependencies.map(r=>esc(r.name||r.id)).join(' · ')+'</div>';
   th+='<p class="help">Drag a bar horizontally to move both dates in whole days; drag near an edge (or hold Shift for the end edge) to move one date. Escape cancels with no source change. The sheet under the canvas offers the equivalent date controls.</p>';
   p.innerHTML=th+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  return;
+ }
+ const fp=fishboneProfile();
+ if(fp){
+  let fh='<div class="notice">Data-bound projection. Every rib is a source relationship of the bound verb — adding, attaching and removing ribs are source transactions, never free-floating shapes. Attaching an existing cause shares the definition: one identity, distinct occurrence paths.</div><h3>'+esc(fp.profile)+'</h3><label>Bound verb</label><div class="subtle">relation <code>'+esc(fp.relation)+'</code> · effect <code>'+esc(String(fp.effect?.$ref||fp.effect||''))+'</code></div>';
+  let fplan=null;try{fplan=ws.projectionPlan(entry,view);}catch{}
+  if(fplan){
+   fh+='<label>Effect</label><div class="subtle">'+esc(fplan.effect.name)+'</div><label>Categories</label><div class="subtle">'+fplan.categories.map(c=>esc(c.node.name)).join(' · ')+'</div>';
+   const sel=findSelection();
+   if(sel?.kind==='node'){
+    const occ=fishboneOccurrences(fplan).get(sel.sourceId)||[];
+    if(occ.length>1)fh+='<label>Selected rib · '+occ.length+' occurrences, one identity</label>'+occ.map(o=>'<div class="endpoint-card"><code>'+esc(o)+'</code></div>').join('');
+    else fh+='<label>Selected rib</label><div class="subtle">'+esc(sel.name)+' · one occurrence</div>';
+   }
+  }
+  fh+='<p class="help">Edit the effect statement and ribs in the Fishbone sheet under the canvas. A reused cause is listed with every occurrence path; the renderer marks carry the same occurrence strings.</p>';
+  p.innerHTML=fh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const cp=chartProfile();
@@ -439,7 +522,7 @@ function bindCanvas(){
   }
   if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
  $('#paper').onpointercancel=()=>{cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
- $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
+ $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
 $('#viewport').ondrop=e=>{const kind=e.dataTransfer.getData('application/x-ddn-kind');if(!kindEntry(kind))return;e.preventDefault();const p=worldPoint(e)||{x:0,y:0};addNode(kind,{x:p.x-80,y:p.y-25});};

@@ -35,3 +35,12 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .timeline-sheet .notice.error{background:#fdeeee;border-color:#e5b8b8;color:#8a3030}
 .timeline-sheet .batchbar input{border:1px solid var(--line);border-radius:5px;min-height:30px;padding:2px 8px;font-size:12px}
 .drag-tip{position:fixed;z-index:60;pointer-events:none;background:#17263d;color:#fff;border-radius:6px;padding:5px 9px;font-size:12px;box-shadow:0 4px 14px rgba(20,40,60,.3)}
+.fishbone-sheet table{border-collapse:collapse;font-size:12px;width:100%}
+.fishbone-sheet th{background:#f2f6fa;border:1px solid var(--line);padding:6px 9px;text-align:left;font-size:11px}
+.fishbone-sheet td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+.fishbone-sheet tr.sel th{background:#eaf3ff;box-shadow:inset 3px 0 0 #2469d5}
+.fishbone-sheet .fb-cat th{background:#e9eff6;font-size:12px}
+.fishbone-sheet .fb-indent{display:inline-block;width:calc(var(--d)*18px)}
+.fishbone-sheet .occ{font-size:10px;color:var(--muted);word-break:break-all}
+.fishbone-sheet .fb-actions button{font-size:10px;padding:2px 7px;min-height:24px;margin-right:4px}
+.fishbone-sheet .notice.error{background:#fdeeee;border-color:#e5b8b8;color:#8a3030}

@@ -5,6 +5,6 @@
   "description": "DDN visual designer: specification, proposed contracts, and bounded prototype for a visual-first DDN editor. Proposal — not a production editor.",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "node tests/ed-001-full-kind-palette.js && node tests/ed-002-matrix-editor.js && node tests/ed-003-chart-editor.js && node tests/ed-004-timeline-editor.js"
+    "test": "node tests/ed-001-full-kind-palette.js && node tests/ed-002-matrix-editor.js && node tests/ed-003-chart-editor.js && node tests/ed-004-timeline-editor.js && node tests/ed-005-fishbone-editor.js"
   }
 }
