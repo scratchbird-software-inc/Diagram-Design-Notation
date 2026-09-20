@@ -153,5 +153,24 @@ function lifecycle(ir,E,get){
 }
 function simulate(plan,events,expected){const fail=(c,m)=>{throw error(Error,c,m);};if(!Array.isArray(events)||events.length>1000)fail('DDN-QL005','Trace must contain up to 1000 events');let state=plan.initial,steps=[];for(const ev of events){if(!ev||typeof ev.event!=='string')fail('DDN-QL005','Trace event name required');if(Object.keys(ev).some(k=>!['event','data'].includes(k)))fail('DDN-QL005','Trace event supports event and data only');const data=ev.data===undefined?{}:ev.data;if(data===null||typeof data!=='object'||Array.isArray(data))fail('DDN-QL005','Event data must be a record');for(const k of Object.keys(data))if(!plan.inputs.some(d=>d.key===k))fail('DDN-QL005','Unknown trace input '+k);for(const d of plan.inputs)if(!inDomain(data[d.key],d))fail('DDN-QL005','Trace input outside domain '+d.key);const rs=plan.transitions.filter(r=>r.from.element===state&&r.properties.x_transition?.event===ev.event&&match(r.properties.x_transition?.guard||{},data));if(rs.length!==1)fail('DDN-QL006','No unique permitted transition for '+ev.event+' at '+state);const r=rs[0];steps.push({from:state,to:r.to.element,transition:r.id,event:ev.event,actions:(r.properties.x_transition?.actions||[]).map(a=>a.$ref)});state=r.to.element;}const want=typeof expected==='string'?expected:expected?.$ref;if(want&&want!==state)fail('DDN-QL007','Trace final state differs from expected');return{state,terminal:plan.finals.includes(state),steps,actionsExecuted:false};}
 function formatPredicate(c){if(!c)return'Any';if(c.op==='eq')return'= '+canon(c.value);if(c.op==='in')return'∈ {'+c.values.map(canon).join(', ')+'}';if(c.op==='interval')return(c.lower_closed===false?'(':'[')+c.min+', '+c.max+(c.upper_closed===false?')':']');return c.op;}
-return{VERSION,chartRequested,chart,fishbone,matrixEncoding,decision,evaluateDecision,lifecycle,simulate,formatPredicate,inputs,predicates,match,analyze,inDomain};
+function cpm(ir,E){
+ const fail=(c,m,n)=>{throw error(E,c,m,n||ir.view);};
+ const shown=new Set(ir.view.selected),tasks=ir.elements.filter(n=>shown.has(n.id)&&n.kind==='analysis.task'),byId=new Map(tasks.map(n=>[n.id,n]));
+ const es=ir.relations.filter(r=>r.kind==='analysis.precedes'&&byId.has(r.from.element)&&byId.has(r.to.element));
+ for(const n of tasks){const v=n.properties.x_estimate;if(typeof v!=='number'||!Number.isFinite(v)||v<0)fail('DDN-PJ125','Task '+n.id+' needs a finite nonnegative x_estimate duration in days',n);}
+ const kids=new Map(tasks.map(n=>[n.id,[]])),preds=new Map(tasks.map(n=>[n.id,[]]));
+ for(const r of es){kids.get(r.from.element).push(r);preds.get(r.to.element).push(r);}
+ const active=new Set(),seen=new Set(),order=[];
+ function visit(id){if(active.has(id))fail('DDN-PJ124','Dependency cycle reaches task '+id,byId.get(id));if(seen.has(id))return;active.add(id);for(const r of kids.get(id))visit(r.to.element);active.delete(id);seen.add(id);order.push(id);}
+ for(const n of tasks)visit(n.id);
+ order.reverse();
+ const sched={};
+ for(const id of order){const est=byId.get(id).properties.x_estimate,s=preds.get(id).reduce((m,r)=>Math.max(m,sched[r.from.element].ef),0);sched[id]={es:s,ef:s+est,estimate:est};}
+ const duration=order.reduce((m,id)=>Math.max(m,sched[id].ef),0);
+ for(const id of [...order].reverse()){const t=sched[id],est=byId.get(id).properties.x_estimate,lf=kids.get(id).reduce((m,r)=>Math.min(m,sched[r.to.element].ls),duration);t.lf=lf;t.ls=lf-est;t.slack=t.ls-t.es;}
+ const criticalTasks=order.filter(id=>sched[id].slack===0);
+ const criticalRelations=es.filter(r=>sched[r.from.element].slack===0&&sched[r.to.element].slack===0&&sched[r.from.element].ef===sched[r.to.element].es).map(r=>r.id);
+ return{tasks:sched,criticalTasks,criticalRelations,duration};
+}
+return{VERSION,chartRequested,chart,fishbone,matrixEncoding,decision,evaluateDecision,lifecycle,simulate,cpm,formatPredicate,inputs,predicates,match,analyze,inDomain};
 });

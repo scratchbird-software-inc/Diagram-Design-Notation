@@ -1,0 +1,35 @@
+ddn "0.5";
+module "ddn.examples.pertcpm";
+
+import "shared.ddn" as shared;
+
+// Synthetic PERT/CPM critical-path view for the pert.cpm@1 profile.
+// Six tasks with declared day estimates (x_estimate) and finish-before
+// dependencies (analysis.precedes). The planner computes the forward pass
+// (ES/EF) and backward pass (LS/LF) on the dependency DAG; the zero-slack
+// critical chain design -> build_ui -> integrate -> test -> ship (13 days)
+// is drawn with the theme accent stroke, and every task name carries its
+// estimate and slack. build_api carries 1 day of slack. All data is
+// synthetic.
+data m {
+    object design "Design" { kind: "analysis.task"; x_estimate: 3; }
+    object build_api "Build API" { kind: "analysis.task"; x_estimate: 4; }
+    object build_ui "Build UI" { kind: "analysis.task"; x_estimate: 5; }
+    object integrate "Integrate" { kind: "analysis.task"; x_estimate: 2; }
+    object test "Test" { kind: "analysis.task"; x_estimate: 2; }
+    object ship "Ship" { kind: "analysis.task"; x_estimate: 1; }
+
+    relation d_api "before" @design -> @build_api { kind: "analysis.precedes"; }
+    relation d_ui "before" @design -> @build_ui { kind: "analysis.precedes"; }
+    relation api_int "before" @build_api -> @integrate { kind: "analysis.precedes"; }
+    relation ui_int "before" @build_ui -> @integrate { kind: "analysis.precedes"; }
+    relation int_test "before" @integrate -> @test { kind: "analysis.precedes"; }
+    relation test_ship "before" @test -> @ship { kind: "analysis.precedes"; }
+}
+
+view plan "Release plan" {
+    data: [@m]; format: @shared.styles.technical;
+    projection { kind: graph; profile: "pert.cpm@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

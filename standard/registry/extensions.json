@@ -1236,6 +1236,13 @@
           "additionalProperties": false
         }
       }
+    },
+    "x_estimate": {
+      "targets": {
+        "object": {
+          "type": "number"
+        }
+      }
     }
   }
 }

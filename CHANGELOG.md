@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- PERT/CPM critical-path views via profile `pert.cpm@1` (`x_estimate`,
+  computed passes, `DDN-PJ124`/`DDN-PJ125`); removes 'critical-path
+  scheduling' from capabilities `unsupported[]`. RFC-112.
 - ArchiMate-style layered views via profile `archimate.basic@1` (nine-kind
   vocabulary, `DDN-PJ123` layer-pair legality). Profile-level coverage, not
   ArchiMate conformance. RFC-111.

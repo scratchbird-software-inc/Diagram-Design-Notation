@@ -2459,6 +2459,23 @@
         "relationship derivation machinery",
         "full ArchiMate conformance"
       ]
+    },
+    {
+      "id": "pert.cpm@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "PERT/CPM critical-path view"
+      ],
+      "scope": "Tasks with declared day estimates and finish-before dependencies; computed forward/backward pass; zero-slack critical path accented.",
+      "validation": [
+        "dependency cycles rejected (DDN-PJ124)",
+        "every task carries a finite nonnegative x_estimate (DDN-PJ125)"
+      ],
+      "unsupported": [
+        "resource leveling",
+        "calendar-aware scheduling",
+        "probabilistic (three-point) estimation"
+      ]
     }
   ],
   "shapes": [

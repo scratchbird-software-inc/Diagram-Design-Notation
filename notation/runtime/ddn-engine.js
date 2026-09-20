@@ -8,5 +8,8 @@ function render(ir,registry,glyphs,options={}){if(['state.flat@1','state.composi
  if(ir.view.profiles.projection.profile==='bpmn.basic@1'){
  const mark={exclusive:'X',parallel:'+',inclusive:'O'},shown=new Set(ir.view.selected);
  const next={...ir,elements:ir.elements.map(n=>{const m=mark[n.properties.x_gateway?.type];if(n.kind!=='flow.gateway'||!m||!shown.has(n.id))return n;return{...n,name:m+' '+n.name};})};ir=next;}
+ if(ir.view.profiles.projection.profile==='pert.cpm@1'){
+ const cpm=Projections.plan(ir).cpm,critical=new Set(cpm.criticalRelations);
+ const next={...ir,relations:ir.relations.map(r=>critical.has(r.id)?{...r,properties:{...r.properties,x_critical:true}}:r),elements:ir.elements.map(n=>{const t=cpm.tasks[n.id];return t?{...n,name:n.name+' ('+t.estimate+'d, slack '+t.slack+'d)'}:n;})};ir=next;}
  const opts={...options,renderChild:render};return ir.view.profiles.projection?.kind&&ir.view.profiles.projection.kind!=='graph'?Projections.render(ir,registry,glyphs,opts):Interaction.render(ir,registry,glyphs,opts);}
 return{VERSION:'0.5.0-draft.2',render};});

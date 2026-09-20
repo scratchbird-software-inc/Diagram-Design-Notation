@@ -25,6 +25,7 @@ function plan(ir,ErrorClass=Error){
  if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
  if(kind==='graph'&&p.profile==='state.flat@1')return{kind,profile:p.profile,lifecycle:Quality.lifecycle(ir,ErrorClass,get)};
  if(kind==='graph'&&['inputs','analysis_budget','traces'].some(k=>p[k]!==undefined))fail('DDN-Q005','Lifecycle properties require state.flat@1');
+ if(kind==='graph'&&p.profile==='pert.cpm@1')return{kind,profile:p.profile,cpm:Quality.cpm(ir,ErrorClass)};
  if(kind==='graph'||kind==='chen')return{kind,profile:p.profile};
  if(kind==='matrix'){
   const rows=list(p.rows,'rows'),columns=list(p.columns,'columns');if(rows.length*columns.length>5000||columns.length>40)fail('DDN-PJ013','Matrix limit: 5,000 cells and 40 columns');

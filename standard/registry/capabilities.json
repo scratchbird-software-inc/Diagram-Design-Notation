@@ -2587,6 +2587,23 @@
         "relationship derivation machinery",
         "full ArchiMate conformance"
       ]
+    },
+    {
+      "id": "pert.cpm@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "PERT/CPM critical-path view"
+      ],
+      "scope": "Tasks with declared day estimates and finish-before dependencies; computed forward/backward pass; zero-slack critical path accented.",
+      "validation": [
+        "dependency cycles rejected (DDN-PJ124)",
+        "every task carries a finite nonnegative x_estimate (DDN-PJ125)"
+      ],
+      "unsupported": [
+        "resource leveling",
+        "calendar-aware scheduling",
+        "probabilistic (three-point) estimation"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2796,14 +2813,15 @@
     "interaction overview flowcharts with view-referencing ref nodes via uml.interaction_overview@1",
     "CMMN-style case views via cmmn.basic@1 (stages, milestones, entry/exit sentries; profile-level, not CMMN conformance)",
     "SysML-style block definition, internal block (ports/flows) and parametric constraint views via sysml.bdd@1/sysml.ibd@1/sysml.parametric@1 (profile-level, not SysML conformance)",
-    "ArchiMate-style layered architecture views via archimate.basic@1 (nine-kind vocabulary, layer-pair legality; profile-level, not ArchiMate conformance)"
+    "ArchiMate-style layered architecture views via archimate.basic@1 (nine-kind vocabulary, layer-pair legality; profile-level, not ArchiMate conformance)",
+    "PERT/CPM critical-path views via pert.cpm@1 (computed forward/backward pass, zero-slack accent)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
     "arbitrary runtime profile code installation",
     "unrestricted nested dashboard/widget composition (one child-view level is implemented)",
     "complete UML/SysML/BPMN/DMN metamodels or external interchange",
-    "critical-path scheduling, arbitrary/DMN-FEEL rule execution and engineering solvers",
+    "arbitrary/DMN-FEEL rule execution and engineering solvers",
     "third-party Vega runtime execution unverified in build environment",
     "curved routes in the fixed-lane experimental interaction profile (DDN-I031)",
     "redacted interaction SVG without an occurrence/payload closure (DDN-I032)",
