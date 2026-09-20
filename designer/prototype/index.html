@@ -16,6 +16,15 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .matrix-sheet .batchbar .chip button{border:0;background:transparent;min-height:0;padding:0 2px;font-size:12px}
 .matrix-sheet .keypad{display:flex;gap:5px;align-items:center}
 .matrix-sheet .keypad button{min-width:34px;min-height:30px;padding:4px 8px;font-weight:700}
+.chart-sheet .chart-controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin-bottom:10px}
+.chart-sheet .chart-controls label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px}
+.chart-sheet .chart-controls select{min-height:32px}
+.chart-sheet .notice.error{background:#fdeeee;border-color:#e5b8b8;color:#8a3030}
+.chart-sheet .contributors{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+.chart-sheet .contributors .chip{display:inline-flex;align-items:center;background:#eaf3ff;border:1px solid #b9d2ee;border-radius:6px;padding:3px 8px;font-size:11px;min-height:0}
+.chart-sheet td input{width:88px;border:0;background:transparent;min-height:32px;text-align:center;font-size:12px}
+.chart-sheet td input:focus{background:#eaf3ff;outline:2px solid #2469d5;outline-offset:-2px}
+.chart-sheet tr.sel th{background:#eaf3ff;box-shadow:inset 3px 0 0 #2469d5}
 </style></head><body><header class="projectbar">
  <div class="brand"><div class="mark">D</div><div><strong>DDN Designer <span class="tag teal">DESIGN PROTOTYPE</span></strong><small>Visual authoring · separate from Studio</small></div></div>
  <div class="actions"><span class="small muted" id="saved">In-memory sample</span><button id="undo" title="Undo" aria-label="Undo">↶</button><button id="redo" title="Redo" aria-label="Redo">↷</button><button id="sourceBtn">Source & changes</button><button id="reviewBtn">Review impact</button><button id="exportBtn" class="primary">Download</button></div>
@@ -35,6 +44,7 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
   <div class="paper-viewport" id="viewport" tabindex="0" aria-label="Diagram, scrollable. Use Model list for keyboard selection."><div class="paper" id="paper"></div></div>
   <div class="canvas-actions"><button id="fitBtn">Fit</button><button id="zoomOut" aria-label="Zoom out">−</button><span id="zoomLabel" class="small muted" style="min-width:40px;align-self:center;text-align:center">100%</span><button id="zoomIn" aria-label="Zoom in">+</button><span class="divider"></span><button id="arrangeBtn">Arrange…</button><button id="addAuto">＋ Add table</button></div>
   <section id="matrixSheet" class="matrix-sheet" hidden aria-label="Matrix editing sheet"></section>
+  <section id="chartSheet" class="matrix-sheet chart-sheet" hidden aria-label="Chart source editing sheet"></section>
  </main>
  <aside class="inspector" aria-label="Selected element properties"><div id="selectionHeader"></div><div class="tabs"><button data-tab="meaning" class="active">Meaning</button><button data-tab="view">This view</button><button data-tab="details">Details</button></div><div class="pane" id="inspectorBody"></div></aside>
 </div>

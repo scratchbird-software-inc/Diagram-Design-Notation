@@ -765,13 +765,15 @@
       "title": "Data-bound coordinates",
       "action": "Attempt dragging a numeric bar horizontally",
       "expected": "Operation disabled; data edit offered, value not silently changed",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-003-chart-editor.js",
+      "coveredIn": "ED-003"
     },
     {
       "id": "VE-AC-052",
@@ -780,13 +782,15 @@
       "title": "Contributors",
       "action": "Click aggregated mark",
       "expected": "Show input IDs, no invented total record",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-003-chart-editor.js",
+      "coveredIn": "ED-003"
     },
     {
       "id": "VE-AC-053",
@@ -795,13 +799,15 @@
       "title": "Units",
       "action": "Bind two incompatible units on one scale",
       "expected": "Reject with unit-specific diagnostic",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-003-chart-editor.js",
+      "coveredIn": "ED-003"
     },
     {
       "id": "VE-AC-054",

@@ -999,6 +999,73 @@
         "payload"
       ],
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "commandId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "expectedRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "intent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy": {
+          "enum": [
+            "design",
+            "review"
+          ]
+        },
+        "type": {
+          "const": "setProjectionBinding"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "viewId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "key": {
+              "enum": [
+                "mark",
+                "x",
+                "y",
+                "unit",
+                "x_type",
+                "aggregate",
+                "missing",
+                "series"
+              ]
+            },
+            "value": {},
+            "remove": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "viewId",
+            "key"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "commandId",
+        "expectedRevision",
+        "intent",
+        "policy",
+        "type",
+        "payload"
+      ],
+      "additionalProperties": false
     }
   ]
 }

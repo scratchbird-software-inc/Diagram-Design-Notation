@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: chart editor (record sheet, profile-legal mark
+  switching, binding pickers, contributor inspection) and a
+  `setProjectionBinding` command contract (ED-003; covers VE-AC-051/052/053).
 - Designer prototype: matrix (RACI/CRUD/relations) cell editor with atomic
   batch commits (ED-002; covers VE-AC-049/050).
 - Designer prototype: full 188-kind palette driven by `kind-ui-map.json`,

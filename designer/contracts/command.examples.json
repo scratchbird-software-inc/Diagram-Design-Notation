@@ -70,5 +70,17 @@
         "memberId": "domain::customer.id"
       }
     }
+  },
+  {
+    "commandId": "gesture-005",
+    "expectedRevision": 12,
+    "intent": "Bind chart_bar unit to CAD records",
+    "policy": "design",
+    "type": "setProjectionBinding",
+    "payload": {
+      "viewId": "views::chart_bar",
+      "key": "unit",
+      "value": "CAD"
+    }
   }
 ]

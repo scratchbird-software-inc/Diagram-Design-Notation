@@ -33,7 +33,9 @@ is the primary interface — distinct from the source-first Studio in
   checks; the Node-based designer suite (`npm --prefix designer test`, started
   by ED-001's `ed-001-full-kind-palette.js`, which covers VE-AC-002 and
   VE-AC-064, and extended by ED-002's `ed-002-matrix-editor.js`, which covers
-  VE-AC-049 and VE-AC-050); Playwright harnesses (optional).
+  VE-AC-049 and VE-AC-050, and by ED-003's `ed-003-chart-editor.js`, which
+  covers VE-AC-051, VE-AC-052 and VE-AC-053); Playwright harnesses
+  (optional).
 - `src/` — future implementation home (empty).
 
 ## Status and boundaries
@@ -47,4 +49,8 @@ as first host). Beyond the graph canvas, the prototype now includes a matrix
 editor (ED-002): RACI/CRUD/relations cells are editable by keyboard and click
 through a structured sheet under the diagram, staged changes commit as one
 atomic batch transaction, and a filled cell's contributors can be selected in
-the companion graph view.
+the companion graph view. ED-003 adds the chart editor: a Source sheet under
+chart views edits bound records (shared model), switches the mark within the
+profile's legal `capabilities.marks` set, and rebinds `x`/`y`/`unit` (view
+scope); clicking a mark lists its contributing records, and drag gestures stay
+disabled (values set geometry).

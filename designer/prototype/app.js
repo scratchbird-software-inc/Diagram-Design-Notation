@@ -7,6 +7,7 @@ const initial=JSON.parse($('#sourceFiles').textContent), ws=D.createWorkspace(in
 let entry='model.ddn',view='overview',ir=null,result=null,selected='designer.sample::model.customer',tab='meaning',left='add',mode='select',connectFrom=null,zoom=1,toastTimer,drag=null,counter=1;
 let overrides={page:'content',look:'classic',theme:'default'},renderFailure=false;
 let mPlan=null,mSel=null,mBatch=[];
+let chartSel=null,chartNotice=null,dragGuard=null,lastEditError=null;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -33,13 +34,13 @@ function draw(){
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();renderMatrixSheet();updateInspector();updateLeft();highlight();updateSource();
- }catch(e){renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);}
+  bindCanvas();renderMatrixSheet();renderChartSheet();updateInspector();updateLeft();highlight();updateSource();
+ }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
 // The production plan/impact/draft service is specified separately, not implemented here.
 function transaction(label,fn){
- const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;draw();announce(label+' · source updated · Undo available');return true;}catch(e){announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
+ const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;draw();announce(label+' · source updated · Undo available');return true;}catch(e){lastEditError=e;announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
 // Matrix sheet (spec ch.09 structured sheets): the editing surface for
 // kind:matrix projections. Every commit is one setMatrixAssignments transaction.
 const matrixProfile=()=>ir?.view.profiles.projection?.kind==='matrix'?ir.view.profiles.projection:null;
@@ -108,10 +109,93 @@ function commitMatrixBatch(){
  const ok=transaction('Set matrix assignments ('+changes.length+' cell'+(changes.length>1?'s':'')+' as one batch)',t=>CMD.setMatrixAssignments(D,t,entry,view,{changes}));
  if(ok){mBatch=[];renderMatrixSheet();}
 }
+// Chart Source sheet (spec ch.09 structured sheets; ED-003): record rows are
+// shared-model edits; mark/binding pickers are view-scope projection edits.
+const chartProfile=()=>ir?.view.profiles.projection?.kind==='chart'?ir.view.profiles.projection:null;
+function chartRecords(p){
+ const byId=new Map((ir?.elements||[]).map(n=>[n.id,n]));
+ return (p.records||[]).map(r=>byId.get(r.$ref)).filter(n=>n&&n.properties.x_record&&typeof n.properties.x_record==='object');
+}
+function chartKeyUnion(records){const keys=[];for(const n of records)for(const k of Object.keys(n.properties.x_record))if(!keys.includes(k))keys.push(k);return keys;}
+function chartTxn(label,fn){lastEditError=null;const ok=transaction(label,fn);chartNotice=ok?null:(lastEditError?(lastEditError.code||'EDIT')+': '+lastEditError.message:'Edit rejected; source unchanged.');if(!ok)renderChartSheet();return ok;}
+function renderChartSheet(){
+ const sheet=$('#chartSheet');
+ if(!sheet)return;
+ const p=chartProfile();
+ if(!p){sheet.hidden=true;sheet.innerHTML='';chartSel=null;return;}
+ sheet.hidden=false;
+ const records=chartRecords(p),keys=chartKeyUnion(records);
+ let plan=null,planError=null;
+ try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
+ const caps=(()=>{try{return ws.inspect(entry,view).capabilities.marks.filter(m=>m!=='source');}catch{return [];}})();
+ const numericKeys=keys.filter(k=>records.every(n=>typeof n.properties.x_record[k]==='number'||n.properties.x_record[k]===undefined));
+ const units=[...new Set(records.map(n=>n.properties.x_record.unit).filter(u=>typeof u==='string'))];
+ let h='<div class="sheet-head"><span class="tag teal">CHART SOURCE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Record rows edit the <strong>shared model</strong> (every bound view changes) · mark and bindings edit <strong>this view only</strong> (<code>projection { }</code> group)</span></div>';
+ h+='<div class="chart-controls">';
+ h+='<label for="chartMark">Mark <span class="muted">view scope</span></label><select id="chartMark">'+caps.map(m=>'<option value="'+esc(m)+'" '+(p.mark===m?'selected':'')+'>'+esc(m)+'</option>').join('')+(p.profile==='chart.quality@1'?'<option value="__source" '+(p.mark===undefined?'selected':'')+'>Source default (remove mark)</option>':'')+'</select>';
+ const optKey=k=>'<option value="'+esc(k)+'">'+esc(k)+'</option>';
+ const bind=(id,label,options,current)=>{return '<label for="'+id+'">'+label+' <span class="muted">view scope</span></label><select id="'+id+'">'+options.map(o=>'<option value="'+esc(o)+'" '+(current===o?'selected':'')+'>'+esc(o)+'</option>').join('')+'</select>';};
+ h+=bind('chartBindX','x binding',keys,String(p.x||''));
+ h+=bind('chartBindY','y binding <span class="muted">numeric keys</span>',numericKeys,String(p.y||''));
+ h+=bind('chartBindUnit','unit binding',units,String(p.unit||''));
+ if(p.aggregate)h+='<span class="tag amber">AGGREGATE · '+esc(p.aggregate)+'</span>';
+ h+='</div>';
+ if(chartNotice)h+='<div class="notice error">'+esc(chartNotice)+'</div>';
+ if(planError)h+='<div class="notice error">'+esc(planError)+' The source stays committed and saveable; fix the binding above.</div>';
+ // Contributor list for the clicked mark (VE-AC-052): real input records only.
+ if(plan&&chartSel){
+  const idx=plan.points.findIndex(pt=>(pt.sourceIds||[]).includes(chartSel));
+  if(idx>=0){
+   const pt=plan.points[idx],contributors=pt.sourceIds||[];
+   h+='<div class="contributors"><span class="tag '+(contributors.length>1?'amber':'teal')+'">CONTRIBUTORS · '+(contributors.length>1?'aggregated ('+esc(String(p.aggregate||'none'))+')':'single record')+'</span> ';
+   h+=contributors.map(id=>{const n=records.find(r=>r.id===id)||ir.elements.find(e=>e.id===id);return '<button class="chip" data-contrib="'+esc(id)+'" title="Jump to this record’s row">'+esc(n?n.name:id)+'</button>';}).join(' ');
+   h+=' <span class="small muted">Aggregates never create an editable synthetic total record; edit the inputs below.</span></div>';
+  }
+ }
+ h+='<table aria-label="Chart source records"><thead><tr><th>record</th>'+keys.map(k=>'<th>'+esc(k)+'</th>').join('')+'<th></th></tr></thead><tbody>';
+ for(const n of records){
+  const xr=n.properties.x_record;
+  h+='<tr data-recrow="'+esc(n.id)+'"'+(chartSel===n.id?' class="sel"':'')+'><th>'+esc(n.name)+'<br><code class="id">'+esc(n.local||n.id)+'</code></th>';
+  for(const k of keys){
+   const v=xr[k];
+   if(v===undefined)h+='<td class="muted">—</td>';
+   else if(typeof v==='number')h+='<td><input type="number" step="any" data-rec="'+esc(n.id)+'" data-key="'+esc(k)+'" value="'+esc(v)+'" aria-label="'+esc(n.name+' '+k)+'"></td>';
+   else if(typeof v==='boolean')h+='<td><input type="checkbox" data-rec="'+esc(n.id)+'" data-key="'+esc(k)+'" '+(v?'checked':'')+' aria-label="'+esc(n.name+' '+k)+'"></td>';
+   else h+='<td><input type="text" data-rec="'+esc(n.id)+'" data-key="'+esc(k)+'" value="'+esc(String(v))+'" aria-label="'+esc(n.name+' '+k)+'"></td>';
+  }
+  h+='<td><button data-delrec="'+esc(n.id)+'" title="Delete this record and remove its binding in one transaction">Delete</button></td></tr>';
+ }
+ h+='</tbody></table>';
+ h+='<div class="batchbar"><button id="addChartRecord">＋ Add record</button><span class="small muted">Adds a record with this chart’s key set and appends its binding — one transaction. Dragging marks is disabled: values set geometry.</span></div>';
+ sheet.innerHTML=h;
+ $('#chartMark').onchange=e=>{
+  const v=e.target.value;
+  if(v==='__source')chartTxn('Reset chart mark to source default',t=>CMD.editProjectionProperty(D,t,entry,view,{key:'mark',value:undefined}));
+  else chartTxn('Set chart mark to '+v,t=>CMD.setChartMark(D,t,entry,view,{mark:v}));
+ };
+ const binding=(id,key)=>{const el=$('#'+id);if(el)el.onchange=()=>chartTxn('Set '+key+' binding to '+el.value,t=>CMD.setChartBinding(D,t,entry,view,{key,value:el.value}));};
+ binding('chartBindX','x');binding('chartBindY','y');binding('chartBindUnit','unit');
+ sheet.querySelectorAll('input[data-rec]').forEach(inp=>{
+  inp.onchange=()=>{
+   const id=inp.dataset.rec,key=inp.dataset.key,n=records.find(r=>r.id===id),old=n.properties.x_record[key];
+   let value;
+   if(typeof old==='number'){
+    if(inp.value.trim()===''||!Number.isFinite(Number(inp.value))){announce('Numeric record keys accept numbers only — numeric strings are not coerced. Nothing was changed.',true);inp.value=old;return;}
+    value=Number(inp.value);
+   }else if(typeof old==='boolean')value=inp.checked;
+   else value=inp.value;
+   if(value===old)return;
+   chartTxn('Edit record '+n.name+' · '+key+' (shared model)',t=>CMD.editRecordValue(D,t,entry,view,{id,key,value}));
+  };
+ });
+ sheet.querySelectorAll('[data-delrec]').forEach(b=>b.onclick=()=>{const n=records.find(r=>r.id===b.dataset.delrec);chartTxn('Delete record '+n.name+' and its chart binding',t=>CMD.deleteChartRecord(D,t,entry,view,{id:n.id}));});
+ sheet.querySelectorAll('[data-contrib]').forEach(b=>b.onclick=()=>{chartSel=b.dataset.contrib;renderChartSheet();updateInspector();sheet.querySelector('[data-recrow="'+CSS.escape(chartSel)+'"]')?.scrollIntoView({block:'nearest'});});
+ $('#addChartRecord').onclick=()=>chartTxn('Add chart record',t=>CMD.addChartRecord(D,t,entry,view,{id:'record_'+counter++,name:'New record'}));
+}
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','responsibility_graph','crud','matrix_general'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -129,7 +213,7 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
  if(tab==='view'){
  p.innerHTML='<div class="tag">LOCAL PREVIEW OVERRIDES</div>'+selectControl('lookSetting','Drawing treatment',[['classic','Standard'],['handDrawn','Hand-drawn'],['neo','Neo']],overrides.look||'classic')+selectControl('themeSetting','Palette',[['default','Light'],['night','Night · grey-blue']],overrides.theme||'default');
  if(graph())p.innerHTML+=selectControl('fieldsSetting','Field compartment',[['source','As authored'],['names','Field names'],['none','Name only']],overrides.fields||'source')+selectControl('routeSetting','Connector path',[['source','As authored'],['orthogonal','Right angles'],['curved','Curved'],['straight','Straight'],['rounded','Rounded corners']],overrides.routing||'source')+'<p class="help">A path setting changes geometry, never the meaning or endpoints.</p>';
- else if(view==='chart_bar')p.innerHTML+=selectControl('markSetting','Chart mark',[['bar','Bars'],['line','Line'],['pie','Pie'],['donut','Doughnut']],overrides.mark||'bar');
+ else if(!graph()&&!chartProfile())p.innerHTML+='<p class="help">Session preview overrides apply to graph views; data-bound views edit source through their sheet.</p>';
  if(sel?.kind==='node'&&graph()){const pinned=!!result.scene.layout?.pinned?.includes(sel.sourceId)||sourceView().includes('place @model.'+sel.node.local);p.innerHTML+='<hr><h3>Position</h3><p class="help">Dragging makes an explicit pin. Size alone is not a pin.</p><div class="kv"><div><label for="pinX">X · world px</label><input id="pinX" type="number" value="'+Math.round(result.scene.nodes.find(n=>n.id===sel.sourceId)?.x||0)+'"></div><div><label for="pinY">Y · world px</label><input id="pinY" type="number" value="'+Math.round(result.scene.nodes.find(n=>n.id===sel.sourceId)?.y||0)+'"></div></div><div class="row" style="margin-top:10px"><button id="pinApply" class="primary">Set pin</button><button id="unpinApply">Make automatic</button></div>';
  $('#pinApply').onclick=()=>transaction('Set this view position',t=>A.pin(t,entry,view,sel.sourceId,Number($('#pinX').value),Number($('#pinY').value)));$('#unpinApply').onclick=()=>transaction('Release source pin',t=>A.unpin(t,entry,view,sel.sourceId));}
  p.innerHTML+='<hr><p class="help">Look and palette use live renderer overrides in this prototype. Production source-write and inherited/reset rules are specified separately.</p><button id="resetStyle" class="wide">Reset this preview</button>';
@@ -152,7 +236,20 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   if($('#cellInGraph'))$('#cellInGraph').onclick=()=>{const id=cell.assignments[0].id;setView('responsibility_graph');choose(id);announce('Assignment selected in the responsibility graph.');};
   return;
  }
- p.innerHTML='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale.</div>'+'<h3>Supplied values</h3><label>Source</label><div class="subtle">m.facts · six synthetic records</div><label>Category</label><div class="subtle">x_record.month</div><label>Value</label><div class="subtle">x_record.value · CAD</div><p class="help">Changing the chart mark is live under This view. Binding wizards are specified, not implemented in this prototype.</p>'+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;return;
+ const cp=chartProfile();
+ if(cp){
+  let ch='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale. Edit the record in the Source sheet; dragging a mark is disabled.</div><h3>'+esc(cp.profile)+' · '+esc(String(cp.mark??'source mark'))+'</h3><label>Bindings</label><div class="subtle">x <code>'+esc(String(cp.x??'—'))+'</code> · y <code>'+esc(String(cp.y??'—'))+'</code> · unit <code>'+esc(String(cp.unit??'—'))+'</code>'+(cp.aggregate?'<br>aggregate <code>'+esc(String(cp.aggregate))+'</code>':'')+'</div>';
+  let cplan=null;try{cplan=ws.projectionPlan(entry,view);}catch{}
+  const point=cplan&&chartSel?cplan.points.find(pt=>(pt.sourceIds||[]).includes(chartSel)):null;
+  if(point){
+   const ids=point.sourceIds||[];
+   ch+='<label>Selected mark</label><div class="subtle">'+ids.length+' contributing record'+(ids.length>1?'s · aggregate policy '+esc(String(cp.aggregate||'none')):'')+'</div><label>Contributors</label>'+ids.map(id=>'<div class="endpoint-card"><code>'+esc(id)+'</code><br><button data-jump-rec="'+esc(id)+'">Edit row in Source sheet</button></div>').join('')+'<p class="help">An aggregate never becomes an editable synthetic total record; edit the input records.</p>';
+  }else ch+='<p class="help">Click a rendered mark to list its contributing records. The Source sheet under the canvas edits record values (shared model), the mark and the x/y/unit bindings (this view).</p>';
+  p.innerHTML=ch+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.querySelectorAll('[data-jump-rec]').forEach(b=>b.onclick=()=>{chartSel=b.dataset.jumpRec;renderChartSheet();$('#chartSheet')?.scrollIntoView({block:'nearest'});$('#chartSheet [data-recrow="'+CSS.escape(chartSel)+'"]')?.scrollIntoView({block:'nearest'});});
+  return;
+ }
+ p.innerHTML='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale.</div>'+'<h3>Supplied values</h3><label>Source</label><div class="subtle">m.facts · six synthetic records</div><label>Category</label><div class="subtle">x_record.month</div><label>Value</label><div class="subtle">x_record.value · CAD</div><p class="help">Binding edits for this projection are view-scope source writes in its sheet.</p>'+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;return;
  }
  if(!sel){p.innerHTML='<h3>Select an object or relation</h3><p class="help">Choose a palette starter to insert. Use Model for keyboard selection. All new objects are synthetic local design definitions.</p>';return;}
  p.innerHTML='<label for="nameEdit">'+(sel.kind==='field'?'Field label':'Name')+'</label><input id="nameEdit" value="'+esc(sel.name)+'"><div class="row" style="margin-top:8px"><button id="applyName" class="primary">Apply label</button><button id="moreReview">Used in views…</button></div><p class="help">Changes the display label, not the stable identifier.</p>';
@@ -205,14 +302,28 @@ function addNode(kind,at){
 function worldPoint(e){const g=$('#paper svg #drawing')||$('#paper svg');if(!g)return null;const m=g.getScreenCTM();if(!m)return null;return new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());}
 function bindCanvas(){
  $('#paper').onpointerdown=e=>{
-  if(e.button!==0||!graph())return;const member=e.target.closest('[data-member]'),el=e.target.closest('.ddn-node[data-id]'),edge=e.target.closest('.ddn-edge[data-id]');const id=member?.dataset.member||el?.dataset.id||edge?.dataset.id;
+  if(e.button!==0)return;
+  if(!graph()){
+   if(chartProfile()){const m=e.target.closest('[data-id],[data-source]');if(m)dragGuard={x:e.clientX,y:e.clientY,id:m.getAttribute('data-id')||m.getAttribute('data-source'),pointer:e.pointerId,fired:false};}
+   return;
+  }
+  const member=e.target.closest('[data-member]'),el=e.target.closest('.ddn-node[data-id]'),edge=e.target.closest('.ddn-edge[data-id]');const id=member?.dataset.member||el?.dataset.id||edge?.dataset.id;
   if(mode==='connect'&&id){e.preventDefault();if(!connectFrom){connectFrom=id;announce('From '+sourceLabel(id)+'. Select the destination.');}else showConnection(connectFrom,id);return;}
   if(id)choose(id);if(!el||member||mode!=='select')return;const n=result.scene.nodes.find(n=>n.id===el.dataset.id);if(!n)return;const point=worldPoint(e);drag={el,id:n.id,x:n.x,y:n.y,start:point,pointer:e.pointerId,moved:false};el.setPointerCapture(e.pointerId);
  };
- $('#paper').onpointermove=e=>{if(!drag||e.pointerId!==drag.pointer)return;const p=worldPoint(e);const dx=p.x-drag.start.x,dy=p.y-drag.start.y;if(Math.abs(dx)+Math.abs(dy)<5&&!drag.moved)return;drag.moved=true;drag.dx=dx;drag.dy=dy;drag.el.setAttribute('transform','translate('+dx+' '+dy+')');};
- $('#paper').onpointerup=e=>{if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
- $('#paper').onpointercancel=()=>{if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
- $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;updateInspector();announce('Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
+ $('#paper').onpointermove=e=>{
+  if(dragGuard&&e.pointerId===dragGuard.pointer){
+   if(!dragGuard.fired&&Math.abs(e.clientX-dragGuard.x)+Math.abs(e.clientY-dragGuard.y)>6){
+    dragGuard.fired=true;
+    if(dragGuard.id){chartSel=dragGuard.id;renderChartSheet();updateInspector();$('#chartSheet')?.scrollIntoView({block:'nearest'});}
+    announce('Values set geometry — edit the record',true);
+   }
+   return;
+  }
+  if(!drag||e.pointerId!==drag.pointer)return;const p=worldPoint(e);const dx=p.x-drag.start.x,dy=p.y-drag.start.y;if(Math.abs(dx)+Math.abs(dy)<5&&!drag.moved)return;drag.moved=true;drag.dx=dx;drag.dy=dy;drag.el.setAttribute('transform','translate('+dx+' '+dy+')');};
+ $('#paper').onpointerup=e=>{if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
+ $('#paper').onpointercancel=()=>{dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
+ $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
 $('#viewport').ondrop=e=>{const kind=e.dataTransfer.getData('application/x-ddn-kind');if(!kindEntry(kind))return;e.preventDefault();const p=worldPoint(e)||{x:0,y:0};addNode(kind,{x:p.x-80,y:p.y-25});};

@@ -34,7 +34,7 @@ function createInView(D,ws,entry,view,args){
   return{select:n.id};
  });
 }
-const PROJECTION_PROPERTY_KEYS=['mark','records','dependencies'];
+const PROJECTION_PROPERTY_KEYS=['mark','records','dependencies','x','y','unit','x_type','aggregate','missing','series'];
 function editProjectionProperty(D,ws,entry,view,args){
  const {key,value}=args||{};
  if(!PROJECTION_PROPERTY_KEYS.includes(key))fail('DDN-D001','Unknown or unsupported projection property key: '+String(key));
@@ -49,7 +49,8 @@ function editProjectionProperty(D,ws,entry,view,args){
   let depth=1,close=-1;
   for(let i=open+1;i<tokens.length;i++){if(tokens[i].type==='{')depth++;if(tokens[i].type==='}'){depth--;if(!depth){close=i;break;}}}
   if(close<0)fail('DDN-I033','The projection group is not closed in source.');
-  const render=key+': '+D.authoring.value(value)+';';
+  const removing=value===undefined;
+  const render=removing?'':key+': '+D.authoring.value(value)+';';
   let edit=null;
   for(let i=open+1,d=1;i<close;i++){
    const tok=tokens[i];
@@ -62,9 +63,9 @@ function editProjectionProperty(D,ws,entry,view,args){
     edit={file:span.file,start:tok.start,end:tokens[j].end,text:render};break;
    }
   }
-  if(!edit)edit={file:span.file,start:tokens[close].start,end:tokens[close].start,text:render+' '};
+  if(!edit){if(removing)return{key,removed:false};edit={file:span.file,start:tokens[close].start,end:tokens[close].start,text:render+' '};}
   t.applyEdits([edit],{expectedRevision:t.revision,entry,view});
-  return{key};
+  return{key,...(removing?{removed:true}:{})};
  });
 }
 function applyCreationAction(D,ws,entry,view,args){
@@ -134,5 +135,87 @@ function setMatrixAssignments(D,ws,entry,view,args){
   return{changes:changes.length};
  });
 }
-return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,PROJECTION_PROPERTY_KEYS};
+// Chart editor commands (ED-003). Record edits are shared-model writes through
+// D.authoring; mark/binding edits are view-scope writes into the projection { }
+// group through editProjectionProperty. Numbers are never coerced from strings.
+function chartProjection(D,ws,entry,view){
+ const p=ws.resolve(entry,view).view.profiles.projection||{};
+ if(p.kind!=='chart')fail('DDN-E006','Chart editing needs a chart projection');
+ return p;
+}
+// Resolved refs arrive module-qualified ('module::path'); the projection group
+// needs the entry file's source form (import-alias path, or bare local path).
+function sourceRef(ws,entry,uid){
+ if(!String(uid).includes('::'))return uid;
+ const [mod,path]=String(uid).split('::');
+ const files=ws.getFiles(),entryText=files[entry]||'';
+ const entryMod=(entryText.match(/module\s+"([^"]+)"/)||[])[1];
+ if(mod===entryMod)return path;
+ const dir=entry.includes('/')?entry.slice(0,entry.lastIndexOf('/')+1):'';
+ for(const m of entryText.matchAll(/import\s+"([^"]+)"\s+as\s+([A-Za-z_][A-Za-z0-9_-]*)/g)){
+  const txt=files[dir+m[1].replace(/^\.\//,'')];
+  if(txt&&(txt.match(/module\s+"([^"]+)"/)||[])[1]===mod)return m[2]+'.'+path;
+ }
+ fail('DDN-E003','The edited source does not import the target definition. Add the required import explicitly.');
+}
+function sourceRecords(ws,entry,records){
+ return (records||[]).map(r=>r?.$ref?{$ref:sourceRef(ws,entry,r.$ref)}:r);
+}
+function editRecordValue(D,ws,entry,view,args){
+ const {id,key,value}=args||{};
+ if(typeof key!=='string'||!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(key))fail('DDN-E001','Use a valid, nonreserved DDN identifier.');
+ const el=ws.resolve(entry,view).elements.find(n=>n.id===id);
+ if(!el)fail('DDN-E002','Definition not found.');
+ const current=el.properties.x_record;
+ if(!current||typeof current!=='object')fail('DDN-E006','Selected object has no x_record value record');
+ if(current[key]!==undefined&&typeof current[key]!==typeof value)fail('DDN-I033','Record key '+JSON.stringify(key)+' holds '+typeof current[key]+' data; numeric strings are not coerced. Nothing was changed.');
+ if(typeof value==='number'&&!Number.isFinite(value))fail('DDN-E007','Cell value must be a finite scalar');
+ return stage(D,ws,entry,view,t=>{D.authoring.setRecordValue(t,entry,view,id,key,value);return{id,key};});
+}
+function addChartRecord(D,ws,entry,view,args){
+ const {id,name}=args||{};
+ const p=chartProjection(D,ws,entry,view);
+ const ir=ws.resolve(entry,view);
+ const bound=(p.records||[]).map(r=>ir.elements.find(n=>n.id===r.$ref)).filter(Boolean);
+ const first=bound.find(n=>n.properties.x_record&&typeof n.properties.x_record==='object');
+ if(!first)fail('DDN-I033','No bound record with an x_record object to clone the key set from. Nothing was changed.');
+ const skeleton={};
+ for(const [k,v]of Object.entries(first.properties.x_record))skeleton[k]=k==='unit'?v:typeof v==='number'?0:'';
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addElement(t,entry,view,{id,name:name||id,kind:'record'});
+  const n=t.resolve(entry,view).elements.find(e=>e.local===id);
+  if(!n)fail('DDN-I033','Created record not found in the resolved view.');
+  D.authoring.setProperty(t,entry,view,n.id,'x_record',skeleton);
+  const current=sourceRecords(ws,entry,p.records);
+  editProjectionProperty(D,t,entry,view,{key:'records',value:[...current,{$ref:'editor_data.'+id}]});
+  return{select:n.id};
+ });
+}
+function deleteChartRecord(D,ws,entry,view,args){
+ const {id}=args||{};
+ const p=chartProjection(D,ws,entry,view);
+ return stage(D,ws,entry,view,t=>{
+  const current=sourceRecords(ws,entry,p.records);
+  const local=sourceRef(ws,entry,id);
+  const kept=current.filter(r=>String(r.$ref)!==local);
+  if(kept.length!==current.length)editProjectionProperty(D,t,entry,view,{key:'records',value:kept});
+  D.authoring.deleteDefinition(t,entry,view,id);
+  return{id};
+ });
+}
+function setChartMark(D,ws,entry,view,args){
+ const {mark}=args||{};
+ chartProjection(D,ws,entry,view);
+ const legal=ws.inspect(entry,view).capabilities.marks.filter(m=>m!=='source');
+ if(!legal.includes(mark))fail('DDN-I033','Mark '+JSON.stringify(mark)+' is outside this profile’s legal set ('+legal.join(', ')+'). Nothing was changed.');
+ return editProjectionProperty(D,ws,entry,view,{key:'mark',value:mark});
+}
+const CHART_BINDING_KEYS=['x','y','unit','x_type','aggregate','missing','series'];
+function setChartBinding(D,ws,entry,view,args){
+ const {key,value,remove}=args||{};
+ if(!CHART_BINDING_KEYS.includes(key))fail('DDN-D001','Unknown or unsupported projection property key: '+String(key));
+ chartProjection(D,ws,entry,view);
+ return editProjectionProperty(D,ws,entry,view,{key,value:remove?undefined:value});
+}
+return{createInView,editProjectionProperty,applyCreationAction,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });
