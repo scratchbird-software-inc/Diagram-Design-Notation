@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- SysML-style profiles `sysml.bdd@1`/`sysml.ibd@1`/`sysml.parametric@1`
+  (blocks, ports, flows, constraints; `DDN-PJ121`/`DDN-PJ122`).
+  Profile-level coverage, not SysML conformance. RFC-110.
 - CMMN-style case views via profile `cmmn.basic@1` (stages/milestones/
   sentries, `DDN-PJ120`). Profile-level coverage, not CMMN conformance.
   RFC-109.

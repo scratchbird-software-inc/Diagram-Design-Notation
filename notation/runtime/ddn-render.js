@@ -158,6 +158,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
  const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
  const context={byId:new Map(ir.elements.map(n=>[n.id,n])),members:new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(f=>[f.id,f]))),degrees:{}};
+ const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
  
@@ -207,7 +208,10 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?Sketch.curve:Sketch.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${colour}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${a.reg.pattern}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
   if(a.r.properties.x_chen_total){diagram+=`<g${mask} data-total-participation="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${colour}" stroke-width="5"/><path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.surface}" stroke-width="2"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
-  diagram+=endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface)+'</g>';
+  diagram+=endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface);
+  if(p.projection.profile?.startsWith('sysml.')){const s=q(p.style.font_size,16)/16;
+   for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member))diagram+=`<rect data-port-square="${esc(ep.member)}" x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${t.surface}" stroke="${colour}" stroke-width="1.5"/>`;}
+  diagram+='</g>';
  }
  // Bridge geometry is explicit postprocessing. A rounded bridge is a local exception to orthogonality.
  if(p.layout.crossings!=='gap')for(const c of crossings){

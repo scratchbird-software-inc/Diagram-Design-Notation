@@ -75,6 +75,17 @@ function validate(ir,E){
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='flow.gateway'))
    if(!['exclusive','parallel','inclusive'].includes(n.properties.x_gateway?.type))fail('DDN-PJ117','Gateway '+n.id+' lacks a valid x_gateway.type (exclusive, parallel or inclusive)',n);
  }
+ if(profile.startsWith('sysml.')){
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.ports.length&&n.kind!=='sysml.block'))
+   fail('DDN-PJ121','Element '+(n.name||n.id)+' (kind '+n.kind+') declares a ports group; under sysml.* profiles only sysml.block elements declare ports',n);
+ }
+ if(profile==='sysml.parametric@1'){
+  const es=ir.relations.filter(r=>ir.view.relations.includes(r.id));
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='sysml.constraint')){
+   const count=es.filter(r=>r.from.element===n.id||r.to.element===n.id).length;
+   if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
+  }
+ }
  if(profile==='cmmn.basic@1'){
   const stages=(ir.view.frames||[]).filter(f=>ns.get(f.scope)?.kind==='cmmn.stage');
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='cmmn.sentry')){

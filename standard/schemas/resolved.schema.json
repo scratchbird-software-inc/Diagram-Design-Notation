@@ -467,7 +467,9 @@
             "flow.gateway",
             "cmmn.stage",
             "cmmn.milestone",
-            "cmmn.sentry"
+            "cmmn.sentry",
+            "sysml.block",
+            "sysml.constraint"
           ]
         },
         "kindCode": {
@@ -674,7 +676,9 @@
             "GATEWAY",
             "STAGE",
             "MILESTONE",
-            "SENTRY"
+            "SENTRY",
+            "BLOCK",
+            "CONSTRAINT"
           ]
         },
         "properties": {
@@ -861,7 +865,8 @@
             "epk.next",
             "uml.message",
             "uml.flow",
-            "bpmn.messageflow"
+            "bpmn.messageflow",
+            "sysml.flow"
           ]
         },
         "kindCode": {
@@ -981,7 +986,8 @@
             "EPKNEXT",
             "MESSAGE",
             "FLOW",
-            "MSGFLOW"
+            "MSGFLOW",
+            "ITEMFLOW"
           ]
         },
         "from": {

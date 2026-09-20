@@ -562,6 +562,28 @@
       "code": "SENTRY",
       "glyph": "object",
       "aliases": []
+    },
+    {
+      "keyword": "sysml.block",
+      "name": "Block",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "BLOCK",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "sysml.constraint",
+      "name": "Constraint block",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "object",
+      "family": "concept",
+      "code": "CONSTRAINT",
+      "glyph": "object",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -1120,6 +1142,24 @@
       ],
       "allow_self": false,
       "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.flow",
+      "name": "Item flow",
+      "verb": "Item flow",
+      "family": "flow",
+      "code": "ITEMFLOW",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
     }
   ],
   "profiles": [
@@ -2220,6 +2260,55 @@
         "case execution semantics",
         "discretionary items",
         "full CMMN conformance"
+      ]
+    },
+    {
+      "id": "sysml.bdd@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Block definition-style view"
+      ],
+      "scope": "Blocks and their associations. Profile-level coverage, not SysML conformance.",
+      "validation": [
+        "ports only on blocks (DDN-PJ121)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "full SysML conformance",
+        "compartment typing beyond field rows"
+      ]
+    },
+    {
+      "id": "sysml.ibd@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Internal block-style view"
+      ],
+      "scope": "Blocks with declared border ports and typed item flows. Profile-level coverage, not SysML conformance.",
+      "validation": [
+        "ports only on blocks (DDN-PJ121)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "full SysML conformance",
+        "flow property propagation"
+      ]
+    },
+    {
+      "id": "sysml.parametric@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Parametric constraint view"
+      ],
+      "scope": "Constraint blocks carrying formula text, each bound to exactly two endpoints. Profile-level coverage, not SysML conformance.",
+      "validation": [
+        "ports only on blocks (DDN-PJ121)",
+        "constraints bind exactly two endpoints (DDN-PJ122)"
+      ],
+      "unsupported": [
+        "equation solving or evaluation",
+        "SysML XMI interchange",
+        "full SysML conformance"
       ]
     }
   ],

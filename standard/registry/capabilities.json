@@ -2522,6 +2522,55 @@
         "discretionary items",
         "full CMMN conformance"
       ]
+    },
+    {
+      "id": "sysml.bdd@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Block definition-style view"
+      ],
+      "scope": "Blocks and their associations. Profile-level coverage, not SysML conformance.",
+      "validation": [
+        "ports only on blocks (DDN-PJ121)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "full SysML conformance",
+        "compartment typing beyond field rows"
+      ]
+    },
+    {
+      "id": "sysml.ibd@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Internal block-style view"
+      ],
+      "scope": "Blocks with declared border ports and typed item flows. Profile-level coverage, not SysML conformance.",
+      "validation": [
+        "ports only on blocks (DDN-PJ121)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "full SysML conformance",
+        "flow property propagation"
+      ]
+    },
+    {
+      "id": "sysml.parametric@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Parametric constraint view"
+      ],
+      "scope": "Constraint blocks carrying formula text, each bound to exactly two endpoints. Profile-level coverage, not SysML conformance.",
+      "validation": [
+        "ports only on blocks (DDN-PJ121)",
+        "constraints bind exactly two endpoints (DDN-PJ122)"
+      ],
+      "unsupported": [
+        "equation solving or evaluation",
+        "SysML XMI interchange",
+        "full SysML conformance"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2729,7 +2778,8 @@
     "BPMN-style pools, typed events, gateways and cross-pool message flow via bpmn.basic@1 (profile-level, not BPMN conformance)",
     "timing/state-over-time diagrams via uml.timing@1 (declared time points, plateau bands)",
     "interaction overview flowcharts with view-referencing ref nodes via uml.interaction_overview@1",
-    "CMMN-style case views via cmmn.basic@1 (stages, milestones, entry/exit sentries; profile-level, not CMMN conformance)"
+    "CMMN-style case views via cmmn.basic@1 (stages, milestones, entry/exit sentries; profile-level, not CMMN conformance)",
+    "SysML-style block definition, internal block (ports/flows) and parametric constraint views via sysml.bdd@1/sysml.ibd@1/sysml.parametric@1 (profile-level, not SysML conformance)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",
