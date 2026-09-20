@@ -464,7 +464,10 @@
             "epk.event",
             "epk.function",
             "epk.connector",
-            "flow.gateway"
+            "flow.gateway",
+            "cmmn.stage",
+            "cmmn.milestone",
+            "cmmn.sentry"
           ]
         },
         "kindCode": {
@@ -668,7 +671,10 @@
             "EVENT",
             "FUNCTION",
             "CONNECTOR",
-            "GATEWAY"
+            "GATEWAY",
+            "STAGE",
+            "MILESTONE",
+            "SENTRY"
           ]
         },
         "properties": {

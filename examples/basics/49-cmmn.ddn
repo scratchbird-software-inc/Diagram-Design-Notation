@@ -1,0 +1,30 @@
+ddn "0.5";
+module "ddn.examples.cmmn";
+
+import "shared.ddn" as shared;
+
+// Synthetic CMMN-style case diagram for the cmmn.basic@1 profile.
+// A stage is a cmmn.stage object plus a view frame whose scope resolves to it
+// and whose members are the stage's plan items. Sentries are cmmn.sentry
+// diamonds declared as members of the stage frame, typed by
+// x_sentry:{on:"entry"|"exit"}. Milestones are rounded cmmn.milestone nodes;
+// tasks reuse analysis.task; ordering uses analysis.precedes. All data is
+// synthetic. This is profile-level coverage, not CMMN conformance.
+data claim {
+    object review "Review" { kind: "cmmn.stage"; }
+    object gather_documents "Gather documents" { kind: "analysis.task"; }
+    object assess_claim "Assess claim" { kind: "analysis.task"; }
+    object docs_received "Docs received?" { kind: "cmmn.sentry"; x_sentry: { "on": "entry" }; }
+    object claim_decided "Claim decided" { kind: "cmmn.milestone"; }
+
+    relation order "order" @gather_documents -> @assess_claim { kind: "analysis.precedes"; }
+    relation done "done" @assess_claim -> @claim_decided { kind: "assoc"; }
+}
+
+view case "Claim handling" {
+    data: [@claim]; format: @shared.styles.technical;
+    projection { kind: graph; profile: "cmmn.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame review_frame "Review" { scope: @claim.review; members: [@claim.gather_documents, @claim.assess_claim, @claim.docs_received]; }
+}

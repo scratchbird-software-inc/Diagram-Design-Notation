@@ -75,6 +75,13 @@ function validate(ir,E){
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='flow.gateway'))
    if(!['exclusive','parallel','inclusive'].includes(n.properties.x_gateway?.type))fail('DDN-PJ117','Gateway '+n.id+' lacks a valid x_gateway.type (exclusive, parallel or inclusive)',n);
  }
+ if(profile==='cmmn.basic@1'){
+  const stages=(ir.view.frames||[]).filter(f=>ns.get(f.scope)?.kind==='cmmn.stage');
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='cmmn.sentry')){
+   if(!stages.some(f=>f.members.includes(n.id)))fail('DDN-PJ120','Sentry '+(n.name||n.id)+' is not a member of any frame whose scope is a cmmn.stage; sentries belong on a stage border declared by frame membership',n);
+   if(!['entry','exit'].includes(n.properties.x_sentry?.on))fail('DDN-PJ120','Sentry '+(n.name||n.id)+' lacks a valid x_sentry.on (entry or exit)',n);
+  }
+ }
 }
 return{VERSION:'0.5.0-draft.2',validate};
 });

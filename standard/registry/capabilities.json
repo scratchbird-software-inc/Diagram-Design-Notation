@@ -2505,6 +2505,23 @@
         "inline expansion of referenced views",
         "full UML conformance"
       ]
+    },
+    {
+      "id": "cmmn.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "CMMN-style case diagram"
+      ],
+      "scope": "Stages as scoped frames of plan items; rounded milestones; entry/exit sentries on stage membership. Profile-level coverage, not CMMN conformance.",
+      "validation": [
+        "sentries must belong to a stage frame and declare entry/exit (DDN-PJ120)"
+      ],
+      "unsupported": [
+        "CMMN XML interchange",
+        "case execution semantics",
+        "discretionary items",
+        "full CMMN conformance"
+      ]
     }
   ],
   "projectionProperties": {
@@ -2711,7 +2728,8 @@
     "activity-style flows with swimlane partitions, fork/join bars and object nodes via uml.activity@1",
     "BPMN-style pools, typed events, gateways and cross-pool message flow via bpmn.basic@1 (profile-level, not BPMN conformance)",
     "timing/state-over-time diagrams via uml.timing@1 (declared time points, plateau bands)",
-    "interaction overview flowcharts with view-referencing ref nodes via uml.interaction_overview@1"
+    "interaction overview flowcharts with view-referencing ref nodes via uml.interaction_overview@1",
+    "CMMN-style case views via cmmn.basic@1 (stages, milestones, entry/exit sentries; profile-level, not CMMN conformance)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

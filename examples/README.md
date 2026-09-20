@@ -7,7 +7,7 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 48 numbered examples (01-customer … 48-interaction-overview)
+- `basics/` — 49 numbered examples (01-customer … 49-cmmn)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, authorized SQL DDL export, process contracts,

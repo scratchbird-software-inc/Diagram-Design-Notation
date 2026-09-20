@@ -1217,6 +1217,25 @@
           "additionalProperties": false
         }
       }
+    },
+    "x_sentry": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "required": [
+            "on"
+          ],
+          "properties": {
+            "on": {
+              "enum": [
+                "entry",
+                "exit"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
     }
   }
 }

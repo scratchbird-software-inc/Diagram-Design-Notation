@@ -6,6 +6,10 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- CMMN-style case views via profile `cmmn.basic@1` (stages/milestones/
+  sentries, `DDN-PJ120`). Profile-level coverage, not CMMN conformance.
+  RFC-109.
+
 - Interaction overview views via profile `uml.interaction_overview@1`
   (`x_subdiagram` view references, `DDN-PJ119`). RFC-108.
 

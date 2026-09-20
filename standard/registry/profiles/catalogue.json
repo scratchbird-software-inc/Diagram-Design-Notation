@@ -529,6 +529,39 @@
       "code": "GATEWAY",
       "glyph": "object",
       "aliases": []
+    },
+    {
+      "keyword": "cmmn.stage",
+      "name": "Case stage",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "STAGE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "cmmn.milestone",
+      "name": "Case milestone",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "MILESTONE",
+      "glyph": "object",
+      "aliases": []
+    },
+    {
+      "keyword": "cmmn.sentry",
+      "name": "Case sentry",
+      "shape": "profile",
+      "silhouette": "diamond",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "SENTRY",
+      "glyph": "object",
+      "aliases": []
     }
   ],
   "relationships": [
@@ -2170,6 +2203,23 @@
       "unsupported": [
         "inline expansion of referenced views",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "cmmn.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "CMMN-style case diagram"
+      ],
+      "scope": "Stages as scoped frames of plan items; rounded milestones; entry/exit sentries on stage membership. Profile-level coverage, not CMMN conformance.",
+      "validation": [
+        "sentries must belong to a stage frame and declare entry/exit (DDN-PJ120)"
+      ],
+      "unsupported": [
+        "CMMN XML interchange",
+        "case execution semantics",
+        "discretionary items",
+        "full CMMN conformance"
       ]
     }
   ],
