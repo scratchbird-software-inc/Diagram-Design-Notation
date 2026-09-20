@@ -21,6 +21,8 @@ The split must be documented per validator; do not blanket-demote every error. A
 
 Draft visualization uses the same registered geometry and exposes an Incomplete badge/Problems list. If a projection cannot meaningfully render incomplete inputs, show its structured sheet and exact missing requirements—not fabricated chart values. Strict render/export remains unchanged. A draft preview export, if implemented, is explicitly watermarked and separately authorized; it is not the ordinary Publish result.
 
+Implementation status (ED-010): the prototype's draft inspection path (`Commands.validate` + `Commands.classifyCode`) classifies every diagnostic — `incomplete` only under policy `design`, `error` otherwise — and never suppresses a code (ADR-07). A tolerant draft commit succeeds only when the sole failure is an `incomplete`-typed code; hard failures reject before staging. Strict render/export remains unchanged and the CLI reports the same codes (AUD-001's guard honored; covers VE-AC-006/007).
+
 ## Cross-view validation
 Maintain an index from definitions and format policies to consuming views and child-view closures. A command may commit a draft but must update each affected view's status to stale/unvalidated. Review revalidates the affected closure. Deletion and kind conversion require a dependency check before commit. Public export validates its authorized dependency closure. Do not claim all-view validity from the current helper's current-view `build` call.
 

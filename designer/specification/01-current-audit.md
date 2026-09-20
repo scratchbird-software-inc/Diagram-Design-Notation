@@ -14,7 +14,7 @@ The audited core has **152 kinds**, **90 relation verbs**, **118 facet entries**
 The public API supplies workspaces, revision checks, source-span edits, undo/redo, labels, generic properties, add-field/element/relation helpers, pin/unpin/hide, guarded definition deletion, record and matrix edits, file rename/import adjustment, render/inspect, snapshots and ZIP/JSON I/O. Scenes expose measured node rectangles and field rows. Rendering remains synchronous behind an async-shaped API. The patched router preserves endpoint identity and distinguishes routing attachment freedom from field binding.
 
 ## Gaps with evidence
-**AUD-001 — Eager profile validation obstructs construction.** A source containing only a flowchart start is rejected by the current profile builder. A visual user must be able to place the start before the rest exists. Add a draft inspection/rendering path; do not remove the completed-flow validator.
+**AUD-001 — Eager profile validation obstructs construction.** A source containing only a flowchart start is rejected by the current profile builder. A visual user must be able to place the start before the rest exists. Add a draft inspection/rendering path; do not remove the completed-flow validator. *Status (ED-010, 2026-09-20): the editor-level draft inspection/presentation path landed — tolerant draft commits, `incomplete` typing under policy design, the INCOMPLETE badge and Problems drawer; the completed-flow validator and strict render/export are untouched. The core draft resolver in the runtime remains open; AUD-001 is not closed.*
 
 **AUD-002 — Generic creation has a fixed write target.** `addElement` and `addRelation` use a local `editor_data` block. The audit confirms a newly created object is not automatically shared with the second view. The new editor needs an explicit creation destination and an atomic create-plus-occurrence transaction.
 
@@ -28,7 +28,7 @@ The public API supplies workspaces, revision checks, source-span edits, undo/red
 
 **AUD-007 — Inspection data is not yet a complete UI schema.** Current catalogues mix targets, prose applicability and registry defaults. Add typed editor descriptors, supported-enum checks and exact serialization adapters. Do not scrape labels or invent source keys at runtime.
 
-**AUD-008 — Draft/publication/view validation are insufficiently separated for visual construction.** Raw source drafts can be retained; guided commands build the current view before commit. Dependent-view impact is not an authoritative all-workspace transaction. The specification adds scoped validation and impact previews.
+**AUD-008 — Draft/publication/view validation are insufficiently separated for visual construction.** Raw source drafts can be retained; guided commands build the current view before commit. Dependent-view impact is not an authoritative all-workspace transaction. The specification adds scoped validation and impact previews. *Status (ED-010, 2026-09-20): scoped validation landed in the prototype — current-view and workspace-review scopes with per-view ch.12 statuses and session-scope pending-view bookkeeping. The authoritative all-workspace transaction remains open; AUD-008 is not closed.*
 
 **AUD-009 — Performance boundary.** The public live API limits a visible view to 128 elements and 384 relations and runs layout synchronously. A full editor needs coalesced drag previews and a worker execution seam. Performance targets below are proposed, not measured against a completed editor.
 

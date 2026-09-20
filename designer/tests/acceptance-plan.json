@@ -86,13 +86,15 @@
       "title": "Start before End",
       "action": "Insert Start into an empty flowchart",
       "expected": "Draft node appears with incomplete obligation; publish is blocked, source retained",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-010-draft-validation-ux.js",
+      "coveredIn": "ED-010"
     },
     {
       "id": "VE-AC-007",
@@ -101,13 +103,15 @@
       "title": "Safety separate",
       "action": "Enter executable script where typed value is expected",
       "expected": "Input rejected, not downgraded to incomplete",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-010-draft-validation-ux.js",
+      "coveredIn": "ED-010"
     },
     {
       "id": "VE-AC-008",

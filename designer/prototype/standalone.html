@@ -81,6 +81,18 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .reconnect-ghost{stroke:#146b7c;stroke-width:2.5;stroke-dasharray:7 4;pointer-events:none}
 .reconnect-ghost.invalid{stroke:#b3392f}
 .endpoint-card.proposed{background:#e5f4f3;border-color:#9fd2ca}
+.problems-strip{border:1px solid var(--line);background:#f6f8fa;border-radius:6px;padding:2px 10px;margin-right:10px;font-size:12px;cursor:pointer}
+.problems-strip.has-error{border-color:#b3392f;color:#b3392f;background:#fdecea}
+.problems-strip.has-incomplete{border-color:#b07d10;color:#8a6206;background:#fdf3dd}
+.problems-drawer{border-top:1px solid var(--line);background:#fff;max-height:220px;display:flex;flex-direction:column}
+.problems-drawer header{display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:1px solid var(--line)}
+.problems-drawer header .spacer{flex:1}
+.problems-drawer #problemsList{overflow:auto;padding:4px 10px 8px}
+.problem-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;border-bottom:1px solid #eef1f4;padding:5px 4px;font-size:12px;cursor:pointer}
+.problem-row:hover{background:#f4f8fd}
+.problem-row .problem-msg{flex:1}
+.problem-row.sev-error code{color:#b3392f}
+.problem-row.sev-incomplete code{color:#8a6206}
 </style></head><body><header class="projectbar"><a href="../../README.md" style="color:inherit;text-decoration:none;border-bottom:1px dotted">Data-Design-Notation ↗</a>
  <div class="brand"><div class="mark">D</div><div><strong>DDN Designer <span class="tag teal">DESIGN PROTOTYPE</span></strong><small>Visual authoring · separate from Studio</small></div></div>
  <div class="actions"><span class="small muted" id="saved">In-memory sample</span><button id="undo" title="Undo" aria-label="Undo">↶</button><button id="redo" title="Redo" aria-label="Redo">↷</button><button id="sourceBtn">Source & changes</button><button id="reviewBtn">Review impact</button><button id="exportBtn" class="primary">Download</button></div>
@@ -96,7 +108,7 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
   <div class="pane" id="leftBody"></div>
  </aside>
  <main class="canvas-wrap" aria-label="Diagram canvas">
-  <div class="canvas-head"><div><div class="eyebrow" id="canvasEyebrow">SYNTHETIC COMMERCE MODEL / LIVE GRAPH</div><h2 id="viewHeading">Customer orders</h2><p id="viewHelp">Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.</p></div><span class="tag" id="viewTag">Graph · 4 elements</span></div>
+  <div class="canvas-head"><div><div class="eyebrow" id="canvasEyebrow">SYNTHETIC COMMERCE MODEL / LIVE GRAPH</div><h2 id="viewHeading">Customer orders</h2><p id="viewHelp">Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.</p></div><span class="tag amber" id="incompleteBadge" hidden>INCOMPLETE</span><span class="tag" id="viewTag">Graph · 4 elements</span></div>
   <div class="paper-viewport" id="viewport" tabindex="0" aria-label="Diagram, scrollable. Use Model list for keyboard selection."><div class="paper" id="paper"></div></div>
   <div class="canvas-actions"><button id="fitBtn">Fit</button><button id="zoomOut" aria-label="Zoom out">−</button><span id="zoomLabel" class="small muted" style="min-width:40px;align-self:center;text-align:center">100%</span><button id="zoomIn" aria-label="Zoom in">+</button><span class="divider"></span><button id="arrangeBtn">Arrange…</button><button id="addAuto">＋ Add table</button></div>
   <section id="matrixSheet" class="matrix-sheet" hidden aria-label="Matrix editing sheet"></section>
@@ -108,7 +120,8 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
  </main>
  <aside class="inspector" aria-label="Selected element properties"><div id="selectionHeader"></div><div class="tabs"><button data-tab="meaning" class="active">Meaning</button><button data-tab="view">This view</button><button data-tab="details">Details</button></div><div class="pane" id="inspectorBody"></div></aside>
 </div>
-<footer class="statusbar"><span id="status">Ready</span><span id="selectionStatus">Properties change source, not a cached image.</span></footer>
+<section id="problemsDrawer" class="problems-drawer" hidden aria-label="Problems list"><header><strong>Problems</strong><span id="problemsSummary" class="small muted"></span><span class="spacer"></span><button id="revalidateBtn" title="Revalidate every view in the workspace (review scope)">Revalidate workspace</button><button id="closeProblems" aria-label="Close problems list">Close</button></header><div id="problemsList"></div></section>
+<footer class="statusbar"><button id="problemsBtn" class="problems-strip" title="Problems: errors, incomplete obligations and warnings. Click to expand.">No problems</button><span id="status">Ready</span><span id="selectionStatus">Properties change source, not a cached image.</span></footer>
 <div id="toast" class="message" role="status" aria-live="polite"></div>
 <section id="sourceDrawer" class="source-panel" aria-label="Source and changes"><header><div><strong>Actual DDN source</strong><span class="small"> · generated by live property transactions · comments retained</span></div><button id="closeSource">Close</button></header><pre id="sourceText"></pre></section>
 <dialog id="dialog"><div class="dialog-head"><div><span id="dialogTag" class="tag teal">LIVE ACTION</span><h2 id="dialogTitle" style="margin-top:6px"></h2></div><button id="dialogClose" aria-label="Close dialog">×</button></div><div class="dialog-body" id="dialogBody"></div><div class="dialog-actions" id="dialogActions"></div></dialog>
@@ -3893,9 +3906,26 @@ const api=makeLiveAPI(backend,assets);installIO(api);installAuthoring(api,backen
 (function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DesignerCommands=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const fail=(code,message)=>{throw Object.assign(new Error(message),{code});};
+// ED-010 severity classification (spec ch.12, contracts/change-plan diagnostics;
+// ADR-07: draft issues are separately typed, never suppressed). Profile
+// completeness codes are draft-scope 'incomplete' under policy 'design'; under
+// policy 'review' the same codes report as 'error'. Everything else is always
+// 'error'. No code is ever dropped. Verified against the runtime:
+// DDN-PF007/008/009/010 (ddn-profiles.js), DDN-PJ016 (ddn-projection-data.js),
+// DDN-QD004/005/008 (ddn-quality-data.js), DDN-QL001…007 (lifecycle).
+const INCOMPLETE_CODE_PREFIXES=['DDN-PF','DDN-QD0','DDN-QL'];
+const INCOMPLETE_CODES=['DDN-PJ016'];
+function classifyCode(code,policy){
+ const c=String(code||'');
+ if(INCOMPLETE_CODES.includes(c)||INCOMPLETE_CODE_PREFIXES.some(p=>c.startsWith(p)))
+  return policy==='review'?'error':'incomplete';
+ return 'error';
+}
 // Analysis failures a decision-table draft may carry (VE-007): the commit
-// stands, the committed re-render surfaces the runtime's own error.
-const DECISION_DRAFT_CODES=['DDN-QD004','DDN-QD005','DDN-QD008'];
+// stands, the committed re-render surfaces the runtime's own error. ED-010
+// generalizes the same draft-commit rule to every code the classifier types
+// 'incomplete' under policy 'design' (DDN-QD004/005/008 are the DDN-QD0 prefix;
+// DDN-PF008 start-before-end commits the same way for VE-AC-006).
 function stage(D,ws,entry,view,fn,mode){
  const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);
  try{
@@ -3906,9 +3936,9 @@ function stage(D,ws,entry,view,fn,mode){
    if(mode==='tolerant'){
     try{ws.applyEdits(edits,{expectedRevision:revision,entry,view});}
     catch(e){
-     if(!DECISION_DRAFT_CODES.includes(e.code))throw e;
-     // Draft commit (VE-007): parse-only validation; the analysis error stays
-     // visible in the committed re-render and publish stays blocked.
+     if(classifyCode(e.code,'design')!=='incomplete')throw e;
+     // Draft commit (VE-007): parse-only validation; the completeness error
+     // stays visible in the committed re-render and publish stays blocked.
      ws.applyEdits(edits,{expectedRevision:revision});
     }
    }else ws.applyEdits(edits,{expectedRevision:revision,entry,view});
@@ -3922,7 +3952,7 @@ function stage(D,ws,entry,view,fn,mode){
 const CREATION_DEFAULTS={
  'req.requirement':id=>({x_diagram:{code:String(id).toUpperCase().replace(/[^A-Z0-9]+/g,'_'),text:'Undecided requirement statement'}}),
 };
-function createInView(D,ws,entry,view,args){
+function createInView(D,ws,entry,view,args,mode){
  const {id,name,kind,at,properties}=args||{};
  const initial=properties||CREATION_DEFAULTS[kind]?.(id);
  return stage(D,ws,entry,view,t=>{
@@ -3932,7 +3962,7 @@ function createInView(D,ws,entry,view,args){
   if(initial){for(const [k,v]of Object.entries(initial))D.authoring.setProperty(t,entry,view,n.id,k,v);D.authoring.setProperty(t,entry,view,n.id,'kind',kind);}
   if(at)D.authoring.pin(t,entry,view,n.id,at.x,at.y);
   return{select:n.id};
- });
+ },mode);
 }
 const PROJECTION_PROPERTY_KEYS=['mark','records','dependencies','x','y','unit','x_type','aggregate','missing','series','panels','hit_policy','coverage','analysis_budget'];
 function editProjectionProperty(D,ws,entry,view,args,mode){
@@ -3966,7 +3996,7 @@ function editProjectionProperty(D,ws,entry,view,args,mode){
   if(!edit){if(removing)return{key,removed:false};edit={file:span.file,start:tokens[close].start,end:tokens[close].start,text:render+' '};}
   if(mode==='tolerant'){
    try{t.applyEdits([edit],{expectedRevision:t.revision,entry,view});}
-   catch(e){if(!DECISION_DRAFT_CODES.includes(e.code))throw e;t.applyEdits([edit],{expectedRevision:t.revision});}
+   catch(e){if(classifyCode(e.code,'design')!=='incomplete')throw e;t.applyEdits([edit],{expectedRevision:t.revision});}
   }else t.applyEdits([edit],{expectedRevision:t.revision,entry,view});
   return{key,...(removing?{removed:true}:{})};
  },mode);
@@ -4023,7 +4053,7 @@ const MATRIX_ALPHABETS={
  'matrix.raci@1':v=>['R','A','C','I'].includes(v),
  'matrix.crud@1':v=>typeof v==='string'&&/^[CRUD]+$/.test(v)&&new Set(v).size===v.length,
 };
-function setMatrixAssignments(D,ws,entry,view,args){
+function setMatrixAssignments(D,ws,entry,view,args,mode){
  const changes=(args||{}).changes;
  if(!Array.isArray(changes)||!changes.length||changes.length>100)fail('DDN-E007','Matrix changes need a matrix view and 1..100 cell operations');
  const p=ws.resolve(entry,view).view.profiles.projection||{};
@@ -4036,7 +4066,7 @@ function setMatrixAssignments(D,ws,entry,view,args){
  return stage(D,ws,entry,view,t=>{
   D.authoring.setMatrixCells(t,entry,view,changes.map(c=>({row:c.rowId,column:c.columnId,...(c.remove?{remove:true}:{value:c.value}),...(c.id?{id:c.id}:{})})));
   return{changes:changes.length};
- });
+ },mode);
 }
 // Chart editor commands (ED-003). Record edits are shared-model writes through
 // D.authoring; mark/binding edits are view-scope writes into the projection { }
@@ -4412,7 +4442,7 @@ function decisionProjection(D,ws,entry,view){
 }
 function decisionReplan(t,entry,view){
  try{return t.projectionPlan(entry,view);}
- catch(e){if(DECISION_DRAFT_CODES.includes(e.code))return{draft:{code:e.code,message:e.message}};throw e;}
+ catch(e){if(classifyCode(e.code,'design')==='incomplete')return{draft:{code:e.code,message:e.message}};throw e;}
 }
 // Decision commands stage with stage(…,'tolerant'): clean re-plans commit
 // through the full build validation exactly like every other editor; a
@@ -4549,7 +4579,7 @@ function editViewBodyProperty(D,t,entry,view,{key,value}){
  }
  if(!edit){if(removing)return{key,removed:false};edit={file:span.file,start:tokens[close].start,end:tokens[close].start,text:render+' '};}
  try{t.applyEdits([edit],{expectedRevision:t.revision,entry,view});}
- catch(e){if(!DECISION_DRAFT_CODES.includes(e.code))throw e;t.applyEdits([edit],{expectedRevision:t.revision});}
+ catch(e){if(classifyCode(e.code,'design')!=='incomplete')throw e;t.applyEdits([edit],{expectedRevision:t.revision});}
  return{key,...(removing?{removed:true}:{})};
 }
 function editDecisionRule(D,ws,entry,view,args){
@@ -4855,14 +4885,21 @@ function addExistingToView(D,ws,entry,args){
 // transitively (documented in the ch.11 status note). Relation occurrences
 // answer with an explicit unsupported response: no source change, no fake
 // replica (VE-AC-036's allowed alternative).
-function removeOccurrence(D,ws,entry,args){
+function removeOccurrence(D,ws,entry,args,mode){
  const {viewId,occurrenceId}=args||{};
  const r=resolveOccurrence(D,ws,entry,viewId,occurrenceId);
  if(r.role==='relation')return{status:'unsupported',reason:'The 0.5 runtime has no independent relation-hide: a relation occurrence can only disappear with an endpoint or via display { relations:none; }. The source is unchanged.'};
  return stage(D,ws,entry,viewId,t=>{
-  D.authoring.hide(t,entry,viewId,r.definitionId);
+  if(mode==='tolerant'){
+   // Draft commit (ED-010, VE-AC-006): authoring.hide validates the view and
+   // would reject a completeness-breaking draft; append the exclude ref
+   // through the span editor, which applies parse-only on incomplete codes.
+   const refs=viewListRefs(D,t,entry,viewId,'exclude')||[];
+   const ref=sourceRef(t,entry,r.definitionId);
+   if(!refs.includes(ref))editViewBodyProperty(D,t,entry,viewId,{key:'exclude',value:[...refs,ref].map(x=>({$ref:x}))});
+  }else D.authoring.hide(t,entry,viewId,r.definitionId);
   return{status:'removed',occurrenceId,removed:r.definitionId};
- });
+ },mode);
 }
 // moveOccurrences: one staged transaction for the whole positions array
 // (schema caps at 128). pin:false releases the place block. Pin-by-occurrence
@@ -4905,7 +4942,78 @@ function setViewOverride(D,ws,entry,args){
  return{status:'unsupported',reason:'Per-occurrence '+JSON.stringify(descriptorId)+' overrides are the ch.11 occurrence-contract RFC’s scope; the 0.5 runtime has no source form for them. The source is unchanged.'};
 }
 const occurrences={occurrenceIdFor,parse:parseOccurrenceId,list:listOccurrences,resolve:resolveOccurrence,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride};
-return{createInView,editProjectionProperty,editViewProperty,occurrences,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// ED-010 draft validation surface (spec ch.12; AUD-001/AUD-008; VE-002/003/007).
+// Read-only inspection: every scope runs in a scratch workspace so nothing
+// commits, and the strict render/export path is untouched. Diagnostics follow
+// the change-plan shape {code,severity,message,subjectId?,viewId,occurrenceId?};
+// severity typing is classifyCode (incomplete only under policy 'design').
+// Pass-through renderer diagnostics keep their own severity (e.g. DDN-W012,
+// DDN-PJW01/02, DDN-LW01). Subject attribution maps a diagnostic's
+// (source, offset) back to the definition declared at that span; when the
+// subject is a visible occurrence (ED-009) the issue carries its occurrenceId.
+function moduleOf(ws,file){
+ const m=/module\s+"([^"]+)"/.exec(ws.getFiles()[file]||'');
+ return m?m[1]:null;
+}
+function attributeSubject(D,t,file,offset){
+ if(!file||typeof offset!=='number')return null;
+ for(const e of t.entries())for(const v of t.views(e.file)||[]){
+  let ir;try{ir=t.resolve(e.file,v.id);}catch(_){continue;}
+  const el=ir.elements.find(n=>n.source?.file===file&&n.source?.start===offset);
+  if(el&&ir.view.selected.includes(el.id))return{entry:e.file,view:v.id,viewId:ir.view.id,definitionId:el.id};
+  const rel=ir.relations.find(r=>r.source?.file===file&&r.source?.start===offset);
+  if(rel&&ir.view.relations.includes(rel.id))return{entry:e.file,view:v.id,viewId:ir.view.id,definitionId:rel.id};
+  if(el)return{entry:e.file,view:v.id,viewId:ir.view.id,definitionId:el.id};
+ }
+ return null;
+}
+function makeIssue(D,t,viewUid,code,severity,message,file,offset){
+ const issue={code:String(code||'DDN099'),severity,message:String(message||''),viewId:viewUid};
+ const sub=attributeSubject(D,t,file,offset);
+ if(sub){issue.subjectId=sub.definitionId;issue.occurrenceId=occurrenceIdFor(sub.viewId,sub.definitionId);}
+ return issue;
+}
+function validate(D,ws,entry,opts){
+ const o=opts||{},scope=o.scope||'current-view',policy=o.policy||'design';
+ if(!['current-view','workspace'].includes(scope))fail('DDN-I033','validate scope is current-view or workspace.');
+ if(!['design','review'].includes(policy))fail('DDN-I033','validate policy is design or review.');
+ if(scope==='current-view'&&!o.view)fail('DDN-I033','current-view validation needs the active view id.');
+ const t=D.createWorkspace(ws.getFiles());
+ try{
+  const targets=scope==='workspace'
+   ?t.entries().flatMap(e=>(t.views(e.file)||[]).map(v=>({entry:e.file,view:v.id})))
+   :[{entry,view:o.view}];
+  const issues=[],views=[];
+  for(const tg of targets){
+   const mod=moduleOf(t,tg.entry),viewUid=mod?mod+'::'+tg.view:tg.view;
+   try{
+    const r=t.renderSync({entry:tg.entry,view:tg.view});
+    for(const d of r.diagnostics||[])issues.push(makeIssue(D,t,viewUid,d.code,d.severity||'warning',d.message,d.source||tg.entry,typeof d.offset==='number'?d.offset:undefined));
+    views.push({viewId:viewUid,entry:tg.entry,status:'current-view checked'});
+   }catch(e){
+    const severity=classifyCode(e.code,policy);
+    issues.push(makeIssue(D,t,viewUid,e.code,severity,e.message,e.source||tg.entry,typeof e.offset==='number'?e.offset:undefined));
+    views.push({viewId:viewUid,entry:tg.entry,status:severity==='incomplete'?'profile-incomplete':'error'});
+   }
+  }
+  issues.sort((a,b)=>a.code<b.code?-1:a.code>b.code?1:a.viewId<b.viewId?-1:a.viewId>b.viewId?1:0);
+  return{scope,policy,views,issues,counts:{
+   errors:issues.filter(i=>i.severity==='error').length,
+   incomplete:issues.filter(i=>i.severity==='incomplete').length,
+   warnings:issues.filter(i=>i.severity==='warning'||i.severity==='info'||i.severity==='information').length,
+  }};
+ }finally{t.destroy();}
+}
+// Pending-view bookkeeping (ch.12 "impacted views pending", session scope):
+// after a commit, every view except the committed one is pending until a
+// workspace-scope revalidation clears it. In-memory only; never persisted.
+function pendingViewsAfterCommit(D,ws,entry,activeView){
+ const out=[];
+ for(const e of ws.entries())for(const v of ws.views(e.file)||[])
+  if(!(e.file===entry&&v.id===activeView))out.push(e.file+'::'+v.id);
+ return out.sort();
+}
+return{createInView,editProjectionProperty,editViewProperty,occurrences,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });
 </script>
 <!-- INLINE:END commands.js -->
@@ -4925,6 +5033,7 @@ let fishboneNotice=null;
 let panelsNotice=null,panelsSel=null;
 let decisionNotice=null,decisionFixture=null;
 let rDrag=null;
+let pendingViews=new Set(),wsIssues=[],problemsOpen=false,incompleteBadge=false;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands,RELMAP=window.DDNRelationUIMap;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -4952,12 +5061,61 @@ function draw(){
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
   bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();renderDecisionSheet();updateInspector();updateLeft();highlight();updateSource();
- }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}if(decisionProfile())try{renderDecisionSheet();}catch{}}
+  incompleteBadge=false;renderProblems();
+ }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);
+  // ED-010: a profile-completeness failure is a draft state, not a hard error —
+  // the last good render stays dimmed behind and export stays blocked.
+  incompleteBadge=CMD.classifyCode(e.code,'design')==='incomplete';renderProblems();
+  if(chartProfile())try{renderChartSheet();}catch{}if(decisionProfile())try{renderDecisionSheet();}catch{}}
+}
+// ED-010 Problems strip + drawer (spec ch.12 "Bottom surfaces", ch.03): the
+// collapsed strip reports error / warning / incomplete counts separately;
+// expanding opens the navigable list grouped by severity. Dismissing the
+// drawer never waives a diagnostic. wsIssues holds the last workspace-review
+// scope result; pendingViews is session-only "impacted views pending" state.
+function currentIssues(){
+ const uid=ir?.view?.id,out=[];
+ if(renderFailure&&lastEditError)out.push({code:lastEditError.code||'RENDER',severity:CMD.classifyCode(lastEditError.code,'design'),message:lastEditError.message,viewId:uid||view});
+ else if(result)for(const d of result.diagnostics||[])out.push({code:d.code,severity:d.severity||'warning',message:d.message,viewId:uid||view});
+ for(const i of wsIssues)if(i.viewId!==uid)out.push(i);
+ return out;
+}
+function navigateIssue(d){
+ const target=d.subjectId||(d.occurrenceId?CMD.occurrences.parse(d.occurrenceId).definitionId:null);
+ if(!target){announce(d.code+': view-level diagnostic; no subject occurrence to navigate to.',true);return;}
+ if(d.occurrenceId){
+  const uid=CMD.occurrences.parse(d.occurrenceId).viewId;
+  if(uid!==ir?.view?.id)outer:for(const e of ws.entries())for(const v of ws.views(e.file)||[]){try{if(ws.resolve(e.file,v.id).view.id===uid){setView(v.id);break outer;}}catch(_){}}
+ }
+ choose(target);setTab('meaning');
+ const mark=document.querySelector('#paper [data-id="'+CSS.escape(target)+'"]');if(mark&&mark.scrollIntoView)mark.scrollIntoView({block:'center',inline:'center'});
+ announce('Navigated to '+target.split('::').pop()+' from '+d.code+'.');
+}
+function renderProblems(){
+ const issues=currentIssues();
+ const errs=issues.filter(i=>i.severity==='error'),inc=issues.filter(i=>i.severity==='incomplete'),warn=issues.filter(i=>['warning','info','information'].includes(i.severity));
+ const parts=[];if(errs.length)parts.push(errs.length+' error'+(errs.length>1?'s':''));if(inc.length)parts.push(inc.length+' incomplete');if(warn.length)parts.push(warn.length+' warning'+(warn.length>1?'s':''));if(pendingViews.size)parts.push(pendingViews.size+' pending');
+ const btn=$('#problemsBtn');btn.textContent=parts.length?parts.join(' · '):'No problems';
+ btn.classList.toggle('has-error',errs.length>0);btn.classList.toggle('has-incomplete',!errs.length&&(inc.length>0||pendingViews.size>0));
+ $('#incompleteBadge').hidden=!incompleteBadge;
+ const drawer=$('#problemsDrawer');drawer.hidden=!problemsOpen;if(!problemsOpen)return;
+ $('#problemsSummary').textContent=(wsIssues.length?'workspace review loaded · ':'')+issues.length+' issue(s) · dismissing never waives a diagnostic';
+ const order={error:0,incomplete:1,warning:2,info:2,information:2};
+ const sorted=[...issues].sort((a,b)=>(order[a.severity]??3)-(order[b.severity]??3)||(a.code<b.code?-1:a.code>b.code?1:0));
+ $('#problemsList').innerHTML=sorted.length?sorted.map((d,i)=>'<button class="problem-row sev-'+esc(d.severity)+'" data-issue="'+i+'"><span class="tag '+(d.severity==='error'?'':d.severity==='incomplete'?'amber':'teal')+'">'+esc(String(d.severity).toUpperCase())+'</span><code>'+esc(d.code)+'</code><span class="problem-msg">'+esc(d.message)+'</span><span class="small muted">'+esc(d.viewId||'')+'</span></button>').join(''):'<p class="help small muted">No diagnostics in the current scope.</p>';
+ $$('#problemsList [data-issue]').forEach(b=>b.onclick=()=>navigateIssue(sorted[+b.dataset.issue]));
+}
+function revalidateWorkspace(){
+ try{const rep=CMD.validate(D,ws,entry,{scope:'workspace',policy:'design'});wsIssues=rep.issues;pendingViews.clear();renderProblems();announce('Workspace revalidated · '+rep.views.length+' views checked · '+rep.counts.errors+' errors · '+rep.counts.incomplete+' incomplete · '+rep.counts.warnings+' warnings',rep.counts.errors>0);}catch(e){announce((e.code||'VALIDATE')+': '+e.message,true);}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
 // The production plan/impact/draft service is specified separately, not implemented here.
 function transaction(label,fn){
- const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;draw();announce(label+' · source updated · Undo available');return true;}catch(e){lastEditError=e;announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
+ const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;
+ // ED-010: after every commit every view except the active one is pending
+ // revalidation (ch.12 "impacted views pending", session scope only).
+ if(edits.length)try{pendingViews=new Set(CMD.pendingViewsAfterCommit(D,ws,entry,view));}catch{}
+ draw();announce(label+' · source updated · Undo available');return true;}catch(e){lastEditError=e;announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
 // Matrix sheet (spec ch.09 structured sheets): the editing surface for
 // kind:matrix projections. Every commit is one setMatrixAssignments transaction.
 const matrixProfile=()=>ir?.view.profiles.projection?.kind==='matrix'?ir.view.profiles.projection:null;
@@ -5540,7 +5698,7 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['flowchart','raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -5893,12 +6051,13 @@ function updateZoom(){$('#paper').style.width=(zoom*100)+'%';$('#zoomLabel').tex
 $('#dialogClose').onclick=closeModal;$('#dialog').addEventListener('cancel',()=>$('#reviewScreen').value='live');
 $('#sourceBtn').onclick=openSource;$('#closeSource').onclick=()=>$('#sourceDrawer').classList.remove('open');$('#reviewBtn').onclick=()=>story('impact');$('#reviewScreen').onchange=e=>{if(e.target.value!=='live')story(e.target.value);};
 $$('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));$$('[data-left]').forEach(b=>b.onclick=()=>{left=b.dataset.left;updateLeft();});$$('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$('#problemsBtn').onclick=()=>{problemsOpen=!problemsOpen;renderProblems();};$('#closeProblems').onclick=()=>{problemsOpen=false;renderProblems();};$('#revalidateBtn').onclick=revalidateWorkspace;
 $('#undo').onclick=()=>{ws.undo();draw();announce('Undo · source restored');};$('#redo').onclick=()=>{ws.redo();draw();announce('Redo · source restored');};
 $('#selectTool').onclick=()=>{mode='select';connectFrom=null;$('#selectTool').classList.add('active');$('#connectTool').classList.remove('active');announce('Select objects or fields. Drag a selected object to pin it.');};$('#connectTool').onclick=()=>{mode='connect';connectFrom=null;$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Click a source, then a destination. Escape cancels.');};
 $('#fitBtn').onclick=()=>{const svg=$('#paper>svg'),v=svg?.viewBox.baseVal,port=$('#viewport');if(v?.width&&v?.height){const availableW=port.clientWidth-48,availableH=port.clientHeight-75;zoom=Math.min(1,(availableH/v.height)/(availableW/v.width));}else zoom=1;updateZoom();};$('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom+.2);updateZoom();};$('#zoomOut').onclick=()=>{zoom=Math.max(.4,zoom-.2);updateZoom();};$('#arrangeBtn').onclick=arrange;$('#addAuto').onclick=()=>addNode('table');
 $('#exportBtn').onclick=()=>{modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio.</p>',[{label:'Current DDN',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},{label:'Workspace ZIP',primary:true,action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},{label:'Current SVG',action:()=>{if(renderFailure)return announce('Current render is invalid; export blocked.',true);D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}}]);};
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
-window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides}),select:choose,setView,story,draw,transaction};
+window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides,renderFailure,incompleteBadge,pendingViews:[...pendingViews],issues:currentIssues()}),select:choose,setView,story,draw,transaction,setProblemsOpen:v=>{problemsOpen=!!v;renderProblems();},revalidateWorkspace};
 draw();
 })();
 </script>

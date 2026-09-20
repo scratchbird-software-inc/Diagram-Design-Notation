@@ -13,6 +13,7 @@ let fishboneNotice=null;
 let panelsNotice=null,panelsSel=null;
 let decisionNotice=null,decisionFixture=null;
 let rDrag=null;
+let pendingViews=new Set(),wsIssues=[],problemsOpen=false,incompleteBadge=false;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands,RELMAP=window.DDNRelationUIMap;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -40,12 +41,61 @@ function draw(){
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
   bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();renderDecisionSheet();updateInspector();updateLeft();highlight();updateSource();
- }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}if(decisionProfile())try{renderDecisionSheet();}catch{}}
+  incompleteBadge=false;renderProblems();
+ }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);
+  // ED-010: a profile-completeness failure is a draft state, not a hard error —
+  // the last good render stays dimmed behind and export stays blocked.
+  incompleteBadge=CMD.classifyCode(e.code,'design')==='incomplete';renderProblems();
+  if(chartProfile())try{renderChartSheet();}catch{}if(decisionProfile())try{renderDecisionSheet();}catch{}}
+}
+// ED-010 Problems strip + drawer (spec ch.12 "Bottom surfaces", ch.03): the
+// collapsed strip reports error / warning / incomplete counts separately;
+// expanding opens the navigable list grouped by severity. Dismissing the
+// drawer never waives a diagnostic. wsIssues holds the last workspace-review
+// scope result; pendingViews is session-only "impacted views pending" state.
+function currentIssues(){
+ const uid=ir?.view?.id,out=[];
+ if(renderFailure&&lastEditError)out.push({code:lastEditError.code||'RENDER',severity:CMD.classifyCode(lastEditError.code,'design'),message:lastEditError.message,viewId:uid||view});
+ else if(result)for(const d of result.diagnostics||[])out.push({code:d.code,severity:d.severity||'warning',message:d.message,viewId:uid||view});
+ for(const i of wsIssues)if(i.viewId!==uid)out.push(i);
+ return out;
+}
+function navigateIssue(d){
+ const target=d.subjectId||(d.occurrenceId?CMD.occurrences.parse(d.occurrenceId).definitionId:null);
+ if(!target){announce(d.code+': view-level diagnostic; no subject occurrence to navigate to.',true);return;}
+ if(d.occurrenceId){
+  const uid=CMD.occurrences.parse(d.occurrenceId).viewId;
+  if(uid!==ir?.view?.id)outer:for(const e of ws.entries())for(const v of ws.views(e.file)||[]){try{if(ws.resolve(e.file,v.id).view.id===uid){setView(v.id);break outer;}}catch(_){}}
+ }
+ choose(target);setTab('meaning');
+ const mark=document.querySelector('#paper [data-id="'+CSS.escape(target)+'"]');if(mark&&mark.scrollIntoView)mark.scrollIntoView({block:'center',inline:'center'});
+ announce('Navigated to '+target.split('::').pop()+' from '+d.code+'.');
+}
+function renderProblems(){
+ const issues=currentIssues();
+ const errs=issues.filter(i=>i.severity==='error'),inc=issues.filter(i=>i.severity==='incomplete'),warn=issues.filter(i=>['warning','info','information'].includes(i.severity));
+ const parts=[];if(errs.length)parts.push(errs.length+' error'+(errs.length>1?'s':''));if(inc.length)parts.push(inc.length+' incomplete');if(warn.length)parts.push(warn.length+' warning'+(warn.length>1?'s':''));if(pendingViews.size)parts.push(pendingViews.size+' pending');
+ const btn=$('#problemsBtn');btn.textContent=parts.length?parts.join(' · '):'No problems';
+ btn.classList.toggle('has-error',errs.length>0);btn.classList.toggle('has-incomplete',!errs.length&&(inc.length>0||pendingViews.size>0));
+ $('#incompleteBadge').hidden=!incompleteBadge;
+ const drawer=$('#problemsDrawer');drawer.hidden=!problemsOpen;if(!problemsOpen)return;
+ $('#problemsSummary').textContent=(wsIssues.length?'workspace review loaded · ':'')+issues.length+' issue(s) · dismissing never waives a diagnostic';
+ const order={error:0,incomplete:1,warning:2,info:2,information:2};
+ const sorted=[...issues].sort((a,b)=>(order[a.severity]??3)-(order[b.severity]??3)||(a.code<b.code?-1:a.code>b.code?1:0));
+ $('#problemsList').innerHTML=sorted.length?sorted.map((d,i)=>'<button class="problem-row sev-'+esc(d.severity)+'" data-issue="'+i+'"><span class="tag '+(d.severity==='error'?'':d.severity==='incomplete'?'amber':'teal')+'">'+esc(String(d.severity).toUpperCase())+'</span><code>'+esc(d.code)+'</code><span class="problem-msg">'+esc(d.message)+'</span><span class="small muted">'+esc(d.viewId||'')+'</span></button>').join(''):'<p class="help small muted">No diagnostics in the current scope.</p>';
+ $$('#problemsList [data-issue]').forEach(b=>b.onclick=()=>navigateIssue(sorted[+b.dataset.issue]));
+}
+function revalidateWorkspace(){
+ try{const rep=CMD.validate(D,ws,entry,{scope:'workspace',policy:'design'});wsIssues=rep.issues;pendingViews.clear();renderProblems();announce('Workspace revalidated · '+rep.views.length+' views checked · '+rep.counts.errors+' errors · '+rep.counts.incomplete+' incomplete · '+rep.counts.warnings+' warnings',rep.counts.errors>0);}catch(e){announce((e.code||'VALIDATE')+': '+e.message,true);}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
 // The production plan/impact/draft service is specified separately, not implemented here.
 function transaction(label,fn){
- const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;draw();announce(label+' · source updated · Undo available');return true;}catch(e){lastEditError=e;announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
+ const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);try{const value=fn(t);const after=t.getFiles();const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));if(edits.length)ws.applyEdits(edits,{expectedRevision:revision,entry,view});actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});if(value?.select)selected=value.select;
+ // ED-010: after every commit every view except the active one is pending
+ // revalidation (ch.12 "impacted views pending", session scope only).
+ if(edits.length)try{pendingViews=new Set(CMD.pendingViewsAfterCommit(D,ws,entry,view));}catch{}
+ draw();announce(label+' · source updated · Undo available');return true;}catch(e){lastEditError=e;announce((e.code||'EDIT')+': '+e.message,true);return false;}finally{t.destroy();}}
 // Matrix sheet (spec ch.09 structured sheets): the editing surface for
 // kind:matrix projections. Every commit is one setMatrixAssignments transaction.
 const matrixProfile=()=>ir?.view.profiles.projection?.kind==='matrix'?ir.view.profiles.projection:null;
@@ -628,7 +678,7 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['flowchart','raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -981,11 +1031,12 @@ function updateZoom(){$('#paper').style.width=(zoom*100)+'%';$('#zoomLabel').tex
 $('#dialogClose').onclick=closeModal;$('#dialog').addEventListener('cancel',()=>$('#reviewScreen').value='live');
 $('#sourceBtn').onclick=openSource;$('#closeSource').onclick=()=>$('#sourceDrawer').classList.remove('open');$('#reviewBtn').onclick=()=>story('impact');$('#reviewScreen').onchange=e=>{if(e.target.value!=='live')story(e.target.value);};
 $$('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));$$('[data-left]').forEach(b=>b.onclick=()=>{left=b.dataset.left;updateLeft();});$$('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$('#problemsBtn').onclick=()=>{problemsOpen=!problemsOpen;renderProblems();};$('#closeProblems').onclick=()=>{problemsOpen=false;renderProblems();};$('#revalidateBtn').onclick=revalidateWorkspace;
 $('#undo').onclick=()=>{ws.undo();draw();announce('Undo · source restored');};$('#redo').onclick=()=>{ws.redo();draw();announce('Redo · source restored');};
 $('#selectTool').onclick=()=>{mode='select';connectFrom=null;$('#selectTool').classList.add('active');$('#connectTool').classList.remove('active');announce('Select objects or fields. Drag a selected object to pin it.');};$('#connectTool').onclick=()=>{mode='connect';connectFrom=null;$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Click a source, then a destination. Escape cancels.');};
 $('#fitBtn').onclick=()=>{const svg=$('#paper>svg'),v=svg?.viewBox.baseVal,port=$('#viewport');if(v?.width&&v?.height){const availableW=port.clientWidth-48,availableH=port.clientHeight-75;zoom=Math.min(1,(availableH/v.height)/(availableW/v.width));}else zoom=1;updateZoom();};$('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom+.2);updateZoom();};$('#zoomOut').onclick=()=>{zoom=Math.max(.4,zoom-.2);updateZoom();};$('#arrangeBtn').onclick=arrange;$('#addAuto').onclick=()=>addNode('table');
 $('#exportBtn').onclick=()=>{modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio.</p>',[{label:'Current DDN',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},{label:'Workspace ZIP',primary:true,action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},{label:'Current SVG',action:()=>{if(renderFailure)return announce('Current render is invalid; export blocked.',true);D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}}]);};
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
-window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides}),select:choose,setView,story,draw,transaction};
+window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides,renderFailure,incompleteBadge,pendingViews:[...pendingViews],issues:currentIssues()}),select:choose,setView,story,draw,transaction,setProblemsOpen:v=>{problemsOpen=!!v;renderProblems();},revalidateWorkspace};
 draw();
 })();

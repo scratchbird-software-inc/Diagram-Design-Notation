@@ -29,3 +29,48 @@ While a command or render is pending, retain the last successful diagram with a 
 
 ## Routing regressions as trust cases
 The reported Complete connector must remain short in its fixture, not merely crossing-free. Journal Line relations 11/12 must preserve field identity while improving allowed side/slot assignment. A preview must show that a suggested fix does not move pins or exchange fields. Measure route length, crossings, bend count, label clearance and semantic endpoint identity separately.
+
+## Implementation status (ED-010, 2026-09-20)
+The prototype implements the draft/published validation surface described in
+this chapter (covers VE-AC-006/007):
+
+- **Problems strip + drawer** (`prototype/body.html`, `app.js`): a collapsed
+  strip left of the status bar reports error, incomplete and warning counts
+  separately (zero classes hidden); expanding opens the navigable list grouped
+  by severity, each row showing code, message and view. Clicking a row
+  resolves the occurrence (ED-009), selects the implicated definition
+  (`choose`) and opens the Meaning tab (`setTab('meaning')`). Dismissing the
+  drawer never waives a diagnostic.
+- **Severity classification map** (`Commands.classifyCode` in
+  `prototype/commands.js`): the literal prefix map `DDN-PF`, `DDN-PJ016`,
+  `DDN-QD0`, `DDN-QL` types profile-completeness codes as draft-scope
+  `incomplete` under policy `design`; under policy `review` the same codes
+  report as `error`. Everything else (parse/identity `DDN0xx`, authoring
+  `DDN-E0xx`, unsafe binding `DDN-PJ004`, reference/scope `DDN-PJ007/008`) is
+  always `error`. Pass-through renderer diagnostics keep their own severity
+  (e.g. `DDN-W012`, `DDN-PJW01/02`, `DDN-LW01`). No code is ever dropped
+  (ADR-07: separately typed, not suppressed).
+- **`Commands.validate(D, ws, entry, {scope, policy})`**: `current-view`
+  builds the active view in a scratch workspace and classifies
+  `result.diagnostics` plus any thrown `DDNError`; `workspace` iterates
+  `ws.entries()` × `ws.views(entry)` in a scratch workspace, recording one
+  ch.12 status per view (`current-view checked`, `profile-incomplete`,
+  `error`) plus the flat issue list. Nothing commits; strict render/export is
+  untouched. Issues follow the change-plan diagnostic shape `{code, severity,
+  message, subjectId?, viewId, occurrenceId?}`; subject issues carry an
+  `occurrenceId` computed through `Commands.occurrences` and resolvable back
+  to the same definition.
+- **Incomplete badge + stale state**: when a committed draft's re-render fails
+  with a completeness code, the canvas head gains an amber `INCOMPLETE` badge,
+  the last good render stays dimmed behind, and export stays blocked by the
+  existing `renderFailure` guard.
+- **Pending-view bookkeeping**: after every commit all views except the active
+  one are marked pending (`Commands.pendingViewsAfterCommit`; session scope,
+  never persisted); the strip shows the pending count and "Revalidate
+  workspace" re-checks every view and clears them per view.
+- Draft commits: `createInView`/`removeOccurrence`/`setMatrixAssignments`
+  accept a `tolerant` mode that lets an edit whose only failure is an
+  `incomplete`-typed code commit (parse-only validation); hard failures still
+  reject before staging (VE-007; AUD-001's guard honored).
+
+Review dispositions and evidence attachments remain proposed.

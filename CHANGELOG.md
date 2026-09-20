@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: draft validation UX (Problems strip, incomplete typing,
+  workspace review scope, occurrence-addressed navigation) (ED-010; covers
+  VE-AC-006/007).
 - Designer prototype: occurrence addressing layer (`occ:` ids,
   add-existing/remove/move/override commands with explicit restriction
   responses) (ED-009; covers VE-AC-036).

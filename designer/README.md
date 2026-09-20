@@ -98,4 +98,14 @@ against those ids with explicit responses — same-view alias requests answer
 VE-AC-036) — the inspector header shows the selection's occurrence id and the
 Model shelf gains a per-item "Add to view…" action. This layer is the
 foundation for ED-010 (draft validation addresses issues to occurrence ids)
-and ED-012 (sequence lifelines/messages as occurrences).
+and ED-012 (sequence lifelines/messages as occurrences). ED-010 adds the
+draft validation UX (spec ch.12): a Problems strip left of the status bar
+reports error/incomplete/warning counts separately and expands into a
+navigable, occurrence-addressed issue list; `Commands.validate` classifies
+profile-completeness codes (`DDN-PF*`, `DDN-PJ016`, `DDN-QD0*`, `DDN-QL*`) as
+`incomplete` under policy design and `error` under review, with hard failures
+always `error` and renderer diagnostics passed through; a committed draft
+whose re-render fails a completeness check gains an amber INCOMPLETE badge
+over the dimmed last good render while export stays blocked; a workspace
+review scope revalidates every view and clears the session-only pending set
+(covers VE-AC-006/007).

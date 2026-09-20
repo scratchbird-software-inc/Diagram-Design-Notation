@@ -81,3 +81,15 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .reconnect-ghost{stroke:#146b7c;stroke-width:2.5;stroke-dasharray:7 4;pointer-events:none}
 .reconnect-ghost.invalid{stroke:#b3392f}
 .endpoint-card.proposed{background:#e5f4f3;border-color:#9fd2ca}
+.problems-strip{border:1px solid var(--line);background:#f6f8fa;border-radius:6px;padding:2px 10px;margin-right:10px;font-size:12px;cursor:pointer}
+.problems-strip.has-error{border-color:#b3392f;color:#b3392f;background:#fdecea}
+.problems-strip.has-incomplete{border-color:#b07d10;color:#8a6206;background:#fdf3dd}
+.problems-drawer{border-top:1px solid var(--line);background:#fff;max-height:220px;display:flex;flex-direction:column}
+.problems-drawer header{display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:1px solid var(--line)}
+.problems-drawer header .spacer{flex:1}
+.problems-drawer #problemsList{overflow:auto;padding:4px 10px 8px}
+.problem-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;border-bottom:1px solid #eef1f4;padding:5px 4px;font-size:12px;cursor:pointer}
+.problem-row:hover{background:#f4f8fd}
+.problem-row .problem-msg{flex:1}
+.problem-row.sev-error code{color:#b3392f}
+.problem-row.sev-incomplete code{color:#8a6206}
