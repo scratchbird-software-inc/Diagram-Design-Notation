@@ -119,3 +119,14 @@ one transaction. Assignment follows a one-lane-per-element policy; under the
 RT-105 `uml.activity@1` profile the same commands additionally maintain the
 registered `x_partition:{lane:"…"}` property with DDN-PJ114 re-checked on
 commit (UML-activity partitions stayed blocked until RT-105 landed).
+ED-012 adds the sequence diagram editor for RT-101's `uml.sequence@1`
+projection: a Sequence sheet lists lifelines (add existing/new, remove,
+up/down) and messages (label, from→to badges, dashed-return checkbox,
+up/down, delete) straight from `ws.projectionPlan(entry,view)`, and a
+two-click connect gesture on lifeline header marks creates `uml.message`
+relations through the same command layer. Order is declaration order —
+every reorder is a `Commands.moveDeclaration` span move of the declaration
+itself, provably leaving endpoints and `x_return` byte-identical (covers
+VE-AC-062) — and no placement/Arrange control is offered while the runtime
+rejects layout overrides LIVE021 (covers VE-AC-063); a silent participant
+surfaces the runtime's own DDN-PJW03 text in the sheet (VE-007).

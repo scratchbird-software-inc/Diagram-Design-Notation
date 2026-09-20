@@ -1214,5 +1214,145 @@ function unassignFromLane(D,ws,entry,view,args){
   return{frame:frame.id,removed:present.length};
  });
 }
-return{createInView,editProjectionProperty,editViewProperty,occurrences,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Sequence diagram editor commands (ED-012; RT-101 uml.sequence@1 gate; spec
+// ch.09 interaction paragraph; charter VE-002/003/005/006/007). Order is
+// declaration order: participants and messages render in the order their
+// declarations appear in their data blocks (ddn-projection-data.js sequence
+// branch), so reordering is a reviewed span move of the declaration itself
+// (moveDeclaration) — never a pixel drag and never a view-list rewrite
+// (VE-AC-062: only positions change; endpoints and x_return stay
+// byte-identical). Every write stages on a scratch workspace and re-plans the
+// sequence view, so the runtime's own DDN-PJ110 (endpoint not a selected
+// object) rejects before commit and DDN-PJW03 (silent participant) stays
+// surfaced, never hidden (VE-007). Layout overrides stay rejected LIVE021 by
+// the runtime's api.js apply() for data-bound projections (VE-AC-063); these
+// commands never write place/route source.
+function sequenceProjection(D,ws,entry,view){
+ const p=ws.resolve(entry,view).view.profiles.projection||{};
+ if(p.kind!=='sequence')fail('DDN-E006','Sequence editing needs a sequence projection');
+ return p;
+}
+const blockOf=id=>{const i=String(id).indexOf('::');return i<0?null:String(id).slice(0,i+2)+String(id).slice(i+2).split('.')[0];};
+// Cut the moved declaration's full span (leading line indentation plus the
+// trailing newline) and insert it immediately before beforeId's span.
+function spanMoveEdit(D,t,entry,view,definitionId,beforeId){
+ const from=D.authoring.sourceOf(t,entry,view,definitionId),to=D.authoring.sourceOf(t,entry,view,beforeId);
+ if(from.file!==to.file)return{unsupported:'Declarations '+definitionId+' ('+from.file+') and '+beforeId+' ('+to.file+') are in different files; declaration order is defined per data block. The source is unchanged.'};
+ const text=t.getFiles()[from.file];
+ let start=from.start,end=from.end;
+ const ls=text.lastIndexOf('\n',start-1)+1;
+ if(/^[ \t]*$/.test(text.slice(ls,start)))start=ls;
+ if(text[end]==='\n')end++;
+ const cut=text.slice(start,end),rest=text.slice(0,start)+text.slice(end);
+ const at=to.start>start?to.start-(end-start):to.start;
+ return{file:from.file,edit:{file:from.file,start:0,end:text.length,text:rest.slice(0,at)+cut+rest.slice(at)}};
+}
+function moveDeclaration(D,ws,entry,view,args){
+ const {definitionId,beforeId}=args||{};
+ if(typeof definitionId!=='string'||!definitionId||typeof beforeId!=='string'||!beforeId)fail('DDN-I033','A declaration move needs a definition id and the declaration it moves before. Nothing was changed.');
+ if(definitionId===beforeId)fail('DDN-I033','A declaration cannot move before itself. Nothing was changed.');
+ const ir=ws.resolve(entry,view),known=id=>ir.elements.some(n=>n.id===id)||ir.relations.some(r=>r.id===id);
+ if(!known(definitionId)||!known(beforeId))fail('DDN-E002','Definition not found.');
+ if(blockOf(definitionId)!==blockOf(beforeId))return{status:'unsupported',reason:'Cross-block order is view-data order, not declaration order: '+definitionId+' and '+beforeId+' are declared in different data blocks. The source is unchanged.'};
+ return stage(D,ws,entry,view,t=>{
+  const plan=spanMoveEdit(D,t,entry,view,definitionId,beforeId);
+  if(plan.unsupported)return{status:'unsupported',reason:plan.unsupported};
+  t.applyEdits([plan.edit],{expectedRevision:t.revision,entry,view});
+  t.projectionPlan(entry,view);
+  return{moved:definitionId,before:beforeId};
+ });
+}
+function reorderLifelines(D,ws,entry,view,args){
+ const {participantId,beforeId}=args||{};
+ sequenceProjection(D,ws,entry,view);
+ const plan=ws.projectionPlan(entry,view);
+ if(!plan.participants.some(n=>n.id===participantId))fail('DDN-I033','Lifeline '+String(participantId)+' is not a participant of this sequence view. Nothing was changed.');
+ if(!plan.participants.some(n=>n.id===beforeId))fail('DDN-I033','Lifeline '+String(beforeId)+' is not a participant of this sequence view. Nothing was changed.');
+ return moveDeclaration(D,ws,entry,view,{definitionId:participantId,beforeId});
+}
+// Endpoint pre-check against the uml.message semantic contract
+// (standard/registry/profiles/catalogue.json: allow_self:true,
+// member_endpoints:false, source/target:['*']). The commit-time build stays
+// the backstop (ddn-contracts.js DDN102); the scratch re-plan is the
+// authority for DDN-PJ110 (endpoint not a selected participant object).
+function sequenceEndpoints(D,ws,entry,view,fromId,toId){
+ const ir=ws.resolve(entry,view);
+ const contract=(D.profileCatalogue?.relationships||[]).find(r=>(r.keyword||r.id)==='uml.message')||{};
+ for(const id of [fromId,toId]){
+  if(typeof id!=='string'||!id)fail('DDN-I033','A sequence message names both endpoint lifelines. Nothing was changed.');
+  if(ir.elements.some(n=>n.id===id))continue;
+  const owner=ir.elements.find(n=>(n.fields||[]).some(f=>f.id===id));
+  if(owner&&contract.member_endpoints===false)fail('DDN-I033','A uml.message attaches to whole participant objects; it does not accept a member endpoint such as '+owner.name+'.'+String(id).split('.').pop()+' (member_endpoints:false). Nothing was changed.');
+  fail('DDN-E002','Definition not found.');
+ }
+ if(fromId===toId&&contract.allow_self===false)fail('DDN-I033','uml.message does not allow a self-message. Nothing was changed.');
+}
+function addSequenceMessage(D,ws,entry,view,args){
+ const {id,label,fromId,toId,isReturn,beforeId}=args||{};
+ sequenceProjection(D,ws,entry,view);
+ sequenceEndpoints(D,ws,entry,view,fromId,toId);
+ if(beforeId!==undefined){
+  const plan=ws.projectionPlan(entry,view);
+  if(!plan.messages.some(r=>r.id===beforeId))fail('DDN-I033','Row '+String(beforeId)+' is not a message of this sequence view. Nothing was changed.');
+ }
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.addRelation(t,entry,view,{id,name:label||id,kind:'uml.message',from:fromId,to:toId});
+  let rel=t.resolve(entry,view).relations.find(r=>String(r.id).endsWith('editor_data.'+id));
+  if(!rel)fail('DDN-I033','Created message not found in the resolved view.');
+  if(isReturn===true)D.authoring.setProperty(t,entry,view,rel.id,'x_return',true);
+  if(beforeId!==undefined){
+   // One atomic create+position transaction: authoring.addRelation's fixed
+   // destination is the view's editor_data block; positioning relocates the
+   // fresh declaration immediately before beforeId's span — the destination
+   // block is exactly beforeId's own, so the resulting declaration order is
+   // unambiguous. The user-facing moveDeclaration keeps its same-block
+   // restriction.
+   const plan=spanMoveEdit(D,t,entry,view,rel.id,beforeId);
+   if(plan.unsupported)fail('DDN-I033',plan.unsupported);
+   t.applyEdits([plan.edit],{expectedRevision:t.revision,entry,view});
+   rel=t.resolve(entry,view).relations.find(r=>String(r.id).endsWith('.'+id));
+  }
+  t.projectionPlan(entry,view);
+  return{select:rel.id};
+ });
+}
+function sequenceMessage(D,ws,entry,view,relationId){
+ sequenceProjection(D,ws,entry,view);
+ const rel=ws.resolve(entry,view).relations.find(r=>r.id===relationId);
+ if(!rel)fail('DDN-E002','Definition not found.');
+ if(rel.kind!=='uml.message')fail('DDN-I033','Relation '+String(relationId)+' is not a uml.message of this sequence view. Nothing was changed.');
+ return rel;
+}
+// x_return is true or absent, never a literal false: the renderer tests
+// x_return===true (ddn-projections.js sequence branch); a written false would
+// be dead data (VE-008 hygiene).
+function setMessageReturn(D,ws,entry,view,args){
+ const {relationId,isReturn}=args||{};
+ sequenceMessage(D,ws,entry,view,relationId);
+ if(isReturn!==true&&isReturn!==false&&isReturn!==undefined)fail('DDN-I033','isReturn is true (write x_return:true) or false (remove the property). Nothing was changed.');
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.setProperty(t,entry,view,relationId,'x_return',isReturn===true?true:undefined);
+  t.projectionPlan(entry,view);
+  return{relationId,isReturn:isReturn===true};
+ });
+}
+function setMessageLabel(D,ws,entry,view,args){
+ const {relationId,label}=args||{};
+ sequenceMessage(D,ws,entry,view,relationId);
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.setLabel(t,entry,view,relationId,label);
+  t.projectionPlan(entry,view);
+  return{select:relationId};
+ });
+}
+function removeSequenceMessage(D,ws,entry,view,args){
+ const {relationId}=args||{};
+ sequenceMessage(D,ws,entry,view,relationId);
+ return stage(D,ws,entry,view,t=>{
+  D.authoring.deleteDefinition(t,entry,view,relationId);
+  t.projectionPlan(entry,view);
+  return{relationId};
+ });
+}
+return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

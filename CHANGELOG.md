@@ -6,6 +6,8 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: sequence diagram editor for `uml.sequence@1` (lifelines,
+  messages, returns, declaration-order moves) (ED-012; covers VE-AC-062/063).
 - Designer prototype: lane editing on view frames (create/rename/resize/assign
   with previews; `x_partition` for `uml.activity@1`) (ED-011; covers
   VE-AC-040).

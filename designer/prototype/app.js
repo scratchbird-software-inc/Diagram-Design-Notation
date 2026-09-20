@@ -13,6 +13,7 @@ let fishboneNotice=null;
 let panelsNotice=null,panelsSel=null;
 let decisionNotice=null,decisionFixture=null;
 let laneNotice=null;
+let sequenceNotice=null,seqConnectFrom=null;
 let rDrag=null;
 let pendingViews=new Set(),wsIssues=[],problemsOpen=false,incompleteBadge=false;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
@@ -37,11 +38,11 @@ function draw(){
   $('#status').textContent='Live render · '+Math.round(next.milliseconds)+' ms · '+next.diagnostics.length+' reported warning(s)';
   $('#saved').textContent='Memory revision '+ws.revision;$('#undo').disabled=!ws.history().canUndo;$('#redo').disabled=!ws.history().canRedo;
   $('#canvasEyebrow').textContent=graph()?'SYNTHETIC COMMERCE MODEL / LIVE GRAPH':'SHARED PROCUREMENT MODEL / DATA-BOUND VIEW';
-  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures',swot:'Reusable SWOT panel template',sipoc:'SIPOC from shared notes',journey:'Service journey with spanning panels',decision:'Disposition policy — decision table'}[view]||view;
+  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures',swot:'Reusable SWOT panel template',sipoc:'SIPOC from shared notes',journey:'Service journey with spanning panels',decision:'Disposition policy — decision table',sequence:'Synthetic order flow — sequence'}[view]||view;
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();renderDecisionSheet();updateInspector();updateLeft();highlight();updateSource();
+  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();renderDecisionSheet();renderSequenceSheet();updateInspector();updateLeft();highlight();updateSource();
   incompleteBadge=false;renderProblems();
  }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);
   // ED-010: a profile-completeness failure is a draft state, not a hard error —
@@ -669,6 +670,79 @@ function renderDecisionSheet(){
   decisionTxn('Add decision rule (shared definition + records ref)',t=>CMD.addDecisionRule(D,t,entry,view,{id,label:label||id,when:{},then}));
  };
 }
+// Sequence sheet (spec ch.09 structured sheets; ED-012; RT-101 uml.sequence@1
+// gate). Lifelines column mirrors ws.projectionPlan(entry,view).participants
+// with up/down/remove/add controls; messages column mirrors .messages with a
+// label input, from→to badges, a return checkbox (x_return true-or-absent)
+// and up/down/delete. Order is declaration order: every up/down is a
+// moveDeclaration span move of the declaration itself, never a pixel drag and
+// never a view-list rewrite (VE-AC-062). No placement/Arrange control exists
+// here — the runtime rejects layout overrides LIVE021 (VE-AC-063). Silent
+// participants show the runtime's own DDN-PJW03 text (VE-007, surfaced).
+const sequenceProfile=()=>ir?.view.profiles.projection?.kind==='sequence'?ir.view.profiles.projection:null;
+function sequenceTxn(label,fn){lastEditError=null;const ok=transaction(label,fn);sequenceNotice=ok?null:(lastEditError?(lastEditError.code||'EDIT')+': '+lastEditError.message:'Edit rejected; source unchanged.');if(!ok)renderSequenceSheet();return ok;}
+function renderSequenceSheet(){
+ const sheet=$('#sequenceSheet');
+ if(!sheet)return;
+ const p=sequenceProfile();
+ if(!p){sheet.hidden=true;sheet.innerHTML='';seqConnectFrom=null;return;}
+ sheet.hidden=false;
+ let plan=null,planError=null;
+ try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
+ let h='<div class="sheet-head"><span class="tag teal">SEQUENCE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Order is <strong>declaration order</strong>: ↑/↓ moves the declaration span in source (moveDeclaration), never pixels · messages are shared <code>uml.message</code> relations (<code>x_return</code> true-or-absent) · no placement or Arrange exists in this projection (LIVE021)</span></div>';
+ if(sequenceNotice)h+='<div class="notice error">'+esc(sequenceNotice)+'</div>';
+ if(planError){h+='<div class="notice error">'+esc(planError)+' The sheet stays read-only; the source is unchanged.</div>';sheet.innerHTML=h;return;}
+ const pjW03=(result?.diagnostics||[]).filter(d=>d.code==='DDN-PJW03');
+ const nameOf=id=>ir.elements.find(n=>n.id===id)?.name||String(id).split('::').pop();
+ h+='<div class="seq-cols"><div class="seq-col"><h3>Lifelines · declaration order</h3><table aria-label="Sequence lifelines"><tbody>';
+ plan.participants.forEach((n,i)=>{
+  const warn=pjW03.find(d=>d.message.includes(n.name));
+  h+='<tr'+(selected===n.id?' class="sel"':'')+'><th>'+esc(n.name)+'<br><code class="id">'+esc(n.id.split('::').pop())+'</code>'+(warn?'<div class="seq-warn"><strong>'+esc(warn.code)+'</strong> '+esc(warn.message)+'</div>':'')+'</th>';
+  h+='<td class="seq-actions"><button data-seq-life-up="'+i+'" '+(i===0?'disabled':'')+' title="Move one lifeline left (declaration span move)">↑</button><button data-seq-life-down="'+i+'" '+(i===plan.participants.length-1?'disabled':'')+' title="Move one lifeline right">↓</button><button data-seq-life-remove="'+esc(n.id)+'" title="Hide this lifeline from the view; the shared definition is kept">remove</button></td></tr>';
+ });
+ h+='</tbody></table>';
+ const candidates=ir.elements.filter(n=>n.type==='object'&&!plan.participants.some(x=>x.id===n.id));
+ h+='<div class="batchbar"><span class="tag">ADD LIFELINE</span><select id="seqLifePick">'+candidates.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><button id="seqLifeAdd" '+(candidates.length?'':'disabled')+'>＋ Add existing</button><span class="small muted">or create a new participant:</span><input id="seqLifeNewId" placeholder="participant_id" aria-label="New participant identifier"><input id="seqLifeNewLabel" placeholder="Label" aria-label="New participant label"><button id="seqLifeNew">＋ New</button><span class="small muted">Add-existing adds one occurrence (addExistingToView) — never a clone. A participant without messages surfaces the runtime’s DDN-PJW03 above.</span></div></div>';
+ h+='<div class="seq-col"><h3>Messages · top-to-bottom declaration order</h3><table aria-label="Sequence messages"><tbody>';
+ plan.messages.forEach((r,i)=>{
+  h+='<tr'+(selected===r.id?' class="sel"':'')+'><th><input data-seq-msg-label="'+esc(r.id)+'" value="'+esc(r.name)+'" aria-label="Message '+(i+1)+' label"></th>';
+  h+='<td><span class="chip">'+esc(nameOf(r.from.element))+' → '+esc(nameOf(r.to.element))+'</span>'+(r.from.element===r.to.element?' <span class="tag amber">SELF</span>':'')+'</td>';
+  h+='<td style="white-space:nowrap"><label class="small"><input type="checkbox" data-seq-msg-return="'+esc(r.id)+'" '+(r.properties.x_return===true?'checked':'')+'> dashed return</label></td>';
+  h+='<td class="seq-actions"><button data-seq-msg-up="'+i+'" '+(i===0?'disabled':'')+' title="Move one row up (declaration span move)">↑</button><button data-seq-msg-down="'+i+'" '+(i===plan.messages.length-1?'disabled':'')+' title="Move one row down">↓</button><button data-seq-msg-del="'+esc(r.id)+'" title="Delete this message relation">delete</button></td></tr>';
+ });
+ h+='</tbody></table>';
+ h+='<div class="batchbar"><span class="tag">ADD MESSAGE</span><select id="seqMsgFrom">'+plan.participants.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><span class="preview-arrow">→</span><select id="seqMsgTo">'+plan.participants.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><input id="seqMsgLabel" placeholder="Label" aria-label="New message label"><label class="small" style="white-space:nowrap"><input id="seqMsgReturn" type="checkbox"> return</label><button id="seqMsgAdd">＋ Add</button><span class="small muted">Appends the last row (declaration order); ↑ repositions afterwards. The canvas two-click connect on lifeline headers is the equivalent gesture (VE-006). Self-messages are legal.</span></div></div></div>';
+ sheet.innerHTML=h;
+ sheet.querySelectorAll('[data-seq-life-up]').forEach(b=>b.onclick=()=>{const i=+b.dataset.seqLifeUp;sequenceTxn('Move lifeline '+plan.participants[i].name+' one position left',t=>CMD.reorderLifelines(D,t,entry,view,{participantId:plan.participants[i].id,beforeId:plan.participants[i-1].id}));});
+ sheet.querySelectorAll('[data-seq-life-down]').forEach(b=>b.onclick=()=>{const i=+b.dataset.seqLifeDown;sequenceTxn('Move lifeline '+plan.participants[i].name+' one position right',t=>CMD.reorderLifelines(D,t,entry,view,{participantId:plan.participants[i+1].id,beforeId:plan.participants[i].id}));});
+ sheet.querySelectorAll('[data-seq-life-remove]').forEach(b=>b.onclick=()=>{const id=b.dataset.seqLifeRemove;sequenceTxn('Hide lifeline '+nameOf(id)+' from this view (definition kept)',t=>{D.authoring.hide(t,entry,view,id);t.projectionPlan(entry,view);});});
+ $('#seqLifeAdd').onclick=()=>{const id=$('#seqLifePick').value;if(id)sequenceTxn('Add existing '+nameOf(id)+' as a lifeline (one occurrence)',t=>CMD.occurrences.addExistingToView(D,t,entry,{definitionId:id,viewId:view}));};
+ $('#seqLifeNew').onclick=()=>{
+  const id=$('#seqLifeNewId').value.trim(),label=$('#seqLifeNewLabel').value.trim();
+  if(!id){sequenceNotice='DDN-I033: A new participant needs an identifier. Nothing was changed.';renderSequenceSheet();return;}
+  sequenceTxn('Create participant '+id+' in this view (shared definition)',t=>CMD.createInView(D,t,entry,view,{id,name:label||id,kind:'service'}));
+ };
+ sheet.querySelectorAll('[data-seq-msg-label]').forEach(inp=>inp.onchange=()=>{const id=inp.dataset.seqMsgLabel,r=plan.messages.find(x=>x.id===id);if(inp.value!==r.name)sequenceTxn('Rename message '+r.name+' (shared relation label)',t=>CMD.setMessageLabel(D,t,entry,view,{relationId:id,label:inp.value}));});
+ sheet.querySelectorAll('[data-seq-msg-return]').forEach(inp=>inp.onchange=()=>{const id=inp.dataset.seqMsgReturn;sequenceTxn((inp.checked?'Set':'Clear')+' dashed return on '+nameOfMessage(id),t=>CMD.setMessageReturn(D,t,entry,view,{relationId:id,isReturn:inp.checked}));});
+ sheet.querySelectorAll('[data-seq-msg-up]').forEach(b=>b.onclick=()=>{const i=+b.dataset.seqMsgUp;sequenceTxn('Move message '+plan.messages[i].name+' one row up',t=>CMD.moveDeclaration(D,t,entry,view,{definitionId:plan.messages[i].id,beforeId:plan.messages[i-1].id}));});
+ sheet.querySelectorAll('[data-seq-msg-down]').forEach(b=>b.onclick=()=>{const i=+b.dataset.seqMsgDown;sequenceTxn('Move message '+plan.messages[i].name+' one row down',t=>CMD.moveDeclaration(D,t,entry,view,{definitionId:plan.messages[i+1].id,beforeId:plan.messages[i].id}));});
+ sheet.querySelectorAll('[data-seq-msg-del]').forEach(b=>b.onclick=()=>{const id=b.dataset.seqMsgDel;sequenceTxn('Delete message '+nameOfMessage(id)+' (guarded relation delete)',t=>CMD.removeSequenceMessage(D,t,entry,view,{relationId:id}));});
+ $('#seqMsgAdd').onclick=()=>{
+  const from=$('#seqMsgFrom').value,to=$('#seqMsgTo').value,label=$('#seqMsgLabel').value.trim(),ret=$('#seqMsgReturn').checked;
+  sequenceTxn('Add sequence message '+nameOf(from)+' → '+nameOf(to),t=>CMD.addSequenceMessage(D,t,entry,view,{id:'msg_'+counter++,label:label||'New message',fromId:from,toId:to,isReturn:ret}));
+ };
+ function nameOfMessage(id){return plan.messages.find(x=>x.id===id)?.name||String(id).split('::').pop();}
+}
+// Two-click connect on lifeline headers (VE-006 — the inspector list above is
+// the equivalent path; no drag-only gesture). First click marks the source
+// header, second click opens the same label/return modal used by the sheet.
+function sequenceConnectModal(fromId,toId){
+ const nameOf=id=>ir.elements.find(n=>n.id===id)?.name||id;
+ modal('Create a sequence message','<p>Creates one shared <code>uml.message</code> relation from <strong>'+esc(nameOf(fromId))+'</strong> to <strong>'+esc(nameOf(toId))+'</strong> — appended as the last row (declaration order); the sheet’s ↑/↓ repositions it as a span move. Endpoints that are not selected participant objects reject DDN-PJ110 before commit.</p><label for="seqConnLabel">Label</label><input id="seqConnLabel" value="New message"><label class="small"><input id="seqConnReturn" type="checkbox"> dashed return (x_return)</label>',[{label:'Cancel',action:closeModal},{label:'Create message',primary:true,action:()=>{
+  const ok=sequenceTxn('Two-click connect '+nameOf(fromId)+' → '+nameOf(toId),t=>CMD.addSequenceMessage(D,t,entry,view,{id:'msg_'+counter++,label:$('#seqConnLabel').value.trim()||'New message',fromId,toId,isReturn:$('#seqConnReturn').checked}));
+  if(ok)closeModal();
+ }}]);
+}
 function cancelTimelineDrag(silent){
  if(!tDrag)return;
  try{tDrag.el.removeAttribute('transform');}catch{}
@@ -679,7 +753,7 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['flowchart','raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;laneNotice=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['flowchart','raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision','sequence'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;laneNotice=null;sequenceNotice=null;seqConnectFrom=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
@@ -689,7 +763,7 @@ function updateLeft(){
  $('#paletteSearch').oninput=e=>{const q=e.target.value.toLowerCase();let shown=0;pane.querySelectorAll('[data-add]').forEach(b=>{const hit=!q||b.dataset.search.includes(q);b.hidden=!hit;if(hit)shown++;});pane.querySelectorAll('.palette-group').forEach(d=>{const visible=[...d.querySelectorAll('[data-add]')].filter(b=>!b.hidden);d.open=!!q&&visible.length>0||!q;d.hidden=!!q&&!visible.length;const badge=d.querySelector('[data-group-count]');if(badge)badge.textContent=q?visible.length+'/'+d.querySelectorAll('[data-add]').length:visible.length;});$('#paletteCount').textContent=shown+'/'+KINDMAP.kinds.length;};pane.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));
  }else if(left==='model'){
  pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas. “＋ view” adds the existing definition to another (or this) view as one occurrence — never a clone (ED-009).</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<span class="model-row"><button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button><button class="addview" data-addview="${esc(n.id)}" title="Add this existing definition to a view (addExistingToView)">＋ view</button></span>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));pane.querySelectorAll('[data-addview]').forEach(b=>b.onclick=()=>addToView(b.dataset.addview));
- }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey','decision'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels',decision:'Decision table'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+ }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey','decision','sequence'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels',decision:'Decision table',sequence:'Sequence'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
 }
 // Lane editing (ED-011; spec ch.08 "Scope versus visual grouping"; VE-003/
 // VE-005/VE-008). Lanes are this view's `frame` declarations in canonical
@@ -870,6 +944,23 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   p.innerHTML=dh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
+ const sp=sequenceProfile();
+ if(sp){
+  // VE-AC-063: no placement or Arrange control exists for a sequence view —
+  // the model below exposes lifelines and messages only, and the runtime
+  // rejects layout overrides LIVE021 (asserted by the behavior suite).
+  let sh='<div class="notice">Data-bound projection. Lifelines map to selected objects and arrows to shared <code>uml.message</code> relations; order is <strong>declaration order</strong>, never pixels. This inspector offers no placement or Arrange controls — the runtime rejects them (LIVE021).</div><h3>'+esc(sp.profile)+'</h3>';
+  let splan=null;try{splan=ws.projectionPlan(entry,view);}catch{}
+  if(splan){
+   sh+='<label>Lifelines · declaration order</label><div class="subtle">'+splan.participants.map(n=>esc(n.name)).join(' · ')+'</div><label>Messages · top to bottom</label><div class="subtle">'+splan.messages.map(r=>esc(r.name)).join(' · ')+'</div>';
+   const silent=(result?.diagnostics||[]).filter(d=>d.code==='DDN-PJW03');
+   if(silent.length)sh+='<label>Silent participants · surfaced, never hidden</label>'+silent.map(d=>'<div class="subtle"><strong>'+esc(d.code)+'</strong> '+esc(d.message)+'</div>').join('');
+   if(selected&&(splan.participants.some(n=>n.id===selected)||splan.messages.some(r=>r.id===selected)))sh+='<label>Selected</label><div class="subtle">'+esc(sourceLabel(selected))+'</div>';
+  }
+  sh+='<p class="help">Edit lifelines and messages in the Sequence sheet under the canvas, or two-click connect on lifeline headers (VE-006 — the sheet list is the equivalent path). Reorders move declaration spans; endpoints and x_return can never drift (VE-AC-062).</p>';
+  p.innerHTML=sh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  return;
+ }
  const cp=chartProfile();
  if(cp){  let ch='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale. Edit the record in the Source sheet; dragging a mark is disabled.</div><h3>'+esc(cp.profile)+' · '+esc(String(cp.mark??'source mark'))+'</h3><label>Bindings</label><div class="subtle">x <code>'+esc(String(cp.x??'—'))+'</code> · y <code>'+esc(String(cp.y??'—'))+'</code> · unit <code>'+esc(String(cp.unit??'—'))+'</code>'+(cp.aggregate?'<br>aggregate <code>'+esc(String(cp.aggregate))+'</code>':'')+'</div>';
   let cplan=null;try{cplan=ws.projectionPlan(entry,view);}catch{}
@@ -970,6 +1061,21 @@ function bindCanvas(){
   if(e.button!==0)return;
   if(!graph()){
    if(chartProfile()){const m=e.target.closest('[data-id],[data-source]');if(m)dragGuard={x:e.clientX,y:e.clientY,id:m.getAttribute('data-id')||m.getAttribute('data-source'),pointer:e.pointerId,fired:false};}
+   if(sequenceProfile()){
+    // Two-click connect on lifeline header marks only: the header group owns
+    // the scene box at y=0; activation bars and message marks never start it.
+    const g=e.target.closest('.ddn-mark[data-id]');
+    if(!g)return;
+    let plan;try{plan=ws.projectionPlan(entry,view);}catch{return;}
+    const part=plan.participants.find(n=>n.id===g.dataset.id);
+    if(!part)return;
+    const header=(result.scene.marks||[]).find(m=>(m.sourceIds||[]).includes(part.id)&&m.y===0);
+    if(!header)return;
+    e.preventDefault();
+    if(!seqConnectFrom){seqConnectFrom=part.id;announce('From '+part.name+'. Click the destination lifeline header (self-message allowed); Escape cancels.');}
+    else{const from=seqConnectFrom;seqConnectFrom=null;sequenceConnectModal(from,part.id);}
+    return;
+   }
    if(timelineProfile()){
     const g=e.target.closest('.ddn-mark[data-id]');
     if(!g)return;
@@ -1092,7 +1198,7 @@ function bindCanvas(){
    else transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,nx,ny));
   }};
  $('#paper').onpointercancel=()=>{cancelReconnectDrag();cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
- $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}if(decisionProfile())renderDecisionSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':decisionProfile()?'Rule selected — its row is highlighted in the Decision sheet; conditions and outcomes are shared-model edits.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
+ $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}if(decisionProfile())renderDecisionSheet();if(sequenceProfile())renderSequenceSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':decisionProfile()?'Rule selected — its row is highlighted in the Decision sheet; conditions and outcomes are shared-model edits.':sequenceProfile()?'Lifeline/message selected — its row is highlighted in the Sequence sheet; order is declaration order.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
 $('#viewport').ondrop=e=>{const kind=e.dataTransfer.getData('application/x-ddn-kind');if(!kindEntry(kind))return;e.preventDefault();const p=worldPoint(e)||{x:0,y:0};addNode(kind,{x:p.x-80,y:p.y-25});};
@@ -1123,7 +1229,7 @@ $('#undo').onclick=()=>{ws.undo();draw();announce('Undo · source restored');};$
 $('#selectTool').onclick=()=>{mode='select';connectFrom=null;$('#selectTool').classList.add('active');$('#connectTool').classList.remove('active');announce('Select objects or fields. Drag a selected object to pin it.');};$('#connectTool').onclick=()=>{mode='connect';connectFrom=null;$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Click a source, then a destination. Escape cancels.');};
 $('#fitBtn').onclick=()=>{const svg=$('#paper>svg'),v=svg?.viewBox.baseVal,port=$('#viewport');if(v?.width&&v?.height){const availableW=port.clientWidth-48,availableH=port.clientHeight-75;zoom=Math.min(1,(availableH/v.height)/(availableW/v.width));}else zoom=1;updateZoom();};$('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom+.2);updateZoom();};$('#zoomOut').onclick=()=>{zoom=Math.max(.4,zoom-.2);updateZoom();};$('#arrangeBtn').onclick=arrange;$('#addAuto').onclick=()=>addNode('table');
 $('#exportBtn').onclick=()=>{modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio.</p>',[{label:'Current DDN',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},{label:'Workspace ZIP',primary:true,action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},{label:'Current SVG',action:()=>{if(renderFailure)return announce('Current render is invalid; export blocked.',true);D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}}]);};
-window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;seqConnectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
 window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides,renderFailure,incompleteBadge,pendingViews:[...pendingViews],issues:currentIssues()}),select:choose,setView,story,draw,transaction,setProblemsOpen:v=>{problemsOpen=!!v;renderProblems();},revalidateWorkspace};
 draw();
 })();
