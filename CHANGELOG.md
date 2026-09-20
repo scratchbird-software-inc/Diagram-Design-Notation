@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: canvas template starters (BMC, Lean, SWOT, PEST, PESTLE,
+  Porter 5, empathy, scorecard) generating pre-populated panels views in one
+  command (ED-013).
 - Designer prototype: sequence diagram editor for `uml.sequence@1` (lifelines,
   messages, returns, declaration-order moves) (ED-012; covers VE-AC-062/063).
 - Designer prototype: lane editing on view frames (create/rename/resize/assign

@@ -1354,5 +1354,100 @@ function removeSequenceMessage(D,ws,entry,view,args){
   return{relationId};
  });
 }
-return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// Canvas template starters (ED-013; spec ch.06 "A template selects profile and
+// defaults explicitly; it does not inject a complete invented business model";
+// charter VE-003/VE-004/VE-007). CANVAS_TEMPLATES is the fixed registry: one
+// entry per canvas template — {id, title, profile, columns, blocks, notePrompt}
+// — with grids copied verbatim from the landed RT items (RT-013 bmc/lean
+// 10-column grids, RT-014 pest/pestle/porter5, RT-016 empathy/scorecard; SWOT
+// uses the shipped panels.basic@1 swot grid from examples/projections/
+// views.ddn). createCanvasFromTemplate runs ONE staged transaction that creates
+// exactly one synthetic starter note per block in the chosen data block
+// (A.addElement validation-path semantics: idOK + registered kind check; ids
+// <viewId>_<panelId>; description is the template's synthetic guidance
+// sentence — clearly placeholder text, never business data), appends the view
+// block at the entry file's end, then renders the new view in the scratch
+// workspace so the runtime's own DDN-PJ020/021/PJ009 and canvas
+// DDN-PJ080/081/083 checks are the pre-commit authority. No KPIs, no
+// strategies, no extra relations are ever generated.
+const CANVAS_TEMPLATES=[
+ {id:'bmc',title:'Business Model Canvas',profile:'canvas.bmc@1',columns:10,notePrompt:'List the partners this model depends on.',blocks:[['kp','KEY PARTNERS',0,0,2,2],['ka','KEY ACTIVITIES',0,2,1,2],['kr','KEY RESOURCES',1,2,1,2],['vp','VALUE PROPOSITIONS',0,4,2,2],['cr','CUSTOMER RELATIONSHIPS',0,6,1,2],['ch','CHANNELS',1,6,1,2],['cs','CUSTOMER SEGMENTS',0,8,2,2],['cost','COST STRUCTURE',2,0,1,5],['rev','REVENUE STREAMS',2,5,1,5]]},
+ {id:'lean',title:'Lean Canvas',profile:'canvas.lean@1',columns:10,notePrompt:'State the top problem this model addresses.',blocks:[['problem','PROBLEM',0,0,2,2],['solution','SOLUTION',0,2,1,2],['keymetrics','KEY METRICS',1,2,1,2],['uvp','UNIQUE VALUE PROPOSITION',0,4,2,2],['unfair','UNFAIR ADVANTAGE',0,6,1,2],['channels','CHANNELS',1,6,1,2],['segments','CUSTOMER SEGMENTS',0,8,2,2],['cost','COST STRUCTURE',2,0,1,5],['revenue','REVENUE STREAMS',2,5,1,5]]},
+ {id:'swot',title:'SWOT analysis',profile:'panels.basic@1',columns:2,notePrompt:'Name one strength of the current situation.',blocks:[['s','STRENGTHS',0,0,1,1],['w','WEAKNESSES',0,1,1,1],['o','OPPORTUNITIES',1,0,1,1],['t','THREATS',1,1,1,1]]},
+ {id:'pest',title:'PEST analysis',profile:'canvas.pest@1',columns:4,notePrompt:'Note one political factor affecting the subject.',blocks:[['political','POLITICAL',0,0,1,1],['economic','ECONOMIC',0,1,1,1],['social','SOCIAL',0,2,1,1],['technological','TECHNOLOGICAL',0,3,1,1]]},
+ {id:'pestle',title:'PESTLE analysis',profile:'canvas.pestle@1',columns:3,notePrompt:'Note one political factor affecting the subject.',blocks:[['political','POLITICAL',0,0,1,1],['economic','ECONOMIC',0,1,1,1],['social','SOCIAL',0,2,1,1],['technological','TECHNOLOGICAL',1,0,1,1],['legal','LEGAL',1,1,1,1],['environmental','ENVIRONMENTAL',1,2,1,1]]},
+ {id:'porter5',title:'Porter five forces',profile:'canvas.porter5@1',columns:3,notePrompt:'Describe the intensity of competitive rivalry.',blocks:[['entrants','THREAT OF NEW ENTRANTS',0,1,1,1],['supplier','SUPPLIER POWER',1,0,1,1],['rivalry','COMPETITIVE RIVALRY',1,1,1,1],['buyer','BUYER POWER',1,2,1,1],['substitutes','THREAT OF SUBSTITUTES',2,1,1,1]]},
+ {id:'empathy',title:'Empathy map',profile:'canvas.empathy@1',columns:2,notePrompt:'Record what the persona says aloud.',blocks:[['says','SAYS',0,0,1,1],['thinks','THINKS',0,1,1,1],['persona','PERSONA',1,0,1,2],['does','DOES',2,0,1,1],['feels','FEELS',2,1,1,1]]},
+ {id:'scorecard',title:'Balanced scorecard',profile:'canvas.scorecard@1',columns:2,notePrompt:'State one financial perspective objective.',blocks:[['financial','FINANCIAL',0,0,1,1],['customer','CUSTOMER',0,1,1,1],['internal','INTERNAL PROCESS',1,0,1,1],['learning','LEARNING & GROWTH',1,1,1,1]]},
+];
+// Mirror of authoring.js idOK: a fresh DDN identifier, never a reserved name.
+const templateIdOK=id=>{if(typeof id!=='string'||!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(id)||['__proto__','constructor','prototype'].includes(id))fail('DDN-E001','Use a valid, nonreserved DDN identifier.');return id;};
+// Data blocks declared in the entry file (lexed declaration spans), for the
+// dialog's destination picker and the command's default (first data block).
+function dataBlocks(D,ws,entry){
+ const text=ws.getFiles()[entry]||'';
+ const tokens=D.lex(text,entry),out=[];
+ for(let i=0;i<tokens.length;i++){
+  if(tokens[i].type==='id'&&tokens[i].value==='data'&&tokens[i+1]?.type==='id'&&tokens[i+2]?.type==='{'){
+   let depth=1,end=-1;
+   for(let j=i+3;j<tokens.length;j++){if(tokens[j].type==='{')depth++;if(tokens[j].type==='}'){depth--;if(!depth){end=tokens[j].start;break;}}}
+   if(end>0)out.push({id:tokens[i+1].value,bodyEnd:end});
+  }
+ }
+ return out;
+}
+// Default formatRef: the first format @-path declared by any view of the entry
+// (resolved from the view node's source props). A file whose views carry no
+// format reference is a coded rejection with guidance, never a silent guess.
+function defaultFormatRef(D,ws,entry){
+ for(const v of ws.views(entry)||[]){
+  const span=ws.resolve(entry,v.id).view.source,text=ws.getFiles()[span.file];
+  const tokens=D.lex(text,span.file).filter(x=>x.start>=span.start&&x.end<=span.end);
+  for(let i=0,d=0;i<tokens.length;i++){
+   const tok=tokens[i];
+   if(tok.type==='{'||tok.type==='[')d++;
+   if(tok.type==='}'||tok.type===']')d--;
+   if(d===1&&tok.type==='id'&&tok.value==='format'&&tokens[i+1]?.type===':'&&tokens[i+2]?.type==='@'){
+    const tail=text.slice(tokens[i+2].end).match(/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*/);
+    if(tail)return tail[0];
+   }
+  }
+ }
+ fail('DDN-I033','No format bundle reference could be resolved from this entry’s views; pass formatRef explicitly (an @-path to a format bundle). Nothing was changed.');
+}
+function createCanvasFromTemplate(D,ws,entry,args){
+ const {templateId,viewId,viewLabel}=args||{};
+ let {dataId,formatRef}=args||{};
+ const tpl=CANVAS_TEMPLATES.find(x=>x.id===templateId);
+ if(!tpl)fail('DDN-I033','Unknown canvas template '+JSON.stringify(templateId)+'; known templates: '+CANVAS_TEMPLATES.map(x=>x.id).join(', ')+'. Nothing was changed.');
+ templateIdOK(viewId);
+ if(typeof viewLabel!=='string'||!viewLabel||viewLabel.length>4096)fail('DDN-I033','A view label is a non-empty string. Nothing was changed.');
+ const files=ws.getFiles();
+ if(typeof files[entry]!=='string')fail('DDN-I033','Entry '+JSON.stringify(entry)+' is not in this workspace. Nothing was changed.');
+ for(const e of ws.entries())for(const v of ws.views(e.file)||[])if(v.id===viewId)fail('DDN-I033','A view named '+viewId+' already exists ('+e.file+'). Choose a fresh view id. Nothing was changed.');
+ const blocks=dataBlocks(D,ws,entry);
+ if(!blocks.length)fail('DDN-I033','The entry file declares no data block to hold the starter notes. Nothing was changed.');
+ if(dataId===undefined)dataId=blocks[0].id;
+ const target=blocks.find(b=>b.id===dataId);
+ if(!target)fail('DDN-I033','Data block '+JSON.stringify(dataId)+' is not declared in '+entry+'; choices: '+blocks.map(b=>b.id).join(', ')+'. Nothing was changed.');
+ if(formatRef===undefined)formatRef=defaultFormatRef(D,ws,entry);
+ if(!D.kinds.some(k=>k.id==='note'))fail('DDN-E001','Unknown object kind.');
+ for(const [pid] of tpl.blocks)templateIdOK(viewId+'_'+pid);
+ const text=files[entry];
+ const notes=tpl.blocks.map(([pid,title])=>'    object '+viewId+'_'+pid+' '+JSON.stringify(title)+' { kind: "note"; description: '+JSON.stringify(tpl.notePrompt)+'; }').join('\n');
+ const panels=tpl.blocks.map(([pid,title,row,column,rowspan,colspan])=>'{id:'+JSON.stringify(pid)+',title:'+JSON.stringify(title)+',row:'+row+',column:'+column+',rowspan:'+rowspan+',colspan:'+colspan+',items:[@'+dataId+'.'+viewId+'_'+pid+']}').join(', ');
+ const viewText='\nview '+viewId+' '+JSON.stringify(viewLabel)+' {\n    data: [@'+dataId+'];\n    format: @'+formatRef+';\n    projection { kind:panels; profile:'+JSON.stringify(tpl.profile)+'; columns:'+tpl.columns+'; panels:['+panels+']; }\n\n}\n';
+ return stage(D,ws,entry,viewId,t=>{
+  t.applyEdits([
+   {file:entry,start:target.bodyEnd,end:target.bodyEnd,text:'\n'+notes+'\n'},
+   {file:entry,start:text.length,end:text.length,text:viewText},
+  ],{expectedRevision:t.revision});
+  // The scratch render is the pre-commit proof: grid legality (DDN-PJ020/021),
+  // non-empty item lists (DDN-PJ009) and the canvas profile's required blocks
+  // (DDN-PJ080/081/083) all pass before anything commits.
+  t.renderSync({entry,view:viewId});
+  return{select:null,viewId,profile:tpl.profile,blocks:tpl.blocks.length};
+ });
+}
+return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
 });

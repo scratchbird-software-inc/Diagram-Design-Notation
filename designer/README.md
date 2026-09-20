@@ -130,3 +130,16 @@ itself, provably leaving endpoints and `x_return` byte-identical (covers
 VE-AC-062) — and no placement/Arrange control is offered while the runtime
 rejects layout overrides LIVE021 (covers VE-AC-063); a silent participant
 surfaces the runtime's own DDN-PJW03 text in the sheet (VE-007).
+ED-013 adds one-click canvas template starters to the Add shelf (spec ch.06
+"Blank workspace"): eight template cards (Business Model Canvas, Lean Canvas,
+SWOT, PEST, PESTLE, Porter five forces, empathy map, balanced scorecard) open
+a dialog with a mini-grid block preview, the target entry file, editable view
+id/label and a destination data-block picker; commit runs
+`Commands.createCanvasFromTemplate` as one staged transaction — the profile's
+fixed grid with exactly one synthetic starter note per block, never an
+invented business model — proven in a scratch render (DDN-PJ020/021/PJ009 and
+the canvas DDN-PJ080/081/083 guards) before anything commits, then opens the
+generated view in ED-006's panels editor with the fixed-block guard active.
+`setView()` generalizes to resolve generated view ids by scanning both source
+files. No acceptance-plan case covers template starters; the gap is recorded
+in the ED-013 report.

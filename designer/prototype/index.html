@@ -114,6 +114,12 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .sequence-sheet .batchbar select,.sequence-sheet .batchbar input{width:auto;min-height:30px;padding:3px 8px;font-size:12px}
 .sequence-sheet .batchbar #seqMsgLabel{width:170px}
 .sequence-sheet .batchbar #seqLifePick{min-width:180px}
+/* ED-013 canvas template starters: shelf cards and the dialog's mini grid. */
+.template-list{display:grid;gap:6px}
+.template-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border-color:#d7e1eb;padding:8px 10px}
+.tpl-grid{display:grid;gap:5px;margin:10px 0}
+.tpl-cell{border:1px solid #cfdbe7;background:#f2f7fb;border-radius:6px;padding:6px 8px;font-size:11px;display:flex;flex-direction:column;gap:2px;min-height:38px}
+.tpl-cell code{color:#617084}
 </style></head><body><header class="projectbar">
  <div class="brand"><div class="mark">D</div><div><strong>DDN Designer <span class="tag teal">DESIGN PROTOTYPE</span></strong><small>Visual authoring · separate from Studio</small></div></div>
  <div class="actions"><span class="small muted" id="saved">In-memory sample</span><button id="undo" title="Undo" aria-label="Undo">↶</button><button id="redo" title="Redo" aria-label="Redo">↷</button><button id="sourceBtn">Source & changes</button><button id="reviewBtn">Review impact</button><button id="exportBtn" class="primary">Download</button></div>

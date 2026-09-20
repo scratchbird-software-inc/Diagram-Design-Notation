@@ -5,6 +5,8 @@
 ## Blank workspace
 Start with a valid minimal module, shared data block, shared default format and one empty named view. Offer Sketch, Data model, Process, Architecture, Matrix/report, or open existing. A template selects profile and defaults explicitly; it does not inject a complete invented business model. Friendly names are editable while stable IDs are generated separately.
 
+> Implementation status (ED-013): eight canvas template starters are implemented in the prototype's Add shelf (Business Model Canvas, Lean Canvas, SWOT, PEST, PESTLE, Porter five forces, empathy map, balanced scorecard). Each one instantiates its profile's fixed grid with one synthetic starter note per block in a single atomic command (`Commands.createCanvasFromTemplate`), then opens the generated view in the panels editor; the starter notes are clearly placeholder guidance, never business data.
+
 ## Creation destination
 The Add shelf displays “Create in model.ddn / model.” A project default can preselect it. New objects go to that selected data block, even when the visual view is in another file. Create the necessary import and view selection atomically. Creating a local-only object is a deliberate alternative labeled “Only this view's local data.” Do not reuse the current helper's `editor_data` behavior as the universal policy.
 
