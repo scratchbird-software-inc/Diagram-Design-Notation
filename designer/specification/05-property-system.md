@@ -20,7 +20,7 @@ UI descriptors do not replace semantic validators. They may hide inapplicable in
 - **References:** search label, kind and source; distinguish an existing definition from creation of a new definition. Stable references are serialized, not display-name strings.
 - **Units:** value plus declared unit; no display-only unit conversion affecting the semantic value.
 - **Cardinality:** two endpoint-specific controls with a sentence preview: “For one Customer, 0..many Orders.” Zero/many symbols are not row counts.
-- **Conditions:** typed predicate builder with explicit source/parameter domain, not a code textarea mislabeled validated rule input.
+- **Conditions:** typed predicate builder with explicit source/parameter domain, not a code textarea mislabeled validated rule input. Implemented for decision rules in the prototype (ED-007): enum inputs select declared values (multi-select for `in`), number inputs use an interval form (min/max with closure flags) or typed `eq`/`in` values, boolean inputs choose true/false, and `null`/`missing` operators appear only when the domain declares `nullable`/`optional`; the scratch re-plan (DDN-QD002) stays the authority.
 - **Series/scales:** bound record selectors, unit checks and explicit missing/aggregation policies.
 - **Scope:** relation-aware membership picker; namespace, placement, ownership and layout-group membership remain separate.
 

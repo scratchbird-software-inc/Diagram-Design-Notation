@@ -65,3 +65,16 @@ body.night{color:var(--ink)}body.night .canvas-head .eyebrow,body.night .section
 .panels-sheet .batchbar input{width:auto;min-height:30px;padding:3px 8px;font-size:12px}
 .panels-sheet .batchbar input[type=number]{width:70px}
 .panels-sheet .batchbar #pNewNote{width:280px}
+.decision-sheet .policy-badges{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 10px}
+.decision-sheet .policy-badges .badge{font:600 11px/1.6 sans-serif;letter-spacing:.04em;background:#eaf3ff;border:1px solid #b9d2ee;border-radius:6px;padding:3px 8px}
+.decision-sheet .policy-badges select{min-height:28px;font-size:12px}
+.decision-sheet td.pred select,.decision-sheet td.pred input{min-height:26px;font-size:11px;padding:2px 5px;margin:1px 2px 1px 0}
+.decision-sheet td.pred input[type=number]{width:62px}
+.decision-sheet td.outcome input[type=text]{width:130px;min-height:26px;font-size:11px;padding:2px 5px}
+.decision-sheet .decision-analysis{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:12px 0;font-size:12px}
+.decision-sheet .decision-analysis .witness{font:11px/1.5 monospace;background:#f6f8fa;border-radius:4px;padding:2px 5px;display:inline-block;margin:2px 4px 2px 0}
+.decision-sheet .fixture-form{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+.decision-sheet .fixture-form label{font-size:11px;color:var(--muted)}
+.decision-sheet .fixture-form select,.decision-sheet .fixture-form input{min-height:28px;font-size:12px}
+.decision-sheet .fixture-result{font-size:12px;margin:6px 0}
+.decision-sheet tr.stale td{opacity:.55}

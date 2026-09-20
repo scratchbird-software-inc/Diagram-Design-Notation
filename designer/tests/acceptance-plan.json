@@ -899,13 +899,15 @@
       "title": "Coverage",
       "action": "Add overlapping unique-hit interval rule",
       "expected": "Witness input shown; invalid publish blocked",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-007-decision-table-editor.js",
+      "coveredIn": "ED-007"
     },
     {
       "id": "VE-AC-060",
@@ -914,13 +916,15 @@
       "title": "Budget",
       "action": "Rule partition count exceeds analysis budget",
       "expected": "Status unestablished, not success",
-      "status": "planned-not-executed",
+      "status": "covered-by-designer-tests",
       "evidenceRequired": [
         "fixture-source",
         "actual-result",
         "diagnostics",
         "source-diff-or-identity-check"
-      ]
+      ],
+      "coveredBy": "designer/tests/ed-007-decision-table-editor.js",
+      "coveredIn": "ED-007"
     },
     {
       "id": "VE-AC-061",

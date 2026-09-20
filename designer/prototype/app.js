@@ -11,6 +11,7 @@ let chartSel=null,chartNotice=null,dragGuard=null,lastEditError=null;
 let timelineNotice=null,tDrag=null;
 let fishboneNotice=null;
 let panelsNotice=null,panelsSel=null;
+let decisionNotice=null,decisionFixture=null;
 const optionsByView={};const actualCommands=[];const A=D.authoring;
 const KINDMAP=window.DDNKindUIMap,CMD=window.DesignerCommands;
 const PALETTE_GROUPS=['Meaning','Data','Process','Systems','Scopes','People & control','Notes & evidence','Analysis'];
@@ -33,12 +34,12 @@ function draw(){
   $('#status').textContent='Live render · '+Math.round(next.milliseconds)+' ms · '+next.diagnostics.length+' reported warning(s)';
   $('#saved').textContent='Memory revision '+ws.revision;$('#undo').disabled=!ws.history().canUndo;$('#redo').disabled=!ws.history().canRedo;
   $('#canvasEyebrow').textContent=graph()?'SYNTHETIC COMMERCE MODEL / LIVE GRAPH':'SHARED PROCUREMENT MODEL / DATA-BOUND VIEW';
-  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures',swot:'Reusable SWOT panel template',sipoc:'SIPOC from shared notes',journey:'Service journey with spanning panels'}[view]||view;
+  $('#viewHeading').textContent={overview:'Customer orders',names:'Customer orders · compact',raci:'Responsibility assignments',chart_bar:'Supplied monthly values',gantt:'Supplied-date procurement schedule',fishbone:'Possible causes of inspection failures',swot:'Reusable SWOT panel template',sipoc:'SIPOC from shared notes',journey:'Service journey with spanning panels',decision:'Disposition policy — decision table'}[view]||view;
   $('#viewHelp').textContent=graph()?'Select a table to edit its shared meaning. Drag to position and pin it. Connect tables or their named fields.':'Values and bindings determine geometry. Graph placement and connector tools are unavailable in this projection.';
   $('#connectTool').disabled=!graph();$('#addAuto').disabled=!graph();$('#arrangeBtn').disabled=!graph();
   if(!graph())mode='select';
-  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();updateInspector();updateLeft();highlight();updateSource();
- }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}}
+  bindCanvas();renderMatrixSheet();renderChartSheet();renderTimelineSheet();renderFishboneSheet();renderPanelsSheet();renderDecisionSheet();updateInspector();updateLeft();highlight();updateSource();
+ }catch(e){lastEditError=e;renderFailure=true;$('#paper').style.opacity='.35';announce((e.code||'RENDER')+': '+e.message,true);if(chartProfile())try{renderChartSheet();}catch{}if(decisionProfile())try{renderDecisionSheet();}catch{}}
 }
 // Staged helper operations provide one history entry for this prototype's limited gestures.
 // The production plan/impact/draft service is specified separately, not implemented here.
@@ -402,6 +403,220 @@ function renderPanelsSheet(){
   });
  };
 }
+// Decision sheet (spec ch.09 structured sheets; ED-007): one row per rule in
+// projection.records order with typed predicate controls driven by the declared
+// input domains and typed outcome cells driven by the observed scalar types.
+// Rule rows and their x_rule records are shared-model edits; the records order
+// and hit_policy/coverage are view-scope writes (both scopes labeled, VE-005).
+// The hit policy and coverage show as badges exactly as the renderer prints
+// them and change through setDecisionPolicy with an immediate re-render and
+// analysis summary. Analysis failures (DDN-QD004/005/008) commit as drafts
+// (VE-007): the committed re-render surfaces the witness, the last good SVG
+// stays with a stale marker, and export stays blocked by the renderFailure guard.
+const decisionProfile=()=>ir?.view.profiles.projection?.kind==='decision'?ir.view.profiles.projection:null;
+const DECISION_DRAFT=['DDN-QD004','DDN-QD005','DDN-QD008'];
+function decisionTxn(label,fn){
+ lastEditError=null;
+ const before=ws.getFiles(),revision=ws.revision,t=D.createWorkspace(before);
+ try{
+  const value=fn(t);
+  const after=t.getFiles();
+  const edits=Object.keys(after).filter(f=>before[f]!==after[f]).map(f=>({file:f,start:0,end:(before[f]||'').length,text:after[f]}));
+  if(edits.length){
+   try{ws.applyEdits(edits,{expectedRevision:revision,entry,view});}
+   catch(e){if(!DECISION_DRAFT.includes(e.code))throw e;ws.applyEdits(edits,{expectedRevision:revision});}
+  }
+  actualCommands.push({label,revision:ws.revision,changedFiles:edits.map(e=>e.file)});
+  if(value?.select)selected=value.select;
+  decisionNotice=null;draw();
+  if(renderFailure){announce(label+' · committed as draft — the analysis error below stays visible; publish/export stay blocked',true);}
+  else announce(label+' · source updated · Undo available');
+  return true;
+ }catch(e){lastEditError=e;decisionNotice=(e.code||'EDIT')+': '+e.message;announce(decisionNotice,true);try{renderDecisionSheet();}catch{}return false;}
+ finally{t.destroy();}
+}
+function decisionScalar(raw,d){
+ if(d.type==='boolean')return raw===true||raw==='true';
+ if(d.type==='number'){const n=Number(raw);if(raw===''||!Number.isFinite(n))throw Object.assign(new Error('A number-domain predicate needs a finite number; numeric strings are not coerced.'),{code:'DDN-I033'});return n;}
+ return String(raw);
+}
+function decisionPredFromCell(cell,d){
+ const opEl=cell.querySelector('[data-pred-op]');
+ if(!opEl)return undefined;
+ const op=opEl.value;
+ if(op==='null'||op==='missing')return{op};
+ if(op==='eq')return{op,value:decisionScalar(cell.querySelector('[data-pred-val]').value,d)};
+ if(op==='in'){
+  const el=cell.querySelector('[data-pred-vals]');
+  const values=el.tagName==='SELECT'?[...el.selectedOptions].map(o=>o.value):el.value.split(',').filter(s=>s.trim()!=='').map(s=>decisionScalar(s.trim(),d));
+  return{op,values};
+ }
+ const min=decisionScalar(cell.querySelector('[data-pred-min]').value,d),max=decisionScalar(cell.querySelector('[data-pred-max]').value,d);
+ return{op:'interval',min,max,lower_closed:cell.querySelector('[data-pred-lc]').checked,upper_closed:cell.querySelector('[data-pred-uc]').checked};
+}
+function renderDecisionSheet(){
+ const sheet=$('#decisionSheet');
+ if(!sheet)return;
+ const p=decisionProfile();
+ if(!p){sheet.hidden=true;sheet.innerHTML='';decisionNotice=null;decisionFixture=null;return;}
+ sheet.hidden=false;
+ let plan=null,planError=null;
+ try{plan=ws.projectionPlan(entry,view);}catch(e){planError={code:e.code||'PLAN',message:e.message};}
+ let h='<div class="sheet-head"><span class="tag teal">DECISION SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Rule rows and conditions/outcomes edit the <strong>shared model</strong> (<code>x_rule</code>) · records order, hit policy and coverage edit <strong>this view only</strong> (<code>projection { }</code> group)</span></div>';
+ if(decisionNotice)h+='<div class="notice error">'+esc(decisionNotice)+'</div>';
+ // Hit policy / coverage badges exactly as the renderer prints them, VE-005 labeled.
+ const policy=plan?plan.policy:String(p.hit_policy||''),coverage=plan?plan.coverage:String(p.coverage||'report');
+ h+='<div class="policy-badges"><span class="badge">HIT POLICY: '+esc(policy.toUpperCase())+'</span><span class="badge">coverage: '+esc(coverage)+'</span>'
+  +'<label for="decisionPolicy">hit policy <span class="muted">view scope</span></label><select id="decisionPolicy">'+['unique','first','collect'].map(v=>'<option value="'+v+'"'+(policy===v?' selected':'')+'>'+v+'</option>').join('')+'</select>'
+  +'<label for="decisionCoverage">coverage <span class="muted">view scope</span></label><select id="decisionCoverage">'+['complete','report','none'].map(v=>'<option value="'+v+'"'+(coverage===v?' selected':'')+'>'+v+'</option>').join('')+'</select>'
+  +(policy==='first'?'<span class="tag amber">RULE ORDER IS SEMANTIC FOR FIRST-MATCH POLICIES</span>':'')+'</div>';
+ if(planError){
+  h+='<div class="notice error"><strong>'+esc(planError.code)+'</strong>: '+esc(planError.message)+'<br>The rule stays committed and saveable as a draft (VE-007); the failing analysis is displayed, never hidden, and publish/export stay blocked. The sheet is read-only until the source passes again — use Undo or edit the source.</div>';
+  h+='<table aria-label="Decision rules (stale)" class="stale-wrap"><tbody><tr class="stale"><td class="small muted">Last good table kept stale; the canvas above shows the last valid render dimmed.</td></tr></tbody></table>';
+  sheet.innerHTML=h;
+  $('#decisionPolicy').onchange=e=>{e.target.value=policy;announce(planError.code+': fix the draft before changing policy.',true);};
+  $('#decisionCoverage').onchange=e=>{e.target.value=coverage;announce(planError.code+': fix the draft before changing coverage.',true);};
+  return;
+ }
+ const inputs=plan.inputs,outputs=plan.outputs,records=p.records||[];
+ const opsFor=d=>{const ops=d.type==='number'?['interval','eq','in']:['eq','in'];if(d.nullable)ops.push('null');if(d.optional)ops.push('missing');return ops;};
+ h+='<table aria-label="Decision rules"><thead><tr><th>order</th><th>Rule</th>'+inputs.map(d=>'<th>'+esc(d.key)+' <span class="muted small">'+esc(d.type)+'</span></th>').join('')+outputs.map(k=>'<th>→ '+esc(k)+'</th>').join('')+'<th></th></tr></thead><tbody>';
+ for(let ri=0;ri<plan.rules.length;ri++){
+  const rule=plan.rules[ri];
+  h+='<tr data-rulerow="'+esc(rule.id)+'"'+(selected===rule.id?' class="sel"':'')+'>';
+  h+='<td style="white-space:nowrap"><button data-rule-up="'+ri+'" '+(ri===0?'disabled':'')+' title="Move earlier (records order — semantic for first-match policies)">↑</button><button data-rule-down="'+ri+'" '+(ri===plan.rules.length-1?'disabled':'')+' title="Move later">↓</button></td>';
+  h+='<th>'+esc(rule.node.name)+'<br><code class="id">'+esc(rule.id.split('::').pop())+'</code></th>';
+  for(const d of inputs){
+   const c=rule.when[d.key];
+   h+='<td class="pred" data-rule="'+esc(rule.id)+'" data-input="'+esc(d.key)+'">';
+   if(!c)h+='<span class="muted small">Any</span> <button data-pred-add title="Add a condition on '+esc(d.key)+'">＋</button>';
+   else{
+    h+='<select data-pred-op aria-label="Predicate operator for '+esc(d.key)+'">'+opsFor(d).map(o=>'<option value="'+o+'"'+(c.op===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
+    if(c.op==='eq'){
+     if(d.type==='boolean')h+='<select data-pred-val><option value="true"'+(c.value===true?' selected':'')+'>true</option><option value="false"'+(c.value===false?' selected':'')+'>false</option></select>';
+     else if(d.type==='enum')h+='<select data-pred-val>'+d.values.map(v=>'<option value="'+esc(String(v))+'"'+(c.value===v?' selected':'')+'>'+esc(String(v))+'</option>').join('')+'</select>';
+     else h+='<input type="number" step="any" data-pred-val value="'+esc(c.value)+'">';
+    }else if(c.op==='in'){
+     if(d.type==='enum')h+='<select data-pred-vals multiple size="'+Math.min(4,d.values.length)+'">'+d.values.map(v=>'<option value="'+esc(String(v))+'"'+(c.values.includes(v)?' selected':'')+'>'+esc(String(v))+'</option>').join('')+'</select>';
+     else h+='<input data-pred-vals value="'+esc(c.values.join(', '))+'" title="Comma-separated values">';
+    }else if(c.op==='interval'){
+     h+='<input type="number" step="any" data-pred-min value="'+esc(c.min)+'" aria-label="min"><input type="number" step="any" data-pred-max value="'+esc(c.max)+'" aria-label="max">';
+     h+='<label class="small"><input type="checkbox" data-pred-lc '+(c.lower_closed!==false?'checked':'')+'>[</label><label class="small"><input type="checkbox" data-pred-uc '+(c.upper_closed!==false?'checked':'')+'>]</label>';
+    }
+    h+='<button data-pred-del title="Remove this condition (the rule matches Any on '+esc(d.key)+')">×</button>';
+   }
+   h+='</td>';
+  }
+  for(const k of outputs){
+   const v=rule.then[k];
+   h+='<td class="outcome" data-rule="'+esc(rule.id)+'" data-output="'+esc(k)+'">';
+   if(typeof v==='boolean')h+='<input type="checkbox" data-out-val '+(v?'checked':'')+' aria-label="'+esc(k)+'">';
+   else if(typeof v==='number')h+='<input type="number" step="any" data-out-val value="'+esc(v)+'" aria-label="'+esc(k)+'">';
+   else h+='<input type="text" data-out-val value="'+esc(String(v))+'" aria-label="'+esc(k)+'">';
+   h+='</td>';
+  }
+  h+='<td><button data-rule-del="'+esc(rule.id)+'" title="Delete this rule definition and remove it from records in one transaction">Delete</button></td></tr>';
+ }
+ h+='</tbody></table>';
+ // Analysis presentation (VE-AC-059/060): status, atoms, witnesses, overlaps,
+ // shadowed/unreachable — budget-exceeded is never presented as success.
+ const a=plan.analysis,proved=a.status==='proved-over-declared-domains';
+ h+='<div class="decision-analysis"><span class="tag '+(proved?'teal':'amber')+'">ANALYSIS · '+esc(a.status)+'</span> ';
+ if(a.status==='budget_exceeded')h+='<span class="tag amber">UNESTABLISHED — disjointness/coverage NOT established</span> '+esc(a.combinations)+' partition atoms exceed the budget of '+esc(a.budget)+'.';
+ else h+=esc(String(a.checks||0))+' tested partition atoms of '+esc(String(a.combinations))+'.';
+ if(a.uncovered?.length)h+='<div>Uncovered input witnesses ('+a.uncovered.length+' shown, first 20 retained): '+a.uncovered.map(w=>'<code class="witness">'+esc(JSON.stringify(w))+'</code>').join('')+'</div>';
+ if(a.overlaps?.length)h+='<div>Overlapping rule pairs with witness inputs: '+a.overlaps.map(o=>'<code class="witness">'+esc(o.rules.map(r=>r.split('::').pop()).join(' + '))+' ← '+esc(JSON.stringify(o.input))+'</code>').join('')+'</div>';
+ if(a.shadowed?.length)h+='<div>Shadowed first-hit rules: '+a.shadowed.map(r=>'<code class="witness">'+esc(r.split('::').pop())+'</code>').join('')+'</div>';
+ if(a.unreachable?.length)h+='<div>Unreachable rules (no domain atom matches): '+a.unreachable.map(r=>'<code class="witness">'+esc(r.split('::').pop())+'</code>').join('')+'</div>';
+ if(proved&&!a.uncovered?.length&&!a.overlaps?.length)h+=' <span class="small muted">No uncovered domain atoms; no overlaps.</span>';
+ h+='</div>';
+ // Fixture evaluator (read-only): typed controls per declared input domain.
+ h+='<div class="decision-analysis"><span class="tag">FIXTURE EVALUATION · READ-ONLY</span><div class="fixture-form">';
+ for(const d of inputs){
+  h+='<label>'+esc(d.key)+'</label>';
+  const extra=(d.nullable?'<option value="__null">null</option>':'')+(d.optional?'<option value="__missing">missing</option>':'');
+  if(d.type==='enum')h+='<select data-fix="'+esc(d.key)+'">'+d.values.map(v=>'<option value="'+esc(String(v))+'">'+esc(String(v))+'</option>').join('')+extra+'</select>';
+  else if(d.type==='boolean')h+='<select data-fix="'+esc(d.key)+'"><option value="true">true</option><option value="false">false</option>'+extra+'</select>';
+  else h+='<input type="number" step="any" data-fix="'+esc(d.key)+'" value="'+esc(String(d.min??0))+'">'+(extra?'<select data-fix-special="'+esc(d.key)+'"><option value="">number</option>'+extra+'</select>':'');
+ }
+ h+='<button id="decisionEval" class="primary">Evaluate</button></div>';
+ if(decisionFixture){
+  if(decisionFixture.error)h+='<div class="notice error">'+esc(decisionFixture.error)+'</div>';
+  else{const r=decisionFixture.result;h+='<div class="fixture-result">status <strong>'+esc(r.status)+'</strong> · matched ['+r.matched.map(x=>esc(x.split('::').pop())).join(', ')+'] · selected ['+r.selected.map(x=>esc(x.split('::').pop())).join(', ')+']'+(r.outputs.length?' · outputs '+r.outputs.map(o=>'<code class="witness">'+esc(JSON.stringify(o))+'</code>').join(''):'')+'</div>';}
+ }
+ h+='</div>';
+ h+='<div class="batchbar"><span class="tag">ADD RULE</span><input id="decNewId" placeholder="rule_id" aria-label="New rule identifier"><input id="decNewLabel" placeholder="Label" aria-label="New rule label"><button id="decAddRule">＋ Add rule</button><span class="small muted">Creates one shared <code>rule.row</code> definition with a default outcome per declared type, appends its ref to <code>projection.records</code> — one transaction. An overlap under a unique policy commits as a draft with the witness shown above (VE-007).</span></div>';
+ sheet.innerHTML=h;
+ $('#decisionPolicy').onchange=e=>decisionTxn('Set hit policy to '+e.target.value+' (this view only)',t=>CMD.setDecisionPolicy(D,t,entry,view,{hitPolicy:e.target.value}));
+ $('#decisionCoverage').onchange=e=>decisionTxn('Set coverage to '+e.target.value+' (this view only)',t=>CMD.setDecisionPolicy(D,t,entry,view,{coverage:e.target.value}));
+ sheet.querySelectorAll('[data-rule-up],[data-rule-down]').forEach(b=>b.onclick=()=>{
+  const ids=plan.rules.map(r=>r.id),i=+(b.dataset.ruleUp??b.dataset.ruleDown),j=b.dataset.ruleUp!==undefined?i-1:i+1;
+  [ids[i],ids[j]]=[ids[j],ids[i]];
+  decisionTxn('Reorder rules (records order — semantic for first-match policies)',t=>CMD.reorderDecisionRules(D,t,entry,view,{orderedIds:ids}));
+ });
+ const commitWhen=cell=>{
+  const ruleId=cell.dataset.rule,rule=plan.rules.find(r=>r.id===ruleId);
+  let when;
+  try{
+   when={};
+   for(const d of inputs){const c=sheet.querySelector('.pred[data-rule="'+CSS.escape(ruleId)+'"][data-input="'+d.key+'"]'),pred=decisionPredFromCell(c,d);if(pred)when[d.key]=pred;}
+  }catch(e){decisionNotice=e.code+': '+e.message;renderDecisionSheet();return;}
+  decisionTxn('Edit conditions of '+rule.node.name+' (shared model)',t=>CMD.editDecisionRule(D,t,entry,view,{ruleId,when}));
+ };
+ sheet.querySelectorAll('td.pred').forEach(cell=>{
+  cell.querySelectorAll('select,input').forEach(el=>el.onchange=()=>commitWhen(cell));
+  const add=cell.querySelector('[data-pred-add]');
+  if(add)add.onclick=()=>{
+   const d=inputs.find(x=>x.key===cell.dataset.input),ruleId=cell.dataset.rule;
+   const when={...plan.rules.find(r=>r.id===ruleId).when};
+   when[d.key]=d.type==='number'?{op:'interval',min:d.min,max:d.max}:d.type==='boolean'?{op:'eq',value:true}:{op:'eq',value:d.values[0]};
+   decisionTxn('Add a condition on '+d.key+' (shared model)',t=>CMD.editDecisionRule(D,t,entry,view,{ruleId,when}));
+  };
+  const del=cell.querySelector('[data-pred-del]');
+  if(del)del.onclick=()=>{
+   const ruleId=cell.dataset.rule,when={...plan.rules.find(r=>r.id===ruleId).when};
+   delete when[cell.dataset.input];
+   decisionTxn('Remove the condition on '+cell.dataset.input+' (shared model)',t=>CMD.editDecisionRule(D,t,entry,view,{ruleId,when}));
+  };
+ });
+ sheet.querySelectorAll('td.outcome').forEach(cell=>{
+  const inp=cell.querySelector('[data-out-val]');
+  inp.onchange=()=>{
+   const ruleId=cell.dataset.rule,k=cell.dataset.output,rule=plan.rules.find(r=>r.id===ruleId),old=rule.then[k];
+   let value;
+   if(typeof old==='boolean')value=inp.checked;
+   else if(typeof old==='number'){if(inp.value.trim()===''||!Number.isFinite(Number(inp.value))){announce('Numeric outcomes accept numbers only — numeric strings are not coerced. Nothing was changed.',true);inp.value=old;return;}value=Number(inp.value);}
+   else value=inp.value;
+   if(value===old)return;
+   decisionTxn('Edit outcome '+k+' of '+rule.node.name+' (shared model)',t=>CMD.editDecisionRule(D,t,entry,view,{ruleId,then:{...rule.then,[k]:value}}));
+  };
+ });
+ sheet.querySelectorAll('[data-rule-del]').forEach(b=>b.onclick=()=>{const rule=plan.rules.find(r=>r.id===b.dataset.ruleDel);decisionTxn('Delete rule '+rule.node.name+' (definition + records ref, one transaction)',t=>CMD.deleteDecisionRule(D,t,entry,view,{ruleId:rule.id}));});
+ $('#decisionEval').onclick=()=>{
+  const input={};
+  try{
+   for(const d of inputs){
+    const el=sheet.querySelector('[data-fix="'+d.key+'"]'),special=sheet.querySelector('[data-fix-special="'+d.key+'"]');
+    if(special&&special.value==='__missing')continue;
+    if(special&&special.value==='__null'){input[d.key]=null;continue;}
+    const raw=el.value;
+    if(raw==='__missing')continue;
+    if(raw==='__null'){input[d.key]=null;continue;}
+    input[d.key]=decisionScalar(raw,d);
+   }
+  }catch(e){decisionFixture={error:e.code+': '+e.message};renderDecisionSheet();return;}
+  try{decisionFixture={result:CMD.evaluateDecisionFixture(D,ws,entry,view,{input})};}
+  catch(e){decisionFixture={error:e.code+': '+e.message};}
+  renderDecisionSheet();
+ };
+ $('#decAddRule').onclick=()=>{
+  const id=$('#decNewId').value.trim(),label=$('#decNewLabel').value.trim();
+  if(!id){decisionNotice='DDN-I033: A new rule needs an identifier. Nothing was changed.';renderDecisionSheet();return;}
+  const first=plan.rules[0],then={};
+  for(const k of outputs)then[k]=first?typeof first.then[k]==='boolean'?false:typeof first.then[k]==='number'?0:'undecided':'undecided';
+  decisionTxn('Add decision rule (shared definition + records ref)',t=>CMD.addDecisionRule(D,t,entry,view,{id,label:label||id,when:{},then}));
+ };
+}
 function cancelTimelineDrag(silent){
  if(!tDrag)return;
  try{tDrag.el.removeAttribute('transform');}catch{}
@@ -412,17 +627,17 @@ function cancelTimelineDrag(silent){
 function highlight(){const paper=$('#paper');paper.querySelectorAll('.selected,.member-selected').forEach(e=>e.classList.remove('selected','member-selected'));if(!selected){$('#selectionStatus').textContent='No selection';return;}const match=paper.querySelector('[data-id="'+CSS.escape(selected)+'"]');if(match)match.classList.add('selected');const member=paper.querySelector('[data-member="'+CSS.escape(selected)+'"]');if(member){member.classList.add('member-selected');member.closest('[data-id]')?.classList.add('selected');}$('#selectionStatus').textContent=selected?'Selected: '+sourceLabel(selected):'No selection';}
 function choose(id){selected=id;$('#workspace').classList.add('inspecting');highlight();updateInspector();}
 function setTab(t){tab=t;$$('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));updateInspector();}
-function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
+function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...overrides};view=v;entry=['raci','chart_bar','gantt','fishbone','responsibility_graph','crud','matrix_general','swot','sipoc','journey','decision'].includes(v)?'projections/views.ddn':'model.ddn';overrides=optionsByView[entry+'#'+view]||{page:'content',look:'classic',theme:'default'};selected=entry==='model.ddn'?'designer.sample::model.customer':null;zoom=1;updateZoom();mode='select';mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;$('#connectTool').classList.remove('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));draw();document.body.classList.toggle('night',overrides.theme==='night');}
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
  const buttonFor=k=>`<button draggable="true" data-add="${esc(k.kind)}" data-search="${esc((k.name+' '+k.kind+' '+codeOf(k.kind)+' '+(D.kinds.find(x=>x.id===k.kind)?.label||'')).toLowerCase())}" title="${esc(k.kind)} — click to add automatically, or drag onto the canvas"><span class="glyph">${esc(codeOf(k.kind))}</span><span>${esc(k.name)}</span></button>`;
  pane.innerHTML='<input id="paletteSearch" placeholder="Find an object…" aria-label="Find any installed kind"><div class="sectionlabel">Installed kinds <span class="countbadge" id="paletteCount">'+KINDMAP.kinds.length+'/'+KINDMAP.kinds.length+'</span></div>'+kindsByGroup.map((g,i)=>'<details class="palette-group" open><summary>'+esc(g.group)+' <span class="countbadge" data-group-count>'+g.kinds.length+'</span></summary><div class="palette">'+g.kinds.map(buttonFor).join('')+'</div></details>').join('')+'<div class="lefttip">One meaningful object, then options.<br><br>Click = automatic placement.<br>Drag = explicit location and pin.</div><p class="small muted" style="margin-top:15px">The shelf lists all '+KINDMAP.kinds.length+' installed kinds from <code>contracts/kind-ui-map.json</code>, grouped by its palette groups. Profile-filtered specialized shelves remain a specification proposal (<button class="ghost" data-story="library" style="min-height:0;padding:0;font-size:inherit;text-decoration:underline">shelf design</button>).</p>';
- pane.querySelectorAll('[data-add]').forEach(b=>{b.disabled=!(graph()||projectionKind()==='fishbone');b.onclick=()=>addNode(b.dataset.add);b.ondragstart=e=>{e.dataTransfer.setData('application/x-ddn-kind',b.dataset.add);e.dataTransfer.effectAllowed='copy';};});
+ pane.querySelectorAll('[data-add]').forEach(b=>{b.disabled=!(graph()||projectionKind()==='fishbone'||projectionKind()==='decision');b.onclick=()=>addNode(b.dataset.add);b.ondragstart=e=>{e.dataTransfer.setData('application/x-ddn-kind',b.dataset.add);e.dataTransfer.effectAllowed='copy';};});
  $('#paletteSearch').oninput=e=>{const q=e.target.value.toLowerCase();let shown=0;pane.querySelectorAll('[data-add]').forEach(b=>{const hit=!q||b.dataset.search.includes(q);b.hidden=!hit;if(hit)shown++;});pane.querySelectorAll('.palette-group').forEach(d=>{const visible=[...d.querySelectorAll('[data-add]')].filter(b=>!b.hidden);d.open=!!q&&visible.length>0||!q;d.hidden=!!q&&!visible.length;const badge=d.querySelector('[data-group-count]');if(badge)badge.textContent=q?visible.length+'/'+d.querySelectorAll('[data-add]').length:visible.length;});$('#paletteCount').textContent=shown+'/'+KINDMAP.kinds.length;};pane.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));
  }else if(left==='model'){
  pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas.</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));
- }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+ }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey','decision'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels',decision:'Decision table'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
 }
 function selectControl(id,label,values,current){return `<label for="${id}">${label}</label><select id="${id}">`+values.map(([v,l])=>`<option value="${v}" ${v===current?'selected':''}>${l}</option>`).join('')+'</select>';}
 function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$('#inspectorBody');
@@ -494,6 +709,21 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   p.innerHTML=ph+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
+ const dp=decisionProfile();
+ if(dp){
+  let dh='<div class="notice">Data-bound projection. Every row maps to a shared <code>rule.row</code> definition carrying <code>x_rule:{when, then}</code> — condition and outcome edits are shared-model writes; the records order, hit policy and coverage are view-scope writes in the <code>projection { }</code> group. Rule order is semantic for first-match policies; an overlapping or budget-breaking table commits as a draft with the failing analysis displayed, never hidden (VE-007).</div><h3>'+esc(dp.profile)+'</h3>';
+  let dplan=null,derr=null;try{dplan=ws.projectionPlan(entry,view);}catch(e){derr=(e.code||'PLAN')+': '+e.message;}
+  if(dplan){
+   dh+='<label>Hit policy · coverage</label><div class="subtle">HIT POLICY: '+esc(dplan.policy.toUpperCase())+' · coverage: '+esc(dplan.coverage)+'</div>';
+   dh+='<label>Inputs</label><div class="subtle">'+dplan.inputs.map(d=>esc(d.key+': '+d.type)).join(' · ')+'</div><label>Outputs</label><div class="subtle">'+dplan.outputs.map(esc).join(' · ')+'</div>';
+   dh+='<label>Rules</label><div class="subtle">'+dplan.rules.map(r=>esc(r.node.name)).join(' · ')+'</div>';
+   dh+='<label>Analysis</label><div class="subtle">'+esc(dplan.analysis.status)+' · '+esc(String(dplan.analysis.checks||0))+' tested atoms of '+esc(String(dplan.analysis.combinations))+'</div>';
+   if(selected&&dplan.rules.some(r=>r.id===selected))dh+='<label>Selected rule</label><div class="subtle">'+esc(sourceLabel(selected))+'</div>';
+  }else dh+='<label>Analysis</label><div class="subtle">'+esc(derr)+' — the draft stays saveable; export stays blocked.</div>';
+  dh+='<p class="help">Edit rules, predicates, outcomes, order, hit policy and fixtures in the Decision sheet under the canvas. Input/output domain editing remains a specification proposal.</p>';
+  p.innerHTML=dh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  return;
+ }
  const cp=chartProfile();
  if(cp){  let ch='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale. Edit the record in the Source sheet; dragging a mark is disabled.</div><h3>'+esc(cp.profile)+' · '+esc(String(cp.mark??'source mark'))+'</h3><label>Bindings</label><div class="subtle">x <code>'+esc(String(cp.x??'—'))+'</code> · y <code>'+esc(String(cp.y??'—'))+'</code> · unit <code>'+esc(String(cp.unit??'—'))+'</code>'+(cp.aggregate?'<br>aggregate <code>'+esc(String(cp.aggregate))+'</code>':'')+'</div>';
   let cplan=null;try{cplan=ws.projectionPlan(entry,view);}catch{}
@@ -535,7 +765,7 @@ function addNode(kind,at){
  const descriptor=kindEntry(kind);
  if(!descriptor)return;
  const proj=projectionKind();
- if(!graph()&&proj!=='fishbone')return;
+ if(!graph()&&proj!=='fishbone'&&proj!=='decision')return;
  const id='new_'+kind.replace(/[^A-Za-z0-9_]/g,'_')+'_'+counter++;
  if(descriptor.creation_action==='edit-projection-source-not-free-node'&&kind==='chen.attribute'){
   const sel=findSelection();
@@ -630,7 +860,7 @@ function bindCanvas(){
   }
   if(dragGuard&&e.pointerId===dragGuard.pointer)dragGuard=null;if(!drag)return;const d=drag;drag=null;try{d.el.releasePointerCapture(e.pointerId);}catch{}if(d.moved)transaction('Move and pin '+sourceLabel(d.id),t=>A.pin(t,entry,view,d.id,d.x+d.dx,d.y+d.dy));};
  $('#paper').onpointercancel=()=>{cancelTimelineDrag();dragGuard=null;if(drag){drag.el.removeAttribute('transform');drag=null;announce('Move cancelled; source unchanged.');}};
- $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
+ $('#paper').onclick=e=>{if(!graph()){const m=e.target.closest('[data-id],[data-source]');if(m){const id=m.getAttribute('data-id')||m.getAttribute('data-source');if(id){selected=id;if(chartProfile()){chartSel=id;renderChartSheet();}if(fishboneProfile())renderFishboneSheet();if(panelsProfile()){panelsSel=id;renderPanelsSheet();}if(decisionProfile())renderDecisionSheet();updateInspector();announce(chartProfile()?'Source-bound mark selected — contributors listed in the Source sheet.':fishboneProfile()?'Rib selected — its row is highlighted in the Fishbone sheet; repeated causes show every occurrence path.':panelsProfile()?'Item selected — its chip is highlighted in the Panels sheet; item notes are shared definitions.':decisionProfile()?'Rule selected — its row is highlighted in the Decision sheet; conditions and outcomes are shared-model edits.':'Source-bound mark selected. Binding editor is specified; source is inspectable.');}}}};
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
 $('#viewport').ondrop=e=>{const kind=e.dataTransfer.getData('application/x-ddn-kind');if(!kindEntry(kind))return;e.preventDefault();const p=worldPoint(e)||{x:0,y:0};addNode(kind,{x:p.x-80,y:p.y-25});};

@@ -72,4 +72,12 @@ transaction), adds/removes panels, and binds child-view slots as named-view
 references with the one-level/12-children limits enforced at the command
 layer; fixed-grid canvas profiles keep their required blocks locked
 (DDN-PJ080/081/083), and the prototype now wires SWOT, SIPOC and journey
-views.
+views. ED-007 adds the decision table editor: a Decision sheet under
+decision views lists `rule.row` rules in records order with reorder
+controls (semantic for first-match policies), typed condition controls
+driven by the declared input domains and typed outcome cells (shared
+model), hit policy and coverage badges with view-scope select edits, the
+bounded analysis (witnesses, overlaps, shadowed rules, budget) beside the
+table, and a read-only fixture evaluator; an overlapping unique-hit rule
+commits as a draft with the DDN-QD004 witness displayed and export
+blocked (VE-007), and the prototype fixture now includes a decision view.

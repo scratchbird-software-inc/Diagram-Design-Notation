@@ -6,6 +6,9 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Designer prototype: decision table editor (`rule.row` rows, typed
+  predicates, hit-policy command, analysis and fixture evaluation) (ED-007;
+  covers VE-AC-059/060).
 - Designer prototype: panels editor (grid, item moves, child-view slots,
   canvas fixed-grid guards) (ED-006; covers VE-AC-055/056).
 - Designer prototype: fishbone editor (effect/category/cause commands,

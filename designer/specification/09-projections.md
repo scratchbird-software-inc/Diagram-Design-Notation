@@ -56,10 +56,30 @@ cause relation; the scratch re-plan lets the runtime's own DDN-QF001/002/003
 codes reject illegal ribs before commit. The occurrence-aware inspector
 display lists the runtime occurrence paths of a reused cause.
 
+Implementation status (ED-007): the decision row is implemented in the
+prototype — a Decision sheet lists the rules in `projection.records` order
+with up/down reorder (labeled semantic for first-match policies), typed
+predicate controls driven by the declared input domains (enum selects,
+numeric interval/eq/in forms with closure flags, boolean true/false,
+`null`/`missing` offered only when the domain declares `nullable`/
+`optional`), outcome cells typed by the observed scalar type, rule add and
+delete (definition + records ref in one transaction; the reference guard
+DDN-E004 still protects rules shared with other views), and hit policy /
+coverage shown as badges exactly as the renderer prints them and changed
+through a view-scope command with an immediate re-render (VE-005). The
+bounded analysis (status, tested atoms, uncovered witnesses, overlapping
+pairs with witness inputs, shadowed and unreachable rules) renders next to
+the table; an overlapping unique-hit rule commits as a draft with the
+DDN-QD004 witness displayed and export blocked (VE-007, VE-AC-059), and a
+budget-exceeded analysis is presented as unestablished, never success
+(VE-AC-060). A read-only fixture evaluator runs `ws.evaluateDecision` and
+surfaces DDN-QD006 as an input error. Input/output domain editing remains
+proposed.
+
 The experimental interaction renderer is a separate mode of graph-family display. Its inspector edits participant/step/payload/causal data, not vertical pixels as time. Adding steps must generate actual occurrence and predecessor records. Full combined fragments are not claimed by this specification.
 
 ## Structured sheets
-A chart Source sheet has source records, category/value/series bindings, units and missing-data policy in a guided order. Only then offer marks and approved transforms. A rule sheet has declared inputs/domains, conditions, outcomes, hit policy, and analysis result. A matrix sheet has row/column selectors, relation/value binding, duplicate policy and write target. Each sheet writes the shared definitions or view policies explicitly. The matrix sheet's relation/value binding and write target are live in the prototype (ED-002: keyboard + click cell editing, one-transaction batch bar); row/column selectors and the duplicate-policy control remain proposed. The chart Source sheet is live in the prototype (ED-003): bound records are editable rows (shared-model writes), the mark picker offers exactly the current profile's `capabilities.marks` legal set, the `x`/`y`/`unit` binding pickers are view-scope source writes, and clicking a mark lists its contributing records with edit-row shortcuts; series/transform editing for `chart.quality@1` remains proposed, and numeric record keys never coerce numeric strings.
+A chart Source sheet has source records, category/value/series bindings, units and missing-data policy in a guided order. Only then offer marks and approved transforms. A rule sheet has declared inputs/domains, conditions, outcomes, hit policy, and analysis result. A matrix sheet has row/column selectors, relation/value binding, duplicate policy and write target. Each sheet writes the shared definitions or view policies explicitly. The matrix sheet's relation/value binding and write target are live in the prototype (ED-002: keyboard + click cell editing, one-transaction batch bar); row/column selectors and the duplicate-policy control remain proposed. The chart Source sheet is live in the prototype (ED-003): bound records are editable rows (shared-model writes), the mark picker offers exactly the current profile's `capabilities.marks` legal set, the `x`/`y`/`unit` binding pickers are view-scope source writes, and clicking a mark lists its contributing records with edit-row shortcuts; series/transform editing for `chart.quality@1` remains proposed, and numeric record keys never coerce numeric strings. The rule sheet is live in the prototype (ED-007): rules are edited in `projection.records` order with typed condition/outcome controls, hit policy and coverage are view-scope badge-and-select edits, and the analysis result (including draft overlap witnesses and budget-unestablished states) is displayed next to the table; input/output domain editing remains proposed.
 
 ## Derived selection
 Every selected mark exposes its contributors. A single source record may be edited through a field control; an aggregate opens its inputs, not an arbitrary editable total. A formula/target definition is distinct from measured input. A heatmap colour changes only through its value or scale policy. A hidden value remains in the source until an authorized export policy removes it.
