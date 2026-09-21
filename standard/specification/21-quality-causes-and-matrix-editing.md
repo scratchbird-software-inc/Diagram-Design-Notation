@@ -1,6 +1,6 @@
 # 21. Quality causes, encoded matrices, and source-assignment editing
 
-**DDN 0.5.0-draft.1. Implemented reference contract.** This chapter adds profiles without changing the separation of data, reusable formats, and named views. Source remains UTF-8. Runtime capabilities, examples, validators, and the public library must agree; a source property must not silently select an unimplemented algorithm.
+**DDN 0.6.0-beta.1. Implemented reference contract.** This chapter adds profiles without changing the separation of data, reusable formats, and named views. Source remains UTF-8. Runtime capabilities, examples, validators, and the public library must agree; a source property must not silently select an unimplemented algorithm.
 
 ## 21.1 Fishbone / Ishikawa profile
 

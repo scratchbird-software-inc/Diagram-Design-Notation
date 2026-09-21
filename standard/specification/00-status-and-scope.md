@@ -1,6 +1,6 @@
 # DDN 0.5 — status and conformance scope
 
-**Current release: 0.5.0-draft.1 — proposed standard.** “MUST”, “SHOULD” and “MAY” describe this proposal, not adoption or external certification. Executable capabilities are declared in `registry/capabilities.json` and tested in fixtures. The 0.3 semantic/routing/publication foundation and the 0.4 projection layer remain compatible; chapters 21–24 implement the four quality/lifecycle/reporting stages.
+**Current release: 0.6.0-beta.1 — proposed standard, pre-1.0.** “MUST”, “SHOULD” and “MAY” describe this proposal, not adoption or external certification. Executable capabilities are declared in `registry/capabilities.json` and tested in fixtures. The 0.3 semantic/routing/publication foundation and the 0.4 projection layer remain compatible; chapters 21–24 implement the four quality/lifecycle/reporting stages. The beta.1 stamp is a runtime/standard packaging release per `../governance/VERSIONING.md`: the language source versions stay `0.2`–`0.5` and the core registry stays `ddn-core@0.3`.
 
 ## Conformance layers
 

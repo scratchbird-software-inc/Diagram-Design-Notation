@@ -21,7 +21,7 @@ Supporting directories: `docs/` (project documentation and website, TBD) and
 ## Status
 
 Draft proposal, pre-1.0. Language/runtime/registry at **0.6.0-beta.1**,
-designer specification at **0.1.0**. See `standard/specification/00-status-and-scope.md`
+designer specification at **0.2.0-beta.1**. See `standard/specification/00-status-and-scope.md`
 and `designer/specification/00-charter.md`. This project does not claim UML,
 BPMN, or DMN conformance, and local fixture tests are not legal, accounting,
 or security approval.

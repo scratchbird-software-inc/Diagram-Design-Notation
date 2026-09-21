@@ -23,7 +23,7 @@ format options {
 }
 
 view concepts "Synthetic order-to-cash concepts / concept map" {
-    data: [@domain]; format: @shared.styles.technical; layout: @options.cmap;
+    data: [@domain]; format: @shared.styles.technical; layout: @options.cmap; spacing: loose;
     projection { kind: graph; profile: "concept.map@1"; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
 }

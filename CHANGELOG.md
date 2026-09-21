@@ -6,6 +6,25 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-009: Beta-1 script and golden refresh — ran the full verification
+  matrix over every `.ddn` in `examples/` (114 files: `cli.js check` on
+  each, every declared view rendered twice, byte-determinism, and the 27
+  use-case goldens compared against `manifest.json` hashes and rendered
+  bytes) with zero mismatches. Deliberate feature adoption: exactly one
+  pre-existing example, `examples/basics/29-concept-map.ddn`, now declares
+  `spacing: loose` (all five relations carry long author-written on-edge
+  labels that routed tight against parallel curves; before/after renders
+  in the report). New permanent parse gate `notation/tests/doc-snippets.js`
+  (wired as `test:doc-snippets` into the notation test chain) extracts and
+  parse-checks every ```ddn fenced block in `README.md` and
+  `standard/specification/*.md`. Stale draft-series wording about the
+  project's own status aligned with Beta 1 (spec 00 status chapter,
+  chapter stamps of spec 21–25, `notation/CHANGELOG.md`, root README's
+  designer-version stamp); standard-status "draft proposal, pre-1.0"
+  wording and the pinned registry/language versions are unchanged per
+  `standard/governance/VERSIONING.md`. All generated artifacts rebuilt in
+  dependency order (build:sdk → build-ui-maps → build-standalone →
+  build-standalone-pages → build-viewer), byte-identical.
 - B1-008: spacing hints — new optional additive `spacing` property on views
   and on `bundle` declarations inside formats (`tight | normal | loose |
   expanded`; view declaration wins over the format's; absent = `normal`).

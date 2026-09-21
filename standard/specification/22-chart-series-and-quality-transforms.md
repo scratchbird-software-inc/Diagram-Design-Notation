@@ -1,6 +1,6 @@
 # 22. Shared chart series, layers, and bounded quality transforms
 
-**DDN 0.5.0-draft.1.** `chart.basic@1` remains unchanged for earlier single-series and arc examples. The additive `chart.quality@1` profile supplies explicit series, layered marks, and four named transforms. No JavaScript/SQL/FEEL expression evaluation or remote data loading is introduced.
+**DDN 0.6.0-beta.1.** `chart.basic@1` remains unchanged for earlier single-series and arc examples. The additive `chart.quality@1` profile supplies explicit series, layered marks, and four named transforms. No JavaScript/SQL/FEEL expression evaluation or remote data loading is introduced.
 
 ## 22.1 Source contract
 

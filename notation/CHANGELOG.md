@@ -1,4 +1,16 @@
-# Current release — 0.5.0-draft.1
+# Current release — 0.6.0-beta.1
+
+Beta 1 packaging of the same runtime: version stamps move to `0.6.0-beta.1`
+(designer `0.2.0-beta.1`) with no language change — source versions stay
+`0.2`–`0.5`, the core registry stays `ddn-core@0.3`. Beta 1 adds registry-driven
+element defaults, renderer CSS class hooks + `ddn.css`, modular runtime bundles
+(core/graph/projections/quality) behind the package `exports` map, the
+`replaceData` refresh API, the single-file end-user viewer
+(`viewer/ddn-viewer.html`), and spacing hints (`tight`/`normal`/`loose`/
+`expanded`). Every shipped `.ddn` script, doc snippet, and generated page is
+verified against the Beta-1 runtime (see the root `CHANGELOG.md`).
+
+# Previous release — 0.5.0-draft.1
 
 All four quality/lifecycle/reporting stages are implemented in the same source-driven runtime. Added nine profile versions (24 installed in total), 34 views from four shared files, heatmap and fishbone projections, shared empty-cell matrix authoring, chart series/layers and bounded transforms, typed decision analysis/evaluation, flat lifecycle traces, R7 boxplots, one-level child panels and selected notation completion. Existing 0.4 short-route/label regression, 0.3 safeguards and 336 previous views remain exercised. Read quality/SCOPE.md and quality/FINDINGS.md; native bounded capability does not imply external-standard/production approval.
 
