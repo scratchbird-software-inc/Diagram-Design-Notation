@@ -49,7 +49,11 @@ p { margin: 0; }
 .ddn-rel-master { display: grid; gap: 4px; margin-bottom: 6px; }
 .ddn-rel-field { display: grid; gap: 2px; font-size: 11px; color: var(--muted); }
 .ddn-rel-field select, .ddn-rel-field input { width: 100%; }
-#ddn-type-list select { min-height: 26px; padding: 1px 4px; font-size: 11px; max-width: 110px; }
+#ddn-type-list select { min-height: 26px; padding: 1px 4px; font-size: 11px; }
+#ddn-type-list .ddn-typo-row { flex-wrap: wrap; }
+#ddn-type-list .ddn-typo-row .ddn-colour-label { flex: 1 1 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#ddn-type-list .ddn-typo-row .ddn-fam { flex: 1 1 auto; min-width: 0; }
+#ddn-type-list .ddn-typo-row .ddn-siz { flex: 0 0 68px; width: 68px; }
 #ddn-paste { width: 100%; min-height: 90px; box-sizing: border-box; }
 
 #ddn-stage { overflow: auto; position: relative; background: radial-gradient(#ced9e4 .7px, transparent .7px); background-size: 18px 18px; background-color: #f3f6fa; }
@@ -4333,11 +4337,13 @@ const sizeOptions = () => [['source', 'source default']].concat(FONT_SIZES.map(n
 const routingOptions = () => [['source', 'default']].concat(ROUTING_VALUES.map(v => [v, v]));
 
 function typographyRow(labelText, code) {
-  const row = document.createElement('div'); row.className = 'ddn-colour-row';
+  const row = document.createElement('div'); row.className = 'ddn-colour-row ddn-typo-row';
   const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText;
   const cur = state.presentation.typography[code] || { family: 'source', size: 'source' };
   const fam = fillSelect(document.createElement('select'), familyOptions(), cur.family || 'source', 'font family for ' + labelText);
+  fam.classList.add('ddn-fam');
   const siz = fillSelect(document.createElement('select'), sizeOptions(), String(cur.size || 'source'), 'font size for ' + labelText);
+  siz.classList.add('ddn-siz');
   const update = () => {
     if (fam.value === 'source' && siz.value === 'source') delete state.presentation.typography[code];
     else state.presentation.typography[code] = { family: fam.value, size: siz.value };

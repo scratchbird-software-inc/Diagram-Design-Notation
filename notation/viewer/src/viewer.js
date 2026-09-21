@@ -263,11 +263,13 @@ const sizeOptions = () => [['source', 'source default']].concat(FONT_SIZES.map(n
 const routingOptions = () => [['source', 'default']].concat(ROUTING_VALUES.map(v => [v, v]));
 
 function typographyRow(labelText, code) {
-  const row = document.createElement('div'); row.className = 'ddn-colour-row';
+  const row = document.createElement('div'); row.className = 'ddn-colour-row ddn-typo-row';
   const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText;
   const cur = state.presentation.typography[code] || { family: 'source', size: 'source' };
   const fam = fillSelect(document.createElement('select'), familyOptions(), cur.family || 'source', 'font family for ' + labelText);
+  fam.classList.add('ddn-fam');
   const siz = fillSelect(document.createElement('select'), sizeOptions(), String(cur.size || 'source'), 'font size for ' + labelText);
+  siz.classList.add('ddn-siz');
   const update = () => {
     if (fam.value === 'source' && siz.value === 'source') delete state.presentation.typography[code];
     else state.presentation.typography[code] = { family: fam.value, size: siz.value };

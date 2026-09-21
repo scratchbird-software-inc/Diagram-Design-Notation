@@ -68,6 +68,12 @@ test('generated viewer contains the inlined runtime and every control', () => {
     assert.ok(html.includes('value="' + v + '"'), 'endpoint ordering option ' + v + ' missing');
   const chrome = fs.readFileSync(path.join(root, 'notation/viewer/src/template.html'), 'utf8') + fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
   assert.ok(!/(?<!con)junction/i.test(chrome), 'no junctions control in the viewer chrome (D3: rejected semantics, documented)');
+  const vcss = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.css'), 'utf8');
+  assert.ok(chrome.includes("ddn-colour-row ddn-typo-row") && chrome.includes("ddn-fam") && chrome.includes("ddn-siz"), 'typography rows must carry labelled structure classes');
+  assert.ok(vcss.includes('#ddn-type-list .ddn-typo-row .ddn-colour-label { flex: 1 1 100%'), 'typography kind label must own a full line');
+  assert.ok(vcss.includes('.ddn-fam { flex: 1 1 auto; min-width: 0; }'), 'family dropdown must flex to available width');
+  assert.ok(vcss.includes('.ddn-siz { flex: 0 0 68px; width: 68px; }'), 'size dropdown must be fixed narrow');
+  assert.ok(!/#ddn-type-list select \{[^}]*max-width/.test(vcss), 'blanket select max-width (label-squeezing) must be gone');
   assert.ok(html.includes('presentation overrides'), 'presentation-only status language missing');
   assert.ok(!/showDirectoryPicker|OffscreenCanvas|showOpenFilePicker/.test(html), 'Chrome-only API found (D4 forbids)');
 });
