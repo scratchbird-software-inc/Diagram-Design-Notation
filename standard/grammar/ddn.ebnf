@@ -1,6 +1,11 @@
 (* DDN 0.5 syntactic core. Context and property restrictions are in spec/01-language.md.
-   Whitespace/comments are skipped between terminals. All files are UTF-8. *)
-document       = "ddn", string, ";", "module", string, ";", { import }, { top } ;
+   Whitespace/comments are skipped between terminals. All files are UTF-8.
+   RFC-117: a file holds one or more module sections. File-level imports come
+   before the first module header (canonical) or immediately after the FIRST
+   header before its first declaration (legacy position, kept for existing
+   single-module files); anywhere else an import is rejected (DDN015). *)
+document       = "ddn", string, ";", { import }, section, { section } ;
+section        = "module", string, ";", { top } ;
 import         = "import", string, "as", identifier, ";" ;
 top            = data | format | view ;
 data           = "data", identifier, [ string ], block ;

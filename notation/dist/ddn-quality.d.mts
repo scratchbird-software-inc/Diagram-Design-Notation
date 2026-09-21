@@ -69,6 +69,7 @@ export interface IO {
  open(files:FileList|File[],options?:{directory?:boolean}):Promise<{files:SourceFiles;snapshot:Snapshot;ignored:string[]}>;
  toJSON(snapshot:Snapshot):string;toZIP(snapshot:Snapshot):Uint8Array;unzip(bytes:Uint8Array):Promise<{files:Record<string,string>;ignored:string[]}>;zipStore(files:Record<string,string>):Uint8Array;
  crc32(bytes:Uint8Array):number;download(name:string,data:BlobPart,type?:string):void;
+ bundle(files:SourceFiles,entry:string):{text:string;diagnostics:Array<{code:string;severity:string;message:string;source?:string}>};
 }
 export const profileCatalogue:{version:string;profiles:Array<Record<string,unknown>>;kinds:Array<Record<string,unknown>>;relationships:Array<Record<string,unknown>>;[key:string]:unknown};
 export const VERSION:string;

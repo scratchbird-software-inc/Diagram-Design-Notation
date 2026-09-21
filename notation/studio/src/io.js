@@ -79,5 +79,5 @@ function download(name,data,type='text/plain;charset=utf-8'){
  if(typeof document==='undefined')fail('DDN-IO08','Downloads require a browser document.');
  const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-api.io={open,toJSON,toZIP,unzip,zipStore,crc32,download};
+api.io={open,toJSON,toZIP,unzip,zipStore,crc32,download,bundle:(files,entry)=>api.bundle(api.filesChecked(files),api.pathChecked(entry))};
 }

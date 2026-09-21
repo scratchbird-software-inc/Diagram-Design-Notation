@@ -7,7 +7,7 @@
 
 ## File formats
 
-An individual `.ddn` file is UTF-8 source. The editor does not require JSON around a single script. Relative imports need their referenced files too. Opening one file cannot grant access to its sibling directory; open the project folder or a workspace ZIP when imports are involved.
+An individual `.ddn` file is UTF-8 source. The editor does not require JSON around a single script. Relative imports need their referenced files too. Opening one file cannot grant access to its sibling directory; open the project folder or a workspace ZIP when imports are involved. Per RFC-117, one file MAY hold several `module "…";` sections (a fully self-contained design); the workspace model treats each section as a module of that file — module identity stays workspace-unique, and sibling sections resolve each other by module-qualified reference without imports. A whole workspace can also be bundled into one multi-section file (`DDNLive.io.bundle` / CLI `bundle`) with byte-identical rendering.
 
 A `.ddn-workspace.json` file has this shape:
 

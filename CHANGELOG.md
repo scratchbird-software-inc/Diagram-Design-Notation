@@ -6,6 +6,26 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-015 / RFC-117: self-contained multi-module `.ddn` files and bundling. A
+  file may hold several `module "…";` sections — model, data, views and
+  formats in one file (`examples/basics/61-self-contained.ddn`). File-level
+  imports precede the first module header (canonical) or immediately follow
+  the FIRST header (legacy position, unchanged for existing files); an import
+  anywhere else is rejected with the new diagnostic DDN015. Sibling sections
+  resolve each other by module-qualified id with no import between them;
+  importing a multi-module file imports all its modules. Module/declaration
+  identity guards (DDN013/DDN014/DDN023/DDN024) are unchanged, the source
+  version stays `"0.5"`, and older runtimes reject multi-section files with a
+  clean DDN010. New bundle surface: `DDNLive.io.bundle(files, entry)` and
+  `node notation/cli/cli.js bundle <entry.ddn> --workspace . --out out.ddn`
+  merge a workspace into one sectioned file — original section bodies minus
+  header lines (comments/formatting preserved), entry module first then by
+  module id, inter-bundle imports dropped (alias references canonicalized to
+  module-qualified sibling references), external imports kept at the top with
+  a DDN-W013 warning — deterministic, with a byte-identical render
+  round-trip proven over 75 views of the basics/projections/quality
+  workspaces (`notation/tests/multi-module.js`, `notation/tests/bundle.js`).
+
 - B1-012: designer prototype chrome rework — the Download modal gains Current
   PNG (2×) and Current WebP (2×) beside DDN/ZIP/SVG (serialize-to-`<img>`, 2×
   canvas, `toDataURL`, mirroring the viewer; WebP feature-detected with the

@@ -24,6 +24,30 @@ view overview {
 
 The module is a stable namespace, not a file path. Imports are local workspace-relative resources. Remote imports, traversal outside the workspace and recursive import cycles are rejected. References start with `@` and resolve declaration paths. A quoted label never serves as identity. An explicit `uid` can preserve identity across declaration refactoring.
 
+### Multi-module files (RFC-117)
+
+A file MAY hold more than one module as marked sections — so a full design (model, data, views, formats) can live in one self-contained file:
+
+```ddn
+ddn "0.5";
+import "palette.ddn" as palette;
+
+module "shop.model";
+data model {
+ object customer "Customer" { kind: table; fields { field id; field name; } }
+}
+
+module "shop.views";
+view overview {
+ data: [@shop.model.model];
+ format: @palette.styles.technical;
+}
+```
+
+Each `module "…";` header starts a section; the following top-level declarations belong to that module until the next header or end of file. Imports stay file-level: canonically they precede the first module header; the legacy position (immediately after the FIRST header, before its first declaration) is kept so existing single-module files are unchanged. An import anywhere else is rejected (DDN015). Module identity stays unique across the whole workspace (DDN023, whether the duplicate is another section or another file), and declaration identities stay unique across sections (DDN024). Sibling sections in the same file are implicitly visible to each other through module-qualified references (`@shop.model.model` above) — no import between them. Another file importing a multi-module file imports all its modules; `@alias.path` resolves against each section in order. Older runtimes reject multi-section files with a clean DDN010.
+
+A workspace can be merged into one such file with `DDNLive.io.bundle(files, entry)` or `node notation/cli/cli.js bundle <entry.ddn> --workspace . --out bundled.ddn`. The bundle carries the maximum language version in use, the entry file's module(s) first and the remaining modules sorted by module id. Section bodies are the original source text minus header lines — comments and formatting survive; imports between bundled files are dropped and references written through their aliases are canonicalized to module-qualified sibling references; imports to files outside the bundle set are kept verbatim at the top with a warning diagnostic (DDN-W013). Bundling is deterministic, and rendering every view of the bundle produces byte-identical SVG to rendering the original workspace.
+
 ## Values and punctuation
 
 Properties end in semicolons. Declarations without bodies also end in semicolons. Blocks can have an optional trailing semicolon. Arrays accept trailing commas. Records use colon-separated entries with comma or semicolon separators. Strings use JSON-style escapes. Comments are `//` or non-nesting `/* ... */`.

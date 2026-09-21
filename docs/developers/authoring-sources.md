@@ -28,9 +28,16 @@ view overview "Orders / shared model" {
 
 - `ddn "0.5";` — language version stamp. See spec `01-language.md`.
 - `module` — namespace; every declaration id is module-qualified. See
-  `01-language.md` and `02-data-model.md`.
+  `01-language.md` and `02-data-model.md`. A file may hold several
+  `module "…";` sections (RFC-117), so a full design can live in one
+  self-contained file; sibling sections reference each other by
+  module-qualified id (`@otherModule.name`) with no import between them.
 - `import "…" as alias` — pulls another file's declarations in as
-  `@alias.name`. See `03-views-and-reuse.md`.
+  `@alias.name`. See `03-views-and-reuse.md`. Imports are file-level: they
+  precede the first module header (canonical), or immediately follow the
+  FIRST header in the legacy position. `DDNLive.io.bundle(files, entry)` and
+  the CLI `bundle` command merge a workspace into one multi-section file with
+  byte-identical rendering.
 
 ## Data blocks: the model is the source of truth
 

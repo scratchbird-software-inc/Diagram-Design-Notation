@@ -6,6 +6,14 @@ semantic model projects into many diagram types (ERD (incl. crow's-foot cardinal
 matrix/RACI, chart, radar chart, funnel chart, gauge chart, candlestick chart, treemap, Sankey diagram, timeline, fishbone, decision, org charts, work breakdown structures, mind maps, concept maps, EPC process chains, business-model/lean canvases, PESTLE/five-forces canvases, BCG/Ansoff/TOWS matrices, empathy maps and balanced scorecards, journey maps, story maps, pyramids, venn diagrams, sequence diagrams, communication diagrams, object diagrams, hierarchical state machines, activity diagrams, BPMN-style collaborations, timing diagrams, interaction overviews, CMMN-style case diagrams, SysML-style block diagrams, ArchiMate-style layered views, PERT/CPM critical-path views, fault/event trees, network/bus and rack diagrams, UI wireframes, family trees, …) through versioned
 profiles and projections. Publication is allowlist-gated: approved views export an explicit JSON projection or an allowlisted SQL DDL export.
 
+A full design can live in **one self-contained file**: a `.ddn` source may carry
+model, data, views and formats as multiple marked `module "…";` sections
+(RFC-117), and a multi-file workspace bundles into one such file
+(`DDNLive.io.bundle(files, entry)` or `node notation/cli/cli.js bundle
+<entry.ddn> --workspace . --out bundled.ddn`) that checks and renders
+byte-identical to the original workspace — DDN is a self-contained,
+mermaid-class notation.
+
 This repository is a monorepo with four components:
 
 | Directory | Component | Contents |

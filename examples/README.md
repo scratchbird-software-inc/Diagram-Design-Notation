@@ -7,7 +7,7 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 60 numbered examples (01-customer … 60-spacing-hints)
+- `basics/` — 61 numbered examples (01-customer … 61-self-contained)
   plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
   `manifest.json` was removed in B1-010: it covered only examples 01–18,
   pointed at nonexistent `examples/rendered/` paths, was stamped
@@ -34,7 +34,9 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   (`57-element-defaults.ddn`), and CSS class hooks for host-page styling
   (`58-css-hooks.ddn` + companion `.html`), and data refresh via
   `ws.replaceData` (`59-data-refresh.ddn`), and spacing hints
-  (tight/normal/loose/expanded) on views and formats (`60-spacing-hints.ddn`).
+  (tight/normal/loose/expanded) on views and formats (`60-spacing-hints.ddn`),
+  and a three-section self-contained file (model + data + views, no imports;
+  RFC-117) (`61-self-contained.ddn`).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

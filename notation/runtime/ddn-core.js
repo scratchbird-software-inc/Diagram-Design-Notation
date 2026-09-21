@@ -83,32 +83,147 @@
     }
     expect('id','ddn');let version=expect('string').value;expect(';');
     if(!SOURCE_VERSIONS.includes(version))fail('DDN012',`Unsupported language version ${version}; expected ${SOURCE_VERSIONS.join(', ')}`,tokens[1],source);
-    expect('id','module');let module=expect('string').value;expect(';');
-    if(!/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/.test(module))fail('DDN013','Invalid module identity',tokens[pos-2],source);
-    const imports=[],declarations=[];
-    while(peek().type==='id'&&peek().value==='import'){take();let path=expect('string').value;expect('id','as');let alias=expect('id').value;expect(';');if(imports.some(x=>x.alias===alias))fail('DDN014','Duplicate import alias',tokens[pos-2],source);imports.push({path,alias});}
-    while(peek().type!=='eof')declarations.push(declaration(expect('id')));
-    return {version,module,imports,declarations,source,text};
+    const imports=[],sections=[],declarations=[];
+    function importLine(){take();let path=expect('string').value;expect('id','as');let alias=expect('id').value;expect(';');if(imports.some(x=>x.alias===alias))fail('DDN014','Duplicate import alias',tokens[pos-2],source);imports.push({path,alias});}
+    // File-level imports: canonical position before the first module header
+    // (RFC-117); the legacy position — right after the FIRST header — is also
+    // accepted so existing single-module files are unchanged.
+    while(peek().type==='id'&&peek().value==='import')importLine();
+    do{
+      expect('id','module');let module=expect('string').value;expect(';');
+      if(!/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/.test(module))fail('DDN013','Invalid module identity',tokens[pos-2],source);
+      if(!sections.length)while(peek().type==='id'&&peek().value==='import')importLine();
+      const decls=[];
+      while(peek().type!=='eof'&&!(peek().type==='id'&&peek().value==='module')){
+        if(peek().type==='id'&&peek().value==='import')fail('DDN015','Import must precede the first module header (or follow it in the legacy position before any declaration)',peek(),source);
+        decls.push(declaration(expect('id')));
+      }
+      sections.push({module,declarations:decls});declarations.push(...decls);
+    }while(peek().type==='id'&&peek().value==='module');
+    return {version,module:sections[0].module,imports,sections,declarations,source,text};
   }
   function normalizePath(base,relative){
     if(/^(?:[a-z]+:|\/|\\)/i.test(relative)||relative.includes('\\'))throw new DDNError('DDN020','Imports must be workspace-relative POSIX paths',base);
     const p=base.split('/').slice(0,-1);for(const bit of relative.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!p.length)throw new DDNError('DDN020','Import escapes workspace',base);p.pop();}else p.push(bit);}return p.join('/');
   }
+  // RFC-117 D4: merge a workspace (entry + transitive imports) into one
+  // self-contained multi-module file. Section bodies are the original source
+  // lines minus the header lines (version/module/import) — comments and
+  // formatting preserved, no re-serialization. Deterministic: same workspace
+  // → identical bytes. Inter-bundled import lines are dropped; references
+  // written through those aliases (@alias.path) are canonicalized to
+  // module-qualified sibling references (@moduleId.path) — token-precise, so
+  // strings and comments are untouched — because a dropped alias no longer
+  // resolves once the sections are siblings (see RFC-117 decision record).
+  function bundle(files,entry){
+    if(!Object.hasOwn(files,entry))throw new DDNError('DDN022','Missing workspace file '+entry,entry);
+    const set=new Set(),order=[];
+    (function visit(path){if(set.has(path))return;if(!Object.hasOwn(files,path))return;set.add(path);order.push(path);const d=parse(files[path],path);for(const imp of d.imports)visit(normalizePath(path,imp.path));})(entry);
+    // Symbol index: which module of each bundled file holds each declaration
+    // path — needed when a dropped alias points at a multi-module file.
+    const owner=new Map();
+    try{
+      const ws=createWorkspace(files,entry);
+      for(const rec of ws.modules.values())for(const [key]of [...ws.symbols].filter(([,n])=>n.doc===rec)){
+        const path=key.slice(rec.module.length+2);
+        if(!owner.has(rec.source))owner.set(rec.source,new Map());
+        const m=owner.get(rec.source);if(!m.has(path))m.set(path,rec.module);
+      }
+    }catch{ /* invalid workspaces still bundle textually; check reports errors */ }
+    const diagnostics=[],sections=[],external=new Map(),externalOrder=[];let maxVersion=0;
+    for(const path of [...order].sort((a,b)=>a===entry?-1:b===entry?1:a.localeCompare(b,'en'))){
+      let text=files[path];
+      const tokens=lex(text,path),starts=[0];
+      for(let i=0;i<text.length;i++)if(text[i]==='\n')starts.push(i+1);
+      const lineOf=o=>{let lo=0,hi=starts.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(starts[mid]<=o)lo=mid;else hi=mid-1;}return lo;};
+      const removed=new Set(),headers=[],dropped=new Map();let depth=0;
+      const mark=(a,b)=>{for(let l=lineOf(a);l<=lineOf(b);l++)removed.add(l);};
+      for(let i=0;i<tokens.length;i++){
+        const t=tokens[i];
+        if(t.type==='{'||t.type==='[')depth++;
+        else if(t.type==='}'||t.type===']')depth--;
+        else if(depth===0&&t.type==='id'&&(t.value==='ddn'||t.value==='import'||t.value==='module')){
+          let j=i;while(tokens[j].type!==';'&&tokens[j].type!=='eof')j++;
+          if(tokens[j].type==='eof')break;
+          mark(t.start,tokens[j].end);
+          if(t.value==='module')headers.push({module:tokens[i+1].value,line:lineOf(t.start)});
+          else if(t.value==='import'){
+            const alias=tokens[j-1].value,target=normalizePath(path,tokens[i+1].value);
+            if(set.has(target))dropped.set(alias,target);
+            else{const key=alias+' '+target,line=text.split('\n')[lineOf(t.start)];
+              if(!external.has(key)){external.set(key,{alias,target,line});externalOrder.push(key);}
+              else if(external.get(key).line!==line)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+'; first occurrence kept.',source:path});}
+          }
+          i=j;
+        }
+      }
+      if(dropped.size){
+        const edits=[];
+        for(let i=0;i<tokens.length-2;i++){
+          const at=tokens[i];
+          if(at.type!=='@'||tokens[i+1].type!=='id'||!dropped.has(tokens[i+1].value)||tokens[i+2].type!=='.')continue;
+          const target=dropped.get(tokens[i+1].value);
+          let rest=[],k=i+2;
+          while(tokens[k].type==='.'&&tokens[k+1].type==='id'){rest.push(tokens[k+1].value);k+=2;}
+          const targetDoc=parse(files[target],target);
+          let module=null;
+          if(targetDoc.sections.length===1)module=targetDoc.sections[0].module;
+          else module=owner.get(target)?.get(rest.join('.'))||null;
+          if(module&&module!==tokens[i+1].value)edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
+          else if(!module)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+'; reference left as-is.',source:path});
+        }
+        edits.sort((a,b)=>b.start-a.start);
+        for(const e of edits)text=text.slice(0,e.start)+e.text+text.slice(e.end);
+      }
+      const d=parse(text,path),lines=text.split('\n');
+      maxVersion=Math.max(maxVersion,SOURCE_VERSIONS.indexOf(d.version));
+      for(let k=0;k<headers.length;k++){
+        const from=headers[k].line+1,to=k+1<headers.length?headers[k+1].line:lines.length;
+        let body=lines.slice(from,to).filter((_,i)=>!removed.has(from+i));
+        while(body.length&&!body[0].trim())body.shift();
+        while(body.length&&!body.at(-1).trim())body.pop();
+        sections.push({file:path,module:d.sections[k].module,body:body.join('\n')});
+      }
+    }
+    const kept=externalOrder.map(k=>external.get(k));
+    if(kept.length)diagnostics.unshift({code:'DDN-W013',severity:'warning',message:'Bundle keeps imports of files outside the bundle set: '+[...new Set(kept.map(x=>x.target))].join(', '),source:entry});
+    const first=sections.filter(s=>s.file===entry),rest=sections.filter(s=>s.file!==entry).sort((a,b)=>a.module.localeCompare(b.module,'en'));
+    const out=[`ddn "${SOURCE_VERSIONS[maxVersion]}";`,...kept.map(x=>x.line)];
+    for(const s of[...first,...rest])out.push('',`module "${s.module}";`,s.body);
+    return {text:out.join('\n')+'\n',diagnostics};
+  }
+
   function createWorkspace(files,entry){
     const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set();
     function load(path){if(active.has(path))throw new DDNError('DDN021','Import cycle: '+[...active,path].join(' → '),path);if(docs.has(path))return docs.get(path);if(!Object.hasOwn(files,path))throw new DDNError('DDN022','Missing workspace file '+path,path);
-      active.add(path);const d=parse(files[path],path);if(modules.has(d.module))throw new DDNError('DDN023','Duplicate module identity '+d.module,path);docs.set(path,d);modules.set(d.module,d);d.imported=new Map();for(const imp of d.imports)d.imported.set(imp.alias,load(normalizePath(path,imp.path)));active.delete(path);return d;}
-    const main=load(entry);
+      active.add(path);const d=parse(files[path],path);docs.set(path,d);d.imported=new Map();
+      // A file registers ALL its module sections (RFC-117 D2). Module records
+      // are what nodes carry as n.doc: identity, own declarations and the
+      // file-level import map.
+      d.moduleRecords=d.sections.map(s=>{
+        if(modules.has(s.module))throw new DDNError('DDN023','Duplicate module identity '+s.module,path);
+        const rec={file:d,module:s.module,declarations:s.declarations,source:path,imported:d.imported};modules.set(s.module,rec);return rec;});
+      d.moduleById=new Map(d.moduleRecords.map(r=>[r.module,r]));
+      for(const imp of d.imports)d.imported.set(imp.alias,load(normalizePath(path,imp.path)));
+      active.delete(path);return d;}
+    const main=load(entry).moduleRecords[0];
     function index(n,d,parent=''){
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;
       if(!n.group&&!['place','route'].includes(n.type)){let key=d.module+'::'+n.path;if(symbols.has(key))throw new DDNError('DDN024','Duplicate declaration '+n.path,d.source,n.start);symbols.set(key,n);}
       for(const c of n.children)index(c,d,n.group?parent:n.path);
     }
-    for(const d of docs.values())for(const n of d.declarations){if(!['data','format','view'].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format or view',d.source,n.start);index(n,d);}
+    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view'].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format or view',d.source,n.start);index(n,d);}
     const uidMap=new Map();for(const n of symbols.values()){if(uidMap.has(n.uid))throw new DDNError('DDN026','Duplicate stable uid '+n.uid,n.source,n.start);uidMap.set(n.uid,n);}
     function resolve(r,context){if(!r||!r.$ref)throw new DDNError('DDN030','Expected a reference',context?.source,context?.start);const parts=r.$ref.split('.');let doc=context.doc;
-      if(doc.imported.has(parts[0])){doc=doc.imported.get(parts.shift());let node=symbols.get(doc.module+'::'+parts.join('.'));if(node)return node;}
-      else{let base=context.path.split('.');base.pop();for(let k=base.length;k>=0;k--){let path=[...base.slice(0,k),...parts].join('.'),n=symbols.get(doc.module+'::'+path);if(n)return n;}}
+      if(doc.imported.has(parts[0])){const f=doc.imported.get(parts.shift());for(const rec of f.moduleRecords){let node=symbols.get(rec.module+'::'+parts.join('.'));if(node)return node;}}
+      else{
+        // Sibling sections are visible via module-qualified ids; module ids
+        // may themselves be dotted, so match the LONGEST module-id prefix.
+        for(let k=Math.min(parts.length-1,16);k>=1;k--){
+          const sib=doc.file.moduleById.get(parts.slice(0,k).join('.'));
+          if(sib){const node=symbols.get(sib.module+'::'+parts.slice(k).join('.'));if(node)return node;}
+        }
+        let base=context.path.split('.');base.pop();for(let k=base.length;k>=0;k--){let path=[...base.slice(0,k),...parts].join('.'),n=symbols.get(doc.module+'::'+path);if(n)return n;}}
       throw new DDNError('DDN031','Unresolved reference @'+r.$ref,context.source,r.$offset||context.start);
     }
     return {main,docs,modules,symbols,uidMap,resolve,files};
@@ -279,5 +394,5 @@
     return {ir,workspace:ws,viewNode:view};
   }
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
-  return {VERSION,SOURCE_VERSIONS,DDNError,lex,parse,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
+  return {VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
 });

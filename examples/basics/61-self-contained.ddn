@@ -1,0 +1,69 @@
+ddn "0.5";
+
+// RFC-117: a full design in one self-contained file. Three module sections —
+// model, data, views — no imports at all. Sibling sections reference each
+// other by module-qualified id (@shop.data.records), exactly as separate
+// files would through an import alias.
+
+module "shop.model";
+
+format styles {
+    notation core { registry: "ddn-core@0.3"; }
+    style classic { look: classic; theme: default; font: sans; seed: 42; }
+    layout wires { algorithm: grid; routing: orthogonal; direction: right; gap: 80px; }
+    display detailed { fields: names; kind: icon_token; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
+    legend words { mode: text; placement: right; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}
+
+module "shop.data";
+
+data records "Shop records" {
+    object customer "Customer" {
+        kind: table;
+        role: authoritative;
+        fields {
+            field customer_id { key: primary; }
+            field display_name;
+        }
+    }
+    object order "Order" {
+        kind: table;
+        fields {
+            field order_id { key: primary; }
+            field customer_id;
+            field ordered_at;
+        }
+    }
+    relation order_customer "Customer places orders" @order.customer_id -> @customer.customer_id {
+        kind: references;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+    sample customers "Synthetic customers" {
+        mode: synthetic;
+        columns: [@customer.customer_id, @customer.display_name];
+        rows: [["C001", "Customer A"], ["C002", "Customer B"]];
+    }
+}
+
+module "shop.views";
+
+view overview "Self-contained / overview" {
+    data: [@shop.data.records];
+    format: @shop.model.styles.technical;
+}
+
+view compact "Self-contained / compact" {
+    data: [@shop.data.records];
+    format: @shop.model.styles.technical;
+    display { fields: none; }
+}

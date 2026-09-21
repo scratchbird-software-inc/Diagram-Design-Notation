@@ -23,7 +23,12 @@ dependencies. Pick the all-in-one bundle for the simplest start.
 
 That is a complete first render: create a workspace from a map of file names
 to source text, render a declared view synchronously, and place the returned
-SVG. Ten lines, and it works from `file://` because nothing is fetched.
+SVG. Ten lines, and it works from `file://` because nothing is fetched. A
+single file can also carry the whole design — model, data, views and formats
+as several `module "…";` sections (RFC-117, see
+`examples/basics/61-self-contained.ddn`) — and `DDNLive.io.bundle(files,
+entry)` merges a multi-file workspace into one such self-contained file with
+byte-identical rendering.
 
 For an embedded, self-updating element use `DDNLive.mount` instead — see
 [embedding.md](embedding.md).
