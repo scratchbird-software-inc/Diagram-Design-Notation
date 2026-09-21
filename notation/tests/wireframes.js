@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Wireframe profile wireframe.ui@1: seven-control stencil, scoped-frame nesting, orphan-control warning DDN-PJ128 (warning, not thrown), determinism. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const dir=path.resolve(__dirname,'../../examples/basics'),FILE='55-wireframe.ddn',base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8')};
+const dir=path.resolve(__dirname,'../../website/examples/basics'),FILE='55-wireframe.ddn',base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8')};
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view='settings',changes={}){return workspace(changes).renderSync({entry:FILE,view});}

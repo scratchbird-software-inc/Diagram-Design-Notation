@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Customer journey map: panels.journey@1 phase/lane grid and emotion polyline. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const dir=path.resolve(__dirname,'../../examples/basics'),FILE='35-journey-map.ddn',base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
+const dir=path.resolve(__dirname,'../../website/examples/basics'),FILE='35-journey-map.ddn',base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view='returns',changes={}){return workspace(changes).renderSync({entry:FILE,view});}

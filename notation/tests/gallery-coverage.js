@@ -6,9 +6,9 @@ const results = [];
 function test(name, fn) { try { fn(); results.push({ name, pass: true }); console.log('PASS', name); } catch (e) { results.push({ name, pass: false }); console.error('FAIL', name, e.stack); } }
 
 const catalogue = require(path.join(root, 'standard/registry/profiles/catalogue.json'));
-const coveragePath = path.join(root, 'examples/gallery/coverage.json');
-const galleryDir = path.join(root, 'examples/gallery');
-const docsDir = path.join(root, 'docs/developers');
+const coveragePath = path.join(root, 'website/examples/gallery/coverage.json');
+const galleryDir = path.join(root, 'website/examples/gallery');
+const docsDir = path.join(root, 'website/docs/developers');
 
 function* walk(dir) {
   for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
@@ -18,7 +18,7 @@ function* walk(dir) {
 }
 
 test('coverage.json exists and names every installed profile', () => {
-  assert.ok(fs.existsSync(coveragePath), 'examples/gallery/coverage.json missing — run npm run build:gallery');
+  assert.ok(fs.existsSync(coveragePath), 'website/examples/gallery/coverage.json missing — run npm run build:gallery');
   const cov = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
   const installed = catalogue.profiles.map(p => p.id).sort();
   const covered = Object.keys(cov.profiles).sort();

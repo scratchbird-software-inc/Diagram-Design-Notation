@@ -17,7 +17,7 @@ const OBR = M + 'schedule.order_before_receive';
 function fixtureFiles() {
   const files = {};
   for (const f of ['model.ddn', 'views.ddn', 'formats.ddn'])
-    files['projections/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'projections', f), 'utf8');
+    files['projections/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'projections', f), 'utf8');
   return files;
 }
 function diffSpan(a, b) {

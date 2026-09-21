@@ -95,7 +95,7 @@ test('sysml.flow targeting an unknown member is rejected as DDN031 (member-side 
  assert.equal(sq.length,1,'only the port endpoint draws a square (verb member_endpoints:true admits any declared member; documented behavior, no DDN102 since source/target are *)');
  assert.ok(sq[0].includes('m.reservoir.in'),'square must remain on the port endpoint');});
 test('Regression: examples/basics/15-process-contracts.ddn (core ports, ddn@1 profile) renders without port squares',()=>{
- const dir=path.resolve(__dirname,'../../examples/basics');
+ const dir=path.resolve(__dirname,'../../website/examples/basics');
  const w=A.createWorkspace({'main.ddn':fs.readFileSync(path.join(dir,'15-process-contracts.ddn'),'utf8'),'shared.ddn':fs.readFileSync(path.join(dir,'shared.ddn'),'utf8')});
  const r=w.renderSync({entry:'main.ddn',view:'balanced'});
  assert.match(r.svg,/<svg/);assert.ok(!r.profiles.projection.profile?.startsWith('sysml.'));

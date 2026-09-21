@@ -3,7 +3,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),D=require('../runtime/ddn-core'),R=require('../runtime/ddn-render'),L=require('../runtime/ddn-layout'),S=require('../runtime/ddn-sketch'),reg=require('../../standard/registry/catalogue.json');
-const files={};for(const f of fs.readdirSync(path.join(root,'../examples/basics')).filter(f=>f.endsWith('.ddn')))files['examples/'+f]=fs.readFileSync(path.join(root,'../examples/basics',f),'utf8');
+const files={};for(const f of fs.readdirSync(path.join(root,'../website/examples/basics')).filter(f=>f.endsWith('.ddn')))files['examples/'+f]=fs.readFileSync(path.join(root,'../website/examples/basics',f),'utf8');
 const entry='examples/17-curved-relations.ddn',checks=[],outputs={};
 function test(name,fn){try{fn();checks.push({name,status:'pass'});}catch(e){checks.push({name,status:'fail',detail:e.stack});console.error(name,e.message);}}
 function build(name,edit){const f={...files};if(edit)f[entry]=edit(f[entry]);const ir=D.build(f,entry,name,reg).ir,out=R.render(ir,reg);return {ir,...out};}

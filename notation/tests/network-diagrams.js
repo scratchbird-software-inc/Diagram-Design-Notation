@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Network diagrams: network.basic@1/network.rack@1 bus attachments and rack slots (DDN-PJ127), original glyphs, DDN046 guards intact. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const dir=path.resolve(__dirname,'../../examples/basics'),FILE='54-network-diagram.ddn',base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
+const dir=path.resolve(__dirname,'../../website/examples/basics'),FILE='54-network-diagram.ddn',base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view='lan',changes={}){return workspace(changes).renderSync({entry:FILE,view});}

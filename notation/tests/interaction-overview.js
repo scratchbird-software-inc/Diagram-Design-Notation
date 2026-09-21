@@ -74,9 +74,9 @@ test('x_subdiagram without view fails the extension contract as DDN105',()=>{
 test('x_subdiagram on a non-flow kind used as a flow.next endpoint is rejected as DDN102',()=>{
  throws(()=>run(edit('object pay "Pay" { kind: "flow.process";','object pay "Pay" { kind: "uml.class";')),'DDN102');});
 test('Regression: the view-level subdiagram reference example (08-subdiagrams.ddn) still renders its diagram-reference badge',()=>{
- const file=path.join(__dirname,'..','..','examples','basics','08-subdiagrams.ddn');
+ const file=path.join(__dirname,'..','..','website','examples','basics','08-subdiagrams.ddn');
  const files={'main.ddn':fs.readFileSync(file,'utf8')};
- for(const extra of ['shared.ddn']){const p=path.join(__dirname,'..','..','examples','basics',extra);if(fs.existsSync(p))files[extra]=fs.readFileSync(p,'utf8');}
+ for(const extra of ['shared.ddn']){const p=path.join(__dirname,'..','..','website','examples','basics',extra);if(fs.existsSync(p))files[extra]=fs.readFileSync(p,'utf8');}
  const r=A.createWorkspace(files).renderSync({entry:'main.ddn',view:'overview'});
  assert.match(r.svg,/<svg/);assert.ok(r.svg.includes('diagram reference'),'view-level reference badge unchanged');});
 test('Repeated render is deterministic',()=>{assert.equal(sha(run().svg),sha(run().svg));});

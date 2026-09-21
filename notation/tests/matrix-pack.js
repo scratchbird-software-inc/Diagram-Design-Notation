@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Matrix pack: matrix.bcg@1 / matrix.ansoff@1 / matrix.tows@1 quadrant profiles. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const dir=path.resolve(__dirname,'../../examples/basics'),base={'33-matrix-pack.ddn':fs.readFileSync(dir+'/33-matrix-pack.ddn','utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
+const dir=path.resolve(__dirname,'../../website/examples/basics'),base={'33-matrix-pack.ddn':fs.readFileSync(dir+'/33-matrix-pack.ddn','utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view,changes={}){return workspace(changes).renderSync({entry:'33-matrix-pack.ddn',view});}

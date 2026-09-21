@@ -16,20 +16,20 @@ const M = 'meridian.procurement.review::';
 function fixtureFiles() {
   const files = {};
   for (const f of ['model.ddn', 'views.ddn', 'formats.ddn'])
-    files['examples/projections/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'projections', f), 'utf8');
+    files['examples/projections/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'projections', f), 'utf8');
   return files;
 }
 function qualityFiles() {
   const files = {};
   for (const f of ['model.ddn', 'views.ddn', 'formats.ddn', 'details.ddn'])
-    files['examples/quality/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'quality', f), 'utf8');
+    files['examples/quality/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'quality', f), 'utf8');
   return files;
 }
 const QENTRY = 'examples/quality/views.ddn', QM = 'meridian.quality.review::';
 function canvasFiles() {
   return {
-    'examples/basics/31-canvas-pack-a.ddn': fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'basics', '31-canvas-pack-a.ddn'), 'utf8'),
-    'examples/basics/shared.ddn': fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'basics', 'shared.ddn'), 'utf8'),
+    'examples/basics/31-canvas-pack-a.ddn': fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'basics', '31-canvas-pack-a.ddn'), 'utf8'),
+    'examples/basics/shared.ddn': fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'basics', 'shared.ddn'), 'utf8'),
   };
 }
 const CENTRY = 'examples/basics/31-canvas-pack-a.ddn', CM = 'ddn.examples.canvas-pack-a::';

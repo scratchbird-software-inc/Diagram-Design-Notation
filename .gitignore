@@ -30,4 +30,4 @@ tests/downloaded*
 tests/history/
 playwright-report/
 notation/validation/
-examples/use-cases/validation-report.json
+website/examples/use-cases/validation-report.json

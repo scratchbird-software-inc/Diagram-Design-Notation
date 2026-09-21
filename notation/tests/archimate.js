@@ -87,7 +87,7 @@ test('business_viewpoint: a second view selecting only archi.business_* objects 
 test('Repeated renders of each view are byte-identical',()=>{
  for(const view of ['landscape','business_viewpoint'])assert.equal(sha(run({},view).svg),sha(run({},view).svg),view+' render not deterministic');});
 test('The shipped example examples/basics/51-archimate.ddn renders both views',()=>{
- const dir=path.resolve(__dirname,'../../examples/basics');
+ const dir=path.resolve(__dirname,'../../website/examples/basics');
  const w=A.createWorkspace({'main.ddn':fs.readFileSync(path.join(dir,'51-archimate.ddn'),'utf8'),'shared.ddn':fs.readFileSync(path.join(dir,'shared.ddn'),'utf8')});
  for(const view of ['landscape','business_viewpoint']){const r=w.renderSync({entry:'main.ddn',view});assert.match(r.svg,/<svg/);assert.equal(r.profiles.projection.profile,'archimate.basic@1');}});
 let pass=0;for(const r of results){if(r.pass)pass++;else console.error('FAIL',r.name,r.code,r.message);}

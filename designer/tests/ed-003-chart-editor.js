@@ -15,11 +15,11 @@ const M = 'meridian.procurement.review::';
 function fixtureFiles() {
   const files = {};
   for (const f of ['model.ddn', 'views.ddn', 'formats.ddn'])
-    files['projections/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'projections', f), 'utf8');
+    files['projections/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'projections', f), 'utf8');
   return files;
 }
 function qualityFiles() {
-  const dir = path.join(__dirname, '..', '..', 'examples', 'quality'), files = {};
+  const dir = path.join(__dirname, '..', '..', 'website', 'examples', 'quality'), files = {};
   for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.ddn')))
     files['quality/' + f] = fs.readFileSync(path.join(dir, f), 'utf8');
   return files;

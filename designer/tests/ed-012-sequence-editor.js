@@ -20,7 +20,7 @@ function test(name, fn) { try { fn(); pass++; console.log('PASS ' + name); } cat
 
 const ROOT = path.join(__dirname, '..', '..');
 const PROTO = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'prototype', 'workspace.json'), 'utf8'));
-const EXAMPLE = path.join(ROOT, 'examples/basics/41-sequence-diagram.ddn');
+const EXAMPLE = path.join(ROOT, 'website/examples/basics/41-sequence-diagram.ddn');
 const fresh = () => D.createWorkspace(JSON.parse(JSON.stringify(PROTO)));
 const E = 'projections/views.ddn', V = 'sequence';
 const M = 'meridian.procurement.views::interactions.';
@@ -49,7 +49,7 @@ test('gate: RT-101 artifacts + ED-009 occurrences + baseline plan in declaration
   assert.ok(projs.includes('DDN-PJW03'), 'GATE: DDN-PJW03 warning missing');
   const ext = fs.readFileSync(path.join(ROOT, 'standard/registry/extensions.json'), 'utf8');
   assert.ok(ext.includes('"x_return"'), 'GATE: x_return contract missing from extensions.json');
-  assert.ok(fs.existsSync(EXAMPLE), 'GATE: examples/basics/41-sequence-diagram.ddn missing');
+  assert.ok(fs.existsSync(EXAMPLE), 'GATE: website/examples/basics/41-sequence-diagram.ddn missing');
   assert.strictEqual(typeof CMD.occurrences, 'object', 'GATE: Commands.occurrences missing — ED-009 not landed');
   assert.strictEqual(typeof CMD.moveDeclaration, 'function');
   const ws = fresh();

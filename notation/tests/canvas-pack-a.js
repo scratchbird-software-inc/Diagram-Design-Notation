@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Canvas pack A: canvas.bmc@1 / canvas.lean@1 profiles. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const dir=path.resolve(__dirname,'../../examples/basics'),base={'31-canvas-pack-a.ddn':fs.readFileSync(dir+'/31-canvas-pack-a.ddn','utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
+const dir=path.resolve(__dirname,'../../website/examples/basics'),base={'31-canvas-pack-a.ddn':fs.readFileSync(dir+'/31-canvas-pack-a.ddn','utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view,changes={}){return workspace(changes).renderSync({entry:'31-canvas-pack-a.ddn',view});}
@@ -20,6 +20,6 @@ test('Renamed Lean cost panel id rejected naming the block',()=>{const e=editFil
 test('Empty items stay DDN-PJ009, not PJ080',()=>throws(()=>run('bmc',editFile('items:[@canvas.bmc_ka]','items:[]')),'DDN-PJ009'));
 test('Overlapping canvas spans stay DDN-PJ021',()=>throws(()=>run('bmc',editFile('{id:"ka",title:"KEY ACTIVITIES",row:0,column:2','{id:"ka",title:"KEY ACTIVITIES",row:0,column:0')),'DDN-PJ021'));
 test('Canvas profile on the wrong projection kind rejected',()=>throws(()=>run('bmc',editFile('projection { kind:panels; profile:"canvas.bmc@1"','projection { kind:matrix; profile:"canvas.bmc@1"')),'DDN-PF002'));
-test('Generic panels.basic@1 views render without PJ080',()=>{const pdir=path.resolve(__dirname,'../../examples/projections'),files=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(pdir,f),'utf8')]));const r=A.createWorkspace(files).renderSync({entry:'views.ddn',view:'swot'});assert.match(r.svg,/STRENGTHS/);});
+test('Generic panels.basic@1 views render without PJ080',()=>{const pdir=path.resolve(__dirname,'../../website/examples/projections'),files=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(pdir,f),'utf8')]));const r=A.createWorkspace(files).renderSync({entry:'views.ddn',view:'swot'});assert.match(r.svg,/STRENGTHS/);});
 test('Deterministic rerender of the BMC view',()=>assert.equal(run('bmc').svg,run('bmc').svg));
 const passed=results.filter(r=>r.pass).length;console.log(`Canvas pack A ${passed}/${results.length}`);if(passed!==results.length)process.exitCode=1;

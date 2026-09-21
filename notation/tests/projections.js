@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Public-path fixtures for the 0.4 expansion. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const dir=path.resolve(__dirname,'../../examples/projections'),base=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(dir,f),'utf8')])),catalogue=JSON.parse(fs.readFileSync(dir+'/catalogue.json','utf8'));
+const dir=path.resolve(__dirname,'../../website/examples/projections'),base=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(dir,f),'utf8')])),catalogue=JSON.parse(fs.readFileSync(dir+'/catalogue.json','utf8'));
 const results=[],renders=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view='chart_bar',changes={},overrides={}){return workspace(changes).renderSync({entry:'views.ddn',view,overrides});}

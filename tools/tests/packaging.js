@@ -4,7 +4,7 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os'),cp=require('node:child_process');
 const root=path.resolve(__dirname,'..','..'),results=[];
-const basics=f=>fs.readFileSync(path.join(root,'examples/basics',f),'utf8');
+const basics=f=>fs.readFileSync(path.join(root,'website/examples/basics',f),'utf8');
 const ERD={'01-customer.ddn':basics('01-customer.ddn'),'shared.ddn':basics('shared.ddn'),'customer-data.ddn':basics('customer-data.ddn')};
 function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false});console.error('FAIL',name,e.code||'',e.message);}}
 /* Pack into a temp dir and extract to a temp consumer dir. */

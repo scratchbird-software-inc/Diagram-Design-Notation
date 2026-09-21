@@ -6,7 +6,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const A=require('../dist/ddn.global'),L=require('../runtime/ddn-layout');
 const root=path.resolve(__dirname,'..'),out=path.join(root,'tests/validation/routing-fix');fs.mkdirSync(out,{recursive:true});
-const base=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(root,'../examples/projections',f),'utf8')]));
+const base=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(root,'../website/examples/projections',f),'utf8')]));
 const checks=[],renders=[];
 function test(name,fn){try{fn();checks.push({name,pass:true});console.log('PASS',name);}catch(e){checks.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function render(hint='',overrides={},changes={}){

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Pin-pattern invariants against the public 0.3 bundle. */
 const A=require('../dist/ddn.global.js'),P=require('../runtime/ddn-palette.js'),fs=require('fs'),assert=require('assert/strict'),root=require('path').resolve(__dirname,'..');
 const out=[];function t(name,fn){try{fn();out.push({name,pass:true});}catch(e){out.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.message);}}
-const entry='examples/live/pinned-patterns.ddn',w=A.createWorkspace({[entry]:fs.readFileSync(root+'/../'+entry,'utf8')}),saved=w.getFiles();let renders={};
+const entry='examples/live/pinned-patterns.ddn',w=A.createWorkspace({[entry]:fs.readFileSync(root+'/../website/'+entry,'utf8')}),saved=w.getFiles();let renders={};
 for(const v of w.views(entry)){let r;t(v.id+' compiles with current native routing',()=>{r=w.renderSync({entry,view:v.id});renders[v.id]=r;});if(!r)continue;
  t(v.id+' does not mutate DDN source',()=>assert.deepEqual(w.getFiles(),saved));
  if(!['single_pin','no_pins'].includes(v.id)){

@@ -19,8 +19,8 @@ function test(name, fn) { try { fn(); pass++; console.log('PASS ' + name); } cat
 
 const ROOT = path.join(__dirname, '..', '..');
 const HYBRID = {
-  '04-hybrid.ddn': fs.readFileSync(path.join(ROOT, 'examples/basics/04-hybrid.ddn'), 'utf8'),
-  'shared.ddn': fs.readFileSync(path.join(ROOT, 'examples/basics/shared.ddn'), 'utf8'),
+  '04-hybrid.ddn': fs.readFileSync(path.join(ROOT, 'website/examples/basics/04-hybrid.ddn'), 'utf8'),
+  'shared.ddn': fs.readFileSync(path.join(ROOT, 'website/examples/basics/shared.ddn'), 'utf8'),
 };
 const PROTO = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'prototype', 'workspace.json'), 'utf8'));
 const fresh = (files) => D.createWorkspace(files || HYBRID);

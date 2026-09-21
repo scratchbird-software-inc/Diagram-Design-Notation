@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Canvas pack B: canvas.pest@1 / canvas.pestle@1 / canvas.porter5@1 profiles. */
 'use strict';
 const A=require('../dist/ddn.global.js'), assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const dir=path.resolve(__dirname,'../../examples/basics'),base={'32-canvas-pack-b.ddn':fs.readFileSync(dir+'/32-canvas-pack-b.ddn','utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
+const dir=path.resolve(__dirname,'../../website/examples/basics'),base={'32-canvas-pack-b.ddn':fs.readFileSync(dir+'/32-canvas-pack-b.ddn','utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({...base,...changes});}
 function run(view,changes={}){return workspace(changes).renderSync({entry:'32-canvas-pack-b.ddn',view});}

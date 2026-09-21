@@ -7,10 +7,10 @@ function collect(dir,entry){const abs=path.resolve(root,dir);const files={};(fun
 function viewsOf(files){const out=[];for(const [p,text]of Object.entries(files))for(const s of A.parse(text,p).sections)for(const n of s.declarations)if(n.type==='view')out.push(n.id);return out;}
 // D5 acceptance core: fixed workspace list incl. projections + quality.
 const WORKSPACES=[
- {dir:'examples/basics',entry:'01-customer.ddn'},
- {dir:'examples/basics',entry:'17-curved-relations.ddn'},
- {dir:'examples/projections',entry:'views.ddn'},
- {dir:'examples/quality',entry:'views.ddn'},
+ {dir:'website/examples/basics',entry:'01-customer.ddn'},
+ {dir:'website/examples/basics',entry:'17-curved-relations.ddn'},
+ {dir:'website/examples/projections',entry:'views.ddn'},
+ {dir:'website/examples/quality',entry:'views.ddn'},
 ];
 let roundTrips=0,bytes=0;
 for(const w of WORKSPACES){
@@ -38,14 +38,14 @@ for(const w of WORKSPACES){
 test('Round-trip proof size recorded',()=>{assert.ok(roundTrips>=60,'expected at least 60 view round-trips, got '+roundTrips);console.log(`  round-trip proof: ${roundTrips} views, ${bytes} SVG bytes compared`);});
 
 test('Section bodies preserve comments and formatting',()=>{
- const files=collect('examples/basics','09-look-comparison.ddn');
+ const files=collect('website/examples/basics','09-look-comparison.ddn');
  const {text}=A.io.bundle(files,'09-look-comparison.ddn');
  assert.ok(text.includes('// One model, three renderings. No at coordinates or manual route waypoints.'),'comment lost');
  assert.ok(text.includes('kind: table;'));
 });
 
 test('Dropped inter-bundled imports are canonicalized to module-qualified sibling references',()=>{
- const files=collect('examples/basics','01-customer.ddn');
+ const files=collect('website/examples/basics','01-customer.ddn');
  const {text}=A.io.bundle(files,'01-customer.ddn');
  assert.ok(!text.includes('import "customer-data.ddn"'),'inter-bundle import kept');
  assert.ok(!text.includes('@customer.model'),'alias reference not canonicalized');
@@ -68,13 +68,13 @@ test('External imports kept at top with warning diagnostic (DDN-W013)',()=>{
 
 test('CLI bundle command end-to-end',()=>{
  const out=path.join('/tmp','ddn-b1-015-cli-bundle.ddn');
- cp.execFileSync(process.execPath,[path.join(root,'notation/cli/cli.js'),'bundle','examples/basics/01-customer.ddn','--workspace','examples/basics','--out',out],{cwd:root,stdio:'pipe'});
+ cp.execFileSync(process.execPath,[path.join(root,'notation/cli/cli.js'),'bundle','website/examples/basics/01-customer.ddn','--workspace','website/examples/basics','--out',out],{cwd:root,stdio:'pipe'});
  const text=fs.readFileSync(out,'utf8');
- assert.equal(text,A.io.bundle(collect('examples/basics','01-customer.ddn'),'01-customer.ddn').text,'CLI output differs from api.io.bundle');
+ assert.equal(text,A.io.bundle(collect('website/examples/basics','01-customer.ddn'),'01-customer.ddn').text,'CLI output differs from api.io.bundle');
  cp.execFileSync(process.execPath,[path.join(root,'notation/cli/cli.js'),'check',out,'--workspace','/tmp','--view','overview'],{cwd:root,stdio:'pipe'});
  const svg=cp.execFileSync(process.execPath,[path.join(root,'notation/cli/cli.js'),'render',out,'--workspace','/tmp','--view','overview'],{cwd:root,stdio:'pipe'}).toString();
  assert.match(svg,/<svg/);
- const orig=cp.execFileSync(process.execPath,[path.join(root,'notation/cli/cli.js'),'render','examples/basics/01-customer.ddn','--workspace','examples/basics','--view','overview'],{cwd:root,stdio:'pipe'}).toString();
+ const orig=cp.execFileSync(process.execPath,[path.join(root,'notation/cli/cli.js'),'render','website/examples/basics/01-customer.ddn','--workspace','website/examples/basics','--view','overview'],{cwd:root,stdio:'pipe'}).toString();
  assert.equal(svg,orig,'CLI render not byte-identical');
 });
 

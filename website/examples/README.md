@@ -3,8 +3,8 @@
 Runnable `.ddn` sources, grouped by purpose. Render any of them with the CLI:
 
 ```sh
-node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/flow.svg
-node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
+node ../../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/flow.svg
+node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
 - `basics/` — 61 numbered examples (01-customer … 61-self-contained)

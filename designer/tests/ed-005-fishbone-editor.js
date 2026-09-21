@@ -18,7 +18,7 @@ const CAL = M + 'causes.calibration';
 function fixtureFiles() {
   const files = {};
   for (const f of ['model.ddn', 'views.ddn', 'formats.ddn', 'details.ddn'])
-    files['examples/quality/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'examples', 'quality', f), 'utf8');
+    files['examples/quality/' + f] = fs.readFileSync(path.join(__dirname, '..', '..', 'website', 'examples', 'quality', f), 'utf8');
   return files;
 }
 function diffSpan(a, b) {

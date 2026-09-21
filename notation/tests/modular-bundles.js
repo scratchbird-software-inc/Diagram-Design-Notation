@@ -4,8 +4,8 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const root=path.resolve(__dirname,'..'),dist=path.join(root,'dist'),results=[];
 const A=require('../dist/ddn.global.js'); // reference: the unchanged all-in-one bundle
 const read=n=>fs.readFileSync(path.join(dist,n),'utf8');
-const basics=f=>fs.readFileSync(path.join(root,'../examples/basics',f),'utf8');
-const quality=f=>fs.readFileSync(path.join(root,'../examples/quality',f),'utf8');
+const basics=f=>fs.readFileSync(path.join(root,'../website/examples/basics',f),'utf8');
+const quality=f=>fs.readFileSync(path.join(root,'../website/examples/quality',f),'utf8');
 const ERD={'01-customer.ddn':basics('01-customer.ddn'),'shared.ddn':basics('shared.ddn'),'customer-data.ddn':basics('customer-data.ddn')};
 const CHART={'20-funnel-chart.ddn':basics('20-funnel-chart.ddn'),'shared.ddn':basics('shared.ddn')};
 const FISHBONE=Object.fromEntries(['model.ddn','details.ddn','formats.ddn','views.ddn'].map(f=>[f,quality(f)]));

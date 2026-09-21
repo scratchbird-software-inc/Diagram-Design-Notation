@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Radar/spider chart mark (chart.radar@1) fixtures. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const entry='19-radar-chart.ddn',base=fs.readFileSync(path.resolve(__dirname,'../../examples/basics',entry),'utf8');
+const entry='19-radar-chart.ddn',base=fs.readFileSync(path.resolve(__dirname,'../../website/examples/basics',entry),'utf8');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 function workspace(changes={}){return A.createWorkspace({[entry]:base,...changes});}
 function run(changes={},overrides={}){return workspace(changes).renderSync({entry,view:'radar',overrides});}

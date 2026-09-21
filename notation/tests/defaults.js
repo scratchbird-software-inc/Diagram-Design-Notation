@@ -61,7 +61,7 @@ test('Explicit property beats the registry default',()=>{
 });
 
 test('D5: pre-existing use-case renders stay byte-identical to their committed goldens',()=>{
- const uc=path.join(root,'../examples/use-cases'),man=JSON.parse(fs.readFileSync(path.join(uc,'manifest.json'),'utf8'));
+ const uc=path.join(root,'../website/examples/use-cases'),man=JSON.parse(fs.readFileSync(path.join(uc,'manifest.json'),'utf8'));
  const hash=s=>crypto.createHash('sha256').update(s).digest('hex');
  const files={};for(const r of man.results)for(const f in r.sourceHashes)files[f]=fs.readFileSync(path.join(uc,f.replace(/^use-cases\//,'')),'utf8');
  for(const r of man.results){
@@ -73,8 +73,8 @@ test('D5: pre-existing use-case renders stay byte-identical to their committed g
 });
 
 test('Example 57 declares a bare and an overriding element of one kind and renders both',()=>{
- const entry='57-element-defaults.ddn',base=fs.readFileSync(path.join(root,'../examples/basics',entry),'utf8');
- const shared=fs.readFileSync(path.join(root,'../examples/basics/shared.ddn'),'utf8');
+ const entry='57-element-defaults.ddn',base=fs.readFileSync(path.join(root,'../website/examples/basics',entry),'utf8');
+ const shared=fs.readFileSync(path.join(root,'../website/examples/basics/shared.ddn'),'utf8');
  const ws=A.createWorkspace({[entry]:base,'shared.ddn':shared});
  const ir=ws.resolve(entry,'defaults');
  const bare=ir.elements.find(e=>e.local==='bare'),explicit=ir.elements.find(e=>e.local==='explicit');

@@ -2,7 +2,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const D=require('../runtime/ddn-core'),X=require('../runtime/ddn-export'),reg=require('../../standard/registry/catalogue.json');
-const dir=path.resolve(__dirname,'../../examples/basics'),FILE='38-sql-ddl-export.ddn';
+const dir=path.resolve(__dirname,'../../website/examples/basics'),FILE='38-sql-ddl-export.ddn';
 const base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const GOLDEN=fs.readFileSync(path.resolve(__dirname,'fixtures/sql-ddl-export.sql'),'utf8');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
