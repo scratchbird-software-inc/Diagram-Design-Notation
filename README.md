@@ -31,7 +31,10 @@ or security approval.
 **No server needed:** open `index.html` in any browser — it renders a live
 diagram in-page and links to every standalone page: the full diagram gallery
 (`notation/studio/portable-gallery.html`), the Studio editor
-(`notation/studio/portable-editor.html`), the working designer prototype
+(`notation/studio/portable-editor.html`), the end-user viewer
+(`notation/viewer/ddn-viewer.html` — open/paste a source, fit page/width/
+height/100%, font and colour overrides per kind/relation-class/object,
+SVG+PNG export, all presentation-only), the working designer prototype
 (`designer/prototype/standalone.html`), and the notation plates
 (`standard/plates/index.html`). All work from `file://`.
 

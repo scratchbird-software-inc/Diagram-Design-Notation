@@ -128,7 +128,7 @@ The full precedence order, weakest to strongest: registry kind defaults < format
 Every rendered SVG mark carries deterministic CSS class hooks so a host web page can restyle a diagram with its own stylesheet without forking the renderer. The class scheme is fixed (no new options) and derives only from registry codes and identifiers, keeping the renderer deterministic:
 
 - Root: `<svg class="ddn-svg ddn-view-<kind> [ddn-profile-<profile-id-slug>] …">` where `<kind>` is the projection kind (`graph`, `chart`, `matrix`, `panels`, `timeline`, `sequence`, …) and the profile class appears when the view declares a projection profile.
-- Nodes: `ddn-node ddn-kind-<code-lowercase>` (the registry kind code, e.g. `ddn-kind-tbl`).
+- Nodes: `ddn-node ddn-kind-<code-lowercase>` (the registry kind code, e.g. `ddn-kind-tbl`). Node marks also carry a stable per-object attribute hook `data-ddn-id="<element-id>"` (in addition to the pre-existing `data-id`), so a host page or viewer can target one specific object (`[data-ddn-id="…"]`) without parsing ids out of classes.
 - Relations: `ddn-rel ddn-verb-<verb-slug>` (registry relationship code, e.g. `ddn-verb-publish`).
 - Field rows `ddn-field`; relation labels `ddn-label`; panels `ddn-panel`; frames `ddn-frame`; projection marks `ddn-mark ddn-mark-<type>` (`bar`, `line`, `arc`, `point`, …; pie and donut sectors are `arc`).
 

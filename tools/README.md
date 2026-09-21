@@ -18,6 +18,10 @@ Small tools shared by the monorepo components. Per-component test suites live in
   exposes only the opened file (e.g. Flatpak document-portal launches).
   (Replacement-string safety: always use function replacements when inlining —
   the runtime contains `$'` sequences that `String.replace` would expand.)
+- `build-viewer.js` — builds the single-file end-user viewer
+  `notation/viewer/ddn-viewer.html` by inlining `notation/dist/ddn.global.js` and
+  `notation/viewer/src/{viewer.css,viewer.js}` into `src/template.html`. Run after
+  `build:sdk` via `npm --prefix notation run build:viewer`; deterministic output.
 - `requirements-dev.txt` — optional Python tooling (markdown rendering, schema
   validation, browser tests). Nothing here is required to run or test the runtime.
 

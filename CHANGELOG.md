@@ -6,6 +6,33 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-007: end-user viewer — new single-file, non-designer viewer
+  `notation/viewer/ddn-viewer.html` (runtime inlined; sources in
+  `notation/viewer/src/`, deterministic build step `tools/build-viewer.js`
+  wired as `npm --prefix notation run build:viewer`). Runs from `file://`
+  in Chrome and Firefox (no Chrome-only APIs — file input, drag-drop,
+  2D canvas + `toDataURL`, Blob downloads only). Features, all client-side:
+  open `.ddn` via file picker, drag-drop, or paste; view picker populated
+  from the source's declared views; zoom controls (Fit page / Fit width /
+  Fit height / 100% / − / + with live % display) implemented as CSS
+  transform scale against the SVG's declared size; font-family override;
+  colour overrides for every object kind and relation class present in the
+  view plus per-object overrides by clicking a node. Per-object overrides
+  ride a new additive renderer hook: node marks now carry
+  `data-ddn-id="<element-id>"` (`ddn-render.js` graph nodes and
+  `ddn-shapes.js` profile-kind nodes) — use-case golden SVG hashes
+  regenerated (27 views; semantic hashes unchanged). Overrides are CSS rules
+  in the viewer DOM only; the source text is never modified and the status
+  bar says so. Reset clears all overrides; Export SVG/PNG downloads the
+  diagram as presented (PNG rasterised at 2×). New suite
+  `notation/tests/viewer.js` (6 tests, wired in as `test:viewer`): build
+  determinism (three byte-identical builds matching the committed file),
+  generated-markup control checks, node unit tests of the pure functions
+  `computeFitScale` / `overrideRuleFor` / `viewListFrom`, and a fixture
+  render asserting the override selectors exist in real output. New usage
+  doc `notation/viewer/README.md`; viewer linked from the root `index.html`
+  landing grid.
+
 - B1-006: data refresh API — new public `ws.replaceData(name, records)` on the
   workspace object (backing implementation `DDNLive.authoring.replaceData`):
   it rewrites ONLY the named `data` block's record lines (declarations
