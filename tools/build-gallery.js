@@ -195,7 +195,7 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <body>
 <header>
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Data Design Notation ${esc(cov.version)}: ${profileCount} installed profiles plus ${sheetCount} variation renders — ${profileCount + sheetCount} SVGs, each produced by the reference CLI render path.</p>
+<p>Full notation coverage for Diagram Design Notation ${esc(cov.version)}: ${profileCount} installed profiles plus ${sheetCount} variation renders — ${profileCount + sheetCount} SVGs, each produced by the reference CLI render path.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>.</p>
 </header>
 <nav>

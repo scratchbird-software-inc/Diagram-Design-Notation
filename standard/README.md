@@ -1,4 +1,4 @@
-# DDN standard — proposed Data Design Notation standard
+# DDN standard — proposed Diagram Design Notation standard
 
 The normative core of the project: what the language is, what the vocabulary
 means, and how the standard evolves. The runtime in `../notation/`

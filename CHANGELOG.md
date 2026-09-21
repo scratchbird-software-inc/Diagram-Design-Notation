@@ -1,11 +1,20 @@
 # Changelog
 
-All notable changes to the Data Design Notation project are documented here.
+All notable changes to the Diagram Design Notation project are documented here.
 Component-level history predating the monorepo import lives in
 `notation/CHANGELOG.md` and `examples/use-cases/CHANGELOG.md`.
 
 ## [Unreleased]
 
+- B1-016: project renamed to **Diagram Design Notation** (formerly "Data"
+  rather than "Diagram"; every user-visible occurrence of the old long name
+  was swept). The acronym **DDN is unchanged** — every machine identifier
+  (`DDNLive`, `ddn-*.js` bundles, `.ddn` extension, npm package names, error
+  codes, CSS classes, `ddn-workspace@1`) stays as it was. The rename touches
+  user-visible long-name occurrences only: READMEs, landing/viewer/studio/
+  designer pages, the registry display name, gallery and standalone-page
+  generators, and this changelog. Versions stay `0.6.0-beta.1` (runtime) and
+  `0.2.0-beta.1` (designer).
 - B1-014: designer display options, text download formats, resizable and
   window pop-out panels. The designer prototype's shelf gains a **Display**
   tab — presentation-only (never written to source): global typography and

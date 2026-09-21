@@ -1,6 +1,6 @@
 # DDN developer documentation
 
-Developer-facing documentation for the Data Design Notation (DDN) reference
+Developer-facing documentation for the Diagram Design Notation (DDN) reference
 runtime, version 0.6.0-beta.1. These pages cover using the runtime as a
 library and embedding rendered diagrams; they are verified against
 `notation/studio/src/public.d.ts` and the shipped bundles under

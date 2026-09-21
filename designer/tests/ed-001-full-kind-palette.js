@@ -173,7 +173,7 @@ test('build-standalone.mjs and build-ui-maps.mjs regenerate byte-identical outpu
     assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(root, 'designer/prototype', f), 'utf8'), f + ' differs from committed regeneration');
   }
   const standalone = fs.readFileSync(path.join(d1, 'standalone.html'), 'utf8');
-  assert.ok(standalone.includes('Data-Design-Notation ↗'), 'standalone keeps its header link');
+  assert.ok(standalone.includes('Diagram-Design-Notation ↗'), 'standalone keeps its header link');
   assert.ok((standalone.match(/INLINE:BEGIN/g) || []).length === 5, 'five inline markers');
 });
 

@@ -1,4 +1,4 @@
-# Data Design Notation (DDN)
+# Diagram Design Notation (DDN)
 
 A **model-first diagram language** and open standard proposal: you author data,
 format, and view declarations separately in plain-text `.ddn` files, and one

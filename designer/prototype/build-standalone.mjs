@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path';
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..', '..');
 
-const STANDALONE_LINK = '<a href="../../README.md" style="color:inherit;text-decoration:none;border-bottom:1px dotted">Data-Design-Notation ↗</a>';
+const STANDALONE_LINK = '<a href="../../README.md" style="color:inherit;text-decoration:none;border-bottom:1px dotted">Diagram-Design-Notation ↗</a>';
 const LOCAL_SCRIPTS = ['kind-ui-map.js', 'relation-ui-map.js', 'commands.js', 'app.js'];
 
 function read(p) { return readFileSync(p, 'utf8'); }
