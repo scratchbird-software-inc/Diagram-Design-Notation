@@ -6,6 +6,8 @@ This chapter defines the core production property vocabulary. It supplements, ra
 
 Properties omitted from source are **not asserted**. An explicit `undecided` is a design assertion. `not_applicable` is permitted only when the target kind and selected profile justify it. `null` is a value, never a synonym for absence. The formatter must not populate absent properties with guessed defaults.
 
+The registry's per-kind `defaults` objects (chapter 04 §10) are the one sanctioned defaults source, and they are not a loophole in the rule above: each entry is a documented registry value drawn from this chapter's vocabulary, type-checked against `registry/data-properties.json` at schema-build time, and it becomes source only through an explicit authoring action (palette creation, a creation command or a script calling `defaults.forKind`). An omitted property stays not asserted at render time; a populated default is indistinguishable from a hand-written property and is overridden by any explicit declaration, view or occurrence value.
+
 Lengths use px, pt, mm or in; time durations use ms, s, min, h or d. Absolute timestamp fields use an explicit time-zone offset where they represent instants. Units are checked by property category, not by merely accepting a number. Locale must not reinterpret decimal separators or timestamps.
 
 Registered fields are subject to target applicability and validation stage. Summary strings in sketch records must be visibly marked incomplete for a physical or observed-state claim. Unknown unqualified properties produce a profile diagnostic; declared namespaced extension properties require their extension contract. This requirement is stricter than the demonstrator's generic metadata preservation.

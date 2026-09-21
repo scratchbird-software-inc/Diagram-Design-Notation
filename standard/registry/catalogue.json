@@ -96,7 +96,8 @@
       "keyword": "object",
       "aliases": [
         "obj"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ent",
@@ -116,7 +117,8 @@
       "keyword": "entity",
       "aliases": [
         "ent"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rel",
@@ -134,7 +136,8 @@
       "glyph_base": "link",
       "token_required_when_ambiguous": true,
       "keyword": "rel",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.dom",
@@ -154,7 +157,8 @@
       "keyword": "domain",
       "aliases": [
         "dom"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.term",
@@ -172,7 +176,8 @@
       "glyph_base": "book",
       "token_required_when_ambiguous": true,
       "keyword": "term",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.enum",
@@ -192,7 +197,8 @@
       "keyword": "enumeration",
       "aliases": [
         "enum"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rule",
@@ -210,7 +216,8 @@
       "glyph_base": "check",
       "token_required_when_ambiguous": true,
       "keyword": "rule",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.unit",
@@ -228,7 +235,8 @@
       "glyph_base": "ruler",
       "token_required_when_ambiguous": true,
       "keyword": "unit",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.agg",
@@ -248,7 +256,8 @@
       "keyword": "aggregate",
       "aliases": [
         "agg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ctx",
@@ -268,7 +277,8 @@
       "keyword": "context",
       "aliases": [
         "ctx"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.bind",
@@ -288,7 +298,8 @@
       "keyword": "binding",
       "aliases": [
         "bind"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.key",
@@ -308,7 +319,8 @@
       "keyword": "identity",
       "aliases": [
         "key"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.tbl",
@@ -328,7 +340,8 @@
       "keyword": "table",
       "aliases": [
         "tbl"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.viw",
@@ -348,7 +361,8 @@
       "keyword": "view",
       "aliases": [
         "viw"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.mvi",
@@ -368,7 +382,8 @@
       "keyword": "materialized_view",
       "aliases": [
         "mvi"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ftb",
@@ -388,7 +403,8 @@
       "keyword": "foreign_table",
       "aliases": [
         "ftb"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.fun",
@@ -408,7 +424,8 @@
       "keyword": "function",
       "aliases": [
         "fun"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.prc",
@@ -428,7 +445,8 @@
       "keyword": "procedure",
       "aliases": [
         "prc"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.trg",
@@ -448,7 +466,8 @@
       "keyword": "trigger",
       "aliases": [
         "trg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.seq",
@@ -468,7 +487,8 @@
       "keyword": "sequence",
       "aliases": [
         "seq"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.sdm",
@@ -488,7 +508,8 @@
       "keyword": "sql_domain",
       "aliases": [
         "sdm"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.typ",
@@ -508,7 +529,8 @@
       "keyword": "sql_type",
       "aliases": [
         "typ"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.con",
@@ -528,7 +550,8 @@
       "keyword": "constraint",
       "aliases": [
         "con"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.idx",
@@ -548,7 +571,8 @@
       "keyword": "index",
       "aliases": [
         "idx"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.syn",
@@ -568,7 +592,8 @@
       "keyword": "synonym",
       "aliases": [
         "syn"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.opr",
@@ -586,7 +611,8 @@
       "glyph_base": "operator",
       "token_required_when_ambiguous": true,
       "keyword": "opr",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.pkg",
@@ -604,7 +630,8 @@
       "glyph_base": "package",
       "token_required_when_ambiguous": true,
       "keyword": "pkg",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.ext",
@@ -622,7 +649,8 @@
       "glyph_base": "plugin",
       "token_required_when_ambiguous": true,
       "keyword": "ext",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.qry",
@@ -640,7 +668,8 @@
       "glyph_base": "query",
       "token_required_when_ambiguous": true,
       "keyword": "qry",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.pol",
@@ -658,7 +687,8 @@
       "glyph_base": "shield",
       "token_required_when_ambiguous": true,
       "keyword": "pol",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.pub",
@@ -676,7 +706,8 @@
       "glyph_base": "publish",
       "token_required_when_ambiguous": true,
       "keyword": "pub",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.sub",
@@ -694,7 +725,8 @@
       "glyph_base": "subscribe",
       "token_required_when_ambiguous": true,
       "keyword": "sub",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.dst",
@@ -714,7 +746,8 @@
       "keyword": "dataset",
       "aliases": [
         "dst"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rec",
@@ -734,7 +767,8 @@
       "keyword": "record",
       "aliases": [
         "rec"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.fld",
@@ -754,7 +788,8 @@
       "keyword": "field",
       "aliases": [
         "fld"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.col",
@@ -774,7 +809,8 @@
       "keyword": "collection",
       "aliases": [
         "col"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.doc",
@@ -794,7 +830,8 @@
       "keyword": "document",
       "aliases": [
         "doc"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.arr",
@@ -814,7 +851,8 @@
       "keyword": "array",
       "aliases": [
         "arr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.map",
@@ -832,7 +870,8 @@
       "glyph_base": "map",
       "token_required_when_ambiguous": true,
       "keyword": "map",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.set",
@@ -850,7 +889,8 @@
       "glyph_base": "set",
       "token_required_when_ambiguous": true,
       "keyword": "set",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.var",
@@ -870,7 +910,8 @@
       "keyword": "variant",
       "aliases": [
         "var"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.grf",
@@ -890,7 +931,8 @@
       "keyword": "graph",
       "aliases": [
         "grf"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.nod",
@@ -910,7 +952,8 @@
       "keyword": "graph_node",
       "aliases": [
         "nod"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.edg",
@@ -930,7 +973,8 @@
       "keyword": "graph_edge",
       "aliases": [
         "edg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.kvs",
@@ -950,7 +994,8 @@
       "keyword": "key_value",
       "aliases": [
         "kvs"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.wcf",
@@ -970,7 +1015,8 @@
       "keyword": "wide_column",
       "aliases": [
         "wcf"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.tsr",
@@ -990,7 +1036,8 @@
       "keyword": "time_series",
       "aliases": [
         "tsr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.fil",
@@ -1010,7 +1057,8 @@
       "keyword": "file",
       "aliases": [
         "fil"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.fls",
@@ -1030,7 +1078,8 @@
       "keyword": "file_set",
       "aliases": [
         "fls"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.buk",
@@ -1050,7 +1099,8 @@
       "keyword": "bucket",
       "aliases": [
         "buk"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.man",
@@ -1070,7 +1120,8 @@
       "keyword": "manifest",
       "aliases": [
         "man"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.src",
@@ -1090,7 +1141,8 @@
       "keyword": "search_index",
       "aliases": [
         "src"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.vec",
@@ -1110,7 +1162,8 @@
       "keyword": "vector",
       "aliases": [
         "vec"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.bin",
@@ -1130,7 +1183,8 @@
       "keyword": "blob",
       "aliases": [
         "bin"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ten",
@@ -1150,7 +1204,8 @@
       "keyword": "tensor",
       "aliases": [
         "ten"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rdf",
@@ -1168,7 +1223,8 @@
       "glyph_base": "graph",
       "token_required_when_ambiguous": true,
       "keyword": "rdf",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.fct",
@@ -1188,7 +1244,8 @@
       "keyword": "fact",
       "aliases": [
         "fct"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.dim",
@@ -1208,7 +1265,8 @@
       "keyword": "dimension",
       "aliases": [
         "dim"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.brg",
@@ -1228,7 +1286,8 @@
       "keyword": "bridge",
       "aliases": [
         "brg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cub",
@@ -1248,7 +1307,8 @@
       "keyword": "cube",
       "aliases": [
         "cub"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.sem",
@@ -1268,7 +1328,8 @@
       "keyword": "semantic_model",
       "aliases": [
         "sem"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.met",
@@ -1288,7 +1349,8 @@
       "keyword": "metric",
       "aliases": [
         "met"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rpt",
@@ -1308,7 +1370,8 @@
       "keyword": "report",
       "aliases": [
         "rpt"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.dsh",
@@ -1328,7 +1391,8 @@
       "keyword": "dashboard",
       "aliases": [
         "dsh"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.dpr",
@@ -1348,7 +1412,8 @@
       "keyword": "data_product",
       "aliases": [
         "dpr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ftr",
@@ -1368,7 +1433,8 @@
       "keyword": "feature",
       "aliases": [
         "ftr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.mlm",
@@ -1388,7 +1454,8 @@
       "keyword": "model_artifact",
       "aliases": [
         "mlm"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.exp",
@@ -1408,7 +1475,8 @@
       "keyword": "export",
       "aliases": [
         "exp"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.api",
@@ -1426,7 +1494,8 @@
       "glyph_base": "interface",
       "token_required_when_ambiguous": true,
       "keyword": "api",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.ept",
@@ -1446,7 +1515,8 @@
       "keyword": "endpoint",
       "aliases": [
         "ept"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.top",
@@ -1466,7 +1536,8 @@
       "keyword": "topic",
       "aliases": [
         "top"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.que",
@@ -1486,7 +1557,8 @@
       "keyword": "queue",
       "aliases": [
         "que"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.msg",
@@ -1506,7 +1578,8 @@
       "keyword": "message",
       "aliases": [
         "msg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cmd",
@@ -1526,7 +1599,8 @@
       "keyword": "command",
       "aliases": [
         "cmd"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cgr",
@@ -1546,7 +1620,8 @@
       "keyword": "consumer_group",
       "aliases": [
         "cgr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.sbs",
@@ -1566,7 +1641,8 @@
       "keyword": "subscription",
       "aliases": [
         "sbs"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.schr",
@@ -1586,7 +1662,8 @@
       "keyword": "schema_registry",
       "aliases": [
         "schr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cnx",
@@ -1606,7 +1683,8 @@
       "keyword": "connector",
       "aliases": [
         "cnx"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.whk",
@@ -1626,7 +1704,8 @@
       "keyword": "webhook",
       "aliases": [
         "whk"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.fed",
@@ -1646,7 +1725,8 @@
       "keyword": "federation",
       "aliases": [
         "fed"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.act",
@@ -1666,7 +1746,8 @@
       "keyword": "activity",
       "aliases": [
         "act"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.pip",
@@ -1686,7 +1767,8 @@
       "keyword": "pipeline",
       "aliases": [
         "pip"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.job",
@@ -1704,7 +1786,8 @@
       "glyph_base": "gear",
       "token_required_when_ambiguous": true,
       "keyword": "job",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.run",
@@ -1722,7 +1805,8 @@
       "glyph_base": "play",
       "token_required_when_ambiguous": true,
       "keyword": "run",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.scd",
@@ -1742,7 +1826,8 @@
       "keyword": "schedule",
       "aliases": [
         "scd"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.app",
@@ -1762,7 +1847,8 @@
       "keyword": "application",
       "aliases": [
         "app"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.qop",
@@ -1782,7 +1868,8 @@
       "keyword": "query_operation",
       "aliases": [
         "qop"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.wop",
@@ -1802,7 +1889,8 @@
       "keyword": "write_operation",
       "aliases": [
         "wop"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.chk",
@@ -1822,7 +1910,8 @@
       "keyword": "checkpoint",
       "aliases": [
         "chk"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.tst",
@@ -1842,7 +1931,8 @@
       "keyword": "test",
       "aliases": [
         "tst"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.hum",
@@ -1862,7 +1952,8 @@
       "keyword": "manual_activity",
       "aliases": [
         "hum"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.gat",
@@ -1882,7 +1973,8 @@
       "keyword": "gateway",
       "aliases": [
         "gat"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cat",
@@ -1902,7 +1994,8 @@
       "keyword": "catalog",
       "aliases": [
         "cat"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.db",
@@ -1922,7 +2015,8 @@
       "keyword": "database",
       "aliases": [
         "db"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.scm",
@@ -1942,7 +2036,8 @@
       "keyword": "schema",
       "aliases": [
         "scm"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ksp",
@@ -1962,7 +2057,8 @@
       "keyword": "keyspace",
       "aliases": [
         "ksp"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.nsp",
@@ -1982,7 +2078,8 @@
       "keyword": "namespace",
       "aliases": [
         "nsp"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.prj",
@@ -2002,7 +2099,8 @@
       "keyword": "workspace",
       "aliases": [
         "prj"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.dir",
@@ -2022,7 +2120,8 @@
       "keyword": "folder",
       "aliases": [
         "dir"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.reg",
@@ -2042,7 +2141,8 @@
       "keyword": "registry",
       "aliases": [
         "reg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cld",
@@ -2062,7 +2162,10 @@
       "keyword": "cloud",
       "aliases": [
         "cld"
-      ]
+      ],
+      "defaults": {
+        "location": "cloud"
+      }
     },
     {
       "id": "kind.acc",
@@ -2082,7 +2185,8 @@
       "keyword": "cloud_account",
       "aliases": [
         "acc"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rgn",
@@ -2102,7 +2206,8 @@
       "keyword": "region",
       "aliases": [
         "rgn"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.az",
@@ -2122,7 +2227,8 @@
       "keyword": "zone",
       "aliases": [
         "az"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.site",
@@ -2142,7 +2248,8 @@
       "keyword": "site",
       "aliases": [
         "site"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.net",
@@ -2162,7 +2269,8 @@
       "keyword": "network",
       "aliases": [
         "net"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.clu",
@@ -2182,7 +2290,8 @@
       "keyword": "cluster",
       "aliases": [
         "clu"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.srv",
@@ -2202,7 +2311,8 @@
       "keyword": "service",
       "aliases": [
         "srv"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.host",
@@ -2222,7 +2332,8 @@
       "keyword": "host",
       "aliases": [
         "host"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.ctr",
@@ -2242,7 +2353,8 @@
       "keyword": "container",
       "aliases": [
         "ctr"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.vol",
@@ -2262,7 +2374,8 @@
       "keyword": "volume",
       "aliases": [
         "vol"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.dev",
@@ -2282,7 +2395,8 @@
       "keyword": "device",
       "aliases": [
         "dev"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.env",
@@ -2302,7 +2416,8 @@
       "keyword": "environment",
       "aliases": [
         "env"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.secz",
@@ -2322,7 +2437,8 @@
       "keyword": "security_zone",
       "aliases": [
         "secz"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.prl",
@@ -2342,7 +2458,8 @@
       "keyword": "partition_rule",
       "aliases": [
         "prl"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.par",
@@ -2362,7 +2479,8 @@
       "keyword": "partition",
       "aliases": [
         "par"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.shd",
@@ -2382,7 +2500,8 @@
       "keyword": "shard",
       "aliases": [
         "shd"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.plc",
@@ -2402,7 +2521,8 @@
       "keyword": "placement",
       "aliases": [
         "plc"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rpl",
@@ -2422,7 +2542,8 @@
       "keyword": "replica",
       "aliases": [
         "rpl"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rps",
@@ -2442,7 +2563,8 @@
       "keyword": "replica_set",
       "aliases": [
         "rps"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cog",
@@ -2462,7 +2584,8 @@
       "keyword": "colocation",
       "aliases": [
         "cog"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.cac",
@@ -2482,7 +2605,10 @@
       "keyword": "cache",
       "aliases": [
         "cac"
-      ]
+      ],
+      "defaults": {
+        "role": "cache"
+      }
     },
     {
       "id": "kind.log",
@@ -2502,7 +2628,8 @@
       "keyword": "log",
       "aliases": [
         "log"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.bal",
@@ -2522,7 +2649,8 @@
       "keyword": "router",
       "aliases": [
         "bal"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.snp",
@@ -2542,7 +2670,10 @@
       "keyword": "snapshot",
       "aliases": [
         "snp"
-      ]
+      ],
+      "defaults": {
+        "temporal": "snapshot"
+      }
     },
     {
       "id": "kind.bak",
@@ -2562,7 +2693,8 @@
       "keyword": "backup",
       "aliases": [
         "bak"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.arc",
@@ -2582,7 +2714,10 @@
       "keyword": "archive",
       "aliases": [
         "arc"
-      ]
+      ],
+      "defaults": {
+        "role": "archive"
+      }
     },
     {
       "id": "kind.tln",
@@ -2602,7 +2737,8 @@
       "keyword": "timeline",
       "aliases": [
         "tln"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.rcp",
@@ -2622,7 +2758,8 @@
       "keyword": "recovery",
       "aliases": [
         "rcp"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.win",
@@ -2642,7 +2779,8 @@
       "keyword": "window",
       "aliases": [
         "win"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.hst",
@@ -2662,7 +2800,10 @@
       "keyword": "history",
       "aliases": [
         "hst"
-      ]
+      ],
+      "defaults": {
+        "temporal": "event_history"
+      }
     },
     {
       "id": "kind.ret",
@@ -2682,7 +2823,8 @@
       "keyword": "retention",
       "aliases": [
         "ret"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.org",
@@ -2702,7 +2844,8 @@
       "keyword": "organization",
       "aliases": [
         "org"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.team",
@@ -2722,7 +2865,8 @@
       "keyword": "team",
       "aliases": [
         "team"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.role",
@@ -2740,7 +2884,8 @@
       "glyph_base": "person",
       "token_required_when_ambiguous": true,
       "keyword": "role",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.dct",
@@ -2758,7 +2903,8 @@
       "glyph_base": "contract",
       "token_required_when_ambiguous": true,
       "keyword": "dct",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.gpo",
@@ -2776,7 +2922,8 @@
       "glyph_base": "shield",
       "token_required_when_ambiguous": true,
       "keyword": "gpo",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.qlr",
@@ -2794,7 +2941,8 @@
       "glyph_base": "check",
       "token_required_when_ambiguous": true,
       "keyword": "qlr",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.slo",
@@ -2812,7 +2960,8 @@
       "glyph_base": "gauge",
       "token_required_when_ambiguous": true,
       "keyword": "slo",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.entl",
@@ -2830,7 +2979,8 @@
       "glyph_base": "lock",
       "token_required_when_ambiguous": true,
       "keyword": "entl",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.cls",
@@ -2848,7 +2998,8 @@
       "glyph_base": "tag",
       "token_required_when_ambiguous": true,
       "keyword": "cls",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.prv",
@@ -2866,7 +3017,8 @@
       "glyph_base": "graph",
       "token_required_when_ambiguous": true,
       "keyword": "prv",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.dcl",
@@ -2884,7 +3036,8 @@
       "glyph_base": "hold",
       "token_required_when_ambiguous": true,
       "keyword": "dcl",
-      "aliases": []
+      "aliases": [],
+      "defaults": {}
     },
     {
       "id": "kind.note",
@@ -2904,7 +3057,8 @@
       "keyword": "note",
       "aliases": [
         "note"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.smp",
@@ -2924,7 +3078,8 @@
       "keyword": "sample",
       "aliases": [
         "smp"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.fix",
@@ -2944,7 +3099,8 @@
       "keyword": "fixture",
       "aliases": [
         "fix"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.dec",
@@ -2964,7 +3120,8 @@
       "keyword": "decision",
       "aliases": [
         "dec"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.iss",
@@ -2984,7 +3141,8 @@
       "keyword": "issue",
       "aliases": [
         "iss"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.obs",
@@ -3004,7 +3162,8 @@
       "keyword": "observation",
       "aliases": [
         "obs"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.chg",
@@ -3024,7 +3183,8 @@
       "keyword": "change",
       "aliases": [
         "chg"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.vie",
@@ -3044,7 +3204,8 @@
       "keyword": "saved_view",
       "aliases": [
         "vie"
-      ]
+      ],
+      "defaults": {}
     },
     {
       "id": "kind.extn",
@@ -3064,7 +3225,8 @@
       "keyword": "extension",
       "aliases": [
         "extn"
-      ]
+      ],
+      "defaults": {}
     }
   ],
   "facets": [

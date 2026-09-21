@@ -7,6 +7,9 @@ Start with a valid minimal module, shared data block, shared default format and 
 
 > Implementation status (ED-013): eight canvas template starters are implemented in the prototype's Add shelf (Business Model Canvas, Lean Canvas, SWOT, PEST, PESTLE, Porter five forces, empathy map, balanced scorecard). Each one instantiates its profile's fixed grid with one synthetic starter note per block in a single atomic command (`Commands.createCanvasFromTemplate`), then opens the generated view in the panels editor; the starter notes are clearly placeholder guidance, never business data.
 
+## Element defaults at creation
+> Implemented (B1-002): every kind's registry `defaults` object (standard spec ch. 04 §10) is merged into `createInView`/`applyCreationAction` BEFORE the explicit properties channel; explicit values — from the inspector, a creation dialog or a script — always win. The merged set is written into the source as ordinary properties (visible, editable, script-overridable, undoable byte-exactly); nothing is applied silently at render time. Kinds whose defaults are `{}` create exactly the `kind` property, as before. The defaults come from the live runtime (`DDNLive.defaults.forKind`), never from a second hand-maintained list.
+
 ## Creation destination
 The Add shelf displays “Create in model.ddn / model.” A project default can preselect it. New objects go to that selected data block, even when the visual view is in another file. Create the necessary import and view selection atomically. Creating a local-only object is a deliberate alternative labeled “Only this view's local data.” Do not reuse the current helper's `editor_data` behavior as the universal policy.
 

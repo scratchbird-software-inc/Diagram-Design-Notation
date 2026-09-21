@@ -8,6 +8,44 @@ reg['kinds'] += profiles['kinds']
 reg['relationships'] += profiles['relationships']
 write=lambda name,obj:(root/'standard/schemas'/name.split('/',1)[1]).write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n')
 S='https://json-schema.org/draft/2020-12/schema'
+# B1-002 (D6): type-check optional per-kind `defaults` against the property
+# contracts (standard/registry/data-properties.json). Invalid entries fail the
+# schema build. Legality: core properties whose targets cover elements (the
+# designer declares every element as `object`), or x_ extensions with an
+# element/object target schema. Values must match the declared value shape.
+prop_contracts=json.loads((root/'standard/registry/data-properties.json').read_text())['properties']
+element_props={p['path']:p['value_shape'] for p in prop_contracts if 'element' in p['targets']}
+def shape_ok(value,shape):
+    s=shape.lower()
+    if 'boolean' in s:return isinstance(value,bool)
+    if 'integer' in s:return isinstance(value,int) and not isinstance(value,bool)
+    if 'number' in s:return isinstance(value,(int,float)) and not isinstance(value,bool)
+    if 'array' in s or s.endswith('[]'):return isinstance(value,list)
+    if '/' in s and ' ' not in s:return isinstance(value,str) and value in {x.strip() for x in s.split('/')}
+    if 'record' in s or 'object' in s:return isinstance(value,dict)
+    return isinstance(value,str)
+def check_defaults():
+    keywords={k['keyword'] for k in reg['kinds']}
+    ext=reg.get('extension_contracts',{})
+    problems=[]
+    for k in reg['kinds']:
+        d=k.get('defaults')
+        if d is None:problems.append(k['keyword']+': missing defaults object');continue
+        if not isinstance(d,dict):problems.append(k['keyword']+': defaults must be an object');continue
+        for key,value in d.items():
+            if key.startswith('x_'):
+                contract=ext.get(key)
+                if not contract or not any(t in contract.get('targets',{}) for t in ('object','element')):
+                    problems.append('%s: extension %s has no element target'% (k['keyword'],key))
+                continue
+            shape=element_props.get(key)
+            if shape is None:problems.append('%s: %s is not an element property in the contracts'%(k['keyword'],key));continue
+            if key=='kind':
+                if value not in keywords:problems.append('%s: kind default is not a registered keyword'%(k['keyword']))
+                continue
+            if not shape_ok(value,shape):problems.append('%s: default %s=%r does not match shape %r'%(k['keyword'],key,value,shape))
+    if problems:raise SystemExit('catalogue defaults invalid:\n'+'\n'.join(problems))
+check_defaults()
 value={'oneOf':[{'type':['null','boolean','string','number']},{'type':'array','items':{'$ref':'#/$defs/value'}},{'type':'object','required':['$ref'],'properties':{'$ref':{'type':'string','minLength':1}},'additionalProperties':False},{'type':'object','required':['$state'],'properties':{'$state':{'enum':['undecided','not_applicable','conflicting']}},'additionalProperties':False},{'type':'object','required':['$missing'],'properties':{'$missing':{'const':True}},'additionalProperties':False},{'type':'object','required':['$quantity','unit'],'properties':{'$quantity':{'type':'number'},'unit':{'enum':['px','pt','mm','cm','in','ms','s','min','h','d','%']}},'additionalProperties':False},{'type':'object','propertyNames':{'pattern':'^[^$]'},'additionalProperties':{'$ref':'#/$defs/value'}}]}
 source={'type':'object','required':['file','start','end'],'properties':{'file':{'type':'string'},'start':{'type':'integer','minimum':0},'end':{'type':'integer','minimum':0},'bodyEnd':{'type':'integer','minimum':0}},'additionalProperties':False}
 member={'type':'object','required':['id','name','local','properties'],'properties':{'id':{'type':'string'},'name':{'type':'string'},'local':{'type':'string'},'path':{'type':'string'},'depth':{'type':'integer','minimum':0},'parent':{'type':['string','null']},'properties':{'type':'object','additionalProperties':{'$ref':'#/$defs/value'}},'source':{'$ref':'#/$defs/source'}},'additionalProperties':False}

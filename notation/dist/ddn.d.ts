@@ -67,5 +67,10 @@ export function fromSnapshot(snapshot:Snapshot):MountOptions;
 export function parse(source:string,file?:string):Record<string,unknown>;
 export const authoring:Authoring;
 export const io:IO;
-declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
+export interface Defaults extends Record<string,unknown> {
+ /** Deep copy of the registry default property set for an element kind; `{}` when absent (B1-002). */
+ forKind(kind:string):Record<string,unknown>;
+}
+export const defaults:Defaults;
+declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
 export default DDNLive;

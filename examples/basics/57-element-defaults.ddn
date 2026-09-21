@@ -1,0 +1,18 @@
+ddn "0.5";
+module "ddn.examples.element-defaults";
+import "shared.ddn" as shared;
+
+// B1-002: every element kind carries a registry-driven default property set
+// (standard/registry/catalogue.json kinds[].defaults). A bare declaration
+// renders with exactly those defaults implicit; an explicit property always
+// wins over the registry default. `cache` defaults to role: "cache".
+data model {
+    object bare "Bare cache (registry default role)" { kind: cache; }
+    object explicit "Explicit override wins" { kind: cache; role: primary; description: "role is stated in source, overriding the registry default role: cache."; }
+}
+
+view defaults "Element defaults / bare versus explicit" {
+    data: [@model];
+    format: @shared.styles.technical;
+    publication { width: 1600px; height: 1000px; minimum_text: 8pt; }
+}

@@ -52,14 +52,21 @@ function stage(D,ws,entry,view,fn,mode){
 const CREATION_DEFAULTS={
  'req.requirement':id=>({x_diagram:{code:String(id).toUpperCase().replace(/[^A-Z0-9]+/g,'_'),text:'Undecided requirement statement'}}),
 };
+// B1-002 (D3): registry element defaults merge BEFORE the explicit properties
+// channel; explicit values win. Defaults are written into the source by the
+// setProperty loop below, never applied silently at render time.
+function creationProperties(D,kind,id,explicit){
+ const base=D.defaults&&typeof D.defaults.forKind==='function'?D.defaults.forKind(kind):{};
+ return{...base,...(explicit||CREATION_DEFAULTS[kind]?.(id)||{})};
+}
 function createInView(D,ws,entry,view,args,mode){
  const {id,name,kind,at,properties}=args||{};
- const initial=properties||CREATION_DEFAULTS[kind]?.(id);
+ const initial=creationProperties(D,kind,id,properties);
  return stage(D,ws,entry,view,t=>{
-  D.authoring.addElement(t,entry,view,{id,name,kind:initial?'object':kind});
+  D.authoring.addElement(t,entry,view,{id,name,kind:Object.keys(initial).length?'object':kind});
   const n=t.resolve(entry,view).elements.find(n=>n.local===id);
   if(!n)fail('DDN-I033','Created element not found in the resolved view.');
-  if(initial){for(const [k,v]of Object.entries(initial))D.authoring.setProperty(t,entry,view,n.id,k,v);D.authoring.setProperty(t,entry,view,n.id,'kind',kind);}
+  if(Object.keys(initial).length){for(const [k,v]of Object.entries(initial))D.authoring.setProperty(t,entry,view,n.id,k,v);D.authoring.setProperty(t,entry,view,n.id,'kind',kind);}
   if(at)D.authoring.pin(t,entry,view,n.id,at.x,at.y);
   return{select:n.id};
  },mode);

@@ -2916,7 +2916,8 @@
     "fault tree and event tree views via fault.tree@1/event.tree@1 (AND/OR gates, two-input check)",
     "network/bus overviews and rack elevations via network.basic@1/network.rack@1 (original glyphs, declared attachments; routing-geometry junctions remain rejected)",
     "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)",
-    "family tree / genealogy views via family.tree@1 (union join nodes, acyclic two-parent lineage)"
+    "family tree / genealogy views via family.tree@1 (union join nodes, acyclic two-parent lineage)",
+    "registry-driven element defaults on every kind (kinds[].defaults; public defaults.forKind; designer creation populates them, explicit properties win; renderer never applies them)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

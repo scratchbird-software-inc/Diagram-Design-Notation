@@ -6,6 +6,17 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-002: registry-driven element defaults — every kind in both registry
+  catalogues carries a `defaults` object (additive growth; `{}` where a kind
+  has no meaningful defaults, meaningful sets for `cache`, `archive`, `cloud`,
+  `snapshot`, `history`). New public API `DDNLive.defaults.forKind(kind)`
+  (runtime `notation/runtime/ddn-defaults.js`, d.ts updated). The designer
+  creation commands merge registry defaults before explicit properties
+  (explicit wins) and write them into the source; the renderer never applies
+  them, so all pre-existing sources render byte-identical. Schema build
+  type-checks defaults against the property contracts. New example
+  `examples/basics/57-element-defaults.ddn`.
+
 ## [0.6.0-beta.1] - 2026-09-20
 
 Beta 1: 38 runtime items, 13 designer items — see item history. Runtime and

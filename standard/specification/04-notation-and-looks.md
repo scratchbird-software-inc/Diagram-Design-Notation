@@ -116,3 +116,9 @@ Object hachures are analytically clipped against the shape, rendered behind text
 The renderer is original, dependency-free JavaScript in `reference/ddn-sketch.js`. It is not Rough.js or Mermaid code. In browser hosts load core, sketch primitives, then renderer. Exported SVG contains its completed geometry and needs none of these scripts to display. Full collision-envelope enforcement and exact font shaping remain production milestones.
 
 Crossing gaps are encoded as omitted path sections as well as masks, so their disconnected meaning does not depend exclusively on luminance-mask support. Relation dash offsets continue across those omitted sections. Directed legend arrows and missing-value symbols request a separate local symbol-capable font fallback.
+
+## 10. Registry element defaults and property precedence
+
+Every kind in `registry/catalogue.json` (and the profile catalogue) carries an optional `defaults` object: property name → default value, using only properties legal for elements under the chapter-10 contracts. Kinds with no meaningful extra defaults carry `{}`. Defaults are documentation for authoring flows, not renderer input: a renderer MUST NOT apply registry defaults implicitly, so a source that omits a property keeps its "not asserted" meaning and renders exactly as before. Authoring tools (for example the designer's creation commands) merge the registry defaults before the user's explicit properties — explicit always wins — and write the result into the source, where it stays visible and script-overridable.
+
+The full precedence order, weakest to strongest: registry kind defaults < format/look (view/format level; `look: classic` and friends are never per-kind) < view overrides < declaration properties < occurrence overrides. Invalid `defaults` entries fail the schema build (`tools/build-schemas.py` type-checks them against `registry/data-properties.json`); there is no new runtime error code.
