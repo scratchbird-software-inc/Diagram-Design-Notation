@@ -16,7 +16,7 @@ test('Crow\'s-foot ERD renders: crowfoot tines, single bar and optionality circl
  assert.ok(svg.includes('cx="-20"'),'optionality circle missing');
  assert.ok(svg.includes('purchase customer'),'relation label missing');});
 test('Four relations, each with exactly two endpoint mark groups',()=>{const svg=run().svg;
- const relations=svg.match(/<g class="ddn-relation" /g)||[];
+ const relations=svg.match(/<g class="ddn-relation /g)||[];
  assert.equal(relations.length,4,'expected 4 ddn-relation groups');
  const marks=svg.match(ENDMARK)||[];
  assert.equal(marks.length,8,'expected 8 endpoint mark groups (4 relations × 2 ends)');});

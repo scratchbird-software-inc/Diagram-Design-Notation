@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: GPL-2.0-or-later. B1-003 fixture: page CSS restyles a
+     DDN class hook; the script-level object declaration still wins on the
+     overridden node. Exercised headless: --dump-dom prints the assertion
+     results written into #results; --screenshot captures the restyle. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DDN CSS override fixture</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; }
+  /* Page CSS restyles every table-kind node through the D1 class hook. */
+  .ddn-kind-tbl > rect { fill: #dd8800; }
+  .ddn-label text { fill: #7a1fa2; }
+</style>
+</head>
+<body>
+<h1>Page CSS vs script override</h1>
+<p>Two <code>kind: table</code> nodes turn orange via page CSS on
+<code>.ddn-kind-tbl</code>. The script declares the third node
+<code>kind: cache</code>; page CSS on the table class cannot touch it, so its
+registry colour (script level) still wins.</p>
+<div id="host"></div>
+<pre id="results">PENDING</pre>
+<script src="../../dist/ddn.global.js"></script>
+<script>
+const source = `ddn "0.5";
+module "page";
+data page {
+    object orders "Orders" { kind: table; fields { field order_id { key: primary; } } }
+    object invoices "Invoices" { kind: table; fields { field invoice_id { key: primary; } } }
+    relation r1 @orders -> @invoices { kind: publish; }
+}
+view v "Page CSS fixture" {
+    data: [@page];
+}
+`;
+// Script-level override: the audit node is explicitly a different kind, so the
+// page rule for .ddn-kind-tbl does not apply to it.
+const overrideSource = source.replace('relation r1',
+    'object audit "Audit cache" { kind: cache; }\n    relation r1');
+const ws = DDNLive.createWorkspace({ 'page.ddn': overrideSource });
+const out = ws.renderSync({ entry: 'page.ddn', view: 'v' });
+document.getElementById('host').innerHTML = out.svg.replace(/<\?xml[^?]*\?>/, '');
+const svg = document.querySelector('#host svg');
+const results = [];
+const check = (name, ok) => results.push((ok ? 'PASS ' : 'FAIL ') + name);
+const tables = svg.querySelectorAll('.ddn-kind-tbl');
+check('root carries ddn-svg ddn-view-graph', svg.classList.contains('ddn-svg') && svg.classList.contains('ddn-view-graph'));
+check('two table-kind nodes classed', tables.length === 2);
+const overridden = svg.querySelector('.ddn-kind-cac');
+check('script-declared cache node (ddn-kind-cac) keeps its own class hook', !!overridden && overridden.classList.contains('ddn-node'));
+check('relation carries ddn-rel ddn-verb-*', !!svg.querySelector('.ddn-rel[class*="ddn-verb-"]'));
+const pageColour = getComputedStyle(tables[0].querySelector('rect')).fill;
+check('page CSS recoloured the table body (' + pageColour + ')', pageColour === 'rgb(221, 136, 0)');
+const overrideColour = getComputedStyle(overridden.querySelector('rect')).fill;
+check('script override still wins on the cache node (' + overrideColour + ')', overrideColour !== 'rgb(221, 136, 0)');
+document.getElementById('results').textContent = results.join('\n');
+document.title = results.every(r => r.startsWith('PASS')) ? 'FIXTURE PASS' : 'FIXTURE FAIL';
+</script>
+</body>
+</html>

@@ -122,3 +122,16 @@ Crossing gaps are encoded as omitted path sections as well as masks, so their di
 Every kind in `registry/catalogue.json` (and the profile catalogue) carries an optional `defaults` object: property name → default value, using only properties legal for elements under the chapter-10 contracts. Kinds with no meaningful extra defaults carry `{}`. Defaults are documentation for authoring flows, not renderer input: a renderer MUST NOT apply registry defaults implicitly, so a source that omits a property keeps its "not asserted" meaning and renders exactly as before. Authoring tools (for example the designer's creation commands) merge the registry defaults before the user's explicit properties — explicit always wins — and write the result into the source, where it stays visible and script-overridable.
 
 The full precedence order, weakest to strongest: registry kind defaults < format/look (view/format level; `look: classic` and friends are never per-kind) < view overrides < declaration properties < occurrence overrides. Invalid `defaults` entries fail the schema build (`tools/build-schemas.py` type-checks them against `registry/data-properties.json`); there is no new runtime error code.
+
+## 11. CSS class hooks and host-page styling
+
+Every rendered SVG mark carries deterministic CSS class hooks so a host web page can restyle a diagram with its own stylesheet without forking the renderer. The class scheme is fixed (no new options) and derives only from registry codes and identifiers, keeping the renderer deterministic:
+
+- Root: `<svg class="ddn-svg ddn-view-<kind> [ddn-profile-<profile-id-slug>] …">` where `<kind>` is the projection kind (`graph`, `chart`, `matrix`, `panels`, `timeline`, `sequence`, …) and the profile class appears when the view declares a projection profile.
+- Nodes: `ddn-node ddn-kind-<code-lowercase>` (the registry kind code, e.g. `ddn-kind-tbl`).
+- Relations: `ddn-rel ddn-verb-<verb-slug>` (registry relationship code, e.g. `ddn-verb-publish`).
+- Field rows `ddn-field`; relation labels `ddn-label`; panels `ddn-panel`; frames `ddn-frame`; projection marks `ddn-mark ddn-mark-<type>` (`bar`, `line`, `arc`, `point`, …; pie and donut sectors are `arc`).
+
+Slugs are lowercase with every non-alphanumeric run collapsed to one dash (`chart.basic@1` → `ddn-profile-chart-basic-1`).
+
+Cascade: page CSS < format palette < look < object/occurrence overrides (inline). All script-driven paint is still emitted as SVG presentation attributes on the classed elements, so exported SVG stays self-contained and identical when no page CSS is present; the renderer never emits a `<style>` block for styling hooks and never uses `!important`. Host stylesheets select the classes above; a declaration the script itself made for a specific element (its kind, its look, an occurrence override) continues to win for that element. An optional ready-made stylesheet mapping the hook classes to `--ddn-*` custom properties ships as `notation/dist/ddn.css` (source `notation/studio/src/ddn.css`), and the live component's optional `theme` attribute injects a constructed stylesheet setting those properties.

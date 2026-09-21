@@ -3,6 +3,7 @@
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const f=x=>Math.round(x*1000)/1000;
+const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile==='dfd.yourdon@1'?'circle':'round';return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
@@ -95,7 +96,7 @@ function render(g,p,theme){
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?Sketch.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  const text=(xx,yy,txt,size=13,weight=400,extra='')=>{Text.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
- let out=`<g class="ddn-node" data-id="${esc(n.id)}" data-shape="${shape}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-shape="${shape}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(['initial','final'].includes(shape)){
   const cx=x+w/2,cy=y+h/2-8,r=12*s;
   if(shape==='initial')out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${ink}"/>`;
@@ -130,11 +131,11 @@ function render(g,p,theme){
  }else if(['uml.class','uml.interface'].includes(n.kind)){
   out+=text(x+w/2,y+20*s,n.kind==='uml.interface'?'«interface»':'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
-  for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
+  for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
  }else if(n.kind==='req.requirement'){
   out+=text(x+14*s,y+21*s,'«requirement» '+n.properties.x_diagram.code,11,600)+lines(g.titleLines,x+14*s,y+45*s,16,650,'')+line(x,y+68*s,x+w,y+68*s)+lines(g.requirement,x+14*s,y+90*s,13,400,'');
  }else if(g.fieldRows.length){
-  out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
+  out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
  }else{
   let yy=y+h/2-(g.titleLines.length-1)*10.5*s+5*s;if(shape==='package')yy+=10*s;
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');

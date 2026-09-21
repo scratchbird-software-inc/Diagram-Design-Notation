@@ -60,6 +60,16 @@ class DDNExample extends HTMLElement{
  }
  drawUI(){
   const style=document.createElement('style');style.textContent=STYLE;this.shadowRoot.append(style);
+  if(this.hasAttribute('theme')){
+   // Optional `theme` attribute: a JSON object of --ddn-* custom property
+   // overrides, injected as a constructed stylesheet on the shadow host so
+   // the values cascade into the rendered SVG (which may map the ddn-*
+   // classes to those properties via dist/ddn.css). Script-level inline
+   // SVG attributes still win the cascade.
+   let props={};try{props=JSON.parse(this.getAttribute('theme'))||{};}catch{props={};}
+   const decl=Object.entries(props).filter(([k,v])=>/^--ddn-[a-z0-9-]+$/i.test(k)&&typeof v==='string').map(([k,v])=>k+':'+v.replace(/[;{}]/g,'')).join(';');
+   if(decl){const sheet=new CSSStyleSheet();sheet.replaceSync(':host{'+decl+'}');this.shadowRoot.adoptedStyleSheets=[...this.shadowRoot.adoptedStyleSheets,sheet];}
+  }
   const shell=document.createElement('div');shell.className='shell';shell.innerHTML=`
 <div class="top"><span class="title">DDN live example</span><span class="live">LIVE SOURCE → SVG</span></div>
 <div class="tools"><div class="field"><span>DRAWING STYLE</span><div class="choice"><button data-look="classic" aria-pressed="false">Standard</button><button data-look="handDrawn" aria-pressed="false">Hand-drawn</button><button data-look="neo" aria-pressed="false">Neo</button></div></div>

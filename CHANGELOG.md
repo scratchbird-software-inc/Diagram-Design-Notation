@@ -6,6 +6,21 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-003: deterministic CSS class hooks on every rendered SVG mark — root
+  `ddn-svg ddn-view-<kind> ddn-profile-<slug>`, nodes `ddn-node ddn-kind-<code>`,
+  relations `ddn-rel ddn-verb-<verb>`, plus `ddn-field`, `ddn-label`,
+  `ddn-panel`, `ddn-frame` and `ddn-mark ddn-mark-<type>` in projections.
+  Pure addition of `class` attributes: no visual change without page CSS,
+  renderer stays deterministic (registry-derived classes only), script-level
+  presentation stays inline and wins for the elements it names; no `<style>`
+  block and no `!important` in renderer output. Optional ready-made stylesheet
+  `notation/dist/ddn.css` (source `notation/studio/src/ddn.css`, real rules
+  mapping the hook classes to `--ddn-*` custom properties) and an optional
+  `theme` attribute on `<ddn-example>` injecting those properties as a
+  constructed stylesheet. Cascade documented in spec 04 §11 and spec 14.
+  Use-case goldens (27) regenerated through the documented manifest path.
+  New example `examples/basics/58-css-hooks.ddn` (+ companion `.html`) and
+  headless fixture `notation/tests/fixtures/css-override.html`.
 - B1-002: registry-driven element defaults — every kind in both registry
   catalogues carries a `defaults` object (additive growth; `{}` where a kind
   has no meaningful defaults, meaningful sets for `cache`, `archive`, `cloud`,

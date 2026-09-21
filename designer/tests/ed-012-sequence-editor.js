@@ -95,7 +95,7 @@ test('return toggle: exact x_return span; SVG dash pattern; removal leaves no x_
   CMD.setMessageReturn(D, ws, E, V, { relationId: M + 'submit_order', isReturn: true });
   const span = declText(ws, M + 'submit_order');
   assert.ok(span.includes('x_return: true;'), 'exact span missing: ' + span);
-  let group = ws.renderSync({ entry: E, view: V }).svg.match(new RegExp('<g class="ddn-mark" data-id="' + M.replace(/\./g, '\\.') + 'submit_order"[\\s\\S]*?</g>'))[0];
+  let group = ws.renderSync({ entry: E, view: V }).svg.match(new RegExp('<g class="ddn-mark[^"]*" data-id="' + M.replace(/\./g, '\\.') + 'submit_order"[\\s\\S]*?</g>'))[0];
   assert.ok(group.includes('stroke-dasharray="5 4"'), 'the message path did not gain a dash pattern');
   CMD.setMessageReturn(D, ws, E, V, { relationId: M + 'submit_order', isReturn: false });
   assert.ok(!declText(ws, M + 'submit_order').includes('x_return'), 'x_return text remains after removal');
@@ -160,7 +160,7 @@ test('self-message: commits under allow_self:true and renders a loop mark', () =
   const ws = fresh();
   const r = CMD.addSequenceMessage(D, ws, E, V, { id: 'audit_self', label: 'Audit log', fromId: M + 'checkout', toId: M + 'checkout' });
   assert.ok(msgIds(ws).includes(r.select));
-  const group = ws.renderSync({ entry: E, view: V }).svg.match(new RegExp('<g class="ddn-mark" data-id="' + r.select.replace(/\./g, '\\.') + '"[\\s\\S]*?</g>'))[0];
+  const group = ws.renderSync({ entry: E, view: V }).svg.match(new RegExp('<g class="ddn-mark[^"]*" data-id="' + r.select.replace(/\./g, '\\.') + '"[\\s\\S]*?</g>'))[0];
   assert.match(group, /M[\d.]+ [\d.]+H[\d.]+V[\d.]+H[\d.]+/, 'self-message loop mark missing: ' + group.slice(0, 160));
   ws.destroy();
 });
@@ -244,7 +244,7 @@ test('round-trip + determinism: unrelated source byte-identical; two runs identi
   assert.strictEqual(rr.status, 0, 'CLI render failed: ' + rr.stdout + rr.stderr);
   const text = fs.readFileSync(svg, 'utf8');
   assert.ok(text.includes('Check stock'), 'new message row missing from CLI render');
-  const submit = text.match(new RegExp('<g class="ddn-mark" data-id="' + M.replace(/\./g, '\\.') + 'submit_order"[\\s\\S]*?</g>'))[0];
+  const submit = text.match(new RegExp('<g class="ddn-mark[^"]*" data-id="' + M.replace(/\./g, '\\.') + 'submit_order"[\\s\\S]*?</g>'))[0];
   assert.ok(submit.includes('stroke-dasharray="5 4"'), 'dashed return missing from CLI render');
 });
 console.log('ED-012 ' + pass + '/' + (pass + fail));

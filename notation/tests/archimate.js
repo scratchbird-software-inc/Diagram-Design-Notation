@@ -44,7 +44,7 @@ const throws=(fn,code,check)=>assert.throws(fn,e=>{if(code&&e.code!==code)consol
 const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 // Registered family palette: business=governance, application=interface, technology=deployment.
 const FAMILY={business:{colour:'#526525',fill:'#F2F5E9'},application:{colour:'#6D4C91',fill:'#F3EFF8'},technology:{colour:'#7A5535',fill:'#F6F0E9'}};
-const relationGroup=(svg,id)=>{const m=svg.match(new RegExp('<g class="ddn-relation"[^>]*data-id="[^"]*'+id.replace(/\./g,'\\.')+'"[\\s\\S]*?(?=<g class="ddn-relation"|<g class="ddn-node"|$)'));return m?m[0]:'';};
+const relationGroup=(svg,id)=>{const m=svg.match(new RegExp('<g class="ddn-relation[^"]*"[^>]*data-id="[^"]*'+id.replace(/\./g,'\\.')+'"[\\s\\S]*?(?=<g class="ddn-relation"|<g class="ddn-node"|$)'));return m?m[0]:'';};
 test('landscape renders: the three layers carry their distinct registered family colours; all seven nodes render',()=>{const r=run();
  assert.match(r.svg,/<svg/);assert.equal(r.profiles.projection.profile,'archimate.basic@1');
  for(const s of ['Service agent','Order desk','Order handling','Order API','Order service','Database node','Database service'])assert.ok(r.svg.includes(s),'label missing: '+s);

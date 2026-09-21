@@ -7,7 +7,7 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 57 numbered examples (01-customer … 57-element-defaults)
+- `basics/` — 58 numbered examples (01-customer … 58-css-hooks)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, authorized SQL DDL export, process contracts,
@@ -27,7 +27,8 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   rack diagrams (`54-network-diagram.ddn`), and low-fidelity UI wireframes
   (`55-wireframe.ddn`), and family tree / genealogy views
   (`56-family-tree.ddn`), and registry-driven element defaults
-  (`57-element-defaults.ddn`).
+  (`57-element-defaults.ddn`), and CSS class hooks for host-page styling
+  (`58-css-hooks.ddn` + companion `.html`).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

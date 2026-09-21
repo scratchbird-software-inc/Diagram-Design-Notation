@@ -30,7 +30,7 @@ test('Example renders three generations with union join nodes and downward paren
  assert.ok(pc.profiles.find(x=>x.id==='family.tree@1'),'registry missing profile family.tree@1');});
 test('partner_of edges have no arrowheads; parent_of edges carry filled arrowheads',()=>{
  const r=run();
- const relRe=/<g class="ddn-relation"[^>]*data-id="([^"]+)"[\s\S]*?<\/g>\n?<\/g>|<g class="ddn-relation"[^>]*data-id="([^"]+)"[\s\S]*?(?=<g class="ddn-relation"|<\/svg>)/g;
+ const relRe=/<g class="ddn-relation[^"]*"[^>]*data-id="([^"]+)"[\s\S]*?<\/g>\n?<\/g>|<g class="ddn-relation[^"]*"[^>]*data-id="([^"]+)"[\s\S]*?(?=<g class="ddn-relation"|<\/svg>)/g;
  const found={};let m;
  while((m=relRe.exec(r.svg)))found[(m[1]||m[2]).split('::').pop()]=m[0];
  for(const id of Object.keys(found).filter(x=>/partner/.test(x)))assert.ok(!found[id].includes('L-10 -5L-10 5Z'),'partner edge '+id+' must have no arrowhead');

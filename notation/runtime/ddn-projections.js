@@ -21,13 +21,14 @@ function render(ir,reg,glyphs='',options={}){
  if(plan.kind==='graph')return R.render(ir,reg,glyphs,options);
  if(options.layoutState)throw new D.DDNError('DDN-PJ051','Retained graph positions cannot override data-bound projection coordinates');
  const t=Palette.themes[p.style.theme],s=q(p.style.font_size,16)/16,stats=Text.stats(),marks=[],diagnostics=[...ir.diagnostics],numbers=[],S=24*s;
+ const markType=plan.kind==='chart'?({pie:'arc',donut:'arc'}[plan.mark]||plan.mark||'chart'):plan.kind;
  let body='',W=q(pr.width,1050),H=500,smallest=11*s;
  const text=(x,y,value,size=13,weight=400,anchor='start',extra='')=>{const txt=String(value??'');Text.measure(txt,size*s,p.style.font,weight);smallest=Math.min(smallest,size*s);return `<text x="${f(x)}" y="${f(y)}" font-size="${size*s}" fill="${t.ink}" font-weight="${weight}" text-anchor="${anchor}" ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,x,y,size=13,weight=400,anchor='start')=>ls.map((v,i)=>text(x,y+i*(size+6)*s,v,size,weight,anchor)).join('');
  const wrap=(str,w,size=13,weight=400)=>Text.wrap(str,w,size*s,p.style.font,weight);
  const line=(x,y,xx,yy,colour=t.rule,width=1,dash='')=>`<path d="M${f(x)} ${f(y)}L${f(xx)} ${f(yy)}" stroke="${colour}" stroke-width="${width}" fill="none"${dash?` stroke-dasharray="${dash}"`:''}/>`;
  const rect=(x,y,w,h,fill=t.surface,stroke=t.rule,semantic=false)=>R.rect(x,y,w,h,stroke,fill,semantic?'classic':p.style.look,ir.view.id+':'+x+':'+y,0,{...p.style,hachure:false});
- const group=(id,ids,content,box={},key)=>{const mid='mark:'+ir.view.id+':'+marks.length;marks.push({id:mid,sourceIds:ids,...box,...(key?{property:key}:{})});return `<g class="ddn-mark" data-id="${esc(id||ids[0]||'')}" data-source-ids="${esc(JSON.stringify(ids))}" data-projection-mark="${esc(mid)}"${box.rowId?` data-matrix-row="${esc(box.rowId)}" data-matrix-column="${esc(box.columnId)}"`:''}${key?` data-property="${esc(key)}"`:''} tabindex="0" role="group">${content}</g>`;};
+ const group=(id,ids,content,box={},key)=>{const mid='mark:'+ir.view.id+':'+marks.length;marks.push({id:mid,sourceIds:ids,...box,...(key?{property:key}:{})});return `<g class="${R.cls('ddn-mark','ddn-mark-'+markType)}" data-id="${esc(id||ids[0]||'')}" data-source-ids="${esc(JSON.stringify(ids))}" data-projection-mark="${esc(mid)}"${box.rowId?` data-matrix-row="${esc(box.rowId)}" data-matrix-column="${esc(box.columnId)}"`:''}${key?` data-property="${esc(key)}"`:''} tabindex="0" role="group">${content}</g>`;};
  const colours=['#337DB7','#34976E','#AC6538','#8259B1','#967421','#347D8E','#AC5573'];
  const colour=i=>Palette.semantic(colours[i%colours.length],t);
  let composedSubs=[];
@@ -69,11 +70,12 @@ function render(ir,reg,glyphs='',options={}){
    body+=group(key,rg.ids,text(L[0],L[1],rg.count,16,700,'middle'),{x:L[0]-14*s,y:L[1]-10*s,w:28*s,h:20*s},'x_sets');}
  }else if(plan.kind==='panels'&&plan.profile==='panels.pyramid@1'&&!plan.panels.some(v=>v.child)){
   W=Math.max(W,560*s);const bandH=150*s,gap=10*s,cx=W/2,bands=[...plan.panels].sort((a,b)=>a.row-b.row),n=bands.length,widthAt=k=>W*(k+1)/(n+1);
-  for(let i=0;i<n;i++){const band=bands[i],tw=widthAt(i),bw=widthAt(i+1),y=i*(bandH+gap);
+  for(let i=0;i<n;i++){const bandStart=body.length,band=bands[i],tw=widthAt(i),bw=widthAt(i+1),y=i*(bandH+gap);
    const poly=`<polygon points="${f(cx-tw/2)} ${f(y)} ${f(cx+tw/2)} ${f(y)} ${f(cx+bw/2)} ${f(y+bandH)} ${f(cx-bw/2)} ${f(y+bandH)}" fill="${colour(i)}" fill-opacity=".18" stroke="${colour(i)}" stroke-width="1.6"/>`;
    body+=group(band.id,[band.id],poly+lines(wrap(band.title,Math.max(tw,60*s),13,700),cx,y+bandH/2,13,700,'middle'),{x:cx-tw/2,y:y,w:tw,h:bandH});
    let ay=y+26*s;
    for(const it of band.items){const block=wrap(it.node.name+': '+it.text,240*s,11);body+=group(it.node.id,[it.node.id],lines(block,cx+bw/2+18*s,ay,11),{x:cx+bw/2+18*s,y:ay-11*s,w:240*s,h:(block.length*17+10)*s});ay+=(block.length*17+10)*s;}
+   body=body.slice(0,bandStart)+`<g class="ddn-panel" data-panel="${esc(band.id)}">`+body.slice(bandStart)+'</g>';
   }
   H=n*(bandH+gap)+40*s;
  }else if(plan.kind==='panels'&&!plan.panels.some(v=>v.child)){
@@ -82,7 +84,7 @@ function render(ir,reg,glyphs='',options={}){
   const measured=plan.panels.map(panel=>{const width=cw*panel.colspan+gap*(panel.colspan-1),items=panel.items.map(i=>({item:i,label:wrap(i.node.name,width-36*s,14,650),content:wrap(i.text,width-36*s,12)}));const title=wrap(panel.title,width-32*s,14,700),titleHeight=(title.length*20+24)*s;const needed=titleHeight+20*s+items.reduce((h,i)=>h+(i.label.length*20+i.content.length*18+25)*s,0);return{panel,width,items,needed,title,titleHeight};});
   for(const m of measured.sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const available=heights.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(available<m.needed){const delta=(m.needed-available)/m.panel.rowspan;for(let r=m.panel.row;r<m.panel.row+m.panel.rowspan;r++)heights[r]+=delta;}}
   const tops=[0];heights.forEach(h=>tops.push(tops.at(-1)+h+gap));
-  for(const m of measured){const {panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);
+  for(const m of measured){const panelStart=body.length,{panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);
    if(plan.profile==='panels.journey@1'&&panel.id==='emotions'){
     const top=y+titleHeight+34*s,bottom=y+height-30*s,px=i=>x+i*(cw+gap)+cw/2,py=v=>bottom-(v-1)/4*(bottom-top);
     for(let v=1;v<=5;v++)body+=line(x+8*s,py(v),x+width-8*s,py(v))+text(x+14*s,py(v)-4*s,String(v),10);
@@ -90,7 +92,8 @@ function render(ir,reg,glyphs='',options={}){
     body+=`<path d="${pts.map((pt,i)=>(i?'L':'M')+f(px(pt.col))+' '+f(py(pt.value))).join('')}" stroke="${colour(0)}" stroke-width="2.5" fill="none"/>`;
     for(const pt of pts)body+=group(pt.nodeId,[pt.nodeId],`<circle cx="${f(px(pt.col))}" cy="${f(py(pt.value))}" r="${f(5*s)}" fill="${colour(0)}"/>`+text(px(pt.col),py(pt.value)-12*s,String(pt.value),12,700,'middle'),{x:px(pt.col)-8*s,y:py(pt.value)-8*s,w:16*s,h:16*s},'x_record.value');
    }else{let yy=y+titleHeight+28*s;
-   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}}
+   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}
+   body=body.slice(0,panelStart)+`<g class="ddn-panel" data-panel="${esc(m.panel.id)}">`+body.slice(panelStart)+'</g>'; }
   H=tops.at(-1)-gap+32*s;
  }
  const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
@@ -299,12 +302,13 @@ function render(ir,reg,glyphs='',options={}){
    if(m.child)m.need=m.header+2*pad+m.child.scene.height;else{m.itemLines=m.panel.items.map(i=>({i,title:wrap(i.node.name,pw-2*pad,14,600),body:wrap(i.text,pw-2*pad,12)}));m.need=m.header+pad+m.itemLines.reduce((n,x)=>n+(x.title.length*20+x.body.length*18+24)*s,0);}}
   for(const m of measured.slice().sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const avail=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(avail<m.need)for(let j=m.panel.row;j<m.panel.row+m.panel.rowspan;j++)rh[j]+=(m.need-avail)/m.panel.rowspan;}
   const tops=[0];rh.forEach(h=>tops.push(tops.at(-1)+h+gap));
-  for(const m of measured){const x=m.panel.column*(cw+gap),y=tops[m.panel.row],height=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);body+=rect(x,y,m.width,height)+lines(m.title,x+pad,y+29*s,15,650)+line(x,y+m.header,x+m.width,y+m.header);
+  for(const m of measured){const panelStart=body.length,x=m.panel.column*(cw+gap),y=tops[m.panel.row],height=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);body+=rect(x,y,m.width,height)+lines(m.title,x+pad,y+29*s,15,650)+line(x,y+m.header,x+m.width,y+m.header);
    if(m.child){const cc=m.child.scene,xx=x+(m.width-cc.width)/2,yy=y+m.header+pad,prefix='child-'+R.hash(ir.view.id+':'+m.panel.id)+'-',svg=scopeSVG(m.child.svg,prefix,Text.FONTS[m.panel.child.view.profiles.style.font]);body+='<g data-child-view="'+esc(m.panel.child.view.id)+'">'+svg.replace(/<svg\b/,'<svg x="'+f(xx)+'" y="'+f(yy)+'"')+'</g>';
     composedSubs.push({id:m.panel.id,target:m.panel.child.view.id,x:xx,y:yy,w:cc.width,h:cc.height,mode:'inline'});
     for(const mark of cc.marks||[])marks.push({...mark,id:prefix+mark.id,x:xx+cc.origin[0]+(mark.x||0)*cc.scale,y:yy+cc.origin[1]+(mark.y||0)*cc.scale,w:(mark.w||0)*cc.scale,h:(mark.h||0)*cc.scale,childView:m.panel.child.view.id});
     for(const node of cc.nodes||[])marks.push({id:prefix+node.id,sourceIds:[node.id],x:xx+cc.origin[0]+node.x*cc.scale,y:yy+cc.origin[1]+node.y*cc.scale,w:node.w*cc.scale,h:node.h*cc.scale,childView:m.panel.child.view.id});
    }else{let yy=y+m.header+pad+18*s;for(const item of m.itemLines){body+=group(item.i.node.id,[item.i.node.id],lines(item.title,x+pad,yy,14,600)+lines(item.body,x+pad,yy+item.title.length*20*s,12),{x:x+pad,y:yy-16*s,w:m.width-2*pad,h:(item.title.length*20+item.body.length*18+24)*s});yy+=(item.title.length*20+item.body.length*18+24)*s;}}
+   body=body.slice(0,panelStart)+`<g class="ddn-panel" data-panel="${esc(m.panel.id)}">`+body.slice(panelStart)+'</g>';
   }H=tops.at(-1)-gap+24*s;
  }
  if(!Number.isFinite(W)||!Number.isFinite(H)||W>50000||H>50000)throw new D.DDNError('DDN-PJ060','Projection extent exceeds bounded publication budget');
@@ -319,7 +323,7 @@ function render(ir,reg,glyphs='',options={}){
  if(W*scale>aw+.01||H*scale>ah+.01)warnOrFail('DDN074','Projection exceeds publication page; use content size or a larger page');
  if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');
  const tx=margin+(aw-W*scale)/2,ty=margin+header;
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${R.cls('ddn-svg','ddn-view-'+plan.kind,'ddn-profile-'+R.slug(plan.profile))}" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
  out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650)+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
  out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end')+'</svg>';
  const after=Text.stats(),estimated=after.estimated>stats.estimated;if(estimated){if(p.publication.metrics==='required')throw new D.DDNError('DDN077','Required measured fonts unavailable for projection');diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});}

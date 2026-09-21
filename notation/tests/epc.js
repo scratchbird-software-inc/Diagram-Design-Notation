@@ -61,7 +61,7 @@ test('EPC renders 10 nodes, 9 routes; silhouette golden counts; operator text vi
  assert.ok(/xor/i.test(r.svg),'operator text xor/XOR present in SVG');
 });
 test('Hexagon outline is a six-point polygon in the SVG and in Shapes.polygon',()=>{
- const svg=run('epc').svg,m=svg.match(/<g class="ddn-node"[^>]*data-shape="hexagon"[\s\S]*?<path d="([^"]+)"/);
+ const svg=run('epc').svg,m=svg.match(/<g class="ddn-node[^"]*"[^>]*data-shape="hexagon"[\s\S]*?<path d="([^"]+)"/);
  assert.ok(m,'hexagon node outline path found');
  assert.equal((m[1].match(/L/g)||[]).length,5,'closed six-point polygon draws M + five L segments');
  assert.ok(m[1].endsWith('Z'));

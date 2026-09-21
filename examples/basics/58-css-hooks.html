@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: GPL-2.0-or-later.
+     Companion page for 58-css-hooks.ddn: renders the view in the browser and
+     restyles it purely with page CSS on the deterministic DDN class hooks.
+     The script-declared kind: cache node keeps its registry colour — script
+     level declarations win over page CSS for the elements they name.
+     Open over HTTP or file:// with the repo layout intact:
+     examples/basics/58-css-hooks.html → ../../notation/dist/ddn.global.js -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DDN example 58 — CSS hooks</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 24px; color: #1d2b3f; }
+  code { background: #eef2f7; padding: 0 4px; border-radius: 4px; }
+  /* Page stylesheet restyling the DDN class hooks (D1 scheme). */
+  .ddn-kind-tbl > rect { fill: #fde7c8; stroke: #b26a00; }
+  .ddn-rel > g > path { stroke-width: 3; }
+  .ddn-label text { fill: #6d2f9e; }
+  .ddn-frame > rect { stroke-dasharray: 8 4; }
+</style>
+</head>
+<body>
+<h1>58 — CSS class hooks</h1>
+<p>The two <code>kind: table</code> nodes are restyled by this page's own
+stylesheet through the <code>.ddn-kind-tbl</code> hook. The
+<code>Audit cache</code> node is declared <code>kind: cache</code> in the
+<code>.ddn</code> script, so the table rule cannot touch it — the script-level
+declaration wins. No <code>&lt;style&gt;</code> block is emitted into the SVG;
+an optional ready-made equivalent ships as <code>notation/dist/ddn.css</code>.</p>
+<div id="host"></div>
+<script src="../../notation/dist/ddn.global.js"></script>
+<script type="text/plain" id="ddn-source">ddn "0.5";
+module "ddn.examples.css-hooks";
+
+// CSS class hooks: every rendered SVG mark carries deterministic classes
+// (ddn-svg / ddn-node ddn-kind-* / ddn-rel ddn-verb-* / ddn-field / ddn-label /
+// ddn-frame / ddn-panel / ddn-mark ddn-mark-*), so a web page can restyle a
+// diagram with its own stylesheet. Script-level look/format/object
+// declarations keep winning on the elements they name: the audit node is
+// declared kind: cache, so a page rule for .ddn-kind-tbl never matches it.
+
+data shop {
+    object orders "Orders" { kind: table; fields { field order_id { key: primary; } field status; } }
+    object invoices "Invoices" { kind: table; fields { field invoice_id { key: primary; } field total; } }
+    object audit "Audit cache" { kind: cache; description: "Script-level kind choice: page CSS on .ddn-kind-tbl does not apply here."; }
+    relation billed @orders -> @invoices { kind: publish; }
+    relation cached @invoices -> @audit { kind: capture; }
+}
+
+view hooks "CSS hooks / page styling" {
+    data: [@shop];
+    publication { size: content; fit: none; }
+    frame billing "BILLING" { members: [@shop.orders, @shop.invoices]; }
+}
+</script>
+<script>
+const source = document.getElementById('ddn-source').textContent;
+const ws = DDNLive.createWorkspace({ '58-css-hooks.ddn': source });
+const out = ws.renderSync({ entry: '58-css-hooks.ddn', view: 'hooks' });
+document.getElementById('host').innerHTML = out.svg.replace(/<\?xml[^?]*\?>/, '');
+</script>
+</body>
+</html>

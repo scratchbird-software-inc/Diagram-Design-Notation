@@ -7,6 +7,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmt=n=>Number(n.toFixed(3));
 const q=DDN.quantity;
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return(h>>>0).toString(16);};
+const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+const cls=(...parts)=>parts.flat(Infinity).filter(Boolean).join(' ');
 function wrap(s,n=30){const lines=[];for(const line of String(s??'').split('\n')){let current='';for(const word of line.split(/\s+/)){if((current+' '+word).trim().length>n&&current){lines.push(current);current=word;}else current=(current+' '+word).trim();}while(current.length>n+8){lines.push(current.slice(0,n));current=current.slice(n);}lines.push(current);}return lines;}
 function text(x,y,s,size=14,fill='#203047',weight=400,extra=''){Text?.measure(s,size,activeFont,weight);return `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${size}" fill="${fill}" font-weight="${weight}" ${extra}>${esc(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
 function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400){return lines.map((l,i)=>text(x,y+i*step,l,size,fill,weight)).join('');}
@@ -64,7 +66,7 @@ function renderNode(g,p,theme){
  const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral',look=p.style.look;
  const nc=Palette.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,bodyInk=nc.text;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
- let out=`<g class="ddn-node" data-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(k.shape==='note'){
   if(look==='handDrawn')out+=Sketch.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
   else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
@@ -80,7 +82,7 @@ function renderNode(g,p,theme){
  if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt(x+w-b.w*s)} ${fmt(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
  if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
   for(const row of g.fieldRows){const xx=x+(16+row.depth*16)*s,yy=y+row.top+18*s;
-   out+=`<g data-member="${esc(row.id)}">`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
+   out+=`<g class="ddn-field" data-member="${esc(row.id)}">`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
    if(row.field.properties.key)out+=glyph('key',x+w-27*s,yy-14*s,16*s,ink);
    if(row.detailLines.length)out+=multilines(xx,yy+row.labelLines.length*18*s,row.detailLines,11.5*s,ink,16*s);
    out+='</g>';
@@ -199,11 +201,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?90+extraHeader+availH/2-pinFocus[1]*scale:90+extraHeader-minY*scale+10;
  let diagram='';
- for(const f of frames){diagram+=`<g data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
+ for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
  const routeColours={};
  for(const a of routes){const colour=mono?'#383838':Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
   let mask='';const holes=crossings.filter(c=>p.layout.crossings==='gap'?c.under===a.id:c.over===a.id);if(holes.length){const mid='gap-'+hash(a.id);mask=` mask="url(#${mid})"`;diagram+=`<defs><mask id="${mid}" maskUnits="userSpaceOnUse" x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}"><rect x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}" fill="white"/>`+holes.map(h=>`<circle cx="${h.point[0]}" cy="${h.point[1]}" r="7" fill="black"/>`).join('')+'</mask></defs>';}
-  diagram+=`<g class="ddn-relation" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
+  diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
   const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?Layout.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
   diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?Sketch.curve:Sketch.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${colour}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${a.reg.pattern}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
   if(a.r.properties.x_chen_total){diagram+=`<g${mask} data-total-participation="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${colour}" stroke-width="5"/><path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.surface}" stroke-width="2"/>`).join('')+'</g>';}
@@ -228,13 +230,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   else diagram+=`<g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text(d.x+48,d.y+33,d.name,15,t.ink,600)+text(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';
  }
  for(const a of routes){if(a.r._visualLabel===false)continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
-  if(mode==='numbers'){diagram+=`<g class="ddn-callout" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
-  else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"');}
+  if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
+  else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
  }
  const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font];
  const fontClass='ddn-font-'+hash(font);
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${fontClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections. Relationship details are in the adjacent legend.</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+ const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections. Relationship details are in the adjacent legend.</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
  out+=text(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
  out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
  if(p.legend.placement!=='none'&&legendEntries.length){let lx=p.legend.placement==='right'?pageW-margin-legendW:margin,ly=p.legend.placement==='right'?95+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,p.legend.placement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
@@ -248,5 +251,5 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  scene.textMeasurement={mode:estimated?'estimated':'measured',requestedFont:p.style.font,provider:textAfter.canvas>textBefore.canvas?'browser-canvas':'pinned-cache'};
  return{svg:out,scene,diagnostics:diags,_drawing:diagram,_defs:glyphDefs,_ir:ir};
 }
-return{palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark};
+return{palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark,cls,slug};
 });

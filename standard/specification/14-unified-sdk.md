@@ -41,3 +41,7 @@ Display hiding is not redaction. The 0.3 allowlist export pipeline remains the a
 ## Static publishing
 
 The same renderer can export SVG for print, PDF pipelines or Markdown hosts that do not execute JavaScript. The live website stores source, not a separate image for each combination of appearance options. Reference icon/notation plates may remain static diagrams. An exported SVG is vector content, not executable DDN.
+
+## Renderer CSS class hooks
+
+The SVG produced by `render`/`renderSync` carries the deterministic class hooks specified in `../standard/specification/04-notation-and-looks.md` §11 (`ddn-svg ddn-view-*`, `ddn-node ddn-kind-*`, `ddn-rel ddn-verb-*`, `ddn-field`, `ddn-label`, `ddn-panel`, `ddn-frame`, `ddn-mark ddn-mark-*`). They are pure additions: bytes without a host stylesheet are unchanged in appearance, and rendering stays deterministic — classes derive from registry codes/ids only. The distribution also ships `dist/ddn.css`, an optional stylesheet mapping those classes to `--ddn-*` custom properties, and the `<ddn-example>` element accepts an optional `theme` attribute (a JSON object of `--ddn-*` property overrides) that injects a constructed stylesheet on its shadow host so the values cascade into the rendered SVG.

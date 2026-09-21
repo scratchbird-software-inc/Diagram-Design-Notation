@@ -32,7 +32,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
 <p>A model-first diagram language and open standard proposal. Author data, format, and view declarations
 separately in plain-text <code>.ddn</code> files — one semantic model projects into ERDs (incl. crow's-foot cardinality), DFDs, flowcharts,
 C4 views, RACI/CRUD matrices, charts, radar charts, funnel charts, gauge charts, candlestick charts, treemaps, Sankey diagrams, Gantt timelines, fishbones, decision tables, org charts, work breakdown structures, mind maps, concept maps, EPC process chains, business-model/lean canvases, PESTLE/five-forces canvases, BCG/Ansoff/TOWS matrices, empathy maps and balanced scorecards, journey maps, story maps, pyramids, venn diagrams, sequence diagrams, communication diagrams, object diagrams, hierarchical state machines, activity diagrams, BPMN-style collaborations, timing diagrams, interaction overviews, CMMN-style case diagrams, SysML-style block diagrams, ArchiMate-style layered views, PERT/CPM critical-path views, fault/event trees, network/bus and rack diagrams, UI wireframes, family trees, and more. Pure JavaScript,
-zero dependencies, deterministic SVG, with allowlist-gated publication including an allowlisted SQL DDL export. This page runs entirely from your local filesystem — no server needed.</p>
+zero dependencies, deterministic SVG, with allowlist-gated publication including an allowlisted SQL DDL export. Rendered SVG carries deterministic CSS class hooks on every mark, so a host page can restyle diagrams with its own stylesheet while script-level declarations keep winning. This page runs entirely from your local filesystem — no server needed.</p>
 </header>
 <main>
 <section class="demo">
@@ -1798,6 +1798,7 @@ return{stats:()=>({...counts}),FONTS,key,measure,wrap,graphemes,setMetrics,setPr
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const f=x=>Math.round(x*1000)/1000;
+const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile==='dfd.yourdon@1'?'circle':'round';return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
@@ -1890,7 +1891,7 @@ function render(g,p,theme){
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?Sketch.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  const text=(xx,yy,txt,size=13,weight=400,extra='')=>{Text.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
- let out=`<g class="ddn-node" data-id="${esc(n.id)}" data-shape="${shape}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-shape="${shape}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(['initial','final'].includes(shape)){
   const cx=x+w/2,cy=y+h/2-8,r=12*s;
   if(shape==='initial')out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${ink}"/>`;
@@ -1925,11 +1926,11 @@ function render(g,p,theme){
  }else if(['uml.class','uml.interface'].includes(n.kind)){
   out+=text(x+w/2,y+20*s,n.kind==='uml.interface'?'«interface»':'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
-  for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
+  for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
  }else if(n.kind==='req.requirement'){
   out+=text(x+14*s,y+21*s,'«requirement» '+n.properties.x_diagram.code,11,600)+lines(g.titleLines,x+14*s,y+45*s,16,650,'')+line(x,y+68*s,x+w,y+68*s)+lines(g.requirement,x+14*s,y+90*s,13,400,'');
  }else if(g.fieldRows.length){
-  out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
+  out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
  }else{
   let yy=y+h/2-(g.titleLines.length-1)*10.5*s+5*s;if(shape==='package')yy+=10*s;
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
@@ -2623,6 +2624,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmt=n=>Number(n.toFixed(3));
 const q=DDN.quantity;
 const hash=s=>{let h=2166136261;for(const c of String(s)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return(h>>>0).toString(16);};
+const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+const cls=(...parts)=>parts.flat(Infinity).filter(Boolean).join(' ');
 function wrap(s,n=30){const lines=[];for(const line of String(s??'').split('\n')){let current='';for(const word of line.split(/\s+/)){if((current+' '+word).trim().length>n&&current){lines.push(current);current=word;}else current=(current+' '+word).trim();}while(current.length>n+8){lines.push(current.slice(0,n));current=current.slice(n);}lines.push(current);}return lines;}
 function text(x,y,s,size=14,fill='#203047',weight=400,extra=''){Text?.measure(s,size,activeFont,weight);return `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${size}" fill="${fill}" font-weight="${weight}" ${extra}>${esc(s).replace(/[→↗∅]/g,c=>`<tspan font-family="DejaVu Sans, Arial, sans-serif">${c}</tspan>`)}</text>`;}
 function multilines(x,y,lines,size=14,fill='#203047',step=20,weight=400){return lines.map((l,i)=>text(x,y+i*step,l,size,fill,weight)).join('');}
@@ -2680,7 +2683,7 @@ function renderNode(g,p,theme){
  const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral',look=p.style.look;
  const nc=Palette.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,bodyInk=nc.text;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
- let out=`<g class="ddn-node" data-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(k.shape==='note'){
   if(look==='handDrawn')out+=Sketch.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
   else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
@@ -2696,7 +2699,7 @@ function renderNode(g,p,theme){
  if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt(x+w-b.w*s)} ${fmt(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
  if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
   for(const row of g.fieldRows){const xx=x+(16+row.depth*16)*s,yy=y+row.top+18*s;
-   out+=`<g data-member="${esc(row.id)}">`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
+   out+=`<g class="ddn-field" data-member="${esc(row.id)}">`+multilines(xx,yy,row.labelLines,13.5*s,bodyInk,18*s);
    if(row.field.properties.key)out+=glyph('key',x+w-27*s,yy-14*s,16*s,ink);
    if(row.detailLines.length)out+=multilines(xx,yy+row.labelLines.length*18*s,row.detailLines,11.5*s,ink,16*s);
    out+='</g>';
@@ -2815,11 +2818,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?90+extraHeader+availH/2-pinFocus[1]*scale:90+extraHeader-minY*scale+10;
  let diagram='';
- for(const f of frames){diagram+=`<g data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
+ for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
  const routeColours={};
  for(const a of routes){const colour=mono?'#383838':Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
   let mask='';const holes=crossings.filter(c=>p.layout.crossings==='gap'?c.under===a.id:c.over===a.id);if(holes.length){const mid='gap-'+hash(a.id);mask=` mask="url(#${mid})"`;diagram+=`<defs><mask id="${mid}" maskUnits="userSpaceOnUse" x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}"><rect x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}" fill="white"/>`+holes.map(h=>`<circle cx="${h.point[0]}" cy="${h.point[1]}" r="7" fill="black"/>`).join('')+'</mask></defs>';}
-  diagram+=`<g class="ddn-relation" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
+  diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
   const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?Layout.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
   diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?Sketch.curve:Sketch.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${colour}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${a.reg.pattern}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
   if(a.r.properties.x_chen_total){diagram+=`<g${mask} data-total-participation="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${colour}" stroke-width="5"/><path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.surface}" stroke-width="2"/>`).join('')+'</g>';}
@@ -2844,13 +2847,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   else diagram+=`<g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text(d.x+48,d.y+33,d.name,15,t.ink,600)+text(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';
  }
  for(const a of routes){if(a.r._visualLabel===false)continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
-  if(mode==='numbers'){diagram+=`<g class="ddn-callout" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
-  else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"');}
+  if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
+  else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
  }
  const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font];
  const fontClass='ddn-font-'+hash(font);
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${fontClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections. Relationship details are in the adjacent legend.</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+ const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections. Relationship details are in the adjacent legend.</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
  out+=text(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
  out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
  if(p.legend.placement!=='none'&&legendEntries.length){let lx=p.legend.placement==='right'?pageW-margin-legendW:margin,ly=p.legend.placement==='right'?95+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,p.legend.placement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
@@ -2864,7 +2868,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  scene.textMeasurement={mode:estimated?'estimated':'measured',requestedFont:p.style.font,provider:textAfter.canvas>textBefore.canvas?'browser-canvas':'pinned-cache'};
  return{svg:out,scene,diagnostics:diags,_drawing:diagram,_defs:glyphDefs,_ir:ir};
 }
-return{palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark};
+return{palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark,cls,slug};
 });
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -3114,13 +3118,14 @@ function render(ir,reg,glyphs='',options={}){
  if(plan.kind==='graph')return R.render(ir,reg,glyphs,options);
  if(options.layoutState)throw new D.DDNError('DDN-PJ051','Retained graph positions cannot override data-bound projection coordinates');
  const t=Palette.themes[p.style.theme],s=q(p.style.font_size,16)/16,stats=Text.stats(),marks=[],diagnostics=[...ir.diagnostics],numbers=[],S=24*s;
+ const markType=plan.kind==='chart'?({pie:'arc',donut:'arc'}[plan.mark]||plan.mark||'chart'):plan.kind;
  let body='',W=q(pr.width,1050),H=500,smallest=11*s;
  const text=(x,y,value,size=13,weight=400,anchor='start',extra='')=>{const txt=String(value??'');Text.measure(txt,size*s,p.style.font,weight);smallest=Math.min(smallest,size*s);return `<text x="${f(x)}" y="${f(y)}" font-size="${size*s}" fill="${t.ink}" font-weight="${weight}" text-anchor="${anchor}" ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,x,y,size=13,weight=400,anchor='start')=>ls.map((v,i)=>text(x,y+i*(size+6)*s,v,size,weight,anchor)).join('');
  const wrap=(str,w,size=13,weight=400)=>Text.wrap(str,w,size*s,p.style.font,weight);
  const line=(x,y,xx,yy,colour=t.rule,width=1,dash='')=>`<path d="M${f(x)} ${f(y)}L${f(xx)} ${f(yy)}" stroke="${colour}" stroke-width="${width}" fill="none"${dash?` stroke-dasharray="${dash}"`:''}/>`;
  const rect=(x,y,w,h,fill=t.surface,stroke=t.rule,semantic=false)=>R.rect(x,y,w,h,stroke,fill,semantic?'classic':p.style.look,ir.view.id+':'+x+':'+y,0,{...p.style,hachure:false});
- const group=(id,ids,content,box={},key)=>{const mid='mark:'+ir.view.id+':'+marks.length;marks.push({id:mid,sourceIds:ids,...box,...(key?{property:key}:{})});return `<g class="ddn-mark" data-id="${esc(id||ids[0]||'')}" data-source-ids="${esc(JSON.stringify(ids))}" data-projection-mark="${esc(mid)}"${box.rowId?` data-matrix-row="${esc(box.rowId)}" data-matrix-column="${esc(box.columnId)}"`:''}${key?` data-property="${esc(key)}"`:''} tabindex="0" role="group">${content}</g>`;};
+ const group=(id,ids,content,box={},key)=>{const mid='mark:'+ir.view.id+':'+marks.length;marks.push({id:mid,sourceIds:ids,...box,...(key?{property:key}:{})});return `<g class="${R.cls('ddn-mark','ddn-mark-'+markType)}" data-id="${esc(id||ids[0]||'')}" data-source-ids="${esc(JSON.stringify(ids))}" data-projection-mark="${esc(mid)}"${box.rowId?` data-matrix-row="${esc(box.rowId)}" data-matrix-column="${esc(box.columnId)}"`:''}${key?` data-property="${esc(key)}"`:''} tabindex="0" role="group">${content}</g>`;};
  const colours=['#337DB7','#34976E','#AC6538','#8259B1','#967421','#347D8E','#AC5573'];
  const colour=i=>Palette.semantic(colours[i%colours.length],t);
  let composedSubs=[];
@@ -3162,11 +3167,12 @@ function render(ir,reg,glyphs='',options={}){
    body+=group(key,rg.ids,text(L[0],L[1],rg.count,16,700,'middle'),{x:L[0]-14*s,y:L[1]-10*s,w:28*s,h:20*s},'x_sets');}
  }else if(plan.kind==='panels'&&plan.profile==='panels.pyramid@1'&&!plan.panels.some(v=>v.child)){
   W=Math.max(W,560*s);const bandH=150*s,gap=10*s,cx=W/2,bands=[...plan.panels].sort((a,b)=>a.row-b.row),n=bands.length,widthAt=k=>W*(k+1)/(n+1);
-  for(let i=0;i<n;i++){const band=bands[i],tw=widthAt(i),bw=widthAt(i+1),y=i*(bandH+gap);
+  for(let i=0;i<n;i++){const bandStart=body.length,band=bands[i],tw=widthAt(i),bw=widthAt(i+1),y=i*(bandH+gap);
    const poly=`<polygon points="${f(cx-tw/2)} ${f(y)} ${f(cx+tw/2)} ${f(y)} ${f(cx+bw/2)} ${f(y+bandH)} ${f(cx-bw/2)} ${f(y+bandH)}" fill="${colour(i)}" fill-opacity=".18" stroke="${colour(i)}" stroke-width="1.6"/>`;
    body+=group(band.id,[band.id],poly+lines(wrap(band.title,Math.max(tw,60*s),13,700),cx,y+bandH/2,13,700,'middle'),{x:cx-tw/2,y:y,w:tw,h:bandH});
    let ay=y+26*s;
    for(const it of band.items){const block=wrap(it.node.name+': '+it.text,240*s,11);body+=group(it.node.id,[it.node.id],lines(block,cx+bw/2+18*s,ay,11),{x:cx+bw/2+18*s,y:ay-11*s,w:240*s,h:(block.length*17+10)*s});ay+=(block.length*17+10)*s;}
+   body=body.slice(0,bandStart)+`<g class="ddn-panel" data-panel="${esc(band.id)}">`+body.slice(bandStart)+'</g>';
   }
   H=n*(bandH+gap)+40*s;
  }else if(plan.kind==='panels'&&!plan.panels.some(v=>v.child)){
@@ -3175,7 +3181,7 @@ function render(ir,reg,glyphs='',options={}){
   const measured=plan.panels.map(panel=>{const width=cw*panel.colspan+gap*(panel.colspan-1),items=panel.items.map(i=>({item:i,label:wrap(i.node.name,width-36*s,14,650),content:wrap(i.text,width-36*s,12)}));const title=wrap(panel.title,width-32*s,14,700),titleHeight=(title.length*20+24)*s;const needed=titleHeight+20*s+items.reduce((h,i)=>h+(i.label.length*20+i.content.length*18+25)*s,0);return{panel,width,items,needed,title,titleHeight};});
   for(const m of measured.sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const available=heights.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(available<m.needed){const delta=(m.needed-available)/m.panel.rowspan;for(let r=m.panel.row;r<m.panel.row+m.panel.rowspan;r++)heights[r]+=delta;}}
   const tops=[0];heights.forEach(h=>tops.push(tops.at(-1)+h+gap));
-  for(const m of measured){const {panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);
+  for(const m of measured){const panelStart=body.length,{panel,width,items,title,titleHeight}=m,x=panel.column*(cw+gap),y=tops[panel.row],height=heights.slice(panel.row,panel.row+panel.rowspan).reduce((a,b)=>a+b,0)+gap*(panel.rowspan-1);body+=rect(x,y,width,height)+lines(title,x+16*s,y+28*s,14,700)+line(x,y+titleHeight,x+width,y+titleHeight);
    if(plan.profile==='panels.journey@1'&&panel.id==='emotions'){
     const top=y+titleHeight+34*s,bottom=y+height-30*s,px=i=>x+i*(cw+gap)+cw/2,py=v=>bottom-(v-1)/4*(bottom-top);
     for(let v=1;v<=5;v++)body+=line(x+8*s,py(v),x+width-8*s,py(v))+text(x+14*s,py(v)-4*s,String(v),10);
@@ -3183,7 +3189,8 @@ function render(ir,reg,glyphs='',options={}){
     body+=`<path d="${pts.map((pt,i)=>(i?'L':'M')+f(px(pt.col))+' '+f(py(pt.value))).join('')}" stroke="${colour(0)}" stroke-width="2.5" fill="none"/>`;
     for(const pt of pts)body+=group(pt.nodeId,[pt.nodeId],`<circle cx="${f(px(pt.col))}" cy="${f(py(pt.value))}" r="${f(5*s)}" fill="${colour(0)}"/>`+text(px(pt.col),py(pt.value)-12*s,String(pt.value),12,700,'middle'),{x:px(pt.col)-8*s,y:py(pt.value)-8*s,w:16*s,h:16*s},'x_record.value');
    }else{let yy=y+titleHeight+28*s;
-   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}}
+   for(const i of items){const h=(i.label.length*20+i.content.length*18+25)*s;body+=group(i.item.node.id,[i.item.node.id],lines(i.label,x+16*s,yy,14,650)+lines(i.content,x+16*s,yy+i.label.length*20*s+6*s,12),{x:x+12*s,y:yy-20*s,w:width-24*s,h});yy+=h;}}
+   body=body.slice(0,panelStart)+`<g class="ddn-panel" data-panel="${esc(m.panel.id)}">`+body.slice(panelStart)+'</g>'; }
   H=tops.at(-1)-gap+32*s;
  }
  const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
@@ -3392,12 +3399,13 @@ function render(ir,reg,glyphs='',options={}){
    if(m.child)m.need=m.header+2*pad+m.child.scene.height;else{m.itemLines=m.panel.items.map(i=>({i,title:wrap(i.node.name,pw-2*pad,14,600),body:wrap(i.text,pw-2*pad,12)}));m.need=m.header+pad+m.itemLines.reduce((n,x)=>n+(x.title.length*20+x.body.length*18+24)*s,0);}}
   for(const m of measured.slice().sort((a,b)=>a.panel.rowspan-b.panel.rowspan)){const avail=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);if(avail<m.need)for(let j=m.panel.row;j<m.panel.row+m.panel.rowspan;j++)rh[j]+=(m.need-avail)/m.panel.rowspan;}
   const tops=[0];rh.forEach(h=>tops.push(tops.at(-1)+h+gap));
-  for(const m of measured){const x=m.panel.column*(cw+gap),y=tops[m.panel.row],height=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);body+=rect(x,y,m.width,height)+lines(m.title,x+pad,y+29*s,15,650)+line(x,y+m.header,x+m.width,y+m.header);
+  for(const m of measured){const panelStart=body.length,x=m.panel.column*(cw+gap),y=tops[m.panel.row],height=rh.slice(m.panel.row,m.panel.row+m.panel.rowspan).reduce((a,b)=>a+b,0)+gap*(m.panel.rowspan-1);body+=rect(x,y,m.width,height)+lines(m.title,x+pad,y+29*s,15,650)+line(x,y+m.header,x+m.width,y+m.header);
    if(m.child){const cc=m.child.scene,xx=x+(m.width-cc.width)/2,yy=y+m.header+pad,prefix='child-'+R.hash(ir.view.id+':'+m.panel.id)+'-',svg=scopeSVG(m.child.svg,prefix,Text.FONTS[m.panel.child.view.profiles.style.font]);body+='<g data-child-view="'+esc(m.panel.child.view.id)+'">'+svg.replace(/<svg\b/,'<svg x="'+f(xx)+'" y="'+f(yy)+'"')+'</g>';
     composedSubs.push({id:m.panel.id,target:m.panel.child.view.id,x:xx,y:yy,w:cc.width,h:cc.height,mode:'inline'});
     for(const mark of cc.marks||[])marks.push({...mark,id:prefix+mark.id,x:xx+cc.origin[0]+(mark.x||0)*cc.scale,y:yy+cc.origin[1]+(mark.y||0)*cc.scale,w:(mark.w||0)*cc.scale,h:(mark.h||0)*cc.scale,childView:m.panel.child.view.id});
     for(const node of cc.nodes||[])marks.push({id:prefix+node.id,sourceIds:[node.id],x:xx+cc.origin[0]+node.x*cc.scale,y:yy+cc.origin[1]+node.y*cc.scale,w:node.w*cc.scale,h:node.h*cc.scale,childView:m.panel.child.view.id});
    }else{let yy=y+m.header+pad+18*s;for(const item of m.itemLines){body+=group(item.i.node.id,[item.i.node.id],lines(item.title,x+pad,yy,14,600)+lines(item.body,x+pad,yy+item.title.length*20*s,12),{x:x+pad,y:yy-16*s,w:m.width-2*pad,h:(item.title.length*20+item.body.length*18+24)*s});yy+=(item.title.length*20+item.body.length*18+24)*s;}}
+   body=body.slice(0,panelStart)+`<g class="ddn-panel" data-panel="${esc(m.panel.id)}">`+body.slice(panelStart)+'</g>';
   }H=tops.at(-1)-gap+24*s;
  }
  if(!Number.isFinite(W)||!Number.isFinite(H)||W>50000||H>50000)throw new D.DDNError('DDN-PJ060','Projection extent exceeds bounded publication budget');
@@ -3412,7 +3420,7 @@ function render(ir,reg,glyphs='',options={}){
  if(W*scale>aw+.01||H*scale>ah+.01)warnOrFail('DDN074','Projection exceeds publication page; use content size or a larger page');
  if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');
  const tx=margin+(aw-W*scale)/2,ty=margin+header;
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${R.cls('ddn-svg','ddn-view-'+plan.kind,'ddn-profile-'+R.slug(plan.profile))}" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
  out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650)+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
  out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end')+'</svg>';
  const after=Text.stats(),estimated=after.estimated>stats.estimated;if(estimated){if(p.publication.metrics==='required')throw new D.DDNError('DDN077','Required measured fonts unavailable for projection');diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});}
@@ -3777,6 +3785,16 @@ class DDNExample extends HTMLElement{
  }
  drawUI(){
   const style=document.createElement('style');style.textContent=STYLE;this.shadowRoot.append(style);
+  if(this.hasAttribute('theme')){
+   // Optional `theme` attribute: a JSON object of --ddn-* custom property
+   // overrides, injected as a constructed stylesheet on the shadow host so
+   // the values cascade into the rendered SVG (which may map the ddn-*
+   // classes to those properties via dist/ddn.css). Script-level inline
+   // SVG attributes still win the cascade.
+   let props={};try{props=JSON.parse(this.getAttribute('theme'))||{};}catch{props={};}
+   const decl=Object.entries(props).filter(([k,v])=>/^--ddn-[a-z0-9-]+$/i.test(k)&&typeof v==='string').map(([k,v])=>k+':'+v.replace(/[;{}]/g,'')).join(';');
+   if(decl){const sheet=new CSSStyleSheet();sheet.replaceSync(':host{'+decl+'}');this.shadowRoot.adoptedStyleSheets=[...this.shadowRoot.adoptedStyleSheets,sheet];}
+  }
   const shell=document.createElement('div');shell.className='shell';shell.innerHTML=`
 <div class="top"><span class="title">DDN live example</span><span class="live">LIVE SOURCE → SVG</span></div>
 <div class="tools"><div class="field"><span>DRAWING STYLE</span><div class="choice"><button data-look="classic" aria-pressed="false">Standard</button><button data-look="handDrawn" aria-pressed="false">Hand-drawn</button><button data-look="neo" aria-pressed="false">Neo</button></div></div>

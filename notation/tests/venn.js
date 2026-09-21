@@ -8,7 +8,7 @@ function run(view='overlap',changes={}){return workspace(changes).renderSync({en
 const throws=(fn,code)=>assert.throws(fn,e=>{if(code&&e.code!==code)console.error('Expected',code,'got',e.code,e.message);return code?e.code===code:typeof e.code==='string';});
 const editFile=(before,after)=>{assert.ok(base[FILE].includes(before),'Mutation target missing: '+before);return{[FILE]:base[FILE].replace(before,after)};};
 const circles=svg=>[...svg.matchAll(/<circle cx="([\d.-]+)" cy="([\d.-]+)" r="([\d.-]+)" fill="[^"]+" fill-opacity="\.16"/g)].map(m=>({x:+m[1],y:+m[2],r:+m[3]}));
-const regionCounts=svg=>Object.fromEntries([...svg.matchAll(/<g class="ddn-mark" data-id="([^"]*)"[^>]*data-projection-mark="[^"]*"[^>]*><text x="([\d.-]+)" y="([\d.-]+)" font-size="16" fill="[^"]+" font-weight="700" text-anchor="middle"[^>]*>(\d+)<\/text>/g)].map(m=>({id:m[1],x:+m[2],y:+m[3],count:+m[4]})).map(o=>[o.id,o]));
+const regionCounts=svg=>Object.fromEntries([...svg.matchAll(/<g class="ddn-mark[^"]*" data-id="([^"]*)"[^>]*data-projection-mark="[^"]*"[^>]*><text x="([\d.-]+)" y="([\d.-]+)" font-size="16" fill="[^"]+" font-weight="700" text-anchor="middle"[^>]*>(\d+)<\/text>/g)].map(m=>({id:m[1],x:+m[2],y:+m[3],count:+m[4]})).map(o=>[o.id,o]));
 // Default geometry (technical format, s=1): W=1050, H=600, cx=525, cy=310, r=180.
 const CX=525,CY=310,R=180,D=3*R/5,K=0.866*D;
 test('Venn renders 3 circles at the fixed triangle centers, 3 set labels and 7 region count labels',()=>{const r=run();assert.match(r.svg,/<svg/);

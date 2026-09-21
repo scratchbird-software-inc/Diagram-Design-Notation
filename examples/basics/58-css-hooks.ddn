@@ -1,0 +1,24 @@
+ddn "0.5";
+module "ddn.examples.css-hooks";
+
+// CSS class hooks: every rendered SVG mark carries deterministic classes
+// (ddn-svg / ddn-node ddn-kind-* / ddn-rel ddn-verb-* / ddn-field / ddn-label /
+// ddn-frame / ddn-panel / ddn-mark ddn-mark-*), so a web page can restyle a
+// diagram with its own stylesheet. Script-level look/format/object
+// declarations keep winning on the elements they name: the audit node is
+// declared kind: cache, so a page rule for .ddn-kind-tbl never matches it.
+// See the companion 58-css-hooks.html for the live page-CSS demonstration.
+
+data shop {
+    object orders "Orders" { kind: table; fields { field order_id { key: primary; } field status; } }
+    object invoices "Invoices" { kind: table; fields { field invoice_id { key: primary; } field total; } }
+    object audit "Audit cache" { kind: cache; description: "Script-level kind choice: page CSS on .ddn-kind-tbl does not apply here."; }
+    relation billed @orders -> @invoices { kind: publish; }
+    relation cached @invoices -> @audit { kind: capture; }
+}
+
+view hooks "CSS hooks / page styling" {
+    data: [@shop];
+    publication { size: content; fit: none; }
+    frame billing "BILLING" { members: [@shop.orders, @shop.invoices]; }
+}

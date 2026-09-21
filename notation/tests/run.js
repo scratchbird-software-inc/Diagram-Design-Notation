@@ -102,7 +102,7 @@ test('seed noninteger rejected',()=>reject(base.replace('data:[@m];','data:[@m];
 test('seed outside uint32 rejected',()=>reject(base.replace('data:[@m];','data:[@m];style {seed:4294967296;}'),'DDN046'));
 test('unrelated primitive does not advance another shape random seed',()=>{const a=Sketch.box(0,0,270,150,{id:'customer',seed:8});Sketch.box(0,0,300,300,{id:'other',seed:8});assert.equal(a,Sketch.box(0,0,270,150,{id:'customer',seed:8}));});
 test('completed SVG is vector-only with no runtime scripts or font payload',()=>{const s=handRender().svg;assert.ok(!/<script|<image|<foreignObject|@font-face|data:font|\.woff/i.test(s));assert.ok(s.includes('<text'));});
-test('SVG font styles are scoped and inherited per nested root',()=>{const s=handRender().svg;assert.ok(s.includes('class="ddn-font-'));assert.ok(!s.includes('text{font-family:'));});
+test('SVG font styles are scoped and inherited per nested root',()=>{const s=handRender().svg;assert.ok(s.includes('ddn-font-'),'scoped font class present on the root svg');assert.ok(!s.includes('text{font-family:'));});
 
 test('gap crossing has physically interrupted path pieces',()=>{const x=byView['10-handdrawn-routing.ddn#gap'];assert.ok(x.svg.includes('data-route-pieces="2"'));});
 test('crossing gap is explicit absent geometry without mask support',()=>{const x=Render.visibleRoutePieces([[0,0],[200,0]],[{point:[100,0]}]);assert.deepEqual(x,[{points:[[0,0],[93,0]],distance:0},{points:[[107,0],[200,0]],distance:107}]);});

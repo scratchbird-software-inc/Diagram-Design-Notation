@@ -95,3 +95,14 @@ Matrix creation uses the projection's `write_data` shared block or an unambiguou
 ## Endpoint-ordering policy (0.6.0-beta.1)
 
 Free compatible slots are optimized by default. The optional overlay `endpointOrdering: "preserve"` selects the legacy stable-ID slot order; `"source"` follows the DDN layout. This does not change field identities, pins, or quantitative coordinate meaning. See `../../spec/26-local-endpoint-ordering.md`.
+
+## Styling rendered diagrams (CSS hooks)
+
+Rendered SVG carries deterministic class hooks on every mark — root `ddn-svg ddn-view-<kind> ddn-profile-<profile-slug>`, nodes `ddn-node ddn-kind-<code>`, relations `ddn-rel ddn-verb-<verb>`, plus `ddn-field`, `ddn-label`, `ddn-panel`, `ddn-frame` and `ddn-mark ddn-mark-<type>` in projections — so a host page can restyle diagrams with its own CSS. Script-level declarations (format palette, look, object/occurrence choices) are emitted as inline SVG presentation attributes and continue to win for the elements they name; no `<style>` block or `!important` is ever emitted into the SVG.
+
+Two optional conveniences ship with the distribution:
+
+- `dist/ddn.css` — a ready-made stylesheet (source `studio/src/ddn.css`) defining `:root` `--ddn-*` custom properties (`--ddn-font`, `--ddn-node-fill`, `--ddn-node-stroke`, `--ddn-rel-stroke`, `--ddn-label-color`, `--ddn-field-color`, `--ddn-mark-fill`) and rules mapping the hook classes to them.
+- `<ddn-example theme='{"--ddn-node-fill":"#fdf3e3"}'>` — the `theme` attribute takes a JSON object of `--ddn-*` overrides and injects them as a constructed stylesheet on the component's shadow host, so the values cascade into the rendered SVG. Unknown or non-`--ddn-` properties are ignored.
+
+See `examples/basics/58-css-hooks.ddn` and its companion `.html` for a working page-CSS demonstration.
