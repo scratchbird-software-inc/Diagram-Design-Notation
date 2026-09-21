@@ -85,5 +85,10 @@ export interface Defaults extends Record<string,unknown> {
  forKind(kind:string):Record<string,unknown>;
 }
 export const defaults:Defaults;
-declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
+export interface Glyphs {
+ /** Registered plate glyph for a kind keyword (or registry id): symbol body + viewBox; null when absent (B1-012). */
+ forKind(kind:string):{kind:string;glyph:string;viewBox:string;svg:string;meaning:string}|null;
+}
+export const glyphs:Glyphs;
+declare const DDNLive:{profileCatalogue:typeof profileCatalogue;VERSION:typeof VERSION;runtime:typeof runtime;createWorkspace:typeof createWorkspace;registerWorkspace:typeof registerWorkspace;mount:typeof mount;fromSnapshot:typeof fromSnapshot;authoring:Authoring;io:IO;parse:typeof parse;defaults:Defaults;glyphs:Glyphs;setTextProvider(fn:((text:string,size:number,font:string,weight:number)=>{width:number;ascent?:number;descent?:number})|null,name?:string):void;setTextMetrics(metrics:Record<string,unknown>):void};
 export default DDNLive;

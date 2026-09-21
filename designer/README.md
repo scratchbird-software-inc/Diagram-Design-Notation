@@ -143,3 +143,34 @@ generated view in ED-006's panels editor with the fixed-block guard active.
 `setView()` generalizes to resolve generated view ids by scanning both source
 files. No acceptance-plan case covers template starters; the gap is recorded
 in the ED-013 report.
+B1-012 reworks the prototype chrome. A density system drives the whole chrome
+from `--ui-*` custom properties: Compact (12 px base, 28 px buttons, 56 px
+palette cells, 10 px panes, 48 px projectbar, 40 px toolbar) is the default
+and a Compact/Comfortable toggle in the projectbar restores the previous
+sizes (14 px/34 px), persisted in localStorage. Draggable splitters between
+the shelf, canvas and inspector resize the grid columns (left 160–420 px,
+inspector 220–520 px clamps, double-click resets, positions persisted). The
+shelf and inspector each carry a detach button: the panel becomes a floating,
+title-bar-draggable window, its grid column collapses to 0 so the canvas
+grows to fill, and re-attach restores the splitter position — floating state
+is session-only (a fresh load is always docked) and panels stay fully
+functional while floating. Every bottom sheet (matrix/chart/timeline/
+fishbone/panels/decision/sequence) gains a collapse toggle for vertical
+space. Palette buttons render each kind's actual notation plate glyph as
+inline SVG from the runtime bundle (new additive accessor
+`DDNLive.glyphs.forKind(kindId)` → `{viewBox, svg, meaning}` or null; the
+kind code remains the fallback for kinds without a glyph), and chrome action
+icons are original minimal stroke SVGs in the plate style — no third-party
+icon sets. Every button carries a descriptive tooltip (what it does, not its
+name; palette hints are built from the registry name+meaning). The Download
+modal adds Current PNG (2×) and Current WebP (2×) beside the existing DDN /
+workspace ZIP / SVG: rasterization serializes the current SVG into an
+`<img>`, draws to a 2× canvas and reads `toDataURL` (the viewer's pattern);
+WebP is feature-detected and the button disables with a visible reason when
+the browser cannot encode it (never a mislabeled file); the existing
+renderFailure guard blocks every diagram format equally. Filenames:
+`designer-prototype.{svg,png,webp}`. All changes are additive — no element
+ids or handler signatures changed; ED-001…ED-013, B1-002 and the
+build-standalone byte-identity gate stay green, covered by the new suite
+`tests/b1-012-designer-chrome.js` (pure units + chrome greps + a headless
+chromium driver run generated from the real standalone.html).

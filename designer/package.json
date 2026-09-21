@@ -5,6 +5,6 @@
   "description": "DDN visual designer: specification, proposed contracts, and bounded prototype for a visual-first DDN editor. Proposal — not a production editor.",
   "license": "GPL-2.0-or-later",
   "scripts": {
-    "test": "node tests/ed-001-full-kind-palette.js && node tests/ed-002-matrix-editor.js && node tests/ed-003-chart-editor.js && node tests/ed-004-timeline-editor.js && node tests/ed-005-fishbone-editor.js && node tests/ed-006-panels-editor.js && node tests/ed-007-decision-table-editor.js && node tests/ed-008-edge-reconnection.js && node tests/ed-009-occurrence-addressing.js && node tests/ed-010-draft-validation-ux.js && node tests/ed-011-lane-editing.js && node tests/ed-012-sequence-editor.js && node tests/ed-013-canvas-template-starters.js && node tests/b1-002-element-defaults.js"
+    "test": "node tests/ed-001-full-kind-palette.js && node tests/ed-002-matrix-editor.js && node tests/ed-003-chart-editor.js && node tests/ed-004-timeline-editor.js && node tests/ed-005-fishbone-editor.js && node tests/ed-006-panels-editor.js && node tests/ed-007-decision-table-editor.js && node tests/ed-008-edge-reconnection.js && node tests/ed-009-occurrence-addressing.js && node tests/ed-010-draft-validation-ux.js && node tests/ed-011-lane-editing.js && node tests/ed-012-sequence-editor.js && node tests/ed-013-canvas-template-starters.js && node tests/b1-002-element-defaults.js && node tests/b1-012-designer-chrome.js"
   }
 }

@@ -1644,6 +1644,20 @@ function filesChecked(input){
  for(const [path,text]of Object.entries(input)){pathChecked(path);if(typeof text!=='string'||text.length>2000000)fail('LIVE010','DDN source must be text, at most 2,000,000 characters per file.');total+=text.length;files[path]=text;}
  if(total>12000000||Object.keys(files).length>1500)fail('LIVE011','Workspace limit: 1,500 files and 12,000,000 source characters.');return files;
 }
+// B1-012: public glyph access for chrome that renders the notation's own
+// plate vocabulary (designer palette). kindId is a kind keyword (or registry
+// id); returns the registered glyph's symbol body + viewBox, or null when the
+// kind is unknown or no glyph symbol is registered for it. Deterministic.
+const glyphSymbols={};
+for(const m of String(assets.glyphs||'').matchAll(/<symbol id="g-([A-Za-z0-9_-]+)" viewBox="([^"]+)">([\s\S]*?)<\/symbol>/g))glyphSymbols[m[1]]={viewBox:m[2],svg:m[3]};
+function glyphForKind(kindId){
+ if(typeof kindId!=='string'||!kindId)return null;
+ const kind=assets.registry.kinds.find(k=>k.keyword===kindId||k.id===kindId);
+ if(!kind||!kind.glyph)return null;
+ const symbol=glyphSymbols[kind.glyph];
+ if(!symbol)return null;
+ return{kind:kind.keyword,glyph:kind.glyph,viewBox:symbol.viewBox,svg:symbol.svg,meaning:kind.meaning||kind.name||kind.keyword};
+}
 const fingerprint=s=>{let a=2166136261,b=5381;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b,33)^c;}return(a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');};
 function freeze(v){if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.freeze(v);Object.values(v).forEach(freeze);}return v;}
 function capabilities(ir){const projection=ir.view.profiles.projection?.kind||'graph',bound=!['graph','chen'].includes(projection);const sequence=!!ir.view.profiles.layout.x_interaction,redacted=ir.view.profiles.export.mode==='redacted';return{...ENGINES,sequence,projection,dataBound:bound,graphControls:!bound&&projection!=='chen',marks:projection==='chart'&&ir.view.profiles.projection.profile==='chart.quality@1'?(ir.view.profiles.projection.transform&&ir.view.profiles.projection.transform!=='identity'||ir.view.profiles.projection.layers?['source']:['source','bar','line','area','point']):projection==='chart'?(ir.view.profiles.projection.x_type==='number'?['source','point','line','area']:ir.view.profiles.projection.x_type==='date'?['source','line','area']:['source','bar','line','area','pie','donut']):['source'],sourceExport:!redacted,autoPlacement:!sequence&&!bound&&projection!=='chen',retainedPlacementState:!sequence&&!bound&&projection!=='chen',placement:sequence||bound||projection==='chen'?['source']:choices.placement,centers:sequence||bound||projection==='chen'?['source']:choices.center,routing:sequence||bound||projection==='chen'?['source']:choices.routing,fields:sequence||bound||projection==='chen'?['source']:choices.fields,labels:bound||projection==='chen'?['source']:sequence?['source','numbers']:choices.labels,page:sequence?['source']:choices.page,kind:sequence||bound||projection==='chen'?['source']:choices.kind,crossings:sequence||bound||projection==='chen'?['source']:choices.crossings,theme:choices.theme,looks:choices.look,notes:sequence?['Fixed participant lanes and ordered exchanges; free-node routing/page controls are disabled. Redacted interaction exports are rejected.']:['DDN 0.5 profiles and projections preserve core validation, native routing and publication checks. Layout search is deterministic and bounded; pins and explicit constraints can leave crossings.']};}
@@ -1761,7 +1775,7 @@ function createWorkspace(input){
 const workspaces=new Map();
 function registerWorkspace(id,files){if(typeof id!=='string'||!id)fail('LIVE014','Workspace name is required.');const ws=files&&typeof files.renderSync==='function'?files:createWorkspace(files);workspaces.set(id,ws);if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('ddn-workspace-ready',{detail:{id}}));return ws;}
 function fromSnapshot(s){if(!['ddn-workspace@1','ddn-live-snapshot@0.1'].includes(s?.format)||typeof s.entry!=='string'||typeof s.view!=='string')fail('LIVE015','Unknown saved workspace format.');checkOptions(s.overrides||{});pathChecked(s.entry);return{workspace:createWorkspace(s.files),entry:s.entry,view:s.view,overrides:clone(s.overrides||{}),...(s.layoutState?{layoutState:clone(s.layoutState)}:{})};}
-const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider};
+const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,glyphs:{forKind:glyphForKind}};
 return api;
 }
 

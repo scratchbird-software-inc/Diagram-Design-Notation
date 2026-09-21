@@ -1456,5 +1456,38 @@ function createCanvasFromTemplate(D,ws,entry,args){
   return{select:null,viewId,profile:tpl.profile,blocks:tpl.blocks.length};
  });
 }
-return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS};
+// B1-012 designer chrome: pure, node-testable tables and math behind the
+// prototype's splitters, density toggle and export modal (D1/D2/D5).
+const SPLITTER_LIMITS={left:[160,420],inspector:[220,520]};
+const SPLITTER_DEFAULTS={left:230,inspector:306};
+function clampWidth(which,width){
+ const limits=SPLITTER_LIMITS[which];
+ if(!limits||!Number.isFinite(width))fail('DDN-I033','Unknown splitter or non-finite width. Nothing was changed.');
+ return Math.min(limits[1],Math.max(limits[0],Math.round(width)));
+}
+function splitterDrag(which,startWidth,startClientX,clientX){
+ // The left shelf grows rightward with the pointer; the inspector grows leftward.
+ const delta=clientX-startClientX;
+ return clampWidth(which,which==='left'?startWidth+delta:startWidth-delta);
+}
+function gridColumns(leftWidth,inspectorWidth){
+ // 0 marks a detached (floating) panel: its column and splitter collapse so the
+ // canvas grows to fill. Re-attach restores the persisted splitter width.
+ const l=leftWidth<=0?'0px':clampWidth('left',leftWidth)+'px',ls=leftWidth<=0?'0px':'6px';
+ const i=inspectorWidth<=0?'0px':clampWidth('inspector',inspectorWidth)+'px',is=inspectorWidth<=0?'0px':'6px';
+ return l+' '+ls+' minmax(360px,1fr) '+is+' '+i;
+}
+const DENSITY={
+ compact:{'--ui-font':'12px','--ui-pad':'8px','--ui-btn-h':'28px','--ui-gap':'6px','--ui-palette-h':'56px','--ui-pane-pad':'10px','--ui-projectbar-h':'48px','--ui-toolbar-h':'40px','--ui-tab-font':'12px'},
+ comfortable:{'--ui-font':'14px','--ui-pad':'10px','--ui-btn-h':'34px','--ui-gap':'8px','--ui-palette-h':'74px','--ui-pane-pad':'16px','--ui-projectbar-h':'62px','--ui-toolbar-h':'48px','--ui-tab-font':'13px'}
+};
+const DENSITY_DEFAULT='compact';
+const EXPORT_FORMATS=[
+ {id:'ddn',label:'Current DDN',mime:'text/plain;charset=utf-8',guarded:false},
+ {id:'zip',label:'Workspace ZIP',file:'designer-prototype-workspace.zip',mime:'application/zip',guarded:false},
+ {id:'svg',label:'Current SVG',file:'designer-prototype.svg',mime:'image/svg+xml',guarded:true},
+ {id:'png',label:'Current PNG (2×)',file:'designer-prototype.png',mime:'image/png',guarded:true,scale:2},
+ {id:'webp',label:'Current WebP (2×)',file:'designer-prototype.webp',mime:'image/webp',guarded:true,scale:2}
+];
+return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS,splitters:{SPLITTER_LIMITS,SPLITTER_DEFAULTS,clampWidth,splitterDrag,gridColumns},DENSITY,DENSITY_DEFAULT,EXPORT_FORMATS};
 });

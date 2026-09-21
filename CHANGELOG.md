@@ -6,6 +6,30 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-012: designer prototype chrome rework — the Download modal gains Current
+  PNG (2×) and Current WebP (2×) beside DDN/ZIP/SVG (serialize-to-`<img>`, 2×
+  canvas, `toDataURL`, mirroring the viewer; WebP feature-detected with the
+  button disabled + reason when unsupported — never a mislabeled file; the
+  renderFailure guard blocks every diagram format; filenames
+  `designer-prototype.{svg,png,webp}`). Density is driven by `--ui-*` custom
+  properties: Compact (12 px/28 px buttons/56 px palette cells) is the default
+  with a persisted Compact/Comfortable toggle (Comfortable ≈ the old
+  14 px/34 px). Draggable splitters resize shelf/inspector columns
+  (160–420 px / 220–520 px clamps, double-click reset, persisted). Shelf and
+  inspector detach into floating, title-bar-draggable panels with canvas
+  reflow (column collapses to 0) and re-attach; floating is session-only.
+  Every bottom sheet gains a collapse toggle. Palette buttons render the
+  kind's real notation plate glyph via the new additive runtime accessor
+  `DDNLive.glyphs.forKind(kindId)` (symbol body + viewBox + meaning, null when
+  absent; code text fallback), chrome icons are original stroke SVGs in the
+  plate style (no third-party artwork), and every button carries a
+  descriptive tooltip. New suites `designer/tests/b1-012-designer-chrome.js`
+  (7 tests: pure splitter/density/export units, chrome greps, headless
+  chromium driver generated from the real standalone.html incl.
+  detach/float/reattach + an ED-002 matrix edit committing afterwards, PNG/WebP
+  MIME prefixes) and `notation/tests/glyphs.js` (6 tests). All additive:
+  ED-001…ED-013 + B1-002 green, build-standalone byte-identity gate green.
+
 - B1-011: viewer typography + relation options — the end-user viewer's
   free-text font input is replaced by global family/size dropdowns (the four
   runtime stacks, 8–24 px, applied through the reflow-safe `font`/`fontSize`

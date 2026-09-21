@@ -24,6 +24,78 @@ const kindEntry=kind=>KINDMAP.kinds.find(k=>k.kind===kind);
 const codeOf=kind=>D.kinds.find(k=>k.id===kind)?.code||'';
 const projectionKind=()=>ir?.view.profiles.projection?.kind||'graph';
 const graph=()=>!ir||ir.view.profiles.projection?.kind==='graph';
+// B1-012 chrome (D2/D5/D6): persistence is best-effort — file:// or hardened
+// profiles may deny localStorage; the prototype stays fully functional.
+const store={get(k){try{return localStorage.getItem(k);}catch{return null;}},set(k,v){try{localStorage.setItem(k,v);}catch{}}};
+const density={current:CMD.DENSITY[store.get('ddn-designer-density')]?store.get('ddn-designer-density'):CMD.DENSITY_DEFAULT};
+function applyDensity(){document.body.dataset.density=density.current;const label=density.current==='compact'?'Compact':'Comfortable';$('#densityLabel').textContent=label;$('#densityToggle').setAttribute('aria-label','Toggle density, currently '+label);}
+const widths={left:+store.get('ddn-designer-split-left')||CMD.splitters.SPLITTER_DEFAULTS.left,inspector:+store.get('ddn-designer-split-inspector')||CMD.splitters.SPLITTER_DEFAULTS.inspector};
+const floatingPanels={left:false,inspector:false};
+function applyColumns(){
+ $('#workspace').style.gridTemplateColumns=CMD.splitters.gridColumns(floatingPanels.left?0:widths.left,floatingPanels.inspector?0:widths.inspector);
+ $('#splitLeft').hidden=floatingPanels.left;$('#splitRight').hidden=floatingPanels.inspector;
+}
+function bindSplitter(id,which){
+ const el=$('#'+id);let start=null;
+ el.onpointerdown=e=>{if(e.button!==0)return;start={x:e.clientX,w:widths[which]};try{el.setPointerCapture(e.pointerId);}catch{}el.classList.add('active');e.preventDefault();};
+ el.onpointermove=e=>{if(!start)return;widths[which]=CMD.splitters.splitterDrag(which,start.w,start.x,e.clientX);applyColumns();};
+ const end=()=>{if(!start)return;start=null;el.classList.remove('active');store.set('ddn-designer-split-'+which,String(widths[which]));};
+ el.onpointerup=end;el.onpointercancel=end;
+ el.ondblclick=()=>{widths[which]=CMD.splitters.SPLITTER_DEFAULTS[which];applyColumns();store.set('ddn-designer-split-'+which,String(widths[which]));};
+}
+const DETACH_TITLE='Float this panel in its own window; the canvas expands to fill the space';
+const REATTACH_TITLE='Re-attach this panel to the workspace grid; the column returns to its splitter position';
+function setFloating(which,on){
+ floatingPanels[which]=!!on;
+ const left=which==='left',panel=$(left?'#leftPanel':'#inspectorPanel'),btn=$(left?'#detachLeft':'#detachInspector'),name=left?'shelf':'inspector';
+ panel.classList.toggle('floating',floatingPanels[which]);
+ if(floatingPanels[which]){
+  panel.style.left=(left?16:Math.max(16,window.innerWidth-360))+'px';panel.style.top='120px';
+  btn.title=REATTACH_TITLE;btn.setAttribute('aria-label','Re-attach the '+name+' to the workspace');
+ }else{
+  panel.style.left='';panel.style.top='';
+  btn.title=DETACH_TITLE;btn.setAttribute('aria-label','Detach the '+name+' into a floating window');
+ }
+ applyColumns();
+}
+function bindPanelDrag(panel){
+ const bar=panel.querySelector('.panel-chrome');let d=null;
+ bar.addEventListener('pointerdown',e=>{if(!panel.classList.contains('floating')||e.target.closest('button'))return;const r=panel.getBoundingClientRect();d={dx:e.clientX-r.left,dy:e.clientY-r.top,pointer:e.pointerId};try{bar.setPointerCapture(e.pointerId);}catch{}e.preventDefault();});
+ bar.addEventListener('pointermove',e=>{if(!d||e.pointerId!==d.pointer)return;panel.style.left=Math.max(0,Math.min(window.innerWidth-80,e.clientX-d.dx))+'px';panel.style.top=Math.max(0,Math.min(window.innerHeight-60,e.clientY-d.dy))+'px';});
+ const up=()=>{d=null;};bar.addEventListener('pointerup',up);bar.addEventListener('pointercancel',up);
+}
+// B1-012 D7: every bottom sheet gains a collapse/expand toggle in its head;
+// the state is session-only (a fresh page expands every sheet again).
+const collapsedSheets=new Set();
+function addSheetToggle(sheet){
+ const head=sheet.querySelector('.sheet-head');if(!head||head.querySelector('.sheet-toggle'))return;
+ const b=document.createElement('button');b.className='sheet-toggle';b.type='button';b.dataset.sheetToggle=sheet.id;
+ b.title='Collapse this sheet to a header bar; click again to expand';b.setAttribute('aria-label','Collapse or expand this sheet');
+ b.innerHTML='<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ head.appendChild(b);sheet.classList.toggle('collapsed',collapsedSheets.has(sheet.id));
+}
+function setSheet(sheet,h){sheet.innerHTML=h;addSheetToggle(sheet);}
+$$('.matrix-sheet').forEach(s=>s.addEventListener('click',e=>{
+ const b=e.target.closest('[data-sheet-toggle]');if(!b)return;
+ collapsedSheets.has(s.id)?collapsedSheets.delete(s.id):collapsedSheets.add(s.id);
+ s.classList.toggle('collapsed',collapsedSheets.has(s.id));
+}));
+// B1-012 D1: raster export, mirroring the viewer's canvas-2× pattern. SVG is
+// serialized into an <img>, drawn to a 2× canvas, read back with toDataURL.
+function rasterize(svgText,mime,scale){
+ return new Promise((resolve,reject)=>{
+  const vb=$('#paper>svg')?.viewBox?.baseVal;
+  const w=Math.max(1,Math.round((vb&&vb.width||result?.scene?.width||1600)*scale)),h=Math.max(1,Math.round((vb&&vb.height||result?.scene?.height||1000)*scale));
+  const img=new Image();
+  img.onload=()=>{try{const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL(mime));}catch(e){reject(e);}};
+  img.onerror=()=>reject(new Error('Rasterisation failed; the browser could not decode the SVG.'));
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgText);
+ });
+}
+// WebP feature-detect (D1): the button disables with a visible reason rather
+// than ever writing a mislabeled file.
+const webpSupported=(()=>{try{return document.createElement('canvas').toDataURL('image/webp').startsWith('data:image/webp');}catch{return false;}})();
+function downloadDataURL(name,url){const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();}
 function announce(text,error=false){const t=$('#toast');t.textContent=text;t.className='message show'+(error?' error':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),6500);$('#status').textContent=text;}
 function findSelection(){const n=ir?.elements.find(n=>n.id===selected);if(n)return{kind:'node',node:n,sourceId:n.id,name:n.name};for(const e of ir?.elements||[]){const f=e.fields?.find(f=>f.id===selected);if(f)return{kind:'field',node:e,field:f,sourceId:f.id,name:f.name};}const r=ir?.relations.find(r=>r.id===selected);if(r)return{kind:'relation',relation:r,sourceId:r.id,name:r.name};return null;}
 function sourceLabel(id){for(const e of ir?.elements||[]){if(e.id===id)return e.name;const f=e.fields.find(f=>f.id===id);if(f)return e.name+'.'+f.name;}return ir?.relations.find(r=>r.id===id)?.name||id?.split('::').pop()||'';}
@@ -84,7 +156,7 @@ function renderProblems(){
  $('#problemsSummary').textContent=(wsIssues.length?'workspace review loaded · ':'')+issues.length+' issue(s) · dismissing never waives a diagnostic';
  const order={error:0,incomplete:1,warning:2,info:2,information:2};
  const sorted=[...issues].sort((a,b)=>(order[a.severity]??3)-(order[b.severity]??3)||(a.code<b.code?-1:a.code>b.code?1:0));
- $('#problemsList').innerHTML=sorted.length?sorted.map((d,i)=>'<button class="problem-row sev-'+esc(d.severity)+'" data-issue="'+i+'"><span class="tag '+(d.severity==='error'?'':d.severity==='incomplete'?'amber':'teal')+'">'+esc(String(d.severity).toUpperCase())+'</span><code>'+esc(d.code)+'</code><span class="problem-msg">'+esc(d.message)+'</span><span class="small muted">'+esc(d.viewId||'')+'</span></button>').join(''):'<p class="help small muted">No diagnostics in the current scope.</p>';
+ $('#problemsList').innerHTML=sorted.length?sorted.map((d,i)=>'<button class="problem-row sev-'+esc(d.severity)+'" data-issue="'+i+'" title="Navigate to the subject of this diagnostic"><span class="tag '+(d.severity==='error'?'':d.severity==='incomplete'?'amber':'teal')+'">'+esc(String(d.severity).toUpperCase())+'</span><code>'+esc(d.code)+'</code><span class="problem-msg">'+esc(d.message)+'</span><span class="small muted">'+esc(d.viewId||'')+'</span></button>').join(''):'<p class="help small muted">No diagnostics in the current scope.</p>';
  $$('#problemsList [data-issue]').forEach(b=>b.onclick=()=>navigateIssue(sorted[+b.dataset.issue]));
 }
 function revalidateWorkspace(){
@@ -124,15 +196,15 @@ function renderMatrixSheet(){
   h+='<tr><th>'+esc(plan.rows[ri].name)+'</th>';
   for(let ci=0;ci<plan.columns.length;ci++){
    const d=cellDisplay(ri,ci),cls=((mSel&&mSel.r===ri&&mSel.c===ci)?'sel':'')+(d.staged?' staged':'');
-   h+='<td class="'+cls+'"><button class="mcell" data-r="'+ri+'" data-c="'+ci+'" aria-label="'+esc(plan.rows[ri].name+' / '+plan.columns[ci].name)+'">'+esc(d.value||'·')+'</button></td>';
+   h+='<td class="'+cls+'"><button class="mcell" data-r="'+ri+'" data-c="'+ci+'" aria-label="'+esc(plan.rows[ri].name+' / '+plan.columns[ci].name)+'" title="Stage an assignment for this cell; commit the batch as one transaction">'+esc(d.value||'·')+'</button></td>';
   }
   h+='</tr>';
  }
  h+='</tbody></table>';
- if(editable&&keys)h+='<div class="sheet-head" style="margin-top:10px"><span class="small muted">Selected cell:</span><span class="keypad">'+keys.map(k=>'<button data-key="'+k+'">'+k+'</button>').join('')+'<button data-key="clear">Clear</button></span><span class="small muted">Keys '+(p.profile==='matrix.crud@1'?'toggle letters':'assign')+' · arrows move · Enter commits the batch · Esc discards</span></div>';
+ if(editable&&keys)h+='<div class="sheet-head" style="margin-top:10px"><span class="small muted">Selected cell:</span><span class="keypad">'+keys.map(k=>'<button data-key="'+k+'" title="Stage this code letter on the selected cell">'+k+'</button>').join('')+'<button data-key="clear" title="Stage clearing the selected cell">Clear</button></span><span class="small muted">Keys '+(p.profile==='matrix.crud@1'?'toggle letters':'assign')+' · arrows move · Enter commits the batch · Esc discards</span></div>';
  else if(!editable)h+='<p class="help small muted" style="margin-top:10px">Cell editing needs an extension-property (<code>x_*</code>) value binding; this view binds <code>'+esc(p.value)+'</code>. The sheet is read-only.</p>';
- h+='<div class="batchbar"><span class="tag '+(mBatch.length?'amber':'')+'">BATCH · '+mBatch.length+' staged</span>'+mBatch.map((b,i)=>{const r=plan.rows.find(x=>x.id===b.rowId)?.name||b.rowId,c=plan.columns.find(x=>x.id===b.columnId)?.name||b.columnId;return '<span class="chip">'+esc(r+' → '+c+': '+(b.remove?'clear':String(b.value)))+'<button data-unstage="'+i+'" aria-label="Remove staged change">×</button></span>';}).join('')+'<button id="commitBatch" class="primary" '+(mBatch.length?'':'disabled')+'>Commit as one transaction</button><button id="discardBatch" '+(mBatch.length?'':'disabled')+'>Discard</button></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><span class="tag '+(mBatch.length?'amber':'')+'">BATCH · '+mBatch.length+' staged</span>'+mBatch.map((b,i)=>{const r=plan.rows.find(x=>x.id===b.rowId)?.name||b.rowId,c=plan.columns.find(x=>x.id===b.columnId)?.name||b.columnId;return '<span class="chip">'+esc(r+' → '+c+': '+(b.remove?'clear':String(b.value)))+'<button data-unstage="'+i+'" aria-label="Remove staged change" title="Remove this staged change from the batch">×</button></span>';}).join('')+'<button id="commitBatch" class="primary" '+(mBatch.length?'':'disabled')+' title="Commit the staged matrix cells as one transaction">Commit as one transaction</button><button id="discardBatch" '+(mBatch.length?'':'disabled')+' title="Discard every staged matrix change; source unchanged">Discard</button></div>';
+ setSheet(sheet,h);
  sheet.querySelectorAll('.mcell').forEach(b=>b.onclick=()=>{mSel={r:+b.dataset.r,c:+b.dataset.c};renderMatrixSheet();updateInspector();});
  sheet.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{if(!mSel){announce('Select a cell first.',true);return;}stageKey(b.dataset.key);});
  sheet.querySelectorAll('[data-unstage]').forEach(b=>b.onclick=()=>{mBatch.splice(+b.dataset.unstage,1);renderMatrixSheet();updateInspector();});
@@ -223,8 +295,8 @@ function renderChartSheet(){
   h+='<td><button data-delrec="'+esc(n.id)+'" title="Delete this record and remove its binding in one transaction">Delete</button></td></tr>';
  }
  h+='</tbody></table>';
- h+='<div class="batchbar"><button id="addChartRecord">＋ Add record</button><span class="small muted">Adds a record with this chart’s key set and appends its binding — one transaction. Dragging marks is disabled: values set geometry.</span></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><button id="addChartRecord" title="Add a record with this chart’s key set and bind it">＋ Add record</button><span class="small muted">Adds a record with this chart’s key set and appends its binding — one transaction. Dragging marks is disabled: values set geometry.</span></div>';
+ setSheet(sheet,h);
  $('#chartMark').onchange=e=>{
   const v=e.target.value;
   if(v==='__source')chartTxn('Reset chart mark to source default',t=>CMD.editProjectionProperty(D,t,entry,view,{key:'mark',value:undefined}));
@@ -264,7 +336,7 @@ function renderTimelineSheet(){
  try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
  let h='<div class="sheet-head"><span class="tag teal">TIMELINE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Dates edit the <strong>shared model</strong> (<code>'+esc(String(p.start))+'</code> / <code>'+esc(String(p.end))+'</code>) · dependencies edit <strong>this view only</strong> (<code>projection.dependencies</code>); relations stay shared</span></div>';
  if(timelineNotice)h+='<div class="notice error">'+esc(timelineNotice)+'</div>';
- if(planError){h+='<div class="notice error">'+esc(planError)+' The sheet stays read-only; the source is unchanged.</div>';sheet.innerHTML=h;return;}
+ if(planError){h+='<div class="notice error">'+esc(planError)+' The sheet stays read-only; the source is unchanged.</div>';setSheet(sheet,h);return;}
  const depsOf=id=>plan.dependencies.filter(r=>r.from.element===id||r.to.element===id);
  h+='<table aria-label="Timeline tasks"><thead><tr><th>task</th><th>start (UTC)</th><th>end (exclusive, UTC)</th><th>dependencies touching this task</th></tr></thead><tbody>';
  for(const it of plan.items){
@@ -275,8 +347,8 @@ function renderTimelineSheet(){
   h+='<td class="deps">'+depsOf(it.id).map(r=>'<span class="chip">'+esc(r.name||r.id.split('::').pop())+' <button data-unlink="'+esc(r.id)+'" title="Remove from this view’s dependency list; the shared relation is kept" aria-label="Unlink '+esc(r.name||r.id)+'">×</button></span>').join('')+'<button data-linkfrom="'+esc(it.id)+'" title="Link a new predecessor dependency starting here">＋ link</button></td></tr>';
  }
  h+='</tbody></table>';
- h+='<div class="batchbar"><span class="tag">ADD TASK</span><input id="tlNewId" placeholder="task_id" aria-label="New task identifier"><input id="tlNewLabel" placeholder="Label" aria-label="New task label"><input id="tlNewStart" type="date" aria-label="New task start"><input id="tlNewEnd" type="date" aria-label="New task end"><button id="addTimelineRecord">＋ Add record</button><span class="small muted">A zero-length interval (start = end) is a legal milestone. Bars drag whole days with a preview; the SVG stays authoritative until commit.</span></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><span class="tag">ADD TASK</span><input id="tlNewId" placeholder="task_id" aria-label="New task identifier"><input id="tlNewLabel" placeholder="Label" aria-label="New task label"><input id="tlNewStart" type="date" aria-label="New task start"><input id="tlNewEnd" type="date" aria-label="New task end"><button id="addTimelineRecord" title="Add the task record to the shared model and this view’s bindings">＋ Add record</button><span class="small muted">A zero-length interval (start = end) is a legal milestone. Bars drag whole days with a preview; the SVG stays authoritative until commit.</span></div>';
+ setSheet(sheet,h);
  sheet.querySelectorAll('input[data-trec]').forEach(inp=>{
   inp.onchange=()=>{
    const id=inp.dataset.trec,key=inp.dataset.tkey,it=plan.items.find(i=>i.id===id);
@@ -317,11 +389,11 @@ function renderFishboneSheet(){
  try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
  let h='<div class="sheet-head"><span class="tag teal">FISHBONE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Ribs are source relationships of the bound verb <code>relation: '+esc(p.relation)+'</code> — branches are source relationships · repeated appearances retain one identity. Attaching an existing cause creates a relation only; no UI path clones a definition.</span></div>';
  if(fishboneNotice)h+='<div class="notice error">'+esc(fishboneNotice)+'</div>';
- if(planError){h+='<div class="notice error">'+esc(planError)+' Incomplete bones stay saveable; profile checks run at review. Fix the rib set below or in source.</div>';sheet.innerHTML=h;return;}
+ if(planError){h+='<div class="notice error">'+esc(planError)+' Incomplete bones stay saveable; profile checks run at review. Fix the rib set below or in source.</div>';setSheet(sheet,h);return;}
  const occ=fishboneOccurrences(plan);
  const occNote=id=>{const list=occ.get(id)||[];return list.length>1?'<div class="occ">occurrences ('+list.length+'): '+list.map(o=>'<code>'+esc(o)+'</code>').join(' · ')+'</div>':'';};
  h+='<table aria-label="Fishbone ribs"><tbody>';
- h+='<tr'+(selected===plan.effect.id?' class="sel"':'')+'><th style="width:1%;white-space:nowrap">EFFECT</th><td><input id="fbEffectLabel" value="'+esc(plan.effect.name)+'" aria-label="Effect statement"></td><td class="fb-actions"><button id="fbEffectApply" class="primary">Apply label</button></td></tr>';
+ h+='<tr'+(selected===plan.effect.id?' class="sel"':'')+'><th style="width:1%;white-space:nowrap">EFFECT</th><td><input id="fbEffectLabel" value="'+esc(plan.effect.name)+'" aria-label="Effect statement"></td><td class="fb-actions"><button id="fbEffectApply" class="primary" title="Rename the fishbone effect (shared definition)">Apply label</button></td></tr>';
  const actionCell=(parentId,relationId,depth)=>'<button data-fb-add="'+esc(parentId)+'" data-depth="'+depth+'" title="Create a new quality.cause under this rib — one transaction">＋ cause</button><button data-fb-attach="'+esc(parentId)+'" title="Attach an existing cause definition here; one identity, a second occurrence">attach…</button>'+(relationId?'<button data-fb-remove="'+esc(relationId)+'" title="Remove this rib only; the definition and its other occurrences survive">remove rib</button>':'');
  const causeRows=(node,depth)=>{
   let rows='<tr'+(selected===node.node.id?' class="sel"':'')+'><th><span class="fb-indent" style="--d:'+depth+'"></span>'+esc(node.node.name)+'</th><td><code class="id">'+esc(node.node.kind)+'</code>'+occNote(node.node.id)+'</td><td class="fb-actions">'+actionCell(node.node.id,node.relationId,depth+1)+'</td></tr>';
@@ -333,8 +405,8 @@ function renderFishboneSheet(){
   for(const c of cat.children||[])h+=causeRows(c,1);
  }
  h+='</tbody></table>';
- h+='<div class="batchbar"><span class="tag">ADD CATEGORY</span><input id="fbCatId" placeholder="category_id" aria-label="New category identifier"><input id="fbCatLabel" placeholder="Label" aria-label="New category label"><button id="fbAddCat">＋ Add category</button><span class="small muted">First-level ribs must be categories (1..12); causes nest at most 4 levels. Illegal ribs reject with the runtime’s own codes before any commit.</span></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><span class="tag">ADD CATEGORY</span><input id="fbCatId" placeholder="category_id" aria-label="New category identifier"><input id="fbCatLabel" placeholder="Label" aria-label="New category label"><button id="fbAddCat" title="Add a category rib in one transaction">＋ Add category</button><span class="small muted">First-level ribs must be categories (1..12); causes nest at most 4 levels. Illegal ribs reject with the runtime’s own codes before any commit.</span></div>';
+ setSheet(sheet,h);
  $('#fbEffectApply').onclick=()=>{const label=$('#fbEffectLabel').value;if(label!==plan.effect.name)fishboneTxn('Rename fishbone effect (shared definition)',t=>CMD.setFishboneEffectLabel(D,t,entry,view,{label}));};
  $('#fbEffectLabel').onkeydown=e=>{if(e.key==='Enter')$('#fbEffectApply').click();};
  $('#fbAddCat').onclick=()=>{
@@ -404,24 +476,24 @@ function renderPanelsSheet(){
   h+='<div class="panel-card'+(panelsSel===v.id?' sel':'')+'" data-card="'+esc(v.id)+'"><div class="sheet-head"><span class="tag'+(fixed?' amber':'')+'">'+esc(v.id)+(fixed?' · FIXED CANVAS BLOCK':'')+(isChild?' · CHILD-VIEW SLOT':'')+'</span>'+(fixed?'<span class="small muted">fixed canvas block — title, span and delete are locked; the runtime’s DDN-PJ080/081/083 re-plan is the backstop</span>':'')+'</div>';
   h+='<div class="panel-form"><label>Title</label><input data-ptitle="'+esc(v.id)+'" value="'+esc(v.title)+'" '+(fixed?'disabled':'')+' aria-label="Panel '+esc(v.id)+' title">';
   for(const k of ['row','column','rowspan','colspan'])h+='<label>'+k+'</label><input type="number" min="0" data-pspan="'+esc(v.id)+':'+k+'" value="'+esc(String(v[k]??(k==='rowspan'||k==='colspan'?1:0)))+'" '+(fixed?'disabled':'')+' aria-label="Panel '+esc(v.id)+' '+k+'">';
-  h+='<button data-pspanapply="'+esc(v.id)+'" '+(fixed?'disabled':'')+'>Apply span</button><button data-pdel="'+esc(v.id)+'" '+(fixed?'disabled title="fixed canvas block"':'')+'>Delete panel</button></div>';
+  h+='<button data-pspanapply="'+esc(v.id)+'" '+(fixed?'disabled':'')+' title="Apply the grid position for this panel (this view only)">Apply span</button><button data-pdel="'+esc(v.id)+'" '+(fixed?'disabled title="fixed canvas block"':'')+'>Delete panel</button></div>';
   if(isChild){
    const childId=String(v.view?.$ref??v.view).split('::').pop();
-   h+='<div class="panel-items"><span class="small muted">Bound child view <code>'+esc(childId)+'</code> — a named-view reference, never an inline copy of child geometry (spec ch.09 Composition).</span><button data-popen="'+esc(childId)+'">Open child view</button>';
+   h+='<div class="panel-items"><span class="small muted">Bound child view <code>'+esc(childId)+'</code> — a named-view reference, never an inline copy of child geometry (spec ch.09 Composition).</span><button data-popen="'+esc(childId)+'" title="Open the bound child view in the editor">Open child view</button>';
    const others=ws.views(entry).filter(x=>x.id!==view&&x.id!==childId);
-   h+='<span class="small muted">Rebind slot ('+childCount+'/12 child slots):</span><select data-pbindpick="'+esc(v.id)+'">'+others.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id)+'</option>').join('')+'</select><button data-pbind="'+esc(v.id)+'">Bind view</button></div>';
+   h+='<span class="small muted">Rebind slot ('+childCount+'/12 child slots):</span><select data-pbindpick="'+esc(v.id)+'">'+others.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.id)+'</option>').join('')+'</select><button data-pbind="'+esc(v.id)+'" title="Bind the selected view into this slot (named reference)">Bind view</button></div>';
   }else{
    const itemPanels=source.filter(x=>x.view===undefined&&x.id!==v.id);
    h+='<div class="panel-items">'+(planned?planned.items.map(it=>{
     const nid=it.node.id;
     return '<span class="chip'+(panelsSel===nid?' sel':'')+'" data-pitem="'+esc(nid)+'">'+esc(it.node.name)+' <select data-pmove="'+esc(nid)+'" title="Move to another item-panel" aria-label="Move '+esc(it.node.name)+' to another panel"><option value="">move to…</option>'+itemPanels.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title)+'</option>').join('')+'</select></span>';
    }).join(''):'<span class="small muted">items unavailable while the plan is invalid</span>')+'</div>';
-   h+='<div class="panel-form"><input data-paddid="'+esc(v.id)+'" placeholder="note_id" aria-label="New note identifier"><input data-paddlabel="'+esc(v.id)+'" placeholder="Label" aria-label="New note label"><input data-padddesc="'+esc(v.id)+'" placeholder="Description" aria-label="New note description"><button data-padd="'+esc(v.id)+'">＋ Add item</button></div>';
+   h+='<div class="panel-form"><input data-paddid="'+esc(v.id)+'" placeholder="note_id" aria-label="New note identifier"><input data-paddlabel="'+esc(v.id)+'" placeholder="Label" aria-label="New note label"><input data-padddesc="'+esc(v.id)+'" placeholder="Description" aria-label="New note description"><button data-padd="'+esc(v.id)+'" title="Add the note to this panel in one transaction">＋ Add item</button></div>';
   }
   h+='</div>';
  }
- h+='<div class="batchbar"><span class="tag">ADD PANEL</span><input id="pNewId" placeholder="panel_id" aria-label="New panel identifier"><input id="pNewTitle" placeholder="Title" aria-label="New panel title"><input id="pNewRow" type="number" min="0" placeholder="row" aria-label="New panel row"><input id="pNewCol" type="number" min="0" placeholder="column" aria-label="New panel column"><input id="pNewNote" placeholder="First item label (required — empty panels reject DDN-PJ009)" aria-label="First item label"><button id="pAddPanel">＋ Add panel</button><span class="small muted">One transaction: a shared note definition plus the new panel holding it. Overlaps reject DDN-PJ021; fixed-grid canvas profiles keep their required blocks (DDN-PJ080/081/083).</span></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><span class="tag">ADD PANEL</span><input id="pNewId" placeholder="panel_id" aria-label="New panel identifier"><input id="pNewTitle" placeholder="Title" aria-label="New panel title"><input id="pNewRow" type="number" min="0" placeholder="row" aria-label="New panel row"><input id="pNewCol" type="number" min="0" placeholder="column" aria-label="New panel column"><input id="pNewNote" placeholder="First item label (required — empty panels reject DDN-PJ009)" aria-label="First item label"><button id="pAddPanel" title="Add the panel with its first item in one transaction">＋ Add panel</button><span class="small muted">One transaction: a shared note definition plus the new panel holding it. Overlaps reject DDN-PJ021; fixed-grid canvas profiles keep their required blocks (DDN-PJ080/081/083).</span></div>';
+ setSheet(sheet,h);
  sheet.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>{panelsSel=b.dataset.panel;renderPanelsSheet();updateInspector();});
  sheet.querySelectorAll('[data-pitem]').forEach(c=>c.onclick=e=>{if(e.target.tagName==='SELECT')return;panelsSel=c.dataset.pitem;renderPanelsSheet();updateInspector();});
  sheet.querySelectorAll('[data-ptitle]').forEach(inp=>inp.onchange=()=>{const id=inp.dataset.ptitle,cur=source.find(v=>v.id===id);if(inp.value!==cur.title)panelsTxn('Rename panel '+id+' (this view only)',t=>CMD.renamePanel(D,t,entry,view,{panelId:id,title:inp.value}));});
@@ -526,7 +598,7 @@ function renderDecisionSheet(){
  if(planError){
   h+='<div class="notice error"><strong>'+esc(planError.code)+'</strong>: '+esc(planError.message)+'<br>The rule stays committed and saveable as a draft (VE-007); the failing analysis is displayed, never hidden, and publish/export stay blocked. The sheet is read-only until the source passes again — use Undo or edit the source.</div>';
   h+='<table aria-label="Decision rules (stale)" class="stale-wrap"><tbody><tr class="stale"><td class="small muted">Last good table kept stale; the canvas above shows the last valid render dimmed.</td></tr></tbody></table>';
-  sheet.innerHTML=h;
+  setSheet(sheet,h);
   $('#decisionPolicy').onchange=e=>{e.target.value=policy;announce(planError.code+': fix the draft before changing policy.',true);};
   $('#decisionCoverage').onchange=e=>{e.target.value=coverage;announce(planError.code+': fix the draft before changing coverage.',true);};
   return;
@@ -592,14 +664,14 @@ function renderDecisionSheet(){
   else if(d.type==='boolean')h+='<select data-fix="'+esc(d.key)+'"><option value="true">true</option><option value="false">false</option>'+extra+'</select>';
   else h+='<input type="number" step="any" data-fix="'+esc(d.key)+'" value="'+esc(String(d.min??0))+'">'+(extra?'<select data-fix-special="'+esc(d.key)+'"><option value="">number</option>'+extra+'</select>':'');
  }
- h+='<button id="decisionEval" class="primary">Evaluate</button></div>';
+ h+='<button id="decisionEval" class="primary" title="Evaluate the fixture input against the rules (read-only)">Evaluate</button></div>';
  if(decisionFixture){
   if(decisionFixture.error)h+='<div class="notice error">'+esc(decisionFixture.error)+'</div>';
   else{const r=decisionFixture.result;h+='<div class="fixture-result">status <strong>'+esc(r.status)+'</strong> · matched ['+r.matched.map(x=>esc(x.split('::').pop())).join(', ')+'] · selected ['+r.selected.map(x=>esc(x.split('::').pop())).join(', ')+']'+(r.outputs.length?' · outputs '+r.outputs.map(o=>'<code class="witness">'+esc(JSON.stringify(o))+'</code>').join(''):'')+'</div>';}
  }
  h+='</div>';
- h+='<div class="batchbar"><span class="tag">ADD RULE</span><input id="decNewId" placeholder="rule_id" aria-label="New rule identifier"><input id="decNewLabel" placeholder="Label" aria-label="New rule label"><button id="decAddRule">＋ Add rule</button><span class="small muted">Creates one shared <code>rule.row</code> definition with a default outcome per declared type, appends its ref to <code>projection.records</code> — one transaction. An overlap under a unique policy commits as a draft with the witness shown above (VE-007).</span></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><span class="tag">ADD RULE</span><input id="decNewId" placeholder="rule_id" aria-label="New rule identifier"><input id="decNewLabel" placeholder="Label" aria-label="New rule label"><button id="decAddRule" title="Add a rule with a default outcome per declared type">＋ Add rule</button><span class="small muted">Creates one shared <code>rule.row</code> definition with a default outcome per declared type, appends its ref to <code>projection.records</code> — one transaction. An overlap under a unique policy commits as a draft with the witness shown above (VE-007).</span></div>';
+ setSheet(sheet,h);
  $('#decisionPolicy').onchange=e=>decisionTxn('Set hit policy to '+e.target.value+' (this view only)',t=>CMD.setDecisionPolicy(D,t,entry,view,{hitPolicy:e.target.value}));
  $('#decisionCoverage').onchange=e=>decisionTxn('Set coverage to '+e.target.value+' (this view only)',t=>CMD.setDecisionPolicy(D,t,entry,view,{coverage:e.target.value}));
  sheet.querySelectorAll('[data-rule-up],[data-rule-down]').forEach(b=>b.onclick=()=>{
@@ -691,7 +763,7 @@ function renderSequenceSheet(){
  try{plan=ws.projectionPlan(entry,view);}catch(e){planError=(e.code||'PLAN')+': '+e.message;}
  let h='<div class="sheet-head"><span class="tag teal">SEQUENCE SHEET · LIVE SOURCE EDITING</span><span class="sheet-target">Order is <strong>declaration order</strong>: ↑/↓ moves the declaration span in source (moveDeclaration), never pixels · messages are shared <code>uml.message</code> relations (<code>x_return</code> true-or-absent) · no placement or Arrange exists in this projection (LIVE021)</span></div>';
  if(sequenceNotice)h+='<div class="notice error">'+esc(sequenceNotice)+'</div>';
- if(planError){h+='<div class="notice error">'+esc(planError)+' The sheet stays read-only; the source is unchanged.</div>';sheet.innerHTML=h;return;}
+ if(planError){h+='<div class="notice error">'+esc(planError)+' The sheet stays read-only; the source is unchanged.</div>';setSheet(sheet,h);return;}
  const pjW03=(result?.diagnostics||[]).filter(d=>d.code==='DDN-PJW03');
  const nameOf=id=>ir.elements.find(n=>n.id===id)?.name||String(id).split('::').pop();
  h+='<div class="seq-cols"><div class="seq-col"><h3>Lifelines · declaration order</h3><table aria-label="Sequence lifelines"><tbody>';
@@ -702,7 +774,7 @@ function renderSequenceSheet(){
  });
  h+='</tbody></table>';
  const candidates=ir.elements.filter(n=>n.type==='object'&&!plan.participants.some(x=>x.id===n.id));
- h+='<div class="batchbar"><span class="tag">ADD LIFELINE</span><select id="seqLifePick">'+candidates.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><button id="seqLifeAdd" '+(candidates.length?'':'disabled')+'>＋ Add existing</button><span class="small muted">or create a new participant:</span><input id="seqLifeNewId" placeholder="participant_id" aria-label="New participant identifier"><input id="seqLifeNewLabel" placeholder="Label" aria-label="New participant label"><button id="seqLifeNew">＋ New</button><span class="small muted">Add-existing adds one occurrence (addExistingToView) — never a clone. A participant without messages surfaces the runtime’s DDN-PJW03 above.</span></div></div>';
+ h+='<div class="batchbar"><span class="tag">ADD LIFELINE</span><select id="seqLifePick">'+candidates.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><button id="seqLifeAdd" '+(candidates.length?'':'disabled')+' title="Add the selected existing definition as one lifeline occurrence">＋ Add existing</button><span class="small muted">or create a new participant:</span><input id="seqLifeNewId" placeholder="participant_id" aria-label="New participant identifier"><input id="seqLifeNewLabel" placeholder="Label" aria-label="New participant label"><button id="seqLifeNew" title="Create a new participant in this view">＋ New</button><span class="small muted">Add-existing adds one occurrence (addExistingToView) — never a clone. A participant without messages surfaces the runtime’s DDN-PJW03 above.</span></div></div>';
  h+='<div class="seq-col"><h3>Messages · top-to-bottom declaration order</h3><table aria-label="Sequence messages"><tbody>';
  plan.messages.forEach((r,i)=>{
   h+='<tr'+(selected===r.id?' class="sel"':'')+'><th><input data-seq-msg-label="'+esc(r.id)+'" value="'+esc(r.name)+'" aria-label="Message '+(i+1)+' label"></th>';
@@ -711,8 +783,8 @@ function renderSequenceSheet(){
   h+='<td class="seq-actions"><button data-seq-msg-up="'+i+'" '+(i===0?'disabled':'')+' title="Move one row up (declaration span move)">↑</button><button data-seq-msg-down="'+i+'" '+(i===plan.messages.length-1?'disabled':'')+' title="Move one row down">↓</button><button data-seq-msg-del="'+esc(r.id)+'" title="Delete this message relation">delete</button></td></tr>';
  });
  h+='</tbody></table>';
- h+='<div class="batchbar"><span class="tag">ADD MESSAGE</span><select id="seqMsgFrom">'+plan.participants.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><span class="preview-arrow">→</span><select id="seqMsgTo">'+plan.participants.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><input id="seqMsgLabel" placeholder="Label" aria-label="New message label"><label class="small" style="white-space:nowrap"><input id="seqMsgReturn" type="checkbox"> return</label><button id="seqMsgAdd">＋ Add</button><span class="small muted">Appends the last row (declaration order); ↑ repositions afterwards. The canvas two-click connect on lifeline headers is the equivalent gesture (VE-006). Self-messages are legal.</span></div></div></div>';
- sheet.innerHTML=h;
+ h+='<div class="batchbar"><span class="tag">ADD MESSAGE</span><select id="seqMsgFrom">'+plan.participants.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><span class="preview-arrow">→</span><select id="seqMsgTo">'+plan.participants.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><input id="seqMsgLabel" placeholder="Label" aria-label="New message label"><label class="small" style="white-space:nowrap"><input id="seqMsgReturn" type="checkbox"> return</label><button id="seqMsgAdd" title="Append the message as the last row (declaration order)">＋ Add</button><span class="small muted">Appends the last row (declaration order); ↑ repositions afterwards. The canvas two-click connect on lifeline headers is the equivalent gesture (VE-006). Self-messages are legal.</span></div></div></div>';
+ setSheet(sheet,h);
  sheet.querySelectorAll('[data-seq-life-up]').forEach(b=>b.onclick=()=>{const i=+b.dataset.seqLifeUp;sequenceTxn('Move lifeline '+plan.participants[i].name+' one position left',t=>CMD.reorderLifelines(D,t,entry,view,{participantId:plan.participants[i].id,beforeId:plan.participants[i-1].id}));});
  sheet.querySelectorAll('[data-seq-life-down]').forEach(b=>b.onclick=()=>{const i=+b.dataset.seqLifeDown;sequenceTxn('Move lifeline '+plan.participants[i].name+' one position right',t=>CMD.reorderLifelines(D,t,entry,view,{participantId:plan.participants[i+1].id,beforeId:plan.participants[i].id}));});
  sheet.querySelectorAll('[data-seq-life-remove]').forEach(b=>b.onclick=()=>{const id=b.dataset.seqLifeRemove;sequenceTxn('Hide lifeline '+nameOf(id)+' from this view (definition kept)',t=>{D.authoring.hide(t,entry,view,id);t.projectionPlan(entry,view);});});
@@ -757,13 +829,13 @@ function setView(v){cancelTimelineDrag(true);optionsByView[entry+'#'+view]={...o
 function updateLeft(){
  $$('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===left));const pane=$('#leftBody');
  if(left==='add'){
- const buttonFor=k=>`<button draggable="true" data-add="${esc(k.kind)}" data-search="${esc((k.name+' '+k.kind+' '+codeOf(k.kind)+' '+(D.kinds.find(x=>x.id===k.kind)?.label||'')).toLowerCase())}" title="${esc(k.kind)} — click to add automatically, or drag onto the canvas"><span class="glyph">${esc(codeOf(k.kind))}</span><span>${esc(k.name)}</span></button>`;
- pane.innerHTML='<input id="paletteSearch" placeholder="Find an object…" aria-label="Find any installed kind"><div class="sectionlabel">Installed kinds <span class="countbadge" id="paletteCount">'+KINDMAP.kinds.length+'/'+KINDMAP.kinds.length+'</span></div>'+kindsByGroup.map((g,i)=>'<details class="palette-group" open><summary>'+esc(g.group)+' <span class="countbadge" data-group-count>'+g.kinds.length+'</span></summary><div class="palette">'+g.kinds.map(buttonFor).join('')+'</div></details>').join('')+'<div class="sectionlabel">Canvas templates <span class="countbadge">'+CMD.CANVAS_TEMPLATES.length+'</span></div><div class="template-list">'+CMD.CANVAS_TEMPLATES.map(t=>'<button class="template-card" data-template="'+esc(t.id)+'" title="'+esc(t.profile)+' — one command creates the fixed grid with one synthetic starter note per block"><strong>'+esc(t.title)+'</strong><span class="small muted">'+esc(t.profile)+' · '+t.blocks.length+' blocks</span></button>').join('')+'</div><div class="lefttip">One meaningful object, then options.<br><br>Click = automatic placement.<br>Drag = explicit location and pin.</div><p class="small muted" style="margin-top:15px">The shelf lists all '+KINDMAP.kinds.length+' installed kinds from <code>contracts/kind-ui-map.json</code>, grouped by its palette groups. Profile-filtered specialized shelves remain a specification proposal (<button class="ghost" data-story="library" style="min-height:0;padding:0;font-size:inherit;text-decoration:underline">shelf design</button>).</p>';
+ const buttonFor=k=>{const g=D.glyphs?D.glyphs.forKind(k.kind):null;const tip='Add a '+k.name+' element to the current view'+(g&&g.meaning&&g.meaning!==k.name?' — '+g.meaning:'')+' — click or drag onto the canvas';return `<button draggable="true" data-add="${esc(k.kind)}" data-search="${esc((k.name+' '+k.kind+' '+codeOf(k.kind)+' '+(D.kinds.find(x=>x.id===k.kind)?.label||'')).toLowerCase())}" title="${esc(tip)}" aria-label="${esc(tip)}"><span class="glyph">${g?'<svg viewBox="'+esc(g.viewBox)+'" aria-hidden="true">'+g.svg+'</svg>':esc(codeOf(k.kind))}</span><span>${esc(k.name)}</span></button>`;};
+ pane.innerHTML='<input id="paletteSearch" placeholder="Find an object…" aria-label="Find any installed kind"><div class="sectionlabel">Installed kinds <span class="countbadge" id="paletteCount">'+KINDMAP.kinds.length+'/'+KINDMAP.kinds.length+'</span></div>'+kindsByGroup.map((g,i)=>'<details class="palette-group" open><summary>'+esc(g.group)+' <span class="countbadge" data-group-count>'+g.kinds.length+'</span></summary><div class="palette">'+g.kinds.map(buttonFor).join('')+'</div></details>').join('')+'<div class="sectionlabel">Canvas templates <span class="countbadge">'+CMD.CANVAS_TEMPLATES.length+'</span></div><div class="template-list">'+CMD.CANVAS_TEMPLATES.map(t=>'<button class="template-card" data-template="'+esc(t.id)+'" title="'+esc(t.profile)+' — one command creates the fixed grid with one synthetic starter note per block"><strong>'+esc(t.title)+'</strong><span class="small muted">'+esc(t.profile)+' · '+t.blocks.length+' blocks</span></button>').join('')+'</div><div class="lefttip">One meaningful object, then options.<br><br>Click = automatic placement.<br>Drag = explicit location and pin.</div><p class="small muted" style="margin-top:15px">The shelf lists all '+KINDMAP.kinds.length+' installed kinds from <code>contracts/kind-ui-map.json</code>, grouped by its palette groups. Profile-filtered specialized shelves remain a specification proposal (<button class="ghost" data-story="library" style="min-height:0;padding:0;font-size:inherit;text-decoration:underline" title="Open the shelf-design screen">shelf design</button>).</p>';
  pane.querySelectorAll('[data-add]').forEach(b=>{b.disabled=!(graph()||projectionKind()==='fishbone'||projectionKind()==='decision');b.onclick=()=>addNode(b.dataset.add);b.ondragstart=e=>{e.dataTransfer.setData('application/x-ddn-kind',b.dataset.add);e.dataTransfer.effectAllowed='copy';};});
  $('#paletteSearch').oninput=e=>{const q=e.target.value.toLowerCase();let shown=0;pane.querySelectorAll('[data-add]').forEach(b=>{const hit=!q||b.dataset.search.includes(q);b.hidden=!hit;if(hit)shown++;});pane.querySelectorAll('.palette-group').forEach(d=>{const visible=[...d.querySelectorAll('[data-add]')].filter(b=>!b.hidden);d.open=!!q&&visible.length>0||!q;d.hidden=!!q&&!visible.length;const badge=d.querySelector('[data-group-count]');if(badge)badge.textContent=q?visible.length+'/'+d.querySelectorAll('[data-add]').length:visible.length;});$('#paletteCount').textContent=shown+'/'+KINDMAP.kinds.length;};pane.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));pane.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>templateDialog(b.dataset.template));
  }else if(left==='model'){
- pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas. “＋ view” adds the existing definition to another (or this) view as one occurrence — never a clone (ED-009).</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<span class="model-row"><button class="model-item" data-select="${esc(n.id)}">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button><button class="addview" data-addview="${esc(n.id)}" title="Add this existing definition to a view (addExistingToView)">＋ view</button></span>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));pane.querySelectorAll('[data-addview]').forEach(b=>b.onclick=()=>addToView(b.dataset.addview));
- }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey','decision','sequence'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels',decision:'Decision table',sequence:'Sequence'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
+ pane.innerHTML='<div class="row"><span class="tag teal">SHARED DEFINITIONS</span></div><p class="help small muted" style="margin-top:10px">Select a definition. This list is a keyboard alternative to the canvas. “＋ view” adds the existing definition to another (or this) view as one occurrence — never a clone (ED-009).</p>'+ir.elements.filter(n=>ir.view.selected.includes(n.id)||!graph()).slice(0,35).map(n=>`<span class="model-row"><button class="model-item" data-select="${esc(n.id)}" title="Select this shared definition">${esc(n.name)} <span class="id">${esc(n.kind)} · ${esc(n.source?.file||'source')}</span></button><button class="addview" data-addview="${esc(n.id)}" title="Add this existing definition to a view (addExistingToView)">＋ view</button></span>`).join('');pane.querySelectorAll('[data-select]').forEach(b=>b.onclick=()=>choose(b.dataset.select));pane.querySelectorAll('[data-addview]').forEach(b=>b.onclick=()=>addToView(b.dataset.addview));
+ }else{pane.innerHTML='<div class="tag">ONE WORKSPACE · SHARED SOURCE</div>'+['overview','names','raci','chart_bar','gantt','fishbone','swot','sipoc','journey','decision','sequence'].map(v=>`<button class="model-item ${v===view?'active':''}" data-open-view="${v}" style="margin-top:12px" title="Open this view">${({overview:'Structure',names:'Compact',raci:'Responsibilities',chart_bar:'Report',gantt:'Schedule',fishbone:'Fishbone',swot:'SWOT panels',sipoc:'SIPOC panels',journey:'Journey panels',decision:'Decision table',sequence:'Sequence'})[v]}<span class="id">${v==='overview'||v==='names'?'model.ddn':'projections/views.ddn'}</span></button>`).join('')+'<div class="lefttip">Changing a name edits a definition.<br><br>Changing “show fields” edits the appearance of this view.</div>';pane.querySelectorAll('[data-open-view]').forEach(b=>b.onclick=()=>setView(b.dataset.openView));}
 }
 // Canvas template starters (ED-013; spec ch.06 "Blank workspace" / "Creation
 // destination"). One click on a template card opens this dialog: a blocks
@@ -814,14 +886,14 @@ function lanesSectionHTML(){
  if(laneNotice)h+='<div class="notice error">'+esc(laneNotice)+'</div>';
  for(const f of frames){
   const r=sceneRect(f.id);
-  h+='<div class="lane-card" data-lanecard="'+esc(f.id)+'"><div class="row"><input data-lanelabel value="'+esc(f.name)+'" aria-label="Lane '+esc(f.name)+' label"><button data-lanerename>Rename</button></div>';
+  h+='<div class="lane-card" data-lanecard="'+esc(f.id)+'"><div class="row"><input data-lanelabel value="'+esc(f.name)+'" aria-label="Lane '+esc(f.name)+' label"><button data-lanerename title="Rename this lane (this view only)">Rename</button></div>';
   h+='<div class="kv lane-rect">'+['x','y','w','h'].map(k=>'<div><label>'+k.toUpperCase()+' · px</label><input type="number" data-lanerect="'+k+'" value="'+Math.round(r?r[k]:0)+'"></div>').join('')+'</div>';
-  h+='<div class="row"><button data-laneresize>Apply X/Y/W/H</button><button data-lanefit title="Remove explicit at/size; the frame auto-fits its members">Fit to members</button></div>';
-  h+='<div class="lane-members">'+f.members.map(m=>'<span class="chip">'+esc(sourceLabel(m))+'<button data-laneunassign="'+esc(m)+'" aria-label="Remove '+esc(sourceLabel(m))+' from lane">×</button></span>').join('')+'</div>';
+  h+='<div class="row"><button data-laneresize title="Apply the lane’s X/Y/W/H (this view only)">Apply X/Y/W/H</button><button data-lanefit title="Remove explicit at/size; the frame auto-fits its members">Fit to members</button></div>';
+  h+='<div class="lane-members">'+f.members.map(m=>'<span class="chip">'+esc(sourceLabel(m))+'<button data-laneunassign="'+esc(m)+'" aria-label="Remove '+esc(sourceLabel(m))+' from lane" title="Remove this member from the lane">×</button></span>').join('')+'</div>';
   const candidates=ir.elements.filter(n=>ir.view.selected.includes(n.id)&&!f.members.includes(n.id));
-  h+='<div class="row"><select data-lanepick>'+candidates.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><button data-laneassign '+(candidates.length?'':'disabled')+'>Assign…</button></div></div>';
+  h+='<div class="row"><select data-lanepick>'+candidates.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.name)+'</option>').join('')+'</select><button data-laneassign '+(candidates.length?'':'disabled')+' title="Preview assigning the selected object to this lane">Assign…</button></div></div>';
  }
- h+='<div class="lane-card"><div class="row"><span class="tag">NEW LANE</span></div><div class="row"><input id="laneNewId" placeholder="lane_id" aria-label="New lane identifier"><input id="laneNewLabel" placeholder="Label" aria-label="New lane label"></div><div class="kv lane-rect">'+[['laneNewX','X'],['laneNewY','Y'],['laneNewW','W'],['laneNewH','H']].map(([id,k])=>'<div><label>'+k+' · px</label><input id="'+id+'" type="number" value="0"></div>').join('')+'</div><div class="row"><button id="laneAdd">＋ New lane</button></div><p class="help">An empty lane needs explicit X/Y/W/H to render where you place it; assigning members is a separate previewed step.</p></div>';
+ h+='<div class="lane-card"><div class="row"><span class="tag">NEW LANE</span></div><div class="row"><input id="laneNewId" placeholder="lane_id" aria-label="New lane identifier"><input id="laneNewLabel" placeholder="Label" aria-label="New lane label"></div><div class="kv lane-rect">'+[['laneNewX','X'],['laneNewY','Y'],['laneNewW','W'],['laneNewH','H']].map(([id,k])=>'<div><label>'+k+' · px</label><input id="'+id+'" type="number" value="0"></div>').join('')+'</div><div class="row"><button id="laneAdd" title="Create the lane at the given X/Y/W/H">＋ New lane</button></div><p class="help">An empty lane needs explicit X/Y/W/H to render where you place it; assigning members is a separate previewed step.</p></div>';
  return h;
 }
 function wireLanesSection(){
@@ -896,9 +968,9 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
  p.innerHTML='<div class="tag">LOCAL PREVIEW OVERRIDES</div>'+selectControl('lookSetting','Drawing treatment',[['classic','Standard'],['handDrawn','Hand-drawn'],['neo','Neo']],overrides.look||'classic')+selectControl('themeSetting','Palette',[['default','Light'],['night','Night · grey-blue']],overrides.theme||'default');
  if(graph())p.innerHTML+=selectControl('fieldsSetting','Field compartment',[['source','As authored'],['names','Field names'],['none','Name only']],overrides.fields||'source')+selectControl('routeSetting','Connector path',[['source','As authored'],['orthogonal','Right angles'],['curved','Curved'],['straight','Straight'],['rounded','Rounded corners']],overrides.routing||'source')+'<p class="help">A path setting changes geometry, never the meaning or endpoints.</p>';
  else if(!graph()&&!chartProfile())p.innerHTML+='<p class="help">Session preview overrides apply to graph views; data-bound views edit source through their sheet.</p>';
- if(sel?.kind==='node'&&graph()){const pinned=!!result.scene.layout?.pinned?.includes(sel.sourceId)||sourceView().includes('place @model.'+sel.node.local);p.innerHTML+='<hr><h3>Position</h3><p class="help">Dragging makes an explicit pin. Size alone is not a pin.</p><div class="kv"><div><label for="pinX">X · world px</label><input id="pinX" type="number" value="'+Math.round(result.scene.nodes.find(n=>n.id===sel.sourceId)?.x||0)+'"></div><div><label for="pinY">Y · world px</label><input id="pinY" type="number" value="'+Math.round(result.scene.nodes.find(n=>n.id===sel.sourceId)?.y||0)+'"></div></div><div class="row" style="margin-top:10px"><button id="pinApply" class="primary">Set pin</button><button id="unpinApply">Make automatic</button></div>';
+ if(sel?.kind==='node'&&graph()){const pinned=!!result.scene.layout?.pinned?.includes(sel.sourceId)||sourceView().includes('place @model.'+sel.node.local);p.innerHTML+='<hr><h3>Position</h3><p class="help">Dragging makes an explicit pin. Size alone is not a pin.</p><div class="kv"><div><label for="pinX">X · world px</label><input id="pinX" type="number" value="'+Math.round(result.scene.nodes.find(n=>n.id===sel.sourceId)?.x||0)+'"></div><div><label for="pinY">Y · world px</label><input id="pinY" type="number" value="'+Math.round(result.scene.nodes.find(n=>n.id===sel.sourceId)?.y||0)+'"></div></div><div class="row" style="margin-top:10px"><button id="pinApply" class="primary" title="Pin the object at these world coordinates in this view">Set pin</button><button id="unpinApply" title="Release the explicit pin; automatic placement applies">Make automatic</button></div>';
  $('#pinApply').onclick=()=>transaction('Set this view position',t=>A.pin(t,entry,view,sel.sourceId,Number($('#pinX').value),Number($('#pinY').value)));$('#unpinApply').onclick=()=>transaction('Release source pin',t=>A.unpin(t,entry,view,sel.sourceId));}
- p.innerHTML+='<hr><p class="help">Look and palette use live renderer overrides in this prototype. Production source-write and inherited/reset rules are specified separately.</p><button id="resetStyle" class="wide">Reset this preview</button>';
+ p.innerHTML+='<hr><p class="help">Look and palette use live renderer overrides in this prototype. Production source-write and inherited/reset rules are specified separately.</p><button id="resetStyle" class="wide" title="Reset the preview overrides for this view">Reset this preview</button>';
  const change=(id,key)=>{const el=$('#'+id);if(el)el.onchange=()=>{overrides[key]=el.value;document.body.classList.toggle('night',overrides.theme==='night');draw();};};change('lookSetting','look');change('themeSetting','theme');change('fieldsSetting','fields');change('routeSetting','routing');change('markSetting','mark');$('#resetStyle').onclick=()=>{overrides={page:'content',look:'classic',theme:'default'};document.body.classList.remove('night');draw();};
  // Rebind position actions after innerHTML append recreated them.
  if($('#pinApply')){$('#pinApply').onclick=()=>transaction('Set this view position',t=>A.pin(t,entry,view,sel.sourceId,Number($('#pinX').value),Number($('#pinY').value)));$('#unpinApply').onclick=()=>transaction('Release source pin',t=>A.unpin(t,entry,view,sel.sourceId));}
@@ -906,17 +978,17 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
  return;
  }
  if(tab==='details'){
- p.innerHTML='<div class="sectionlabel" style="margin-top:0">Details on demand</div><p class="help">Required properties appear in Meaning. Specialized implementation, evidence and scope stay discoverable here.</p>'+(sel?'<label>Source identity</label><div class="subtle"><code>'+esc(sel.sourceId)+'</code></div><label>Applicable groups</label><div class="control-stack"><button data-story="properties">Domain & representation</button><button data-story="properties">Scope & ownership</button><button data-story="properties">Constraints & evidence</button></div>':'<div class="notice">The projection determines which operations are meaningful. A record value is not a freehand position.</div>')+'<hr><h3>Current render diagnostics</h3>'+result.diagnostics.slice(0,5).map(d=>'<p class="help"><strong>'+esc(d.code)+'</strong><br>'+esc(d.message)+'</p>').join('')+'<button id="inspectSource" class="wide">Inspect actual source</button><p class="help">Advanced group screens are design proposals, not implemented specialized property editors.</p>';p.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));$('#inspectSource').onclick=openSource;return;
+ p.innerHTML='<div class="sectionlabel" style="margin-top:0">Details on demand</div><p class="help">Required properties appear in Meaning. Specialized implementation, evidence and scope stay discoverable here.</p>'+(sel?'<label>Source identity</label><div class="subtle"><code>'+esc(sel.sourceId)+'</code></div><label>Applicable groups</label><div class="control-stack"><button data-story="properties" title="Open the property-group design screen">Domain & representation</button><button data-story="properties" title="Open the property-group design screen">Scope & ownership</button><button data-story="properties" title="Open the property-group design screen">Constraints & evidence</button></div>':'<div class="notice">The projection determines which operations are meaningful. A record value is not a freehand position.</div>')+'<hr><h3>Current render diagnostics</h3>'+result.diagnostics.slice(0,5).map(d=>'<p class="help"><strong>'+esc(d.code)+'</strong><br>'+esc(d.message)+'</p>').join('')+'<button id="inspectSource" class="wide" title="Open the generated DDN source">Inspect actual source</button><p class="help">Advanced group screens are design proposals, not implemented specialized property editors.</p>';p.querySelectorAll('[data-story]').forEach(b=>b.onclick=()=>story(b.dataset.story));$('#inspectSource').onclick=openSource;return;
  }
  if(!graph()){
  const mp=matrixProfile();
  if(mp){
   let mh='<div class="notice">Data-bound projection. A cell is a projection of a shared assignment relation — editing it edits source, never a UI-only fact.</div><h3>'+esc(mp.profile)+'</h3><label>Binding</label><div class="subtle">'+esc(mp.relation)+' · '+esc(mp.value)+'</div><label>Write target</label><div class="subtle">'+esc(matrixWriteTarget(mp))+'</div>';
   const cell=mSel&&mPlan?{row:mPlan.rows[mSel.r],column:mPlan.columns[mSel.c],...cellDisplay(mSel.r,mSel.c)}:null;
-  if(cell&&cell.assignments.length)mh+='<label>Selected cell</label><div class="subtle">'+esc(cell.row.name)+' → '+esc(cell.column.name)+'</div><label>Contributors</label>'+cell.assignments.map(a=>'<div class="endpoint-card"><code>'+esc(a.id)+'</code><br>value <code>'+esc(a.value)+'</code></div>').join('')+'<button id="cellInGraph" class="wide primary">Select assignment in graph</button>';
+  if(cell&&cell.assignments.length)mh+='<label>Selected cell</label><div class="subtle">'+esc(cell.row.name)+' → '+esc(cell.column.name)+'</div><label>Contributors</label>'+cell.assignments.map(a=>'<div class="endpoint-card"><code>'+esc(a.id)+'</code><br>value <code>'+esc(a.value)+'</code></div>').join('')+'<button id="cellInGraph" class="wide primary" title="Select this assignment relation in the responsibility graph">Select assignment in graph</button>';
   else if(cell)mh+='<label>Selected cell</label><div class="subtle">'+esc(cell.row.name)+' → '+esc(cell.column.name)+' · '+(cell.staged?'staged “'+esc(cell.value||'clear')+'”':'empty')+'</div><p class="help">Type a code letter or use the sheet keypad to stage an assignment, then commit the batch as one transaction.</p>';
   else mh+='<label>Rows</label><div class="subtle">'+esc(mPlan?mPlan.rows.map(r=>r.name).join(' · '):'')+'</div><label>Columns</label><div class="subtle">'+esc(mPlan?mPlan.columns.map(c=>c.name).join(' · '):'')+'</div><p class="help">Click a cell in the sheet under the diagram. Keyboard and pointer are equivalent; every commit is one source transaction.</p>';
-  p.innerHTML=mh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=mh+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   if($('#cellInGraph'))$('#cellInGraph').onclick=()=>{const id=cell.assignments[0].id;setView('responsibility_graph');choose(id);announce('Assignment selected in the responsibility graph.');};
   return;
  }
@@ -926,7 +998,7 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   let tplan=null;try{tplan=ws.projectionPlan(entry,view);}catch{}
   if(tplan)th+='<label>Tasks</label><div class="subtle">'+tplan.items.map(i=>esc(i.label)).join(' · ')+'</div><label>Dependencies</label><div class="subtle">'+tplan.dependencies.map(r=>esc(r.name||r.id)).join(' · ')+'</div>';
   th+='<p class="help">Drag a bar horizontally to move both dates in whole days; drag near an edge (or hold Shift for the end edge) to move one date. Escape cancels with no source change. The sheet under the canvas offers the equivalent date controls.</p>';
-  p.innerHTML=th+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=th+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const fp=fishboneProfile();
@@ -943,7 +1015,7 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
    }
   }
   fh+='<p class="help">Edit the effect statement and ribs in the Fishbone sheet under the canvas. A reused cause is listed with every occurrence path; the renderer marks carry the same occurrence strings.</p>';
-  p.innerHTML=fh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=fh+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const pp=panelsProfile();
@@ -958,7 +1030,7 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
    if(hit)ph+='<label>Selected</label><div class="subtle">'+esc(hit.title)+' · row '+hit.row+', column '+hit.column+' · '+hit.rowspan+'×'+hit.colspan+(hit.child?' · child view '+esc(hit.child.view.id):' · '+hit.items.length+' item(s)')+'</div>';
   }
   ph+='<p class="help">Edit panels, items and child-view slots in the Panels sheet under the canvas. Composed slots stay named-view references — “Open child view” switches the editor instead of editing child geometry through the parent (VE-003; spec ch.09 Composition).</p>';
-  p.innerHTML=ph+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=ph+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const dp=decisionProfile();
@@ -973,7 +1045,7 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
    if(selected&&dplan.rules.some(r=>r.id===selected))dh+='<label>Selected rule</label><div class="subtle">'+esc(sourceLabel(selected))+'</div>';
   }else dh+='<label>Analysis</label><div class="subtle">'+esc(derr)+' — the draft stays saveable; export stays blocked.</div>';
   dh+='<p class="help">Edit rules, predicates, outcomes, order, hit policy and fixtures in the Decision sheet under the canvas. Input/output domain editing remains a specification proposal.</p>';
-  p.innerHTML=dh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=dh+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const sp=sequenceProfile();
@@ -990,7 +1062,7 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
    if(selected&&(splan.participants.some(n=>n.id===selected)||splan.messages.some(r=>r.id===selected)))sh+='<label>Selected</label><div class="subtle">'+esc(sourceLabel(selected))+'</div>';
   }
   sh+='<p class="help">Edit lifelines and messages in the Sequence sheet under the canvas, or two-click connect on lifeline headers (VE-006 — the sheet list is the equivalent path). Reorders move declaration spans; endpoints and x_return can never drift (VE-AC-062).</p>';
-  p.innerHTML=sh+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=sh+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   return;
  }
  const cp=chartProfile();
@@ -999,31 +1071,31 @@ function updateInspector(){const sel=findSelection(),h=$('#selectionHeader'),p=$
   const point=cplan&&chartSel?cplan.points.find(pt=>(pt.sourceIds||[]).includes(chartSel)):null;
   if(point){
    const ids=point.sourceIds||[];
-   ch+='<label>Selected mark</label><div class="subtle">'+ids.length+' contributing record'+(ids.length>1?'s · aggregate policy '+esc(String(cp.aggregate||'none')):'')+'</div><label>Contributors</label>'+ids.map(id=>'<div class="endpoint-card"><code>'+esc(id)+'</code><br><button data-jump-rec="'+esc(id)+'">Edit row in Source sheet</button></div>').join('')+'<p class="help">An aggregate never becomes an editable synthetic total record; edit the input records.</p>';
+   ch+='<label>Selected mark</label><div class="subtle">'+ids.length+' contributing record'+(ids.length>1?'s · aggregate policy '+esc(String(cp.aggregate||'none')):'')+'</div><label>Contributors</label>'+ids.map(id=>'<div class="endpoint-card"><code>'+esc(id)+'</code><br><button data-jump-rec="'+esc(id)+'" title="Jump to this record’s row in the Source sheet">Edit row in Source sheet</button></div>').join('')+'<p class="help">An aggregate never becomes an editable synthetic total record; edit the input records.</p>';
   }else ch+='<p class="help">Click a rendered mark to list its contributing records. The Source sheet under the canvas edits record values (shared model), the mark and the x/y/unit bindings (this view).</p>';
-  p.innerHTML=ch+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;
+  p.innerHTML=ch+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;
   p.querySelectorAll('[data-jump-rec]').forEach(b=>b.onclick=()=>{chartSel=b.dataset.jumpRec;renderChartSheet();$('#chartSheet')?.scrollIntoView({block:'nearest'});$('#chartSheet [data-recrow="'+CSS.escape(chartSel)+'"]')?.scrollIntoView({block:'nearest'});});
   return;
  }
- p.innerHTML='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale.</div>'+'<h3>Supplied values</h3><label>Source</label><div class="subtle">m.facts · six synthetic records</div><label>Category</label><div class="subtle">x_record.month</div><label>Value</label><div class="subtle">x_record.value · CAD</div><p class="help">Binding edits for this projection are view-scope source writes in its sheet.</p>'+'<button id="projectedSource" class="wide">View source bindings</button>';$('#projectedSource').onclick=openSource;return;
+ p.innerHTML='<div class="notice">Data-bound projection. Moving a mark must not change a number, date, assignment, or scale.</div>'+'<h3>Supplied values</h3><label>Source</label><div class="subtle">m.facts · six synthetic records</div><label>Category</label><div class="subtle">x_record.month</div><label>Value</label><div class="subtle">x_record.value · CAD</div><p class="help">Binding edits for this projection are view-scope source writes in its sheet.</p>'+'<button id="projectedSource" class="wide" title="Open the source drawer at this view’s bindings">View source bindings</button>';$('#projectedSource').onclick=openSource;return;
  }
  if(!sel){p.innerHTML='<h3>Select an object or relation</h3><p class="help">Choose a palette starter to insert. Use Model for keyboard selection. All new objects are synthetic local design definitions.</p>';return;}
- p.innerHTML='<label for="nameEdit">'+(sel.kind==='field'?'Field label':'Name')+'</label><input id="nameEdit" value="'+esc(sel.name)+'"><div class="row" style="margin-top:8px"><button id="applyName" class="primary">Apply label</button><button id="moreReview">Used in views…</button></div><p class="help">Changes the display label, not the stable identifier.</p>';
+ p.innerHTML='<label for="nameEdit">'+(sel.kind==='field'?'Field label':'Name')+'</label><input id="nameEdit" value="'+esc(sel.name)+'"><div class="row" style="margin-top:8px"><button id="applyName" class="primary" title="Apply the new shared label">Apply label</button><button id="moreReview" title="Show the views that use this definition">Used in views…</button></div><p class="help">Changes the display label, not the stable identifier.</p>';
  if(sel.kind==='node'){
  const km=kindEntry(sel.node.kind);
- p.innerHTML+='<label>Type</label><div class="row"><input value="'+esc(sel.node.kind)+'" readonly aria-label="Semantic kind"><button id="convertBtn">Change…</button></div><p class="help">A type conversion can change meaning. A visual look does not.</p>';
- p.innerHTML+='<label for="descEdit">Description</label><textarea id="descEdit">'+esc(sel.node.properties?.description||'')+'</textarea><div class="row" style="margin-top:8px"><button id="applyDesc">Apply description</button></div>';
+ p.innerHTML+='<label>Type</label><div class="row"><input value="'+esc(sel.node.kind)+'" readonly aria-label="Semantic kind"><button id="convertBtn" title="Review changing this object’s kind (design screen)">Change…</button></div><p class="help">A type conversion can change meaning. A visual look does not.</p>';
+ p.innerHTML+='<label for="descEdit">Description</label><textarea id="descEdit">'+esc(sel.node.properties?.description||'')+'</textarea><div class="row" style="margin-top:8px"><button id="applyDesc" title="Apply the description to the shared definition">Apply description</button></div>';
  if(km?.inspector_template==='data-structure'){
- p.innerHTML+='<label>Fields <span class="muted">'+sel.node.fields.length+'</span></label><div class="fieldlist">'+sel.node.fields.map(f=>`<div class="fieldrow" data-field="${esc(f.id)}"><code>${esc(f.name)}</code><button data-start="${esc(f.id)}" title="Connect this field">↗</button></div>`).join('')+'</div><div class="row" style="margin-top:8px"><input id="newField" placeholder="new_field" aria-label="New field identifier"><button id="addField">＋</button></div><p class="help">Start with names. No datatype is required.</p>';
+ p.innerHTML+='<label>Fields <span class="muted">'+sel.node.fields.length+'</span></label><div class="fieldlist">'+sel.node.fields.map(f=>`<div class="fieldrow" data-field="${esc(f.id)}"><code>${esc(f.name)}</code><button data-start="${esc(f.id)}" title="Connect this field">↗</button></div>`).join('')+'</div><div class="row" style="margin-top:8px"><input id="newField" placeholder="new_field" aria-label="New field identifier"><button id="addField" title="Add an untyped field to this object">＋</button></div><p class="help">Start with names. No datatype is required.</p>';
  }
  if(km)p.innerHTML+='<label>Descriptor <span class="muted">kind-ui-map.json · read-only</span></label><div class="subtle">Basic controls: '+esc(km.basic_controls.join(', '))+'<br>Advanced groups: '+esc(km.advanced_groups.join(', '))+'<br>'+esc(km.properties_editing)+'</div><p class="help">'+esc(km.mapping_status)+'. Live controls here are label, description, fields, pin, connect and hide; every other descriptor property is shown read-only and is never rewritten.</p>';
- p.innerHTML+='<hr><div class="row wrap"><button id="connectSelected">Connect…</button><button id="hideSelected">Remove from view</button></div><p class="help">Remove from view retains the shared definition.</p>';
+ p.innerHTML+='<hr><div class="row wrap"><button id="connectSelected" title="Start a connection from this object">Connect…</button><button id="hideSelected" title="Remove from this view; the shared definition is kept">Remove from view</button></div><p class="help">Remove from view retains the shared definition.</p>';
  }else if(sel.kind==='field'){
- p.innerHTML+='<label>Owner</label><div class="subtle">'+esc(sel.node.name)+'</div><label>Meaning / domain</label><button class="wide" data-story="properties">Choose a domain… <span class="tag amber">DESIGN</span></button><p class="help">Prototype only edits the label and connects this field. Domain/type/key editing is specified in the descriptor contract.</p><button id="connectSelected" class="wide primary">Connect this field</button><button id="selectParent" class="wide">Back to '+esc(sel.node.name)+'</button>';
+ p.innerHTML+='<label>Owner</label><div class="subtle">'+esc(sel.node.name)+'</div><label>Meaning / domain</label><button class="wide" data-story="properties" title="Open the domain-picker design screen">Choose a domain… <span class="tag amber">DESIGN</span></button><p class="help">Prototype only edits the label and connects this field. Domain/type/key editing is specified in the descriptor contract.</p><button id="connectSelected" class="wide primary" title="Start a connection from this field">Connect this field</button><button id="selectParent" class="wide" title="Select the owning object">Back to '+esc(sel.node.name)+'</button>';
  }else{
  const r=sel.relation;const end=e=>e.field||e.member||e.port||e.element;
  p.innerHTML+='<label>Meaning</label><div class="subtle">'+esc(r.kind)+'</div><label>From</label><div class="endpoint-card">'+esc(sourceLabel(end(r.from)))+'</div><label>To</label><div class="endpoint-card">'+esc(sourceLabel(end(r.to)))+'</div><p class="help">Field identity and visual anchor are separate. Reconnecting an endpoint is one reviewed source transaction that keeps the relation’s identity, label and properties.</p>'
- +'<hr><h3>Reconnect an endpoint</h3><label for="reconnectFrom">From endpoint</label><select id="reconnectFrom">'+endpointOptions(end(r.from))+'</select><label for="reconnectTo">To endpoint</label><select id="reconnectTo">'+endpointOptions(end(r.to))+'</select><div class="row" style="margin-top:8px"><button id="reconnectPreviewFrom" class="primary">Preview from…</button><button id="reconnectPreviewTo" class="primary">Preview to…</button></div><p class="help">The same move works by dragging a selected edge’s endpoint onto another object or field. Reversing direction stays a separate proposed operation — it is not two reconnects. <button class="ghost" id="reconnectDesign" style="min-height:0;padding:0;font-size:inherit;text-decoration:underline">Reconnection design notes</button></p>';
+ +'<hr><h3>Reconnect an endpoint</h3><label for="reconnectFrom">From endpoint</label><select id="reconnectFrom">'+endpointOptions(end(r.from))+'</select><label for="reconnectTo">To endpoint</label><select id="reconnectTo">'+endpointOptions(end(r.to))+'</select><div class="row" style="margin-top:8px"><button id="reconnectPreviewFrom" class="primary" title="Preview the impact of moving the from-endpoint">Preview from…</button><button id="reconnectPreviewTo" class="primary" title="Preview the impact of moving the to-endpoint">Preview to…</button></div><p class="help">The same move works by dragging a selected edge’s endpoint onto another object or field. Reversing direction stays a separate proposed operation — it is not two reconnects. <button class="ghost" id="reconnectDesign" style="min-height:0;padding:0;font-size:inherit;text-decoration:underline" title="Open the reconnection design notes">Reconnection design notes</button></p>';
  }
  $('#applyName').onclick=()=>transaction('Rename shared label',t=>A.setLabel(t,entry,view,sel.sourceId,$('#nameEdit').value));$('#nameEdit').onkeydown=e=>{if(e.key==='Enter')$('#applyName').click();if(e.key==='Escape')e.target.value=sel.name;};$('#moreReview').onclick=()=>story('impact');if($('#convertBtn'))$('#convertBtn').onclick=()=>story('conversion');
  if($('#applyDesc'))$('#applyDesc').onclick=()=>transaction('Set description',t=>A.setProperty(t,entry,view,sel.sourceId,'description',$('#descEdit').value));
@@ -1234,7 +1306,7 @@ function bindCanvas(){
 }
 $('#viewport').ondragover=e=>{if(graph()){e.preventDefault();e.dataTransfer.dropEffect='copy';}};
 $('#viewport').ondrop=e=>{const kind=e.dataTransfer.getData('application/x-ddn-kind');if(!kindEntry(kind))return;e.preventDefault();const p=worldPoint(e)||{x:0,y:0};addNode(kind,{x:p.x-80,y:p.y-25});};
-function modal(title,body,actions,live=true){$('#dialogTitle').textContent=title;$('#dialogBody').innerHTML=body;$('#dialogTag').textContent=live?'LIVE ACTION · REAL SOURCE':'PROPOSED WORKFLOW · NOT EXECUTED';$('#dialogTag').className='tag '+(live?'teal':'amber');$('#dialogActions').innerHTML='';for(const a of actions){const b=document.createElement('button');b.textContent=a.label;b.className=a.primary?'primary':'';b.onclick=a.action;$('#dialogActions').appendChild(b);}$('#dialog').showModal();}
+function modal(title,body,actions,live=true){$('#dialogTitle').textContent=title;$('#dialogBody').innerHTML=body;$('#dialogTag').textContent=live?'LIVE ACTION · REAL SOURCE':'PROPOSED WORKFLOW · NOT EXECUTED';$('#dialogTag').className='tag '+(live?'teal':'amber');$('#dialogActions').innerHTML='';for(const a of actions){const b=document.createElement('button');b.textContent=a.label;b.className=a.primary?'primary':'';b.disabled=!!a.disabled;b.title=a.title||a.label;b.setAttribute('aria-label',a.title||a.label);b.onclick=a.action;$('#dialogActions').appendChild(b);}$('#dialog').showModal();}
 function closeModal(){$('#dialog').close();$('#reviewScreen').value='live';}
 function endpointOptions(current){return ir.elements.filter(n=>ir.view.selected.includes(n.id)).map(n=>`<optgroup label="${esc(n.name)}"><option value="${esc(n.id)}" ${current===n.id?'selected':''}>${esc(n.name)} · object</option>`+(n.fields||[]).map(f=>`<option value="${esc(f.id)}" ${current===f.id?'selected':''}>${esc(n.name+'.'+f.name)} · field</option>`).join('')+'</optgroup>').join('');}
 function beginConnect(from,preset='ref'){connectFrom=from;mode='connect';$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Choose a target in the diagram, or select it in the connection sheet.');showConnection(from,null,preset);}
@@ -1244,7 +1316,7 @@ function story(type){const sel=findSelection(),n=sel?.name||'Customer';const sec
  conversion:['Change the type, not just the shape',`<p>Review design for converting <strong>${esc(n)}</strong>. This screen does not perform a conversion.</p><div class="row"><div class="endpoint-card">Table</div><strong>→</strong><div class="endpoint-card">SQL view</div></div><div class="storyline"><h3>Keep</h3><p>Stable identity, compatible fields, names and descriptions.</p><h3>Review before converting</h3><p>Primary-key enforcement, storage placement, write behavior, implementation dependencies and all affected views.</p><h3>3 affected views</h3><p>Structure · Deployment · SQL dependency. The production impact resolver must calculate this list; these are illustrative labels.</p></div><div class="notice">Conversion cannot silently retain incompatible metadata or discard a property. The command planner returns a source diff and requires confirmation.</div>`],
  draft:['Build incomplete diagrams safely','<p>A user must be able to place Start before End. The current strict flowchart validator rejects that intermediate diagram.</p><div class="fake-sheet"><span class="tag amber">DRAFT OBLIGATIONS</span><p>Start has no outgoing step.</p><p>At least one End is required before review/export.</p><p>Untyped connection requires a meaning.</p></div><p>Proposed behavior: show repairable draft objects, record incomplete obligations separately from unsafe syntax, preserve source, and keep reviewed publication strict.</p><div class="notice">Draft-state validation and rendering are new core requirements. This prototype does not bypass existing validators.</div>'],
  connection:['Relation identity versus visual attachment',`<p>The semantic endpoints remain <strong>Journal Line.journal</strong> and <strong>Journal Header.id</strong>.</p><div class="fake-sheet"><h3>Meaning</h3><p>References · enforcement undecided</p><h3>This view</h3><p>Curved · automatic side/anchor · numbered key</p></div><p>A control point can move along a legal outline. Reconnecting to a different field is a separate meaning-changing command with impact preview.</p><div class="notice">The fixed endpoint-ordering renderer is used by this prototype. This screen specifies a future reconnection/anchor editor.</div>`],
- export:['Publication and source downloads','<p>Source workspaces are internal design material. A hidden salary field may remain in a source archive.</p><div class="control-stack"><button disabled>Download source workspace — authority required</button><button disabled>Export current SVG — display selection only</button><button disabled>Authorized publication — validated allowlist policy</button></div><p>These disabled buttons document production choices. Use Download in the real toolbar for the synthetic prototype files.</p><div class="notice">Unsupported redacted projections must fail closed. No “ignore validation” option should be offered.</div>'],
+ export:['Publication and source downloads','<p>Source workspaces are internal design material. A hidden salary field may remain in a source archive.</p><div class="control-stack"><button disabled title="Design-proposal placeholder; not executable in this prototype">Download source workspace — authority required</button><button disabled title="Design-proposal placeholder; not executable in this prototype">Export current SVG — display selection only</button><button disabled title="Design-proposal placeholder; not executable in this prototype">Authorized publication — validated allowlist policy</button></div><p>These disabled buttons document production choices. Use Download in the real toolbar for the synthetic prototype files.</p><div class="notice">Unsupported redacted projections must fail closed. No “ignore validation” option should be offered.</div>'],
  impact:['Shared-change review',`<p>Editing <strong>${esc(n)}</strong> changes the definition. Moving it normally changes only an appearance in this view.</p><div class="fake-sheet"><h3>Change preview</h3><p>Old label → proposed label</p><p>Definition, fields, references and all matching source ranges are retained.</p></div><h3>Impact requirements</h3><p>Resolve direct and transitive dependent views, show invalidated rules and publication constraints, and commit one source transaction against the checked revision.</p><div class="notice">A complete cross-view impact planner is a specified addition, not implemented by this screen. The live name editor above updates actual shared source.</div>`],
  properties:['Progressive property system','<p>Keep six or fewer common controls visible; make specialized properties discoverable through typed groups and search.</p><div class="fake-sheet"><h3>Meaning</h3><p>Name · Type · Fields · Description · Status</p><h3>This view</h3><p>Compartments · Icons/text · Pin · Route</p><h3>Details</h3><p>Domains · Constraints · Ownership · Evidence</p></div><p>Each descriptor declares scope, value states, source adapter, applicability, reset behavior and validation. Unset, undecided and false are not the same value.</p>'],
  library:['188 kinds without 188 default buttons','<p>The complete registry is mapped in <code>contracts/kind-ui-map.json</code>. The default shelf uses eight task groups and relevant templates.</p><div class="fake-sheet"><h3>Data</h3><p>Table · View · Record · Collection</p><h3>Process</h3><p>Activity · Decision · Start/End</p><h3>Scopes</h3><p>Namespace · Location · Team boundary</p></div><p>A template combines a registered semantic kind, legal options, content sections, default recipe and a small contextual inspector. It does not replace every kind with a generic rectangle.</p>']};
@@ -1260,8 +1332,24 @@ $('#problemsBtn').onclick=()=>{problemsOpen=!problemsOpen;renderProblems();};$('
 $('#undo').onclick=()=>{ws.undo();draw();announce('Undo · source restored');};$('#redo').onclick=()=>{ws.redo();draw();announce('Redo · source restored');};
 $('#selectTool').onclick=()=>{mode='select';connectFrom=null;$('#selectTool').classList.add('active');$('#connectTool').classList.remove('active');announce('Select objects or fields. Drag a selected object to pin it.');};$('#connectTool').onclick=()=>{mode='connect';connectFrom=null;$('#selectTool').classList.remove('active');$('#connectTool').classList.add('active');announce('Click a source, then a destination. Escape cancels.');};
 $('#fitBtn').onclick=()=>{const svg=$('#paper>svg'),v=svg?.viewBox.baseVal,port=$('#viewport');if(v?.width&&v?.height){const availableW=port.clientWidth-48,availableH=port.clientHeight-75;zoom=Math.min(1,(availableH/v.height)/(availableW/v.width));}else zoom=1;updateZoom();};$('#zoomIn').onclick=()=>{zoom=Math.min(2,zoom+.2);updateZoom();};$('#zoomOut').onclick=()=>{zoom=Math.max(.4,zoom-.2);updateZoom();};$('#arrangeBtn').onclick=arrange;$('#addAuto').onclick=()=>addNode('table');
-$('#exportBtn').onclick=()=>{modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio.</p>',[{label:'Current DDN',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},{label:'Workspace ZIP',primary:true,action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},{label:'Current SVG',action:()=>{if(renderFailure)return announce('Current render is invalid; export blocked.',true);D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}}]);};
+$('#exportBtn').onclick=()=>{
+ const guard=()=>{if(renderFailure){announce('Current render is invalid; export blocked.',true);return false;}return true;};
+ const raster=(fmt)=>()=>{if(!guard())return;rasterize(result.svg,fmt.mime,fmt.scale).then(u=>{if(!u.startsWith('data:'+fmt.mime)){announce(fmt.label+' encoding is unavailable in this browser; download cancelled — no mislabeled file was written.',true);return;}downloadDataURL(fmt.file,u);}).catch(e=>announce(e.message,true));};
+ modal('Download the live design','<p>The files below contain the current synthetic design. They are not a production-authorized export.</p><div class="endpoint-card"><strong>'+esc(entry)+'</strong><p>Current source file. Its imports still require their files.</p></div><p>The workspace ZIP includes all supporting DDN sources. Its file format can be opened in the existing Studio. SVG keeps the diagram vector; PNG and WebP rasterize it at 2× resolution. The render guard blocks every diagram format while the current render is invalid.</p>'+(webpSupported?'':'<p class="notice">This browser cannot encode WebP — the WebP button is disabled instead of writing a mislabeled file.</p>'),[
+  {label:'Current DDN',title:'Download the current entry source file as DDN text',action:()=>D.io.download(entry.split('/').pop(),ws.getFiles()[entry],'text/plain;charset=utf-8')},
+  {label:'Workspace ZIP',primary:true,title:'Download every workspace source as a Studio-openable ZIP',action:()=>D.io.download('designer-prototype-workspace.zip',D.io.toZIP(ws.snapshot(entry,view,overrides)),'application/zip')},
+  {label:'Current SVG',title:'Download the rendered diagram as SVG vector',action:()=>{if(guard())D.io.download('designer-prototype.svg',result.svg,'image/svg+xml');}},
+  {label:'Current PNG (2×)',title:'Download the rendered diagram rasterized to PNG at 2× resolution',action:raster(CMD.EXPORT_FORMATS.find(f=>f.id==='png'))},
+  {label:'Current WebP (2×)',title:webpSupported?'Download the rendered diagram rasterized to WebP at 2× resolution':'WebP encoding is not supported by this browser; disabled instead of writing a mislabeled file',disabled:!webpSupported,action:raster(CMD.EXPORT_FORMATS.find(f=>f.id==='webp'))}
+ ]);
+};
+$('#densityToggle').onclick=()=>{density.current=density.current==='compact'?'comfortable':'compact';store.set('ddn-designer-density',density.current);applyDensity();announce('Density: '+(density.current==='compact'?'Compact':'Comfortable')+' · remembered on this browser');};
+$('#detachLeft').onclick=()=>setFloating('left',!floatingPanels.left);
+$('#detachInspector').onclick=()=>setFloating('inspector',!floatingPanels.inspector);
+bindSplitter('splitLeft','left');bindSplitter('splitRight','inspector');
+bindPanelDrag($('#leftPanel'));bindPanelDrag($('#inspectorPanel'));
+applyDensity();applyColumns();
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;seqConnectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')$('#hideSelected')?.click();});
-window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides,renderFailure,incompleteBadge,pendingViews:[...pendingViews],issues:currentIssues()}),select:choose,setView,story,draw,transaction,setProblemsOpen:v=>{problemsOpen=!!v;renderProblems();},revalidateWorkspace};
+window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides,renderFailure,incompleteBadge,pendingViews:[...pendingViews],issues:currentIssues(),density:density.current,widths:{...widths},floating:{...floatingPanels},webpSupported}),select:choose,setView,story,draw,transaction,setProblemsOpen:v=>{problemsOpen=!!v;renderProblems();},revalidateWorkspace,setFloating,rasterize};
 draw();
 })();
