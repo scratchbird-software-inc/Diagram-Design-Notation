@@ -37,3 +37,15 @@ node cli/cli.js check ../examples/basics/01-customer.ddn --workspace ..
 
 All public output goes through the export/profile machinery — hiding is not
 redaction. History before the monorepo import is in `CHANGELOG.md`.
+
+## Packaging
+
+This directory packs as the npm package `@ddn/notation` (see `package.json`:
+`main`/`module`/`types`, an `exports` map with subpaths `.`, `./core`,
+`./graph`, `./projections`, `./quality` and `./package.json`, and a `files`
+allowlist of `dist/` + `README.md`). `npm pack` here produces a tarball with
+exactly those files; consumers install the tarball directly — nothing is
+published to a registry. The package is licensed GPL-2.0-or-later (the
+`license` field is authoritative; there is no `LICENSE` file in this
+directory — the repository-root `LICENSE` applies).
+

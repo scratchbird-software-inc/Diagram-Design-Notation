@@ -28,7 +28,10 @@ is untouched. The designer keeps its independent semver and also carries
    new version.
 4. Runtime, registry, schemas, specification, and fixtures move together for
    a language release; the CLI and SDK bundle must not present a newer
-   language than the specification documents.
+   language than the specification documents. Packaging is part of a release:
+   the `@ddn/notation` tarball (`npm pack` in `notation/`) ships the
+   version-stamped `dist/` bundles behind the package `exports` map at the
+   same semver stamp (0.6.0-beta.1 at the beta.1 release).
 5. Release integrity evidence (manifests, checksums, archives) is generated at
    tag time by release tooling; that tooling from the 0.5 monolith is not yet
    imported into this repository.

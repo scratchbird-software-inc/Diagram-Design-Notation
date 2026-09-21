@@ -66,6 +66,33 @@ Each `ddn-X.js` has `ddn-X.mjs`/`.d.ts` copies. Loading modules out of order
 throws immediately; rendering a kind whose bundle is missing throws coded error
 `DDN-E010` naming the providing bundle. See `examples/embed/` for live proofs.
 
+## npm package
+
+The runtime is pack-able as `@ddn/notation` (`notation/`; version
+0.6.0-beta.1, license GPL-2.0-or-later, zero dependencies). `npm pack` in
+`notation/` produces a tarball limited to `dist/`, `README.md`, and
+`package.json`; there is no registry publishing — install the tarball
+directly (`npm i ./ddn-notation-0.6.0-beta.1.tgz`, later `npm i @ddn/notation`
+once published). Subpaths resolve in both CommonJS and ESM:
+
+| Import | Resolves to | Notes |
+|---|---|---|
+| `@ddn/notation` | `dist/ddn.global.js` / `dist/ddn.mjs` | all-in-one runtime |
+| `@ddn/notation/core` | `dist/ddn-core.js` / `.mjs` | parse/validate/export; rendering throws `DDN-E010` |
+| `@ddn/notation/graph` | `dist/ddn-graph.js` / `.mjs` | graph renderer (ESM wrapper loads core first; CJS: `require('@ddn/notation/core')` first) |
+| `@ddn/notation/projections` | `dist/ddn-projections.js` / `.mjs` | chart/matrix/panels/timeline/table/sequence/timing/chen |
+| `@ddn/notation/quality` | `dist/ddn-quality.js` / `.mjs` | quality charts, decision tables, fishbone |
+
+```js
+import ddn from '@ddn/notation/graph';              // ESM: prerequisites auto-loaded
+const { createWorkspace } = require('@ddn/notation'); // CJS
+```
+
+`"sideEffects": true` is deliberate: the bundles register onto `globalThis`.
+The package's license is GPL-2.0-or-later (the `license` field is
+authoritative; the tarball carries no `LICENSE` file because `notation/` has
+none — see the repository root).
+
 ## Licensing
 
 GPL-2.0-or-later; see `LICENSE`. The previous draft packages were distributed

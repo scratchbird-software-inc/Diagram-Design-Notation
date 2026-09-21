@@ -1,3 +1,4 @@
+import './ddn-core.js';
 import './ddn-graph.js';
 const ddn=globalThis.DDNLive;
 export const {VERSION,runtime,createWorkspace,registerWorkspace,mount,fromSnapshot,authoring,io,parse,profileCatalogue}=ddn;

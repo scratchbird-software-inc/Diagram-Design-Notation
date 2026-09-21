@@ -49,7 +49,7 @@ const written={};
 for(const [name,def]of Object.entries(BUNDLES)){
  const b=modular(name,def);written[name]=b;
  fs.writeFileSync(path.join(out,'ddn-'+name+'.js'),b);
- fs.writeFileSync(path.join(out,'ddn-'+name+'.mjs'),`import './ddn-${name}.js';\nconst ddn=globalThis.DDNLive;\nexport const {VERSION,runtime,createWorkspace,registerWorkspace,mount,fromSnapshot,authoring,io,parse,profileCatalogue}=ddn;\nexport default ddn;\n`);
+ fs.writeFileSync(path.join(out,'ddn-'+name+'.mjs'),def.needs.map(n=>`import './ddn-${n}.js';\n`).join('')+`import './ddn-${name}.js';\nconst ddn=globalThis.DDNLive;\nexport const {VERSION,runtime,createWorkspace,registerWorkspace,mount,fromSnapshot,authoring,io,parse,profileCatalogue}=ddn;\nexport default ddn;\n`);
  for(const ext of['d.ts','d.mts'])fs.copyFileSync(path.join(root,'notation/studio/src/public.d.ts'),path.join(out,'ddn-'+name+'.'+ext));
 }
 fs.writeFileSync(path.join(out,'ddn.global.js'),body);fs.copyFileSync(path.join(root,'notation/studio/src/public.d.ts'),path.join(out,'ddn.d.ts'));fs.copyFileSync(path.join(root,'notation/studio/src/public.d.ts'),path.join(out,'ddn.d.mts'));
@@ -71,7 +71,16 @@ ${rows.join('\n')}
 
 Every \`ddn-X.js\` has a matching \`ddn-X.mjs\` ES-module wrapper and \`ddn-X.d.ts\` /
 \`ddn-X.d.mts\` type copies. \`ddn.css\` carries the default mark styles (page CSS wins
-over script-inlined presentation).
+over script-inlined presentation). Non-core \`.mjs\` wrappers import their prerequisite
+bundles first, so a single \`import\` of \`./ddn-graph.mjs\` (etc.) is self-sufficient.
+
+## npm subpaths
+
+\`@ddn/notation\` resolves to \`ddn.global.js\`/\`ddn.mjs\`; the subpaths \`./core\`,
+\`./graph\`, \`./projections\`, \`./quality\` resolve to the matching modular bundles
+(\`require\` → \`.js\`, \`import\` → \`.mjs\`, types → \`.d.ts\`/\`.d.mts\`). In ESM the
+wrappers load prerequisites automatically; in CommonJS \`require('@ddn/notation/core')\`
+before any non-core subpath (same realm, same-version module stacking is a no-op).
 
 ## Load order
 

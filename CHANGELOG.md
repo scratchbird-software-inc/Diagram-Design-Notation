@@ -6,6 +6,22 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-005: npm packaging — `notation/package.json` gains `main`/`module`/
+  `types`, an `exports` map (`.`, `./core`, `./graph`, `./projections`,
+  `./quality`, `./package.json`; `require` → `.js`, `import` → `.mjs`, types →
+  `.d.ts`/`.d.mts`), a `files` allowlist (`dist`, `README.md`),
+  `"sideEffects": true` (the bundles register onto `globalThis`), and
+  `prepublishOnly: npm run build:sdk`. The non-core `.mjs` wrappers now import
+  their prerequisite bundles first (`core` → module), so one ESM `import` of
+  `@ddn/notation/graph` is self-sufficient; same-version module stacking in
+  one realm stays a no-op per the B1-004 guard. `npm pack` yields a
+  788,983-byte tarball of exactly `dist/` + `README.md` + `package.json`; a
+  temp consumer install proves all five subpaths in both CJS and ESM, core's
+  `DDN-E010` on render, and byte-identical graph rendering vs the all-in-one.
+  New suite `tools/tests/packaging.js` (root test chain, after notation
+  tests; pack → extract → child-process requires, no network). No registry
+  publishing; no dependency changes.
+
 - B1-004: modular runtime bundles — the SDK now ships as optional libraries in
   `notation/dist/`: `ddn-core.js` (parse/build/validate/export, projection and
   quality planning data, workspace API; no rendering), `ddn-graph.js` (graph
