@@ -164,7 +164,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
  
- if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=p.legend.placement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(Math.max(270,...geoms.map(g=>g.w))+q(p.layout.gap,100)));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
+ if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=p.legend.placement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(Math.max(270,...geoms.map(g=>g.w))+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
  let maxW=Math.max(270,...geoms.map(g=>g.w)),maxH=Math.max(130,...geoms.map(g=>g.h));
  const byId=new Map(geoms.map(g=>[g.id,g]));

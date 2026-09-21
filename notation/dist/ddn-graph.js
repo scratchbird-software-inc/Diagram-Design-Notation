@@ -368,6 +368,12 @@ return{VERSION:'0.6.0-beta.1',measure,render,anchor,polygon,shapeOf,segmentInter
 const VERSION='0.6.0-beta.1',EPS=.01;
 const q=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
 const round=x=>Math.round(x*1000)/1000;
+/* B1-008 spacing hints: fixed deterministic factors (D2/D4). Applied to inter-node
+ * gaps, layer/band spacing and the route-label reservation margins only — never to
+ * node bodies, fonts, glyphs or fixed-grid projections. normal (1.0) is the exact
+ * historical path. */
+const SPACING={tight:.75,normal:1,loose:1.4,expanded:2};
+const spacingScale=p=>SPACING[p.spacing]||1;
 const same=(a,b)=>Math.abs(a[0]-b[0])<EPS&&Math.abs(a[1]-b[1])<EPS;
 const segs=ps=>ps.slice(1).map((b,i)=>({a:ps[i],b,i}));
 const length=s=>Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]);
@@ -391,7 +397,8 @@ function cross(s,t,margin=0){
 function collinear(s,t,tolerance=.1){const h=Math.abs(s.a[1]-s.b[1])<EPS&&Math.abs(t.a[1]-t.b[1])<EPS,v=Math.abs(s.a[0]-s.b[0])<EPS&&Math.abs(t.a[0]-t.b[0])<EPS;if(h&&Math.abs(s.a[1]-t.a[1])<tolerance)return Math.min(Math.max(s.a[0],s.b[0]),Math.max(t.a[0],t.b[0]))-Math.max(Math.min(s.a[0],s.b[0]),Math.min(t.a[0],t.b[0]))>EPS;if(v&&Math.abs(s.a[0]-t.a[0])<tolerance)return Math.min(Math.max(s.a[1],s.b[1]),Math.max(t.a[1],t.b[1]))-Math.max(Math.min(s.a[1],s.b[1]),Math.min(t.a[1],t.b[1]))>EPS;return false;}
 function distancePointSegment(p,s){const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],l=dx*dx+dy*dy;if(!l)return Math.hypot(p[0]-s.a[0],p[1]-s.a[1]);const t=Math.max(0,Math.min(1,((p[0]-s.a[0])*dx+(p[1]-s.a[1])*dy)/l));return Math.hypot(p[0]-s.a[0]-t*dx,p[1]-s.a[1]-t*dy);}
 function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
- const p=profiles.layout,minGap=2*(q(p.object_clearance,16)+Math.max(24,q(p.port_clearance,28)))+2*q(p.edge_clearance,12),gap=Math.max(q(p.gap,100),minGap),rowGap=Math.max(q(p.row_gap,100),minGap),diag=[];if(gap<20||rowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
+ const p=profiles.layout,minGap=2*(q(p.object_clearance,16)+Math.max(24,q(p.port_clearance,28)))+2*q(p.edge_clearance,12),diag=[];let gap=Math.max(q(p.gap,100),minGap),rowGap=Math.max(q(p.row_gap,100),minGap);if(gap<20||rowGap<20)throw new ErrorClass('DDN200','Automatic gaps must be at least 20px');
+ const spread=spacingScale(p);gap=round(gap*spread);rowGap=round(rowGap*spread);
  const order=new Map(nodes.map((n,i)=>[n.id,i])),byId=new Map(nodes.map(n=>[n.id,n])),ids=new Set(byId.keys());
  const edges=rels.filter(r=>ids.has(r.from.element)&&ids.has(r.to.element)&&r.from.element!==r.to.element);
  function grid(ns,ox=0,oy=0){const cols=Math.max(1,p.columns||3),widths=Array(cols).fill(0),rows=[];ns.forEach((n,i)=>{widths[i%cols]=Math.max(widths[i%cols],n.w);rows[Math.floor(i/cols)]=Math.max(rows[Math.floor(i/cols)]||0,n.h);});ns.forEach((n,i)=>{n.x=ox+widths.slice(0,i%cols).reduce((a,b)=>a+b+gap,0);n.y=oy+rows.slice(0,Math.floor(i/cols)).reduce((a,b)=>a+b+rowGap,0);});}
@@ -484,6 +491,9 @@ function portAssignments(nodes,rels,profiles,hints={}){
 class Heap{constructor(){this.a=[];}push(value){const a=this.a;let i=a.length;a.push(value);while(i){let p=(i-1)>>1;if(a[p].score<=value.score)break;a[i]=a[p];i=p;}a[i]=value;}pop(){const a=this.a;if(!a.length)return;const first=a[0],last=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let j=i*2+1;if(j+1<a.length&&a[j+1].score<a[j].score)j++;if(a[j].score>=last.score)break;a[i]=a[j];i=j;}a[i]=last;}return first;}get length(){return this.a.length;}}
 function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extraObstacles=[]){
  const p=profiles.layout,clear=q(p.object_clearance,16),lane=q(p.edge_clearance,12),port=Math.max(24,q(p.port_clearance,28)),byId=new Map(nodes.map(n=>[n.id,n]));
+ // Route-label reservation margins widen/narrow with the spacing hint (D2), so
+ // placed labels reserve broader bands before later relations are routed.
+ const labelMargin=round(8*spacingScale(p)),labelRouteMargin=round(10*spacingScale(p));
  const assignments=portAssignments(nodes,rels,profiles,hints),routes=[],labels=[],diagnostics=[];
  const bounds={minX:Math.min(0,...nodes.map(n=>n.x)),minY:Math.min(0,...nodes.map(n=>n.y)),maxX:Math.max(100,...nodes.map(n=>n.x+n.w)),maxY:Math.max(100,...nodes.map(n=>n.y+n.h))};
  const inflated=nodes.map(n=>box(n,clear));
@@ -539,13 +549,13 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
    for(const t of samples){if(t*len<need/2+12||(1-t)*len<need/2+12)continue;candidates.push({point:[s.a[0]+(s.b[0]-s.a[0])*t,s.a[1]+(s.b[1]-s.a[1])*t]});}}
   for(const candidate of candidates){const[x,y]=candidate.point,rect={x:x-size.w/2,y:y-size.h/2,w:size.w,h:size.h};
    if(!segs(route.points).some(s=>distancePointSegment([x,y],s)<1))continue;
-   if(nodes.some(n=>overlap(rect,n,8))||extraObstacles.some(n=>overlap(rect,n,8))||labels.some(l=>overlap(rect,l,8)))continue;
-   if(prior.some(r=>segs(r.points).some(s=>segmentBox(s,box(rect,10)))))continue;
+   if(nodes.some(n=>overlap(rect,n,labelMargin))||extraObstacles.some(n=>overlap(rect,n,labelMargin))||labels.some(l=>overlap(rect,l,labelMargin)))continue;
+   if(prior.some(r=>segs(r.points).some(s=>segmentBox(s,box(rect,labelRouteMargin)))))continue;
    return {id:route.id,x,y,w:size.w,h:size.h,bounds:rect,explicit:!!candidate.explicit};
   }return null;
  }
  for(let index=0;index<rels.length;index++){
-  const r=rels[index],hint=hints[r.id]||{},ep=assignments.get(r.id),start=ep.source,end=ep.target,ownA=byId.get(r.from.element),ownB=byId.get(r.to.element),obstacles=[...inflated,...extraObstacles.map(n=>box(n,clear)),...labels.map(l=>box(l,8))];
+  const r=rels[index],hint=hints[r.id]||{},ep=assignments.get(r.id),start=ep.source,end=ep.target,ownA=byId.get(r.from.element),ownB=byId.get(r.to.element),obstacles=[...inflated,...extraObstacles.map(n=>box(n,clear)),...labels.map(l=>box(l,labelMargin))];
   const normal=(point,dir,d)=>[round(point[0]+dir[0]*d),round(point[1]+dir[1]*d)];
   // Contour attachments (actors, initial/final markers, diamonds) may lie
   // inside their conservative rectangle. Escape all the way beyond that
@@ -701,6 +711,7 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  const p=profiles.layout,routes=result.routes.map(r=>({...r,points:r.points.map(v=>[...v]),hint:{...r.hint},routing:hints[r.id]?.routing||p.routing}));
  if(!routes.some(r=>r.routing==='curved'))return routes.some(r=>r.routing==='straight')?{...result,crossings:routeCrossings(routes)}:result;
  const dirs={east:[1,0],west:[-1,0],north:[0,-1],south:[0,1]};
+ const labelMargin=round(8*spacingScale(p)),labelRouteMargin=round(10*spacingScale(p));
  const routeSegments=r=>segs(r.points);
  // Keep early callouts off likely later cubic branches, so the sequential
  // planner does not force needless detours merely to avoid its own labels.
@@ -712,7 +723,7 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  function safe(candidate,index){
   const own=routes[index],segments=routeSegments(candidate);
   for(const n of [...nodes,...extraObstacles]){const owner=n.id===own.r.from.element||n.id===own.r.to.element,pad=owner?-.3:Math.max(3,q(p.object_clearance,16)*.7);if(segments.some(s=>owner&&n.silhouette&&Shapes.segmentInterior?Shapes.segmentInterior(s,n):segmentBox(s,box(n,pad))))return false;}
-  for(let j=0;j<routes.length;j++)if(j!==index){const other=routes[j];if(segments.some(s=>segmentBox(s,box(other.label.bounds,8))))return false;
+  for(let j=0;j<routes.length;j++)if(j!==index){const other=routes[j];if(segments.some(s=>segmentBox(s,box(other.label.bounds,labelMargin))))return false;
    const ts=routeSegments(other);if(segments.some(s=>ts.some(t=>generalCollinear(s,t,.22))))return false;
    for(const s of segments)for(const t of ts){const hit=lineIntersection(s,t);if(hit&&hit.sine<.22)return false;}
   }return true;
@@ -721,9 +732,9 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  if(routeSegments(candidate).some(s=>distancePointSegment(old,s)<.15))positions.push(old);
  positions.push(...samples.map(t=>curvePointAt(candidate,len*t).point));
  for(const pt of positions){const[x,y]=pt,rect={x:x-size.w/2,y:y-size.h/2,w:size.w,h:size.h};if(Math.min(Math.hypot(x-candidate.points[0][0],y-candidate.points[0][1]),Math.hypot(x-candidate.points.at(-1)[0],y-candidate.points.at(-1)[1]))<Math.max(size.w,size.h)/2+20)continue;
- if([...nodes,...extraObstacles].some(n=>overlap(rect,n,8)))continue;
- if(routes.some((r,j)=>j!==index&&(overlap(rect,r.label.bounds,8)||routeSegments(r).some(s=>segmentBox(s,box(rect,10))))))continue;
- if(previewCurves.some((pts,j)=>j>index&&pts&&segs(pts).some(s=>segmentBox(s,box(rect,10)))))continue;
+ if([...nodes,...extraObstacles].some(n=>overlap(rect,n,labelMargin)))continue;
+ if(routes.some((r,j)=>j!==index&&(overlap(rect,r.label.bounds,labelMargin)||routeSegments(r).some(s=>segmentBox(s,box(rect,labelRouteMargin))))))continue;
+ if(previewCurves.some((pts,j)=>j>index&&pts&&segs(pts).some(s=>segmentBox(s,box(rect,labelRouteMargin)))))continue;
  return{...size,x:round(x),y:round(y),bounds:{...rect,x:round(rect.x),y:round(rect.y)},explicit:false};}return null;}
  for(let i=0;i<routes.length;i++){const r=routes[i];if(r.routing!=='curved')continue;const mode=hints[r.id]?.curve||p.curve||'bezier',radius=q(hints[r.id]?.curve_radius??p.curve_radius,32),tension=hints[r.id]?.curve_tension??p.curve_tension??.5,candidates=[];
  if(mode==='bezier'&&!hints[r.id]?.via&&r.r.from.element!==r.r.to.element){const a=r.points[0],b=r.points.at(-1),sd=dirs[r.source_side],td=dirs[r.target_side],major=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1])),handle=Math.max(24,major*tension);
@@ -743,7 +754,7 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  return {...result,routes,crossings,labels,quality,curveTolerance:CURVE_TOLERANCE};
 }
 
-return {crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION,q,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect};
+return {crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION,q,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale};
 });
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -771,7 +782,7 @@ function place(nodes,rels,ir,options={}){
  let pattern=null;
  const ErrorClass=class extends Error{constructor(code,message){super(message);this.code=code;}};
  if(usePattern){
-  const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Math.max(minGap,q(p.layout.gap,100))}};
+  const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Layout.round(Math.max(minGap,q(p.layout.gap,100))*Layout.spacingScale(p.layout))}};
   const result=Patterns.place(nodes,rels,ir,adapted);pattern=result.pattern;diagnostics.push(...result.diagnostics);
   if(['left','up'].includes(p.layout.direction)&&patternMode==='layered'){
    for(const n of nodes)if(!at[n.id]?.at){const c=center(n),ax=pattern.anchor[0],ay=pattern.anchor[1];if(p.layout.direction==='left')n.x=2*ax-c[0]-n.w/2;else n.y=2*ay-c[1]-n.h/2;}
@@ -1117,7 +1128,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
  
- if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=p.legend.placement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(Math.max(270,...geoms.map(g=>g.w))+q(p.layout.gap,100)));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
+ if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=p.legend.placement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(Math.max(270,...geoms.map(g=>g.w))+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
  let maxW=Math.max(270,...geoms.map(g=>g.w)),maxH=Math.max(130,...geoms.map(g=>g.h));
  const byId=new Map(geoms.map(g=>[g.id,g]));

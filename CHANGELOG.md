@@ -6,6 +6,35 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-008: spacing hints — new optional additive `spacing` property on views
+  and on `bundle` declarations inside formats (`tight | normal | loose |
+  expanded`; view declaration wins over the format's; absent = `normal`).
+  Registered additively in the ddn-core property whitelists per VERSIONING
+  rule 1 (no language version bump); an unknown value is rejected as `DDN033`.
+  Fixed deterministic factors 0.75/1.0/1.4/2.0 scale the graph-family
+  inter-node horizontal/vertical gaps (`gap`, `row_gap`, including the
+  pin-pattern pitch), derived layer/band spacing, and the route-label
+  reservation margins (8/10 px at `normal`), rounded via the renderer's
+  existing numeric helper — so relation routes carrying long text labels get
+  wider reserved bands before routing and shorter detours at `loose`/
+  `expanded`. Node bodies, fonts, glyphs and fixed canvas furniture never
+  scale; fixed-grid projections (chart, matrix, panels, table, timeline,
+  fishbone, decision, sequence, timing) ignore the hint by documented design
+  with no `check()` warning. `normal` (and omission) is byte-identical to the
+  historical output — the entire existing golden set is unchanged (zero
+  golden regeneration). Runtime: `ddn-core.js` (whitelist + precedence +
+  validation), `ddn-layout.js` (`SPACING`/`spacingScale`; gap and label-band
+  scaling in `layoutNodes`/`routingAttempt`/`curvedRouting`),
+  `ddn-placement.js` (pattern-gap scaling), `ddn-render.js` (reflow column
+  estimate). New suite `notation/tests/spacing-hints.js` (13 tests, wired in
+  as `test:spacing-hints`): enum acceptance/rejection on views and formats,
+  normal == omitted byte-identity on a multi-view fixture, precedence,
+  monotonic canvas spread, label-reservation geometry from scene JSON,
+  fixed-grid invariance, determinism. New example
+  `examples/basics/60-spacing-hints.ddn` (one model, four views). Docs: spec
+  15 (spacing property table + factors), spec 03 (declaration + precedence),
+  capabilities.json, examples/README.md, root README.md.
+
 - B1-007: end-user viewer — new single-file, non-designer viewer
   `notation/viewer/ddn-viewer.html` (runtime inlined; sources in
   `notation/viewer/src/`, deterministic build step `tools/build-viewer.js`

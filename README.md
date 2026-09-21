@@ -13,7 +13,7 @@ This repository is a monorepo with four components:
 | `standard/` | **Proposed DDN standard** | Normative specification chapters, EBNF grammar, JSON schemas, the notation vocabulary registry, notation plates, governance |
 | `notation/` | **Notation project** | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests |
 | `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, RACI/CRUD matrix cell editor and chart editor (records, marks, bindings), research, decisions |
-| `examples/` | **Example diagrams** | 59 basics, projection and quality corpora, 22 use-case scenarios |
+| `examples/` | **Example diagrams** | 60 basics, projection and quality corpora, 22 use-case scenarios |
 
 Supporting directories: `docs/` (project documentation and website, TBD) and
 `tools/` (shared build/serve/package scripts).
@@ -85,6 +85,15 @@ host.innerHTML = r.svg;
 ```
 
 See `examples/basics/59-data-refresh.ddn` and `examples/embed/data-refresh.html`.
+
+**Spacing hints:** a view or a shared format bundle can declare
+`spacing: tight|normal|loose|expanded` (view wins over format; absent =
+`normal`, byte-identical to historical output). The fixed factors
+(0.75/1.0/1.4/2.0) scale inter-node gaps, layer spacing and the route-label
+reservation in graph-family diagrams, so long relation labels get wider
+reserved bands instead of longer detours. Fixed-grid projections (chart,
+matrix, panels, …) ignore the hint by design. See
+`examples/basics/60-spacing-hints.ddn` (one model, four views).
 
 ## npm package
 

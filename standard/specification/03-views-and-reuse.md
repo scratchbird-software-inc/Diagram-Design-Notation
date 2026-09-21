@@ -22,6 +22,8 @@ view overview {
 
 `select` limits visible objects; `exclude` removes occurrences from that view. Relations are selected when both endpoints are shown unless relations are disabled. Domain/reference dependencies still have to be supplied as data modules even when not shown. Default selection order is deterministic source order.
 
+A view or a bundle may also declare `spacing: tight|normal|loose|expanded` directly (`view overview { spacing: loose; … }`, `bundle wide { spacing: loose; layout: @x; … }`). The view declaration wins over the bundle's; absent means `normal`. It scales graph-family gaps and route-label reservation only — see [Anchored placement](15-placement-and-low-light.md#spacing-hints).
+
 ## Display versus authorization
 
 `fields:none`, limited `depth`, hidden domains, hidden samples and omitted badges change presentation only. Full private resolution still contains the model. Public output MUST use an explicit `export {mode:redacted; ...}` profile; it is not inferred from a sparse view.

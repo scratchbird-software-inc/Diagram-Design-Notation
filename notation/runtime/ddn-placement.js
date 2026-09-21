@@ -23,7 +23,7 @@ function place(nodes,rels,ir,options={}){
  let pattern=null;
  const ErrorClass=class extends Error{constructor(code,message){super(message);this.code=code;}};
  if(usePattern){
-  const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Math.max(minGap,q(p.layout.gap,100))}};
+  const adapted={...p,layout:{...p.layout,algorithm:patternMode,gap:Layout.round(Math.max(minGap,q(p.layout.gap,100))*Layout.spacingScale(p.layout))}};
   const result=Patterns.place(nodes,rels,ir,adapted);pattern=result.pattern;diagnostics.push(...result.diagnostics);
   if(['left','up'].includes(p.layout.direction)&&patternMode==='layered'){
    for(const n of nodes)if(!at[n.id]?.at){const c=center(n),ax=pattern.anchor[0],ay=pattern.anchor[1];if(p.layout.direction==='left')n.x=2*ax-c[0]-n.w/2;else n.y=2*ay-c[1]-n.h/2;}

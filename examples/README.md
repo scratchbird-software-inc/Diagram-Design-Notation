@@ -7,7 +7,7 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 59 numbered examples (01-customer … 59-data-refresh)
+- `basics/` — 60 numbered examples (01-customer … 60-spacing-hints)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, authorized SQL DDL export, process contracts,
@@ -29,7 +29,8 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   (`56-family-tree.ddn`), and registry-driven element defaults
   (`57-element-defaults.ddn`), and CSS class hooks for host-page styling
   (`58-css-hooks.ddn` + companion `.html`), and data refresh via
-  `ws.replaceData` (`59-data-refresh.ddn`).
+  `ws.replaceData` (`59-data-refresh.ddn`), and spacing hints
+  (tight/normal/loose/expanded) on views and formats (`60-spacing-hints.ddn`).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

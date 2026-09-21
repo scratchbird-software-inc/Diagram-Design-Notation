@@ -31,6 +31,30 @@ Renaming the earlier live value `tree` to `spanning_tree` preserves the stronger
 
 `auto_place` is boolean (default true). `center` is `pins` or `content`. New pin-centred patterns default to pins; inherited original patterns keep their explicit centre. `grid_step` is a finite length 8–512 CSS px. The pattern gap is 16–2000 CSS px; the engine may enlarge it to honour element dimensions and native port clearance. `direction` is right/down/left/up where the underlying algorithm supports orientation.
 
+## Spacing hints
+
+A view, or a `bundle` inside a format declaration, may carry one optional
+`spacing` property. The view value wins over the format value; when both are
+absent the hint is `normal`. It is an additive optional enum — an unknown value
+is rejected with `DDN033`, and it is not a language version gate.
+
+| Value | Factor | Effect |
+|---|---|---|
+| `tight` | 0.75 | Compacts inter-node gaps, layer/band spacing and the route-label reservation margin. |
+| `normal` | 1.0 | The default. Exactly the historical output; omitting `spacing` is byte-identical to `spacing: normal`. |
+| `loose` | 1.4 | Spreads gaps and label bands so long relation labels get room with shorter detours. |
+| `expanded` | 2.0 | Maximum spread. |
+
+The factor multiplies the inter-node horizontal/vertical gaps (`gap`,
+`row_gap`, including the pin-pattern pitch), the layer/band spacing derived from
+them, and the route-label reservation margins (8/10 px at `normal`), rounded
+through the renderer's numeric helper. Node body sizes, font sizes, glyph sizes
+and the fixed canvas furniture never scale. `spacing` is a **graph-family
+hint**: fixed-grid projections (chart, matrix, panels, table, timeline,
+fishbone, decision, sequence, timing) ignore it entirely — `check()` emits no
+warning, because ignoring it is the documented behavior. Factors are literal
+constants; the renderer stays deterministic.
+
 ```ddn
 format layouts {
     layout orbit {
@@ -41,6 +65,7 @@ format layouts {
         crossings: gap;
         gap: 100px;
     }
+    bundle roomy { layout: @orbit; spacing: loose; }
 }
 ```
 

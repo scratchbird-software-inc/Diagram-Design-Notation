@@ -145,8 +145,8 @@
     legend:['mode','placement','width','keys','keyset','scope'],
     validation:['mode','unknown_extensions'],
     export:['mode','elements','fields','properties','include_samples','identifier_mode','title','format'],
-    bundle:['projection','notation','style','layout','display','publication','legend','validation','export'],
-    view:['projection','data','format','notation','style','layout','display','publication','legend','select','exclude','description','uid','validation','export'],
+    bundle:['projection','notation','style','layout','display','publication','legend','validation','export','spacing'],
+    view:['projection','data','format','notation','style','layout','display','publication','legend','select','exclude','description','uid','validation','export','spacing'],
     place:['at','size'],route:['via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
     subdiagram:['view','mode','at','size','label','binding','uid'],
     frame:['scope','members','at','size','label','dimension'],
@@ -180,6 +180,12 @@
       if(type==='legend'&&def&&def.props.keyset){let keyset=ws.resolve(def.props.keyset,def);if(keyset.type!=='keyset')throw new DDNError('DDN044','Expected keyset',def.source,def.start);p.legend.keys={...keyset.props.keys,...p.legend.keys};}
     }
     if(quantity(p.style.font_size,16)<8||quantity(p.style.font_size,16)>64)throw new DDNError('DDN046','font_size must be between 8px and 64px',view.source,view.start);
+    // Spacing hint: view declaration wins over the referenced format (bundle);
+    // absent means normal. Additive optional enum, so a bad value is an unknown
+    // property value and fails with DDN033 rather than a version gate.
+    const spacing=view.props.spacing??bundle?.props.spacing;
+    if(spacing!==undefined&&!['tight','normal','loose','expanded'].includes(spacing))throw new DDNError('DDN033','Unknown spacing value '+spacing+'; expected tight, normal, loose or expanded',view.source,view.start);
+    p.layout.spacing=spacing||'normal';
     if(!['ddn-core@0.2','ddn-core@0.3'].includes(p.notation.registry))throw new DDNError('DDN045','Unknown notation registry',view.source,view.start);p.notation.registry='ddn-core@0.3';
     const choices=CHOICES;
     for(const [cat,props] of Object.entries(choices))for(const [key,allowed] of Object.entries(props))if(!allowed.includes(p[cat][key]))throw new DDNError('DDN046',`Unsupported ${cat}.${key}: ${p[cat][key]}`,view.source,view.start);
