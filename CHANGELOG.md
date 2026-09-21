@@ -6,6 +6,22 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-014: designer display options, text download formats, resizable and
+  window pop-out panels. The designer prototype's shelf gains a **Display**
+  tab — presentation-only (never written to source): global typography and
+  relation options (routing/crossings/endpoint ordering/curve tension/radius/
+  per-verb routing) through the existing per-view override channel, plus
+  per-kind typography and kind/verb/object colours as a localStorage-backed
+  CSS overlay on the `.ddn-kind-*`/`.ddn-verb-*`/`data-ddn-id` hooks. The
+  Download modal regroups into **Text** (current file `.ddn`; single
+  self-contained sectioned `.ddn` of the entire workspace via
+  `DDNLive.io.bundle` — re-opens anywhere DDN loads; ZIP of all sources) and
+  **Image** (SVG/PNG/WebP, unchanged). Floating panels resize (`resize: both`,
+  220×160 minimum, visible grip, session-only), and the shelf/inspector can
+  pop out into a separate OS window for multi-monitor work — fully functional
+  there (panel lookups go through live `panelRoot` element references across
+  documents) and re-docking when the window closes. Covered by
+  `designer/tests/b1-014-display-and-popout.js`.
 - B1-015 / RFC-117: self-contained multi-module `.ddn` files and bundling. A
   file may hold several `module "…";` sections — model, data, views and
   formats in one file (`examples/basics/61-self-contained.ddn`). File-level

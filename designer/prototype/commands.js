@@ -1482,6 +1482,78 @@ const DENSITY={
  comfortable:{'--ui-font':'14px','--ui-pad':'10px','--ui-btn-h':'34px','--ui-gap':'8px','--ui-palette-h':'74px','--ui-pane-pad':'16px','--ui-projectbar-h':'62px','--ui-toolbar-h':'48px','--ui-tab-font':'13px'}
 };
 const DENSITY_DEFAULT='compact';
+// B1-014 D1/D2: designer display options (presentation-only CSS overlay,
+// never written to source) and the Text download format table. The CSS
+// builders mirror the viewer's B1-011 helpers (viewer.js overrideRuleFor /
+// typographyRuleFor) scoped to the designer's #paper — mirrored, not imported:
+// the designer is separate code.
+const DISPLAY_FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
+const DISPLAY_FONT_SIZES=[8,9,10,11,12,14,16,18,20,24];
+const DISPLAY_ROUTING=['orthogonal','straight','curved','rounded'];
+const DISPLAY_CROSSINGS=['gap','bridge','square_bridge'];
+const DISPLAY_ENDPOINT_ORDERING=['optimize','preserve'];
+const cssSlug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+const cssString=s=>String(s).replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\a ');
+const DISPLAY_COLOUR=/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
+function displayTypographyRule(code,style){
+ const decls=[];
+ if(style&&style.family!=null&&style.family!=='source'){const stack=DISPLAY_FONT_STACKS[style.family];if(!stack)fail('DDN-I033','Unknown font family '+style.family+'. Nothing was changed.');decls.push('font-family: '+stack);}
+ if(style&&style.size!=null&&style.size!=='source'){const n=Number(style.size);if(!Number.isFinite(n)||n<8||n>24)fail('DDN-I033','Font size must be between 8 and 24px. Nothing was changed.');decls.push('font-size: '+n+'px');}
+ if(!decls.length)fail('DDN-I033','A typography rule needs a family or a size. Nothing was changed.');
+ return '#paper .ddn-kind-'+cssSlug(code)+' text { '+decls.join('; ')+'; }';
+}
+function displayColourRule(target,value){
+ if(!target||typeof target!=='object')fail('DDN-I033','Colour override target required. Nothing was changed.');
+ if(!DISPLAY_COLOUR.test(String(value)))fail('DDN-I033','Colour must be #rgb or #rrggbb. Nothing was changed.');
+ if(target.type==='kind'){const c=cssSlug(target.code);return '#paper .ddn-kind-'+c+' > path, #paper .ddn-kind-'+c+' > rect, #paper .ddn-kind-'+c+' > circle, #paper .ddn-kind-'+c+' > ellipse, #paper .ddn-kind-'+c+' > polygon { fill: '+value+'; }';}
+ if(target.type==='verb'){const c=cssSlug(target.code);return '#paper .ddn-verb-'+c+' path { stroke: '+value+'; }';}
+ if(target.type==='object'){const sel='#paper [data-ddn-id="'+cssString(target.id)+'"]';return sel+' > path, '+sel+' > rect, '+sel+' > circle, '+sel+' > ellipse, '+sel+' > polygon { fill: '+value+'; }';}
+ fail('DDN-I033','Unknown colour override type '+target.type+'. Nothing was changed.');
+}
+function displayCss(state){
+ const s=state||{},rules=[];
+ for(const [code,style]of Object.entries(s.typography||{}))rules.push(displayTypographyRule(code,style));
+ for(const [code,col]of Object.entries(s.kindColours||{}))rules.push(displayColourRule({type:'kind',code},col));
+ for(const [code,col]of Object.entries(s.verbColours||{}))rules.push(displayColourRule({type:'verb',code},col));
+ for(const [id,col]of Object.entries(s.objectColours||{}))rules.push(displayColourRule({type:'object',id},col));
+ return rules.join('\n');
+}
+// Text download formats (D2). Image formats stay in EXPORT_FORMATS above.
+const TEXT_FORMATS=[
+ {id:'current',label:'Current file (.ddn)',tooltip:'Download the current entry source file as DDN text; its imports still require their files.'},
+ {id:'bundle',label:'Single file — entire workspace (.ddn)',file:'designer-prototype-workspace.ddn',tooltip:'One self-contained sectioned .ddn holding every model/data/view section of the workspace; re-opens anywhere DDN loads.'},
+ {id:'zip',label:'ZIP archive (all sources)',file:'designer-prototype-workspace.zip',tooltip:'Download every workspace source as a Studio-openable ZIP.'}
+];
+// One self-contained sectioned .ddn for the WHOLE workspace via api.io.bundle
+// (B1-015). bundle() is entry-reachability-scoped, so each import root is
+// bundled and the sections concatenated; a module-id collision between roots
+// is a coded rejection, never a silent fallback format (D2).
+function bundleWorkspace(D,files,entry){
+ const names=Object.keys(files);
+ const imported=new Set();
+ for(const [name,text]of names.map(n=>[n,files[n]]))for(const imp of D.parse(text,name).imports)imported.add(D.resolvePath(name,imp.path));
+ const covered=new Set();
+ (function walk(path){if(covered.has(path)||!Object.hasOwn(files,path))return;covered.add(path);for(const imp of D.parse(files[path],path).imports)walk(D.resolvePath(path,imp.path));})(entry);
+ const roots=[entry,...names.filter(n=>n!==entry&&!imported.has(n)).sort((a,b)=>a.localeCompare(b,'en'))];
+ const seen=new Set(),parts=[];
+ for(const root of roots){
+  if(root!==entry&&covered.has(root))continue;
+  const out=D.io.bundle(files,root).text;
+  const lines=out.split('\n');
+  if(parts.length===0)parts.push(out.replace(/\n$/,''));
+  else{
+   const rest=lines.slice(1).join('\n').replace(/^\n+/,'');
+   const head=rest.slice(0,rest.search(/^module "/m));
+   if(head.trim())fail('DDN-I033','Workspace root '+root+' keeps external imports; the single-file download cannot merge them. Use the ZIP archive.');
+   parts.push(rest);
+  }
+  for(const m of out.matchAll(/^module "([^"]+)";$/gm)){
+   if(seen.has(m[1]))fail('DDN-I033','Workspace roots share module '+m[1]+'; the single-file download would be ambiguous. Use the ZIP archive.');
+   seen.add(m[1]);
+  }
+ }
+ return parts.join('\n')+'\n';
+}
 const EXPORT_FORMATS=[
  {id:'ddn',label:'Current DDN',mime:'text/plain;charset=utf-8',guarded:false},
  {id:'zip',label:'Workspace ZIP',file:'designer-prototype-workspace.zip',mime:'application/zip',guarded:false},
@@ -1489,5 +1561,5 @@ const EXPORT_FORMATS=[
  {id:'png',label:'Current PNG (2×)',file:'designer-prototype.png',mime:'image/png',guarded:true,scale:2},
  {id:'webp',label:'Current WebP (2×)',file:'designer-prototype.webp',mime:'image/webp',guarded:true,scale:2}
 ];
-return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS,splitters:{SPLITTER_LIMITS,SPLITTER_DEFAULTS,clampWidth,splitterDrag,gridColumns},DENSITY,DENSITY_DEFAULT,EXPORT_FORMATS};
+return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS,splitters:{SPLITTER_LIMITS,SPLITTER_DEFAULTS,clampWidth,splitterDrag,gridColumns},DENSITY,DENSITY_DEFAULT,EXPORT_FORMATS,TEXT_FORMATS,bundleWorkspace,display:{FONT_STACKS:DISPLAY_FONT_STACKS,FONT_SIZES:DISPLAY_FONT_SIZES,ROUTING:DISPLAY_ROUTING,CROSSINGS:DISPLAY_CROSSINGS,ENDPOINT_ORDERING:DISPLAY_ENDPOINT_ORDERING,typographyRule:displayTypographyRule,colourRule:displayColourRule,css:displayCss,slug:cssSlug}};
 });

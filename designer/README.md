@@ -174,3 +174,33 @@ ids or handler signatures changed; ED-001…ED-013, B1-002 and the
 build-standalone byte-identity gate stay green, covered by the new suite
 `tests/b1-012-designer-chrome.js` (pure units + chrome greps + a headless
 chromium driver run generated from the real standalone.html).
+B1-014 adds a fourth shelf tab, **Display**: viewer-grade presentation control
+for the current view, headed "Designer display only — never written to source"
+(the inspector's This-view preview controls stay where they are). Global
+typography (family source-default/sans/serif/mono/handwriting, size 8–24 px)
+and the relation options (master routing/crossings/endpoint ordering, curve
+tension/radius, and one routing dropdown per verb present) write through the
+existing `optionsByView` override channel for a reflow-safe re-render; per-kind
+typography rows (label on its own line, family + 68 px size selects) and
+kind/verb/object colour swatches are a CSS overlay on `#paper` via the B1-003
+`.ddn-kind-*`/`.ddn-verb-*`/`data-ddn-id` hooks, persisted in localStorage
+keyed by `entry#view`. Every section collapses and resets, plus a master
+reset. The Download modal regroups into **Text** — Current file (.ddn),
+Single file — entire workspace (.ddn) (the native sectioned multi-module
+bundle via `DDNLive.io.bundle` from B1-015, one self-contained file holding
+every model/data/view section; `commands.js` `bundleWorkspace` composes the
+workspace's import roots and re-opens anywhere DDN loads), ZIP archive (all
+sources) — and **Image** (SVG/PNG/WebP, unchanged behavior and guard).
+Floating panels are resizable (`resize: both`, 220×160 minimum, visible grip,
+session-only size like all float state). Each detachable panel also gains a
+**Pop out to window** button: the panel is `adoptNode`d into a `window.open`
+child with a copy of every stylesheet, keeps working there (palette create,
+inspector edits, Display tab), and re-docks on the child's
+pagehide/beforeunload or its Re-dock button; the parent closes children on
+its own pagehide, and in-page float and window pop are mutually exclusive per
+panel. Panel content lookups go through `panelRoot(name)` element references
+so every render path follows the panel across documents. Covered by
+`tests/b1-014-display-and-popout.js` (pure units + chrome greps + headless
+driver incl. a committed edit from inside the popped window and a cli check
+of the downloaded bundle); no acceptance-plan case covers designer chrome or
+display options, so the gap is recorded in the suite header and report.

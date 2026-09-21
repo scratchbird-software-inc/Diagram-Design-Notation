@@ -20,7 +20,7 @@ This repository is a monorepo with four components:
 |---|---|---|
 | `standard/` | **Proposed DDN standard** | Normative specification chapters, EBNF grammar, JSON schemas, the notation vocabulary registry, notation plates, governance |
 | `notation/` | **Notation project** | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests |
-| `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, RACI/CRUD matrix cell editor and chart editor (records, marks, bindings), compact-density chrome with splitters/floating panels and SVG/PNG/WebP export, research, decisions |
+| `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, RACI/CRUD matrix cell editor and chart editor (records, marks, bindings), compact-density chrome with splitters/resizable floating or window-popped panels, a presentation-only Display options tab and SVG/PNG/WebP + .ddn/ZIP text downloads, research, decisions |
 | `examples/` | **Example diagrams** | 60 basics, projection and quality corpora, 22 use-case scenarios, the generated full-coverage gallery |
 
 Supporting directories: `docs/` (project documentation, including the
@@ -45,8 +45,10 @@ diagram in-page and links to every standalone page: the full diagram gallery
 height/100%, font and colour overrides per kind/relation-class/object,
 SVG+PNG export, all presentation-only), the working designer prototype
 (`designer/prototype/standalone.html` — compact/comfortable density,
-draggable splitters, detachable floating panels, plate-glyph palette,
-SVG/PNG/WebP + DDN/ZIP downloads), and the notation plates
+draggable splitters, resizable floating panels that can also pop out to a
+separate OS window (multi-monitor), a presentation-only Display options tab,
+SVG/PNG/WebP + current-file/single-file-workspace .ddn/ZIP downloads), and
+the notation plates
 (`standard/plates/index.html`). All work from `file://`.
 
 **Full-coverage example gallery:** `examples/gallery/index.html` — one

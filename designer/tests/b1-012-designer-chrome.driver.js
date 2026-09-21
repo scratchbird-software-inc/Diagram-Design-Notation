@@ -97,7 +97,7 @@ window.addEventListener('load', () => setTimeout(async () => {
     P.setView('overview');
     $('#exportBtn').click();
     const labels = $$('#dialogActions button').map(b => b.textContent);
-    out.exportModalFormats = ['Current DDN', 'Workspace ZIP', 'Current SVG', 'Current PNG (2×)', 'Current WebP (2×)'].every(l => labels.includes(l));
+    out.exportModalFormats = ['Current file (.ddn)', 'Single file — entire workspace (.ddn)', 'ZIP archive (all sources)', 'Current SVG', 'Current PNG (2×)', 'Current WebP (2×)'].every(l => labels.includes(l));
     const webpBtn = $$('#dialogActions button').find(b => b.textContent === 'Current WebP (2×)');
     out.webpEnabledWhenSupported = P.getState().webpSupported ? !webpBtn.disabled : webpBtn.disabled && webpBtn.title.includes('not supported');
     $('#dialogClose').click();
