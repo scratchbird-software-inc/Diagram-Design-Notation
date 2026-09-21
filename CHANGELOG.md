@@ -6,6 +6,30 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-010: full example gallery + developer documentation — new deterministic
+  generator `tools/build-gallery.js` (wired as `npm run build:gallery`)
+  produces `examples/gallery/`: one CLI-rendered SVG for every installed
+  profile (73, coverage map generated from `basics/`, `projections/` and
+  `quality/` examples — the generator fails on an uncovered profile), plus
+  five variation sheets (12 chart marks, 3 looks × 6 palettes, 4 routing
+  modes × 3 looks, 11 layout algorithms, 4 spacing levels) rendered from new
+  real-content sources under `examples/gallery/src/` — 130 committed SVGs, a
+  machine-readable `coverage.json`, and a static, `file://`-safe
+  `index.html` linking the pre-rendered SVGs (no inlined runtime). New
+  developer documentation under `docs/developers/` (orientation,
+  getting-started, modules/bundles, API reference, embedding, viewer,
+  styling, data-refresh, source authoring, 0.5 → 0.6 migration) verified
+  against `notation/studio/src/public.d.ts`. New permanent gate
+  `notation/tests/gallery-coverage.js` (wired as `test:gallery-coverage`
+  into the notation test chain) fails when any installed profile lacks a
+  gallery entry, when any gallery SVG is missing/non-SVG, when
+  api-reference.md names a method absent from `public.d.ts`, or when the
+  developer docs contain placeholder markers. Deleted the stale import-era
+  `examples/basics/manifest.json` (covered only examples 01–18, referenced
+  nonexistent `examples/rendered/` paths, stamped `0.5.0-draft.1`, consumed
+  by nothing — repo-wide grep verified zero references; the live golden
+  manifest is `examples/use-cases/manifest.json`). Root README and
+  index.html link the gallery and the developer docs.
 - B1-009: Beta-1 script and golden refresh — ran the full verification
   matrix over every `.ddn` in `examples/` (114 files: `cli.js check` on
   each, every declared view rendered twice, byte-determinism, and the 27

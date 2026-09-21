@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN example gallery — full notation coverage</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;color:#203047;background:#f7f8fa}
+header{padding:1.5rem 2rem;background:#203047;color:#fff}
+header h1{margin:0 0 .25rem;font-size:1.4rem}
+header p{margin:.15rem 0;opacity:.85;font-size:.9rem}
+nav{padding:.75rem 2rem;background:#fff;border-bottom:1px solid #dde3ea;font-size:.85rem;line-height:1.9}
+nav a{margin-right:.9rem;color:#285ea8;text-decoration:none;white-space:nowrap}
+nav a:hover{text-decoration:underline}
+main{padding:1.5rem 2rem;max-width:1500px}
+h2{border-bottom:2px solid #285ea8;padding-bottom:.3rem;margin-top:2.5rem}
+h3{margin:1.6rem 0 .6rem;color:#285ea8}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:1.1rem}
+figure{margin:0;background:#fff;border:1px solid #dde3ea;border-radius:6px;padding:.6rem}
+figure img{width:100%;height:auto;display:block}
+figcaption{font-size:.8rem;margin-top:.45rem;color:#455}
+figcaption code{font-size:.78rem}
+table{border-collapse:collapse;width:100%;font-size:.85rem;background:#fff}
+th,td{border:1px solid #dde3ea;padding:.35rem .6rem;text-align:left;vertical-align:top}
+th{background:#eef2f7}
+footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
+</style>
+</head>
+<body>
+<header>
+<h1>DDN example gallery</h1>
+<p>Full notation coverage for Data Design Notation 0.6.0-beta.1: 73 installed profiles plus 57 variation renders — 130 SVGs, each produced by the reference CLI render path.</p>
+<p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>.</p>
+</header>
+<nav>
+<strong>Sections:</strong>
+<a href="#profiles">Profiles</a>
+<a href="#sheet-marks">Chart marks</a>
+<a href="#sheet-looks">Looks × palettes</a>
+<a href="#sheet-routing">Routing × look</a>
+<a href="#sheet-layouts">Layout algorithms</a>
+<a href="#sheet-spacing">Spacing levels</a>
+<a href="#coverage">Coverage table</a>
+</nav>
+<main>
+<h2 id="profiles">Installed profiles (73)</h2>
+<p>One render per installed profile from <code>standard/registry/profiles/catalogue.json</code>. Each entry reuses the nearest existing example under <code>examples/basics/</code> or <code>examples/projections/</code>; the coverage map is generated, not hand-written, and is enforced by <code>notation/tests/gallery-coverage.js</code>.</p>
+<section class="family" id="family-archimate">
+<h3>archimate</h3>
+<div class="grid">
+<figure id="profile-archimate-basic-1"><a href="profiles/archimate-basic-1.svg"><img src="profiles/archimate-basic-1.svg" alt="archimate.basic@1 — Order platform landscape" loading="lazy"></a><figcaption><code>archimate.basic@1</code><br>Order platform landscape<br><small>examples/basics/51-archimate.ddn · view <code>landscape</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-bpmn">
+<h3>bpmn</h3>
+<div class="grid">
+<figure id="profile-bpmn-basic-1"><a href="profiles/bpmn-basic-1.svg"><img src="profiles/bpmn-basic-1.svg" alt="bpmn.basic@1 — Buyer / seller collaboration" loading="lazy"></a><figcaption><code>bpmn.basic@1</code><br>Buyer / seller collaboration<br><small>examples/basics/46-bpmn.ddn · view <code>collaboration</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-c4">
+<h3>c4</h3>
+<div class="grid">
+<figure id="profile-c4-component-1"><a href="profiles/c4-component-1.svg"><img src="profiles/c4-component-1.svg" alt="c4.component@1 — Synthetic shop / C4 component" loading="lazy"></a><figcaption><code>c4.component@1</code><br>Synthetic shop / C4 component<br><small>examples/basics/25-c4-views.ddn · view <code>component</code></small></figcaption></figure>
+<figure id="profile-c4-container-1"><a href="profiles/c4-container-1.svg"><img src="profiles/c4-container-1.svg" alt="c4.container@1 — Synthetic shop / C4 container" loading="lazy"></a><figcaption><code>c4.container@1</code><br>Synthetic shop / C4 container<br><small>examples/basics/25-c4-views.ddn · view <code>container</code></small></figcaption></figure>
+<figure id="profile-c4-context-1"><a href="profiles/c4-context-1.svg"><img src="profiles/c4-context-1.svg" alt="c4.context@1 — Synthetic shop / C4 context" loading="lazy"></a><figcaption><code>c4.context@1</code><br>Synthetic shop / C4 context<br><small>examples/basics/25-c4-views.ddn · view <code>context</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-canvas">
+<h3>canvas</h3>
+<div class="grid">
+<figure id="profile-canvas-bmc-1"><a href="profiles/canvas-bmc-1.svg"><img src="profiles/canvas-bmc-1.svg" alt="canvas.bmc@1 — Coffee cart / business model canvas" loading="lazy"></a><figcaption><code>canvas.bmc@1</code><br>Coffee cart / business model canvas<br><small>examples/basics/31-canvas-pack-a.ddn · view <code>bmc</code></small></figcaption></figure>
+<figure id="profile-canvas-empathy-1"><a href="profiles/canvas-empathy-1.svg"><img src="profiles/canvas-empathy-1.svg" alt="canvas.empathy@1 — Support team / empathy map" loading="lazy"></a><figcaption><code>canvas.empathy@1</code><br>Support team / empathy map<br><small>examples/basics/34-empathy-scorecard.ddn · view <code>empathy</code></small></figcaption></figure>
+<figure id="profile-canvas-lean-1"><a href="profiles/canvas-lean-1.svg"><img src="profiles/canvas-lean-1.svg" alt="canvas.lean@1 — Coffee cart / lean canvas" loading="lazy"></a><figcaption><code>canvas.lean@1</code><br>Coffee cart / lean canvas<br><small>examples/basics/31-canvas-pack-a.ddn · view <code>lean</code></small></figcaption></figure>
+<figure id="profile-canvas-pest-1"><a href="profiles/canvas-pest-1.svg"><img src="profiles/canvas-pest-1.svg" alt="canvas.pest@1 — Fizzberry in Aurelia / PEST scan" loading="lazy"></a><figcaption><code>canvas.pest@1</code><br>Fizzberry in Aurelia / PEST scan<br><small>examples/basics/32-canvas-pack-b.ddn · view <code>pest</code></small></figcaption></figure>
+<figure id="profile-canvas-pestle-1"><a href="profiles/canvas-pestle-1.svg"><img src="profiles/canvas-pestle-1.svg" alt="canvas.pestle@1 — Fizzberry in Aurelia / PESTLE scan" loading="lazy"></a><figcaption><code>canvas.pestle@1</code><br>Fizzberry in Aurelia / PESTLE scan<br><small>examples/basics/32-canvas-pack-b.ddn · view <code>pestle</code></small></figcaption></figure>
+<figure id="profile-canvas-porter5-1"><a href="profiles/canvas-porter5-1.svg"><img src="profiles/canvas-porter5-1.svg" alt="canvas.porter5@1 — Fizzberry in Aurelia / five forces" loading="lazy"></a><figcaption><code>canvas.porter5@1</code><br>Fizzberry in Aurelia / five forces<br><small>examples/basics/32-canvas-pack-b.ddn · view <code>porter5</code></small></figcaption></figure>
+<figure id="profile-canvas-scorecard-1"><a href="profiles/canvas-scorecard-1.svg"><img src="profiles/canvas-scorecard-1.svg" alt="canvas.scorecard@1 — Department / balanced scorecard" loading="lazy"></a><figcaption><code>canvas.scorecard@1</code><br>Department / balanced scorecard<br><small>examples/basics/34-empathy-scorecard.ddn · view <code>scorecard</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-chart">
+<h3>chart</h3>
+<div class="grid">
+<figure id="profile-chart-basic-1"><a href="profiles/chart-basic-1.svg"><img src="profiles/chart-basic-1.svg" alt="chart.basic@1 — Latency / chart" loading="lazy"></a><figcaption><code>chart.basic@1</code><br>Latency / chart<br><small>examples/basics/59-data-refresh.ddn · view <code>latency_chart</code></small></figcaption></figure>
+<figure id="profile-chart-candlestick-1"><a href="profiles/chart-candlestick-1.svg"><img src="profiles/chart-candlestick-1.svg" alt="chart.candlestick@1 — Synthetic trading sessions / candlestick" loading="lazy"></a><figcaption><code>chart.candlestick@1</code><br>Synthetic trading sessions / candlestick<br><small>examples/basics/22-candlestick-chart.ddn · view <code>candlestick</code></small></figcaption></figure>
+<figure id="profile-chart-funnel-1"><a href="profiles/chart-funnel-1.svg"><img src="profiles/chart-funnel-1.svg" alt="chart.funnel@1 — Synthetic sales pipeline / funnel" loading="lazy"></a><figcaption><code>chart.funnel@1</code><br>Synthetic sales pipeline / funnel<br><small>examples/basics/20-funnel-chart.ddn · view <code>funnel</code></small></figcaption></figure>
+<figure id="profile-chart-gauge-1"><a href="profiles/chart-gauge-1.svg"><img src="profiles/chart-gauge-1.svg" alt="chart.gauge@1 — Synthetic SLA attainment / gauge" loading="lazy"></a><figcaption><code>chart.gauge@1</code><br>Synthetic SLA attainment / gauge<br><small>examples/basics/21-gauge-chart.ddn · view <code>gauge</code></small></figcaption></figure>
+<figure id="profile-chart-quality-1"><a href="profiles/chart-quality-1.svg"><img src="profiles/chart-quality-1.svg" alt="chart.quality@1 — 06 / Defects — grouped bars" loading="lazy"></a><figcaption><code>chart.quality@1</code><br>06 / Defects — grouped bars<br><small>examples/quality/views.ddn · view <code>grouped_bars</code></small></figcaption></figure>
+<figure id="profile-chart-radar-1"><a href="profiles/chart-radar-1.svg"><img src="profiles/chart-radar-1.svg" alt="chart.radar@1 — Product comparison / radar" loading="lazy"></a><figcaption><code>chart.radar@1</code><br>Product comparison / radar<br><small>examples/basics/19-radar-chart.ddn · view <code>radar</code></small></figcaption></figure>
+<figure id="profile-chart-sankey-1"><a href="profiles/chart-sankey-1.svg"><img src="profiles/chart-sankey-1.svg" alt="chart.sankey@1 — Synthetic energy spend across three stages / sankey" loading="lazy"></a><figcaption><code>chart.sankey@1</code><br>Synthetic energy spend across three stages / sankey<br><small>examples/basics/24-sankey.ddn · view <code>sankey</code></small></figcaption></figure>
+<figure id="profile-chart-treemap-1"><a href="profiles/chart-treemap-1.svg"><img src="profiles/chart-treemap-1.svg" alt="chart.treemap@1 — Synthetic storage by domain and table / treemap" loading="lazy"></a><figcaption><code>chart.treemap@1</code><br>Synthetic storage by domain and table / treemap<br><small>examples/basics/23-treemap.ddn · view <code>treemap</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-chen">
+<h3>chen</h3>
+<div class="grid">
+<figure id="profile-chen-basic-1"><a href="profiles/chen-basic-1.svg"><img src="profiles/chen-basic-1.svg" alt="chen.basic@1 — 11 / Chen binary projection" loading="lazy"></a><figcaption><code>chen.basic@1</code><br>11 / Chen binary projection<br><small>examples/projections/views.ddn · view <code>chen</code></small></figcaption></figure>
+<figure id="profile-chen-binary-2"><a href="profiles/chen-binary-2.svg"><img src="profiles/chen-binary-2.svg" alt="chen.binary@2 — 18 / Binary Chen details" loading="lazy"></a><figcaption><code>chen.binary@2</code><br>18 / Binary Chen details<br><small>examples/quality/views.ddn · view <code>chen_extended</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-cmmn">
+<h3>cmmn</h3>
+<div class="grid">
+<figure id="profile-cmmn-basic-1"><a href="profiles/cmmn-basic-1.svg"><img src="profiles/cmmn-basic-1.svg" alt="cmmn.basic@1 — Claim handling" loading="lazy"></a><figcaption><code>cmmn.basic@1</code><br>Claim handling<br><small>examples/basics/49-cmmn.ddn · view <code>case</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-concept">
+<h3>concept</h3>
+<div class="grid">
+<figure id="profile-concept-map-1"><a href="profiles/concept-map-1.svg"><img src="profiles/concept-map-1.svg" alt="concept.map@1 — Synthetic order-to-cash concepts / concept map" loading="lazy"></a><figcaption><code>concept.map@1</code><br>Synthetic order-to-cash concepts / concept map<br><small>examples/basics/29-concept-map.ddn · view <code>concepts</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-ddn">
+<h3>ddn</h3>
+<div class="grid">
+<figure id="profile-ddn-1"><a href="profiles/ddn-1.svg"><img src="profiles/ddn-1.svg" alt="ddn@1 — Customer data / a shared model" loading="lazy"></a><figcaption><code>ddn@1</code><br>Customer data / a shared model<br><small>examples/basics/01-customer.ddn · view <code>overview</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-decision">
+<h3>decision</h3>
+<div class="grid">
+<figure id="profile-decision-rules-1"><a href="profiles/decision-rules-1.svg"><img src="profiles/decision-rules-1.svg" alt="decision.rules@1 — 14 / Disposition policy — unique" loading="lazy"></a><figcaption><code>decision.rules@1</code><br>14 / Disposition policy — unique<br><small>examples/quality/views.ddn · view <code>decision_unique</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-dfd">
+<h3>dfd</h3>
+<div class="grid">
+<figure id="profile-dfd-gane-sarson-1"><a href="profiles/dfd-gane-sarson-1.svg"><img src="profiles/dfd-gane-sarson-1.svg" alt="dfd.gane_sarson@1 — 05 / Numbered Gane–Sarson-style DFD" loading="lazy"></a><figcaption><code>dfd.gane_sarson@1</code><br>05 / Numbered Gane–Sarson-style DFD<br><small>examples/projections/views.ddn · view <code>dfd_gane</code></small></figcaption></figure>
+<figure id="profile-dfd-yourdon-1"><a href="profiles/dfd-yourdon-1.svg"><img src="profiles/dfd-yourdon-1.svg" alt="dfd.yourdon@1 — 06 / Yourdon-style DFD" loading="lazy"></a><figcaption><code>dfd.yourdon@1</code><br>06 / Yourdon-style DFD<br><small>examples/projections/views.ddn · view <code>dfd_yourdon</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-epc">
+<h3>epc</h3>
+<div class="grid">
+<figure id="profile-epc-basic-1"><a href="profiles/epc-basic-1.svg"><img src="profiles/epc-basic-1.svg" alt="epc.basic@1 — Synthetic order-to-cash / EPC" loading="lazy"></a><figcaption><code>epc.basic@1</code><br>Synthetic order-to-cash / EPC<br><small>examples/basics/30-epc.ddn · view <code>epc</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-erd">
+<h3>erd</h3>
+<div class="grid">
+<figure id="profile-erd-crowfoot-1"><a href="profiles/erd-crowfoot-1.svg"><img src="profiles/erd-crowfoot-1.svg" alt="erd.crowfoot@1 — Synthetic sales / crow's-foot ERD" loading="lazy"></a><figcaption><code>erd.crowfoot@1</code><br>Synthetic sales / crow's-foot ERD<br><small>examples/basics/37-crows-foot-erd.ddn · view <code>erd</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-event">
+<h3>event</h3>
+<div class="grid">
+<figure id="profile-event-tree-1"><a href="profiles/event-tree-1.svg"><img src="profiles/event-tree-1.svg" alt="event.tree@1 — Alarm event tree" loading="lazy"></a><figcaption><code>event.tree@1</code><br>Alarm event tree<br><small>examples/basics/53-fault-event-tree.ddn · view <code>event</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-family">
+<h3>family</h3>
+<div class="grid">
+<figure id="profile-family-tree-1"><a href="profiles/family-tree-1.svg"><img src="profiles/family-tree-1.svg" alt="family.tree@1 — Three generations" loading="lazy"></a><figcaption><code>family.tree@1</code><br>Three generations<br><small>examples/basics/56-family-tree.ddn · view <code>family</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-fault">
+<h3>fault</h3>
+<div class="grid">
+<figure id="profile-fault-tree-1"><a href="profiles/fault-tree-1.svg"><img src="profiles/fault-tree-1.svg" alt="fault.tree@1 — Service outage fault tree" loading="lazy"></a><figcaption><code>fault.tree@1</code><br>Service outage fault tree<br><small>examples/basics/53-fault-event-tree.ddn · view <code>fault</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-fishbone">
+<h3>fishbone</h3>
+<div class="grid">
+<figure id="profile-fishbone-basic-1"><a href="profiles/fishbone-basic-1.svg"><img src="profiles/fishbone-basic-1.svg" alt="fishbone.basic@1 — 01 / Possible causes" loading="lazy"></a><figcaption><code>fishbone.basic@1</code><br>01 / Possible causes<br><small>examples/quality/views.ddn · view <code>fishbone</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-flow">
+<h3>flow</h3>
+<div class="grid">
+<figure id="profile-flow-basic-1"><a href="profiles/flow-basic-1.svg"><img src="profiles/flow-basic-1.svg" alt="flow.basic@1 — 01 / Purchasing control flow" loading="lazy"></a><figcaption><code>flow.basic@1</code><br>01 / Purchasing control flow<br><small>examples/projections/views.ddn · view <code>flowchart</code></small></figcaption></figure>
+<figure id="profile-flow-documented-2"><a href="profiles/flow-documented-2.svg"><img src="profiles/flow-documented-2.svg" alt="flow.documented@2 — 21 / Documented cross-sheet control flow" loading="lazy"></a><figcaption><code>flow.documented@2</code><br>21 / Documented cross-sheet control flow<br><small>examples/quality/views.ddn · view <code>flow_documented</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-matrix">
+<h3>matrix</h3>
+<div class="grid">
+<figure id="profile-matrix-ansoff-1"><a href="profiles/matrix-ansoff-1.svg"><img src="profiles/matrix-ansoff-1.svg" alt="matrix.ansoff@1 — Synthetic portfolio / Ansoff" loading="lazy"></a><figcaption><code>matrix.ansoff@1</code><br>Synthetic portfolio / Ansoff<br><small>examples/basics/33-matrix-pack.ddn · view <code>ansoff</code></small></figcaption></figure>
+<figure id="profile-matrix-bcg-1"><a href="profiles/matrix-bcg-1.svg"><img src="profiles/matrix-bcg-1.svg" alt="matrix.bcg@1 — Synthetic portfolio / BCG" loading="lazy"></a><figcaption><code>matrix.bcg@1</code><br>Synthetic portfolio / BCG<br><small>examples/basics/33-matrix-pack.ddn · view <code>bcg</code></small></figcaption></figure>
+<figure id="profile-matrix-crud-1"><a href="profiles/matrix-crud-1.svg"><img src="profiles/matrix-crud-1.svg" alt="matrix.crud@1 — 04 / Model-derived CRUD" loading="lazy"></a><figcaption><code>matrix.crud@1</code><br>04 / Model-derived CRUD<br><small>examples/projections/views.ddn · view <code>crud</code></small></figcaption></figure>
+<figure id="profile-matrix-heatmap-1"><a href="profiles/matrix-heatmap-1.svg"><img src="profiles/matrix-heatmap-1.svg" alt="matrix.heatmap@1 — 02 / Review score — numeric" loading="lazy"></a><figcaption><code>matrix.heatmap@1</code><br>02 / Review score — numeric<br><small>examples/quality/views.ddn · view <code>heat_numeric</code></small></figcaption></figure>
+<figure id="profile-matrix-raci-1"><a href="profiles/matrix-raci-1.svg"><img src="profiles/matrix-raci-1.svg" alt="matrix.raci@1 — 03 / Model-derived RACI" loading="lazy"></a><figcaption><code>matrix.raci@1</code><br>03 / Model-derived RACI<br><small>examples/projections/views.ddn · view <code>raci</code></small></figcaption></figure>
+<figure id="profile-matrix-relations-1"><a href="profiles/matrix-relations-1.svg"><img src="profiles/matrix-relations-1.svg" alt="matrix.relations@1 — 26 / General relationship matrix" loading="lazy"></a><figcaption><code>matrix.relations@1</code><br>26 / General relationship matrix<br><small>examples/projections/views.ddn · view <code>matrix_general</code></small></figcaption></figure>
+<figure id="profile-matrix-storymap-1"><a href="profiles/matrix-storymap-1.svg"><img src="profiles/matrix-storymap-1.svg" alt="matrix.storymap@1 — Shop rebuild / story map" loading="lazy"></a><figcaption><code>matrix.storymap@1</code><br>Shop rebuild / story map<br><small>examples/basics/36-story-map.ddn · view <code>storymap</code></small></figcaption></figure>
+<figure id="profile-matrix-tows-1"><a href="profiles/matrix-tows-1.svg"><img src="profiles/matrix-tows-1.svg" alt="matrix.tows@1 — Synthetic portfolio / TOWS" loading="lazy"></a><figcaption><code>matrix.tows@1</code><br>Synthetic portfolio / TOWS<br><small>examples/basics/33-matrix-pack.ddn · view <code>tows</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-mindmap">
+<h3>mindmap</h3>
+<div class="grid">
+<figure id="profile-mindmap-basic-1"><a href="profiles/mindmap-basic-1.svg"><img src="profiles/mindmap-basic-1.svg" alt="mindmap.basic@1 — Synthetic brainstorm / mind map" loading="lazy"></a><figcaption><code>mindmap.basic@1</code><br>Synthetic brainstorm / mind map<br><small>examples/basics/28-mind-map.ddn · view <code>mindmap</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-network">
+<h3>network</h3>
+<div class="grid">
+<figure id="profile-network-basic-1"><a href="profiles/network-basic-1.svg"><img src="profiles/network-basic-1.svg" alt="network.basic@1 — Office LAN" loading="lazy"></a><figcaption><code>network.basic@1</code><br>Office LAN<br><small>examples/basics/54-network-diagram.ddn · view <code>lan</code></small></figcaption></figure>
+<figure id="profile-network-rack-1"><a href="profiles/network-rack-1.svg"><img src="profiles/network-rack-1.svg" alt="network.rack@1 — Rack A elevation" loading="lazy"></a><figcaption><code>network.rack@1</code><br>Rack A elevation<br><small>examples/basics/54-network-diagram.ddn · view <code>rack</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-org">
+<h3>org</h3>
+<div class="grid">
+<figure id="profile-org-tree-1"><a href="profiles/org-tree-1.svg"><img src="profiles/org-tree-1.svg" alt="org.tree@1 — Synthetic organisation / org chart" loading="lazy"></a><figcaption><code>org.tree@1</code><br>Synthetic organisation / org chart<br><small>examples/basics/26-org-chart.ddn · view <code>org</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-panels">
+<h3>panels</h3>
+<div class="grid">
+<figure id="profile-panels-basic-1"><a href="profiles/panels-basic-1.svg"><img src="profiles/panels-basic-1.svg" alt="panels.basic@1 — 23 / Reusable SWOT panel template" loading="lazy"></a><figcaption><code>panels.basic@1</code><br>23 / Reusable SWOT panel template<br><small>examples/projections/views.ddn · view <code>swot</code></small></figcaption></figure>
+<figure id="profile-panels-composed-1"><a href="profiles/panels-composed-1.svg"><img src="profiles/panels-composed-1.svg" alt="panels.composed@1 — 17 / Dashboard Quality" loading="lazy"></a><figcaption><code>panels.composed@1</code><br>17 / Dashboard Quality<br><small>examples/quality/views.ddn · view <code>dashboard_quality</code></small></figcaption></figure>
+<figure id="profile-panels-journey-1"><a href="profiles/panels-journey-1.svg"><img src="profiles/panels-journey-1.svg" alt="panels.journey@1 — Returns journey / synthetic" loading="lazy"></a><figcaption><code>panels.journey@1</code><br>Returns journey / synthetic<br><small>examples/basics/35-journey-map.ddn · view <code>returns</code></small></figcaption></figure>
+<figure id="profile-panels-pyramid-1"><a href="profiles/panels-pyramid-1.svg"><img src="profiles/panels-pyramid-1.svg" alt="panels.pyramid@1 — Support tiers / pyramid" loading="lazy"></a><figcaption><code>panels.pyramid@1</code><br>Support tiers / pyramid<br><small>examples/basics/39-pyramid.ddn · view <code>tiers</code></small></figcaption></figure>
+<figure id="profile-panels-venn-1"><a href="profiles/panels-venn-1.svg"><img src="profiles/panels-venn-1.svg" alt="panels.venn@1 — Feature overlap / venn" loading="lazy"></a><figcaption><code>panels.venn@1</code><br>Feature overlap / venn<br><small>examples/basics/40-venn.ddn · view <code>overlap</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-pert">
+<h3>pert</h3>
+<div class="grid">
+<figure id="profile-pert-cpm-1"><a href="profiles/pert-cpm-1.svg"><img src="profiles/pert-cpm-1.svg" alt="pert.cpm@1 — Release plan" loading="lazy"></a><figcaption><code>pert.cpm@1</code><br>Release plan<br><small>examples/basics/52-pert-cpm.ddn · view <code>plan</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-requirements">
+<h3>requirements</h3>
+<div class="grid">
+<figure id="profile-requirements-basic-1"><a href="profiles/requirements-basic-1.svg"><img src="profiles/requirements-basic-1.svg" alt="requirements.basic@1 — 09 / Requirement traceability" loading="lazy"></a><figcaption><code>requirements.basic@1</code><br>09 / Requirement traceability<br><small>examples/projections/views.ddn · view <code>requirements</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-state">
+<h3>state</h3>
+<div class="grid">
+<figure id="profile-state-composite-1"><a href="profiles/state-composite-1.svg"><img src="profiles/state-composite-1.svg" alt="state.composite@1 — Order lifecycle / composite states" loading="lazy"></a><figcaption><code>state.composite@1</code><br>Order lifecycle / composite states<br><small>examples/basics/44-hierarchical-state.ddn · view <code>lifecycle</code></small></figcaption></figure>
+<figure id="profile-state-flat-1"><a href="profiles/state-flat-1.svg"><img src="profiles/state-flat-1.svg" alt="state.flat@1 — 12 / Corrective-action lifecycle" loading="lazy"></a><figcaption><code>state.flat@1</code><br>12 / Corrective-action lifecycle<br><small>examples/quality/views.ddn · view <code>lifecycle</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-sysml">
+<h3>sysml</h3>
+<div class="grid">
+<figure id="profile-sysml-bdd-1"><a href="profiles/sysml-bdd-1.svg"><img src="profiles/sysml-bdd-1.svg" alt="sysml.bdd@1 — Pump station block definition" loading="lazy"></a><figcaption><code>sysml.bdd@1</code><br>Pump station block definition<br><small>examples/basics/50-sysml.ddn · view <code>bdd</code></small></figcaption></figure>
+<figure id="profile-sysml-ibd-1"><a href="profiles/sysml-ibd-1.svg"><img src="profiles/sysml-ibd-1.svg" alt="sysml.ibd@1 — Pump station internal block" loading="lazy"></a><figcaption><code>sysml.ibd@1</code><br>Pump station internal block<br><small>examples/basics/50-sysml.ddn · view <code>ibd</code></small></figcaption></figure>
+<figure id="profile-sysml-parametric-1"><a href="profiles/sysml-parametric-1.svg"><img src="profiles/sysml-parametric-1.svg" alt="sysml.parametric@1 — Pump station flow balance" loading="lazy"></a><figcaption><code>sysml.parametric@1</code><br>Pump station flow balance<br><small>examples/basics/50-sysml.ddn · view <code>parametric</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-table">
+<h3>table</h3>
+<div class="grid">
+<figure id="profile-table-records-1"><a href="profiles/table-records-1.svg"><img src="profiles/table-records-1.svg" alt="table.records@1 — 19 / Shared observation table" loading="lazy"></a><figcaption><code>table.records@1</code><br>19 / Shared observation table<br><small>examples/projections/views.ddn · view <code>record_table</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-timeline">
+<h3>timeline</h3>
+<div class="grid">
+<figure id="profile-timeline-basic-1"><a href="profiles/timeline-basic-1.svg"><img src="profiles/timeline-basic-1.svg" alt="timeline.basic@1 — 21 / Supplied-date procurement schedule" loading="lazy"></a><figcaption><code>timeline.basic@1</code><br>21 / Supplied-date procurement schedule<br><small>examples/projections/views.ddn · view <code>gantt</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-uml">
+<h3>uml</h3>
+<div class="grid">
+<figure id="profile-uml-activity-1"><a href="profiles/uml-activity-1.svg"><img src="profiles/uml-activity-1.svg" alt="uml.activity@1 — Order fulfilment activity" loading="lazy"></a><figcaption><code>uml.activity@1</code><br>Order fulfilment activity<br><small>examples/basics/45-activity-diagram.ddn · view <code>fulfilment</code></small></figcaption></figure>
+<figure id="profile-uml-communication-1"><a href="profiles/uml-communication-1.svg"><img src="profiles/uml-communication-1.svg" alt="uml.communication@1 — Synthetic order flow / communication" loading="lazy"></a><figcaption><code>uml.communication@1</code><br>Synthetic order flow / communication<br><small>examples/basics/42-communication-diagram.ddn · view <code>communication</code></small></figcaption></figure>
+<figure id="profile-uml-interaction-overview-1"><a href="profiles/uml-interaction-overview-1.svg"><img src="profiles/uml-interaction-overview-1.svg" alt="uml.interaction_overview@1 — Checkout interaction overview" loading="lazy"></a><figcaption><code>uml.interaction_overview@1</code><br>Checkout interaction overview<br><small>examples/basics/48-interaction-overview.ddn · view <code>overview</code></small></figcaption></figure>
+<figure id="profile-uml-object-1"><a href="profiles/uml-object-1.svg"><img src="profiles/uml-object-1.svg" alt="uml.object@1 — Synthetic snapshot / objects" loading="lazy"></a><figcaption><code>uml.object@1</code><br>Synthetic snapshot / objects<br><small>examples/basics/43-object-diagram.ddn · view <code>objects</code></small></figcaption></figure>
+<figure id="profile-uml-sequence-1"><a href="profiles/uml-sequence-1.svg"><img src="profiles/uml-sequence-1.svg" alt="uml.sequence@1 — Synthetic order flow / sequence" loading="lazy"></a><figcaption><code>uml.sequence@1</code><br>Synthetic order flow / sequence<br><small>examples/basics/41-sequence-diagram.ddn · view <code>sequence</code></small></figcaption></figure>
+<figure id="profile-uml-structure-1"><a href="profiles/uml-structure-1.svg"><img src="profiles/uml-structure-1.svg" alt="uml.structure@1 — 07 / Declared class / interface subset" loading="lazy"></a><figcaption><code>uml.structure@1</code><br>07 / Declared class / interface subset<br><small>examples/projections/views.ddn · view <code>structure</code></small></figcaption></figure>
+<figure id="profile-uml-timing-1"><a href="profiles/uml-timing-1.svg"><img src="profiles/uml-timing-1.svg" alt="uml.timing@1 — Synthetic traffic lights / timing (seconds)" loading="lazy"></a><figcaption><code>uml.timing@1</code><br>Synthetic traffic lights / timing (seconds)<br><small>examples/basics/47-timing-diagram.ddn · view <code>timing</code></small></figcaption></figure>
+<figure id="profile-uml-usecase-1"><a href="profiles/uml-usecase-1.svg"><img src="profiles/uml-usecase-1.svg" alt="uml.usecase@1 — 08 / Actor and use-case subset" loading="lazy"></a><figcaption><code>uml.usecase@1</code><br>08 / Actor and use-case subset<br><small>examples/projections/views.ddn · view <code>usecases</code></small></figcaption></figure>
+<figure id="profile-uml-usecase-2"><a href="profiles/uml-usecase-2.svg"><img src="profiles/uml-usecase-2.svg" alt="uml.usecase@2 — 20 / Use-case subjects and extension points" loading="lazy"></a><figcaption><code>uml.usecase@2</code><br>20 / Use-case subjects and extension points<br><small>examples/quality/views.ddn · view <code>usecases_extended</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-wbs">
+<h3>wbs</h3>
+<div class="grid">
+<figure id="profile-wbs-tree-1"><a href="profiles/wbs-tree-1.svg"><img src="profiles/wbs-tree-1.svg" alt="wbs.tree@1 — Synthetic project / work breakdown structure" loading="lazy"></a><figcaption><code>wbs.tree@1</code><br>Synthetic project / work breakdown structure<br><small>examples/basics/27-wbs.ddn · view <code>wbs</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-wireframe">
+<h3>wireframe</h3>
+<div class="grid">
+<figure id="profile-wireframe-ui-1"><a href="profiles/wireframe-ui-1.svg"><img src="profiles/wireframe-ui-1.svg" alt="wireframe.ui@1 — Settings screen" loading="lazy"></a><figcaption><code>wireframe.ui@1</code><br>Settings screen<br><small>examples/basics/55-wireframe.ddn · view <code>settings</code></small></figcaption></figure>
+</div>
+</section>
+<h2 id="sheets">Variation sheets</h2>
+<section class="sheet" id="sheet-marks">
+<h3>Chart marks</h3>
+<p>Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1) and radar, funnel, gauge, candlestick, treemap, sankey (their own profiles).</p>
+<div class="grid">
+<figure><a href="marks/bar.svg"><img src="marks/bar.svg" alt="Chart marks / bar" loading="lazy"></a><figcaption>Chart marks / bar</figcaption></figure>
+<figure><a href="marks/line.svg"><img src="marks/line.svg" alt="Chart marks / line" loading="lazy"></a><figcaption>Chart marks / line</figcaption></figure>
+<figure><a href="marks/area.svg"><img src="marks/area.svg" alt="Chart marks / area" loading="lazy"></a><figcaption>Chart marks / area</figcaption></figure>
+<figure><a href="marks/point.svg"><img src="marks/point.svg" alt="Chart marks / point" loading="lazy"></a><figcaption>Chart marks / point</figcaption></figure>
+<figure><a href="marks/pie.svg"><img src="marks/pie.svg" alt="Chart marks / pie" loading="lazy"></a><figcaption>Chart marks / pie</figcaption></figure>
+<figure><a href="marks/donut.svg"><img src="marks/donut.svg" alt="Chart marks / donut" loading="lazy"></a><figcaption>Chart marks / donut</figcaption></figure>
+<figure><a href="marks/radar.svg"><img src="marks/radar.svg" alt="Chart marks / radar" loading="lazy"></a><figcaption>Chart marks / radar</figcaption></figure>
+<figure><a href="marks/funnel.svg"><img src="marks/funnel.svg" alt="Chart marks / funnel" loading="lazy"></a><figcaption>Chart marks / funnel</figcaption></figure>
+<figure><a href="marks/gauge.svg"><img src="marks/gauge.svg" alt="Chart marks / gauge" loading="lazy"></a><figcaption>Chart marks / gauge</figcaption></figure>
+<figure><a href="marks/candlestick.svg"><img src="marks/candlestick.svg" alt="Chart marks / candlestick" loading="lazy"></a><figcaption>Chart marks / candlestick</figcaption></figure>
+<figure><a href="marks/treemap.svg"><img src="marks/treemap.svg" alt="Chart marks / treemap" loading="lazy"></a><figcaption>Chart marks / treemap</figcaption></figure>
+<figure><a href="marks/sankey.svg"><img src="marks/sankey.svg" alt="Chart marks / sankey" loading="lazy"></a><figcaption>Chart marks / sankey</figcaption></figure>
+</div>
+</section>
+<section class="sheet" id="sheet-looks">
+<h3>Looks × palettes</h3>
+<p>Every look (classic, handDrawn, neo) crossed with every palette theme (default, neutral, dark, night, forest, base).</p>
+<div class="grid">
+<figure><a href="looks/classic_default.svg"><img src="looks/classic_default.svg" alt="Looks / classic × default" loading="lazy"></a><figcaption>Looks / classic × default</figcaption></figure>
+<figure><a href="looks/classic_neutral.svg"><img src="looks/classic_neutral.svg" alt="Looks / classic × neutral" loading="lazy"></a><figcaption>Looks / classic × neutral</figcaption></figure>
+<figure><a href="looks/classic_dark.svg"><img src="looks/classic_dark.svg" alt="Looks / classic × dark" loading="lazy"></a><figcaption>Looks / classic × dark</figcaption></figure>
+<figure><a href="looks/classic_night.svg"><img src="looks/classic_night.svg" alt="Looks / classic × night" loading="lazy"></a><figcaption>Looks / classic × night</figcaption></figure>
+<figure><a href="looks/classic_forest.svg"><img src="looks/classic_forest.svg" alt="Looks / classic × forest" loading="lazy"></a><figcaption>Looks / classic × forest</figcaption></figure>
+<figure><a href="looks/classic_base.svg"><img src="looks/classic_base.svg" alt="Looks / classic × base" loading="lazy"></a><figcaption>Looks / classic × base</figcaption></figure>
+<figure><a href="looks/handdrawn_default.svg"><img src="looks/handdrawn_default.svg" alt="Looks / handDrawn × default" loading="lazy"></a><figcaption>Looks / handDrawn × default</figcaption></figure>
+<figure><a href="looks/handdrawn_neutral.svg"><img src="looks/handdrawn_neutral.svg" alt="Looks / handDrawn × neutral" loading="lazy"></a><figcaption>Looks / handDrawn × neutral</figcaption></figure>
+<figure><a href="looks/handdrawn_dark.svg"><img src="looks/handdrawn_dark.svg" alt="Looks / handDrawn × dark" loading="lazy"></a><figcaption>Looks / handDrawn × dark</figcaption></figure>
+<figure><a href="looks/handdrawn_night.svg"><img src="looks/handdrawn_night.svg" alt="Looks / handDrawn × night" loading="lazy"></a><figcaption>Looks / handDrawn × night</figcaption></figure>
+<figure><a href="looks/handdrawn_forest.svg"><img src="looks/handdrawn_forest.svg" alt="Looks / handDrawn × forest" loading="lazy"></a><figcaption>Looks / handDrawn × forest</figcaption></figure>
+<figure><a href="looks/handdrawn_base.svg"><img src="looks/handdrawn_base.svg" alt="Looks / handDrawn × base" loading="lazy"></a><figcaption>Looks / handDrawn × base</figcaption></figure>
+<figure><a href="looks/neo_default.svg"><img src="looks/neo_default.svg" alt="Looks / neo × default" loading="lazy"></a><figcaption>Looks / neo × default</figcaption></figure>
+<figure><a href="looks/neo_neutral.svg"><img src="looks/neo_neutral.svg" alt="Looks / neo × neutral" loading="lazy"></a><figcaption>Looks / neo × neutral</figcaption></figure>
+<figure><a href="looks/neo_dark.svg"><img src="looks/neo_dark.svg" alt="Looks / neo × dark" loading="lazy"></a><figcaption>Looks / neo × dark</figcaption></figure>
+<figure><a href="looks/neo_night.svg"><img src="looks/neo_night.svg" alt="Looks / neo × night" loading="lazy"></a><figcaption>Looks / neo × night</figcaption></figure>
+<figure><a href="looks/neo_forest.svg"><img src="looks/neo_forest.svg" alt="Looks / neo × forest" loading="lazy"></a><figcaption>Looks / neo × forest</figcaption></figure>
+<figure><a href="looks/neo_base.svg"><img src="looks/neo_base.svg" alt="Looks / neo × base" loading="lazy"></a><figcaption>Looks / neo × base</figcaption></figure>
+</div>
+</section>
+<section class="sheet" id="sheet-routing">
+<h3>Routing × look</h3>
+<p>Every routing mode (orthogonal, straight, curved bezier, curved rounded) crossed with every look.</p>
+<div class="grid">
+<figure><a href="routing/orthogonal_classic.svg"><img src="routing/orthogonal_classic.svg" alt="Routing / orthogonal × classic" loading="lazy"></a><figcaption>Routing / orthogonal × classic</figcaption></figure>
+<figure><a href="routing/straight_classic.svg"><img src="routing/straight_classic.svg" alt="Routing / straight × classic" loading="lazy"></a><figcaption>Routing / straight × classic</figcaption></figure>
+<figure><a href="routing/curved_classic.svg"><img src="routing/curved_classic.svg" alt="Routing / curved bezier × classic" loading="lazy"></a><figcaption>Routing / curved bezier × classic</figcaption></figure>
+<figure><a href="routing/rounded_classic.svg"><img src="routing/rounded_classic.svg" alt="Routing / rounded × classic" loading="lazy"></a><figcaption>Routing / rounded × classic</figcaption></figure>
+<figure><a href="routing/orthogonal_handdrawn.svg"><img src="routing/orthogonal_handdrawn.svg" alt="Routing / orthogonal × handDrawn" loading="lazy"></a><figcaption>Routing / orthogonal × handDrawn</figcaption></figure>
+<figure><a href="routing/straight_handdrawn.svg"><img src="routing/straight_handdrawn.svg" alt="Routing / straight × handDrawn" loading="lazy"></a><figcaption>Routing / straight × handDrawn</figcaption></figure>
+<figure><a href="routing/curved_handdrawn.svg"><img src="routing/curved_handdrawn.svg" alt="Routing / curved bezier × handDrawn" loading="lazy"></a><figcaption>Routing / curved bezier × handDrawn</figcaption></figure>
+<figure><a href="routing/rounded_handdrawn.svg"><img src="routing/rounded_handdrawn.svg" alt="Routing / rounded × handDrawn" loading="lazy"></a><figcaption>Routing / rounded × handDrawn</figcaption></figure>
+<figure><a href="routing/orthogonal_neo.svg"><img src="routing/orthogonal_neo.svg" alt="Routing / orthogonal × neo" loading="lazy"></a><figcaption>Routing / orthogonal × neo</figcaption></figure>
+<figure><a href="routing/straight_neo.svg"><img src="routing/straight_neo.svg" alt="Routing / straight × neo" loading="lazy"></a><figcaption>Routing / straight × neo</figcaption></figure>
+<figure><a href="routing/curved_neo.svg"><img src="routing/curved_neo.svg" alt="Routing / curved bezier × neo" loading="lazy"></a><figcaption>Routing / curved bezier × neo</figcaption></figure>
+<figure><a href="routing/rounded_neo.svg"><img src="routing/rounded_neo.svg" alt="Routing / rounded × neo" loading="lazy"></a><figcaption>Routing / rounded × neo</figcaption></figure>
+</div>
+</section>
+<section class="sheet" id="sheet-layouts">
+<h3>Layout algorithms</h3>
+<p>Every placement algorithm: native grid, manual (pinned), layered, tree, mindmap, grouped, and the pattern-based fit_grid, circular, radial, spanning_tree, organic.</p>
+<div class="grid">
+<figure><a href="layouts/grid.svg"><img src="layouts/grid.svg" alt="Layouts / grid" loading="lazy"></a><figcaption>Layouts / grid</figcaption></figure>
+<figure><a href="layouts/manual.svg"><img src="layouts/manual.svg" alt="Layouts / manual (pinned)" loading="lazy"></a><figcaption>Layouts / manual (pinned)</figcaption></figure>
+<figure><a href="layouts/layered.svg"><img src="layouts/layered.svg" alt="Layouts / layered" loading="lazy"></a><figcaption>Layouts / layered</figcaption></figure>
+<figure><a href="layouts/tree.svg"><img src="layouts/tree.svg" alt="Layouts / tree" loading="lazy"></a><figcaption>Layouts / tree</figcaption></figure>
+<figure><a href="layouts/mindmap.svg"><img src="layouts/mindmap.svg" alt="Layouts / mindmap" loading="lazy"></a><figcaption>Layouts / mindmap</figcaption></figure>
+<figure><a href="layouts/grouped.svg"><img src="layouts/grouped.svg" alt="Layouts / grouped" loading="lazy"></a><figcaption>Layouts / grouped</figcaption></figure>
+<figure><a href="layouts/fit_grid.svg"><img src="layouts/fit_grid.svg" alt="Layouts / fit_grid" loading="lazy"></a><figcaption>Layouts / fit_grid</figcaption></figure>
+<figure><a href="layouts/circular.svg"><img src="layouts/circular.svg" alt="Layouts / circular" loading="lazy"></a><figcaption>Layouts / circular</figcaption></figure>
+<figure><a href="layouts/radial.svg"><img src="layouts/radial.svg" alt="Layouts / radial" loading="lazy"></a><figcaption>Layouts / radial</figcaption></figure>
+<figure><a href="layouts/spanning_tree.svg"><img src="layouts/spanning_tree.svg" alt="Layouts / spanning_tree" loading="lazy"></a><figcaption>Layouts / spanning_tree</figcaption></figure>
+<figure><a href="layouts/organic.svg"><img src="layouts/organic.svg" alt="Layouts / organic" loading="lazy"></a><figcaption>Layouts / organic</figcaption></figure>
+</div>
+</section>
+<section class="sheet" id="sheet-spacing">
+<h3>Spacing levels</h3>
+<p>The four spacing hints (tight, normal, loose, expanded) on one graph (B1-008).</p>
+<div class="grid">
+<figure><a href="spacing/tight.svg"><img src="spacing/tight.svg" alt="Spacing / tight" loading="lazy"></a><figcaption>Spacing / tight</figcaption></figure>
+<figure><a href="spacing/normal.svg"><img src="spacing/normal.svg" alt="Spacing / normal" loading="lazy"></a><figcaption>Spacing / normal</figcaption></figure>
+<figure><a href="spacing/loose.svg"><img src="spacing/loose.svg" alt="Spacing / loose" loading="lazy"></a><figcaption>Spacing / loose</figcaption></figure>
+<figure><a href="spacing/expanded.svg"><img src="spacing/expanded.svg" alt="Spacing / expanded" loading="lazy"></a><figcaption>Spacing / expanded</figcaption></figure>
+</div>
+</section>
+<h2 id="coverage">Coverage table</h2>
+<table>
+<thead><tr><th>Profile</th><th>Example</th><th>Source</th><th>SVG</th></tr></thead>
+<tbody>
+<tr><td><code>archimate.basic@1</code></td><td><a href="#profile-archimate-basic-1">Order platform landscape</a></td><td><code>examples/basics/51-archimate.ddn</code></td><td><a href="profiles/archimate-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>bpmn.basic@1</code></td><td><a href="#profile-bpmn-basic-1">Buyer / seller collaboration</a></td><td><code>examples/basics/46-bpmn.ddn</code></td><td><a href="profiles/bpmn-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>c4.component@1</code></td><td><a href="#profile-c4-component-1">Synthetic shop / C4 component</a></td><td><code>examples/basics/25-c4-views.ddn</code></td><td><a href="profiles/c4-component-1.svg">SVG</a></td></tr>
+<tr><td><code>c4.container@1</code></td><td><a href="#profile-c4-container-1">Synthetic shop / C4 container</a></td><td><code>examples/basics/25-c4-views.ddn</code></td><td><a href="profiles/c4-container-1.svg">SVG</a></td></tr>
+<tr><td><code>c4.context@1</code></td><td><a href="#profile-c4-context-1">Synthetic shop / C4 context</a></td><td><code>examples/basics/25-c4-views.ddn</code></td><td><a href="profiles/c4-context-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.bmc@1</code></td><td><a href="#profile-canvas-bmc-1">Coffee cart / business model canvas</a></td><td><code>examples/basics/31-canvas-pack-a.ddn</code></td><td><a href="profiles/canvas-bmc-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.empathy@1</code></td><td><a href="#profile-canvas-empathy-1">Support team / empathy map</a></td><td><code>examples/basics/34-empathy-scorecard.ddn</code></td><td><a href="profiles/canvas-empathy-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.lean@1</code></td><td><a href="#profile-canvas-lean-1">Coffee cart / lean canvas</a></td><td><code>examples/basics/31-canvas-pack-a.ddn</code></td><td><a href="profiles/canvas-lean-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.pest@1</code></td><td><a href="#profile-canvas-pest-1">Fizzberry in Aurelia / PEST scan</a></td><td><code>examples/basics/32-canvas-pack-b.ddn</code></td><td><a href="profiles/canvas-pest-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.pestle@1</code></td><td><a href="#profile-canvas-pestle-1">Fizzberry in Aurelia / PESTLE scan</a></td><td><code>examples/basics/32-canvas-pack-b.ddn</code></td><td><a href="profiles/canvas-pestle-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.porter5@1</code></td><td><a href="#profile-canvas-porter5-1">Fizzberry in Aurelia / five forces</a></td><td><code>examples/basics/32-canvas-pack-b.ddn</code></td><td><a href="profiles/canvas-porter5-1.svg">SVG</a></td></tr>
+<tr><td><code>canvas.scorecard@1</code></td><td><a href="#profile-canvas-scorecard-1">Department / balanced scorecard</a></td><td><code>examples/basics/34-empathy-scorecard.ddn</code></td><td><a href="profiles/canvas-scorecard-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.basic@1</code></td><td><a href="#profile-chart-basic-1">Latency / chart</a></td><td><code>examples/basics/59-data-refresh.ddn</code></td><td><a href="profiles/chart-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.candlestick@1</code></td><td><a href="#profile-chart-candlestick-1">Synthetic trading sessions / candlestick</a></td><td><code>examples/basics/22-candlestick-chart.ddn</code></td><td><a href="profiles/chart-candlestick-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.funnel@1</code></td><td><a href="#profile-chart-funnel-1">Synthetic sales pipeline / funnel</a></td><td><code>examples/basics/20-funnel-chart.ddn</code></td><td><a href="profiles/chart-funnel-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.gauge@1</code></td><td><a href="#profile-chart-gauge-1">Synthetic SLA attainment / gauge</a></td><td><code>examples/basics/21-gauge-chart.ddn</code></td><td><a href="profiles/chart-gauge-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.quality@1</code></td><td><a href="#profile-chart-quality-1">06 / Defects — grouped bars</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/chart-quality-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.radar@1</code></td><td><a href="#profile-chart-radar-1">Product comparison / radar</a></td><td><code>examples/basics/19-radar-chart.ddn</code></td><td><a href="profiles/chart-radar-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.sankey@1</code></td><td><a href="#profile-chart-sankey-1">Synthetic energy spend across three stages / sankey</a></td><td><code>examples/basics/24-sankey.ddn</code></td><td><a href="profiles/chart-sankey-1.svg">SVG</a></td></tr>
+<tr><td><code>chart.treemap@1</code></td><td><a href="#profile-chart-treemap-1">Synthetic storage by domain and table / treemap</a></td><td><code>examples/basics/23-treemap.ddn</code></td><td><a href="profiles/chart-treemap-1.svg">SVG</a></td></tr>
+<tr><td><code>chen.basic@1</code></td><td><a href="#profile-chen-basic-1">11 / Chen binary projection</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/chen-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>chen.binary@2</code></td><td><a href="#profile-chen-binary-2">18 / Binary Chen details</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/chen-binary-2.svg">SVG</a></td></tr>
+<tr><td><code>cmmn.basic@1</code></td><td><a href="#profile-cmmn-basic-1">Claim handling</a></td><td><code>examples/basics/49-cmmn.ddn</code></td><td><a href="profiles/cmmn-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>concept.map@1</code></td><td><a href="#profile-concept-map-1">Synthetic order-to-cash concepts / concept map</a></td><td><code>examples/basics/29-concept-map.ddn</code></td><td><a href="profiles/concept-map-1.svg">SVG</a></td></tr>
+<tr><td><code>ddn@1</code></td><td><a href="#profile-ddn-1">Customer data / a shared model</a></td><td><code>examples/basics/01-customer.ddn</code></td><td><a href="profiles/ddn-1.svg">SVG</a></td></tr>
+<tr><td><code>decision.rules@1</code></td><td><a href="#profile-decision-rules-1">14 / Disposition policy — unique</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/decision-rules-1.svg">SVG</a></td></tr>
+<tr><td><code>dfd.gane_sarson@1</code></td><td><a href="#profile-dfd-gane-sarson-1">05 / Numbered Gane–Sarson-style DFD</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/dfd-gane-sarson-1.svg">SVG</a></td></tr>
+<tr><td><code>dfd.yourdon@1</code></td><td><a href="#profile-dfd-yourdon-1">06 / Yourdon-style DFD</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/dfd-yourdon-1.svg">SVG</a></td></tr>
+<tr><td><code>epc.basic@1</code></td><td><a href="#profile-epc-basic-1">Synthetic order-to-cash / EPC</a></td><td><code>examples/basics/30-epc.ddn</code></td><td><a href="profiles/epc-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>erd.crowfoot@1</code></td><td><a href="#profile-erd-crowfoot-1">Synthetic sales / crow's-foot ERD</a></td><td><code>examples/basics/37-crows-foot-erd.ddn</code></td><td><a href="profiles/erd-crowfoot-1.svg">SVG</a></td></tr>
+<tr><td><code>event.tree@1</code></td><td><a href="#profile-event-tree-1">Alarm event tree</a></td><td><code>examples/basics/53-fault-event-tree.ddn</code></td><td><a href="profiles/event-tree-1.svg">SVG</a></td></tr>
+<tr><td><code>family.tree@1</code></td><td><a href="#profile-family-tree-1">Three generations</a></td><td><code>examples/basics/56-family-tree.ddn</code></td><td><a href="profiles/family-tree-1.svg">SVG</a></td></tr>
+<tr><td><code>fault.tree@1</code></td><td><a href="#profile-fault-tree-1">Service outage fault tree</a></td><td><code>examples/basics/53-fault-event-tree.ddn</code></td><td><a href="profiles/fault-tree-1.svg">SVG</a></td></tr>
+<tr><td><code>fishbone.basic@1</code></td><td><a href="#profile-fishbone-basic-1">01 / Possible causes</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/fishbone-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>flow.basic@1</code></td><td><a href="#profile-flow-basic-1">01 / Purchasing control flow</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/flow-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>flow.documented@2</code></td><td><a href="#profile-flow-documented-2">21 / Documented cross-sheet control flow</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/flow-documented-2.svg">SVG</a></td></tr>
+<tr><td><code>matrix.ansoff@1</code></td><td><a href="#profile-matrix-ansoff-1">Synthetic portfolio / Ansoff</a></td><td><code>examples/basics/33-matrix-pack.ddn</code></td><td><a href="profiles/matrix-ansoff-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.bcg@1</code></td><td><a href="#profile-matrix-bcg-1">Synthetic portfolio / BCG</a></td><td><code>examples/basics/33-matrix-pack.ddn</code></td><td><a href="profiles/matrix-bcg-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.crud@1</code></td><td><a href="#profile-matrix-crud-1">04 / Model-derived CRUD</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/matrix-crud-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.heatmap@1</code></td><td><a href="#profile-matrix-heatmap-1">02 / Review score — numeric</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/matrix-heatmap-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.raci@1</code></td><td><a href="#profile-matrix-raci-1">03 / Model-derived RACI</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/matrix-raci-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.relations@1</code></td><td><a href="#profile-matrix-relations-1">26 / General relationship matrix</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/matrix-relations-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.storymap@1</code></td><td><a href="#profile-matrix-storymap-1">Shop rebuild / story map</a></td><td><code>examples/basics/36-story-map.ddn</code></td><td><a href="profiles/matrix-storymap-1.svg">SVG</a></td></tr>
+<tr><td><code>matrix.tows@1</code></td><td><a href="#profile-matrix-tows-1">Synthetic portfolio / TOWS</a></td><td><code>examples/basics/33-matrix-pack.ddn</code></td><td><a href="profiles/matrix-tows-1.svg">SVG</a></td></tr>
+<tr><td><code>mindmap.basic@1</code></td><td><a href="#profile-mindmap-basic-1">Synthetic brainstorm / mind map</a></td><td><code>examples/basics/28-mind-map.ddn</code></td><td><a href="profiles/mindmap-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>network.basic@1</code></td><td><a href="#profile-network-basic-1">Office LAN</a></td><td><code>examples/basics/54-network-diagram.ddn</code></td><td><a href="profiles/network-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>network.rack@1</code></td><td><a href="#profile-network-rack-1">Rack A elevation</a></td><td><code>examples/basics/54-network-diagram.ddn</code></td><td><a href="profiles/network-rack-1.svg">SVG</a></td></tr>
+<tr><td><code>org.tree@1</code></td><td><a href="#profile-org-tree-1">Synthetic organisation / org chart</a></td><td><code>examples/basics/26-org-chart.ddn</code></td><td><a href="profiles/org-tree-1.svg">SVG</a></td></tr>
+<tr><td><code>panels.basic@1</code></td><td><a href="#profile-panels-basic-1">23 / Reusable SWOT panel template</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/panels-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>panels.composed@1</code></td><td><a href="#profile-panels-composed-1">17 / Dashboard Quality</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/panels-composed-1.svg">SVG</a></td></tr>
+<tr><td><code>panels.journey@1</code></td><td><a href="#profile-panels-journey-1">Returns journey / synthetic</a></td><td><code>examples/basics/35-journey-map.ddn</code></td><td><a href="profiles/panels-journey-1.svg">SVG</a></td></tr>
+<tr><td><code>panels.pyramid@1</code></td><td><a href="#profile-panels-pyramid-1">Support tiers / pyramid</a></td><td><code>examples/basics/39-pyramid.ddn</code></td><td><a href="profiles/panels-pyramid-1.svg">SVG</a></td></tr>
+<tr><td><code>panels.venn@1</code></td><td><a href="#profile-panels-venn-1">Feature overlap / venn</a></td><td><code>examples/basics/40-venn.ddn</code></td><td><a href="profiles/panels-venn-1.svg">SVG</a></td></tr>
+<tr><td><code>pert.cpm@1</code></td><td><a href="#profile-pert-cpm-1">Release plan</a></td><td><code>examples/basics/52-pert-cpm.ddn</code></td><td><a href="profiles/pert-cpm-1.svg">SVG</a></td></tr>
+<tr><td><code>requirements.basic@1</code></td><td><a href="#profile-requirements-basic-1">09 / Requirement traceability</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/requirements-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>state.composite@1</code></td><td><a href="#profile-state-composite-1">Order lifecycle / composite states</a></td><td><code>examples/basics/44-hierarchical-state.ddn</code></td><td><a href="profiles/state-composite-1.svg">SVG</a></td></tr>
+<tr><td><code>state.flat@1</code></td><td><a href="#profile-state-flat-1">12 / Corrective-action lifecycle</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/state-flat-1.svg">SVG</a></td></tr>
+<tr><td><code>sysml.bdd@1</code></td><td><a href="#profile-sysml-bdd-1">Pump station block definition</a></td><td><code>examples/basics/50-sysml.ddn</code></td><td><a href="profiles/sysml-bdd-1.svg">SVG</a></td></tr>
+<tr><td><code>sysml.ibd@1</code></td><td><a href="#profile-sysml-ibd-1">Pump station internal block</a></td><td><code>examples/basics/50-sysml.ddn</code></td><td><a href="profiles/sysml-ibd-1.svg">SVG</a></td></tr>
+<tr><td><code>sysml.parametric@1</code></td><td><a href="#profile-sysml-parametric-1">Pump station flow balance</a></td><td><code>examples/basics/50-sysml.ddn</code></td><td><a href="profiles/sysml-parametric-1.svg">SVG</a></td></tr>
+<tr><td><code>table.records@1</code></td><td><a href="#profile-table-records-1">19 / Shared observation table</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/table-records-1.svg">SVG</a></td></tr>
+<tr><td><code>timeline.basic@1</code></td><td><a href="#profile-timeline-basic-1">21 / Supplied-date procurement schedule</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/timeline-basic-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.activity@1</code></td><td><a href="#profile-uml-activity-1">Order fulfilment activity</a></td><td><code>examples/basics/45-activity-diagram.ddn</code></td><td><a href="profiles/uml-activity-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.communication@1</code></td><td><a href="#profile-uml-communication-1">Synthetic order flow / communication</a></td><td><code>examples/basics/42-communication-diagram.ddn</code></td><td><a href="profiles/uml-communication-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.interaction_overview@1</code></td><td><a href="#profile-uml-interaction-overview-1">Checkout interaction overview</a></td><td><code>examples/basics/48-interaction-overview.ddn</code></td><td><a href="profiles/uml-interaction-overview-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.object@1</code></td><td><a href="#profile-uml-object-1">Synthetic snapshot / objects</a></td><td><code>examples/basics/43-object-diagram.ddn</code></td><td><a href="profiles/uml-object-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.sequence@1</code></td><td><a href="#profile-uml-sequence-1">Synthetic order flow / sequence</a></td><td><code>examples/basics/41-sequence-diagram.ddn</code></td><td><a href="profiles/uml-sequence-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.structure@1</code></td><td><a href="#profile-uml-structure-1">07 / Declared class / interface subset</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/uml-structure-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.timing@1</code></td><td><a href="#profile-uml-timing-1">Synthetic traffic lights / timing (seconds)</a></td><td><code>examples/basics/47-timing-diagram.ddn</code></td><td><a href="profiles/uml-timing-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.usecase@1</code></td><td><a href="#profile-uml-usecase-1">08 / Actor and use-case subset</a></td><td><code>examples/projections/views.ddn</code></td><td><a href="profiles/uml-usecase-1.svg">SVG</a></td></tr>
+<tr><td><code>uml.usecase@2</code></td><td><a href="#profile-uml-usecase-2">20 / Use-case subjects and extension points</a></td><td><code>examples/quality/views.ddn</code></td><td><a href="profiles/uml-usecase-2.svg">SVG</a></td></tr>
+<tr><td><code>wbs.tree@1</code></td><td><a href="#profile-wbs-tree-1">Synthetic project / work breakdown structure</a></td><td><code>examples/basics/27-wbs.ddn</code></td><td><a href="profiles/wbs-tree-1.svg">SVG</a></td></tr>
+<tr><td><code>wireframe.ui@1</code></td><td><a href="#profile-wireframe-ui-1">Settings screen</a></td><td><code>examples/basics/55-wireframe.ddn</code></td><td><a href="profiles/wireframe-ui-1.svg">SVG</a></td></tr>
+</tbody>
+</table>
+</main>
+<footer>Generated deterministically by <code>tools/build-gallery.js</code> (<code>npm run build:gallery</code>). Regenerate after changing profiles, examples, or the runtime.</footer>
+</body>
+</html>

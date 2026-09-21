@@ -1,0 +1,119 @@
+ddn "0.4";
+module "ddn.gallery.marks";
+
+// Gallery chart-mark sheet. Every mark renders over a small real dataset:
+// synthetic quarterly generation figures for a two-site wind/solar operator.
+data quarterly {
+    object q1 "Q1 / Wind" { kind: record; x_record: {"quarter": "Q1", "source": "Wind", "mwh": 412, "unit": "MWh"}; }
+    object q2 "Q2 / Wind" { kind: record; x_record: {"quarter": "Q2", "source": "Wind", "mwh": 355, "unit": "MWh"}; }
+    object q3 "Q3 / Wind" { kind: record; x_record: {"quarter": "Q3", "source": "Wind", "mwh": 388, "unit": "MWh"}; }
+    object q4 "Q4 / Wind" { kind: record; x_record: {"quarter": "Q4", "source": "Wind", "mwh": 470, "unit": "MWh"}; }
+    object s1 "Q1 / Solar" { kind: record; x_record: {"quarter": "Q1", "source": "Solar", "mwh": 180, "unit": "MWh"}; }
+    object s2 "Q2 / Solar" { kind: record; x_record: {"quarter": "Q2", "source": "Solar", "mwh": 296, "unit": "MWh"}; }
+    object s3 "Q3 / Solar" { kind: record; x_record: {"quarter": "Q3", "source": "Solar", "mwh": 310, "unit": "MWh"}; }
+    object s4 "Q4 / Solar" { kind: record; x_record: {"quarter": "Q4", "source": "Solar", "mwh": 205, "unit": "MWh"}; }
+}
+
+data criteria {
+    object r1 "Wind / Capacity factor" { kind: record; x_record: {"site": "Wind farm", "criterion": "Capacity factor", "score": 8, "unit": "points"}; }
+    object r2 "Wind / Grid access" { kind: record; x_record: {"site": "Wind farm", "criterion": "Grid access", "score": 6, "unit": "points"}; }
+    object r3 "Wind / Land cost" { kind: record; x_record: {"site": "Wind farm", "criterion": "Land cost", "score": 5, "unit": "points"}; }
+    object r4 "Wind / Permitting" { kind: record; x_record: {"site": "Wind farm", "criterion": "Permitting", "score": 4, "unit": "points"}; }
+    object r5 "Wind / Maintenance" { kind: record; x_record: {"site": "Wind farm", "criterion": "Maintenance", "score": 7, "unit": "points"}; }
+    object v1 "Solar / Capacity factor" { kind: record; x_record: {"site": "Solar park", "criterion": "Capacity factor", "score": 6, "unit": "points"}; }
+    object v2 "Solar / Grid access" { kind: record; x_record: {"site": "Solar park", "criterion": "Grid access", "score": 7, "unit": "points"}; }
+    object v3 "Solar / Land cost" { kind: record; x_record: {"site": "Solar park", "criterion": "Land cost", "score": 6, "unit": "points"}; }
+    object v4 "Solar / Permitting" { kind: record; x_record: {"site": "Solar park", "criterion": "Permitting", "score": 8, "unit": "points"}; }
+    object v5 "Solar / Maintenance" { kind: record; x_record: {"site": "Solar park", "criterion": "Maintenance", "score": 9, "unit": "points"}; }
+}
+
+data pipeline {
+    object p1 "Prospects" { kind: record; x_record: {"stage": "Prospects", "count": 240, "unit": "accounts"}; }
+    object p2 "Qualified" { kind: record; x_record: {"stage": "Qualified", "count": 150, "unit": "accounts"}; }
+    object p3 "Proposal" { kind: record; x_record: {"stage": "Proposal", "count": 90, "unit": "accounts"}; }
+    object p4 "Negotiation" { kind: record; x_record: {"stage": "Negotiation", "count": 48, "unit": "accounts"}; }
+    object p5 "Signed" { kind: record; x_record: {"stage": "Signed", "count": 26, "unit": "accounts"}; }
+}
+
+data uptime {
+    object u1 "Fleet availability" { kind: record; x_record: {"kpi": "Fleet availability", "value": 96.4, "unit": "%"}; }
+}
+
+data market {
+    object d1 "Mon" { kind: record; x_record: {"day": "Mon", "open": 42.1, "high": 43.8, "low": 41.5, "close": 43.2, "unit": "EUR"}; }
+    object d2 "Tue" { kind: record; x_record: {"day": "Tue", "open": 43.2, "high": 44.0, "low": 42.4, "close": 42.9, "unit": "EUR"}; }
+    object d3 "Wed" { kind: record; x_record: {"day": "Wed", "open": 42.9, "high": 44.6, "low": 42.8, "close": 44.3, "unit": "EUR"}; }
+    object d4 "Thu" { kind: record; x_record: {"day": "Thu", "open": 44.3, "high": 45.1, "low": 43.6, "close": 43.9, "unit": "EUR"}; }
+    object d5 "Fri" { kind: record; x_record: {"day": "Fri", "open": 43.9, "high": 45.4, "low": 43.7, "close": 45.0, "unit": "EUR"}; }
+}
+
+data storage {
+    object t1 "Turbine logs" { kind: record; x_record: {"path": "operations/turbine-logs", "gb": 320, "unit": "GB"}; }
+    object t2 "SCADA archive" { kind: record; x_record: {"path": "operations/scada-archive", "gb": 540, "unit": "GB"}; }
+    object t3 "Meter reads" { kind: record; x_record: {"path": "billing/meter-reads", "gb": 210, "unit": "GB"}; }
+    object t4 "Invoices" { kind: record; x_record: {"path": "billing/invoices", "gb": 80, "unit": "GB"}; }
+    object t5 "Weather feeds" { kind: record; x_record: {"path": "forecast/weather-feeds", "gb": 260, "unit": "GB"}; }
+    object t6 "Model runs" { kind: record; x_record: {"path": "forecast/model-runs", "gb": 150, "unit": "GB"}; }
+}
+
+data flows {
+    object f1 "Wind to grid" { kind: record; x_record: {"source": "Wind farm", "target": "Grid export", "mwh": 1240, "unit": "MWh"}; }
+    object f2 "Solar to grid" { kind: record; x_record: {"source": "Solar park", "target": "Grid export", "mwh": 780, "unit": "MWh"}; }
+    object f3 "Solar to storage" { kind: record; x_record: {"source": "Solar park", "target": "Battery", "mwh": 211, "unit": "MWh"}; }
+    object f4 "Storage to grid" { kind: record; x_record: {"source": "Battery", "target": "Grid export", "mwh": 190, "unit": "MWh"}; }
+    object f5 "Wind to curtailment" { kind: record; x_record: {"source": "Wind farm", "target": "Curtailment", "mwh": 62, "unit": "MWh"}; }
+}
+
+format gallery {
+    publication screen { size: content; fit: none; minimum_text: 8pt; }
+    bundle common { publication: @screen; }
+}
+
+view mark_bar "Chart marks / bar" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: bar; x: "x_record.quarter"; y: "x_record.mwh"; series: "x_record.source"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_line "Chart marks / line" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: line; x: "x_record.quarter"; y: "x_record.mwh"; series: "x_record.source"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_area "Chart marks / area" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: area; x: "x_record.quarter"; y: "x_record.mwh"; series: "x_record.source"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_point "Chart marks / point" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: point; x: "x_record.quarter"; y: "x_record.mwh"; series: "x_record.source"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_pie "Chart marks / pie" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4]; mark: pie; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_donut "Chart marks / donut" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4]; mark: donut; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_radar "Chart marks / radar" {
+    format: @gallery.common; data: [@criteria];
+    projection { kind: chart; profile: "chart.radar@1"; records: [@criteria.r1, @criteria.r2, @criteria.r3, @criteria.r4, @criteria.r5, @criteria.v1, @criteria.v2, @criteria.v3, @criteria.v4, @criteria.v5]; mark: radar; x: "x_record.criterion"; y: "x_record.score"; series: "x_record.site"; unit: "points"; width: 1050px; height: 640px; }
+}
+view mark_funnel "Chart marks / funnel" {
+    format: @gallery.common; data: [@pipeline];
+    projection { kind: chart; profile: "chart.funnel@1"; records: [@pipeline.p1, @pipeline.p2, @pipeline.p3, @pipeline.p4, @pipeline.p5]; mark: funnel; x: "x_record.stage"; y: "x_record.count"; unit: "accounts"; width: 1050px; height: 640px; }
+}
+view mark_gauge "Chart marks / gauge" {
+    format: @gallery.common; data: [@uptime];
+    projection { kind: chart; profile: "chart.gauge@1"; records: [@uptime.u1]; mark: gauge; x: "x_record.kpi"; y: "x_record.value"; unit: "%"; target: 98; width: 1050px; height: 640px; }
+}
+view mark_candlestick "Chart marks / candlestick" {
+    format: @gallery.common; data: [@market];
+    projection { kind: chart; profile: "chart.candlestick@1"; records: [@market.d1, @market.d2, @market.d3, @market.d4, @market.d5]; mark: candlestick; x: "x_record.day"; open: "x_record.open"; high: "x_record.high"; low: "x_record.low"; close: "x_record.close"; unit: "EUR"; width: 1050px; height: 640px; }
+}
+view mark_treemap "Chart marks / treemap" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.treemap@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: treemap; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; width: 1050px; height: 640px; }
+}
+view mark_sankey "Chart marks / sankey" {
+    format: @gallery.common; data: [@flows];
+    projection { kind: chart; profile: "chart.sankey@1"; records: [@flows.f1, @flows.f2, @flows.f3, @flows.f4, @flows.f5]; mark: sankey; x: "x_record.source"; target: "x_record.target"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}

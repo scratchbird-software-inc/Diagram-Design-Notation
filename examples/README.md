@@ -8,7 +8,11 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
 ```
 
 - `basics/` — 60 numbered examples (01-customer … 60-spacing-hints)
-  plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
+  plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
+  `manifest.json` was removed in B1-010: it covered only examples 01–18,
+  pointed at nonexistent `examples/rendered/` paths, was stamped
+  `0.5.0-draft.1`, and nothing in the repo referenced it — the live golden
+  manifest is `use-cases/manifest.json`.)
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, authorized SQL DDL export, process contracts,
   enterprise gates, curved
@@ -35,6 +39,14 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,
   `details.ddn`, `formats.ddn`, `views.ddn`, `fixture.json`, `catalogue.json`).
+- `gallery/` — generated full-coverage gallery (B1-010): one pre-rendered SVG
+  per installed profile (all 73) plus variation sheets (chart marks, looks ×
+  palettes, routing × look, layout algorithms, spacing levels) — 130 SVGs via
+  the real CLI render path, a static `index.html` (no inlined runtime,
+  `file://`-safe), and `coverage.json`, the machine-readable coverage map the
+  permanent gate `notation/tests/gallery-coverage.js` enforces. Sources for
+  the variation sheets live in `gallery/src/`. Regenerate with
+  `npm run build:gallery` (committed outputs per D5).
 - `embed/` — browser proofs for the modular runtime bundles (B1-004):
   `core-graph.html` loads only `ddn-core.js` + `ddn-graph.js` and renders the
   `basics/01-customer.ddn` overview; `core-only-check.html` loads only

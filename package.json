@@ -13,6 +13,7 @@
     "test:packaging": "node tools/tests/packaging.js",
     "test:core": "npm --prefix notation run test:core",
     "build:sdk": "npm --prefix notation run build:sdk",
+    "build:gallery": "node tools/build-gallery.js",
     "serve": "node tools/serve.js"
   },
   "engines": {

@@ -13,9 +13,10 @@ This repository is a monorepo with four components:
 | `standard/` | **Proposed DDN standard** | Normative specification chapters, EBNF grammar, JSON schemas, the notation vocabulary registry, notation plates, governance |
 | `notation/` | **Notation project** | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests |
 | `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, RACI/CRUD matrix cell editor and chart editor (records, marks, bindings), research, decisions |
-| `examples/` | **Example diagrams** | 60 basics, projection and quality corpora, 22 use-case scenarios |
+| `examples/` | **Example diagrams** | 60 basics, projection and quality corpora, 22 use-case scenarios, the generated full-coverage gallery |
 
-Supporting directories: `docs/` (project documentation and website, TBD) and
+Supporting directories: `docs/` (project documentation, including the
+developer documentation under `docs/developers/`) and
 `tools/` (shared build/serve/package scripts).
 
 ## Status
@@ -37,6 +38,15 @@ height/100%, font and colour overrides per kind/relation-class/object,
 SVG+PNG export, all presentation-only), the working designer prototype
 (`designer/prototype/standalone.html`), and the notation plates
 (`standard/plates/index.html`). All work from `file://`.
+
+**Full-coverage example gallery:** `examples/gallery/index.html` — one
+pre-rendered SVG per installed profile (all 73) plus variation sheets for
+every chart mark, look × palette, routing × style, layout algorithm, and
+spacing level (130 renders via the CLI path; regenerate with
+`npm run build:gallery`). **Developer documentation:**
+`docs/developers/` — getting started, runtime modules, API reference,
+embedding, viewer, styling, data refresh, source authoring, and the
+0.5 → 0.6 migration guide.
 
 Requires Node 22+ for tests/tooling (no runtime dependencies; Python 3.12+
 optional — see `tools/requirements-dev.txt`).
