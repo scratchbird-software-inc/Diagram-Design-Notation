@@ -1,0 +1,31 @@
+ddn "0.5";
+module "ddn.examples.data-refresh";
+
+// Data refresh (B1-006): a host page swaps the records of the `metrics`
+// data block with ws.replaceData("metrics", [...]) and re-renders — the
+// model, views and layout structure stay untouched. Replacing with the
+// same values re-renders every view byte-identical; replacing with new
+// values moves only the chart marks. See examples/embed/data-refresh.html.
+//
+//   ws.replaceData("metrics", rows);            // rows: plain objects,
+//   const r = ws.renderSync({entry, view: "latency_chart"});  // same keys
+//   host.innerHTML = r.svg;                     // as the first record
+
+data metrics {
+    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
+    relation trend "Alpha drives Beta" @m1 -> @m2 { kind: flow; }
+    relation feed "Beta feeds Gamma" @m2 -> @m3 { kind: flow; }
+}
+
+view latency_chart "Latency / chart" {
+    data: [@metrics];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+    publication { size: content; fit: none; }
+}
+
+view dependency_graph "Latency / dependency graph" {
+    data: [@metrics];
+    publication { size: content; fit: none; }
+}

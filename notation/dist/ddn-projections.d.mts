@@ -27,6 +27,8 @@ export interface Workspace {
  analyze(file:string):Record<string,unknown>;resolve(entry:string,view:string):Record<string,unknown>;inspect(entry:string,view:string):Record<string,unknown>;
  updateFiles(changes:SourceFiles):number;replaceFiles(files:SourceFiles):number;removeFile(file:string,options?:{force?:boolean}):number;dependents(file:string):string[];renameFile(oldName:string,newName:string):number;
  applyEdits(edits:TextEdit[],options?:{expectedRevision?:number;entry?:string;view?:string}):number;history():{canUndo:boolean;canRedo:boolean;undoLabel:string;redoLabel:string};undo():boolean;redo():boolean;
+ /** Replace the records of a named `data` block, leaving every other byte of the source untouched. Records must carry the same keys as the block's existing first record. */
+ replaceData(name:string,records:Array<Record<string,unknown>>):{revision:number;diagnostics:Diagnostic[]};
  subscribe(fn:(event:{revision:number;changedFiles:string[]})=>void):()=>void;
  renderSync(request:RenderRequest):RenderResult;render(request:RenderRequest):Promise<RenderResult>;exportModel(request:RenderRequest):string;exportVegaLite(request:RenderRequest):Record<string,unknown>;projectionPlan(entry:string,view:string):Record<string,unknown>; evaluateDecision(entry:string,view:string,input:Record<string,unknown>):Record<string,unknown>; simulateLifecycle(entry:string,view:string,events:Array<{event:string;data?:Record<string,unknown>}>,expected?:string):Record<string,unknown>;
  snapshot(entry:string,view:string,overrides?:Options,layoutState?:LayoutState|null):Snapshot;destroy():void;
@@ -41,6 +43,8 @@ export interface Authoring {
  setMatrixCell(ws:Workspace,entry:string,view:string,row:string,column:string,value:unknown,options?:{remove?:boolean;id?:string}):number;
  setMatrixCells(ws:Workspace,entry:string,view:string,changes:MatrixEdit[]):number;
  setRecordValue(ws:Workspace,entry:string,view:string,id:string,key:string,value:unknown):number;
+ /** Workspace-level record replacement backing `ws.replaceData`. */
+ replaceData(ws:Workspace,name:string,records:Array<Record<string,unknown>>):{revision:number;diagnostics:Diagnostic[]};
  setAssignment(ws:Workspace,entry:string,view:string,id:string,code:string):number;
  value(value:unknown):string;
  setLabel(ws:Workspace,entry:string,view:string,id:string,label:string):number;

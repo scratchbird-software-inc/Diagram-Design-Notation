@@ -13,7 +13,7 @@ This repository is a monorepo with four components:
 | `standard/` | **Proposed DDN standard** | Normative specification chapters, EBNF grammar, JSON schemas, the notation vocabulary registry, notation plates, governance |
 | `notation/` | **Notation project** | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests |
 | `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, RACI/CRUD matrix cell editor and chart editor (records, marks, bindings), research, decisions |
-| `examples/` | **Example diagrams** | 58 basics, projection and quality corpora, 22 use-case scenarios |
+| `examples/` | **Example diagrams** | 59 basics, projection and quality corpora, 22 use-case scenarios |
 
 Supporting directories: `docs/` (project documentation and website, TBD) and
 `tools/` (shared build/serve/package scripts).
@@ -56,15 +56,32 @@ unchanged all-in-one build (byte sizes at 0.6.0-beta.1; generated details in
 
 | Bundle | Contains | Requires | Bytes |
 |---|---|---|---|
-| `ddn-core.js` | Parse/build/validate/export, projection + quality planning data, workspace API (no rendering) | — | 620,968 |
+| `ddn-core.js` | Parse/build/validate/export, projection + quality planning data, workspace API (no rendering) | — | 623,929 |
 | `ddn-graph.js` | Graph renderer (ERD/flow/C4/state/BPMN…); registers the `graph` kind | `ddn-core.js` | 141,045 |
 | `ddn-quality.js` | Quality charts, decision tables, fishbone renderers | core + graph (renders through `ddn-projections.js`) | 18,063 |
 | `ddn-projections.js` | Chart/matrix/panels/timeline/table/sequence/timing/chen | core + graph | 49,607 |
-| `ddn.global.js` | All of the above + Studio component (what tests and standalone pages embed) | — | 857,488 |
+| `ddn.global.js` | All of the above + Studio component (what tests and standalone pages embed) | — | 860,449 |
 
 Each `ddn-X.js` has `ddn-X.mjs`/`.d.ts` copies. Loading modules out of order
 throws immediately; rendering a kind whose bundle is missing throws coded error
 `DDN-E010` naming the providing bundle. See `examples/embed/` for live proofs.
+
+**Data refresh:** a host page (dashboard, live report) can replace the records
+of a named `data` block without touching the model, views or layout —
+`ws.replaceData(name, records)` rewrites only that block's record lines and
+returns `{revision, diagnostics}`. Records must carry the same keys as the
+block's existing first record (`DDN-E011` otherwise; unknown block name is
+`DDN-E002`; the source is untouched on error). Same values re-render every
+view byte-identical; changed values move only the marks of data-driven views.
+The dashboard recipe is three lines:
+
+```js
+ws.replaceData('metrics', rows);
+const r = ws.renderSync({entry: 'main.ddn', view: 'latency_chart'});
+host.innerHTML = r.svg;
+```
+
+See `examples/basics/59-data-refresh.ddn` and `examples/embed/data-refresh.html`.
 
 ## npm package
 

@@ -3627,6 +3627,7 @@ function createWorkspace(input){
    for(const [name,text]of Object.entries(files)){const doc=D.parse(text,name),bound=doc.declarations[0]?.start??text.length,tokens=D.lex(text,name).filter(t=>t.start<bound),edits=[],newFile=name===oldName?newName:name;for(let i=0;i<tokens.length-1;i++)if(tokens[i].type==='id'&&tokens[i].value==='import'&&tokens[i+1].type==='string'){const tok=tokens[i+1],target=resolvePath(name,tok.value),newTarget=target===oldName?newName:target;if(name===oldName||target===oldName)edits.push({start:tok.start,end:tok.end,text:JSON.stringify(relative(newFile,newTarget))});}next[newFile]=replaceSpans(text,edits);}
    return commit(next,'Rename '+oldName+' to '+newName);},
   applyEdits(edits,{expectedRevision=revision,entry,view}={}){if(expectedRevision!==revision)fail('LIVE030','Source changed since this edit was prepared.');const next={...files},groups=new Map();for(const e of edits){if(!Object.hasOwn(files,e.file))fail('LIVE012','Missing edited file.');if(!groups.has(e.file))groups.set(e.file,[]);groups.get(e.file).push(e);}for(const [f,list]of groups)next[f]=replaceSpans(next[f],list);if(entry)D.build(next,entry,view,assets.registry);else for(const f of groups.keys())D.parse(next[f],f);return commit(next,'Structured edit');},
+  replaceData(name,records){return api.authoring.replaceData(this,name,records);},
   history(){return{canUndo:undo.length>0,canRedo:redo.length>0,undoLabel:undo.at(-1)?.label||'',redoLabel:redo.at(-1)?.label||''};},
   undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
   redo(){const t=redo.pop();if(!t)return false;const n={...files};for(const p of t.patch)if(p.after===undefined)delete n[p.file];else n[p.file]=p.after;commit(n,t.label,false);undo.push(t);historyBytes+=t.bytes;return true;},
@@ -3654,7 +3655,8 @@ function createWorkspace(input){
 const workspaces=new Map();
 function registerWorkspace(id,files){if(typeof id!=='string'||!id)fail('LIVE014','Workspace name is required.');const ws=files&&typeof files.renderSync==='function'?files:createWorkspace(files);workspaces.set(id,ws);if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('ddn-workspace-ready',{detail:{id}}));return ws;}
 function fromSnapshot(s){if(!['ddn-workspace@1','ddn-live-snapshot@0.1'].includes(s?.format)||typeof s.entry!=='string'||typeof s.view!=='string')fail('LIVE015','Unknown saved workspace format.');checkOptions(s.overrides||{});pathChecked(s.entry);return{workspace:createWorkspace(s.files),entry:s.entry,view:s.view,overrides:clone(s.overrides||{}),...(s.layoutState?{layoutState:clone(s.layoutState)}:{})};}
-return{VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider};
+const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider};
+return api;
 }
 
 /* SPDX-License-Identifier: GPL-2.0-or-later. Bounded local-only DDN file/workspace I/O.
@@ -3781,6 +3783,29 @@ api.authoring={
   return apply(ws,b,edits,entry,view);
  },
  setRecordValue(ws,entry,view,id,key,val){idOK(key);const b=build(ws,entry,view),n=find(b,id),record=n.props.x_record;if(!record||typeof record!=='object')fail('DDN-E006','Selected object has no x_record value record');return apply(ws,b,[property(ws.getFiles()[n.source],n,'x_record',{...record,[key]:val})],entry,view);},
+ replaceData(ws,name,records){
+  if(typeof name!=='string'||!name)fail('DDN-E001','Data block name is required.');
+  if(!Array.isArray(records)||records.some(r=>!r||typeof r!=='object'||Array.isArray(r)))fail('DDN-E011','replaceData records must be an array of plain objects.');
+  const scalarOK=v=>{if(v===null||typeof v==='string'||typeof v==='boolean')return true;if(typeof v==='number')return Number.isFinite(v);if(Array.isArray(v))return v.every(scalarOK);if(typeof v==='object'){const ks=Object.keys(v);return !ks.some(k=>['__proto__','constructor','prototype'].includes(k))&&ks.every(k=>scalarOK(v[k]));}return false;};
+  for(const r of records)for(const x of Object.values(r))if(!scalarOK(x))fail('DDN-E011','Record values must be finite scalars, or arrays/plain objects of them.');
+  const files=ws.getFiles(),blocks=[];
+  for(const f of Object.keys(files).sort()){let doc;try{doc=D.parse(files[f],f);}catch{continue;}for(const n of doc.declarations)if(n.type==='data'&&n.id===name)blocks.push(n);}
+  if(!blocks.length)fail('DDN-E002','Data block not found: '+name);
+  if(blocks.length>1)fail('DDN-E002','Data block name is ambiguous across the workspace: '+name+' ('+blocks.length+' blocks)');
+  const block=blocks[0],text=files[block.source],recs=block.children.filter(n=>n.props.x_record&&typeof n.props.x_record==='object');
+  if(!recs.length){if(records.length)fail('DDN-E011','Data block '+name+' declares no records; its field shape cannot be inferred.');}
+  else{
+   if(!records.length)fail('DDN-E011','Data block '+name+' declares '+recs.length+' record(s); an empty replacement would erase its declared field shape.');
+   const shape=Object.keys(recs[0].props.x_record).sort().join(' ');
+   for(const r of records)if(Object.keys(r).sort().join(' ')!==shape)fail('DDN-E011','Every record must carry the same keys as the first existing record of '+name+': '+shape);
+  }
+  const edits=[],keep=Math.min(recs.length,records.length);
+  for(let i=0;i<keep;i++)edits.push(property(text,recs[i],'x_record',{...records[i]}));
+  for(let i=keep;i<recs.length;i++){let start=recs[i].start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=recs[i].end;if(text[end]==='\r'&&text[end+1]==='\n')end+=2;else if(text[end]==='\n')end++;edits.push({file:block.source,start,end,text:''});}
+  if(records.length>recs.length){const taken=new Set(block.children.map(n=>n.id)),added=[];for(let i=recs.length;i<records.length;i++){const base=name+'_r'+(i+1);let id=base,n=2;while(taken.has(id))id=base+'_'+(n++);taken.add(id);added.push('    object '+id+' '+JSON.stringify(id)+' { kind: record; x_record: '+value(records[i])+'; }');}edits.push({file:block.source,start:block.bodyEnd,end:block.bodyEnd,text:'\n'+added.join('\n')+'\n'});}
+  const revision=ws.applyEdits(edits,{expectedRevision:ws.revision});
+  return{revision,diagnostics:[]};
+ },
  setAssignment(ws,entry,view,id,code){const b=build(ws,entry,view),n=find(b,id);if(n.type!=='relation'||!n.props.x_assignment)fail('DDN-E006','Not an assignment relationship');return apply(ws,b,[property(ws.getFiles()[n.source],n,'x_assignment',{code})],entry,view);},
  value,
  setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},

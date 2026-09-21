@@ -7,7 +7,7 @@ node ../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/f
 node ../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 58 numbered examples (01-customer … 58-css-hooks)
+- `basics/` — 59 numbered examples (01-customer … 59-data-refresh)
   plus shared modules (`shared.ddn`, `customer-data.ddn`) and `manifest.json`.
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,
   publication, authorized export, authorized SQL DDL export, process contracts,
@@ -28,7 +28,8 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   (`55-wireframe.ddn`), and family tree / genealogy views
   (`56-family-tree.ddn`), and registry-driven element defaults
   (`57-element-defaults.ddn`), and CSS class hooks for host-page styling
-  (`58-css-hooks.ddn` + companion `.html`).
+  (`58-css-hooks.ddn` + companion `.html`), and data refresh via
+  `ws.replaceData` (`59-data-refresh.ddn`).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,
@@ -37,7 +38,10 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   `core-graph.html` loads only `ddn-core.js` + `ddn-graph.js` and renders the
   `basics/01-customer.ddn` overview; `core-only-check.html` loads only
   `ddn-core.js`, checks the same source and shows the coded `DDN-E010` refusal
-  when a render is attempted without a renderer bundle.
+  when a render is attempted without a renderer bundle; `data-refresh.html`
+  (B1-006) loads `ddn-core.js` + `ddn-graph.js` + `ddn-projections.js` and
+  swaps a chart's data-block records with `ws.replaceData` on a button click,
+  re-rendering in place.
 - `use-cases/` — 22 scenarios (whiteboard, ERD, relational, SQL dependencies,
   documents, graph schema, streaming, lineage, governance, security,
   recovery, migration, …) with shared `data/` modules and `formats.ddn`.

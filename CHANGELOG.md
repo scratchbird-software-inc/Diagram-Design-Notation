@@ -6,6 +6,29 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-006: data refresh API — new public `ws.replaceData(name, records)` on the
+  workspace object (backing implementation `DDNLive.authoring.replaceData`):
+  it rewrites ONLY the named `data` block's record lines (declarations
+  carrying an `x_record` value record) with the canonical authoring
+  serializer — same key order as the incoming objects — applies one validated
+  source transaction and returns `{revision, diagnostics}`. Field-shape
+  contract keyed on the block's existing first record (order-insensitive;
+  empty replacement legal only for record-less blocks): violations throw
+  `DDN-E011`, unknown/ambiguous block names reuse `DDN-E002`, and the source
+  is untouched on error. Record counts may grow (deterministic
+  `<name>_r<N>` ids) or shrink (trailing record lines removed). Guarantees,
+  proven in new suite `notation/tests/data-refresh.js` (12 tests, wired in as
+  `test:data-refresh`): same-values refresh renders every view (graph +
+  chart + matrix) byte-identical; changed values leave graph views
+  byte-identical and move only chart/matrix marks (identical axis/title/
+  footer text nodes, changed mark geometry/labels); output source depends
+  only on (source, name, records); CLI `check` passes after refresh. New
+  example `examples/basics/59-data-refresh.ddn` and browser proof
+  `examples/embed/data-refresh.html` (ddn-core + ddn-graph + ddn-projections
+  only; button swaps the dataset and re-renders in place). Spec chapter
+  `20-projection-sdk-and-editing.md` gains a "Data refresh" section with the
+  3-line dashboard recipe; `public.d.ts` updated.
+
 - B1-005: npm packaging — `notation/package.json` gains `main`/`module`/
   `types`, an `exports` map (`.`, `./core`, `./graph`, `./projections`,
   `./quality`, `./package.json`; `require` → `.js`, `import` → `.mjs`, types →

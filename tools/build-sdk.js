@@ -106,6 +106,15 @@ ddn-quality.js and ddn-projections.js at render time.
 - Quality charts, decision tables, fishbone: add \`ddn-quality.js\` (and
   \`ddn-projections.js\` for page composition).
 - Everything, one script tag: \`ddn.global.js\`.
+
+## Data refresh
+
+Every core build (ddn-core.js, ddn.global.js) exposes \`ws.replaceData(name, records)\` on the
+workspace object: it rewrites only the named data block's record lines with the canonical
+authoring serializer and returns \`{revision, diagnostics}\` — coded errors \`DDN-E002\`
+(unknown/ambiguous block) and \`DDN-E011\` (field-shape mismatch) leave the source untouched.
+Hosts then call \`renderSync\`/\`mount\` again; a same-values refresh re-renders every view
+byte-identical. See \`examples/embed/data-refresh.html\`.
 `;
 fs.writeFileSync(path.join(out,'README.md'),readme);
 console.log('SDK',version,Buffer.byteLength(body),'bytes;','bundles:',Object.entries(written).map(([n,b])=>'ddn-'+n+'.js='+Buffer.byteLength(b)).join(' '));

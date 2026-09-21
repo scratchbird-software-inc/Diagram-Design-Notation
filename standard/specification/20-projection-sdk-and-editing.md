@@ -40,6 +40,20 @@ DDNLive.authoring.setAssignment(workspace, 'views.ddn', 'raci',
 
 Guided changes validate against the current view before commit. They preserve unrelated source spans and comments, but replacing a structured literal may reformat that literal and does not guarantee preservation of comments within it. Other dependent views validate on subsequent render. A complete multi-view transactional consistency engine and semantic identifier refactoring remain future work.
 
+## Data refresh
+
+A host page can replace the records of a named `data` block without touching the model, views, layout structure or any other declaration. `workspace.replaceData(name, records)` locates the named block across the workspace, rewrites only its record lines (declarations carrying an `x_record` value record) using the same canonical serializer as the other authoring writes — same key order as the incoming objects, same scalar formatting — and applies one validated source transaction, returning `{revision, diagnostics}`. There is no change-event API: hosts call `replaceData` and then render or mount again. The dashboard recipe is three lines:
+
+```javascript
+workspace.replaceData('metrics', rows);
+const result = workspace.renderSync({entry:'views.ddn', view:'chart_bar'});
+container.innerHTML = result.svg;
+```
+
+The field shape of a data block is declared by its records: every incoming record must carry the same keys as the block's existing first record (order-insensitive), and an empty replacement is legal only when the block already declares zero records. Violations fail with coded error `DDN-E011`; an unknown or ambiguous block name fails with `DDN-E002`. On any error the source is untouched. Record counts may change: surplus incoming records append deterministically named record declarations, and trailing existing records are removed — views that still bind removed records then fail validation at render, by design.
+
+Refresh is deterministic: the output source depends only on (source, name, records). Re-rendering after a same-values (deep-equal) refresh produces byte-identical SVG for every view; after a changed-values refresh, graph views without data binding render byte-identical while chart/matrix/timeline views differ only in mark geometry and value labels.
+
 The palette is populated from the same trusted kind/relation definitions. Dotted names are inserted as strings. Pins/drag-to-pin are disabled for data-bound and generated Chen views; dates and numeric coordinates must be changed in their records, not by grabbing marks. The source editor remains universal; complete drag-to-edit matrix cells, widget drawing, interval resizing and arbitrary shape recipe inspectors are not implemented.
 
 ## Capability-aware controls
