@@ -48,6 +48,24 @@ node notation/cli/cli.js check examples/basics/01-customer.ddn --workspace .
 node notation/cli/cli.js render examples/basics/01-customer.ddn --workspace . --out /tmp/customer.svg
 ```
 
+## Runtime bundles
+
+The browser SDK in `notation/dist/` ships as optional libraries plus the
+unchanged all-in-one build (byte sizes at 0.6.0-beta.1; generated details in
+`notation/dist/README.md`):
+
+| Bundle | Contains | Requires | Bytes |
+|---|---|---|---|
+| `ddn-core.js` | Parse/build/validate/export, projection + quality planning data, workspace API (no rendering) | — | 620,968 |
+| `ddn-graph.js` | Graph renderer (ERD/flow/C4/state/BPMN…); registers the `graph` kind | `ddn-core.js` | 141,045 |
+| `ddn-quality.js` | Quality charts, decision tables, fishbone renderers | core + graph (renders through `ddn-projections.js`) | 18,063 |
+| `ddn-projections.js` | Chart/matrix/panels/timeline/table/sequence/timing/chen | core + graph | 49,607 |
+| `ddn.global.js` | All of the above + Studio component (what tests and standalone pages embed) | — | 857,488 |
+
+Each `ddn-X.js` has `ddn-X.mjs`/`.d.ts` copies. Loading modules out of order
+throws immediately; rendering a kind whose bundle is missing throws coded error
+`DDN-E010` naming the providing bundle. See `examples/embed/` for live proofs.
+
 ## Licensing
 
 GPL-2.0-or-later; see `LICENSE`. The previous draft packages were distributed

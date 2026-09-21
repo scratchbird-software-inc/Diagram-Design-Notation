@@ -6,6 +6,23 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-004: modular runtime bundles — the SDK now ships as optional libraries in
+  `notation/dist/`: `ddn-core.js` (parse/build/validate/export, projection and
+  quality planning data, workspace API; no rendering), `ddn-graph.js` (graph
+  renderer), `ddn-projections.js` (chart/matrix/panels/timeline/table/sequence/
+  timing/chen) and `ddn-quality.js` (quality charts/decision/fishbone), each
+  with `.mjs` and type copies, plus the unchanged all-in-one `ddn.global.js`.
+  Load-order guards (core → graph → quality/projections, double-load no-op,
+  single-version guard kept); the engine is now a renderer registry
+  (`DDNEngine.registerProjectionRenderer`) and rendering or planning an
+  unregistered kind throws new coded error `DDN-E010` naming the bundle that
+  provides it. `tools/build-sdk.js` is data-driven (one `BUNDLES` map builds
+  both the modules and the all-in-one), emits a generated
+  `notation/dist/README.md`, and `release/validation/sdk-build.json` gains a
+  per-bundle `bundles` object (bytes/sha256/files). Browser proofs:
+  `examples/embed/core-graph.html` and `examples/embed/core-only-check.html`.
+  Full-bundle behavior is byte-identical (whole existing golden set unchanged).
+
 - B1-003: deterministic CSS class hooks on every rendered SVG mark — root
   `ddn-svg ddn-view-<kind> ddn-profile-<slug>`, nodes `ddn-node ddn-kind-<code>`,
   relations `ddn-rel ddn-verb-<verb>`, plus `ddn-field`, `ddn-label`,

@@ -18,9 +18,11 @@ Zero runtime dependencies; runs in Node 22+ and browsers. Implements
   (enforces workspace containment; rejects symlink escapes and remote imports).
 - `studio/` — browser Studio (source-first editor) and portable editor.
 - `adapters/vega-lite/` — optional Vega-Lite export adapter (not in the runtime bundle).
-- `dist/` — shipped single-file build (`ddn.global.js`, `ddn.mjs`, `ddn.d.ts`),
-  committed so Studio and examples work without a build step. Regenerate with
-  `npm run build:sdk`.
+- `dist/` — shipped builds, committed so Studio and examples work without a
+  build step: the all-in-one `ddn.global.js` (+ `ddn.mjs`, `ddn.d.ts`) and the
+  modular bundles `ddn-core.js` / `ddn-graph.js` / `ddn-projections.js` /
+  `ddn-quality.js` (each with `.mjs`/`.d.ts` copies; contents and load order in
+  the generated `dist/README.md`). Regenerate with `npm run build:sdk`.
 - `tests/` — node suites: 150 core fixtures, 0.3 regressions, curved
   relations, patterns, projections, quality, use-cases, SDK, endpoint
   ordering, routing efficiency.

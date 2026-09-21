@@ -33,6 +33,11 @@ node ../notation/cli/cli.js render projections/views.ddn --workspace . --view ra
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,
   `details.ddn`, `formats.ddn`, `views.ddn`, `fixture.json`, `catalogue.json`).
+- `embed/` — browser proofs for the modular runtime bundles (B1-004):
+  `core-graph.html` loads only `ddn-core.js` + `ddn-graph.js` and renders the
+  `basics/01-customer.ddn` overview; `core-only-check.html` loads only
+  `ddn-core.js`, checks the same source and shows the coded `DDN-E010` refusal
+  when a render is attempted without a renderer bundle.
 - `use-cases/` — 22 scenarios (whiteboard, ERD, relational, SQL dependencies,
   documents, graph schema, streaming, lineage, governance, security,
   recovery, migration, …) with shared `data/` modules and `formats.ddn`.

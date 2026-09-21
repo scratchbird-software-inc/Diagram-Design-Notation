@@ -2918,7 +2918,8 @@
     "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)",
     "family tree / genealogy views via family.tree@1 (union join nodes, acyclic two-parent lineage)",
     "registry-driven element defaults on every kind (kinds[].defaults; public defaults.forKind; designer creation populates them, explicit properties win; renderer never applies them)",
-    "deterministic CSS class hooks on every rendered SVG mark (ddn-svg/node/kind/rel/verb/field/label/panel/frame/mark scheme) plus optional dist/ddn.css and component theme attribute; page CSS < script-level overrides"
+    "deterministic CSS class hooks on every rendered SVG mark (ddn-svg/node/kind/rel/verb/field/label/panel/frame/mark scheme) plus optional dist/ddn.css and component theme attribute; page CSS < script-level overrides",
+    "modular runtime bundles (dist/ddn-core.js parse/validate/export, ddn-graph.js, ddn-projections.js, ddn-quality.js with load-order guards and DDNEngine renderer registry; unregistered kinds throw DDN-E010 naming the providing bundle; ddn.global.js unchanged all-in-one)"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

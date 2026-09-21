@@ -3,7 +3,7 @@ function makeLiveAPI(backend,assets){
 'use strict';
 const VERSION='0.6.0-beta.1',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
 assets={...assets,registry:D.profiles.registry(assets.registry)};
-const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction.VERSION,layout:backend.Placement.VERSION,palette:'blue-grey@1'};
+const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
 const fail=(code,message)=>{throw new LiveError(code,message);};
 const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
@@ -104,11 +104,11 @@ function createWorkspace(input){
    return{svg:result.svg,scene:result.scene,layoutState:result.scene.layoutState||null,diagnostics:result.diagnostics||[],entry,view,modelFingerprint:fingerprint(JSON.stringify(D.semanticJSON(redacted?publicIR:base.ir))),revision,milliseconds:performance.now()-start,profiles:clone(redacted?publicIR.view.profiles:p),capabilities:capabilities(v.ir),overrides:v.options,keys,sourceMap,dependencies:redacted?[]:base.dependencies.slice()};
   },
   async render(options){return this.renderSync(options);},
-  exportVegaLite({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);return backend.Projections.vegaLite(v.ir);},
-  evaluateDecision(entry,view,input){return clone(backend.Projections.evaluateDecision(compiled(entry,view).ir,input));},
-  simulateLifecycle(entry,view,events,expected){return clone(backend.Projections.simulateLifecycle(compiled(entry,view).ir,events,expected));},
-  projectionPlan(entry,view){return clone(backend.Projections.plan(compiled(entry,view).ir,D.DDNError));},
-  exportModel({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(v.ir.view.profiles.layout.x_interaction&&v.ir.view.profiles.export.mode==='redacted')backend.Interaction.validate(v.ir);return backend.Export.serialize(v.ir);},
+  exportVegaLite({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(!backend.Projections)fail('DDN-E010','Vega-Lite export is provided by ddn-projections.js; load it after ddn-core.js and ddn-graph.js.');return backend.Projections.vegaLite(v.ir);},
+  evaluateDecision(entry,view,input){return clone(backend.ProjectionData.quality.evaluateDecision(backend.ProjectionData.plan(compiled(entry,view).ir,D.DDNError),input));},
+  simulateLifecycle(entry,view,events,expected){return clone(backend.ProjectionData.quality.simulate(backend.ProjectionData.plan(compiled(entry,view).ir,D.DDNError).lifecycle,events,expected));},
+  projectionPlan(entry,view){return clone(backend.Engine.plan(compiled(entry,view).ir,D.DDNError));},
+  exportModel({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(v.ir.view.profiles.layout.x_interaction&&v.ir.view.profiles.export.mode==='redacted'){if(!backend.Interaction)fail('DDN-E010','Interaction validation is provided by ddn-graph.js; load it after ddn-core.js.');backend.Interaction.validate(v.ir);}return backend.Export.serialize(v.ir);},
   snapshot(entry,view,overrides={},layoutState=null){checkOptions(overrides);return{format:'ddn-workspace@1',runtime:ENGINES,files:{...files},entry,view,overrides:clone(overrides),...(layoutState?{layoutState:clone(layoutState)}:{})};},
   destroy(){cache.clear();listeners.clear();undo.length=redo.length=0;files=Object.create(null);destroyed=true;}
  };return ws;
@@ -116,5 +116,5 @@ function createWorkspace(input){
 const workspaces=new Map();
 function registerWorkspace(id,files){if(typeof id!=='string'||!id)fail('LIVE014','Workspace name is required.');const ws=files&&typeof files.renderSync==='function'?files:createWorkspace(files);workspaces.set(id,ws);if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('ddn-workspace-ready',{detail:{id}}));return ws;}
 function fromSnapshot(s){if(!['ddn-workspace@1','ddn-live-snapshot@0.1'].includes(s?.format)||typeof s.entry!=='string'||typeof s.view!=='string')fail('LIVE015','Unknown saved workspace format.');checkOptions(s.overrides||{});pathChecked(s.entry);return{workspace:createWorkspace(s.files),entry:s.entry,view:s.view,overrides:clone(s.overrides||{}),...(s.layoutState?{layoutState:clone(s.layoutState)}:{})};}
-return{VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text.setMetrics,setTextProvider:backend.Text.setProvider};
+return{VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider};
 }
