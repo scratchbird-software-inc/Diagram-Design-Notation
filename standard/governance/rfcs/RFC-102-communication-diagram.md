@@ -151,7 +151,7 @@ claim: numbers are author-declared and are validated for shape only.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/42-communication-diagram.ddn` — the RT-101
+- Positive example: `website/examples/basics/42-communication-diagram.ddn` — the RT-101
   three-party order flow as a layered graph with declared numbers `1`, `2`,
   reply `2.1`, self-message `3`, and `4`.
 - Test suite: `notation/tests/communication-diagram.js` — positive render with

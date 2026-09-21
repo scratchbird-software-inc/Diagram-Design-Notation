@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Security and accessibility — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Security and accessibility</h1>
+<p>Treat a model, its samples and its embedded descriptions as potentially sensitive. The full semantic model and source editor are private-design artifacts unless deliberately published. Hiding a field is not redacting it.</p>
+<h2>Explicit publication closure</h2>
+<pre><code>export {
+ mode: redacted;
+ elements: [@model.directory];
+ fields: [@model.directory.staff_id,@model.directory.display_name];
+ properties: [kind];
+ identifier_mode: opaque;
+ title: &quot;Approved directory view&quot;;
+}</code></pre>
+<p>An omitted field allowlist is not equivalent to an intentional empty list. Unknown entries and arbitrary free-text property exports fail. Nested fields require their ancestors to be explicitly included. Relations survive only when both approved endpoints and any member endpoints survive. Public output uses opaque IDs by default, strips source positions/paths and unapproved descriptive metadata, and removes nested views/samples. The same projection drives <code>Render.render</code>, CLI <code>resolve</code> and the editor JSON export.</p>
+<p>The rule is <strong>allowlisted does not mean automatically safe</strong>: approved names or structured values may still contain sensitive content. Only an authorized publisher can approve that list. The complete teaching ZIP intentionally contains synthetic private and public examples; it is not itself an anonymized export.</p>
+<h2>Input and runtime protections</h2>
+<p>The reader rejects prototype keys, malformed escapes and unsafe workspace imports. Typed guards are data, not JavaScript or SQL; unsupported operators fail. The renderer XML-escapes untrusted text. It does not execute SQL, authentication, bank transfers or external URLs found in descriptions. Extension validators are registered pure code/data, not downloaded from a diagram. Resource/search/depth bounds prevent unbounded processing; exceeding one is an error, not success.</p>
+<h2>Accessibility and print</h2>
+<p>Colour never carries the only canonical meaning. Registered symbols, text/token fallbacks and line patterns preserve distinctions in neutral output. SVG has titles, descriptions, node identities and textual legends. Selected font measurement and readability checks help prevent clipping, but are not a WCAG certification. Keyboard and assistive-technology testing belongs to the target publishing/editor environment. Do not claim those tests solely from an SVG screenshot.</p>
+<h2>Audit contracts</h2>
+<p>A content digest detects a mismatch against a trusted expected digest; it does not establish custody or prevent an administrator replacing both. <code>x_custody</code> requires separate anchor authority, key custodian, retention/hold policies and independent-evidence obligations. The release leaves real evidence custody and independent review pending.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

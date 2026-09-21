@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>39. Fault tree and event tree profiles (fault.tree@1, event.tree@1) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>39. Fault tree and event tree profiles (<code>fault.tree@1</code>, <code>event.tree@1</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-113 (<code>standard/governance/rfcs/RFC-113-fault-event-tree.md</code>). Source grammar remains DDN 0.5; the profiles, kinds, verb and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Fault trees decompose a top event downward through AND/OR gates into basic events; event trees follow an initiating event forward through gate branches to outcomes. Both profiles run on the existing <code>graph</code> projection with the tree layout. Users write <code>projection { kind:graph; profile:&quot;fault.tree@1&quot;; }</code> (or <code>&quot;event.tree@1&quot;</code>) with <code>layout { algorithm:tree; direction:down; }</code>. This is profile-level notation coverage, not a reliability-engineering certification.</p>
+<h2>Metamodel</h2>
+<ul><li>Gates are <code>tree.gate</code> objects (silhouette <code>diamond</code>, fallback <code>gateway</code>,</li></ul>
+<p>  family <code>activity</code>, code <code>GATE</code>). Every gate declares its type via the   registered extension <code>x_gate</code> on objects:   <code>{ &quot;type&quot;:&quot;object&quot;, &quot;required&quot;:[&quot;type&quot;], &quot;properties&quot;:{ &quot;type&quot;:{ &quot;enum&quot;:[&quot;and&quot;,&quot;or&quot;] } }, &quot;additionalProperties&quot;:false }</code>.   Malformed <code>x_gate</code> values are rejected by the schema contract (<code>DDN105</code>).</p>
+<ul><li>Basic events are <code>tree.event</code> objects (silhouette <code>circle</code>, fallback</li></ul>
+<p>  <code>object</code>, family <code>concept</code>, code <code>EVENT</code>).</p>
+<ul><li>Inputs are <code>tree.input</code> relations (&quot;has input&quot;, family <code>control</code>,</li></ul>
+<p>  <code>start:'none'</code>, <code>end:'none'</code>), source <code>tree.gate</code>, target <code>tree.gate</code> or   <code>tree.event</code>. The endpoint contract is enforced as <code>DDN102</code>.</p>
+<h2>Semantics</h2>
+<p>A <code>tree.input</code> relation points FROM a gate TO one of its inputs — a child gate or a basic event. A gate's input count is its number of visible outgoing <code>tree.input</code> relations. Both profiles share this machinery and differ in documented intent only: <code>fault.tree@1</code> decomposes a top event downward; <code>event.tree@1</code> follows an initiating event forward.</p>
+<h2>The two-input rule</h2>
+<p>Under either profile, every selected <code>tree.gate</code> must declare a valid <code>x_gate.type</code> (<code>and</code> or <code>or</code>) and have at least two visible <code>tree.input</code> edges. Violations are rejected as <code>DDN-PJ126</code> (error); the message names the gate, its input count and its declared type. A gate with one input is a notation error because a one-input gate adds no decomposition information; a gate without a declared type is ambiguous.</p>
+<h2>Visual encoding</h2>
+<p>Gates render as diamond nodes whose text shows the author-written label — authors write <code>AND</code>/<code>OR</code> into the gate name; v1 keeps the declared type visible via the node name with no engine relabel. Events render as circle nodes. Edges are plain (no arrowheads). No renderer change.</p>
+<h2>Non-goals</h2>
+<p>Probability quantification at gates, minimal cut-set computation, sequence branching fractions and reliability certification are intentionally unsupported: numeric propagation is an engineering solver, outside notation coverage. See the profiles' <code>unsupported</code> lists in <code>standard/registry/profiles/catalogue.json</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

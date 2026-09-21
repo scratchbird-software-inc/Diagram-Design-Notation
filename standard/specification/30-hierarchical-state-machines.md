@@ -57,7 +57,7 @@ entry — published profiles are immutable.
 
 ## Example
 
-`examples/basics/44-hierarchical-state.ddn` — a synthetic order lifecycle with
+`website/examples/basics/44-hierarchical-state.ddn` — a synthetic order lifecycle with
 top-level states `draft`/`closed`, a composite `fulfillment` containing two
 parallel regions (`payment` with `awaiting`/`paid`, `packing` with
 `open`/`packed`), per-region initial/final pairs, and a boundary-crossing

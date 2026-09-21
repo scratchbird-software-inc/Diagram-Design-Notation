@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 103 — Object diagram profile (uml.object@1 on kind:graph) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 103 — Object diagram profile (<code>uml.object@1</code> on <code>kind:graph</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; profile uml.object@1; extension x_instance</p>
+<h2>Problem and motivating example</h2>
+<p>Class-style structure views (<code>uml.structure@1</code>, and any graph view of <code>uml.class</code> objects) show <em>types</em>: classifiers with their declared fields. Users also need <em>instance snapshots</em>: concrete example objects whose slots are filled in, linked to each other — &quot;an example customer with its example order&quot;. Today a source can declare <code>kind:record</code> objects with fields, but nothing ties such an object to the classifier it exemplifies, so a renderer cannot present it as an instance of a type and a validator cannot check its slots against the type.</p>
+<p>Motivating example: synthetic <code>Customer</code> and <code>Order</code> classifiers (ordinary <code>uml.class</code> objects with a few fields) plus two record instances — <code>sample_customer</code> and <code>sample_order</code> — each naming its classifier and carrying matching slot fields, with one <code>assoc</code> link between the instances. Rendered on the existing graph projection, the instance cards show their slot rows and the link, giving the reader a concrete snapshot beside the type model.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Profiles and extension properties are atom/record property values (<code>property = identifier &quot;:&quot; value &quot;;&quot;</code>); everything below parses today. Verified: <code>standard/grammar/ddn.ebnf</code> untouched; values are records/atoms.</p>
+<ul><li>New profile <code>uml.object@1</code> bound to the existing projection <code>kind:graph</code>.</li></ul>
+<p>  No new projection kind: an object diagram is a graph-shaped view.</p>
+<ul><li>New registered extension property <code>x_instance</code> on objects:</li></ul>
+<p>  ``<code>json   { &quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;classifier&quot;], &quot;additionalProperties&quot;: true }   </code>``</p>
+<p>  The classifier is written as a reference: <code>x_instance: { classifier: @m.Order; };</code>.   Reference values in property records are rewritten by <code>resolveValue</code>   (<code>ddn-core.js</code>) to <code>{ classifier: { $ref: &quot;&lt;uid&gt;&quot; } }</code> at build time, so the   validator always receives a resolved reference; an unresolvable reference   fails at build (<code>DDN031</code>-class) before any profile check runs.</p>
+<ul><li>No new kinds, no new verbs, no new projection properties. Links between</li></ul>
+<p>  instances reuse the core verb <code>assoc</code> (endpoint contract   <code>source:['<em>'], target:['</em>'], allow_self:true, member_endpoints:true</code>).</p>
+<pre><code>object customer &quot;Customer&quot; { kind: uml.class;
+    fields { field customer_id { datatype: &quot;string&quot;; } field name { datatype: &quot;string&quot;; } }
+}
+object sample_customer &quot;sample_customer : Customer&quot; {
+    kind: record; x_instance: { classifier: @model.customer; };
+    fields { field customer_id; field name; }
+}
+relation placed &quot;Placed&quot; @sample_customer -&gt; @sample_order { kind: assoc; }
+
+view objects &quot;Synthetic snapshot / objects&quot; {
+    data: [@model];
+    projection { kind: graph; profile: &quot;uml.object@1&quot;; }
+}</code></pre>
+<h3>Registration correction (verified against the runtime)</h3>
+<p>The original workplan brief implied <code>x_<em></code> extension properties were free-form, documented beside <code>data-properties.json</code>. That is wrong: <code>data-properties.json</code> is the contract list for CORE unqualified properties (<code>uid</code>, <code>description</code>, <code>kind</code>, …). Unregistered <code>x_</em></code> properties warn <code>DDN-W103</code> in logical mode and fail <code>DDN103</code> in strict mode (<code>ddn-contracts.js</code>). Therefore <code>x_instance</code> is formally registered — in <code>notation/runtime/ddn-profiles.js</code> <code>registry()</code> and mirrored in <code>standard/registry/extensions.json</code> <code>contracts{}</code> — exactly as RFC-101/102 registered <code>x_message</code>/<code>x_return</code>.</p>
+<h2>Semantic normalization and identity effects</h2>
+<p>None beyond resolution. An instance is an ordinary selected <code>object</code> element of kind <code>record</code> that carries <code>x_instance</code>; its identity, fields and relations are untouched. The classifier reference resolves at build time to the referenced element's uid — possibly an element of an imported module of the same workspace. Slots are the instance's declared <code>fields</code>; no field is renamed, retyped or reordered.</p>
+<h2>Visual encoding and routing effects</h2>
+<p>None beyond the graph renderer's existing record cards: <code>measureNode</code>/ <code>renderNode</code> in <code>ddn-render.js</code> already draw <code>n.fields</code> as compartment rows, so slots render as ordinary field rows with no renderer change. The instance's name may follow UML-ish <code>name : Classifier</code> text as plain label text (author's choice; no parser support). Links between instances render as ordinary graph edges. Layout is the author's choice.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>A dedicated <code>uml.instance</code> kind</strong> — rejected: <code>record</code> + <code>x_instance</code> is</li></ul>
+<p>  additive and reuses the existing field-row rendering; a new kind would   duplicate the record pipeline for a label.</p>
+<ul><li><strong>Validating slot datatypes against the classifier's field datatypes</strong> —</li></ul>
+<p>  rejected for v1: names only. Record slots in examples frequently omit   datatypes; name checking already catches the common authoring error.</p>
+<ul><li><strong>A new projection kind <code>object</code></strong> — rejected: the view is graph-shaped; the</li></ul>
+<p>  graph projection and its layouts already express it.</p>
+<h2>Compatibility and migration</h2>
+<p>Purely additive. <code>record</code> and <code>uml.class</code> semantics are unchanged; no existing profile, kind, verb, or property is edited. Sources that do not use <code>uml.object@1</code> or <code>x_instance</code> are byte-for-byte unaffected; unregistered <code>x_*</code> properties continue to warn <code>DDN-W103</code> / fail <code>DDN103</code> as before, and registration of <code>x_instance</code> removes that warning for conforming sources.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new inputs: instances, classifiers, slots and links are already-declared model data. Rendered text is escaped through the shared <code>esc()</code> helper like every other node label and field row. Nodes keep <code>data-id</code>/<code>data-source-ids</code> and the existing keyboard/assistive inspection path. The diagram makes no type-system claim: slot values and identity semantics are the author's.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/profiles/catalogue.json</code>: new <code>profiles[]</code> entry</li></ul>
+<p>  <code>uml.object@1</code> (projection <code>graph</code>). Additive only; published profiles are   immutable.</p>
+<ul><li><code>notation/runtime/ddn-profiles.js</code> <code>registry()</code> and</li></ul>
+<p>  <code>standard/registry/extensions.json</code> <code>contracts{}</code>: register <code>x_instance</code> with   the schema above, target <code>object</code>.</p>
+<ul><li><code>standard/registry/capabilities.json</code>: one <code>implemented[]</code> line appended;</li></ul>
+<p>  <code>installedProfiles[]</code> gains the <code>uml.object@1</code> entry (list mirrors the   profile catalogue).</p>
+<ul><li>New error <code>DDN-PJ112</code> — under <code>uml.object@1</code>, an instance (element carrying</li></ul>
+<p>  <code>properties.x_instance</code>) declares a slot (field) whose name is not among its   classifier's fields. Checked ONLY when the classifier resolves to an   in-workspace element that declares fields; if the classifier resolves but   declares no fields, the check is skipped. Matching accepts the classifier   field's <code>name</code> or <code>local</code> id. The message names the instance, the slot and   the classifier. The check lives in the additive profile-completion validator   <code>ddn-profile-quality.js</code>, beside the <code>uml.communication@1</code> block.</p>
+<ul><li>Existing codes unchanged: <code>DDN103</code>/<code>DDN-W103</code> still guard unregistered</li></ul>
+<p>  extensions; <code>DDN105</code> still reports contract failures (e.g. <code>x_instance: {}</code>   missing <code>classifier</code>).</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive example: <code>website/examples/basics/43-object-diagram.ddn</code> — synthetic</li></ul>
+<p>  <code>Customer</code>/<code>Order</code> classifiers, two record instances with matching slots, one   <code>assoc</code> link, one <code>objects</code> view on <code>kind:graph</code> + <code>uml.object@1</code>.</p>
+<ul><li>Test suite: <code>notation/tests/object-diagram.js</code> — positive render with slot</li></ul>
+<p>  rows and source ids on scene marks, imported-module classifier resolution,   fieldless-classifier skip, <code>DDN-PJ112</code> on an unknown slot, <code>DDN105</code> on a   missing classifier, <code>DDN103</code>/<code>DDN-W103</code> on an extension typo in   strict/logical mode, and byte-identical determinism.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: <code>standard/governance/rfcs/RFC-103-object-diagram.md</code> (this document), profile catalogue (<code>uml.object@1</code> entry), <code>ddn-profiles.js</code>/<code>extensions.json</code> (<code>x_instance</code> contract), <code>ddn-profile-quality.js</code> (<code>DDN-PJ112</code> block), <code>capabilities.json</code> (<code>implemented[]</code> + <code>installedProfiles[]</code>), example 43, test suite, spec chapter <code>29-object-diagrams.md</code>. The renderer (<code>ddn-render.js</code>) needs no edit; the grammar (<code>standard/grammar/ddn.ebnf</code>) is untouched.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 motivation, D2 vocabulary, D3 metamodel (instance/classifier/slots/links),</li></ul>
+<p>  D4 rejection behavior (including the fieldless-classifier skip), D5 visual   encoding, D6 alternatives, D7 compatibility, and the data-properties   registration correction: recorded above as fixed decisions of this RFC.</p>
+<ul><li>Open: whether a later RFC adds optional slot-datatype checking or underlined</li></ul>
+<p>  <code>name : Classifier</code> title styling; <code>uml.object@1</code> deliberately renders   ordinary record cards, per D5.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

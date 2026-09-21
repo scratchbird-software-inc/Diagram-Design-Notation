@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hand-drawn rendering correction — draft.2 — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Hand-drawn rendering correction — draft.2</h1>
+<p>This bundle replaces the weak draft.1 stroke treatment with visibly hand-drawn vector geometry. Open <code>site/gallery.html</code> for the existing six-look gallery, or <code>examples/rendered/09-look-comparison/handDrawn.svg</code> for the new coordinate-free sample. Its source is <code>examples/09-look-comparison.ddn</code>.</p>
+<h2>What changed</h2>
+<ul><li>Irregular double-stroke outlines for tables, domains, samples, rounded activities, notes and frames.</li><li>Seeded bowed pen strokes for field separators, sample-grid rules and relationship bodies.</li><li>Optional light diagonal hatching, clipped inside each object, preserving registered semantic colours.</li><li>Explicit optional <code>font: handwriting</code> support using local fonts. No font files are redistributed or fetched.</li><li>Neo gets a clearer offset shadow and top-edge treatment; rectangular tables remain rectangular.</li><li>Crossing paths now contain explicit gaps as well as masks, preventing false joins in SVG readers with alpha-only mask handling.</li><li>Endpoint marks, registry icons, numbered circles, crossing semantics and scene geometry remain stable.</li><li>Invalid roughness, hachure and seed values are diagnosed rather than silently ignored.</li></ul>
+<h2>Use in an existing view</h2>
+<pre><code>style {
+    look: handDrawn;
+    font: handwriting;
+    seed: 42;
+    roughness: 1.8;
+    hachure: true;
+}</code></pre>
+<p>Only <code>look: handDrawn;</code> is needed for the new geometry. Omit <code>font</code> to retain your current font; set <code>hachure: false;</code> for plain interiors. Formatting references and shared data work as before.</p>
+<h2>Integration</h2>
+<p>The complete bundle already loads <code>reference/ddn-sketch.js</code> before the renderer in its browser editor. An existing external browser host must add that script between <code>ddn-core.js</code> and <code>ddn-render.js</code>. The CLI requires the module directly. No npm install, CDN, raster filtering or font download is required. Changing just an old pre-rendered SVG cannot change the renderer: regenerate the SVG from the source.</p>
+<pre><code>npm test
+npm run build:examples
+npm run serve</code></pre>
+<p>New executable examples: <code>09-look-comparison.ddn</code> shares one model across three distinct looks with automatic grid placement; <code>10-handdrawn-routing.ddn</code> shows gap, rounded bridge, square bridge and straight routing in the corrected look.</p>
+<p>This is a rendering correction, not a new layout engine. Grid/manual placement and the pre-existing limits on global routing, measured typography and graphical editing remain. Handwriting font appearance depends on installed fonts; sketch geometry remains present even when the font falls back. Existing outputs intentionally change and must be regenerated for updated hashes.</p>
+</article>
+<p><small>Rendered from <a href="HANDDRAWN-FIX.md">HANDDRAWN-FIX.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

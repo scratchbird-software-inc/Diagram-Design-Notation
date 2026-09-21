@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting started — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Getting started</h1>
+<p>The DDN runtime ships as plain script files — no build step, no runtime dependencies. Pick the all-in-one bundle for the simplest start.</p>
+<h2>Browser (script tag)</h2>
+<pre><code>&lt;div id=&quot;diagram&quot;&gt;&lt;/div&gt;
+&lt;script src=&quot;notation/dist/ddn.global.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  const ws = DDNLive.createWorkspace({
+    &quot;hello.ddn&quot;: 'ddn &quot;0.5&quot;;\nmodule &quot;demo&quot;;\ndata m {\n' +
+      '  object a &quot;Order intake&quot; { kind: application; }\n' +
+      '  object b &quot;Ledger&quot; { kind: table; }\n' +
+      '  relation posts @a -&gt; @b { kind: assoc; }\n' +
+      '}\nview v &quot;Hello&quot; { data: [@m]; }\n'
+  });
+  const result = ws.renderSync({ entry: &quot;hello.ddn&quot;, view: &quot;v&quot; });
+  document.getElementById(&quot;diagram&quot;).innerHTML = result.svg;
+&lt;/script&gt;</code></pre>
+<p>That is a complete first render: create a workspace from a map of file names to source text, render a declared view synchronously, and place the returned SVG. Ten lines, and it works from <code>file://</code> because nothing is fetched. A single file can also carry the whole design — model, data, views and formats as several <code>module &quot;…&quot;;</code> sections (RFC-117, see <code>website/examples/basics/61-self-contained.ddn</code>) — and <code>DDNLive.io.bundle(files, entry)</code> merges a multi-file workspace into one such self-contained file with byte-identical rendering.</p>
+<p>For an embedded, self-updating element use <code>DDNLive.mount</code> instead — see <a href="embedding.html">embedding.md</a>.</p>
+<h2>Node (<code>require</code>)</h2>
+<p>The package is published from <code>notation/</code> (<code>npm pack</code> there, then <code>npm install &lt;tarball&gt;</code>). Its <code>exports</code> map exposes both the all-in-one bundle and the modular splits:</p>
+<pre><code>const DDN = require(&quot;@ddn/notation&quot;); // same surface as DDNLive
+const ws = DDN.createWorkspace({ &quot;hello.ddn&quot;: sourceText });
+const { svg, diagnostics } = ws.renderSync({ entry: &quot;hello.ddn&quot;, view: &quot;v&quot; });
+console.log(svg.length, diagnostics.length);</code></pre>
+<p>Inside this repository, require the bundle directly: <code>require(&quot;./notation/dist/ddn.global.js&quot;)</code>. The ES-module twin is <code>notation/dist/ddn.mjs</code>; types ship as <code>notation/dist/ddn.d.ts</code>.</p>
+<h2>CLI</h2>
+<p>No install needed inside the repo:</p>
+<pre><code>node notation/cli/cli.js check  website/examples/basics/01-customer.ddn --workspace website/examples/basics
+node notation/cli/cli.js render website/examples/basics/01-customer.ddn --view overview --workspace website/examples/basics --out /tmp/overview.svg
+node notation/cli/cli.js resolve website/examples/basics/01-customer.ddn --view overview --workspace website/examples/basics</code></pre>
+<p><code>check</code> parses and validates, <code>render</code> writes the deterministic SVG, and <code>resolve</code> prints the resolved model (elements, relations, profiles, diagnostics) as JSON — the same structures the library returns from <code>ws.resolve</code>.</p>
+<h2>What to read next</h2>
+<ul><li>Only need validation, not rendering? Load a smaller bundle: <a href="modules.html">modules.md</a>.</li><li>Every method used above is specified in <a href="api-reference.html">api-reference.md</a>.</li><li>The source language itself: <a href="authoring-sources.html">authoring-sources.md</a>.</li></ul>
+</article>
+<p><small>Rendered from <a href="getting-started.md">getting-started.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

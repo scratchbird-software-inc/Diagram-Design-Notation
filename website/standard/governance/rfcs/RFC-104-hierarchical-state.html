@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 104 — Hierarchical state machine profile (state.composite@1 on kind:graph) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 104 — Hierarchical state machine profile (<code>state.composite@1</code> on <code>kind:graph</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; profile state.composite@1; no new kinds/verbs</p>
+<h2>Problem and motivating example</h2>
+<p>Flat lifecycle diagrams (<code>state.flat@1</code>) show one level of states with a single initial state. They cannot express &quot;an order is in fulfilment, which itself contains payment and packing tracks that proceed in parallel.&quot; Users need a composite state drawn as a frame containing substates, and parallel regions drawn as dashed boxes inside the composite, with transitions allowed to cross composite boundaries (D1).</p>
+<p>Motivating example: a synthetic order lifecycle with top-level states <code>draft</code> and <code>closed</code>, plus a composite state <code>fulfillment</code> (an ordinary <code>state.state</code> referenced by a view frame's <code>scope</code>) whose members are the substates of two parallel regions — <code>payment</code> (with <code>awaiting</code>/<code>paid</code>) and <code>packing</code> (with <code>open</code>/<code>packed</code>). Each region has its own <code>state.initial</code> and <code>state.final</code>; one transition crosses the composite boundary from <code>paid</code> to top-level <code>closed</code>.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Frames are existing view-level declarations (<code>frame id &quot;LABEL&quot; { members:[@…]; scope:@ref; }</code>, compiled into <code>ir.view.frames</code> by <code>ddn-core.js</code>), and <code>x_region</code> is an <code>x_*</code> property, which <code>validateKnown</code> exempts from the frame property allowlist (<code>ddn-core.js</code>). Verified: <code>standard/grammar/ddn.ebnf</code> untouched (D2).</p>
+<ul><li>New profile <code>state.composite@1</code> bound to the existing projection</li></ul>
+<p>  <code>kind:graph</code>. No new projection kind: a hierarchical state view is a   graph-shaped view.</p>
+<ul><li><strong>Composite state</strong> = an ordinary <code>state.state</code> object referenced by a view</li></ul>
+<p>  <code>frame</code>'s <code>scope</code>; the frame's <code>members</code> are its substates.</p>
+<ul><li><strong>Region</strong> = a view <code>frame</code> carrying the pass-through flag <code>x_region: true</code></li></ul>
+<p>  whose members are states of one composite.</p>
+<ul><li><strong>Transitions</strong> = ordinary <code>state.transition</code> relations with</li></ul>
+<p>  <code>x_transition: { event: &quot;…&quot;, guard: {…} }</code>, reusing the existing extension   contract registered in <code>ddn-profiles.js</code> / <code>extensions.json</code>. No new kinds,   verbs, or extension properties.</p>
+<pre><code>view lifecycle &quot;Order lifecycle&quot; {
+    data: [@m.order];
+    projection { kind: graph; profile: &quot;state.composite@1&quot;; }
+    frame fulfillment &quot;Fulfillment&quot; { scope: @m.order.fulfillment;
+        members: [@m.order.awaiting, @m.order.paid, @m.order.open, @m.order.packed]; }
+    frame payment &quot;PAYMENT&quot; { x_region: true;
+        members: [@m.order.payment_initial, @m.order.awaiting, @m.order.paid, @m.order.payment_final]; }
+    frame packing &quot;PACKING&quot; { x_region: true;
+        members: [@m.order.packing_initial, @m.order.open, @m.order.packed, @m.order.packing_final]; }
+}</code></pre>
+<h2>Semantic normalization and identity effects</h2>
+<p>None beyond resolution. Composites, regions, states and transitions are ordinary elements/relations plus view frames; identities are untouched. Frames compile to <code>ir.view.frames</code> entries <code>{id, name, scope, members, …}</code> with extra properties (including <code>x_region</code>) passed through <code>clean()</code> (<code>ddn-core.js</code>).</p>
+<p>Transition semantics (D3): transitions are ordinary <code>state.transition</code> relations and MAY cross composite/region boundaries — no restriction is added. Each region contains at most one <code>state.initial</code> (enforced as a diagnostic, below). Trace evaluation (<code>traces</code> projection property) remains <code>state.flat@1</code>-only: for <code>state.composite@1</code> it is rejected automatically by the existing <code>DDN-Q005</code> guard in <code>ddn-projection-data.js</code> (<code>if(kind==='graph'&amp;&amp;['inputs','analysis_budget','traces'].some(k=&gt;p[k]!==undefined))fail('DDN-Q005',…)</code> — verified: the lifecycle branch matches <code>state.flat@1</code> exactly, so <code>state.composite@1</code> falls through to the plain graph plan and never routes into <code>Quality.lifecycle</code>, whose single-initial rule would contradict regions).</p>
+<p>Rejection behavior (D4): new error <code>DDN-PJ113</code> — two or more <code>state.initial</code> objects are members of the same region frame (<code>x_region: true</code>), or of the same composite frame when it has no region frames. The message names the frame and the colliding initials.</p>
+<h2>Visual encoding and routing effects</h2>
+<ul><li>Composite: existing frame rendering (rect + name) — no change.</li><li>Region: the same frame box with a DASHED border overlay</li></ul>
+<p>  (<code>&lt;rect … fill=&quot;none&quot; stroke=&quot;&lt;theme rule&gt;&quot; stroke-dasharray=&quot;6 4&quot;/&gt;</code>),   added in the frame loop of <code>ddn-render.js</code> when <code>f.x_region === true</code>.</p>
+<ul><li>Transition labels show <code>event [guard]</code> via the existing engine relabel</li></ul>
+<p>  branch in <code>ddn-engine.js</code>, extended from <code>state.flat@1</code> only to also match   <code>state.composite@1</code> (D5).</p>
+<p>Layout and routing are otherwise the graph renderer's existing behavior.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Dedicated composite/region kinds</strong> (<code>state.composite</code>, <code>state.region</code>) —</li></ul>
+<p>  rejected (D6): frames already provide grouping and rendering; new kinds   would duplicate view machinery.</p>
+<ul><li><strong>Routing <code>state.composite@1</code> through <code>Quality.lifecycle</code></strong> — rejected (D6):</li></ul>
+<p>  its single-initial rule contradicts parallel regions, each of which carries   its own initial state.</p>
+<ul><li><strong>A new projection kind <code>state</code></strong> — rejected: the view is graph-shaped; the</li></ul>
+<p>  graph projection and its layouts already express it.</p>
+<h2>Compatibility and migration</h2>
+<p>Purely additive (D7). <code>state.flat@1</code> behavior is byte-identical: its catalogue entry (including the <code>unsupported: [&quot;hierarchical/parallel states&quot;]</code> line) is untouched — published profiles are immutable. No existing kind, verb, profile, or property is edited. Sources that do not use <code>state.composite@1</code> or <code>x_region</code> are unaffected.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new inputs: composites, regions, states, transitions and frames are already-declared model/view data. Region overlay rects carry no text; labels are escaped through the shared <code>esc()</code> helper like every other label. The diagram makes no conformance claim: this is profile-level coverage, not UML/SCXML conformance.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/profiles/catalogue.json</code>: new <code>profiles[]</code> entry</li></ul>
+<p>  <code>state.composite@1</code> (projection <code>graph</code>). Additive only.</p>
+<ul><li><code>notation/runtime/ddn-engine.js</code>: the <code>x_transition</code> relabel branch matches</li></ul>
+<p>  <code>['state.flat@1','state.composite@1']</code>.</p>
+<ul><li><code>notation/runtime/ddn-render.js</code>: dashed region overlay in the frame loop.</li><li><code>notation/runtime/ddn-profile-quality.js</code>: new <code>state.composite@1</code> block</li></ul>
+<p>  implementing <code>DDN-PJ113</code> (two or more <code>state.initial</code> members in one region   frame, or in one region-less composite frame). Message names the frame and   the colliding initials.</p>
+<ul><li><code>standard/registry/capabilities.json</code>: one <code>implemented[]</code> line appended;</li></ul>
+<p>  <code>installedProfiles[]</code> gains the <code>state.composite@1</code> entry (list mirrors the   profile catalogue).</p>
+<ul><li>Existing codes unchanged: <code>DDN-Q005</code> still rejects <code>traces</code>/<code>inputs</code>/</li></ul>
+<p>  <code>analysis_budget</code> on non-<code>state.flat@1</code> profiles; <code>DDN-QL001</code>…<code>QL005</code> remain   <code>state.flat@1</code>-only.</p>
+<ul><li>New error code verified free: <code>DDN-PJ113</code> appears nowhere in <code>notation/</code>,</li></ul>
+<p>  <code>standard/</code>, or <code>website/examples/</code> (highest pre-existing: PJ112, PJW03).</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive example: <code>website/examples/basics/44-hierarchical-state.ddn</code> — synthetic</li></ul>
+<p>  order lifecycle with composite <code>fulfillment</code>, two dashed regions   (<code>payment</code>, <code>packing</code>), per-region initial/final states, and a   boundary-crossing transition <code>paid → closed</code>.</p>
+<ul><li>Test suite: <code>notation/tests/hierarchical-state.js</code> — positive render with</li></ul>
+<p>  composite frame, two <code>stroke-dasharray</code> region overlays and event labels;   boundary-crossing transition; <code>DDN-PJ113</code> for two initials in one region and   in a region-less composite; <code>DDN-Q005</code> on <code>traces</code>; <code>state.flat@1</code>   regression; byte-identical determinism.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: this RFC, profile catalogue entry, <code>ddn-engine.js</code>, <code>ddn-render.js</code>, <code>ddn-profile-quality.js</code>, <code>capabilities.json</code>, example 44, test suite, spec chapter <code>30-hierarchical-state-machines.md</code>. The grammar (<code>standard/grammar/ddn.ebnf</code>) is untouched; <code>state.flat@1</code> rendering and validation paths are untouched.</p>
+<p>This is profile-level coverage, not UML/SCXML conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 motivation, D2 vocabulary (frames + <code>x_region</code>, no new kinds/verbs), D3</li></ul>
+<p>  semantics (boundary-crossing transitions; flat-only traces), D4 rejection   behavior (<code>DDN-PJ113</code>), D5 visual encoding (dashed region overlay, extended   relabel branch), D6 alternatives, D7 compatibility: recorded above as fixed   decisions of this RFC.</p>
+<ul><li>Open: history pseudostates, timers, and executable actions remain</li></ul>
+<p>  unsupported; a later RFC may add them under a new profile version.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

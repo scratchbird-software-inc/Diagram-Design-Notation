@@ -64,7 +64,7 @@ This is profile-level coverage, not BPMN conformance.
 
 ## Example
 
-`examples/basics/46-bpmn.ddn` — a synthetic buyer/seller collaboration: two
+`website/examples/basics/46-bpmn.ddn` — a synthetic buyer/seller collaboration: two
 pool frames, typed start/end events (`none`, `message`, `error`), an exclusive
 gateway on the buyer side, `uml.flow` sequence edges within each pool, and one
 dashed `bpmn.messageflow` from `request_quote` to `prepare_quote` across the

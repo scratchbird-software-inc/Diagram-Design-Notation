@@ -26,7 +26,7 @@ to source text, render a declared view synchronously, and place the returned
 SVG. Ten lines, and it works from `file://` because nothing is fetched. A
 single file can also carry the whole design — model, data, views and formats
 as several `module "…";` sections (RFC-117, see
-`examples/basics/61-self-contained.ddn`) — and `DDNLive.io.bundle(files,
+`website/examples/basics/61-self-contained.ddn`) — and `DDNLive.io.bundle(files,
 entry)` merges a multi-file workspace into one such self-contained file with
 byte-identical rendering.
 
@@ -55,9 +55,9 @@ Inside this repository, require the bundle directly:
 No install needed inside the repo:
 
 ```sh
-node notation/cli/cli.js check  examples/basics/01-customer.ddn --workspace examples/basics
-node notation/cli/cli.js render examples/basics/01-customer.ddn --view overview --workspace examples/basics --out /tmp/overview.svg
-node notation/cli/cli.js resolve examples/basics/01-customer.ddn --view overview --workspace examples/basics
+node notation/cli/cli.js check  website/examples/basics/01-customer.ddn --workspace website/examples/basics
+node notation/cli/cli.js render website/examples/basics/01-customer.ddn --view overview --workspace website/examples/basics --out /tmp/overview.svg
+node notation/cli/cli.js resolve website/examples/basics/01-customer.ddn --view overview --workspace website/examples/basics
 ```
 
 `check` parses and validates, `render` writes the deterministic SVG, and

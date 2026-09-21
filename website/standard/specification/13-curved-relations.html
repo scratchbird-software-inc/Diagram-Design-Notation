@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Curved relations and shape-preserving routing — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Curved relations and shape-preserving routing</h1>
+<p><strong>Status: proposed normative contract with a bounded executable reference.</strong> Applies to the ordinary graph renderer. The experimental interaction-lane renderer remains a separate projection. An explicit curved request there fails with <code>DDN-I031</code>; it is not silently turned into a curved sequence notation.</p>
+<h2>1. Geometry is independent of meaning</h2>
+<p><code>routing</code> chooses connector geometry. It MUST NOT change the relation's kind, direction, source/target identities, member endpoints, cardinality, line-family pattern, colour, occurrence identity, or legend-key assignment. A curve is not a new relationship verb. The same model can be projected through straight, orthogonal, or curved views without copied data.</p>
+<p><code>style.look</code> is independent: classic, handDrawn, and neo can all display curved paths. <code>font</code>, maturity, and authority retain their separate meanings. A precisely drawn curve is not necessarily approved; a sketched curve is not necessarily a draft.</p>
+<p>There are three routing values in this release:</p>
+<table><thead><tr><th>Value</th><th>Meaning</th></tr></thead><tbody><tr><td><code>straight</code></td><td>A direct straight segment. It cannot evade an obstacle by silently becoming orthogonal.</td></tr><tr><td><code>orthogonal</code></td><td>Horizontal/vertical route segments with sharp right-angle bends, except an explicitly requested local crossing jump.</td></tr><tr><td><code>curved</code></td><td>Cubic Bézier path segments, optionally joined by straight tangent runs. The renderer checks the resulting curve geometry, not just a polygonal plan.</td></tr></tbody></table>
+<p>Perfectly aligned endpoints MAY produce a geometrically straight result even under <code>curved</code>. No artificial bow is required when it conveys nothing.</p>
+<h2>2. Reusable policy and view composition</h2>
+<p>A reusable format concern can contain:</p>
+<pre><code>format styles {
+    layout concept_map {
+        algorithm: mindmap;
+        routing: curved;
+        curve: bezier;
+        curve_tension: 0.5;
+        crossings: gap;
+        gap: 150px;
+        row_gap: 100px;
+    }
+}</code></pre>
+<p>An existing view selects it with <code>layout: @styles.concept_map;</code>. The view can separately identify its root and hierarchy relation kinds. The policy references no copied model. <code>algorithm: mindmap</code> and <code>routing: curved</code> are independent: selecting the placement algorithm does not silently overwrite an explicitly chosen route geometry.</p>
+<p>In a view's <code>layout</code> override, authors can instead write:</p>
+<pre><code>layout {
+    routing: curved;
+    curve: rounded;
+    curve_radius: 36px;
+}</code></pre>
+<p>The <code>bezier</code> family prefers a broad cubic from a source port to a destination port with correctly aligned endpoint tangents. When obstacles, labels, self-relations, or explicit guides require a detour, it uses a checked piecewise-cubic corridor spline. The selected strategy is recorded in scene metadata.</p>
+<p>The <code>rounded</code> family keeps the corridor route but replaces bends with cubic corner transitions. It is deliberately different from a broad mind-map branch. <code>curve_radius</code> is a requested maximum corner-rounding reach, clamped by adjacent segment lengths and reduced when needed for clearance. A reduction is recorded; the requested radius is not a promise of a minimum physical radius.</p>
+<h2>3. Per-relation refinement</h2>
+<p>The same four geometry properties are permitted in an existing view's route hint:</p>
+<pre><code>route @model.receipt_flow {
+    routing: curved;
+    curve: bezier;
+    curve_tension: 0.6;
+}
+
+route @model.foreign_reference {
+    routing: orthogonal;
+}</code></pre>
+<p>These are presentation overrides. They do not change the corresponding data declarations. Direct route properties override the shared layout policy for that one appearance. <code>via</code> remains an optional rectilinear corridor guide, not a list of Bézier control points. It is rounded after route repair/validation; exact unrounded passage through a bend is not implied by curve mode. A <code>strict</code> route policy rejects an unsafe or nonorthogonal guide. General arbitrary control-handle editing is not part of this draft.</p>
+<table><thead><tr><th>Property</th><th>Default</th><th>Allowed values</th></tr></thead><tbody><tr><td><code>layout.routing</code></td><td><code>orthogonal</code></td><td><code>straight</code>, <code>orthogonal</code>, <code>curved</code></td></tr><tr><td><code>layout.curve</code></td><td><code>bezier</code></td><td><code>bezier</code>, <code>rounded</code></td></tr><tr><td><code>layout.curve_tension</code></td><td><code>0.5</code></td><td>A finite number greater than zero and no greater than one.</td></tr><tr><td><code>layout.curve_radius</code></td><td><code>32px</code></td><td>A positive length no greater than 1,000px after unit conversion.</td></tr></tbody></table>
+<p>Curve settings may be retained in a shared policy whose selected routing is currently orthogonal; they take effect only for curved relations. Unknown curve-family names are errors, not approximations to another family's behavior. This release does not claim to implement Mermaid/D3 interpolation names such as <code>basis</code> or <code>catmullRom</code>.</p>
+<h2>4. Route construction and safety</h2>
+<p>The reference first creates an obstacle-aware orthogonal corridor and reserves independent ports and label space. Curve construction is a second geometric stage. It tries broad cubics where applicable, then piecewise cubic smoothing with progressively tighter corner reach. It preserves source/target positions and does not silently return a sharp angular route because a requested curve is difficult. A genuinely aligned curve may remain straight.</p>
+<p>The renderer MUST check unrelated objects, subdiagram rectangles, labels, independent tracks, endpoint tangents, publication bounds, and crossing clarity after smoothing. Checking only the original orthogonal skeleton is insufficient: a cubic can leave that corridor. Hand-drawn secondary strokes are constrained and leave semantic endpoints and tangent directions exact.</p>
+<p>The reference uses adaptive subdivision with a control-hull flatness bound of <strong>0.18 drawing pixels</strong>, protected by geometric clearance. This is a numerical drawing tolerance, not a proof of universally optimal routing. The enterprise scanner independently resamples the exported controls at a tighter flatness threshold. Recursion and search are bounded; capacity exhaustion is diagnosed.</p>
+<p>Labels are allocated using the actual curved path, and early callouts avoid likely future branches. A circle remains a lookup key, not a time-order indicator. Request and response remain separate relation IDs and separate routes. A self-relation returns to a separately allocated port on its original object; it is not a new object.</p>
+<h2>5. Curved crossings</h2>
+<p>Crossings MUST NOT create connectivity. No dot is invented at a curve intersection. The existing <code>gap</code>, <code>bridge</code>, and <code>square_bridge</code> policies apply. Intersections are located from the checked path geometry, rather than assuming every crossing is horizontal against vertical.</p>
+<p>For <code>gap</code>, the interrupted path is split into actual cubic pieces around the intersection, in addition to any SVG mask. This permits correct appearance when masks are unsupported. Dash phase uses cumulative path distance so a line-family pattern is not restarted at every cut.</p>
+<p>For <code>bridge</code> and <code>square_bridge</code>, the renderer uses the local tangent to orient the jump, attaches it to the actual cut points, and checks that its local geometry does not obstruct an object or label. A square jump is an intentional local angular exception on an otherwise curved route. Jump direction does not indicate priority, authority, or data precedence.</p>
+<p>The reference rejects unresolved ambiguous close crossings and unsafe jump placement. Selecting gaps, increasing spacing, or separating a dense view are legitimate remedies. It does not silently paint a junction over the problem. Native bus/trunk junction-network semantics remain outside this release. Declared bus membership via profile <code>network.basic@1</code> (spec 40) is notation, not routing geometry.</p>
+<h2>6. SVG and scene contract</h2>
+<p>SVG path data uses cubic <code>C</code> commands and straight <code>L</code> commands. Source grammar does not require authors to type these vector coordinates. SVG itself defines these path primitives; DDN supplies routing and semantic rules above them. [S12]</p>
+<p>A curved scene route includes:</p>
+<pre><code>{
+  &quot;routing&quot;: &quot;curved&quot;,
+  &quot;strategy&quot;: &quot;direct-bezier&quot;,
+  &quot;flattenTolerance&quot;: 0.18,
+  &quot;commands&quot;: [
+    {
+      &quot;kind&quot;: &quot;cubic&quot;,
+      &quot;from&quot;: [100, 100],
+      &quot;c1&quot;: [200, 100],
+      &quot;c2&quot;: [250, 250],
+      &quot;to&quot;: [350, 250]
+    }
+  ]
+}</code></pre>
+<p>This is an excerpt, not a complete scene record. Stable relation ID, endpoint-side information, label bounds, and an adaptively sampled <code>points</code> path remain available. <code>commands</code> is the canonical analytic shape for a curved route; <code>points</code> is an inspection/routing approximation, not a different relationship. The scene schema defines line and cubic command variants. Consumers must not treat sampled sloping segments as orthogonality failures on a route explicitly marked curved.</p>
+<p>Endpoint marks are oriented from the exact first/last control tangents, not from a distant box center. Legends, semantic hashes, member references and source navigation remain unchanged. Publication guards include the routed drawing and the final text scale; requesting curved routes does not waive paper readability.</p>
+<h2>7. Diagnostics and regression evidence</h2>
+<table><thead><tr><th>Code</th><th>Meaning</th></tr></thead><tbody><tr><td><code>DDN046</code></td><td>Unknown routing/curve family or invalid tension/radius.</td></tr><tr><td><code>DDN220</code></td><td>No checked curved route and label fit the available geometry. No silent angular downgrade.</td></tr><tr><td><code>DDN221</code></td><td>Post-curve geometry is ambiguous or interferes with another element.</td></tr><tr><td><code>DDN223</code></td><td>Curve subdivision exhausted its bounded capacity.</td></tr><tr><td><code>DDN224</code></td><td>Crossing-jump geometry obstructs an object/label.</td></tr><tr><td><code>DDN-CW01</code></td><td>A corridor spline replaced the preferred direct curve, or rounding was tightened. Informational, with the selected geometry in the scene.</td></tr></tbody></table>
+<p>Run <code>npm run test:curves</code>. The fixtures exercise all three route geometries, both curve families, per-relation overrides, crossovers and dash continuity, source/target identity, style independence, self-relations, obstacle detours, label clearance, deterministic rebuilds, invalid settings and publication guards. They are not a certificate of unrestricted graph-layout quality.</p>
+<h2>8. Examples and implementation acceptance</h2>
+<p><code>website/examples/17-curved-relations.ddn</code> contains shared-data classic/handDrawn/neo mind maps, their angular and rounded alternatives, mixed per-relation rules, three crossing treatments, an obstacle example and a request/response/self-action example. <code>website/examples/18-routing-comparison.ddn</code> holds four small paired comparisons. The enterprise responsibility map now uses native mind-map placement with cubic branches.</p>
+<p>The website displays actual compiler outputs and links the source, semantic export, and scene. Documentation-only illustrations are labeled separately. Codex implementations should preserve these checks before substituting an external spline or layout library. ELK's separation of edge routing and layout, and Mermaid's interpolation controls, are useful precedents, not claims that DDN bundles either implementation. [S04] [S13]</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

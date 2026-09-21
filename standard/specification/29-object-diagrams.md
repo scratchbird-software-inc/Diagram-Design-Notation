@@ -73,7 +73,7 @@ view objects "Synthetic snapshot / objects" {
 }
 ```
 
-See `examples/basics/43-object-diagram.ddn`: synthetic `Customer`/`Order`
+See `website/examples/basics/43-object-diagram.ddn`: synthetic `Customer`/`Order`
 classifiers, two record instances with matching slots, and one `assoc` link.
 
 ## Unsupported

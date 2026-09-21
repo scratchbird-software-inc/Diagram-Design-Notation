@@ -131,7 +131,7 @@ makes no protocol-correctness claim; the footer says so.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/41-sequence-diagram.ddn` (three-party
+- Positive example: `website/examples/basics/41-sequence-diagram.ddn` (three-party
   order flow: reservation, dashed return, self-message).
 - Test suite: `notation/tests/sequence-diagram.js` — positive render,
   geometry/order invariants, dashed return, self-message loop, `DDN-PJ110`,

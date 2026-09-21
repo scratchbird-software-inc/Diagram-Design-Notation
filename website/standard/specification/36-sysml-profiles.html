@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>36. SysML-style block profiles (sysml.bdd@1, sysml.ibd@1, sysml.parametric@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>36. SysML-style block profiles (<code>sysml.bdd@1</code>, <code>sysml.ibd@1</code>, <code>sysml.parametric@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-110 (<code>standard/governance/rfcs/RFC-110-sysml.md</code>). Source grammar remains DDN 0.5; blocks and constraints are registry kinds, the item flow is a registry verb, and ports reuse the existing <code>ports {}</code> group and member-endpoint syntax, so this chapter is a semantic addition, not a grammar change.</p>
+<p>SysML-style structural views model blocks, their border ports, typed item flows and formula-bearing constraints on the existing <code>graph</code> projection. Three profiles divide the coverage (D3 of RFC-110):</p>
+<ul><li><code>sysml.bdd@1</code> — block definition-style view: blocks and their</li></ul>
+<p>  associations.</p>
+<ul><li><code>sysml.ibd@1</code> — internal block-style view: blocks with declared border</li></ul>
+<p>  ports and typed item flows.</p>
+<ul><li><code>sysml.parametric@1</code> — parametric constraint view: constraint blocks</li></ul>
+<p>  carrying formula text, each bound to exactly two endpoints.</p>
+<p>Users write <code>projection { kind:graph; profile:&quot;sysml.ibd@1&quot;; }</code> (or one of the other two profiles).</p>
+<p>This is profile-level coverage, not SysML conformance.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Blocks</strong> — <code>sysml.block</code> objects (silhouette <code>rect</code>, fallback</li></ul>
+<p>  <code>application</code>, family <code>interface</code>, code <code>BLOCK</code>), rendered as rect nodes.</p>
+<ul><li><strong>Ports</strong> — declared members of a block's existing <code>ports {}</code> group (core</li></ul>
+<p>  syntax; see chapter 01). The core layout machinery (<code>portAssignments()</code> in   <code>ddn-layout.js</code>) already assigns port sides and slots, and relation   endpoints already resolve to port members (<code>@pump.out</code>). Under any of this   chapter's three profiles the renderer additionally draws a small square   (10×10·s) centred at each route attachment point that resolves to a port   member, making the border attachment visible. The square is guarded on   <code>sysml.*</code> profiles; every other profile renders ports exactly as before.</p>
+<ul><li><strong>Flows</strong> — <code>sysml.flow</code> relations (verb &quot;Item flow&quot;, family <code>flow</code>, code</li></ul>
+<p>  <code>ITEMFLOW</code>, <code>start:'none'</code>, <code>end:'filled'</code>, <code>member_endpoints:true</code>). The   relation's label names the flowed item (built-in <code>name</code>, no extension   property). Flows may attach to port members.</p>
+<ul><li><strong>Constraints</strong> — <code>sysml.constraint</code> objects (silhouette <code>rect</code>, fallback</li></ul>
+<p>  <code>object</code>, family <code>concept</code>, code <code>CONSTRAINT</code>), rendered as rect nodes   whose label (or <code>description</code> — both core properties) carries the formula   text, e.g. <code>{flow = pressure × area}</code>. DDN renders the formula text; it   never evaluates it.</p>
+<h2>Declaration rules</h2>
+<ul><li>Under any <code>sysml.*</code> profile of this chapter, a selected element that</li></ul>
+<p>  declares a <code>ports {}</code> group must be a <code>sysml.block</code>; otherwise the view is   rejected with <code>DDN-PJ121</code> (error; the message names the element and its   kind).</p>
+<ul><li>Under <code>sysml.parametric@1</code>, every selected <code>sysml.constraint</code> must be</li></ul>
+<p>  touched by exactly two visible relations (<code>assoc</code> or <code>sysml.flow</code> — to   blocks or their ports); otherwise the view is rejected with <code>DDN-PJ122</code>   (error; the message names the constraint and the actual count).</p>
+<ul><li><code>sysml.flow</code> endpoints resolve through the existing member-endpoint</li></ul>
+<p>  machinery: an unknown member reference fails at resolution as <code>DDN031</code>; a   declared field member is admitted by the verb contract   (<code>member_endpoints:true</code>, <code>source/target:['*']</code>) but draws no port square,   since it is not a port.</p>
+<h2>Example</h2>
+<pre><code>data m {
+    object pump &quot;Pump&quot; { kind: &quot;sysml.block&quot;;
+        ports { port out { direction: out; } }
+    }
+    object reservoir &quot;Reservoir&quot; { kind: &quot;sysml.block&quot;;
+        ports { port in { direction: in; } }
+    }
+    object flow_balance &quot;{flow = pressure × area}&quot; { kind: &quot;sysml.constraint&quot;; }
+
+    relation water &quot;water&quot; @pump.out -&gt; @reservoir.in { kind: &quot;sysml.flow&quot;; }
+    relation bind_pump &quot;binds pump&quot; @flow_balance -&gt; @pump { kind: &quot;assoc&quot;; }
+    relation bind_reservoir &quot;binds reservoir&quot; @flow_balance -&gt; @reservoir { kind: &quot;assoc&quot;; }
+}
+
+view ibd &quot;Pump station internal block&quot; {
+    data: [@m];
+    projection { kind: graph; profile: &quot;sysml.ibd@1&quot;; }
+    exclude: [@m.flow_balance];
+}</code></pre>
+<p>See <code>website/examples/basics/50-sysml.ddn</code> for the full runnable example with all three views (<code>bdd</code>, <code>ibd</code>, <code>parametric</code>).</p>
+<h2>Out of scope</h2>
+<p>SysML XMI interchange, full SysML conformance, compartment typing beyond field rows, flow property propagation, and equation solving or evaluation are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API reference — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>API reference</h1>
+<p>The public surface of the DDN runtime, as declared in <code>notation/studio/src/public.d.ts</code> (0.6.0-beta.1). The same object is <code>window.DDNLive</code> in the browser, <code>require(&quot;@ddn/notation&quot;)</code> under Node, and the default export of <code>notation/dist/ddn.mjs</code>. Every method below is grep-verified against <code>public.d.ts</code> by <code>notation/tests/gallery-coverage.js</code>.</p>
+<p>Top-level: <code>profileCatalogue</code>, <code>VERSION</code>, <code>runtime</code>, <code>createWorkspace</code>, <code>registerWorkspace</code>, <code>mount</code>, <code>fromSnapshot</code>, <code>parse</code>, <code>authoring</code>, <code>io</code>, <code>defaults</code>, <code>setTextProvider</code>, <code>setTextMetrics</code>.</p>
+<h2>Creating and inspecting workspaces</h2>
+<h3><code>createWorkspace(files)</code></h3>
+<p><code>createWorkspace(files: SourceFiles): Workspace</code> — compile a set of source files (<code>{ &quot;name.ddn&quot;: &quot;source text&quot; }</code>) into a workspace. File names matter: <code>import</code> paths resolve against them.</p>
+<pre><code>const ws = DDNLive.createWorkspace({ &quot;model.ddn&quot;: source });</code></pre>
+<h3><code>registerWorkspace(name, files)</code></h3>
+<p><code>registerWorkspace(name, files): Workspace</code> — like <code>createWorkspace</code>, plus registers the workspace under a name so other API entry points can find it.</p>
+<h3><code>parse(source, file?)</code></h3>
+<p><code>parse(source: string, file?: string)</code> — parse one source file without a workspace. Returns the declaration list (<code>declarations</code>), <code>imports</code>, and diagnostics. This is the syntax-only check; semantic checking happens on <code>resolve</code>/<code>analyze</code>. The CLI equivalent of a full check is <code>node notation/cli/cli.js check &lt;file&gt; --workspace &lt;dir&gt;</code>.</p>
+<pre><code>const parsed = DDNLive.parse(source, &quot;model.ddn&quot;);
+console.log(parsed.declarations.length, parsed.imports.length);</code></pre>
+<h3><code>entries()</code> and <code>views(entry)</code></h3>
+<p><code>ws.entries(): Array&lt;{file, views: Array&lt;{id, name}&gt;}&gt;</code> — every entry file with its declared views. <code>ws.views(entry)</code> scopes the same list to one file.</p>
+<h3><code>analyze(file)</code></h3>
+<p><code>ws.analyze(file)</code> — structural analysis of one file: declarations, references, and diagnostics without projection resolution.</p>
+<h3><code>resolve(entry, view)</code></h3>
+<p><code>ws.resolve(entry, view)</code> — the resolved model for one view: <code>elements</code>, <code>relations</code>, the view IR with its resolved <code>profiles</code> bundle (style, layout, publication, …), and <code>diagnostics</code>. This is the full semantic check: any validation error in the view surfaces here.</p>
+<pre><code>const ir = ws.resolve(&quot;model.ddn&quot;, &quot;overview&quot;);
+console.log(ir.elements.length, ir.view.profiles.projection.profile);</code></pre>
+<h3><code>inspect(entry, view)</code></h3>
+<p><code>ws.inspect(entry, view)</code> — renderer-facing detail for one view (geometry, ports, routing decisions). Used by tooling that needs to reason about the placed diagram rather than the model.</p>
+<h2>Rendering</h2>
+<h3><code>renderSync(request)</code></h3>
+<p><code>ws.renderSync({ entry, view, overrides?, layoutState? }): RenderResult</code> — render one view deterministically. <code>RenderResult</code> carries <code>svg</code>, <code>scene</code>, <code>layoutState</code>, <code>diagnostics</code>, <code>milliseconds</code>, <code>modelFingerprint</code>, <code>sourceMap</code>, <code>dependencies</code>, and the resolved <code>overrides</code>.</p>
+<pre><code>const r = ws.renderSync({ entry: &quot;model.ddn&quot;, view: &quot;overview&quot;,
+  overrides: { look: &quot;handDrawn&quot;, routing: &quot;curved&quot; } });
+document.querySelector(&quot;#out&quot;).innerHTML = r.svg;</code></pre>
+<p><code>overrides</code> is the <code>Options</code> type from <code>public.d.ts</code> (theme, look, routing, mark, placement, spacing-era presentation switches). <code>'source'</code> means &quot;keep what the view declared&quot;.</p>
+<p>Relation-rendering override keys (B1-011):</p>
+<ul><li><code>relationRouting: Record&lt;string, 'orthogonal'|'straight'|'curved'|'rounded'&gt;</code></li></ul>
+<p>  — per-verb / per-relation routing overlay. Keys are verb ids or relation   ids of the current view; relation-id keys win over verb keys, and verb keys   win over the view-level <code>routing</code>. <code>rounded</code> maps to a curved route with   rounded bends, per relation. Unknown keys reject <code>LIVE022</code> (naming the   key), unsupported values reject <code>LIVE023</code>; data-bound/chen views reject it   with <code>LIVE021</code> and interaction (fixed-lane) views with <code>LIVE020</code>, exactly   like <code>routing</code>.</p>
+<ul><li><code>curveTension: number</code> (0–1) and <code>curveRadius: number</code> (px, 0–512) —</li></ul>
+<p>  view-level curve quantities; out-of-range values reject <code>LIVE003</code>. They are   accepted but inert when the effective routing is not curved.</p>
+<h3><code>render(request)</code></h3>
+<p><code>ws.render(request): Promise&lt;RenderResult&gt;</code> — the async twin of <code>renderSync</code>; same result shape. Use it in UIs that must not block.</p>
+<h3><code>exportModel(request)</code> and <code>exportVegaLite(request)</code></h3>
+<p><code>ws.exportModel(request): string</code> — serialize the view's publication export (honours the view's <code>export</code> profile: <code>full</code>/<code>redacted</code>, identifier mode, <code>json</code>/<code>sql</code> format). <code>ws.exportVegaLite(request)</code> returns the chart spec for chart views; it needs <code>ddn-projections.js</code> loaded (else <code>DDN-E010</code>).</p>
+<h3><code>projectionPlan(entry, view)</code></h3>
+<p><code>ws.projectionPlan(entry, view)</code> — the projection's computed plan (records, encodings, axes) before marks are drawn. Useful for testing chart semantics without rendering.</p>
+<h3><code>evaluateDecision(entry, view, input)</code> and <code>simulateLifecycle(entry, view, events, expected?)</code></h3>
+<p>Quality-family evaluators: <code>evaluateDecision</code> runs a decision/rule-table view against one input record; <code>simulateLifecycle</code> plays an event list through a state view and optionally asserts the final state.</p>
+<h2>Editing and file management</h2>
+<h3><code>updateFiles(changes)</code>, <code>replaceFiles(files)</code>, <code>removeFile(file, options?)</code></h3>
+<p>Whole-text file updates. <code>updateFiles</code> patches some files (added/changed content), <code>replaceFiles</code> swaps the entire file map, <code>removeFile</code> deletes one file (<code>{ force: true }</code> to drop it even when others import it). All return the new revision.</p>
+<h3><code>dependents(file)</code> and <code>renameFile(oldName, newName)</code></h3>
+<p><code>ws.dependents(file)</code> lists files importing the given file; <code>renameFile</code> renames a file and rewrites every <code>import</code> that points at it.</p>
+<h3><code>applyEdits(edits, options?)</code></h3>
+<p><code>ws.applyEdits(edits: TextEdit[], { expectedRevision?, entry?, view? })</code> — apply surgical <code>{ file, start, end, text }</code> edits. With <code>expectedRevision</code> the call fails on a stale base instead of clobbering; with <code>entry</code>/<code>view</code> the edits are validated against that view immediately.</p>
+<h3><code>history()</code>, <code>undo()</code>, <code>redo()</code></h3>
+<p>Undo stack for everything above. <code>history()</code> reports <code>{ canUndo, canRedo, undoLabel, redoLabel }</code>; <code>undo()</code>/<code>redo()</code> step it and report whether anything changed.</p>
+<h3><code>revision</code> and <code>subscribe(fn)</code></h3>
+<p><code>ws.revision</code> is the monotonically increasing workspace version. <code>ws.subscribe(fn)</code> registers a listener called with <code>{ revision, changedFiles }</code> after every mutation; it returns an unsubscribe function.</p>
+<pre><code>const off = ws.subscribe(({ revision, changedFiles }) =&gt; {
+  console.log(&quot;rev&quot;, revision, &quot;changed&quot;, changedFiles);
+  rerender();
+});</code></pre>
+<h2>Live data</h2>
+<h3><code>replaceData(name, records)</code></h3>
+<p><code>ws.replaceData(name, records): { revision, diagnostics }</code> — replace the records of a named <code>data</code> block, leaving every other byte of the source untouched (B1-006). Records must carry the same keys as the block's existing first record, or the call throws <code>DDN-E011</code>. See <a href="data-refresh.html">data-refresh.md</a> for the dashboard recipe.</p>
+<pre><code>ws.replaceData(&quot;metrics&quot;, [
+  { label: &quot;Alpha&quot;, value: 16, unit: &quot;ms&quot; },
+  { label: &quot;Beta&quot;,  value: 8,  unit: &quot;ms&quot; }
+]);</code></pre>
+<h2>Mounting and snapshots</h2>
+<h3><code>mount(element, options)</code></h3>
+<p><code>mount(element, { workspace, entry, view, overrides?, layoutState? }): DiagramElement</code> — attach a live <code>&lt;ddn-example&gt;</code> element that renders now and re-renders on workspace changes. The element exposes <code>ready</code>, <code>setOptions(options)</code>, <code>exportSVG()</code>, <code>getState()</code>, <code>destroy()</code>, and emits <code>ddn-render</code>, <code>ddn-error</code>, and <code>ddn-navigate</code> events. See <a href="embedding.html">embedding.md</a>.</p>
+<h3><code>fromSnapshot(snapshot)</code></h3>
+<p><code>fromSnapshot(snapshot): MountOptions</code> — turn a <code>Snapshot</code> back into mount options (files + entry + view + overrides + layout state), e.g. to restore a saved diagram.</p>
+<h3><code>snapshot(entry, view, overrides?, layoutState?)</code></h3>
+<p><code>ws.snapshot(...): Snapshot</code> — the inverse: capture everything needed to reproduce a render (<code>format: &quot;ddn-workspace@1&quot;</code>, runtime stamps, files, request).</p>
+<h3><code>destroy()</code></h3>
+<p><code>ws.destroy()</code> — release the workspace. Mounted elements should be destroyed first (<code>diagram.destroy()</code>).</p>
+<h2>Structured authoring</h2>
+<h3><code>authoring</code></h3>
+<p><code>DDNLive.authoring</code> is the structured-edit façade (<code>Authoring</code> in <code>public.d.ts</code>): methods like <code>setMatrixCell</code>, <code>setMatrixCells</code>, <code>setRecordValue</code>, <code>replaceData</code>, <code>setAssignment</code>, <code>setLabel</code>, <code>setProperty</code>, <code>pin</code>/<code>unpin</code>/<code>hide</code>, <code>addElement</code>, <code>addField</code>, <code>addRelation</code>, <code>deleteDefinition</code>, and <code>sourceOf</code>. Each takes the workspace plus <code>entry</code>/<code>view</code> coordinates and performs a validated source edit — this is what the visual designer uses, so hand tools get the same guarantees.</p>
+<pre><code>DDNLive.authoring.setLabel(ws, &quot;model.ddn&quot;, &quot;overview&quot;, &quot;model.order&quot;, &quot;Sales order&quot;);</code></pre>
+<h2>File exchange</h2>
+<h3><code>io</code></h3>
+<p><code>DDNLive.io</code> (<code>IO</code> in <code>public.d.ts</code>) — browser-side file exchange: <code>open(files)</code> (FileList → sources + snapshot), <code>toJSON(snapshot)</code>, <code>toZIP(snapshot)</code> / <code>unzip(bytes)</code>, <code>zipStore(files)</code>, <code>crc32(bytes)</code>, <code>download(name, data, type?)</code>, and <code>bundle(files, entry)</code> (RFC-117: merge a workspace into one self-contained multi-module <code>.ddn</code> source → <code>{text, diagnostics}</code>; deterministic, render byte-identical to the original workspace; external imports kept with a <code>DDN-W013</code> warning).</p>
+<h2>Element defaults</h2>
+<h3><code>defaults</code></h3>
+<p><code>DDNLive.defaults.forKind(kind)</code> returns a deep copy of the registry default property set for an element kind (<code>{}</code> when the kind has none) — the same defaults B1-002 populates on declare/create. Use it to pre-fill forms or to diff an element against the registry baseline.</p>
+</article>
+<p><small>Rendered from <a href="api-reference.md">api-reference.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anchored placement, route optimization and low-light palettes — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Anchored placement, route optimization and low-light palettes</h1>
+<p><strong>DDN 0.3.0-draft.2 · proposed implementation contract.</strong> This replaces the separate 0.2 live-companion capability descriptions for current integration. Algorithms are original bounded implementations; no yEd/yFiles code is incorporated.</p>
+<h2>Pin and state identity</h2>
+<p>Only <code>place @element { at: [x, y]; }</code> pins an occurrence. Coordinates are the world-space top-left corner. Size alone is not a pin. A pin MUST retain its exact authored coordinates under all patterns, field-detail, style and publication changes. View framing may transform the entire drawing without mutating world coordinates.</p>
+<p>The pin focus is the midpoint of the combined bounds of selected pinned elements, after measuring their current content. It is not the mean of top-left coordinates or the bounding box of the entire graph. <code>center:pins</code> centres this focus in the drawing area, excluding legend/furniture. A symmetric envelope can add whitespace; it is preferable to moving pins. <code>center:content</code> uses ordinary content framing. No-pin views have no invented pinned object.</p>
+<h2>Algorithms</h2>
+<table><thead><tr><th>Value</th><th>Meaning</th></tr></thead><tbody><tr><td><code>auto</code></td><td>Graph-informed, deterministic layered placement, preserving pins. The omitted-algorithm default.</td></tr><tr><td><code>grid</code></td><td>Original measured row/column placement; not a ring-centred lattice contract.</td></tr><tr><td><code>manual</code></td><td>Respect authored placements, with a deterministic placement for unspecified objects.</td></tr><tr><td><code>fit_grid</code></td><td>Free-element centres on measured grid slots around the fixed core. <code>grid_step</code> gives lattice granularity.</td></tr><tr><td><code>circular</code></td><td>One common ring of free-element centres around pins, expanding for measured boxes.</td></tr><tr><td><code>radial</code></td><td>Concentric rings from undirected graph distance to the pin set or a deterministic root.</td></tr><tr><td><code>layered</code></td><td>Directed SCC condensation/ranks. With pin centring, the layer system is fitted around fixed coordinates.</td></tr><tr><td><code>tree</code></td><td><strong>Original 0.3 declared-tree semantics</strong>: the source must define a valid tree/hierarchy contract.</td></tr><tr><td><code>spanning_tree</code></td><td>Deterministic BFS spanning forest for a general graph. Extra relations still render. This is the old live companion's <code>tree</code>.</td></tr><tr><td><code>mindmap</code></td><td>Original 0.3 branching projection rooted by its declared root/relation selection.</td></tr><tr><td><code>grouped</code></td><td>Original 0.3 grouping/swimlane placement using its grouping contract.</td></tr><tr><td><code>organic</code></td><td>Fixed-iteration force seed with pins excluded from integration and bounded collision projection.</td></tr></tbody></table>
+<p>Renaming the earlier live value <code>tree</code> to <code>spanning_tree</code> preserves the stronger original 0.3 <code>tree</code> meaning. The migration is explicit: a free-graph spanning layout must not masquerade as proof that the semantic graph is a tree. A layout root does not imply business authority; radial distance and rank do not establish time.</p>
+<h2>Parameters and overrides</h2>
+<p><code>auto_place</code> is boolean (default true). <code>center</code> is <code>pins</code> or <code>content</code>. New pin-centred patterns default to pins; inherited original patterns keep their explicit centre. <code>grid_step</code> is a finite length 8–512 CSS px. The pattern gap is 16–2000 CSS px; the engine may enlarge it to honour element dimensions and native port clearance. <code>direction</code> is right/down/left/up where the underlying algorithm supports orientation.</p>
+<h2>Spacing hints</h2>
+<p>A view, or a <code>bundle</code> inside a format declaration, may carry one optional <code>spacing</code> property. The view value wins over the format value; when both are absent the hint is <code>normal</code>. It is an additive optional enum — an unknown value is rejected with <code>DDN033</code>, and it is not a language version gate.</p>
+<table><thead><tr><th>Value</th><th>Factor</th><th>Effect</th></tr></thead><tbody><tr><td><code>tight</code></td><td>0.75</td><td>Compacts inter-node gaps, layer/band spacing and the route-label reservation margin.</td></tr><tr><td><code>normal</code></td><td>1.0</td><td>The default. Exactly the historical output; omitting <code>spacing</code> is byte-identical to <code>spacing: normal</code>.</td></tr><tr><td><code>loose</code></td><td>1.4</td><td>Spreads gaps and label bands so long relation labels get room with shorter detours.</td></tr><tr><td><code>expanded</code></td><td>2.0</td><td>Maximum spread.</td></tr></tbody></table>
+<p>The factor multiplies the inter-node horizontal/vertical gaps (<code>gap</code>, <code>row_gap</code>, including the pin-pattern pitch), the layer/band spacing derived from them, and the route-label reservation margins (8/10 px at <code>normal</code>), rounded through the renderer's numeric helper. Node body sizes, font sizes, glyph sizes and the fixed canvas furniture never scale. <code>spacing</code> is a <strong>graph-family hint</strong>: fixed-grid projections (chart, matrix, panels, table, timeline, fishbone, decision, sequence, timing) ignore it entirely — <code>check()</code> emits no warning, because ignoring it is the documented behavior. Factors are literal constants; the renderer stays deterministic.</p>
+<pre><code>format layouts {
+    layout orbit {
+        algorithm: circular;
+        center: pins;
+        auto_place: true;
+        routing: curved;
+        crossings: gap;
+        gap: 100px;
+    }
+    bundle roomy { layout: @orbit; spacing: loose; }
+}</code></pre>
+<p>A view uses <code>layout:@layouts.orbit;</code>. Placement, appearance and publication stay separate from semantic data. Relative frames and explicit routing guides remain constraints; infeasible rings inside fixed frames fail rather than silently overflowing.</p>
+<h2>Pause and reflow</h2>
+<p>Paused free positions are remembered <strong>view state</strong>, not inserted source pins. A first render with no state requires one initial placement/route optimization. Subsequent paused renders retain those free positions, seed only genuinely new nodes, and preserve authored pins over stale remembered state. Size changes can expose collisions and are reported. Re-enabling placement releases remembered free positions.</p>
+<p><code>layoutState</code> has format <code>ddn-layout-state@1</code>, an exact <code>entry#view</code> scope and finite bounded coordinates by stable identity. State from another view is rejected. Deleting an element does not leave a ghost node. Saved source workspaces may include paused state; semantic identities and source coordinates are still distinct.</p>
+<h2>Optimization priority</h2>
+<ol><li>Measure actual visible content; place the graph under hard constraints and the selected pattern.</li><li>Compute native object-clear routes. Try permitted source/destination attachment sides before moving objects. Named field/port identity, side constraints and explicit fractions survive.</li><li>If crossings remain, try bounded free-node swaps in legal pattern slots. Circle/radial nodes stay on their ring; lattice centres stay on the grid; layers stay in their level. Retained or pinned nodes do not move.</li><li>Prefer short routes with few bends, permit sensible residual X crossings, and render the registered nonconnection gap or jump. Do not invent junctions from geometry.</li></ol>
+<p>The implementation evaluates limited candidate routes and graph moves, accepts crossing reductions under a path-length bound, and reports stage telemetry. Exact per-relation routes can constrain global curve choices. Broad curves that violate clearance are tightened or rejected; no invalid path is published as valid. Existing 0.3 native route, label, crossing and publication checks stay active.</p>
+<p>Some graph topologies cannot be drawn without crossings. The solver does not prove global minimality and may reject an input another algorithm could place. Independent straight segments, curved/rounded paths, port-entry conventions, label clearance and glyph sizes have separate checks. Successful SVG generation is not a legibility certificate.</p>
+<h2>Low-light presentation</h2>
+<table><thead><tr><th>Role</th><th>Dark</th><th>Night</th></tr></thead><tbody><tr><td>Canvas</td><td><code>#202C3E</code></td><td><code>#2D3B50</code></td></tr><tr><td>Card / label surface</td><td><code>#2A3A50</code></td><td><code>#394B63</code></td></tr><tr><td>Main text</td><td><code>#EDF3FC</code></td><td><code>#F1F5FC</code></td></tr></tbody></table>
+<p>Registered semantic colours use deterministic lighter variants against these grey-blue surfaces. Connectors, arrowheads, cardinalities, badges, outlines and legends use the same palette policy. Style remains classic/handDrawn/neo independently. The fixed patterns, icons and endpoints preserve relation meaning without requiring colour perception.</p>
+<p>Numerical colour contrast can be tested against the generated solid colours. This is not proof of readability after arbitrary downscaling, complete accessibility conformance, or universal font substitution.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

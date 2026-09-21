@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposal governance and extension process — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Proposal governance and extension process</h1>
+<p>DDN 0.3 is a working proposal, not an assertion of community consensus. The initial website should invite review of syntax, semantics, accessibility, routing and implementation feasibility. A release should identify maintainers and a real discussion/issue destination before presenting a public governance process as operational.</p>
+<h2>Versioning</h2>
+<p>Language major-minor versions identify syntax and semantic contracts. Registry and renderer releases have their own versions. A compatible new optional registry entry can be a registry revision; reinterpreting a token, indicator slot, relation direction or default behaviour requires an explicit compatibility decision. A draft suffix signals that breaking changes are still possible. Tools must record the versions they actually resolved.</p>
+<p>Deprecation includes a replacement, rationale, migration example and planned removal boundary. A formatter does not silently migrate a model to another language version. Migration is an explicit command with a diff. Legacy colour-alias policies are not silently carried into a fixed-notation profile.</p>
+<h2>Extensions</h2>
+<p>An extension declares a globally distinguishable ID, version, semantic class, definition, applicable targets/endpoints, parameter schema, glyph/slot recipe, optional label, colour-mode treatment, safe fallback, dependencies and test fixtures. It must not redefine an existing standard identifier. Unknown extensions are preserved or rejected according to the selected conformance profile; they are never silently interpreted as the nearest familiar kind.</p>
+<p>Extension SVG must be sanitized. Executable behavior is not implicitly trusted by registration. Vendor profiles identify platform and version and distinguish unsupported features from undecided choices. A proposed extension should include one minimal positive example and one example of a misleading rendering it prevents.</p>
+<h2>Review workflow</h2>
+<p>Use an RFC with problem statement, proposed syntax/semantics, alternatives, compatibility impact, security/privacy/accessibility effects, executable fixtures and unresolved questions. Review grammar and semantics before investing in a large icon set. Additions should preferably compose existing shapes/slots rather than create arbitrary new silhouettes.</p>
+<p>A release gate requires a versioned specification, changelog, test corpus, reproducible examples, implementation capability statement and review of licensing/provenance. The project should avoid implying that an attractive demonstration is an endorsed international standard.</p>
+<h2>Open-source distribution model</h2>
+<p>The proposed distribution is a free library, CLI, static/self-hostable editor and openly readable specification. The supplied original code and documentation include an MIT license file as a proposed permissive distribution choice. No Mermaid code or brand artwork is copied into the runtime. Mermaid is cited as a design reference; its own repository uses MIT [S10]. A maintainer should verify rights and naming before a public release, especially for future contributed assets or dependencies.</p>
+<p>Paid hosting or support can exist separately, but must not be required to decode a <code>.ddn</code> file, render SVG or host the standard editor. Source files, registry metadata and model interchange remain available without a central service.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -80,7 +80,7 @@ Rejection behavior (D4):
   `DDN105`; this code covers the membership and missing-property cases). The
   message names the sentry.
 
-Code verified free: `grep -rhoE "DDN-PJ120" notation/ standard/ examples/`
+Code verified free: `grep -rhoE "DDN-PJ120" notation/ standard/ website/examples/`
 prints nothing (RT-101…108 took PJ110–PJ119 + PJW03).
 
 ## Visual encoding and routing effects
@@ -132,7 +132,7 @@ profile-level coverage, not CMMN conformance.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/49-cmmn.ddn` — a synthetic
+- Positive example: `website/examples/basics/49-cmmn.ddn` — a synthetic
   claim-handling case: `cmmn.stage` object `review`; `analysis.task` objects
   `gather_documents` and `assess_claim`; `cmmn.sentry` `docs_received`
   (`x_sentry:{on:"entry"}`); `cmmn.milestone` `claim_decided`; an

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modules and bundles — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Modules and bundles</h1>
+<p>B1-004 split the runtime into loadable pieces so pages can pay only for what they use. All bundles live in <code>notation/dist/</code> and are rebuilt deterministically by <code>npm run build:sdk</code> (<code>tools/build-sdk.js</code>); the numbers below are the current build from <code>release/validation/sdk-build.json</code> (0.6.0-beta.1).</p>
+<h2>Bundle table</h2>
+<table><thead><tr><th>Bundle</th><th>Bytes</th><th>Provides</th><th>Load after</th></tr></thead><tbody><tr><td><code>ddn-core.js</code></td><td>624,500</td><td>Parse, resolve, validate (<code>createWorkspace</code>, <code>parse</code>, <code>resolve</code>, <code>analyze</code>, authoring, io). No rendering.</td><td>—</td></tr><tr><td><code>ddn-graph.js</code></td><td>142,120</td><td>Graph-family rendering: layout, routing, shapes, palettes, interaction validation.</td><td><code>ddn-core.js</code></td></tr><tr><td><code>ddn-projections.js</code></td><td>49,607</td><td>Fixed-grid projections: chart, matrix, panels, table, timeline, fishbone, decision.</td><td><code>ddn-graph.js</code></td></tr><tr><td><code>ddn-quality.js</code></td><td>18,063</td><td>Quality charts, fishbone causes, decision/rule-table rendering.</td><td><code>ddn-projections.js</code></td></tr><tr><td><code>ddn.global.js</code></td><td>862,095</td><td>All of the above plus the web component — one file, nothing to order. (206,731 bytes gzipped.)</td><td>—</td></tr></tbody></table>
+<p>Each modular bundle is additive: it registers itself with the previously loaded bundles (<code>DDNLive.runtime</code> records which pieces are present; presence-tolerant construction means a missing later piece is <code>null</code>, never an import error).</p>
+<h2>Load order</h2>
+<p>Order is mandatory — every later bundle attaches to the earlier ones:</p>
+<pre><code>&lt;script src=&quot;notation/dist/ddn-core.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;notation/dist/ddn-graph.js&quot;&gt;&lt;/script&gt;        &lt;!-- needed to render graph-family views --&gt;
+&lt;script src=&quot;notation/dist/ddn-projections.js&quot;&gt;&lt;/script&gt;  &lt;!-- needed for chart/matrix/panels/… views --&gt;
+&lt;script src=&quot;notation/dist/ddn-quality.js&quot;&gt;&lt;/script&gt;      &lt;!-- needed for quality/fishbone/decision views --&gt;</code></pre>
+<p>Under Node, <code>require(&quot;@ddn/notation/core&quot;)</code>, <code>…/graph</code>, <code>…/projections</code>, <code>…/quality</code> apply the same registration in the same order (see the <code>exports</code> map in <code>notation/package.json</code>).</p>
+<h2>DDN-E010 behavior</h2>
+<p>Calling a capability whose bundle is not loaded never silently degrades: the runtime throws <code>DDN-E010</code> with a message naming the missing file and where to load it. Verified behaviors (<code>notation/tests/modular-bundles.js</code>):</p>
+<ul><li>Core alone parses and checks: <code>ws.resolve(...)</code> returns the resolved model,</li></ul>
+<p>  but <code>ws.renderSync(...)</code> throws <code>DDN-E010</code> naming <code>ddn-graph.js</code>.</p>
+<ul><li>Core + graph renders graph-family views byte-identically to</li></ul>
+<p>  <code>ddn.global.js</code>, but chart projections throw <code>DDN-E010</code> naming   <code>ddn-projections.js</code>.</p>
+<ul><li>Quality/fishbone/decision views without <code>ddn-quality.js</code> throw <code>DDN-E010</code></li></ul>
+<p>  naming <code>ddn-quality.js</code>.</p>
+<ul><li><code>exportVegaLite</code> without <code>ddn-projections.js</code> throws <code>DDN-E010</code> naming</li></ul>
+<p>  <code>ddn-projections.js</code>.</p>
+<p>Working single-page proofs ship in <code>website/examples/embed/core-only-check.html</code> (core-only) and <code>website/examples/embed/core-graph.html</code> (core + graph).</p>
+<h2>Choosing a bundle</h2>
+<ul><li>Validation tooling, editors, linters: <code>ddn-core.js</code> only.</li><li>Documentation sites rendering ERD/flow/UML graphs: core + graph.</li><li>Dashboards with charts/matrices: add <code>ddn-projections.js</code> (and</li></ul>
+<p>  <code>ddn-quality.js</code> for quality views).</p>
+<ul><li>Anything else, or when in doubt: <code>ddn.global.js</code>.</li></ul>
+</article>
+<p><small>Rendered from <a href="modules.md">modules.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

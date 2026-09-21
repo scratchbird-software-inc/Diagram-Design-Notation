@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>24. Child-view panels and bounded notation completion — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>24. Child-view panels and bounded notation completion</h1>
+<p><strong>DDN 0.6.0-beta.1.</strong> This chapter completes the fourth implementation stage: real child-view composition, box-plot integration (chapter 22), and selected local notation gaps. A useful supported profile is not blanket external-standard conformance.</p>
+<h2>24.1 Composed panels</h2>
+<p><code>projection.kind: panels</code>, <code>profile: &quot;panels.composed@1&quot;</code> accepts named slots containing either item references or a child <code>view</code>, never both. A child is another actual named DDN view. Its source model is not copied into the parent.</p>
+<pre><code>projection {
+    kind: panels; profile: &quot;panels.composed@1&quot;;
+    columns: 2;
+    panels: [
+        {id: pareto, title:&quot;Defect priorities&quot;, row:0, column:0, view:@pareto},
+        {id: spread, title:&quot;Measurement distribution&quot;, row:0, column:1, view:@histogram},
+        {id: score, title:&quot;Review scores&quot;, row:1, column:0, view:@heat_bands},
+        {id: state, title:&quot;Corrective action&quot;, row:1, column:1, view:@lifecycle}
+    ];
+}</code></pre>
+<p>The existing row/column/span validation still applies: positive bounded dimensions, no overlapping slots, unique slot IDs, legal spans and measured headings. Up to twelve child-view slots and one level of view composition are supported. A child may contain ordinary item panels, but it may not itself contain child views. Cycles are detected through the core view compilation stack before recursive rendering. A missing view cannot become a successful blank panel.</p>
+<p>The parent controls placement, column width, row height and its own publication. Each child retains its data selection, projection, metadata validation, graph constraints, chart scales, calendar coordinates and source identities. Parent look/theme are inherited for a coherent review page; other child policies are not silently overwritten. Children render at native content dimensions with no fit-to-small-slot scaling. The parent expands its grid as necessary. Its own page and minimum-text rules then evaluate the complete composed result. Consequently a dashboard may be larger than a small print sheet; split it or select a larger publication target instead of ignoring a rejection.</p>
+<p>A child view with more than the declared resource limit fails rather than being partially omitted. Composite dimensions are bounded at 50,000 units. This release does not include asynchronous worker rendering, arbitrarily deep recursive view layouts, responsive browser breakpoints, or a general dashboard application.</p>
+<h2>24.2 Identity, selection and source mapping</h2>
+<p>Each embedded SVG's internal IDs, <code>href</code>, <code>url(#...)</code>, accessibility ID references and projection-mark IDs receive a deterministic slot prefix. Repeating one child view twice therefore yields distinct <strong>appearance IDs</strong> but the same <strong>semantic IDs</strong>. Font styling is contained so one nested chart's stylesheet cannot globally style the whole parent. Child SVGs are produced by the installed renderer, not loaded from arbitrary untrusted URLs.</p>
+<p>The parent semantic fingerprint includes source objects and relationships reachable through its child views. Changing a child-only measurement changes that fingerprint and the rendered output. Source maps are recursively collected for internal editing. Aggregated marks retain contributor IDs; selecting an aggregate does not create an independently editable total.</p>
+<p>Scene output includes <code>subdiagrams</code> and source-bound child marks. SVG interactions include <code>data-child-view</code>, enabling the host to navigate to that original view. The laboratory's <strong>Open selected child view</strong> action opens the full child example. Specialized matrix-cell mutation from a child dashboard is deliberately not inferred in the parent: open the child view or edit its source so the correct data/write-back contract is validated. Full source navigation remains available.</p>
+<p>Parent and child validation are performed before output. Profile/projection <strong>redacted export remains fail-closed</strong>; nesting cannot bypass that gate. The editor workspace may contain confidential source, and hiding a child/field is not access control. Supply only authorized source to a public browser. No external assets or network privileges are conferred by a child-view reference.</p>
+<h2>24.3 Binary Chen profile completion</h2>
+<p><code>chen.basic@1</code> remains the earlier scalar/binary profile. <code>chen.binary@2</code> adds:</p>
+<table><thead><tr><th>Definition</th><th>Metadata and visual meaning</th></tr></thead><tbody><tr><td>Weak entity</td><td><code>x_chen:{weak:true,owner:@entity}</code>; double entity border.</td></tr><tr><td>Identifying relationship</td><td><code>x_chen:{identifying:true,owner:@entity,weak:@weak,...}</code>; double diamond and doubled total-participation connection to the weak entity.</td></tr><tr><td>Key field</td><td><code>x_chen:{key:true}</code>; underlined label.</td></tr><tr><td>Partial key</td><td><code>x_chen:{partial_key:true}</code> on weak-entity field; dashed underline.</td></tr><tr><td>Composite attribute</td><td>Actual nested fields plus <code>x_chen:{composite:true}</code> on their parent. Child ovals attach to the parent attribute identity.</td></tr><tr><td>Multivalued attribute</td><td><code>x_chen:{multivalued:true}</code>; double oval.</td></tr><tr><td>Derived attribute</td><td><code>x_chen:{derived:true}</code>; dashed oval.</td></tr><tr><td>Binary participation</td><td>Relationship <code>from</code> and <code>to</code> records with nonnegative integer <code>min</code> and integer <code>max</code> or <code>max:many</code>.</td></tr></tbody></table>
+<p>For a relation A→B, <code>from</code> is the number of A instances allowed per B, and <code>to</code> the number of B instances allowed per A. Min/max text is placed on its corresponding leg through the relationship diamond. <code>many</code> prints as N. This is not row-count metadata or arrow direction.</p>
+<p>Every visible binary relation in this profile must have both participation annotations. An identifying relationship must connect its declared weak entity to that entity's declared owner. Each weak instance has exactly one owner: the <strong>owner-end</strong> multiplicity is 1..1. Each selected weak entity has one visible identifying relationship and a visible owner; ownership cycles fail. It needs a partial key. Derived or multivalued fields cannot simultaneously be full/partial keys. Partial keys cannot be declared on strong entities. Composite flags must match actual child fields.</p>
+<p>The original entity and field IDs survive the projection. Generated attribute/relationship occurrences and their connections are not persisted as additional logical entities. General arbitrary n-ary relationships, multiple identifying owners, all textbook variants, relational inference and external interchange remain outside this binary profile. The document does not claim complete Chen-theory validation of business identity decisions.</p>
+<h2>24.4 Use-case subject and extension semantics</h2>
+<p>The additive <code>uml.usecase@2</code> profile uses <code>uml.subject</code>, <code>uml.actor</code>, and <code>uml.usecase</code>, with existing participation, include, extend and same-kind generalization relations. Each selected use case declares a nonempty <code>x_usecase.subjects</code> list of distinct subject references. An actor is not a server or a data table.</p>
+<p>A use case may declare distinct named <code>extension_points</code>. An <code>uml.extend</code> relation must carry <code>x_usecase.extension_point</code> naming a point on its target plus either a nonempty prose <code>condition</code> or a resolvable <code>condition_ref</code>. It cannot carry both. Conditions are requirements, not evaluated guards. Include/extend endpoints share a declared subject in this installed profile. Include/generalization cycles and endpoint compatibility retain their existing checks. A subject frame may not contradict the use case's declared membership.</p>
+<pre><code>object review &quot;Review lot&quot; {
+    kind: &quot;uml.usecase&quot;;
+    x_usecase: {subjects:[@subject],extension_points:[&quot;before disposition&quot;]};
+}
+relation escalation &quot;Escalates when necessary&quot; @escalate -&gt; @review {
+    kind: &quot;uml.extend&quot;;
+    x_usecase: {
+        extension_point:&quot;before disposition&quot;,
+        condition:&quot;The declared review policy requires escalation.&quot;
+    };
+}</code></pre>
+<p>Extension-point compartments are measured inside the ellipse. The supplied fixture groups actors separately so its subject frame does not visually claim to contain them. A graph frame is not a general compound-layout solver; profiles cannot guarantee every arbitrary placement choice communicates membership correctly. Hard placement constraints remain enforceable, and profile diagrams require review of boundary geometry.</p>
+<p>This is a useful explicit use-case subset aligned with selected concepts from UML [Q6], not full UML semantics, an XMI adapter, or an independent UML conformance certificate.</p>
+<h2>24.5 Documented flowchart profile</h2>
+<p><code>flow.documented@2</code> retains the earlier decision/terminal/process/document/I-O/subprocess profile and adds <code>flow.connector</code>, <code>flow.offpage</code>, <code>flow.storage</code>, and <code>flow.annotation</code>. Storage is rendered with a cylinder motif. Annotation uses a bracketed note and <code>flow.annotation</code> attachment, and is not counted as an unreachable control-flow process.</p>
+<p>An off-page connector has <code>x_continuation:{key,side:&quot;in&quot;|&quot;out&quot;,page?:text}</code>. A declared key has one out and one in definition, joined by an explicit <code>flow.continues</code> relation. Out connectors only send this continuation; in connectors only receive it. Unmatched keys, contradictory directions, unsupported relation kinds or unattached annotations fail.</p>
+<p>Both endpoints are shown in the supplied review view for validation. <code>page</code> is an explanatory label; it does not automatically paginate the graph or generate an external hyperlink. Full publication-specific cross-sheet continuation placement remains future work. Existing reachability, endpoint, branch, routing and page checks still apply to the actual control subset; annotation attachments do not imply control execution.</p>
+<h2>24.6 Integration and acceptance</h2>
+<p>The SDK remains <code>DDNLive</code>, with one global build and an ESM facade. All old 0.2–0.4 source remains accepted; these additions use version 0.5 and versioned installed profile IDs. Schemas accept recursive compiled child view records only within runtime depth/budget checks. No arbitrary source-defined shape code or remote plugin installation is introduced.</p>
+<p>Studio retains raw script, file/folder/ZIP/JSON opening and downloads. New matrix editing and raw record/rule editing write source spans with undo. The capability list disables graph placement for quantitative/matrix/panel/fishbone views. Child data never becomes editable just because it appears inside a selectable SVG.</p>
+<p>The mandatory corpus includes a dashboard using Pareto/histogram/heatmap/lifecycle children; the same child repeated twice; child-only data changing parent fingerprints; all IDs/references resolving; cycle/depth rejection; fixed-page readability rejection; source links and downloads; unchanged purchasing-route efficiency; weak-key and extension-point negatives; annotation and continuation checks. Each build regenerates runtime, websites, portable pages, source/output hashes and static fallbacks from the same code.</p>
+<p>[Q6] OMG UML 2.5.1 specification page and normative artifacts: https://www.omg.org/spec/UML/2.5.1/About-UML (checked 2026-09-08). No OMG artwork or proprietary implementation is copied.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Versioning and release policy — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Versioning and release policy</h1>
+<p>DDN is a pre-1.0 draft standard. Versioning is layered:</p>
+<table><thead><tr><th>Layer</th><th>Mechanism</th><th>Current</th></tr></thead><tbody><tr><td>Language source version</td><td><code>ddn &quot;0.x&quot;;</code> declaration at the top of every <code>.ddn</code> file; runtime accepts a fixed set (<code>ddn-core.js</code> <code>SOURCE_VERSIONS</code>)</td><td>0.2 – 0.5</td></tr><tr><td>Runtime / notation package</td><td>semver with <code>-beta.N</code> prereleases; git tags <code>notation/vX.Y.Z</code></td><td>0.6.0-beta.1</td></tr><tr><td>Core registry</td><td>pinned identifier <code>ddn-core@0.3</code> inside <code>registry/catalogue.json</code></td><td>ddn-core@0.3</td></tr><tr><td>Profiles</td><td><code>name@version</code> identifiers, listed in <code>registry/profiles/catalogue.json</code></td><td>24 installed</td></tr><tr><td>Standard documents</td><td>chapter set per language version; git tags <code>standard/vX.Y.Z</code></td><td>0.6.0-beta.1</td></tr><tr><td>Designer specification</td><td>independent semver; git tags <code>designer/vX.Y.Z</code></td><td>0.2.0-beta.1</td></tr></tbody></table>
+<p>The prerelease series moved from <code>-draft.N</code> to <code>-beta.N</code> at 0.6.0-beta.1 (2026-09-20): this is a runtime/standard packaging release, not a language change — the language source version stays at <code>0.2 – 0.5</code> and <code>ddn-core@0.3</code> is untouched. The designer keeps its independent semver and also carries <code>beta.1</code>.</p>
+<h2>Rules</h2>
+<ol><li>The registry may grow additively within a draft; changing or removing a</li></ol>
+<p>   kind, relation verb, facet, or property is a language change and needs an    RFC.</p>
+<ol><li>A new <code>-draft.N</code> may tighten validation only with new error codes and</li></ol>
+<p>   fixtures covering both acceptance and rejection.</p>
+<ol><li>Profiles are immutable once published under a version; changes ship as a</li></ol>
+<p>   new version.</p>
+<ol><li>Runtime, registry, schemas, specification, and fixtures move together for</li></ol>
+<p>   a language release; the CLI and SDK bundle must not present a newer    language than the specification documents. Packaging is part of a release:    the <code>@ddn/notation</code> tarball (<code>npm pack</code> in <code>notation/</code>) ships the    version-stamped <code>dist/</code> bundles behind the package <code>exports</code> map at the    same semver stamp (0.6.0-beta.1 at the beta.1 release).</p>
+<ol><li>Release integrity evidence (manifests, checksums, archives) is generated at</li></ol>
+<p>   tag time by release tooling; that tooling from the 0.5 monolith is not yet    imported into this repository.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 108 — Interaction overview profile (uml.interaction_overview@1) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 108 — Interaction overview profile (<code>uml.interaction_overview@1</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; profile uml.interaction_overview@1; extension x_subdiagram</p>
+<h2>Problem and motivating example</h2>
+<p>Large interactions need a map: a high-level flow in which some steps stand for whole interaction diagrams kept in their own views. DDN 0.5 already has the flow vocabulary (<code>flow.start</code>/<code>flow.end</code>/<code>flow.process</code>/<code>flow.decision</code>, edges <code>flow.next</code>) and a <em>view-level</em> <code>subdiagram</code> declaration that places a floating reference box on a canvas. What is missing is a <em>node-level</em> analogue: an ordinary flow node that itself references another view of the same workspace, so the overview reads as a flowchart, not as a canvas with detached boxes.</p>
+<p>Motivating example: a synthetic checkout overview. The flow runs start → browse → pay → ship → end, where the <code>pay</code> step stands for a <code>payment_flow</code> detail view and the <code>ship</code> step stands for a <code>stock_flow</code> detail view, both declared in the same file. Today the author can only draw the overview and the details as unrelated views, with nothing on the overview nodes saying &quot;this step is expanded elsewhere&quot;.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. The extension value is a record of atoms (<code>property = identifier &quot;:&quot; value &quot;;&quot;</code> with a record value), which parses today under the existing extension-property rules.</p>
+<ul><li>New profile <code>uml.interaction_overview@1</code> bound to the existing projection</li></ul>
+<p>  <code>graph</code>.</p>
+<ul><li>New registered extension property <code>x_subdiagram</code> on objects:</li></ul>
+<p>  <code>{ &quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;view&quot;], &quot;properties&quot;: { &quot;view&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;minLength&quot;: 1 } }, &quot;additionalProperties&quot;: false }</code>.</p>
+<pre><code>data checkout {
+    object pay &quot;Pay&quot; { kind: flow.process; x_subdiagram: { view: &quot;payment_flow&quot; }; }
+}
+
+view overview &quot;Checkout overview&quot; {
+    data: [@checkout];
+    projection { kind: graph; profile: &quot;uml.interaction_overview@1&quot;; }
+}
+
+view payment_flow &quot;Payment detail&quot; {
+    data: [@checkout];
+    projection { kind: graph; profile: &quot;ddn@1&quot;; }
+}</code></pre>
+<p>No new kinds or verbs; no new projection properties; <code>standard/grammar/ddn.ebnf</code> is untouched.</p>
+<h2>Semantic normalization and identity effects</h2>
+<ul><li>Overview nodes are <code>flow.start</code>/<code>flow.end</code>/<code>flow.process</code>/<code>flow.decision</code>;</li></ul>
+<p>  edges are <code>flow.next</code>. All existing vocabulary.</p>
+<ul><li>A <em>ref node</em> is a <code>flow.process</code> or <code>flow.subprocess</code> object carrying</li></ul>
+<p>  <code>x_subdiagram:{view:&quot;&lt;local view id&gt;&quot;}</code>. The string names a <code>view</code>   declaration visible in the same workspace, matched against each view's   local id (and uid).</p>
+<ul><li><strong>The value is a plain string, not a <code>@</code>-reference.</strong> This is a verified</li></ul>
+<p>  design constraint: <code>resolveValue</code> turns <code>@ref</code> values into <code>{$ref}</code> at   build and <em>fails the build</em> on unresolvable refs, which would preempt the   profile-level missing-view diagnostic and make <code>DDN-PJ119</code> unreachable. A   string defers resolution to the workspace check in <code>build()</code>, where the   workspace's views are visible.</p>
+<ul><li>Reference semantics only: the referenced view is NOT expanded inline by</li></ul>
+<p>  this profile. <code>panels.composed@1</code> owns composed rendering; the view-level   <code>subdiagram … { mode: inline }</code> declaration is unchanged and unaffected.</p>
+<ul><li>Endpoint contract: <code>flow.next</code>'s endpoint contract lists <code>flow.*</code> kinds</li></ul>
+<p>  only, so an <code>x_subdiagram</code> node of a non-<code>flow.*</code> kind used as a   <code>flow.next</code> endpoint fails with the existing <code>DDN102</code>. The v1 rule is   therefore: ref nodes are <code>flow.process</code> (or <code>flow.subprocess</code>) objects   carrying <code>x_subdiagram</code>.</p>
+<p>Element identities are untouched; a ref node keeps its own id and the badge is a rendering mark on that node.</p>
+<h2>Visual encoding and routing effects</h2>
+<p>Ref nodes render as ordinary flow nodes plus a small &quot;↗ ref&quot; badge at the node's top-right corner, drawn with the existing <code>badge()</code> helper using the theme accent/rule colours — echoing the view-level subdiagram badge style (&quot;↗ target · diagram reference&quot;). No other rendering change; routing and layout are exactly the graph projection's.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Reuse the view-level <code>subdiagram</code> declaration</strong> — rejected for this</li></ul>
+<p>  purpose: it places a floating reference box on the canvas, not a flow node   in the flowchart's layout. It stays available and unchanged   (<code>website/examples/basics/08-subdiagrams.ddn</code> renders identically).</p>
+<ul><li><strong><code>@</code>-reference properties</strong> (<code>x_subdiagram:{view:@payment_flow}</code>) —</li></ul>
+<p>  rejected: unresolvable refs fail the build inside <code>resolveValue</code> before any   profile validation runs, making the dedicated missing-view diagnostic   unreachable.</p>
+<ul><li><strong>Inline expansion of the referenced view into the node</strong> — rejected for</li></ul>
+<p>  v1: <code>panels.composed@1</code> owns composed rendering.</p>
+<h2>Compatibility and migration</h2>
+<p>Additive only. No existing profile, kind, verb, extension or property is edited; the view-level subdiagram machinery (<code>DDN064</code>, <code>DDN065</code>, <code>DDN900</code> paths) is untouched. Sources that do not use <code>uml.interaction_overview@1</code> or <code>x_subdiagram</code> are byte-for-byte unaffected.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new inputs: <code>x_subdiagram.view</code> is an author-supplied string checked against the workspace's own view ids — it never triggers file or network access. Rendered text is escaped through the shared <code>esc()</code> helper. The badge text is static (&quot;↗ ref&quot;); the node keeps its <code>tabindex</code>/<code>role=&quot;group&quot;</code> markup like every other node.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/profiles/catalogue.json</code> <code>profiles[]</code> gains</li></ul>
+<p>  <code>uml.interaction_overview@1</code> (projection <code>graph</code>; validation: referenced   views must exist in the workspace (DDN-PJ119); unsupported: inline   expansion of referenced views, full UML conformance).</p>
+<ul><li><code>ddn-profiles.js</code> <code>registry()</code> and <code>standard/registry/extensions.json</code></li></ul>
+<p>  <code>contracts{}</code> gain the <code>x_subdiagram</code> contract (object target; required   <code>view</code> string, minLength 1; additionalProperties false).</p>
+<ul><li>New error <code>DDN-PJ119</code> (verified free: RT-101…107 took PJ110–PJ118 + PJW03)</li></ul>
+<p>  — an <code>x_subdiagram.view</code> string names no view in the workspace. Checked in   <code>ddn-core.js</code> <code>build()</code> beside the panels child-view checks (before the   <code>Contracts.validate</code> call), because profile validators receive only <code>ir</code>   and cannot see other views. The message names the node and the missing   view id.</p>
+<ul><li>Existing codes unchanged: a malformed <code>x_subdiagram</code> (missing <code>view</code>) fails</li></ul>
+<p>  the extension contract as <code>DDN105</code>; a non-<code>flow.*</code> ref node used as a   <code>flow.next</code> endpoint fails as <code>DDN102</code>.</p>
+<ul><li><code>standard/registry/capabilities.json</code>: one <code>implemented[]</code> line appended;</li></ul>
+<p>  <code>installedProfiles[]</code> gains the <code>uml.interaction_overview@1</code> entry (61   after this RFC).</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive example: <code>website/examples/basics/48-interaction-overview.ddn</code> (synthetic</li></ul>
+<p>  checkout: <code>overview</code> plus detail views <code>payment_flow</code> and <code>stock_flow</code> in   one file).</p>
+<ul><li>Test suite: <code>notation/tests/interaction-overview.js</code> — positive render with</li></ul>
+<p>  the <code>↗ ref</code> badge asserted in the SVG; the detail views render   independently; <code>DDN-PJ119</code> for a missing target view; <code>DDN105</code> for   <code>x_subdiagram:{}</code>; <code>DDN102</code> for a non-<code>flow.*</code> ref node as a <code>flow.next</code>   endpoint; the RT view-level subdiagram regression   (<code>08-subdiagrams.ddn</code> via <code>test:core</code>); byte-identical determinism.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: <code>ddn-core.js</code> <code>build()</code> (workspace view-existence check), <code>ddn-profiles.js</code> <code>registry()</code> (<code>x_subdiagram</code> contract), <code>ddn-render.js</code> <code>renderNode</code> (ref badge), profile catalogue, extensions registry, capabilities registry. The graph projection and dispatcher need no edit.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 motivation, D2 vocabulary, D3 semantics (string reference, no inline</li></ul>
+<p>  expansion, ref-node kinds), D4 rejection behavior (<code>DDN-PJ119</code> in   <code>build()</code>), D5 visual encoding, D6 alternatives, D7 compatibility: recorded   above as fixed decisions of this RFC.</p>
+<ul><li>Open: whether a later RFC adds inline expansion of referenced views behind</li></ul>
+<p>  a new profile version; explicitly unsupported in   <code>uml.interaction_overview@1</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

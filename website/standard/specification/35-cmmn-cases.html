@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>35. CMMN-style case diagrams (profile cmmn.basic@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>35. CMMN-style case diagrams (profile <code>cmmn.basic@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-109 (<code>standard/governance/rfcs/RFC-109-cmmn.md</code>). Source grammar remains DDN 0.5; the kinds are registry entries, stage grouping is the existing view <code>frame</code> with a resolved <code>scope</code>, and sentry typing uses a registered <code>x_*</code> extension property, so this chapter is a semantic addition, not a grammar change.</p>
+<p>A CMMN-style case view models case-style planning — stages containing plan items, entry/exit criteria on stage borders, and milestones — on the existing <code>graph</code> projection. Users write <code>projection { kind:graph; profile:&quot;cmmn.basic@1&quot;; }</code>.</p>
+<p>This is profile-level coverage, not CMMN conformance.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Stages</strong> — a <code>cmmn.stage</code> object (silhouette <code>round</code>, fallback</li></ul>
+<p>  <code>activity</code>, family <code>activity</code>, code <code>STAGE</code>) plus a view <code>frame</code> whose   <code>scope</code> resolves to that stage element and whose <code>members</code> are the stage's   plan items (tasks, milestones, sentries). The frame renders as the existing   frame box; its scope object is the stage header. Membership is declared by   the frame's <code>members</code> list, never inferred from geometry.</p>
+<ul><li><strong>Milestones</strong> — <code>cmmn.milestone</code> nodes (silhouette <code>round</code>, fallback</li></ul>
+<p>  <code>activity</code>, family <code>activity</code>, code <code>MILESTONE</code>), rendered as rounded   nodes.</p>
+<ul><li><strong>Sentries</strong> — <code>cmmn.sentry</code> nodes (silhouette <code>diamond</code>, fallback</li></ul>
+<p>  <code>activity</code>, family <code>activity</code>, code <code>SENTRY</code>), rendered as small diamond   nodes, carrying the registered extension <code>x_sentry:{on:…}</code> with <code>on</code> one of   <code>entry</code>, <code>exit</code> (schema:   <code>{type:'object', required:['on'], properties:{on:{enum:['entry','exit']}}, additionalProperties:false}</code>   on objects).</p>
+<ul><li><strong>Tasks</strong> — the existing <code>analysis.task</code> kind, reused unchanged; no new</li></ul>
+<p>  task kind is registered.</p>
+<ul><li><strong>Links</strong> — containment-free links inside a stage use the existing <code>assoc</code></li></ul>
+<p>  (structural) verb; ordering uses the existing <code>analysis.precedes</code> verb. No   new verbs are registered.</p>
+<h2>Declaration rules</h2>
+<ul><li>&quot;On the stage border&quot; is a declared-membership notion in v1: a sentry is</li></ul>
+<p>  on a stage's border exactly when it is a member of the view frame whose   <code>scope</code> resolves to that <code>cmmn.stage</code> element.</p>
+<ul><li>Every selected <code>cmmn.sentry</code> must be a member of at least one such stage</li></ul>
+<p>  frame and must carry a valid <code>x_sentry.on</code>; otherwise the view is rejected   with <code>DDN-PJ120</code> (error; the message names the sentry). Malformed   <code>x_sentry</code> values — for example <code>x_sentry:{on:&quot;during&quot;}</code> — are caught   earlier by the extension schema contract as <code>DDN105</code>; <code>DDN-PJ120</code> covers   the membership and missing-property cases.</p>
+<ul><li>A sentry that is a member of a frame whose scope resolves to a non-stage</li></ul>
+<p>  element is likewise rejected with <code>DDN-PJ120</code>.</p>
+<h2>Example</h2>
+<pre><code>data claim {
+    object review &quot;Review&quot; { kind: &quot;cmmn.stage&quot;; }
+    object gather_documents &quot;Gather documents&quot; { kind: &quot;analysis.task&quot;; }
+    object assess_claim &quot;Assess claim&quot; { kind: &quot;analysis.task&quot;; }
+    object docs_received &quot;Docs received?&quot; { kind: &quot;cmmn.sentry&quot;; x_sentry: { &quot;on&quot;: &quot;entry&quot; }; }
+    object claim_decided &quot;Claim decided&quot; { kind: &quot;cmmn.milestone&quot;; }
+    relation order &quot;order&quot; @gather_documents -&gt; @assess_claim { kind: &quot;analysis.precedes&quot;; }
+}
+
+view case &quot;Claim handling&quot; {
+    data: [@claim];
+    projection { kind: graph; profile: &quot;cmmn.basic@1&quot;; }
+    frame review_frame &quot;Review&quot; {
+        scope: @claim.review;
+        members: [@claim.gather_documents, @claim.assess_claim, @claim.docs_received];
+    }
+}</code></pre>
+<p>See <code>website/examples/basics/49-cmmn.ddn</code> for the full runnable example.</p>
+<h2>Out of scope</h2>
+<p>CMMN XML interchange, case execution semantics, discretionary items, and full CMMN conformance are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

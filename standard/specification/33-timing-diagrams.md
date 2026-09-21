@@ -43,7 +43,7 @@ view timing "Synthetic traffic lights / timing (seconds)" {
 }
 ```
 
-See `examples/basics/47-timing-diagram.ddn` for the full runnable example.
+See `website/examples/basics/47-timing-diagram.ddn` for the full runnable example.
 
 ## Visual encoding
 

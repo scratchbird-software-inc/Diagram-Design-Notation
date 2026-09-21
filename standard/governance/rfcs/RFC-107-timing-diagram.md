@@ -141,7 +141,7 @@ conformance claim; the footer says so.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/47-timing-diagram.ddn` (synthetic
+- Positive example: `website/examples/basics/47-timing-diagram.ddn` (synthetic
   traffic-light controller and pedestrian signal over 60 seconds).
 - Test suite: `notation/tests/timing-diagram.js` — positive render,
   geometry/order invariants (step x positions proportional to `at`),

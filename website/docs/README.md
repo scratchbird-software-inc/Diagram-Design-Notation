@@ -1,6 +1,9 @@
 # Docs
 
-Project-level documentation and (future) the project website.
+Project-level documentation. This directory lives inside the deployable
+static site (`website/`); every Markdown page here is rendered to HTML by
+`website/build-site.mjs` (`npm run build:site`) and browsable from the site's
+Docs section.
 
 - `developers/` — developer documentation (B1-010): orientation/doc map,
   getting started, runtime modules and bundle sizes, the workspace API
@@ -9,8 +12,5 @@ Project-level documentation and (future) the project website.
   at `developers/README.md`.
 - `notes/` — topical engineering notes imported from the draft packages:
   - `ROUTING-PATCH.md` — endpoint-ordering routing patch notes (draft.2 delta).
-  - `HANDDRAWN-FIX.md` — hand-drawn style fix notes.
-
-The prebuilt static site from the 0.5 monolith is not imported; a fresh site
-generator will live here. Until then, `npm run serve` serves the repository
-directly (Studio, prototype, plates, and specs are all browsable).
+  - `HANDDRAWN-FIX.md` — hand-drawn style fix notes (historical; its draft-era
+    paths refer to the 0.5 packages, not this repository).

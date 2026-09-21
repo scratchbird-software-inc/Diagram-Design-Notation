@@ -21,7 +21,7 @@ formula text `{flow = pressure × area}` bound to the two blocks.
 
 No grammar change. `ports {}` groups and member endpoints are existing syntax
 (verified: `standard/specification/01-language.md` line 35; example
-`examples/basics/15-process-contracts.ddn`; `standard/grammar/ddn.ebnf`
+`website/examples/basics/15-process-contracts.ddn`; `standard/grammar/ddn.ebnf`
 untouched). Blocks and constraints are registry kinds; the item flow is a
 registry verb (D2).
 
@@ -120,7 +120,7 @@ in `renderInner`. The guard keeps every non-`sysml.*` profile pixel-identical
 
 Purely additive (D7). No existing kind, verb, profile, or property is edited;
 published profiles keep their contracts. Existing port/flow examples
-(`examples/basics/15-process-contracts.ddn`) render identically — the port
+(`website/examples/basics/15-process-contracts.ddn`) render identically — the port
 squares are guarded on `sysml.*` profiles and a regression test asserts the
 absence of port squares outside them. The capabilities `unsupported[]`
 metamodel line ("complete UML/SysML/BPMN/DMN metamodels or external
@@ -152,7 +152,7 @@ this is profile-level coverage, not SysML conformance.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/50-sysml.ddn` — a synthetic pump
+- Positive example: `website/examples/basics/50-sysml.ddn` — a synthetic pump
   station: `sysml.block` objects `pump` (`port out`) and `reservoir`
   (`port in`); a `sysml.flow` relation `@m.pump.out -> @m.reservoir.in`
   labelled `water`; a `sysml.constraint` `flow_balance` labelled

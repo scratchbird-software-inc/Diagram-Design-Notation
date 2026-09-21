@@ -72,7 +72,7 @@ view case "Claim handling" {
 }
 ```
 
-See `examples/basics/49-cmmn.ddn` for the full runnable example.
+See `website/examples/basics/49-cmmn.ddn` for the full runnable example.
 
 ## Out of scope
 

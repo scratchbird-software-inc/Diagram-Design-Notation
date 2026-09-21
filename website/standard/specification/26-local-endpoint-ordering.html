@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>26. Local endpoint ordering (DDN 0.5 routing patch) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>26. Local endpoint ordering (DDN 0.5 routing patch)</h1>
+<p>Status: implemented bounded routing policy in runtime 0.6.0-beta.1. Source grammar remains DDN 0.5; existing files need no rewrite. This chapter supplements chapters on native layout, curved routes, and source-preserving placement.</p>
+<h2>Invariants and compatibility groups</h2>
+<p>A semantic endpoint is an element, field, or named port identity. Its visual attachment does not authorize a change of semantic identity. An ordering group is an object occurrence plus side plus visible field-row identity (or the unbound body). Attachments from different visible rows MUST NOT trade row identities. Free body attachments and repeated connections to the same row MAY exchange compatible slots. Hidden-member projections retain the hidden source IDs.</p>
+<p>An explicit fraction or named port is not a free slot. Waypoint-authored endpoints are not automatically permuted. An authored side constrains the side but, absent a fraction/port/guide, does not necessarily freeze the order of free slots on it. A pinned element constrains its world-space position; it does not implicitly freeze all free attachments on that element. <code>place.size</code> is not a position pin.</p>
+<h2>Policy</h2>
+<p><code>layout.endpoint_ordering</code> accepts <code>optimize</code> (default) and <code>preserve</code>. The latter retains the legacy stable-ID initial slot order and omits the coupled refinement; other independently enabled layout/routing optimizers can still operate. An <code>optimize:none</code> layout omits the new optimization as well. Unknown policy values are errors. The API overlay <code>endpointOrdering</code> accepts <code>source</code>, <code>optimize</code>, or <code>preserve</code> and cannot override data-bound or ordered-interaction coordinates.</p>
+<h2>Procedure</h2>
+<ol><li>Partition attachments by compatible side/row. Establish deterministic slots;</li></ol>
+<p>   order free slots by the opposite endpoint's row centre or object centre.    Fixed entries keep their assignment.</p>
+<ol><li>Route using the existing obstacle, label, and endpoint checks. Evaluate the</li></ol>
+<p>   actual rendered path samples, not just endpoint-to-endpoint chords.</p>
+<ol><li>Identify crossing relations incident on a common element; prioritize crossings</li></ol>
+<p>   close to that element. Propose compatible pairwise permutations. For different    rows, retain the rows and try legal side combinations instead.</p>
+<ol><li>Accept only a feasible reroute that improves the crossing/length criterion.</li></ol>
+<p>   The route-length increase per accepted trial is bounded, and cumulative length    is bounded relative to the pass's input. No element moves during this pass.</p>
+<ol><li>Run this before permitted free-node moves; recheck after accepted node moves.</li></ol>
+<p>   Residual crossings retain their declared gap/jump representation and warning.</p>
+<p>This local pass uses at most 32 trials for up to 16 relations, 12 for up to 48, and 4 for up to 96; larger inputs retain geometric initial ordering but skip the expensive paired pass. Each pass stops after at most eight improvement sweeps. It is not a globally optimal port-assignment or minimum-crossing solver.</p>
+<h2>Telemetry</h2>
+<p><code>scene.layout.endpointOrdering</code> reports the selected policy, trial budget, trials, accepted slot swaps/side changes, input/output crossing counts, local crossing counts, length and segment-derived bend counts. A skipped stage or a budget limit is not evidence of optimality. If node movement requires another pass, its prior record is retained. Source model identities, legend keys, and original text are unchanged by routing.</p>
+<h2>Acceptance examples</h2>
+<p>The tests cover all four object sides; body and same-row permutation; different-row and nested-field preservation; explicit fractions; named port sides; hard guides; pins and retained free positions; invalid policy inputs; quantitative-policy guards; actual paired swaps in the circular lab; and the Journal Line journal/account crossing with curved, rounded, and angular routing. The purchasing <code>Complete</code> connector's 140-unit short-route regression remains in force.</p>
+<p>See <code>../patches/endpoint-ordering/validation/</code> for this patch's actual test results. Earlier release reports remain historical evidence, not newly executed assertions.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

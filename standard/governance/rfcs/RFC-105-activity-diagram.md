@@ -87,7 +87,7 @@ Rejection behavior (D4):
   block's start/end and reachability rules apply, with `uml.flow` as the
   control edge kind).
 
-Codes verified free: `grep -rhoE "DDN-PJ11(4|5)" notation/ standard/ examples/`
+Codes verified free: `grep -rhoE "DDN-PJ11(4|5)" notation/ standard/ website/examples/`
 prints nothing (RT-101…104 took PJ110–PJ113 + PJW03).
 
 ## Visual encoding and routing effects
@@ -142,7 +142,7 @@ profile-level coverage, not UML conformance.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/45-activity-diagram.ddn` — synthetic
+- Positive example: `website/examples/basics/45-activity-diagram.ddn` — synthetic
   order-fulfilment activity with `webshop`/`warehouse` lane frames, one
   fork/join pair around `pick_items`/`take_payment`, and an `order` object
   node.

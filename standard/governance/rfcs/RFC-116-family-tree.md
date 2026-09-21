@@ -90,7 +90,7 @@ The remodelling path is to split the extra parentage into separate
 unions/partners. A warning was rejected for exactly these reasons (D6).
 
 Verified free before allocation:
-`grep -rhoE "DDN-PJ1(29|30)" notation/ standard/ examples/` prints nothing.
+`grep -rhoE "DDN-PJ1(29|30)" notation/ standard/ website/examples/` prints nothing.
 
 ## Visual encoding and routing effects
 
@@ -155,7 +155,7 @@ meaning survives monochrome rendering and text extraction.
 
 ## Positive and negative fixtures
 
-- Positive: `examples/basics/56-family-tree.ddn` — the `family` view
+- Positive: `website/examples/basics/56-family-tree.ddn` — the `family` view
   renders three generations: the grandparents' union at the top, the child
   generation below, the grandchild at the bottom; union nodes are small
   circles; `partner_of` edges have no arrowheads; `parent_of` edges point

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.5 — status and conformance scope — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.5 — status and conformance scope</h1>
+<p><strong>Current release: 0.6.0-beta.1 — proposed standard, pre-1.0.</strong> “MUST”, “SHOULD” and “MAY” describe this proposal, not adoption or external certification. Executable capabilities are declared in <code>registry/capabilities.json</code> and tested in fixtures. The 0.3 semantic/routing/publication foundation and the 0.4 projection layer remain compatible; chapters 21–24 implement the four quality/lifecycle/reporting stages. The beta.1 stamp is a runtime/standard packaging release per <code>../governance/VERSIONING.md</code>: the language source versions stay <code>0.2</code>–<code>0.5</code> and the core registry stays <code>ddn-core@0.3</code>.</p>
+<h2>Conformance layers</h2>
+<ol><li><strong>Reader:</strong> UTF-8 labels, stable ASCII identifiers, local imports, recursive fields and source-preserving workspace editing.</li><li><strong>Logical validator:</strong> registered relationships, metadata, domains, profile contracts, bounded decision partitions and lifecycle traces.</li><li><strong>Renderer:</strong> native placement, shapes/contours, checked routes, source-bound matrices/charts, fishbones and child views within their declared scopes.</li><li><strong>Publisher:</strong> deterministic SVG/JSON, source/occurrence mapping, page constraints, current internal/full exports and existing core authorized allowlists. New profile/projected redaction still fails closed pending a qualified closure.</li><li><strong>Deployment assurance:</strong> real applications, security, statistical/engineering policy, infrastructure behavior and independent professional approval. None follows from a parser, diagram, local evaluator or passing fixture.</li></ol>
+<h2>Compatibility</h2>
+<p>The parser's exported <code>SOURCE_VERSIONS</code> is the source of truth for the capability manifest. Current accepted inputs are 0.2 through 0.5; 0.2 uses its disclosed compatibility path. Legacy examples retain their accepted version rather than receiving arbitrary syntax rewrites. Quality examples use <code>ddn &quot;0.5&quot;;</code>. The core notation registry remains <code>ddn-core@0.3</code>, while installed profiles have independent versioned names.</p>
+<p>Resolved output uses the highest current source-language version in the workspace, at least 0.3: <code>ddn-resolved@0.3</code>, <code>@0.4</code>, or <code>@0.5</code>. Stable semantic identities are preserved. New static checks can reject previously accepted invalid metadata; a renderer must not silently reinterpret it to create a picture.</p>
+<h2>Evidence policy</h2>
+<p>A pass names the input, implementation and checked outcome. Source-generated diagrams and the interactive site share one runtime. Static legend plates are explicitly notation specimens. Historic failures stay under history directories; current results are regenerated. No independent reviewer is marked signed by automated evidence generation.</p>
+<p>Quality profiles are documented, bounded diagram/analysis capabilities—not full UML/DMN/SCXML, a statistical package or a deployed ERP. See <code>quality/SCOPE.md</code>, chapters 21–24 and the current verification reports. Full-model shrink-to-A4 is not an acceptance criterion: explicit linked and bounded views preserve readability.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

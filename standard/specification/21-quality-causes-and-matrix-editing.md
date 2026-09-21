@@ -77,4 +77,4 @@ RACI's supplied policy remains exactly one `A` and at least one `R` per row, wit
 
 Acceptance must include repeated cause identities; cycle/depth rejection; numeric zero versus absent cells; edge-inclusive bands; numeric-string rejection; empty-cell creation observable in a second graph view; invalid RACI creation with no source mutation; batched accountability changes; and exact undo. No image-only fixture can establish these properties.
 
-Source witness: `examples/quality/model.ddn`, `views.ddn`; tests: `tests/quality.js`. [Q1] ASQ, Fishbone: https://asq.org/quality-resources/fishbone (checked 2026-09-08). The implementation is original; no ASQ artwork is redistributed.
+Source witness: `website/examples/quality/model.ddn`, `views.ddn`; tests: `tests/quality.js`. [Q1] ASQ, Fishbone: https://asq.org/quality-resources/fishbone (checked 2026-09-08). The implementation is original; no ASQ artwork is redistributed.

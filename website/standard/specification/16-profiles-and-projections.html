@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16. Profiles and projections — DDN 0.4 draft — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>16. Profiles and projections — DDN 0.4 draft</h1>
+<blockquote><strong>Current 0.5 extension:</strong> chapters 21–24 add quality profiles, matrix creation, multiseries/statistical transforms, rule/lifecycle checks and one-level composed views. This chapter retains the earlier basic profile scopes; broader options require their registered 0.5 profiles.</blockquote>
+<p><strong>Status: implemented reference subset for review, not an adopted external standard.</strong> These rules add to the existing language. Existing 0.2/0.3 source is still accepted; no profile may silently reinterpret the original core kinds or connectors. The current runtime is 0.5.0-draft.1; this chapter establishes the retained basic 0.4 projection contract. Core notation retains its independent <code>ddn-core@0.3</code> identity; installed extension definitions have their own profile IDs.</p>
+<h2>16.1 Model, projection and scene</h2>
+<p>The model contains stable semantic elements, members and relationships. A named view selects from that model. Its projection determines whether the selected information becomes a graph, Chen diagram, relationship matrix, record table, panel composition, chart or supplied-date timeline. A scene is the resulting measured geometry. An occurrence is not a copy of a business entity.</p>
+<p>Changing look, palette or display detail MUST NOT change semantic identities or assertions. Changing a chart mark MUST NOT change its source values. Matrix cells MUST retain their contributing relationship IDs. A Chen attribute oval MUST identify the original field. Page translation/scaling MUST NOT rewrite source coordinates. Date, numeric and matrix coordinates are determined by bindings, not free-node layout optimization.</p>
+<p>The public <code>modelFingerprint</code> is a non-security fingerprint of the resolved semantic content. It is not a signature. The build manifests separately record SHA-256 digests. Different views can include different data modules, so not all views of a project necessarily have identical fingerprints. Equivalent ER/Chen and chart/table examples deliberately do.</p>
+<h2>16.2 Source grammar</h2>
+<p>The parser accepts a JSON-style quoted version and module identity followed by semicolons. Profile-defined dotted kind names MUST be quoted; references continue to use <code>@</code> and qualified identifiers.</p>
+<pre><code>ddn &quot;0.4&quot;;
+module &quot;example.review&quot;;
+data model {
+    object first &quot;First observation&quot; {
+        kind: record;
+        x_record: { month: &quot;Jan&quot;, value: 420, unit: &quot;CAD&quot; };
+    }
+    object second &quot;Second observation&quot; {
+        kind: record;
+        x_record: { month: &quot;Feb&quot;, value: 570, unit: &quot;CAD&quot; };
+    }
+}
+format shared {
+    projection monthly {
+        kind: chart;
+        profile: &quot;chart.basic@1&quot;;
+        records: [@model.first, @model.second];
+        mark: bar;
+        x: &quot;x_record.month&quot;;
+        y: &quot;x_record.value&quot;;
+        unit: &quot;CAD&quot;;
+    }
+    publication screen { size: content; fit: none; }
+}
+view monthly {
+    data: [@model];
+    projection: @shared.monthly;
+    publication: @shared.screen;
+}</code></pre>
+<p>A reusable <code>projection</code> is a named declaration inside <code>format</code>, just like <code>layout</code>, <code>style</code> or <code>publication</code>. It can be referenced directly from <code>view</code> or through a <code>bundle</code>. A view-local <code>projection { ... }</code> block overrides the referenced projection's properties using the existing concern-resolution rules. The parser does not introduce a different statement keyword for every diagram kind.</p>
+<p>Projection syntax in EBNF supplements the existing generic declaration grammar:</p>
+<pre><code>ProjectionDefinition = &quot;projection&quot;, Identifier, &quot;{&quot;, Property*, &quot;}&quot; ;
+ProjectionReference  = &quot;projection&quot;, &quot;:&quot;, Reference, &quot;;&quot; ;
+ProjectionOverride   = &quot;projection&quot;, &quot;{&quot;, Property*, &quot;}&quot; ;</code></pre>
+<p>The implementation's semantic validator is authoritative for property applicability. Merely parsing a property does not make it valid for all projections. For instance, <code>mark</code> is not legal on a matrix. No filter or binding executes JavaScript, SQL, FEEL or another expression language.</p>
+<h2>16.3 Installed profiles</h2>
+<p><code>profiles/catalogue.json</code> is the machine-readable profile catalogue. The shipped profiles are fixed trusted definitions bundled at build time. This release does NOT implement downloading or installing arbitrary user-defined plugin code from DDN source. Developers can extend the catalogue/source, rebuild the library and add fixtures. Unrecognized profile IDs and incompatible projection kinds are errors.</p>
+<p>A profile describes a projection, eligible semantics, validation obligations, supported silhouettes, scope and exclusions. The profile library adds 45 kind definitions and 22 relationship definitions to the 152-kind/91-relation core without changing the latter's IDs. Three of the additional kind recipes are used by Chen-generated occurrences. An icon count is not a supported-diagram count.</p>
+<p>Registry catalogue note (additive growth): kind entries in both catalogues may carry an optional <code>defaults</code> object (property name → default value, <code>{}</code> when a kind has no meaningful defaults). This is additive registry growth under the versioning rules — no RFC and no semantics change — and it never extends a published profile entry; defaults live on kind entries only and are type-checked against the property contracts at schema-build time (chapter 04 §10, chapter 10).</p>
+<p>The graph-projection profiles now include the C4-style set: <code>c4.context@1</code> (people and systems only, no internal structure), <code>c4.container@1</code> (containers, stores and queues inside one system boundary frame) and <code>c4.component@1</code> (components inside one container boundary frame), using the six <code>c4.*</code> kinds and the <code>c4.rel</code> verb. These are DDN profiles on the existing graph projection, not a claim of C4 specification conformance.</p>
+<p>The graph projection also carries <code>org.tree@1</code>: a single-root reporting hierarchy of <code>organization</code>, <code>team</code>, <code>role</code> and <code>analysis.role</code> participants linked only by the core governance verb <code>reports_to</code>, rendered top-down with the native tree layout. Validation rejects non-org participants and links (<code>DDN-PF007</code>), reporting cycles (<code>DDN-PF004</code>), anything but exactly one root (<code>DDN-PJ102</code>), and multiple managers per node (core <code>DDN201</code> at the layout stage).</p>
+<p>The graph projection also carries <code>wbs.tree@1</code>: a deliverable-oriented work breakdown structure — a single-root decomposition tree of <code>analysis.task</code> participants linked only by the profile verb <code>analysis.decomposes</code> (parent deliverable → child deliverable), rendered top-down with the same native tree layout. Validation reuses the org-tree checks: non-task participants and links are rejected (<code>DDN-PF007</code>), decomposition cycles (<code>DDN-PF004</code>), anything but exactly one root (<code>DDN-PJ102</code>), and multiple parents per node (core <code>DDN201</code> at the layout stage).</p>
+<p>The graph projection also carries <code>mindmap.basic@1</code>: a mind map — a single central topic (<code>object</code>, <code>entity</code>, <code>term</code> or <code>domain</code> participants) with branches alternating left and right over plain <code>assoc</code> links, rendered with the native mindmap layout and curved connectors. Validation rejects non-concept participants and non-<code>assoc</code> links (<code>DDN-PF007</code>), any layout algorithm other than <code>mindmap</code> (<code>DDN-PF007</code>), branch cycles (<code>DDN-PF004</code>), and anything but exactly one root (<code>DDN-PJ102</code>, shared with the org-tree/WBS check); multiple parents and a root outside the hierarchy remain core <code>DDN201</code>/<code>DDN202</code> errors at the layout stage.</p>
+<p>The graph projection also carries <code>concept.map@1</code>: a concept map — concept-family nodes (<code>object</code>, <code>entity</code>, <code>term</code> or <code>domain</code> participants) joined by explicitly labelled structural links (<code>assoc</code> or <code>ref</code>), with no root or cycle constraints (concept maps are not trees). Because the IR merges an unnamed relation with its verb's registry default name, explicitness is checked against that default: validation rejects non-concept participants and non-structural links (<code>DDN-PF007</code>), and any selected relation whose effective label is empty or equals the verb default such as <code>&quot;associated with&quot;</code> (<code>DDN-PJ104</code>) — labels are mandatory and author-written, never inferred. Label inference from endpoints, automatic layout to ontology standards and OWL/RDF export are unsupported.</p>
+<p>The graph projection also carries <code>epc.basic@1</code>: an Event-driven Process Chain — <code>epk.event</code> hexagons and <code>epk.function</code> rounded rectangles strictly alternating through <code>epk.connector</code> circles carrying an <code>and</code>/<code>or</code>/<code>xor</code> operator, linked only by the <code>epk.next</code> verb and rendered left-to-right with the layered layout. Validation rejects non-EPC participants and links (<code>DDN-PF007</code>), event-to-event or function-to-function edges (<code>DDN-PJ105</code>), connectors without a valid <code>x_epc.operator</code> or <code>x_epc.operator</code> on a non-connector (<code>DDN-PJ106</code>), and attribute compartments on EPC symbols (<code>DDN-PF003</code>). Process simulation, BPMN interchange and connector fan-in/fan-out balancing rules are unsupported. This is a DDN profile on the graph projection, not a claim of EPC specification conformance.</p>
+<h2>16.4 Explicit source collections and bindings</h2>
+<p>This increment uses explicit arrays of model references for rows, columns, records and panel items. They are not arbitrary SQL-like queries or named collection-expression syntax. Each array has 1–500 unique references. Every bound element must be present in the view selection. A missing or excluded record is an error, never an empty invented row.</p>
+<p>Binding strings are dot-separated safe property paths such as <code>x_record.value</code>, or the special element properties <code>name</code>, <code>id</code>, <code>kind</code>. Reserved object-prototype names and expression characters are rejected. The binding obtains an own property value; it does not run getters or arbitrary code from source.</p>
+<p>Record/table/time projections offer an optional equality or membership filter and stable ascending/descending sort. Filtering may not leave an empty result. Native support for general joins, pivots with arbitrary aggregation, computed business formulas or user code is not claimed. Matrices join only the expressly selected row/column identities through a declared relationship kind.</p>
+<h2>16.5 Coordinate policy</h2>
+<p><code>graph</code> uses the existing positions, pins, patterns and router. <code>chen</code> creates a visual graph from the declared source structure, but this increment rejects occurrence-specific <code>place</code>, <code>route</code>, <code>frame</code> and <code>subdiagram</code> declarations for that generated graph. All other projection kinds are data-bound and reject those graph geometry declarations.</p>
+<p>The viewer disables graph-only controls for data-bound projections. Selecting a page, font, look, palette or supported chart mark remains possible. Zoom only magnifies the completed SVG. Unsupported geometry overrides fail; the implementation never moves a value to make a prettier chart.</p>
+<h2>16.6 Publication and limits</h2>
+<p>Projection width and height hints accept finite 240–12,000px values. They are preferred working dimensions, not permission to crop contents. Native content measurement can enlarge matrix/panel/table layouts. The measured result has a 50,000px extent budget. The common publisher checks final page area and minimum text after scale, including <code>fit:none</code>. Automatic multi-sheet pagination is not implemented.</p>
+<p>The public live API retains its existing 128 selected-element/384 visible-relation resource limit, which can be stricter than the internal planner's per-array limits. Matrix planning additionally limits 5,000 cells and 40 columns; record tables allow at most 30 columns. Limits are bounded synchronous work, not worker isolation or a hard wall-clock timeout.</p>
+<h2>16.7 Export authorization</h2>
+<p>View selection and <code>display</code> are NOT access control. The original core allowlist exporter remains supported for its existing graph domain. Its <code>sql</code> export format rides the same allowlist gate as the existing JSON export. Profile-specific redacted projections, including quantitative/matrix/Chen and graphs using new extended kinds, fail closed with <code>DDN-PJ003</code>. They have not been qualified for complete occurrence/payload authorization closure. Supply a separately authorized source workspace instead. There is no fallback to an unredacted result.</p>
+<p>No confidential source should be sent to an unauthorized browser. Full workspace ZIP/JSON downloads contain the supplied source, including material hidden from a particular view. SVG source IDs, labels, values and provenance can themselves be sensitive.</p>
+<h2>16.8 Conformance declaration</h2>
+<p>Support is tracked independently as render, source authoring, static validation, interchange and execution. The new native profiles are bounded reference implementations. There is no complete UML, SysML, BPMN, CMMN, DMN, ArchiMate, electrical, geographic or UI-prototype certification. The current scope tables and executable fixtures, not the shape catalogue alone, define what this draft implements.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

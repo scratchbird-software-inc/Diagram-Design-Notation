@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The DDN standard — DDN</title>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../examples/index.html">Examples</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html" class="active">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<h1 class="page-title">The Diagram Design Notation standard</h1>
+<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families and claims no UML/BPMN/DMN conformance certification.</p>
+<h2>Specification (45 chapters)</h2>
+<ul>
+  <li><a href="specification/00-status-and-scope.html">DDN 0.5 — status and conformance scope</a></li>
+  <li><a href="specification/01-language.html">DDN 0.3 — Language and decoding</a></li>
+  <li><a href="specification/02-data-model.html">DDN 0.3 — Data model and executable contracts</a></li>
+  <li><a href="specification/03-views-and-reuse.html">DDN 0.3 — Views, reuse and audience projection</a></li>
+  <li><a href="specification/04-notation-and-looks.html">Fixed notation, configurable looks</a></li>
+  <li><a href="specification/05-routing.html">DDN 0.3 — Native placement and routing contract</a></li>
+  <li><a href="specification/06-publication-and-subdiagrams.html">DDN 0.3 — Publication, typography and linked diagrams</a></li>
+  <li><a href="specification/07-reference-and-conformance.html">DDN 0.5 — Executable capability matrix</a></li>
+  <li><a href="specification/08-security-and-accessibility.html">DDN 0.3 — Security and accessibility</a></li>
+  <li><a href="specification/09-governance.html">Proposal governance and extension process</a></li>
+  <li><a href="specification/10-property-contracts.html">Typed semantic-property contracts</a></li>
+  <li><a href="specification/11-remediation.html">DDN 0.3 — Enterprise remediation contract</a></li>
+  <li><a href="specification/12-process-and-assurance.html">DDN 0.3 — Process, requirements and verification</a></li>
+  <li><a href="specification/13-curved-relations.html">DDN 0.3 — Curved relations and shape-preserving routing</a></li>
+  <li><a href="specification/14-unified-sdk.html">Unified JavaScript library and live views</a></li>
+  <li><a href="specification/15-placement-and-low-light.html">Anchored placement, route optimization and low-light palettes</a></li>
+  <li><a href="specification/16-profiles-and-projections.html">16. Profiles and projections — DDN 0.4 draft</a></li>
+  <li><a href="specification/16-workspace-and-editing.html">Source workspaces, local imports and editing transactions</a></li>
+  <li><a href="specification/17-shapes-and-notation-profiles.html">17. Composable silhouettes and notation profiles</a></li>
+  <li><a href="specification/18-matrices-and-panels.html">18. Matrices, record tables and panels</a></li>
+  <li><a href="specification/19-quantitative-and-time.html">19. Quantitative and UTC date projections</a></li>
+  <li><a href="specification/20-projection-sdk-and-editing.html">20. Projection SDK and source editing</a></li>
+  <li><a href="specification/21-quality-causes-and-matrix-editing.html">21. Quality causes, encoded matrices, and source-assignment editing</a></li>
+  <li><a href="specification/22-chart-series-and-quality-transforms.html">22. Shared chart series, layers, and bounded quality transforms</a></li>
+  <li><a href="specification/23-lifecycle-and-rule-tables.html">23. Flat lifecycle profiles and restricted rule-based decision tables</a></li>
+  <li><a href="specification/24-child-views-and-profile-completion.html">24. Child-view panels and bounded notation completion</a></li>
+  <li><a href="specification/25-diagram-field-guide.html">25. Diagram field guide and executable documentation</a></li>
+  <li><a href="specification/26-local-endpoint-ordering.html">26. Local endpoint ordering (DDN 0.5 routing patch)</a></li>
+  <li><a href="specification/27-sequence-diagrams.html">27. Sequence diagrams (projection sequence, profile uml.sequence@1)</a></li>
+  <li><a href="specification/28-communication-diagrams.html">28. Communication diagrams (profile uml.communication@1 on projection graph)</a></li>
+  <li><a href="specification/29-object-diagrams.html">29. Object diagrams (profile uml.object@1 on projection graph)</a></li>
+  <li><a href="specification/30-hierarchical-state-machines.html">30. Hierarchical state machines (profile state.composite@1 on projection graph)</a></li>
+  <li><a href="specification/31-activity-diagrams.html">31. Activity diagrams (profile uml.activity@1 on projection graph)</a></li>
+  <li><a href="specification/32-bpmn-collaboration.html">32. BPMN-style process collaboration (profile bpmn.basic@1 on projection graph)</a></li>
+  <li><a href="specification/33-timing-diagrams.html">33. Timing diagrams (projection timing, profile uml.timing@1)</a></li>
+  <li><a href="specification/34-interaction-overviews.html">34. Interaction overviews (profile uml.interaction_overview@1)</a></li>
+  <li><a href="specification/35-cmmn-cases.html">35. CMMN-style case diagrams (profile cmmn.basic@1 on projection graph)</a></li>
+  <li><a href="specification/36-sysml-profiles.html">36. SysML-style block profiles (sysml.bdd@1, sysml.ibd@1, sysml.parametric@1 on projection graph)</a></li>
+  <li><a href="specification/37-archimate-layers.html">37. ArchiMate-style layered profile (archimate.basic@1 on projection graph)</a></li>
+  <li><a href="specification/38-pert-cpm.html">38. PERT/CPM critical-path profile (pert.cpm@1 on projection graph)</a></li>
+  <li><a href="specification/39-fault-event-trees.html">39. Fault tree and event tree profiles (fault.tree@1, event.tree@1)</a></li>
+  <li><a href="specification/40-network-diagrams.html">40. Network/bus and rack profiles (network.basic@1, network.rack@1)</a></li>
+  <li><a href="specification/41-wireframes.html">41. Wireframe stencil profile (wireframe.ui@1)</a></li>
+  <li><a href="specification/42-family-trees.html">42. Family tree / genealogy profile (family.tree@1)</a></li>
+  <li><a href="specification/sources.html">Sources, precedents and attribution</a></li>
+</ul><h2>Governance</h2>
+<ul>
+  <li><a href="governance/VERSIONING.html">Versioning policy</a></li>
+  <li><a href="governance/RFC-TEMPLATE.html">RFC template</a></li>
+</ul>
+<h2>RFCs</h2>
+<ul>
+  <li><a href="governance/rfcs/RFC-101-sequence-diagram.html">RFC 101 — Sequence diagram projection (kind:sequence, profile uml.sequence@1)</a></li>
+  <li><a href="governance/rfcs/RFC-102-communication-diagram.html">RFC 102 — Communication diagram profile (uml.communication@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-103-object-diagram.html">RFC 103 — Object diagram profile (uml.object@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-104-hierarchical-state.html">RFC 104 — Hierarchical state machine profile (state.composite@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-105-activity-diagram.html">RFC 105 — Activity diagram profile with partitions (uml.activity@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-106-bpmn.html">RFC 106 — BPMN-style process collaboration profile (bpmn.basic@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-107-timing-diagram.html">RFC 107 — Timing diagram projection (kind:timing, profile uml.timing@1)</a></li>
+  <li><a href="governance/rfcs/RFC-108-interaction-overview.html">RFC 108 — Interaction overview profile (uml.interaction_overview@1)</a></li>
+  <li><a href="governance/rfcs/RFC-109-cmmn.html">RFC 109 — CMMN-style case diagram profile (cmmn.basic@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-110-sysml.html">RFC 110 — SysML-style block profiles (sysml.bdd@1, sysml.ibd@1, sysml.parametric@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-111-archimate.html">RFC 111 — ArchiMate-style layered profile (archimate.basic@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-112-pert-cpm.html">RFC 112 — PERT/CPM critical-path profile (pert.cpm@1 on kind:graph)</a></li>
+  <li><a href="governance/rfcs/RFC-113-fault-event-tree.html">RFC 113 — Fault tree and event tree profiles (fault.tree@1, event.tree@1)</a></li>
+  <li><a href="governance/rfcs/RFC-114-network.html">RFC 114 — Network/bus and rack profiles (network.basic@1, network.rack@1)</a></li>
+  <li><a href="governance/rfcs/RFC-115-wireframes.html">RFC 115 — Wireframe stencil profile (wireframe.ui@1)</a></li>
+  <li><a href="governance/rfcs/RFC-116-family-tree.html">RFC 116 — Family tree / genealogy profile (family.tree@1)</a></li>
+  <li><a href="governance/rfcs/RFC-117-multi-module-files.html">RFC 117 — Self-contained multi-module files and bundling</a></li>
+</ul><h2>Notation plates</h2>
+<p><a href="../plates/index.html">SVG plates of the full vocabulary</a> — object kinds, facets, relationship families, looks, and routing.</p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -4,16 +4,19 @@
   "private": true,
   "description": "Diagram Design Notation (DDN): a model-first diagram language, reference runtime, visual designer proposal, and open standard draft.",
   "license": "GPL-2.0-or-later",
+  "homepage": "website/index.html",
   "workspaces": [
     "notation",
     "designer"
   ],
   "scripts": {
-    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test",
+    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site",
     "test:packaging": "node tools/tests/packaging.js",
+    "test:site": "node tests/website-links.js",
     "test:core": "npm --prefix notation run test:core",
     "build:sdk": "npm --prefix notation run build:sdk",
     "build:gallery": "node tools/build-gallery.js",
+    "build:site": "node website/build-site.mjs",
     "serve": "node tools/serve.js"
   },
   "engines": {

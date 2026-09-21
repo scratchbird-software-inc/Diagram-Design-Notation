@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data refresh (live dashboards) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Data refresh (live dashboards)</h1>
+<p>B1-006 added <code>ws.replaceData(name, records)</code>: swap the records of a named <code>data</code> block while leaving every other byte of the source untouched. It is the supported way to drive a live diagram from changing data — the model, views, layout structure, pins, and format bundles all survive; only the record payload changes.</p>
+<h2>The contract</h2>
+<ul><li><code>name</code> is the data block's declared name (e.g. <code>data metrics { … }</code> →</li></ul>
+<p>  <code>&quot;metrics&quot;</code>).</p>
+<ul><li>Each record is a plain object. Records must carry the **same keys as the</li></ul>
+<p>  block's existing first record** — a missing or extra key throws <code>DDN-E011</code>   (verified in <code>notation/tests/data-refresh.js</code>). No silent shape drift.</p>
+<ul><li>The call returns <code>{ revision, diagnostics }</code> and bumps the workspace</li></ul>
+<p>  revision, so <code>subscribe</code> listeners and mounted elements re-render   automatically.</p>
+<ul><li>Both object records (<code>x_record</code> on <code>object</code>) and relation records are</li></ul>
+<p>  supported.</p>
+<h2>Dashboard recipe</h2>
+<pre><code>&lt;div id=&quot;chart&quot;&gt;&lt;/div&gt;
+&lt;script src=&quot;notation/dist/ddn.global.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  const ws = DDNLive.createWorkspace({ &quot;dash.ddn&quot;: source });   // declares data metrics {…}
+  const diagram = DDNLive.mount(document.getElementById(&quot;chart&quot;), {
+    workspace: ws, entry: &quot;dash.ddn&quot;, view: &quot;latency_chart&quot;
+  });
+
+  async function poll() {
+    const rows = await fetch(&quot;/api/latency&quot;).then(r =&gt; r.json());
+    ws.replaceData(&quot;metrics&quot;, rows.map(d =&gt; ({ label: d.route, value: d.p95, unit: &quot;ms&quot; })));
+    // mounted diagram re-renders on its own; nothing else to call
+  }
+  setInterval(poll, 5000);
+&lt;/script&gt;</code></pre>
+<p>For headless use, call <code>renderSync</code> after each <code>replaceData</code> and diff <code>modelFingerprint</code> if you want to prove the model did not change:</p>
+<pre><code>const before = ws.renderSync({ entry: &quot;dash.ddn&quot;, view: &quot;latency_chart&quot; }).modelFingerprint;
+ws.replaceData(&quot;metrics&quot;, nextRows);
+const after = ws.renderSync({ entry: &quot;dash.ddn&quot;, view: &quot;latency_chart&quot; });
+console.assert(before === after.modelFingerprint, &quot;data-only change&quot;);</code></pre>
+<h2>Complete working examples</h2>
+<ul><li><code>website/examples/embed/data-refresh.html</code> — a browser proof over</li></ul>
+<p>  <code>ddn-core.js</code> + <code>ddn-graph.js</code> + <code>ddn-projections.js</code>: a button swaps the   <code>metrics</code> records of an inlined copy of <code>website/examples/basics/59-data-refresh.ddn</code>   and re-renders in place.</p>
+<ul><li><code>website/examples/basics/59-data-refresh.ddn</code> — the two-view source (a bar chart</li></ul>
+<p>  and a dependency graph over the same data block).</p>
+<ul><li><code>notation/tests/data-refresh.js</code> — the contract tests, including the</li></ul>
+<p>  <code>DDN-E011</code> shape-mismatch rejections.</p>
+<h2>When not to use it</h2>
+<p><code>replaceData</code> replaces <em>records</em>, not structure. New objects, new relations, renamed fields, or view changes are authoring operations — use <code>applyEdits</code>/<code>updateFiles</code> or the <code>authoring</code> façade (see <a href="api-reference.html">api-reference.md</a>).</p>
+</article>
+<p><small>Rendered from <a href="data-refresh.md">data-refresh.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

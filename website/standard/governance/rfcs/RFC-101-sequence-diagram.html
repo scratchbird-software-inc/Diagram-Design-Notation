@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 101 — Sequence diagram projection (kind:sequence, profile uml.sequence@1) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 101 — Sequence diagram projection (<code>kind:sequence</code>, profile <code>uml.sequence@1</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; new projection kind sequence; profile uml.sequence@1; verb uml.message; extension x_return</p>
+<h2>Problem and motivating example</h2>
+<p>DDN 0.5 ships nine projection kinds — graph, chen, matrix, panels, table, chart, timeline, fishbone, decision — but has no ordered-interaction view. A sequence-style view is the most requested diagram family in the gap analysis: authors who can already declare participants and the messages between them have no way to see those interactions ordered in time without falling back to a free graph layout, which has no notion of &quot;earlier/later&quot; between messages.</p>
+<p>Motivating example: a three-party synthetic order flow. A customer app submits an order to checkout; checkout reserves stock against inventory and receives a dashed return; checkout logs an audit record to itself (a self-message); checkout confirms to the customer app. Today this can only be drawn as a graph, losing the top-to-bottom ordering that is the entire point of the diagram.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Projection kinds are atom property values (<code>property = identifier &quot;:&quot; value &quot;;&quot;</code>); <code>kind:sequence;</code> parses today and is rejected semantically by <code>DDN046</code>/<code>DDN-PJ001</code>. This RFC makes it valid:</p>
+<ul><li>New projection kind token <code>sequence</code> in the semantic kind enum.</li><li>New profile <code>uml.sequence@1</code> bound to projection <code>sequence</code>.</li><li>New profile relationship verb <code>uml.message</code>:</li></ul>
+<p>  <code>{keyword:'uml.message', name:'Message', verb:'Message', family:'control',     code:'MESSAGE', glyph:'link', start:'none', end:'open',     source:['<em>'], target:['</em>'], allow_self:true, member_endpoints:false}</code>.</p>
+<ul><li>New registered extension property <code>x_return</code> (boolean, relation target):</li></ul>
+<p>  marks a message as a dashed return.</p>
+<p>No new projection properties: <code>sequence</code> accepts only the common block (<code>kind</code>, <code>profile</code>, <code>width</code>, <code>height</code>).</p>
+<pre><code>view sequence {
+  data:[@m.flow];
+  projection { kind:sequence; profile:&quot;uml.sequence@1&quot;; }
+}</code></pre>
+<h2>Semantic normalization and identity effects</h2>
+<p>Normalization is declaration order — never geometry, never inference:</p>
+<ul><li><strong>Participants</strong> are the view's selected <code>object</code>-type elements,</li></ul>
+<p>  left-to-right in <code>ir.elements</code> declaration order.</p>
+<ul><li><strong>Messages</strong> are the view's visible relations of kind <code>uml.message</code>,</li></ul>
+<p>  top-to-bottom in <code>ir.relations</code> declaration order.</p>
+<ul><li>A <strong>self-message</strong> is a <code>uml.message</code> from a participant to itself</li></ul>
+<p>  (<code>allow_self:true</code> on the verb).</p>
+<ul><li>A <strong>dashed return</strong> is a <code>uml.message</code> carrying <code>x_return:true</code>.</li><li>The <strong>activation bar</strong> on the receiver of message <em>i</em> spans from message</li></ul>
+<p>  <em>i</em>'s row to the row of the next message whose source is that participant,   or the last row if none.</p>
+<p>Element and relation identities are untouched; every mark carries its source ids, so a message arrow remains traceable to the declared relation.</p>
+<h2>Visual encoding and routing effects</h2>
+<p>Deterministic native SVG, derived only from the scale <code>s</code>, the theme, and measured label widths:</p>
+<ul><li>Equal participant spacing; a header box per participant at the top.</li><li>A dashed vertical lifeline from each header to the bottom of the message</li></ul>
+<p>  area.</p>
+<ul><li>Messages are horizontal arrows at descending y by declaration index, at a</li></ul>
+<p>  fixed row pitch, numbered, with the label above the arrow.</p>
+<ul><li>Self-messages render as a small rectangular loop to the right of the</li></ul>
+<p>  lifeline.</p>
+<ul><li>Returns render dashed with an open arrowhead.</li><li>Activation bars are thin filled rectangles straddling the receiver's</li></ul>
+<p>  lifeline.</p>
+<ul><li>A footer note states that ordering is declaration order, not a verified</li></ul>
+<p>  protocol.</p>
+<p>All marks are registered through the shared <code>group()</code> helper with contributor <code>sourceIds</code>. There is no routing: message arrows are straight horizontal lines between lifelines.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Reuse <code>kind:graph</code> with a layout algorithm</strong> — rejected: lifeline</li></ul>
+<p>  semantics are order-bound, not free layout; a graph layout cannot express   &quot;messages descend in declaration order&quot;.</p>
+<ul><li><strong>Extend the experimental <code>session-bootstrap@0.1</code> interaction lanes</strong> —</li></ul>
+<p>  rejected: that profile is a fixed-lane protocol illustration with   <code>DDN-I0xx</code> semantics, not a general sequence view.</p>
+<ul><li><strong>Full UML 2.5 interaction metamodel</strong> — rejected: out of scope (combined</li></ul>
+<p>  fragments, gates, creation/destruction, execution specifications).</p>
+<h2>Compatibility and migration</h2>
+<p>Purely additive. No existing profile, kind, verb or property is edited. <code>x_sequence</code> (interaction@0.1) is untouched. Sources that do not use <code>kind:sequence</code>, <code>uml.message</code> or <code>x_return</code> are byte-for-byte unaffected; the <code>tests/run.js</code> enrollment switch to the engine dispatcher routes graph views through the identical code path (<code>ddn-engine.js</code> → <code>ddn-interaction.js</code> → <code>Base.render</code>) for views without <code>layout.x_interaction</code>.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new inputs: messages and participants are already-declared model elements. Rendered text is escaped through the shared <code>esc()</code> helper. Marks carry <code>data-source-ids</code> and <code>tabindex</code>/<code>role=&quot;group&quot;</code> like every other projection mark, so keyboard and assistive inspection work the same way. The diagram makes no protocol-correctness claim; the footer says so.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/capabilities.json</code>: <code>sequence</code> added to</li></ul>
+<p>  <code>profiles.projection.kind[]</code>; <code>projectionProperties.sequence =   [&quot;kind&quot;,&quot;profile&quot;,&quot;width&quot;,&quot;height&quot;]</code>; one <code>implemented[]</code> line appended;   <code>installedProfiles[]</code> gains the <code>uml.sequence@1</code> entry.</p>
+<ul><li>New error <code>DDN-PJ110</code> — a <code>uml.message</code> endpoint is not a selected</li></ul>
+<p>  <code>object</code> declaration. (Member endpoints already fail earlier with <code>DDN102</code>   because <code>member_endpoints:false</code>; this code covers non-object element types   such as samples/domains/flows used as endpoints.) The message names the   relation and the offending endpoint.</p>
+<ul><li>New warning diagnostic <code>DDN-PJW03</code> (severity <code>warning</code>, not thrown) — a</li></ul>
+<p>  selected participant has no incident messages; the diagram still renders.</p>
+<ul><li>Existing codes unchanged: unknown kind → <code>DDN-PJ001</code>; unknown property →</li></ul>
+<p>  <code>DDN-PJ005</code>; page/extent guards <code>DDN-PJ060/061</code>; Vega-Lite export of a   sequence view → <code>DDN-PJ070</code>; graph geometry in a sequence view → <code>DDN-PJ002</code>.</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive example: <code>website/examples/basics/41-sequence-diagram.ddn</code> (three-party</li></ul>
+<p>  order flow: reservation, dashed return, self-message).</p>
+<ul><li>Test suite: <code>notation/tests/sequence-diagram.js</code> — positive render,</li></ul>
+<p>  geometry/order invariants, dashed return, self-message loop, <code>DDN-PJ110</code>,   <code>DDN-PJ005</code>/<code>DDN-PJ001</code>/<code>DDN-PJ002</code>, <code>DDN-PJ070</code>, <code>DDN-PJW03</code>, and   byte-identical determinism.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: <code>ddn-core.js</code> (<code>CHOICES.projection.kind</code>), <code>ddn-projection-data.js</code> (<code>supported</code> map + planning branch), <code>ddn-projections.js</code> (renderer branch), <code>capabilities.json</code> (kind list + projection properties), <code>ddn-profiles.js</code>/<code>extensions.json</code> (<code>x_return</code> contract), profile catalogue (<code>uml.message</code> verb + <code>uml.sequence@1</code> profile). The engine dispatcher needs no edit: non-graph kinds already route to <code>ddn-projections.js</code>. <code>tests/run.js</code> switches its numbered-example render call to the dispatcher so non-graph examples are exercised.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 motivation, D2 vocabulary, D3 metamodel, D4 rejection behavior, D5</li></ul>
+<p>  layout/geometry, D6 alternatives, D7 compatibility: recorded above as fixed   decisions of this RFC.</p>
+<ul><li>Open: whether a later RFC adds combined fragments (alt/loop/opt) behind a</li></ul>
+<p>  new profile version; explicitly unsupported in <code>uml.sequence@1</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

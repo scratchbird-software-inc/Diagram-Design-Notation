@@ -55,4 +55,4 @@ workspace object: it rewrites only the named data block's record lines with the 
 authoring serializer and returns `{revision, diagnostics}` — coded errors `DDN-E002`
 (unknown/ambiguous block) and `DDN-E011` (field-shape mismatch) leave the source untouched.
 Hosts then call `renderSync`/`mount` again; a same-values refresh re-renders every view
-byte-identical. See `examples/embed/data-refresh.html`.
+byte-identical. See `../../website/examples/embed/data-refresh.html`.

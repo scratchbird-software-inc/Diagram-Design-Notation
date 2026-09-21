@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>17. Composable silhouettes and notation profiles — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>17. Composable silhouettes and notation profiles</h1>
+<blockquote><strong>Current 0.5 extension:</strong> chapters 21–24 add quality profiles, matrix creation, multiseries/statistical transforms, rule/lifecycle checks and one-level composed views. This chapter retains the earlier basic profile scopes; broader options require their registered 0.5 profiles.</blockquote>
+<p><strong>DDN 0.4 draft — executable reference contracts.</strong> The public model continues to use ordinary object/member/relation declarations. Registered namespaced kinds determine a trusted geometry recipe. Profiles determine how a recipe is used; style never supplies new semantics.</p>
+<h2>17.1 Geometry contract</h2>
+<p><code>reference/ddn-shapes.js</code> separates measurement, drawing and attachment. Each recipe provides a visible contour, a conservative rectangular collision envelope, content/label space, measured minimum dimensions and permitted boundary anchors. Endpoint placement uses the actual contour for circles, ellipses, diamonds and sloped sides rather than the invisible rectangle. The existing router continues to avoid conservative obstacle envelopes.</p>
+<p>The initial reusable recipes are rectangle, rounded rectangle, terminal, decision diamond, ellipse, circle, parallelogram, wavy document, predefined-process frame, data store, actor, package tab and component frame. Existing DDN note, frame, sample and card shapes remain available. This is a compositional implementation, not a source-level arbitrary SVG drawing language.</p>
+<p>The drawing look can be classic, handDrawn or neo. Controlled pen variation changes outlines, not the nominal obstacle/attachment model. Quantitative data marks do not inherit rough coordinates. Registered line families and dark/night color variants remain fixed; shapes do not reuse the meaning of an unrelated badge position.</p>
+<p>The native <code>tree</code> layout honours <code>direction</code>: with <code>down</code> (or <code>up</code>, mirrored) depth advances vertically and siblings stack along x using subtree widths, so a single-root hierarchy hangs as a top-down org chart; with the default <code>right</code> (or <code>left</code>) the original horizontal geometry is retained byte-identically. Mind maps ignore <code>direction</code> and remain horizontal.</p>
+<p>The native <code>mindmap</code> layout has a single-root contract: with exactly one hierarchy root it centres that topic and alternates branches left and right in declaration order; with more than one root it silently falls back to ordinary tree stacking. The <code>mindmap.basic@1</code> profile enforces the contract up front — exactly one root (<code>DDN-PJ102</code>), an acyclic <code>assoc</code> hierarchy (<code>DDN-PF004</code>), and <code>layout.algorithm: mindmap</code> (<code>DDN-PF007</code>) — so a profiled mind map never degrades into a two-sided picture of a one-sided tree.</p>
+<h2>17.2 Basic flowcharts</h2>
+<p><code>flow.basic@1</code> uses <code>flow.start</code>, <code>flow.end</code>, <code>flow.process</code>, <code>flow.decision</code>, <code>flow.io</code>, <code>flow.document</code> and <code>flow.subprocess</code>, connected by <code>flow.next</code>.</p>
+<p>A closed flowchart requires at least one start and end. Starts have no incoming control; ends have no outgoing control. Every selected symbol is reachable from a start and can reach an end. A decision has at least two outgoing edges with distinct nonempty <code>x_diagram.branch</code> labels. These labels are declared alternatives, NOT machine-proved mutually exclusive conditions. Symbols do not accept data-field compartments. Loops may exist if a path to an end exists; no liveness or execution result is inferred.</p>
+<p>The fixed solid control-arrow recipe is specific to this profile. It does not change the original DDN control-line conventions globally. Reference callout keys remain presentation identifiers.</p>
+<h2>17.3 DFD notation variants</h2>
+<p><code>dfd.gane_sarson@1</code> and <code>dfd.yourdon@1</code> render the same <code>dfd.process</code>, <code>dfd.store</code>, <code>dfd.external</code> and <code>dfd.data</code> definitions. The former uses process compartments and open store symbols; the latter uses circular processes and parallel-line stores. Process numbers are nonempty and unique, and each process has input and output. Every flow involves a process; store-to-store, external-to-external and external-to-store shortcuts are rejected.</p>
+<p>Payload names are relation labels. This subset does not prove transformation conservation, complete leveled-method rules, Gane–Sarson/Yourdon certification or executable behavior. Existing DDN boundary-contract checks remain a separate capability, not a fabricated formal-method approval.</p>
+<h2>17.4 Structural and use-case subsets</h2>
+<p><code>uml.structure@1</code> supports explicit <code>uml.class</code>, <code>uml.interface</code>, <code>uml.package</code> and <code>uml.component</code> declarations. <code>x_member</code> controls attribute versus operation compartments, visibility, static underline and abstract italic treatment. Signature/type text is authored text; the library does not parse a complete programming-language or UML type system.</p>
+<p>Implemented links are association, generalization, realization and dependency. Generalization connects compatible classifier kinds and must be acyclic. Realization uses its declared endpoint contract and a hollow triangular marker. Package tabs and component indicators are actual silhouettes, but full package import/merge and component assembly/delegation semantics are not implemented.</p>
+<p><code>uml.usecase@1</code> uses actor and use-case contours with participation, include and extend links. Include cycles are rejected. Full extension-point conditions, actor generalization, UML interaction semantics and XMI exchange are outside this subset.</p>
+<p><code>requirements.basic@1</code> is a <strong>DDN requirement-traceability profile</strong>, not full SysML. Requirements have unique nonempty code and text, with satisfies/verifies/derives links to declared implementation/test records. The implementation rejects invalid endpoints and derivation cycles. A <code>verifies</code> relation is a statement of intended traceability, not proof a test ran or passed.</p>
+<h2>17.5 Chen projection</h2>
+<p><code>chen.basic@1</code> maps existing <code>entity</code> objects, scalar fields and binary object-level <code>assoc</code>/<code>ref</code> relationships. Entities become rectangles, their fields become ovals, and relationships become diamonds. The visual occurrence IDs/source maps retain the original entity, field and relationship identity. The original model is unchanged and has the same semantic fingerprint as its ordinary ER view when both select the same data.</p>
+<p>This initial Chen profile rejects nested/repeated fields and member-endpoint links instead of pretending to flatten them. Weak entities, identifying relationships, n-ary associations, multivalued/derived attribute notation and complete cardinality placement are not implemented. The generated scalar/binary illustration is not a complete Chen metamodel conversion. Unknown cases must remain errors or use the original DDN representation.</p>
+<h2>17.6 C4-style boundary profiles</h2>
+<p>The <code>c4.context@1</code>, <code>c4.container@1</code> and <code>c4.component@1</code> profiles render C4-style views on the existing graph projection using six registered kinds and one verb; boundaries reuse the view <code>frame</code> mechanism rather than a new shape category.</p>
+<table><thead><tr><th>Kind</th><th>Silhouette</th><th>Core fallback</th><th>Role in the profile set</th></tr></thead><tbody><tr><td><code>c4.person</code></td><td>actor</td><td><code>role</code></td><td>External person in all three views</td></tr><tr><td><code>c4.system</code></td><td>round</td><td><code>application</code></td><td>System; boundary object of <code>c4.container@1</code></td></tr><tr><td><code>c4.container</code></td><td>rect</td><td><code>application</code></td><td>App/service; boundary object of <code>c4.component@1</code></td></tr><tr><td><code>c4.store</code></td><td>cylinder</td><td><code>dataset</code></td><td>Data store</td></tr><tr><td><code>c4.queue</code></td><td>rect</td><td><code>queue</code></td><td>Queue/topic</td></tr><tr><td><code>c4.component</code></td><td>component</td><td><code>application</code></td><td>Component</td></tr></tbody></table>
+<p>All links use <code>c4.rel</code> (&quot;Uses / interacts with&quot;, open arrow). C4 kinds carry labels only — attribute compartments are rejected (<code>DDN-PF003</code>). Context views accept only people and systems and reject field-level member endpoints (<code>DDN-PJ100</code>). Container and component views require exactly one view frame scoped to a selected boundary object — a <code>c4.system</code> for <code>c4.container@1</code>, a <code>c4.container</code> for <code>c4.component@1</code> — whose members cover every selected interior node; violations raise <code>DDN-PJ101</code>. Participants outside the whitelist raise <code>DDN-PF007</code>. These are DDN profiles with C4-style silhouettes, not C4 specification conformance.</p>
+<h2>17.6.1 EPC process chains</h2>
+<p><code>epc.basic@1</code> renders an Event-driven Process Chain on the graph projection: events and functions strictly alternating through logical connectors, read left-to-right with the layered layout (<code>direction: right</code>).</p>
+<p>The profile adds one silhouette, <code>hexagon</code>: a flat-topped six-point polygon whose points, for a measured box <code>(x, y, w, h)</code>, are <code>(x+0.25w, y)</code>, <code>(x+0.75w, y)</code>, <code>(x+w, y+0.5h)</code>, <code>(x+0.75w, y+h)</code>, <code>(x+0.25w, y+h)</code>, <code>(x, y+0.5h)</code>. It is a profile silhouette drawn by the generic polygon path, not a new primary form.</p>
+<table><thead><tr><th>Kind</th><th>Silhouette</th><th>Core fallback</th><th>Role</th></tr></thead><tbody><tr><td><code>epk.event</code></td><td>hexagon</td><td><code>object</code></td><td>Something that happens; starts and follows functions</td></tr><tr><td><code>epk.function</code></td><td>round</td><td><code>activity</code></td><td>Work performed in response to events</td></tr><tr><td><code>epk.connector</code></td><td>circle</td><td><code>gateway</code></td><td>Logical join/split carrying an <code>and</code>/<code>or</code>/<code>xor</code> operator</td></tr></tbody></table>
+<p>All links use <code>epk.next</code> (&quot;Control passes to&quot;, filled arrow) between any two EPC symbols. Events and functions must alternate: an <code>epk.next</code> edge directly between two events or two functions raises <code>DDN-PJ105</code>; edges through connectors and connector chains are legal. Every <code>epk.connector</code> must carry <code>x_epc: { operator: &quot;and&quot;|&quot;or&quot;|&quot;xor&quot; }</code>; a missing, empty or unknown operator — or <code>x_epc.operator</code> on a non-connector node — raises <code>DDN-PJ106</code> (the extension contract deliberately carries no enum, so the value whitelist reports this code rather than a generic contract error). EPC kinds carry labels only; attribute compartments raise <code>DDN-PF003</code>, and participants or links outside the EPC vocabulary raise <code>DDN-PF007</code>. The published <code>flow.next</code> verb cannot be reused here: its registered endpoint contract accepts <code>flow.*</code> kinds only (<code>DDN102</code>), and widening it would be a language change requiring an RFC. This is a DDN profile with EPC conventions, not a claim of EPC specification conformance.</p>
+<h2>17.7 Authoring integration</h2>
+<p>The installed catalogue feeds Studio's kind and relation selectors. Namespaced kinds are quoted when inserted. Guided edits invoke the same decoder/validators as source editing. Field visibility and static/abstract flags remain editable in source; this release has no dedicated graphical inspector for every profile property.</p>
+<p>Selecting a source-bound shape or matrix/chart mark navigates to its semantic source. Selecting a projected Chen connector maps to the underlying field or association. Graphical pins apply only to editable graph occurrences, not generated quantitative coordinates.</p>
+<h2>Reference boundary</h2>
+<p>OMG UML 2.5.1 separately publishes its formal specification, abstract syntax and diagram interchange resources: https://www.omg.org/spec/UML/2.5.1/About-UML . This profile was designed to cover a declared structural subset; it does not claim to implement all those normative resources. The traditional DFD and Chen illustrations similarly identify their intentional exclusions rather than using familiar silhouettes as a conformance claim.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

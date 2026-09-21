@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example diagrams — DDN</title>
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../examples/index.html" class="active">Examples</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Example diagrams</h1>
+<p>Runnable <code>.ddn</code> sources, grouped by purpose. Render any of them with the CLI:</p>
+<pre><code>node ../../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tmp/flow.svg
+node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg</code></pre>
+<ul><li><code>basics/</code> — 61 numbered examples (01-customer … 61-self-contained)</li></ul>
+<p>  plus shared modules (<code>shared.ddn</code>, <code>customer-data.ddn</code>). (The import-era   <code>manifest.json</code> was removed in B1-010: it covered only examples 01–18,   pointed at nonexistent <code>website/examples/rendered/</code> paths, was stamped   <code>0.5.0-draft.1</code>, and nothing in the repo referenced it — the live golden   manifest is <code>use-cases/manifest.json</code>.)   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,   publication, authorized export, authorized SQL DDL export, process contracts,   enterprise gates, curved   relations, radar charts, funnel charts, gauge charts, candlestick charts,   treemaps, Sankey diagrams, C4-style context/container/component views, and   top-down organisation charts, work breakdown structures, mind maps,   concept maps, EPC process chains, canvas packs (BMC/Lean plus   environmental-scan and five-forces canvases), strategy quadrant   matrices (BCG/Ansoff/TOWS), empathy maps and scorecards, journey maps,   story maps, crow's-foot ERD, pyramid diagrams, venn diagrams,   sequence-style and communication interaction diagrams, and object/instance   snapshots, hierarchical state machines, activity diagrams with partitions,   BPMN-style collaborations, and timing/state-over-time diagrams,   SysML-style block diagrams, PERT/CPM critical-path views   (<code>52-pert-cpm.ddn</code>), and fault/event trees (<code>53-fault-event-tree.ddn</code>), and network/bus and   rack diagrams (<code>54-network-diagram.ddn</code>), and low-fidelity UI wireframes   (<code>55-wireframe.ddn</code>), and family tree / genealogy views   (<code>56-family-tree.ddn</code>), and registry-driven element defaults   (<code>57-element-defaults.ddn</code>), and CSS class hooks for host-page styling   (<code>58-css-hooks.ddn</code> + companion <code>.html</code>), and data refresh via   <code>ws.replaceData</code> (<code>59-data-refresh.ddn</code>), and spacing hints   (tight/normal/loose/expanded) on views and formats (<code>60-spacing-hints.ddn</code>),   and a three-section self-contained file (model + data + views, no imports;   RFC-117) (<code>61-self-contained.ddn</code>).</p>
+<ul><li><code>projections/</code> — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.</li></ul>
+<p>  views (<code>model.ddn</code>, <code>views.ddn</code>, <code>formats.ddn</code>, <code>catalogue.json</code>).</p>
+<ul><li><code>quality/</code> — quality/lifecycle/reporting examples (<code>model.ddn</code>,</li></ul>
+<p>  <code>details.ddn</code>, <code>formats.ddn</code>, <code>views.ddn</code>, <code>fixture.json</code>, <code>catalogue.json</code>).</p>
+<ul><li><code>gallery/</code> — generated full-coverage gallery (B1-010): one pre-rendered SVG</li></ul>
+<p>  per installed profile (all 73) plus variation sheets (chart marks, looks ×   palettes, routing × look, layout algorithms, spacing levels) — 130 SVGs via   the real CLI render path, a static <code>index.html</code> (no inlined runtime,   <code>file://</code>-safe), and <code>coverage.json</code>, the machine-readable coverage map the   permanent gate <code>notation/tests/gallery-coverage.js</code> enforces. Sources for   the variation sheets live in <code>gallery/src/</code>. Regenerate with   <code>npm run build:gallery</code> (committed outputs per D5).</p>
+<ul><li><code>embed/</code> — browser proofs for the modular runtime bundles (B1-004):</li></ul>
+<p>  <code>core-graph.html</code> loads only <code>ddn-core.js</code> + <code>ddn-graph.js</code> and renders the   <code>basics/01-customer.ddn</code> overview; <code>core-only-check.html</code> loads only   <code>ddn-core.js</code>, checks the same source and shows the coded <code>DDN-E010</code> refusal   when a render is attempted without a renderer bundle; <code>data-refresh.html</code>   (B1-006) loads <code>ddn-core.js</code> + <code>ddn-graph.js</code> + <code>ddn-projections.js</code> and   swaps a chart's data-block records with <code>ws.replaceData</code> on a button click,   re-rendering in place.</p>
+<ul><li><code>use-cases/</code> — 22 scenarios (whiteboard, ERD, relational, SQL dependencies,</li></ul>
+<p>  documents, graph schema, streaming, lineage, governance, security,   recovery, migration, …) with shared <code>data/</code> modules and <code>formats.ddn</code>.</p>
+<p>All data is synthetic. Regenerated <code>rendered/</code> outputs are intentionally not committed; produce them locally with the commands above.</p>
+</article>
+<p><small>Rendered from <a href="README.md">README.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

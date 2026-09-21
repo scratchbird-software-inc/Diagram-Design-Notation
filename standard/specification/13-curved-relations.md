@@ -141,6 +141,6 @@ Run `npm run test:curves`. The fixtures exercise all three route geometries, bot
 
 ## 8. Examples and implementation acceptance
 
-`examples/17-curved-relations.ddn` contains shared-data classic/handDrawn/neo mind maps, their angular and rounded alternatives, mixed per-relation rules, three crossing treatments, an obstacle example and a request/response/self-action example. `examples/18-routing-comparison.ddn` holds four small paired comparisons. The enterprise responsibility map now uses native mind-map placement with cubic branches.
+`website/examples/17-curved-relations.ddn` contains shared-data classic/handDrawn/neo mind maps, their angular and rounded alternatives, mixed per-relation rules, three crossing treatments, an obstacle example and a request/response/self-action example. `website/examples/18-routing-comparison.ddn` holds four small paired comparisons. The enterprise responsibility map now uses native mind-map placement with cubic branches.
 
 The website displays actual compiler outputs and links the source, semantic export, and scene. Documentation-only illustrations are labeled separately. Codex implementations should preserve these checks before substituting an external spline or layout library. ELK's separation of edge routing and layout, and Mermaid's interpolation controls, are useful precedents, not claims that DDN bundles either implementation. [S04] [S13]

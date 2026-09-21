@@ -10,7 +10,7 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
 - `basics/` — 61 numbered examples (01-customer … 61-self-contained)
   plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
   `manifest.json` was removed in B1-010: it covered only examples 01–18,
-  pointed at nonexistent `examples/rendered/` paths, was stamped
+  pointed at nonexistent `website/examples/rendered/` paths, was stamped
   `0.5.0-draft.1`, and nothing in the repo referenced it — the live golden
   manifest is `use-cases/manifest.json`.)
   Covers elements, routing, looks, hand-drawn style, layouts, nested fields,

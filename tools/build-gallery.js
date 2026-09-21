@@ -181,7 +181,7 @@ nav a:hover{text-decoration:underline}
 main{padding:1.5rem 2rem;max-width:1500px}
 h2{border-bottom:2px solid #285ea8;padding-bottom:.3rem;margin-top:2.5rem}
 h3{margin:1.6rem 0 .6rem;color:#285ea8}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:1.1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(420px,100%),1fr));gap:1.1rem}
 figure{margin:0;background:#fff;border:1px solid #dde3ea;border-radius:6px;padding:.6rem}
 figure img{width:100%;height:auto;display:block}
 figcaption{font-size:.8rem;margin-top:.45rem;color:#455}

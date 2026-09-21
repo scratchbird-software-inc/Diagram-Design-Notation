@@ -132,11 +132,11 @@ readers.
   `installedProfiles` count +1.
 - New diagnostics: `DDN-PJ124` (dependency cycle), `DDN-PJ125` (missing or
   invalid `x_estimate`). Verified free:
-  `grep -rhoE "DDN-PJ12(4|5)" notation/ standard/ examples/` prints nothing.
+  `grep -rhoE "DDN-PJ12(4|5)" notation/ standard/ website/examples/` prints nothing.
 
 ## Positive and negative fixtures
 
-- Positive: `examples/basics/52-pert-cpm.ddn` — six tasks; critical chain
+- Positive: `website/examples/basics/52-pert-cpm.ddn` — six tasks; critical chain
   design→build_ui→integrate→test→ship (13d) accent-stroked; `build_api`
   shows 1d slack and its edges are not accented.
 - Negative: dependency cycle `a→b→a` → `DDN-PJ124`; task without

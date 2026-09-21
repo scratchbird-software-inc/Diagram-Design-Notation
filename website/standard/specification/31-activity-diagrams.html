@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>31. Activity diagrams (profile uml.activity@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>31. Activity diagrams (profile <code>uml.activity@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-105 (<code>standard/governance/rfcs/RFC-105-activity-diagram.md</code>). Source grammar remains DDN 0.5; kinds and verbs are registry entries and <code>x_partition</code> is an <code>x_*</code> extension property, so this chapter is a semantic addition, not a grammar change.</p>
+<p>An activity-style flow view extends the flowchart vocabulary (<code>flow.basic@1</code>, chapter 4) with parallel flows and lane responsibility on the existing <code>graph</code> projection: swimlane partitions, fork/join bars, and object nodes alongside the familiar flow symbols. Users write <code>projection { kind:graph; profile:&quot;uml.activity@1&quot;; }</code> and group nodes into lanes.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Nodes</strong> — the flow vocabulary subset <code>flow.start</code>, <code>flow.end</code>,</li></ul>
+<p>  <code>flow.process</code>, <code>flow.decision</code>, <code>flow.io</code>, plus two new profile kinds:</p>
+<ul><li><code>flow.forkjoin</code> (silhouette <code>rect</code>, family <code>activity</code>, code <code>FORKJOIN</code>) —</li></ul>
+<p>    a fork/join bar. A bar with ≥2 outgoing <code>uml.flow</code> edges is a fork; a bar     with ≥2 incoming <code>uml.flow</code> edges is a join. The same node can be both.</p>
+<ul><li><code>flow.objectnode</code> (silhouette <code>rect</code>, fallback <code>record</code>, family <code>data</code>,</li></ul>
+<p>    code <code>OBJNODE</code>) — an object node carrying data between actions.</p>
+<ul><li><strong>Edges</strong> — the new profile verb <code>uml.flow</code> (&quot;Activity edge&quot;, family</li></ul>
+<p>  <code>control</code>, filled arrowhead). Its endpoint contract covers exactly the node   kinds above. <code>flow.next</code>'s published endpoint list is unchanged; activity   views use <code>uml.flow</code> only.</p>
+<ul><li><strong>Partitions (swimlanes)</strong> — ordinary view frames. One <code>frame</code> per lane;</li></ul>
+<p>  the frame's <code>id</code> or <code>name</code> is the lane name, and the frame's <code>members</code> list   the lane's nodes. A node declares its lane with the registered extension   property <code>x_partition:{lane:&quot;&lt;frame id or name&gt;&quot;}</code> (schema:   <code>{type:'object', required:['lane'], properties:{lane:{type:'string',   minLength:1}}, additionalProperties:false}</code> on objects). A lane name also   matches the unqualified local segment of a frame's qualified id   (<code>module::view.frame</code>).</p>
+<ul><li>No new projection kind and no renderer change: lanes render as ordinary</li></ul>
+<p>  frame boxes with their names; fork/join bars and object nodes render as   rect nodes via their profile silhouettes.</p>
+<p>Note: swimlanes here are declared frame groups, not the interaction profile's fixed lanes. The <code>&quot;separate parallel lanes&quot;</code> capability of the experimental <code>session-bootstrap@0.1</code> profile (<code>ddn-interaction.js</code>) is a fixed-participant protocol mechanism and is unrelated to <code>uml.activity@1</code> partitions.</p>
+<h2>Declaration rules</h2>
+<ol><li>Selected nodes must be <code>flow.*</code> kinds and visible relations must be</li></ol>
+<p>   <code>uml.flow</code>; violations fail with the existing vocabulary code    <strong><code>DDN-PF007</code></strong> (the flowchart guard in <code>ddn-profiles.js</code> is extended to    this profile, with <code>uml.flow</code> as the control edge for the start/end and    reachability rules <code>DDN-PF008</code>/<code>DDN-PF010</code>).</p>
+<ol><li>A node carrying <code>x_partition.lane</code> that names no frame of the view</li></ol>
+<p>   (matched against <code>ir.view.frames</code> <code>id</code> or <code>name</code>) fails with    <strong><code>DDN-PJ114</code></strong> (error). The message names node and lane.</p>
+<ol><li>Fork/join balance: the count of <code>flow.forkjoin</code> nodes with ≥2 visible</li></ol>
+<p>   outgoing <code>uml.flow</code> edges must equal the count with ≥2 visible incoming    edges (v1 structural check). Imbalance fails with <strong><code>DDN-PJ115</code></strong> (error);    the message reports both counts.</p>
+<ol><li>Malformed <code>x_partition</code> (e.g. missing <code>lane</code>) fails schema validation with</li></ol>
+<p>   <strong><code>DDN105</code></strong>, like every registered extension contract.</p>
+<h2>Example</h2>
+<p><code>website/examples/basics/45-activity-diagram.ddn</code> — a synthetic order-fulfilment activity with <code>webshop</code> and <code>warehouse</code> lane frames, one fork/join pair around <code>pick_items</code>/<code>take_payment</code>, and an <code>order</code> object node; every node declares its lane via <code>x_partition</code>.</p>
+<h2>Unsupported</h2>
+<p>Interruptible regions, pins and parameter sets, object-flow typing, and full UML conformance are out of scope for <code>uml.activity@1</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

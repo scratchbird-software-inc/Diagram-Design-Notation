@@ -97,6 +97,6 @@ source:
 3. Specificity works normally within tier 2: `.ddn-kind-tbl` beats
    `.ddn-node`; `[data-ddn-id="model.order"]` beats both.
 
-A runnable example ships in `examples/basics/58-css-hooks.ddn` +
+A runnable example ships in `website/examples/basics/58-css-hooks.ddn` +
 `58-css-hooks.html`, and the class contract is pinned by
 `notation/tests/css-classes.js`.

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources, precedents and attribution — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Sources, precedents and attribution</h1>
+<p><strong>External material checked 7 September 2026.</strong> The DDN syntax, diagrams, slot assignments and normative requirements are original proposals. The following sources inform specific engineering decisions; none endorses or standardizes DDN. No Mermaid source, vendor artwork or font files are redistributed in this bundle.</p>
+<h2>S01 — Mermaid looks</h2>
+<p><a href="https://mermaid.ai/open-source/config/schema-docs/config-properties-look.html">Mermaid configuration schema: look</a> lists <code>classic</code>, <code>handDrawn</code> and <code>neo</code>. DDN borrows these familiar look names as an interface convention, but uses its own SVG implementation and fixed semantic notation. Similar naming is not pixel equivalence or Mermaid syntax compatibility.</p>
+<h2>S02 — Mermaid themes and configuration</h2>
+<p><a href="https://mermaid.ai/open-source/config/theming.html">Mermaid theming</a> and the <a href="https://mermaid.ai/open-source/config/schema-docs/config.html">configuration schema</a> distinguish styling/configuration controls. DDN adopts a subset of familiar names: default, base, neutral, dark and forest. This is not an exhaustive statement of Mermaid's current themes. DDN deliberately constrains semantic recolouring more tightly than general-purpose theming.</p>
+<h2>S03 — Language implementation</h2>
+<p><a href="https://langium.org/docs/features/">Langium features</a> and <a href="https://langium.org/docs/reference/grammar-language/">grammar language</a> describe grammar-based parsing, references, validation and language tooling. Langium is a proposed production component; the included reference decoder is original dependency-free JavaScript and does not redistribute Langium.</p>
+<h2>S04 — Layout implementation</h2>
+<p><a href="https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-layered.html">ELK Layered</a> documents layered layouts, routing and port-related capabilities. <a href="https://github.com/kieler/elkjs">ELK.js</a> provides the JavaScript integration. ELK supplies layout calculations, not the complete DDN semantic model, symbol renderer or crossing/post-processing policy. The included demonstrator does not bundle ELK.</p>
+<h2>S05 — Markdown portability</h2>
+<p><a href="https://spec.commonmark.org/0.31.2/">CommonMark 0.31.2</a> defines fenced code blocks and their info strings. A <code>ddn</code> fence needs a DDN-aware build or host extension; ordinary Markdown does not automatically interpret this language. Static image/link publication is the portable fallback.</p>
+<h2>S06 — Unicode identity policies</h2>
+<p><a href="https://www.unicode.org/reports/tr31/">Unicode UAX #31</a> and <a href="https://www.unicode.org/reports/tr39/">UTS #39</a> inform future identifier and confusable-character profiles. The DDN 0.3 reference uses ASCII identifiers and Unicode string values; Unicode identifiers are not silently enabled.</p>
+<h2>S07 — Accessibility</h2>
+<p><a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a> and <a href="https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html">Understanding Use of Color</a> support non-colour alternatives and accessible interaction. DDN includes accessibility requirements and a monochrome mode; this bundle has not been independently accessibility-certified.</p>
+<h2>S08 — SVG coordinate systems</h2>
+<p><a href="https://www.w3.org/TR/SVG/coords.html">SVG coordinate systems</a> define viewports, transforms, <code>viewBox</code> and aspect-ratio behaviour. DDN page sizing, legend allocation and minimum-readable-scale policies are proposed rules built above these mechanisms.</p>
+<h2>S09 — SVG embedding and navigation</h2>
+<p><a href="https://www.w3.org/TR/SVG/conform.html">SVG conformance</a>, <a href="https://www.w3.org/TR/SVG2/linking.html">linking</a> and <a href="https://www.w3.org/TR/SVG/struct.html">document structure</a> distinguish SVG embedding modes and linking/structural mechanisms. An SVG displayed as an ordinary image is not an interactive application. Cross-view links therefore also receive textual fallbacks in published documentation.</p>
+<h2>S10 — Open-source precedent</h2>
+<p><a href="https://github.com/mermaid-js/mermaid/blob/develop/LICENSE">Mermaid's MIT license</a> is an open-source precedent, not a license grant to Mermaid trademarks or a claim of project affiliation. Original materials in this bundle carry their own MIT license; see <code>LICENSE</code> and <code>NOTICE.md</code>. Project maintainers should verify provenance before publishing a new repository.</p>
+<h2>S11 — Machine schemas</h2>
+<p><a href="https://json-schema.org/draft/2020-12">JSON Schema Draft 2020-12</a> is the vocabulary used for the included machine-readable interchange schemas. Structural schema validity does not replace cross-reference, topology, unit or semantic validation.</p>
+<h2>Sketch-rendering background (draft.2)</h2>
+<ul><li>Rough.js official overview: https://roughjs.com/ — seedable hand-drawn vector rendering as a general design reference.</li><li>Rough.js author’s algorithm explanation: https://shihn.ca/posts/2020/roughjs-algorithms/ — background on organic lines and hachure shading. DDN’s primitive implementation is original; this bundle does not contain Rough.js.</li></ul>
+<h2>S12 — SVG analytic curve commands</h2>
+<p><a href="https://www.w3.org/TR/SVG/paths.html">SVG 2 paths</a> defines straight, quadratic and cubic path commands. DDN's curved-route output uses cubic Bézier commands with explicit endpoint/control coordinates; its route safety, control metadata, callout and crossing policies are original DDN rules.</p>
+<h2>S13 — Routing/interpolation precedents</h2>
+<p><a href="https://mermaid.ai/open-source/syntax/flowchart.html#styling-line-curves">Mermaid flowchart curve styles</a> and <a href="https://eclipse.dev/elk/reference/options/org-eclipse-elk-edgeRouting.html">ELK edge routing</a> distinguish geometry/interpolation choices from model relationships. DDN implements its own small set (<code>straight</code>, <code>orthogonal</code>, <code>curved</code>; <code>bezier</code> or <code>rounded</code>), not the entire Mermaid/D3 or ELK curve vocabulary. Source pages checked 7 September 2026.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -83,7 +83,7 @@ cloud-provider icon sets are introduced, in compliance with `NOTICE.md`.
 
 ## Example
 
-`examples/basics/54-network-diagram.ddn` — a synthetic office network: one
+`website/examples/basics/54-network-diagram.ddn` — a synthetic office network: one
 bus, one switch, two servers (each with an `eth0` port; the file server
 attaches via `@m.file_server.eth0`) and an uplink router attached to the
 switch's `wan` port, plus a 4U rack elevation with the two servers pinned

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migration: 0.5 → 0.6.0-beta.1 — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Migration: 0.5 → 0.6.0-beta.1</h1>
+<p>Beta 1 (0.6.0-beta.1; designer 0.2.0-beta.1) is additive over 0.5.x: every 0.5 source still parses, and renders that opt into nothing are byte-identical to their 0.5 output (the determinism goldens in <code>notation/tests/</code> prove it). This page lists what changed, with before/after for each.</p>
+<h2>Version stamps</h2>
+<p><strong>Before (0.5.x):</strong> runtime and package stamps <code>0.5.x</code>, language versions <code>&quot;0.3&quot;</code>/<code>&quot;0.4&quot;</code>/<code>&quot;0.5&quot;</code> in sources. <strong>After:</strong> <code>notation/package.json</code> and the runtime stamp <code>0.6.0-beta.1</code> (<code>DDNLive.VERSION</code>), designer <code>0.2.0-beta.1</code>. Language version stamps in <code>.ddn</code> files are <strong>unchanged</strong> — sources keep declaring <code>ddn &quot;0.3&quot;…&quot;0.5&quot;</code>; no source edit is required.</p>
+<h2>Element defaults are registry-driven and visible (B1-002)</h2>
+<p><strong>Before:</strong> defaults for an element kind lived in the renderer; a declared element showed only the properties the author wrote. <strong>After:</strong> <code>DDNLive.defaults.forKind(kind)</code> returns the registry default property set for a kind, and declare/create paths populate from it.</p>
+<pre><code>// after
+DDNLive.defaults.forKind(&quot;table&quot;);   // deep copy of the registry defaults, {} when none</code></pre>
+<h2>CSS class hooks and ddn.css (B1-003)</h2>
+<p><strong>Before:</strong> restyling a rendered diagram meant post-processing SVG. <strong>After:</strong> every render carries stable hooks (<code>.ddn-node</code>, <code>.ddn-rel</code>, <code>.ddn-kind-&lt;code&gt;</code>, <code>.ddn-verb-&lt;verb&gt;</code>, <code>data-id</code>, …) and ships <code>notation/dist/ddn.css</code> with <code>--ddn-*</code> custom properties. Page CSS fills the gaps the script left unset; inline presentation attributes still win.</p>
+<pre><code>/* after */
+:root { --ddn-node-stroke: #6ab0ff; }
+.ddn-kind-tbl { stroke-width: 2.5; }</code></pre>
+<p>Full class list and cascade rules: <a href="styling.html">styling.md</a>.</p>
+<h2>Modular runtime bundles (B1-004)</h2>
+<p><strong>Before:</strong> one all-in-one script or nothing. <strong>After:</strong> <code>ddn-core.js</code> → <code>ddn-graph.js</code> → <code>ddn-projections.js</code> → <code>ddn-quality.js</code> load in order; <code>ddn.global.js</code> remains the all-in-one. A capability whose bundle is missing throws <code>DDN-E010</code> naming the file.</p>
+<pre><code>&lt;!-- after: validation-only page --&gt;
+&lt;script src=&quot;notation/dist/ddn-core.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>Sizes and the full matrix: <a href="modules.html">modules.md</a>.</p>
+<h2>npm packaging (B1-005)</h2>
+<p><strong>Before:</strong> consumers copied files out of the repo. <strong>After:</strong> <code>notation/</code> packs as <code>@ddn/notation</code> with an <code>exports</code> map: <code>.</code> (global), <code>./core</code>, <code>./graph</code>, <code>./projections</code>, <code>./quality</code>, each with import/require/types entries.</p>
+<h2>Data refresh API (B1-006)</h2>
+<p><strong>Before:</strong> live data meant regenerating source text and re-parsing. <strong>After:</strong> <code>ws.replaceData(name, records)</code> swaps a data block's records in place; record keys must match the block's first record or <code>DDN-E011</code>. Recipe: <a href="data-refresh.html">data-refresh.md</a>.</p>
+<h2>End-user viewer (B1-007)</h2>
+<p><strong>New, nothing to migrate:</strong> <code>notation/viewer/ddn-viewer.html</code> — single-file <code>file://</code> viewer with fit modes, font/colour overrides, SVG/PNG export. See <a href="viewer.html">viewer.md</a>.</p>
+<h2>Spacing hints (B1-008)</h2>
+<p><strong>Before:</strong> inter-node gaps were only the format's <code>gap</code>/<code>row_gap</code> numbers. <strong>After:</strong> optional additive <code>spacing: tight|normal|loose|expanded</code> on views and format bundles (view wins; absent = <code>normal</code> = byte-identical to before; unknown value rejected as <code>DDN033</code>). Factors 0.75/1.0/1.4/2.0 scale graph gaps and route-label margins only — node bodies and fonts never scale.</p>
+<pre><code>view workshop &quot;Orders / wide&quot; { data: [@model]; format: @f.common; spacing: loose; }</code></pre>
+<h2>Script/golden refresh (B1-009)</h2>
+<p>All 114 <code>.ddn</code> example files re-verified (check + render-twice byte-determinism + golden hashes), and a permanent gate now parse-checks every <code> </code>`<code>ddn </code> fenced block in the README and spec. No consumer action.</p>
+</article>
+<p><small>Rendered from <a href="migration-0.5-to-0.6.md">migration-0.5-to-0.6.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

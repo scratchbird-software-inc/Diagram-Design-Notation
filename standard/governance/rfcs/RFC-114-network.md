@@ -86,7 +86,7 @@ Rejection behavior (D4):
   relation/device and the rule broken.
 
 Verified free before allocation:
-`grep -rhoE "DDN-PJ127" notation/ standard/ examples/` prints nothing.
+`grep -rhoE "DDN-PJ127" notation/ standard/ website/examples/` prints nothing.
 
 ## Visual encoding and routing effects
 
@@ -153,7 +153,7 @@ not sole, carrier.
 
 ## Positive and negative fixtures
 
-- Positive: `examples/basics/54-network-diagram.ddn` — the `lan` view
+- Positive: `website/examples/basics/54-network-diagram.ddn` — the `lan` view
   renders the bus bar with switch/server attachments (one via a port member)
   and no arrowheads; the `rack` view renders a rack frame with two servers
   pinned bottom-up in slots 1 and 3 of a 4U rack.

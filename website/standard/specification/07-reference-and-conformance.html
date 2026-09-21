@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.5 — Executable capability matrix — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.5 — Executable capability matrix</h1>
+<p><code>registry/capabilities.json</code> is generated from runtime constants. <code>tools/build-capabilities.js</code> is the sole producer of formatting enum lists. Documentation must not advertise an accepted value that has no implementation or explicit diagnostic.</p>
+<table><thead><tr><th>Area</th><th>Reference support</th><th>Important boundary</th></tr></thead><tbody><tr><td>Language/reuse</td><td>UTF-8 labels, local imports, shared data/profiles/views, recursive fields</td><td>ASCII structural IDs; no remote fetching</td></tr><tr><td>Semantics</td><td>All registered relationship endpoint contracts; registered extension validation</td><td>Registry/schema subset, not arbitrary third-party schema code</td></tr><tr><td>Layout</td><td>auto, grid, manual, layered, strict tree, mindmap, grouped; pin-centred fit_grid, circular, radial, spanning_tree, organic</td><td>Deterministic bounded algorithms, not globally optimal packing</td></tr><tr><td>Routing</td><td>Obstacle-aware orthogonal routes, distinct tracks/ports, gaps/bridges, labels</td><td>Fail closed when search/clearance cannot be satisfied; bus graphs unsupported</td></tr><tr><td>Typography</td><td>Variable size, browser or pinned measurements, explicit fallback warnings</td><td>No universal font or browser certification</td></tr><tr><td>Publication</td><td>Content/fixed/paper sizing, overflow and embedding minimums</td><td>Automatic tiling/pagination unsupported</td></tr><tr><td>Export</td><td>Explicit object/field/property allowlists, SVG and JSON closure</td><td>Authorization and classification remain external; samples denied in public profile</td></tr><tr><td>Process contracts</td><td>Port/payload balance; bounded guards, branches and retries on supplied traces</td><td>Not a production orchestration runtime or BPMN certification</td></tr><tr><td>Assurance</td><td>Requirements, evidence, affinity, reconciliation, UI/report/custody obligations</td><td>Does not execute ERP, authenticate professional signoff, or run infrastructure drills</td></tr><tr><td>Editor</td><td>Full-source Studio, DDN/folder/ZIP/JSON local workspaces, undo/redo, validated label/kind/element/field/relation edits, drag-to-pin, live controls and policy-projected SVG</td><td>All grammar remains text-editable; not a dedicated graphical panel for every construct or a complete semantic refactoring engine</td></tr></tbody></table>
+<h2>Quality projection additions</h2>
+<p>The core mechanisms above are shared with <code>fishbone.basic@1</code>, <code>matrix.heatmap@1</code>, <code>chart.quality@1</code>, <code>state.flat@1</code>, <code>decision.rules@1</code>, <code>panels.composed@1</code>, <code>uml.usecase@2</code>, <code>chen.binary@2</code> and <code>flow.documented@2</code>. These implement only the scopes in chapters 21–24. Guided matrix edits can create/delete relationships in shared source; rule evaluation is pure and typed; trace checks never execute actions; panels support one child-view level. Statistics use supplied values and declared finite arithmetic conventions. Numeric/date/cell coordinates are not subject to graph relocation.</p>
+<h2>Verification reports</h2>
+<p>Current tests are <code>tests/core-report.json</code>, <code>validation/0.3-regressions.json</code>, the use-case/session reports, and <code>enterprise-review/validation/</code>. The original 0.2 failure evidence lives only under <code>history/0.2-enterprise/</code>. Tests corrected from old “unsupported” expectations now assert the implemented behavior; the original assertions remain in the historical Git baseline evidence where applicable.</p>
+<p>The enterprise geometry scanner tests emitted SVG-scene coordinates independently of the router. No route-through-box, overlapping object, overlapping callout, independent collinear trunk, or callout-versus-unrelated-route hit is accepted in that corpus. This is corpus evidence, not a universal proof for all possible input graphs.</p>
+<p>Browser tests must disclose whether they used normal navigation, file URLs or injected assets. A headless Chromium test is not a Firefox/Chrome/Linux packaging permission matrix. Casebook self-containment and the loopback server avoid the previously observed single-file portal problem without disabling browser security.</p>
+<h2>Readiness gates</h2>
+<p>Reference-code corrections can be verified locally. External accounting/payroll/privacy policies, real operational drills, final applications/reports, independent evidence custody, specialized algorithms and professional signoff remain named gates. A renderer producing attractive output is not grounds to mark those gates accepted.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

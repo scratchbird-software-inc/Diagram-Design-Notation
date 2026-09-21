@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>41. Wireframe stencil profile (wireframe.ui@1) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>41. Wireframe stencil profile (<code>wireframe.ui@1</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-115 (<code>standard/governance/rfcs/RFC-115-wireframes.md</code>). Source grammar remains DDN 0.5; the profile and its kinds are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Early UI sketches should be boxes and labels, not widget frameworks. The profile runs on the existing <code>graph</code> projection. Users write <code>projection { kind:graph; profile:&quot;wireframe.ui@1&quot;; }</code>. This is profile-level notation coverage, not a UI-toolkit or UX certification.</p>
+<h2>The stencil</h2>
+<p>Seven profile kinds, all family <code>interface</code>, fallback <code>application</code>, glyph <code>object</code>:</p>
+<ul><li><code>ui.frame</code> (silhouette <code>rect</code>, code <code>UI_FRAME</code>) — a screen area.</li><li><code>ui.label</code> (<code>rect</code>, <code>UI_LABEL</code>) — a text label.</li><li><code>ui.input</code> (<code>rect</code>, <code>UI_INPUT</code>) — a text input box.</li><li><code>ui.button</code> (<code>round</code>, <code>UI_BUTTON</code>) — a button.</li><li><code>ui.image</code> (<code>rect</code>, <code>UI_IMAGE</code>) — an image placeholder; its content is</li></ul>
+<p>  the object's label text (no image fetching — the runtime never   fetches).</p>
+<ul><li><code>ui.checkbox</code> (<code>rect</code>, <code>UI_CHECKBOX</code>) — a checkbox.</li><li><code>ui.list</code> (<code>rect</code>, <code>UI_LIST</code>) — a list; shows its label plus field rows</li></ul>
+<p>  when fields are declared.</p>
+<p>No new verbs (links, if any, use the core <code>assoc</code> relation) and no extension properties.</p>
+<h2>Scoped-frame nesting</h2>
+<p>A screen area is a <code>ui.frame</code> object; nesting is a view <code>frame</code> declaration whose <code>scope</code> references the <code>ui.frame</code> object and whose <code>members</code> are the contained controls; controls are objects of the other six <code>ui.*</code> kinds. A <code>ui.frame</code> may itself be a member of another <code>ui.frame</code>'s frame (nested containers). This reuses the existing view-frame scope/members machinery — the same matching the <code>uml.usecase@2</code> validator applies — so no new normalization or identity rule is introduced.</p>
+<h2>The orphan-control warning (<code>DDN-PJ128</code>)</h2>
+<p>A selected control (any <code>ui.*</code> kind except <code>ui.frame</code>) that is not a member of any view frame whose scope resolves to a <code>ui.frame</code> element produces <code>DDN-PJ128</code> — a WARNING, not an error; the message names the control and the view still renders normally. Sketches legitimately start as loose boxes before being grouped; blocking render would hurt the sketching workflow, while silence would hide a real organisational smell.</p>
+<p>Warnings are ordinary diagnostics with <code>severity:'warning'</code>. They travel in <code>ir.diagnostics</code> (the profile validator collects and returns them; <code>build()</code> pushes them into the IR) and surface in two places: the CLI <code>check</code> command prints them as the JSON <code>warnings</code> array (<code>{status:'pass-core', …, warnings: ir.diagnostics}</code>), and the SDK <code>renderSync</code> result carries them in its <code>diagnostics[]</code> array. Thrown validation codes (for example <code>DDN-PJ003</code>) are unaffected and still abort the render.</p>
+<h2>Visual encoding: fixed classic + neutral pairing</h2>
+<p>The stencil is drawn as plain rect/round silhouettes in the CLASSIC look with the NEUTRAL (grey) theme — the fixed pairing <code>style { look:classic; theme:neutral; }</code> used by the example. NOT handDrawn: the stencil is meant to read as clean low-fi boxes. The control kind is the registered kind token (<code>UI_FRAME</code> … <code>UI_LIST</code>); in the neutral theme the family fill still applies, and the grey intent is the documented default, not a renderer-enforced rule (styles remain view/format properties). No renderer change.</p>
+<h2>Example</h2>
+<p><code>website/examples/basics/55-wireframe.ddn</code> — a synthetic settings screen: a <code>ui.frame</code> object <code>settings</code> framing a <code>ui.label</code> (Profile), a <code>ui.input</code> (Display name), a <code>ui.checkbox</code> (Email notifications), a <code>ui.list</code> (Timezone, with three field rows), a <code>ui.image</code> (Avatar) and a <code>ui.button</code> (Save). <code>check</code> reports an empty <code>warnings</code> array for <code>DDN-PJ128</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

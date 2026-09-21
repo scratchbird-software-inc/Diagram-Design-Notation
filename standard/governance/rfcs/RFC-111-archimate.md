@@ -97,7 +97,7 @@ direction) are allowed; downward links are rejected.
   downward layer pair, or an endpoint kind is outside the nine registered
   kinds. The message names the relation and both endpoint layers.
 
-Code verified free: `grep -rhoE "DDN-PJ123" notation/ standard/ examples/`
+Code verified free: `grep -rhoE "DDN-PJ123" notation/ standard/ website/examples/`
 prints nothing (RT-101…110 took PJ110–PJ122 + PJW03).
 
 **Verified correction — validation order.** `Contracts.validate()` (which
@@ -171,7 +171,7 @@ ArchiMate conformance.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/51-archimate.ddn` — the synthetic order
+- Positive example: `website/examples/basics/51-archimate.ddn` — the synthetic order
   platform above: `archi.business_actor` `service_agent`,
   `archi.business_role` `order_desk`, `archi.business_process`
   `order_handling`, `archi.application_component` `order_api`,

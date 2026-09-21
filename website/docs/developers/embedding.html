@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Embedding — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Embedding</h1>
+<h2>The web component</h2>
+<p><code>DDNLive.mount</code> upgrades a host element into a live diagram (<code>notation/studio/src/component.js</code> defines the <code>&lt;ddn-example&gt;</code> custom element behind it):</p>
+<pre><code>&lt;div id=&quot;d&quot;&gt;&lt;/div&gt;
+&lt;script src=&quot;notation/dist/ddn.global.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  const ws = DDNLive.createWorkspace(files);          // { name: source }
+  const diagram = DDNLive.mount(document.getElementById(&quot;d&quot;), {
+    workspace: ws, entry: &quot;model.ddn&quot;, view: &quot;overview&quot;
+  });
+  diagram.ready.then(r =&gt; console.log(&quot;rendered in&quot;, r.milliseconds, &quot;ms&quot;));
+  diagram.addEventListener(&quot;ddn-render&quot;, e =&gt; { /* fresh RenderResult in e.detail */ });
+  diagram.addEventListener(&quot;ddn-error&quot;, e =&gt; console.error(e.detail.code, e.detail.message));
+  diagram.addEventListener(&quot;ddn-navigate&quot;, e =&gt; { /* subdiagram/ref navigation request */ });
+&lt;/script&gt;</code></pre>
+<p>The element re-renders automatically when the workspace changes (any <code>updateFiles</code>/<code>applyEdits</code>/<code>replaceData</code>). Runtime presentation changes go through <code>diagram.setOptions({ theme: &quot;dark&quot; })</code> — overrides are presentation-only and never rewrite the source. <code>diagram.exportSVG()</code> returns the current SVG text; <code>diagram.getState()</code> returns the restorable state; <code>diagram.destroy()</code> detaches.</p>
+<p><code>mount</code> is loaded only in <code>ddn.global.js</code> (the component is part of the full bundle); the modular splits are headless — drive them with <code>renderSync</code>/<code>render</code> and place <code>result.svg</code> yourself.</p>
+<h2>Framework notes</h2>
+<ul><li><strong>React/Vue/Svelte:</strong> treat the diagram as an unmanaged leaf. Create the</li></ul>
+<p>  workspace once (per source set), <code>mount</code> in a ref/<code>onMount</code> callback, and   call <code>diagram.destroy()</code> + <code>ws.destroy()</code> in the cleanup. Never let the   framework diff the SVG — re-render through <code>setOptions</code> or workspace   edits only.</p>
+<ul><li><strong>Server-side rendering:</strong> render on the server with</li></ul>
+<p>  <code>require(&quot;@ddn/notation&quot;)</code> + <code>renderSync</code> and inline <code>result.svg</code> in the   HTML; hydrate by <code>mount</code>-ing only if interactivity is needed.</p>
+<ul><li><strong>Multiple diagrams:</strong> one workspace per independent source set is</li></ul>
+<p>  cheapest; views in the same files share a workspace and re-render together.</p>
+<h2>CSP</h2>
+<p>Rendered output is inline SVG text assigned via <code>innerHTML</code>; the runtime executes no <code>eval</code> and loads nothing at runtime. A working policy for a page embedding the full bundle:</p>
+<pre><code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:</code></pre>
+<p><code>style-src 'unsafe-inline'</code> is required only if you use <code>ddn.css</code> custom property overrides inline or the viewer; the renderer itself writes SVG presentation attributes, not <code>&lt;style&gt;</code> blocks (see <a href="styling.html">styling.md</a> — no <code>!important</code> anywhere, page CSS fills gaps the script left unset).</p>
+<h2><code>file://</code> caveats</h2>
+<p>The runtime itself is <code>file://</code>-safe (no fetch, no workers). The caveats are about <em>your sources</em>:</p>
+<ul><li><code>createWorkspace</code> takes source text, not URLs — reading <code>.ddn</code> files from</li></ul>
+<p>  disk is your job. Over <code>file://</code>, use a file picker (<code>DDNLive.io.open</code>),   drag-drop, paste, or inline the sources as the examples under   <code>website/examples/embed/</code> do.</p>
+<ul><li>The gallery page (<code>website/examples/gallery/index.html</code>) links pre-rendered SVG</li></ul>
+<p>  files with plain <code>&lt;img src&gt;</code> precisely so it needs no runtime at all.</p>
+<ul><li>The single-file viewer (<code>ddn-viewer.html</code>, see <a href="viewer.html">viewer.md</a>)</li></ul>
+<p>  inlines the runtime and loads sources through pickers/drag-drop/paste, so   it works fully from <code>file://</code> in current Chrome and Firefox.</p>
+</article>
+<p><small>Rendered from <a href="embedding.md">embedding.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

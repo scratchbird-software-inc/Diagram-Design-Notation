@@ -88,7 +88,7 @@ result carries them in `diagnostics[]`. The existing `fail()` thrown paths
 in `validate()` are unchanged.
 
 Verified free before allocation:
-`grep -rhoE "DDN-PJ128" notation/ standard/ examples/` prints nothing.
+`grep -rhoE "DDN-PJ128" notation/ standard/ website/examples/` prints nothing.
 
 ## Visual encoding and routing effects
 
@@ -145,7 +145,7 @@ rendering and text extraction.
 
 ## Positive and negative fixtures
 
-- Positive: `examples/basics/55-wireframe.ddn` — the `settings` view
+- Positive: `website/examples/basics/55-wireframe.ddn` — the `settings` view
   renders the grey settings mock: frame, label, input, checkbox, list,
   image and button inside the scoped frame; `check` reports no PJ128
   warning.

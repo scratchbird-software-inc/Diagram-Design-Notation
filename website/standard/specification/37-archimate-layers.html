@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>37. ArchiMate-style layered profile (archimate.basic@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>37. ArchiMate-style layered profile (<code>archimate.basic@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-111 (<code>standard/governance/rfcs/RFC-111-archimate.md</code>). Source grammar remains DDN 0.5; the nine element kinds and the relation verb are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>ArchiMate-style layered views model an enterprise-architecture overview as three layers — business, application, technology — on the existing <code>graph</code> projection, with serving links pointing upward. Users write <code>projection { kind:graph; profile:&quot;archimate.basic@1&quot;; }</code>.</p>
+<p>This is profile-level coverage, not ArchiMate conformance.</p>
+<h2>Vocabulary (nine kinds, one verb)</h2>
+<table><thead><tr><th>kind</th><th>layer</th><th>silhouette</th><th>fallback</th><th>code</th></tr></thead><tbody><tr><td><code>archi.business_actor</code></td><td>business</td><td><code>actor</code></td><td><code>team</code></td><td><code>BIZ_ACTOR</code></td></tr><tr><td><code>archi.business_role</code></td><td>business</td><td><code>round</code></td><td><code>team</code></td><td><code>BIZ_ROLE</code></td></tr><tr><td><code>archi.business_process</code></td><td>business</td><td><code>round</code></td><td><code>activity</code></td><td><code>BIZ_PROCESS</code></td></tr><tr><td><code>archi.business_service</code></td><td>business</td><td><code>round</code></td><td><code>application</code></td><td><code>BIZ_SERVICE</code></td></tr><tr><td><code>archi.business_interface</code></td><td>business</td><td><code>ellipse</code></td><td><code>application</code></td><td><code>BIZ_INTERFACE</code></td></tr><tr><td><code>archi.application_component</code></td><td>application</td><td><code>component</code></td><td><code>application</code></td><td><code>APP_COMPONENT</code></td></tr><tr><td><code>archi.application_service</code></td><td>application</td><td><code>round</code></td><td><code>application</code></td><td><code>APP_SERVICE</code></td></tr><tr><td><code>archi.technology_node</code></td><td>technology</td><td><code>rect</code></td><td><code>host</code></td><td><code>TECH_NODE</code></td></tr><tr><td><code>archi.technology_service</code></td><td>technology</td><td><code>round</code></td><td><code>application</code></td><td><code>TECH_SERVICE</code></td></tr></tbody></table>
+<p>The single verb is <code>archi.rel</code> (&quot;serves / relates to&quot;, family <code>structural</code>, code <code>ARCHIREL</code>, <code>start:'none'</code>, <code>end:'open'</code>, <code>allow_self:false</code>, <code>member_endpoints:false</code>), rendered as a plain link with an open arrowhead. No extension properties are declared.</p>
+<h2>Layer colours</h2>
+<p>An element's layer is derived from its kind keyword prefix (<code>archi.business_</code>, <code>archi.application_</code>, <code>archi.technology_</code>); there is no layer property. Layer colours come from the registered catalogue family of each kind — business kinds use family <code>governance</code>, application kinds family <code>interface</code>, technology kinds family <code>deployment</code> — stamped onto the profile kind by <code>ddn-profiles.js</code> <code>registry()</code> and rendered through the shared palette (<code>ddn-palette.js</code> <code>node()</code>), which follows the active theme preset and lightens hues deterministically for low-light themes. No per-kind colour fields exist.</p>
+<h2>Layer-pair legality table (<code>archi.rel</code>)</h2>
+<p>The legality of an <code>archi.rel</code> link is fixed by this 3×3 table (source row → target column):</p>
+<table><thead><tr><th>source ↓ / target →</th><th>business</th><th>application</th><th>technology</th></tr></thead><tbody><tr><td>business</td><td>allowed</td><td><code>DDN-PJ123</code></td><td><code>DDN-PJ123</code></td></tr><tr><td>application</td><td>allowed</td><td>allowed</td><td><code>DDN-PJ123</code></td></tr><tr><td>technology</td><td>allowed</td><td>allowed</td><td>allowed</td></tr></tbody></table>
+<p>Same-layer and upward links (technology→application→business, the &quot;serving&quot; direction) are allowed; downward links are rejected with <code>DDN-PJ123</code> (error). <code>DDN-PJ123</code> also fires when an <code>archi.rel</code> endpoint kind is outside the nine registered kinds. The message names the relation and both endpoint layers. The check is implemented in <code>ddn-profile-quality.js</code> <code>validate()</code> under <code>profile==='archimate.basic@1'</code>; the core endpoint-kind contract defers to it for this verb under this profile so the diagnostic is always <code>DDN-PJ123</code>, never <code>DDN102</code>.</p>
+<h2>Viewpoints</h2>
+<p>A viewpoint is a named <code>view</code> with an explicit <code>select:[…]</code> list (chapter 03): a &quot;business viewpoint&quot; is a view selecting only the <code>archi.business_*</code> objects. No new machinery is involved. See the <code>business_viewpoint</code> view of <code>website/examples/basics/51-archimate.ddn</code>.</p>
+<h2>Diagnostics</h2>
+<table><thead><tr><th>code</th><th>severity</th><th>meaning</th></tr></thead><tbody><tr><td><code>DDN-PJ123</code></td><td>error</td><td><code>archi.rel</code> links a downward layer pair per the fixed table, or an endpoint kind is outside the nine registered kinds</td></tr></tbody></table>
+<h2>Scope and non-conformance</h2>
+<p>This is profile-level coverage, not ArchiMate conformance. The ArchiMate exchange format, relationship derivation machinery and full ArchiMate conformance remain unsupported. No UML/BPMN/SysML/CMMN/ArchiMate conformance is claimed anywhere in this chapter.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

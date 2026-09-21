@@ -38,6 +38,6 @@ The repository has four moving parts a developer meets:
 
 Every diagram in the repo is produced by the one deterministic render path:
 same source bytes in, same SVG bytes out. The example gallery at
-[`examples/gallery/index.html`](../../examples/gallery/index.html) shows one
+[`website/examples/gallery/index.html`](../../examples/gallery/index.html) shows one
 render per installed profile plus all variation sheets; it is regenerated with
 `npm run build:gallery`.

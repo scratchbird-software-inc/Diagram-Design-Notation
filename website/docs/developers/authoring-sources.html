@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authoring .ddn sources — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Authoring <code>.ddn</code> sources</h1>
+<p>A <code>.ddn</code> file is plain text in the DDN language (current versions <code>0.3</code>, <code>0.4</code>, <code>0.5</code>; <code>0.2</code> reads for compatibility). The grammar lives in <code>standard/grammar/</code>; the normative chapters are <code>standard/specification/</code>. This page is the tour; each section names the chapter with the full rules.</p>
+<h2>File skeleton</h2>
+<pre><code>ddn &quot;0.5&quot;;
+module &quot;shop.orders&quot;;
+import &quot;shared.ddn&quot; as shared;
+
+data model {
+    object customer &quot;Customer&quot; { kind: table; fields { field customer_id; field name; } }
+    object order &quot;Order&quot; { kind: table; fields { field order_id; field customer_id; } }
+    relation order_customer @order.customer_id -&gt; @customer.customer_id {
+        kind: references; source_mark: zeromany; target_mark: one;
+    }
+}
+
+view overview &quot;Orders / shared model&quot; {
+    data: [@model];
+    format: @shared.styles.technical;
+}</code></pre>
+<ul><li><code>ddn &quot;0.5&quot;;</code> — language version stamp. See spec <code>01-language.md</code>.</li><li><code>module</code> — namespace; every declaration id is module-qualified. See</li></ul>
+<p>  <code>01-language.md</code> and <code>02-data-model.md</code>. A file may hold several   <code>module &quot;…&quot;;</code> sections (RFC-117), so a full design can live in one   self-contained file; sibling sections reference each other by   module-qualified id (<code>@otherModule.name</code>) with no import between them.</p>
+<ul><li><code>import &quot;…&quot; as alias</code> — pulls another file's declarations in as</li></ul>
+<p>  <code>@alias.name</code>. See <code>03-views-and-reuse.md</code>. Imports are file-level: they   precede the first module header (canonical), or immediately follow the   FIRST header in the legacy position. <code>DDNLive.io.bundle(files, entry)</code> and   the CLI <code>bundle</code> command merge a workspace into one multi-section file with   byte-identical rendering.</p>
+<h2>Data blocks: the model is the source of truth</h2>
+<p><code>data</code> blocks declare <code>object</code>, <code>domain</code>, <code>relation</code>, and <code>sample</code> definitions — never pictures. Kinds come from the registry (<code>standard/registry/catalogue.json</code>: <code>table</code>, <code>application</code>, <code>process</code>, <code>record</code>, …); relation verbs likewise (<code>references</code>, <code>assoc</code>, <code>flow</code>, <code>uses_domain</code>, …). Fields nest (<code>field address { shape: object; }</code>), samples carry synthetic example rows, and records for charts are objects with an <code>x_record</code> payload. Full model semantics: <code>02-data-model.md</code>; property contracts: <code>10-property-contracts.md</code>.</p>
+<h2>Views: projections of the model</h2>
+<p>A <code>view</code> picks data (<code>data: [@model]</code>, optionally <code>select:</code> a subset) and a presentation. Presentation is resolved from a <strong>format bundle</strong> — named <code>style</code>, <code>layout</code>, <code>display</code>, <code>publication</code>, <code>legend</code> groups inside a <code>format</code> block, composed into a <code>bundle</code> — with per-view inline overrides:</p>
+<pre><code>view sketch &quot;Orders / workshop sketch&quot; {
+    data: [@model];
+    style { look: handDrawn; theme: forest; }
+    layout { algorithm: layered; direction: right; routing: curved; curve: bezier; }
+    spacing: loose;
+    publication { size: content; fit: none; minimum_text: 8pt; }
+}</code></pre>
+<ul><li>Looks, themes, fonts: <code>04-notation-and-looks.md</code>.</li><li>Layout algorithms, routing modes, crossings: <code>05-routing.md</code>,</li></ul>
+<p>  <code>15-placement-and-low-light.md</code>, <code>13-curved-relations.md</code>,   <code>26-local-endpoint-ordering.md</code>.</p>
+<ul><li>Spacing hints (<code>tight</code>/<code>normal</code>/<code>loose</code>/<code>expanded</code>, B1-008): registered in</li></ul>
+<p>  <code>standard/registry/capabilities.json</code>, behavior pinned by   <code>notation/tests/spacing-hints.js</code>.</p>
+<ul><li>Publication sizes, subdiagrams, legends: <code>06-publication-and-subdiagrams.md</code>.</li></ul>
+<h2>Projections and profiles</h2>
+<p><code>projection { kind: …; profile: &quot;…&quot;; … }</code> turns a view into a specific diagram family: <code>chen</code>, <code>matrix</code>, <code>panels</code>, <code>table</code>, <code>chart</code>, <code>timeline</code>, <code>fishbone</code>, <code>decision</code>, <code>sequence</code>, <code>timing</code>, or a specialised <code>graph</code> profile. All 73 installed profiles are listed in <code>standard/registry/profiles/catalogue.json</code> and each has a rendered example in the gallery (<code>website/examples/gallery/index.html</code>). The projection chapters: <code>16-profiles-and-projections.md</code> through <code>42-family-trees.md</code> (matrices and panels 18, charts/time 19 + 22, lifecycles/rule tables 23, sequence 27, BPMN 32, SysML 36, ArchiMate 37, and so on).</p>
+<h2>Checking your work</h2>
+<pre><code>node notation/cli/cli.js check your.ddn --workspace .
+node notation/cli/cli.js render your.ddn --view overview --workspace . --out /tmp/o.svg</code></pre>
+<p>Diagnostics carry stable codes (<code>DDN0xx</code> core, <code>DDN-PJ0xx</code> projections, <code>DDN-I0xx</code> interaction, <code>DDN-E0xx</code> API) — <code>07-reference-and-conformance.md</code> is the conformance chapter. Programmatic authoring edits (the same operations the visual designer uses) are documented in <a href="api-reference.html">api-reference.md</a> under <code>authoring</code>; the editing model itself is spec <code>16-workspace-and-editing.md</code>.</p>
+<p>More prose, lesson-style: <code>25-diagram-field-guide.md</code>. The largest collection of real sources to copy from is <code>website/examples/basics/</code> (01–60).</p>
+</article>
+<p><small>Rendered from <a href="authoring-sources.md">authoring-sources.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

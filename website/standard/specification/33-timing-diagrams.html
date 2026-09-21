@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>33. Timing diagrams (projection timing, profile uml.timing@1) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>33. Timing diagrams (projection <code>timing</code>, profile <code>uml.timing@1</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-107 (<code>standard/governance/rfcs/RFC-107-timing-diagram.md</code>). Source grammar remains DDN 0.5; projection kinds are atom property values, so <code>kind:timing;</code> is a semantic addition, not a grammar change.</p>
+<p>A timing view projects the selected part of one semantic model into a state-over-time diagram: one horizontal band per participant, with state changes drawn as plateau steps along a numeric time axis. Records carry their own time points (<code>x_states</code>); the renderer never invents times.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Participants</strong> are the view's selected <code>object</code>-type elements, drawn</li></ul>
+<p>  top-to-bottom in <code>ir.elements</code> declaration order — the identical rule and   shared helper (<code>participants(ir, shown)</code> in <code>ddn-projection-data.js</code>) as the   sequence projection (chapter 27).</p>
+<ul><li>Every participant must carry the registered extension property <code>x_states</code></li></ul>
+<p>  (array, object target) with at least one entry. Each entry is   <code>{ at: &lt;finite number&gt;, state: &lt;nonempty string&gt; }</code>, interpreted as &quot;from   <code>at</code> onward the participant is in <code>state</code> until the next entry&quot;. The last   state runs to the axis maximum (the greatest declared <code>at</code>).</p>
+<ul><li><strong>Chronology rule:</strong> within one participant, entries must be in strictly</li></ul>
+<p>  ascending <code>at</code> order.</p>
+<ul><li>Time is an abstract numeric axis in the author's unit; the unit belongs in</li></ul>
+<p>  the view label or a footer note. There is no unit conversion.</p>
+<h2>Source example</h2>
+<pre><code>data signals {
+    object controller &quot;Controller&quot; { kind: application;
+        x_states: [{at: 0, state: &quot;red&quot;}, {at: 25, state: &quot;green&quot;}, {at: 55, state: &quot;amber&quot;}];
+    }
+}
+
+view timing &quot;Synthetic traffic lights / timing (seconds)&quot; {
+    data: [@signals];
+    projection { kind: timing; profile: &quot;uml.timing@1&quot;; }
+}</code></pre>
+<p>See <code>website/examples/basics/47-timing-diagram.ddn</code> for the full runnable example.</p>
+<h2>Visual encoding</h2>
+<p>Deterministic native SVG, derived only from the scale, the theme, measured label widths, and the declared time points:</p>
+<ul><li>One band per participant, declaration order top to bottom; participant</li></ul>
+<p>  names at the left.</p>
+<ul><li>Within a band, states are plateau levels indexed by first-appearance order</li></ul>
+<p>  per participant (first state = top plateau); steps are vertical transitions   at each <code>at</code>. A repeated state returns to its original plateau level.</p>
+<ul><li>The time axis runs along the bottom with min/max ticks taken from the data.</li><li>Plateau state labels sit on each segment; every segment mark carries</li></ul>
+<p>  <code>data-source-ids</code> and <code>data-property=&quot;x_states&quot;</code>.</p>
+<ul><li>A footer note states that the diagram shows supplied time points, not a</li></ul>
+<p>  simulation.</p>
+<h2>Validation</h2>
+<ul><li><code>DDN-PJ118</code> (error) — a participant lacks <code>x_states</code>, or an entry is</li></ul>
+<p>  malformed (<code>at</code> not a finite number / <code>state</code> not a nonempty string), or   entries are not in strictly ascending <code>at</code> order. The message names the   participant and the offending entry/index.</p>
+<ul><li>Existing guards apply unchanged: unknown projection property →</li></ul>
+<p>  <code>DDN-PJ005</code>; width/height guards → <code>DDN-PJ006</code>; graph geometry (<code>place</code>,   <code>route</code>) in a timing view → <code>DDN-PJ002</code>; Vega-Lite export → <code>DDN-PJ070</code>.</p>
+<h2>Relationship to <code>timeline.basic@1</code></h2>
+<p><code>timeline.basic@1</code> is an immutable published profile and is unchanged by this chapter — including the &quot;UML timing&quot; entry in its <code>unsupported</code> list, which remains true for the date-interval timeline. Timing coverage arrives as a new projection kind and profile, not as an edit to the old profile. The timeline shows UTC date spans; the timing projection shows value steps on an abstract numeric axis. Neither claims duration/slew-rate annotations, clock/unit conversion, or full UML conformance.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

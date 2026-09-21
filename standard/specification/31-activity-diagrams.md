@@ -64,7 +64,7 @@ protocol mechanism and is unrelated to `uml.activity@1` partitions.
 
 ## Example
 
-`examples/basics/45-activity-diagram.ddn` — a synthetic order-fulfilment
+`website/examples/basics/45-activity-diagram.ddn` — a synthetic order-fulfilment
 activity with `webshop` and `warehouse` lane frames, one fork/join pair
 around `pick_items`/`take_payment`, and an `order` object node; every node
 declares its lane via `x_partition`.

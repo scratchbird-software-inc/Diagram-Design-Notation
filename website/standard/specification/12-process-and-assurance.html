@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Process, requirements and verification — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Process, requirements and verification</h1>
+<h2>Balanced interface contracts</h2>
+<p>A process object may expose ports with <code>direction:in|out</code> and a payload reference to a message/record. <code>x_boundary.ports</code> lists the outer ports. Each <code>bindings</code> entry maps one external port of that process to a port owned by a different internal activity. Every listed outer port must be bound exactly once; directions and payload identities must match. Missing/duplicate/reversed/mismatched bindings fail DDN131–133.</p>
+<p>This validates the declared interface mapping, not every possible event trace. It does not infer a boundary by drawing an enclosing box or certify formal DFD-method conformance.</p>
+<h2>State and guard contract</h2>
+<p><code>x_workflow</code> requires states, initial, terminal and transitions. Each transition has a stable id, from/to, event, optional guard and optional positive <code>max_visits</code>. All states must be reachable structurally. Terminal states cannot have outgoing transitions. Every cycle must cross a bounded transition. Alternatives with the same state/event must use distinct equality values on the same field; arbitrary guard disjointness is not guessed.</p>
+<p>Guards use boolean values, <code>all</code>, <code>any</code>, <code>not</code>, or <code>{field,op,value}</code>. Operators are eq, ne, lt, lte, gt, gte, in and exists. Missing inputs cause an error except for exists. No JavaScript/SQL expression execution is allowed. <code>runTrace</code> evaluates only supplied fixtures and enforces bounds; it cannot prove operational availability or database atomicity.</p>
+<h2>Data invariants</h2>
+<p><code>x_constraint</code> lists unique field tuples, a half-open non-overlap rule with partition/from/to fields, and an optional immutable pre-state guard. The fixture helpers check supplied rows and before/after values. Null unique members are exempt in that fixture convention; alternative database semantics must be a separate profile. Temporal fixtures use parsed numeric/time instants and explicit open ends. They are not engine migrations or transaction implementations.</p>
+<h2>Requirements and evidence</h2>
+<p><code>x_requirement</code> identifies owner, acceptance, state and evidence references. States are proposed, required, accepted, rejected or waived. Accepted/waived declarations require evidence records. <code>x_evidence</code> requires method, scope, observation time, subject hash and result; a pass requires an artifact digest. A readiness result reports declared passing evidence, not that the compiler verified the professional identity, timestamp or signature. Production reviewers must bind approval to exact model/spec/code versions.</p>
+<p>The enterprise assurance file preserves all original findings with owners and acceptance gates. Statutory policies, distributed drills, production UI/report completion, specialized algorithms, custody and independent approvals remain blocked. This is a more accurate model than deleting those findings after diagram software improves.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

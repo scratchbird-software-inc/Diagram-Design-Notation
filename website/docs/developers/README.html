@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN developer documentation — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN developer documentation</h1>
+<p>Developer-facing documentation for the Diagram Design Notation (DDN) reference runtime, version 0.6.0-beta.1. These pages cover using the runtime as a library and embedding rendered diagrams; they are verified against <code>notation/studio/src/public.d.ts</code> and the shipped bundles under <code>notation/dist/</code> by the permanent gate <code>notation/tests/gallery-coverage.js</code>.</p>
+<h2>Doc map</h2>
+<table><thead><tr><th>Page</th><th>Read it when</th></tr></thead><tbody><tr><td><a href="getting-started.html">getting-started.md</a></td><td>You want the first render on screen in ten lines — browser script tag or Node <code>require</code>.</td></tr><tr><td><a href="modules.html">modules.md</a></td><td>You want to load only part of the runtime (core/graph/projections/quality bundles, sizes, load order).</td></tr><tr><td><a href="api-reference.html">api-reference.md</a></td><td>You need the workspace object: parse, check, render, mount, snapshots, data replacement, authoring, io.</td></tr><tr><td><a href="embedding.html">embedding.md</a></td><td>You are embedding diagrams in a page or framework and need CSP / <code>file://</code> guidance.</td></tr><tr><td><a href="viewer.html">viewer.md</a></td><td>You want the single-file end-user viewer (<code>ddn-viewer.html</code>): fit modes, overrides, export.</td></tr><tr><td><a href="styling.html">styling.md</a></td><td>You want to restyle rendered SVG with CSS: class hooks, cascade rules, <code>ddn.css</code>.</td></tr><tr><td><a href="data-refresh.html">data-refresh.md</a></td><td>You are building a dashboard that swaps data-block records without touching the model.</td></tr><tr><td><a href="authoring-sources.html">authoring-sources.md</a></td><td>You are writing <code>.ddn</code> source by hand: language tour with links into the spec chapters.</td></tr><tr><td><a href="migration-0.5-to-0.6.html">migration-0.5-to-0.6.md</a></td><td>You have 0.5.x content or integrations and need the Beta-1 changes with before/after.</td></tr></tbody></table>
+<h2>Orientation</h2>
+<p>The repository has four moving parts a developer meets:</p>
+<ul><li><strong><code>notation/runtime/</code></strong> — the reference implementation sources (parser,</li></ul>
+<p>  validation, layout/routing, deterministic SVG renderer). UMD, no   dependencies, <code>'use strict'</code>.</p>
+<ul><li><strong><code>notation/dist/</code></strong> — the shipped bundles built from those sources by</li></ul>
+<p>  <code>npm run build:sdk</code> (<code>tools/build-sdk.js</code>). <code>ddn.global.js</code> is everything;   <code>ddn-core/graph/projections/quality.js</code> are the modular splits (see   <a href="modules.html">modules.md</a>).</p>
+<ul><li><strong><code>notation/studio/src/</code></strong> — the public API layer (<code>api.js</code>,</li></ul>
+<p>  <code>public.d.ts</code>), the <code>&lt;ddn-example&gt;</code> web component, and Studio itself.</p>
+<ul><li><strong><code>notation/cli/cli.js</code></strong> — the command-line front end</li></ul>
+<p>  (<code>check</code> / <code>render</code> / <code>resolve</code>) over the same code path the library uses.</p>
+<p>Every diagram in the repo is produced by the one deterministic render path: same source bytes in, same SVG bytes out. The example gallery at <a href="../../examples/gallery/index.html"><code>website/examples/gallery/index.html</code></a> shows one render per installed profile plus all variation sheets; it is regenerated with <code>npm run build:gallery</code>.</p>
+</article>
+<p><small>Rendered from <a href="README.md">README.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+ddn "0.4";
+module "ddn.gallery.looks";
+
+// Gallery look/palette sheet. One small order-to-cash graph rendered in every
+// look (classic, handDrawn, neo) crossed with every palette theme
+// (default, neutral, dark, night, forest, base).
+data model {
+    object customer "Customer" { kind: actor; }
+    object storefront "Online storefront" { kind: application; }
+    object orders "Order service" { kind: application; }
+    object ledger "Sales ledger" { kind: table; fields { field order_id; field amount; } }
+    object warehouse "Warehouse dispatch" { kind: process; }
+    relation places @customer -> @storefront { kind: assoc; }
+    relation confirms @storefront -> @orders { kind: assoc; }
+    relation posts @orders -> @ledger { kind: assoc; }
+    relation ships @orders -> @warehouse { kind: assoc; }
+}
+
+format gallery {
+    layout flow_right { algorithm: layered; direction: right; routing: orthogonal; gap: 120px; row_gap: 110px; }
+    display readable { kind: icon_token; fields: names; badges: none; maturity: none; }
+    publication screen { size: content; fit: none; minimum_text: 8pt; }
+    legend key { mode: text; placement: right; width: 260px; }
+}
+
+view classic_default "Looks / classic × default" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: default; }
+}
+view classic_neutral "Looks / classic × neutral" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: neutral; }
+}
+view classic_dark "Looks / classic × dark" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: dark; }
+}
+view classic_night "Looks / classic × night" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: night; }
+}
+view classic_forest "Looks / classic × forest" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: forest; }
+}
+view classic_base "Looks / classic × base" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: base; }
+}
+view handdrawn_default "Looks / handDrawn × default" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: handDrawn; theme: default; }
+}
+view handdrawn_neutral "Looks / handDrawn × neutral" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: handDrawn; theme: neutral; }
+}
+view handdrawn_dark "Looks / handDrawn × dark" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: handDrawn; theme: dark; }
+}
+view handdrawn_night "Looks / handDrawn × night" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: handDrawn; theme: night; }
+}
+view handdrawn_forest "Looks / handDrawn × forest" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: handDrawn; theme: forest; }
+}
+view handdrawn_base "Looks / handDrawn × base" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: handDrawn; theme: base; }
+}
+view neo_default "Looks / neo × default" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: neo; theme: default; }
+}
+view neo_neutral "Looks / neo × neutral" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: neo; theme: neutral; }
+}
+view neo_dark "Looks / neo × dark" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: neo; theme: dark; }
+}
+view neo_night "Looks / neo × night" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: neo; theme: night; }
+}
+view neo_forest "Looks / neo × forest" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: neo; theme: forest; }
+}
+view neo_base "Looks / neo × base" {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: neo; theme: base; }
+}

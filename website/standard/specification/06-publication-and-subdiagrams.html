@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Publication, typography and linked diagrams — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Publication, typography and linked diagrams</h1>
+<p>A publication specifies <code>size:figure|content|a4|letter</code>, optional width/height, paper orientation, margins, <code>fit:contain|none|reflow</code>, minimum text size, optional final <code>embedding_scale</code>, overflow policy and metric requirements. Unsupported pagination is rejected rather than emitting an incomplete first page.</p>
+<h2>Actual behavior</h2>
+<p><code>content</code> allocates a natural-size SVG artboard for drawing and legend. <code>figure</code> uses specified dimensions. A4/Letter use physical dimensions converted to CSS pixels; landscape swaps axes. <code>none</code> retains 1:1 drawing scale and fails on overflow when requested. <code>contain</code> uniformly fits, then checks the final minimum. <code>reflow</code> adjusts automatic grid columns for available width before routing and fitting; it is not an arbitrary-layout pagination engine.</p>
+<p>Text-size checks include small field/legend/footer runs and an explicit embedding multiplier. Inline child text is checked again at its effective parent scale; an undersized child fails or warns under the selected policy. The parent cannot silently compress a readable child into illegible text and claim the original minimum.</p>
+<h2>Measurement provenance</h2>
+<p>Font size is supported from 8–64px. The selected base scales cards, field rows, spacing and typography; it does not change data semantics. Browser rendering uses canvas measurement for the locally resolved font. Node rendering can use a pinned numeric measurement cache produced from installed fonts; no font files are distributed. Unknown runs use a conservative grapheme-based estimate and DDN-TW01. <code>metrics:required</code> rejects estimated metrics.</p>
+<p>The supplied cache records font names/hashes, measurement engine and numeric run metrics. It is evidence for those runs/environment, not proof that an unrelated machine has the same fonts or glyph coverage. Unicode shaping/accessibility still require a deployment browser/font matrix. SVG remains text plus vector geometry, not an embedded font payload.</p>
+<h2>Text, icons and looks</h2>
+<p>The look controls drawing execution, not semantic vocabulary. Classic is precise; handDrawn uses seeded rough geometry; neo uses clean accents/shadows. All retain stable port and marker semantics. Icons, arrowheads and cardinalities remain precise enough to interpret. Standard text and glyphs are fixed by the registry. Editorial font selection does not redefine the notation.</p>
+<h2>References and inline views</h2>
+<p>Reference symbols target named view IDs. A static Markdown image cannot be assumed to expose clickable internal SVG links; a publisher should provide an ordinary adjacent link. Print references use stable figure names rather than source-authored page numbers. Inline views namespace SVG IDs, preserve child meaning and check their allocated size. Infinite inline recursion is rejected.</p>
+<h2>Data protection</h2>
+<p>A public render first computes the explicit allowlist projection. The same projection is used by JSON export. Private source references, free-text metadata, unapproved fields, sample values, routes and nested embedded views are removed by that profile. Allowlisted names remain visible by design. A compiler does not discover sensitive content automatically or grant authorization; review the allowlists. The full source editor belongs in an authorized workspace.</p>
+<p>The redacted allowlist profile also offers a <code>sql</code> export format (<code>export { mode: redacted; format: sql; … }</code>). It emits <code>CREATE TABLE</code> DDL for allowlisted <code>kind: table</code> objects: allowlisted fields become <code>TEXT</code> columns in declaration order (v1 claims no datatype mapping), a <code>PRIMARY KEY</code> line is emitted only when the author allowlisted the <code>key</code> property, and a <code>FOREIGN KEY … REFERENCES</code> line is emitted only for <code>kind: ref</code> relations whose <code>enforcement</code> is exactly <code>database</code> and whose field-level endpoints are both allowlisted. Everything else in the allowlist is reported with a <code>-- skipped: &lt;id&gt; (&lt;reason&gt;)</code> comment; relations touching non-allowlisted records stay invisible. Table/column identifiers are snake_case-normalized names; collisions after normalization fail with <code>DDN-PJ092</code>, and an allowlist containing no table objects fails with <code>DDN-PJ088</code>. SQL is emitted only through <code>DDNExport.serialize</code> under the same allowlist gate as JSON — there is no direct dump API. The output is synthetic illustrative DDL, not a deployable schema.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

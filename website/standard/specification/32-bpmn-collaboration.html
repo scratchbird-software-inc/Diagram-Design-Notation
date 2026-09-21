@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>32. BPMN-style process collaboration (profile bpmn.basic@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>32. BPMN-style process collaboration (profile <code>bpmn.basic@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-106 (<code>standard/governance/rfcs/RFC-106-bpmn.md</code>). Source grammar remains DDN 0.5; the kind and verb are registry entries, pools/lanes are view frames with pass-through <code>x_<em></code> properties, and event/gateway typing uses registered <code>x_</em></code> extension properties, so this chapter is a semantic addition, not a grammar change.</p>
+<p>A BPMN-style collaboration view models two or more cooperating parties with explicit message exchange between them on the existing <code>graph</code> projection: pools and lanes as frames, typed start/end events, typed gateways, and dashed cross-pool message flow. Users write <code>projection { kind:graph; profile:&quot;bpmn.basic@1&quot;; }</code>.</p>
+<p>This is profile-level coverage, not BPMN conformance.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Pools</strong> — ordinary view frames carrying <code>x_pool:true</code>. A pool's <code>members</code></li></ul>
+<p>  list the nodes owned by that party.</p>
+<ul><li><strong>Lanes</strong> — ordinary view frames carrying <code>x_lane:true</code> whose <code>members</code> are</li></ul>
+<p>  also members of one pool frame. Lane nesting inside a pool is declared by   membership, never inferred from geometry.</p>
+<ul><li><strong>Nodes</strong> — the flow vocabulary subset <code>flow.start</code>, <code>flow.end</code>,</li></ul>
+<p>  <code>flow.process</code>, <code>flow.subprocess</code>, plus the new profile kind   <code>flow.gateway</code> (silhouette <code>diamond</code>, fallback <code>activity</code>, family   <code>activity</code>, code <code>GATEWAY</code>).</p>
+<ul><li><strong>Events</strong> — <code>flow.start</code>/<code>flow.end</code> nodes carrying the registered extension</li></ul>
+<p>  <code>x_event:{type:…}</code> with <code>type</code> one of <code>none</code>, <code>message</code>, <code>timer</code>, <code>error</code>   (schema: <code>{type:'object', required:['type'], properties:{type:{enum:   ['none','message','timer','error']}}, additionalProperties:false}</code> on   objects). Events keep the <code>flow.start</code>/<code>flow.end</code> silhouettes; the event   type is shown in the node text.</p>
+<ul><li><strong>Gateways</strong> — <code>flow.gateway</code> nodes carrying the registered extension</li></ul>
+<p>  <code>x_gateway:{type:…}</code> with <code>type</code> one of <code>exclusive</code>, <code>parallel</code>, <code>inclusive</code>   (schema: <code>{type:'object', required:['type'], properties:{type:{enum:   ['exclusive','parallel','inclusive']}}, additionalProperties:false}</code> on   objects). The engine prefixes the node name with a single-letter type   marker: <code>X </code> exclusive, <code>+ </code> parallel, <code>O </code> inclusive.</p>
+<ul><li><strong>Sequence flow</strong> — inside a pool, edges use the <code>uml.flow</code> verb (RFC-105);</li></ul>
+<p>  its endpoint contract additionally accepts <code>flow.gateway</code>. No new   sequence-flow verb is registered.</p>
+<ul><li><strong>Message flow</strong> — the new profile verb <code>bpmn.messageflow</code> (&quot;Message flow&quot;,</li></ul>
+<p>  family <code>control</code>, code <code>MSGFLOW</code>), rendered dashed via its registry   <code>pattern:'6 4'</code> with an open arrowhead (<code>end:'open'</code>). Its endpoint contract   covers <code>flow.start</code>, <code>flow.end</code>, <code>flow.process</code>, <code>flow.subprocess</code>,   <code>flow.gateway</code>, <code>analysis.task</code>. Message flow is allowed only ACROSS pools.</p>
+<h2>Declaration rules</h2>
+<ol><li>A visible <code>bpmn.messageflow</code> whose endpoints are both members of the same</li></ol>
+<p>   <code>x_pool</code> frame fails with <strong><code>DDN-PJ116</code></strong> (error); the message names the    relation and the pool. A message flow whose endpoints are both outside    every pool also fails with <strong><code>DDN-PJ116</code></strong>. A message flow crossing two    pools, or linking a pooled node to an unpooled external node, is valid.</p>
+<ol><li>A selected <code>flow.gateway</code> lacking a valid <code>x_gateway.type</code> fails with</li></ol>
+<p>   <strong><code>DDN-PJ117</code></strong> (error); the message names the gateway. Malformed    <code>x_gateway</code>/<code>x_event</code> values (e.g. <code>x_gateway:{type:&quot;complex&quot;}</code>,    <code>x_event:{type:&quot;signal&quot;}</code>) fail schema validation with <strong><code>DDN105</code></strong>, like    every registered extension contract.</p>
+<ol><li>Pools and lanes render as ordinary frame boxes; no renderer change. Layout</li></ol>
+<p>   and routing are the graph renderer's existing deterministic behavior.</p>
+<h2>Example</h2>
+<p><code>website/examples/basics/46-bpmn.ddn</code> — a synthetic buyer/seller collaboration: two pool frames, typed start/end events (<code>none</code>, <code>message</code>, <code>error</code>), an exclusive gateway on the buyer side, <code>uml.flow</code> sequence edges within each pool, and one dashed <code>bpmn.messageflow</code> from <code>request_quote</code> to <code>prepare_quote</code> across the pools.</p>
+<h2>Unsupported</h2>
+<p>BPMN XML interchange, choreography and conversation diagrams, executable process semantics, and full BPMN conformance are out of scope for <code>bpmn.basic@1</code>. The <code>capabilities.json</code> <code>unsupported[]</code> line &quot;complete UML/SysML/BPMN/DMN metamodels or external interchange&quot; remains true and untouched.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

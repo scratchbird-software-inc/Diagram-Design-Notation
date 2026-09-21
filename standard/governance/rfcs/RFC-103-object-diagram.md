@@ -142,7 +142,7 @@ type-system claim: slot values and identity semantics are the author's.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/43-object-diagram.ddn` — synthetic
+- Positive example: `website/examples/basics/43-object-diagram.ddn` — synthetic
   `Customer`/`Order` classifiers, two record instances with matching slots, one
   `assoc` link, one `objects` view on `kind:graph` + `uml.object@1`.
 - Test suite: `notation/tests/object-diagram.js` — positive render with slot

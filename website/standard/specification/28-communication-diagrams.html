@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>28. Communication diagrams (profile uml.communication@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>28. Communication diagrams (profile <code>uml.communication@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-102 (<code>standard/governance/rfcs/RFC-102-communication-diagram.md</code>). Source grammar remains DDN 0.5; profiles and extension properties are atom/record property values, so this chapter is a semantic addition, not a grammar change.</p>
+<p>A communication (collaboration-style) view renders the same interaction model as a sequence view — participants and <code>uml.message</code> relations — but emphasizes structure over time: participants are graph nodes, and every message is drawn as a numbered label on its relation edge. There is no new projection kind; the view is an ordinary graph layout (<code>layout { algorithm: layered; }</code> is a good default).</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Metamodel</h2>
+<p>Reuses the RFC-101 interaction metamodel unchanged:</p>
+<ul><li><strong>Participants</strong> are the view's selected <code>object</code>-type elements, laid out by</li></ul>
+<p>  the graph layout algorithm.</p>
+<ul><li><strong>Messages</strong> are the view's visible relations of kind <code>uml.message</code> (the</li></ul>
+<p>  RFC-101 verb: <code>family:'control'</code>, <code>start:'none'</code>, <code>end:'open'</code>,   <code>source:['<em>']</code>, <code>target:['</em>']</code>, <code>allow_self:true</code>,   <code>member_endpoints:false</code>).</p>
+<ul><li>A <strong>reply</strong> is a <code>uml.message</code> carrying <code>x_return:true</code> (RFC-101 extension).</li><li><strong>Message numbers</strong> are author-declared via the new registered extension</li></ul>
+<p>  property <code>x_message</code> (relation target):   <code>{ &quot;type&quot;:&quot;object&quot;, &quot;required&quot;:[&quot;seq&quot;], &quot;properties&quot;:{ &quot;seq&quot;:{ &quot;type&quot;:&quot;string&quot;, &quot;minLength&quot;:1 } }, &quot;additionalProperties&quot;:false }</code>.</p>
+<h2>Declared numbering rule</h2>
+<p>The sequence number is declared, never derived: <code>x_message: { seq: &quot;2.1&quot; }</code>. Numbers are data. Convention:</p>
+<ul><li>Top-level messages are numbered <code>1</code>, <code>2</code>, <code>3</code>, …</li><li>A reply is dotted under its request: request <code>2</code>, reply <code>2.1</code>.</li></ul>
+<p>Derived numbering was rejected (RFC-102 D3): it would make the missing-number error unreachable and would silently renumber messages when declarations are reordered.</p>
+<h2>Visual encoding</h2>
+<p>Ordinary graph rendering. Before render, the engine relabels each visible <code>uml.message</code> relation to <code>&quot;&lt;seq&gt; · &lt;name&gt;&quot;</code> (mirroring the <code>state.flat@1</code> relabel branch); edge labels come from the relation name, so the number rides the existing edge-label path with no renderer change. Relations of other kinds in the same view keep their labels unchanged.</p>
+<h2>Source example</h2>
+<pre><code>view communication &quot;Synthetic order flow / communication&quot; {
+    data: [@flow];
+    projection { kind: graph; profile: &quot;uml.communication@1&quot;; }
+    layout { algorithm: layered; }
+}</code></pre>
+<p>with <code>data flow</code> declaring three objects (<code>customer_app</code>, <code>checkout</code>, <code>inventory</code>) and five <code>uml.message</code> relations numbered <code>1</code>, <code>2</code>, <code>2.1</code> (reply), <code>3</code>, <code>4</code> — see <code>website/examples/basics/42-communication-diagram.ddn</code>, which reuses the RT-101 order flow.</p>
+<h2>Validation and diagnostics</h2>
+<ul><li><code>DDN-PJ111</code> (error) — under <code>uml.communication@1</code>, a visible <code>uml.message</code></li></ul>
+<p>  relation:</p>
+<ol><li>lacks <code>x_message.seq</code>, or</li><li>carries a <code>seq</code> that does not match <code>/^\d+(\.\d+)*$/</code>, or</li><li>breaks the reply convention — a reply (<code>x_return:true</code>) with an undotted</li></ol>
+<p>     <code>seq</code>, or a non-reply with a dotted <code>seq</code>.</p>
+<p>  The message names the relation and the rule broken.</p>
+<ul><li>Unchanged existing guards apply as to every graph view (unknown properties,</li></ul>
+<p>  page/extent guards, and so on). The sequence-only rules of chapter 27 do not   apply here, and a communication view does not require place/route geometry.</p>
+<h2>Unsupported</h2>
+<p>Combined fragments; timing constraints; full UML conformance. Cross-message consistency (gap-free numbering, replies matching an existing request number) is deliberately not checked in <code>uml.communication@1</code> — numbers are validated for shape only.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

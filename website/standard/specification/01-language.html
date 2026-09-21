@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Language and decoding — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Language and decoding</h1>
+<p>The formal syntax is <code>grammar/ddn.ebnf</code>. Source files are UTF-8; the formatter convention is LF and no BOM, while the reader accepts a BOM and CRLF. Structural identifiers are ASCII (<code>[A-Za-z_][A-Za-z0-9_-]*</code>) in this reference. Display labels and literal values support Unicode. Do not normalize or rewrite sample strings. Unpaired surrogate escapes, unsafe prototype keys, duplicate properties and duplicate identities are rejected.</p>
+<h2>Document structure</h2>
+<pre><code>ddn &quot;0.3&quot;;
+module &quot;example.customer&quot;;
+import &quot;shared.ddn&quot; as shared;
+data model {
+ object customer &quot;Customer&quot; {
+  kind: table;
+  fields {field id; field name;}
+ }
+}
+view overview {
+ data: [@model];
+ format: @shared.styles.technical;
+ layout {algorithm: layered;}
+ publication {size: content;fit: none;}
+}</code></pre>
+<p>The module is a stable namespace, not a file path. Imports are local workspace-relative resources. Remote imports, traversal outside the workspace and recursive import cycles are rejected. References start with <code>@</code> and resolve declaration paths. A quoted label never serves as identity. An explicit <code>uid</code> can preserve identity across declaration refactoring.</p>
+<h3>Multi-module files (RFC-117)</h3>
+<p>A file MAY hold more than one module as marked sections — so a full design (model, data, views, formats) can live in one self-contained file:</p>
+<pre><code>ddn &quot;0.5&quot;;
+import &quot;palette.ddn&quot; as palette;
+
+module &quot;shop.model&quot;;
+data model {
+ object customer &quot;Customer&quot; { kind: table; fields { field id; field name; } }
+}
+
+module &quot;shop.views&quot;;
+view overview {
+ data: [@shop.model.model];
+ format: @palette.styles.technical;
+}</code></pre>
+<p>Each <code>module &quot;…&quot;;</code> header starts a section; the following top-level declarations belong to that module until the next header or end of file. Imports stay file-level: canonically they precede the first module header; the legacy position (immediately after the FIRST header, before its first declaration) is kept so existing single-module files are unchanged. An import anywhere else is rejected (DDN015). Module identity stays unique across the whole workspace (DDN023, whether the duplicate is another section or another file), and declaration identities stay unique across sections (DDN024). Sibling sections in the same file are implicitly visible to each other through module-qualified references (<code>@shop.model.model</code> above) — no import between them. Another file importing a multi-module file imports all its modules; <code>@alias.path</code> resolves against each section in order. Older runtimes reject multi-section files with a clean DDN010.</p>
+<p>A workspace can be merged into one such file with <code>DDNLive.io.bundle(files, entry)</code> or <code>node notation/cli/cli.js bundle &lt;entry.ddn&gt; --workspace . --out bundled.ddn</code>. The bundle carries the maximum language version in use, the entry file's module(s) first and the remaining modules sorted by module id. Section bodies are the original source text minus header lines — comments and formatting survive; imports between bundled files are dropped and references written through their aliases are canonicalized to module-qualified sibling references; imports to files outside the bundle set are kept verbatim at the top with a warning diagnostic (DDN-W013). Bundling is deterministic, and rendering every view of the bundle produces byte-identical SVG to rendering the original workspace.</p>
+<h2>Values and punctuation</h2>
+<p>Properties end in semicolons. Declarations without bodies also end in semicolons. Blocks can have an optional trailing semicolon. Arrays accept trailing commas. Records use colon-separated entries with comma or semicolon separators. Strings use JSON-style escapes. Comments are <code>//</code> or non-nesting <code>/<em> ... </em>/</code>.</p>
+<p>Numbers are finite. Lengths are <code>px</code>, <code>pt</code>, <code>mm</code>, <code>cm</code>, or <code>in</code>; temporal quantities are <code>ms</code>, <code>s</code>, <code>min</code>, <code>h</code>, or <code>d</code>. Conversion to geometry rejects temporal units. <code>true</code>, <code>false</code>, <code>null</code>, <code>missing</code>, <code>undecided</code>, <code>not_applicable</code>, and <code>conflicting</code> are distinct values. A quoted <code>&quot;undecided&quot;</code> is a string, not an unknown-state assertion.</p>
+<h2>Declaration contexts</h2>
+<p>At document scope: <code>data</code>, <code>format</code>, and <code>view</code>. Within data: <code>object</code>, <code>domain</code>, <code>sample</code>, <code>flow</code>, <code>assertion</code>, and <code>relation</code>. Objects can contain <code>fields</code> and <code>ports</code> groups; a field can recursively contain a <code>fields</code> group. Named format declarations include <code>notation</code>, <code>style</code>, <code>layout</code>, <code>display</code>, <code>publication</code>, <code>legend</code>, <code>validation</code>, <code>export</code>, <code>keyset</code>, and <code>bundle</code>. Views reference these and may contain local property groups, <code>place</code>, <code>route</code>, <code>frame</code>, and <code>subdiagram</code> declarations.</p>
+<p>Only relations have <code>@source -&gt; @target</code> endpoints. Relationships belong to data, never to a formatting override. A renderer MUST NOT invent a relation because two shapes touch. <code>place @object {at:[0px,0px];}</code> is optional. Omit it for automatic layout. A placement body can contain size hints alone.</p>
+<h2>Recursive members</h2>
+<pre><code>field contacts {
+ shape: array;
+ presence: optional;
+ fields {field kind;field value {nullable: true;}}
+}</code></pre>
+<p>The resolved children have their own IDs, parent IDs, depth and dotted path. <code>@model.customer.contacts.value</code> is a field endpoint. Hiding child rows does not change that endpoint identity. Arrays/maps/sets/variants are structural declarations, not an implicit choice of SQL datatype or separate database table.</p>
+<h2>Errors and limits</h2>
+<p>The reader limits source size and nesting to protect local tools from resource exhaustion. Compile errors carry source/offset information where available. The semantic schema checker supports the explicitly listed subset in <code>registry/capabilities.json</code>; it is not a complete JSON Schema evaluator. Unknown extensions are preserved with warnings in logical mode and rejected in strict mode unless registered.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

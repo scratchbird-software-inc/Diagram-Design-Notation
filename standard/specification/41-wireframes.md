@@ -71,7 +71,7 @@ view/format properties). No renderer change.
 
 ## Example
 
-`examples/basics/55-wireframe.ddn` — a synthetic settings screen: a
+`website/examples/basics/55-wireframe.ddn` — a synthetic settings screen: a
 `ui.frame` object `settings` framing a `ui.label` (Profile), a `ui.input`
 (Display name), a `ui.checkbox` (Email notifications), a `ui.list`
 (Timezone, with three field rows), a `ui.image` (Avatar) and a `ui.button`

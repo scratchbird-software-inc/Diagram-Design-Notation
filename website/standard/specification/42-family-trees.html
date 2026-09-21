@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>42. Family tree / genealogy profile (family.tree@1) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>42. Family tree / genealogy profile (<code>family.tree@1</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-116 (<code>standard/governance/rfcs/RFC-116-family-tree.md</code>). Source grammar remains DDN 0.5; the profile, kinds and verbs are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Genealogy sketches — ancestors above, descendants below, partnerships between parents — are a widely recognised tree idiom. The profile runs on the existing <code>graph</code> projection. Users write <code>projection { kind:graph; profile:&quot;family.tree@1&quot;; }</code>. This is profile-level notation coverage, not a GEDCOM-compatible system or a records-verification tool. All example data is fictional.</p>
+<h2>Vocabulary</h2>
+<p>Two profile kinds (both family <code>concept</code>, fallback <code>object</code>):</p>
+<ul><li><code>family.person</code> (silhouette <code>round</code>, code <code>PERSON</code>, glyph <code>person</code>) — a</li></ul>
+<p>  person; the label is the name.</p>
+<ul><li><code>family.union</code> (silhouette <code>circle</code>, code <code>UNION</code>, glyph <code>object</code>) — a</li></ul>
+<p>  partnership join node, rendered as the small circle between partners.</p>
+<p>Two profile verbs:</p>
+<ul><li><code>family.partner_of</code> (&quot;partner of&quot;, family <code>structural</code>, code</li></ul>
+<p>  <code>PARTNEROF</code>, no arrowheads) — from a <code>family.person</code> to a   <code>family.person</code> or a <code>family.union</code>.</p>
+<ul><li><code>family.parent_of</code> (&quot;parent of&quot;, family <code>lineage</code>, code <code>PARENTOF</code>,</li></ul>
+<p>  filled end arrowhead) — from a <code>family.person</code> or <code>family.union</code> down   to a <code>family.person</code>.</p>
+<p>Two registered extension properties on the <code>object</code> target, both <code>{ &quot;type&quot;:&quot;integer&quot; }</code> optional year numbers (no range enforced): <code>x_birth</code> and <code>x_death</code>. Declared years are shown in the person node text — the engine appends them to the node name, the same source-preserving dispatcher pattern <code>bpmn.basic@1</code> and <code>pert.cpm@1</code> already use; the renderer is unchanged.</p>
+<h2>Partnership and descent patterns</h2>
+<p>A partnership is either:</p>
+<ul><li>a direct <code>family.partner_of</code> link between two persons (childless</li></ul>
+<p>  couples), or</p>
+<ul><li>a <code>family.union</code> join node linked to each partner via</li></ul>
+<p>  <code>family.partner_of</code> — the pattern for couples with children, because   the join node gives children a single declared origin edge set.</p>
+<p>Children are <code>family.parent_of</code> edges from a person or a union down to a person. With <code>layout { direction:down; }</code> the existing layered/tree machinery places ancestors above descendants along the declared edges; exact generation-row alignment is not claimed.</p>
+<h2>Lineage rules</h2>
+<ul><li><code>DDN-PJ129</code> (error, thrown) — a cycle in visible <code>family.parent_of</code></li></ul>
+<p>  edges. A person cannot be their own ancestor; the message names a   person on the cycle.</p>
+<ul><li><code>DDN-PJ130</code> (error, thrown — NOT a warning) — a <code>family.person</code> with</li></ul>
+<p>  more than two distinct visible <code>family.parent_of</code> sources. The fact   pattern (at most two biological parents) is a hard domain rule; the   generations layout places at most two parents above a child or union,   so extra parents cannot be drawn faithfully; and silently dropping one   would falsify lineage — the project's no-silent-data-loss principle.   The remodelling path is to split the extra parentage into separate   unions/partners.</p>
+<p>Endpoint contracts are enforced by the existing machinery: a <code>family.partner_of</code> edge sourced from a union, or a <code>family.parent_of</code> edge targeting a union, fails with <code>DDN102</code>; a non-integer <code>x_birth</code> or <code>x_death</code> value fails with <code>DDN105</code>.</p>
+<h2>Visual encoding</h2>
+<p>Persons render as rounded nodes with their name (and years when declared); a union renders as a small circle node on the partner links; <code>partner_of</code> edges are plain (no arrowheads); <code>parent_of</code> edges carry filled arrowheads pointing from the parent/union toward the child — downward under <code>direction:down</code>. No renderer change: all marks come from existing silhouettes, the registered <code>person</code>/<code>object</code> glyphs, and the existing <code>none</code>/<code>filled</code> edge terminals.</p>
+<h2>Out of scope</h2>
+<p>GEDCOM or other external interchange, adoption/step-family nuance beyond the two-parent rule, and records verification remain on the profile's <code>unsupported</code> list.</p>
+<p>See <code>website/examples/basics/56-family-tree.ddn</code> for a fictional three-generation family with two partnerships.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

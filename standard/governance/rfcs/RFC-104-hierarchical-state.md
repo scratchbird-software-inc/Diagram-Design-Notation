@@ -135,11 +135,11 @@ UML/SCXML conformance.
   `analysis_budget` on non-`state.flat@1` profiles; `DDN-QL001`…`QL005` remain
   `state.flat@1`-only.
 - New error code verified free: `DDN-PJ113` appears nowhere in `notation/`,
-  `standard/`, or `examples/` (highest pre-existing: PJ112, PJW03).
+  `standard/`, or `website/examples/` (highest pre-existing: PJ112, PJW03).
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/44-hierarchical-state.ddn` — synthetic
+- Positive example: `website/examples/basics/44-hierarchical-state.ddn` — synthetic
   order lifecycle with composite `fulfillment`, two dashed regions
   (`payment`, `packing`), per-region initial/final states, and a
   boundary-crossing transition `paid → closed`.

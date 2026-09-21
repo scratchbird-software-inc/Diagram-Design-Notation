@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.6.0-beta.1 — endpoint-ordering replacement patch — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.6.0-beta.1 — endpoint-ordering replacement patch</h1>
+<p>This patch targets the runtime in <strong>ddn-0.5-field-guide</strong> (field-guide.1, previously 0.5.0-draft.1). It is built from that actual archive, not from an older companion. It changes routing, not the authored business model or field order.</p>
+<h2>Install by replacing files</h2>
+<ol><li>Back up your extracted project directory and any edited standalone HTML files.</li><li>Extract the patch ZIP **into the existing directory containing <code>package.json</code>,</li></ol>
+<p>   <code>dist/</code>, <code>reference/</code>, and <code>field-guide/</code>**. Allow the files to be replaced.    The patch archive has project-relative paths, not an additional project folder.</p>
+<ol><li>Close the old tab and reload the site (or hard refresh with Ctrl+Shift+R).</li></ol>
+<p>   Restart <code>npm run serve</code> if it was running. No npm dependency install is needed.</p>
+<ol><li>The public version is now <code>DDNLive.VERSION === &quot;0.6.0-beta.1&quot;</code>.</li></ol>
+<p><code>dist/ddn.global.js</code> is the deployable single-file library. <code>dist/ddn.mjs</code> imports that same file; the declarations are beside it. The updated <code>reference/</code> and <code>live/src/</code> files keep local rebuilds from bringing back the old router.</p>
+<p>The patch also replaces the self-contained HTML pages inside this distribution. They embed their own JavaScript and would otherwise continue to run the old code. A standalone copy saved elsewhere is not updated by changing <code>dist/ddn.global.js</code>: replace it with the updated <code>field-guide/portable.html</code> or Studio copy.</p>
+<p>No existing <code>.ddn</code> source is replaced. Existing exported SVGs and earlier evidence are not magically rerendered. Open the source and export again when a fresh SVG is needed. Earlier validation records are historical; current patch evidence is in <code>patches/endpoint-ordering/validation/</code>.</p>
+<h2>Correction</h2>
+<p>The old initial slot allocator sorted incident relations by relation ID, not their spatial approach. The later optimizer changed one endpoint at a time and could finish with crossings that needed a local pair/order change.</p>
+<p>The new allocator orders <strong>free compatible slots</strong> by the opposite endpoint's spatial projection. A bounded local refinement evaluates actual routed crossings, tries coupled slot permutations, and then legal side changes. It reroutes and rechecks obstacles, independent tracks, labels, and final curved paths before accepting a change. This pass runs before free-node movement and is repeated after accepted node moves. It applies to source and destination endpoints and all sides.</p>
+<p><strong>Distinct visible fields do not exchange rows.</strong> In the reported accounting case, <code>Journal Line.journal</code> and <code>Journal Line.account</code> remain those exact fields. Their permitted attachment sides/approaches can change, rather than falsely moving a journal reference onto the account row. Several edges referring to the same field may exchange slots <em>within that same row</em>.</p>
+<p>Authored sides, endpoint fractions, named ports, and waypoint entries are excluded from incompatible permutations; explicit node pins stay fixed. Hidden fields keep their original source identity. The optimizer is deterministic and bounded, not a promise of zero crossings for every constrained graph.</p>
+<h2>Optional policy (no source change is required)</h2>
+<p>The default is enabled. A view or reusable layout can declare:</p>
+<pre><code>layout {
+    endpoint_ordering: optimize;
+}</code></pre>
+<p><code>preserve</code> selects the previous stable-ID slot order and disables the new joint refinement. It is <strong>not</strong> a freeze-all-layout command. <code>optimize: none;</code> disables crossing refinement as before. Both modes still respect hard endpoint constraints. There is no ambiguous <code>strict</code> value; hard constraints apply in both modes.</p>
+<p>The equivalent public API option is:</p>
+<pre><code>await diagram.setOptions({ endpointOrdering: &quot;optimize&quot; });
+// &quot;preserve&quot; selects the legacy order; &quot;source&quot; follows the DDN policy.</code></pre>
+<p>Non-graph/data-bound and fixed-lane interaction projections reject this geometry override rather than pretend to implement it.</p>
+<h2>Verification and limits</h2>
+<p>Run <code>npm run test:endpoint-ordering</code> for the new regressions and <code>npm run test:routing-efficiency</code> for the prior short-connector regression. The patch retains the original source catalogue. The patch report records the complete catalogue render exercise and the actual before/after browser witness. Tests are not independent standards, business, or security certification.</p>
+<p>Remaining routing warnings are not suppressed. When a field or authored route prevents a proposed exchange, it remains constrained rather than being relabeled.</p>
+</article>
+<p><small>Rendered from <a href="ROUTING-PATCH.md">ROUTING-PATCH.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

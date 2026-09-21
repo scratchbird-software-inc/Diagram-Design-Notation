@@ -51,11 +51,11 @@ console.assert(before === after.modelFingerprint, "data-only change");
 
 ## Complete working examples
 
-- `examples/embed/data-refresh.html` — a browser proof over
+- `website/examples/embed/data-refresh.html` — a browser proof over
   `ddn-core.js` + `ddn-graph.js` + `ddn-projections.js`: a button swaps the
-  `metrics` records of an inlined copy of `examples/basics/59-data-refresh.ddn`
+  `metrics` records of an inlined copy of `website/examples/basics/59-data-refresh.ddn`
   and re-renders in place.
-- `examples/basics/59-data-refresh.ddn` — the two-view source (a bar chart
+- `website/examples/basics/59-data-refresh.ddn` — the two-view source (a bar chart
   and a dependency graph over the same data block).
 - `notation/tests/data-refresh.js` — the contract tests, including the
   `DDN-E011` shape-mismatch rejections.

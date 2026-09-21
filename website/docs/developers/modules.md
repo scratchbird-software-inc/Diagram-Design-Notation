@@ -51,8 +51,8 @@ load it. Verified behaviors (`notation/tests/modular-bundles.js`):
 - `exportVegaLite` without `ddn-projections.js` throws `DDN-E010` naming
   `ddn-projections.js`.
 
-Working single-page proofs ship in `examples/embed/core-only-check.html`
-(core-only) and `examples/embed/core-graph.html` (core + graph).
+Working single-page proofs ship in `website/examples/embed/core-only-check.html`
+(core-only) and `website/examples/embed/core-graph.html` (core + graph).
 
 ## Choosing a bundle
 

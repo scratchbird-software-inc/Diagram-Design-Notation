@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio guide — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html">Standard</a>
+      <a href="../../../tools/index.html" class="active">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Studio guide</h1>
+<p>Open <code>live/editor.html</code> through the supplied local server, or use <code>live/portable-editor.html</code>. The portable editor embeds the same runtime and example source and does not depend on neighbouring assets to function. <code>dist/editor.html</code> is a smaller standalone editor with a starter model, not the full example catalogue.</p>
+<h2>Existing work</h2>
+<p><strong>Open DDN / workspace</strong> selects <code>.ddn</code>, workspace JSON or a source ZIP. <strong>Open folder</strong> preserves the relative layout of an entire project. <strong>Add files</strong> merges selected files into the current workspace, asking before replacing same-name files. An individual imported script that references missing files remains editable while the preview reports the missing dependency.</p>
+<p>Use <strong>Entry file</strong> and <strong>Named view</strong> above the preview to choose what is rendered. The Workspace sidebar independently chooses which imported source you edit. Imported data, formatting and view declarations are not flattened or copied merely to render another diagram.</p>
+<h2>Source editing</h2>
+<p>The source textarea has no read-only regions. Edit all accepted DDN constructs. Ctrl+Enter applies and validates; Ctrl+S downloads the current DDN file. Live apply commits the buffer after a short idle period; syntax errors preserve your draft. Find, Replace and Go to line are text tools. Replace is deliberately not advertised as a semantic-symbol refactor.</p>
+<p>The preview updates from the current source, not from stored images. On failure its previous successful image is marked stale, and SVG export is disabled. Diagnostics include the relevant source/offset where available. Download the draft or full workspace before reloading; unsaved changes remain in page memory only.</p>
+<h2>Assisted editing</h2>
+<p>Select a box/field/relation in the outline or diagram. Edit a display label, change a kind where valid, add a field, hide a view occurrence, pin/unpin, or go to its source declaration. <strong>+ Element</strong> and <strong>+ Relationship</strong> add source declarations; endpoint compatibility is checked by the 0.3 core.</p>
+<p>Enable <strong>Drag to pin</strong> to move an object. The release position is written to the selected view as <code>place ... at</code>. It does not move the shared business definition. Undo restores the previous source. Other unpinned elements can reflow around the pin. A dedicated visual control does not exist for every property; the full text editor remains available for all of them.</p>
+<p>File Rename/Move updates actual relative import literals and preserves module identities/comments. Delete blocks files still imported elsewhere. A new file begins as a shared data module; add imports/view source as needed.</p>
+<h2>Appearance and layout</h2>
+<p>Standard, hand-drawn and neo change drawing treatment. Dark/night have contrasting connectors on grey-blue surfaces. Placement choices include the original native layouts and anchored grid/rings/layers/organic. <code>tree</code> validates a declared hierarchy; <code>spanning_tree</code> creates a drawing forest from a general graph without deleting extra relations.</p>
+<p>Auto-placement pause remembers free positions; it does not pin them in source. <strong>Auto-layout now</strong> reflows them; <strong>Centre pins</strong> navigates to the existing pin focus. Fit and zoom magnify the current diagram only. Page/orientation/font/detail choices trigger actual remeasurement and rendering and may fail if unreadable or incompatible.</p>
+<h2>Downloads</h2>
+<p><strong>Download .ddn:</strong> current source file only. Keep its imports as separate files.</p>
+<p><strong>Download workspace ZIP / Workspace JSON:</strong> complete source project with selected view, appearance overlay and paused state. Reopen through the same Open button. A saved source workspace includes confidential information if you authored any; it is not a redacted export.</p>
+<p><strong>Export SVG:</strong> current successful policy-projected vector diagram. The host must authorize input source before delivering it to a browser. Hiding fields is never an authorization mechanism.</p>
+<h2>Limits</h2>
+<p>Rendering is synchronous and can take seconds on a dense graph. There is no hard worker cancellation. Pins, strict guide paths, frames or highly constrained graphs can remain difficult or infeasible. The UI does not downgrade the source to another engine. Sequence projections retain special capabilities and disable incompatible free-layout controls.</p>
+<p>Studio is a local editor/viewer, not a database administration client or an implemented ERP application. No uploaded script is sent to a server by the application.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

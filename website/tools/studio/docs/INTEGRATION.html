@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Developer integration — consolidated DDN 0.5 — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html">Standard</a>
+      <a href="../../../tools/index.html" class="active">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Developer integration — consolidated DDN 0.5</h1>
+<p>Copy <code>dist/ddn.global.js</code> to a self-hosted static location. No reference-site directories are needed. Load the runtime once and supply an authorized map of UTF-8 DDN files.</p>
+<pre><code>&lt;script src=&quot;/vendor/ddn.global.js&quot;&gt;&lt;/script&gt;
+&lt;div id=&quot;diagram&quot;&gt;&lt;/div&gt;
+&lt;script&gt;
+const files = {
+  'main.ddn': `ddn &quot;0.3&quot;; module &quot;hello&quot;;
+    data m { object a &quot;Client&quot;; object b &quot;Service&quot;;
+      relation r @a -&gt; @b { kind: assoc; }
+    }
+    view v { data: [@m]; publication { size: content; fit: none; } }
+  `
+};
+const workspace = DDNLive.createWorkspace(files);
+const diagram = DDNLive.mount(document.querySelector('#diagram'), {
+  workspace, entry: 'main.ddn', view: 'v'
+});
+diagram.addEventListener('ddn-error', e =&gt; console.error(e.detail));
+&lt;/script&gt;</code></pre>
+<p>Change only appearance:</p>
+<pre><code>await diagram.setOptions({theme:'night',look:'handDrawn',routing:'curved'});
+await diagram.setOptions({placement:'circular',center:'pins',autoPlace:true});
+const svg = diagram.exportSVG();</code></pre>
+<p>Update a shared source file using <code>workspace.updateFiles({...})</code>. Every mounted view subscribed to that workspace sees the new source. Independent view options and paused state do not become shared model facts.</p>
+<p>For rendering without the viewer UI:</p>
+<pre><code>import DDNLive from '/vendor/ddn.mjs';
+const workspace = DDNLive.createWorkspace(files);
+const result = await workspace.render({entry:'main.ddn',view:'v'});
+console.log(result.svg, result.diagnostics);</code></pre>
+<p>The <code>.mjs</code> facade imports <code>ddn.global.js</code> beside it. Serve it with a JavaScript MIME type. <code>render</code> is Promise-compatible, <strong>not background-worker execution</strong>. The host must safely insert returned SVG under its own policy; mounting through the provided component additionally sanitizes/scopes it. Type declarations are <code>dist/ddn.d.ts</code>.</p>
+<h2>Local files and workspaces</h2>
+<pre><code>const opened = await DDNLive.io.open(fileInput.files);
+const settings = DDNLive.fromSnapshot(opened.snapshot);
+const diagram = DDNLive.mount(container, settings);
+// For an internal authoring download:
+const snapshot = settings.workspace.snapshot(settings.entry, settings.view);
+DDNLive.io.download('design.zip', DDNLive.io.toZIP(snapshot), 'application/zip');</code></pre>
+<p><code>io.open</code> reads only user-selected inputs, with safe path, size, UTF-8 and ZIP checks. A <code>.ddn</code> upload containing imports needs those files; choose a folder or workspace ZIP. It does not recursively fetch URLs from DDN text.</p>
+<h2>Source transactions</h2>
+<p>The <code>authoring</code> API offers validated span-based label/kind changes, add element/field/relation, hide, pin/unpin and dependent-safe deletion. <code>workspace.applyEdits</code> takes <code>{file,start,end,text}</code> plus an expected revision and optional entry/view for full validation. Use <code>undo()</code>/<code>redo()</code> for committed edits. <code>renameFile</code> rewrites relative import string tokens while preserving module identity.</p>
+<p>These methods power Studio; they are not a replacement for all language constructs. Raw source remains fully editable.</p>
+<h2>Deployment and security boundaries</h2>
+<p>The library is distributed privately for review, not published to npm or a CDN. It needs no remote account, font download or rendering service. CSP/Trusted Types, browser qualification, resource isolation and application authorization require integration review. The component's shadow-root styles require an appropriate style policy; no advice to disable browser security flags is given.</p>
+<p>Source snapshots are full internal projects. Do not send unauthorized source to the browser and rely on display hiding. Policy-projected model/SVG export retains the 0.3 allowlist checks; redacted sequence exports are rejected until that projection has its own payload closure.</p>
+<p>Call <code>diagram.destroy()</code> and release the workspace when no longer used. Multiple instances prefix their SVG IDs independently. The model fingerprint is a regression/change indicator, not a cryptographic signature.</p>
+<h2>0.4 profiles and projections</h2>
+<p>The same renderer now dispatches a view’s <code>projection</code> concern. Graph-only controls are unavailable for matrices, charts, panels and date-bound schedules. Chart views offer supported mark changes without changing data. <code>workspace.projectionPlan(entry,view)</code> exposes bound records and provenance; <code>workspace.exportVegaLite(request)</code> is an optional local-values export, not a mandatory dependency. See <code>../../spec/20-projection-sdk-and-editing.md</code> for new inspector and API contracts.</p>
+<h2>0.5 quality, lifecycle and reporting</h2>
+<p>The same runtime accepts <code>ddn &quot;0.5&quot;;</code>. New reusable projection kinds are <code>fishbone</code> and <code>decision</code>; registered profiles add typed encoded matrices, series/transforms, flat state models and child panels. See standard chapters 21–24. One-level dashboards render children through the same runtime. Source-backed child marks report <code>childView</code> alongside source IDs; navigate/edit the child rather than treating an aggregate as a new independent object.</p>
+<pre><code>const result = workspace.evaluateDecision(&quot;views.ddn&quot;, &quot;decision_unique&quot;, {severity:&quot;low&quot;, score:5});
+const trace = workspace.simulateLifecycle(&quot;views.ddn&quot;, &quot;lifecycle&quot;, [{event:&quot;submit&quot;}]);
+DDNLive.authoring.setMatrixCell(workspace, &quot;views.ddn&quot;, &quot;raci&quot;, rowId, roleId, &quot;C&quot;);
+DDNLive.authoring.setMatrixCells(workspace, &quot;views.ddn&quot;, &quot;raci&quot;, [
+  {row: rowId, column: oldOwnerId, value: &quot;C&quot;},
+  {row: rowId, column: newOwnerId, value: &quot;A&quot;}
+]);</code></pre>
+<p>Matrix creation uses the projection's <code>write_data</code> shared block or an unambiguous shared row block, not a display-only cell. Transactions validate the current view before commit and are undoable; other dependent views validate on their next render. Rule evaluation is pure, typed and budgeted; transition actions are never executed. Chart values/dates and matrix cell coordinates cannot be dragged or re-laid out as graph nodes. Unsupported quality mark overrides and redacted projections fail explicitly.</p>
+<h2>Endpoint-ordering policy (0.6.0-beta.1)</h2>
+<p>Free compatible slots are optimized by default. The optional overlay <code>endpointOrdering: &quot;preserve&quot;</code> selects the legacy stable-ID slot order; <code>&quot;source&quot;</code> follows the DDN layout. This does not change field identities, pins, or quantitative coordinate meaning. See <code>../../spec/26-local-endpoint-ordering.md</code>.</p>
+<h2>Styling rendered diagrams (CSS hooks)</h2>
+<p>Rendered SVG carries deterministic class hooks on every mark — root <code>ddn-svg ddn-view-&lt;kind&gt; ddn-profile-&lt;profile-slug&gt;</code>, nodes <code>ddn-node ddn-kind-&lt;code&gt;</code>, relations <code>ddn-rel ddn-verb-&lt;verb&gt;</code>, plus <code>ddn-field</code>, <code>ddn-label</code>, <code>ddn-panel</code>, <code>ddn-frame</code> and <code>ddn-mark ddn-mark-&lt;type&gt;</code> in projections — so a host page can restyle diagrams with its own CSS. Script-level declarations (format palette, look, object/occurrence choices) are emitted as inline SVG presentation attributes and continue to win for the elements they name; no <code>&lt;style&gt;</code> block or <code>!important</code> is ever emitted into the SVG.</p>
+<p>Two optional conveniences ship with the distribution:</p>
+<ul><li><code>dist/ddn.css</code> — a ready-made stylesheet (source <code>studio/src/ddn.css</code>) defining <code>:root</code> <code>--ddn-*</code> custom properties (<code>--ddn-font</code>, <code>--ddn-node-fill</code>, <code>--ddn-node-stroke</code>, <code>--ddn-rel-stroke</code>, <code>--ddn-label-color</code>, <code>--ddn-field-color</code>, <code>--ddn-mark-fill</code>) and rules mapping the hook classes to them.</li><li><code>&lt;ddn-example theme='{&quot;--ddn-node-fill&quot;:&quot;#fdf3e3&quot;}'&gt;</code> — the <code>theme</code> attribute takes a JSON object of <code>--ddn-*</code> overrides and injects them as a constructed stylesheet on the component's shadow host, so the values cascade into the rendered SVG. Unknown or non-<code>--ddn-</code> properties are ignored.</li></ul>
+<p>See <code>examples/basics/58-css-hooks.ddn</code> and its companion <code>.html</code> for a working page-CSS demonstration.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>23. Flat lifecycle profiles and restricted rule-based decision tables — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>23. Flat lifecycle profiles and restricted rule-based decision tables</h1>
+<p><strong>DDN 0.6.0-beta.1.</strong> These are small executable semantic profiles, not SCXML, full UML statecharts, DMN/FEEL or a workflow service. They validate specified rules and traces without calling databases or executing action references. The diagram remains a view of the declared model.</p>
+<h2>23.1 Typed input domains and predicates</h2>
+<p>The two profiles share an input-domain definition. Each input has a unique safe <code>key</code>, a <code>type</code> (<code>enum</code>, <code>boolean</code>, <code>number</code>), and optional boolean <code>nullable</code>/<code>optional</code> flags. Enum inputs declare distinct scalar <code>values</code>. Number inputs declare finite <code>min</code> and <code>max</code>, inclusive. There are one to eight declared inputs for a decision table; a lifecycle may have none when transitions need no guards.</p>
+<p>Missing and null are independent. An optional value can be omitted; a nullable value can explicitly be null. A numeric string is not a number. An undeclared input key fails evaluation rather than entering a hidden side channel.</p>
+<pre><code>inputs: [
+    {key: severity, type: enum, values: [&quot;low&quot;, &quot;high&quot;]},
+    {key: score, type: number, min: 0, max: 10}
+];</code></pre>
+<p>A condition is a map from input name to one predicate. Predicates on different inputs are conjoined. An omitted input predicate is a wildcard over that input's declared domain. The predicate vocabulary is closed:</p>
+<table><thead><tr><th>Operator</th><th>Parameters</th><th>Meaning</th></tr></thead><tbody><tr><td><code>eq</code></td><td><code>value</code></td><td>Exact scalar equality within the input domain.</td></tr><tr><td><code>in</code></td><td><code>values</code></td><td>Membership in an explicit set of allowed scalar values.</td></tr><tr><td><code>interval</code></td><td><code>min</code>, <code>max</code>, optional <code>lower_closed</code>, <code>upper_closed</code></td><td>Numeric interval within the declared domain; both ends closed by default.</td></tr><tr><td><code>null</code></td><td>none</td><td>Present null value.</td></tr><tr><td><code>missing</code></td><td>none</td><td>Absent value.</td></tr></tbody></table>
+<p>Unknown properties/operators, invalid intervals, incompatible value types and invalid input names fail. No expression string is compiled as JavaScript. There are no arithmetic predicates, function calls, wildcards in bindings, regular expressions or network lookups in this subset.</p>
+<h2>23.2 Decision rule data</h2>
+<p>Rules are objects with <code>kind: &quot;rule.row&quot;</code> and an <code>x_rule</code> record:</p>
+<pre><code>object low_pass &quot;Low severity within tolerance&quot; {
+    kind: &quot;rule.row&quot;;
+    x_rule: {
+        when: {
+            severity: {op: eq, value: &quot;low&quot;},
+            score: {op: interval, min: 0, max: 5, upper_closed: false}
+        },
+        then: {route: &quot;release&quot;, audit: false}
+    };
+}</code></pre>
+<p>A decision projection names its ordered rule records, domains, outputs and policy:</p>
+<pre><code>projection {
+    kind: decision; profile: &quot;decision.rules@1&quot;;
+    records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];
+    inputs: [{key: severity, type: enum, values:[&quot;low&quot;,&quot;high&quot;]},
+             {key: score, type:number, min:0, max:10}];
+    outputs: [route, audit];
+    hit_policy: unique;
+    coverage: complete;
+    analysis_budget: 4096;
+}</code></pre>
+<p>Every rule must supply every declared output as a scalar; one to twenty outputs are supported. This version does not impose a separate common output-type declaration, calculate output expressions, or provide DMN result coercion. The rule's stable ID, rather than its row number, identifies it. Explicit record order controls <code>first</code>; changing layout order must not silently change rule priority.</p>
+<p><code>unique</code> permits at most one matching rule. <code>first</code> chooses the first match. <code>collect</code> returns all matching outcomes in declared order without implicit sum/min/max aggregation. A no-match evaluation returns <code>status: no_match</code> only when the declared coverage policy permits it.</p>
+<h2>23.3 Coverage and conflict analysis</h2>
+<p><code>coverage</code> is <code>complete</code>, <code>report</code> or <code>none</code>. Complete requires every declared input combination to match. Report returns witnesses of uncovered combinations. None does not require completeness; the analyzer can still report the inspected gaps. Unique-policy overlap rejection remains active regardless of coverage mode.</p>
+<p>The analyzer partitions number domains at every interval boundary and equality/set value. It tests boundary singleton atoms and one interior representative where a representable interior exists. Enum and boolean domains are finite. Optional/missing and nullable atoms are added explicitly. Predicates are constant within those declared partitions; this is why a bounded partition analysis can establish more than random sampling would.</p>
+<p>It enumerates the product of input atoms within <code>analysis_budget</code> (one to 50,000; default 4,096). Results expose the number of partitions and tests, policy, uncovered witnesses, overlaps, first-hit shadowed rows and unreachable rules. Witness collections retain at most twenty examples each; their lengths are not the total number of all uncovered inputs.</p>
+<p>For unique or complete claims, exhausting the budget <strong>fails closed</strong> with <code>DDN-QD008</code>. First/collect report mode can render with <code>status: budget_exceeded</code>; disjointness/coverage are explicitly not established. Invalid zero budgets do not fall back to a default. This is bounded proof over the specified predicate language and finite-number semantics, not unrestricted theorem proving or certification of a real business policy.</p>
+<pre><code>const result = workspace.evaluateDecision(&quot;views.ddn&quot;, &quot;decision_unique&quot;, {
+    severity: &quot;low&quot;, score: 5
+});
+// {policy, matched:[ruleIDs], selected:[ruleIDs], outputs:[records], status}</code></pre>
+<p>The live laboratory offers a JSON input field and an Evaluate button. Selecting a matching row is a transient UI highlight, not a hidden modification of the model. Source edits invalidate an old evaluation. Evaluation JSON can be downloaded separately. SVG export remains the declared diagram, not an implied evidence record that a production transaction was approved.</p>
+<h2>23.4 Flat lifecycle model</h2>
+<p><code>state.flat@1</code> is a graph profile. Its selected nodes are <code>state.initial</code>, <code>state.state</code>, and <code>state.final</code>. A <code>state.state</code> can explicitly declare <code>x_state: {terminal:true}</code>. A state represents one lifecycle condition of the modeled object—not an activity performed by a process.</p>
+<p>Transitions use <code>state.transition</code> and <code>x_transition</code>:</p>
+<pre><code>relation accepted &quot;Accepted verification&quot; @correcting -&gt; @verified {
+    kind: &quot;state.transition&quot;;
+    x_transition: {
+        event: &quot;verify&quot;,
+        guard: {passed:{op:eq,value:true}}
+    };
+}</code></pre>
+<p>The profile requires exactly one initial marker and at least one terminal outcome. The initial marker has no incoming and exactly one outgoing transition; that initial step is unconditional and action-free. Terminal states have no outgoing transitions. All states must be structurally reachable from the initial marker and have a structural path to a terminal outcome. These checks do not claim guards make every such path feasible under all environments.</p>
+<p>Every noninitial transition names a nonempty event. Optional guards use the typed domains above. For a given source state and event, guards must be disjoint; a bounded domain analysis validates them. Incomplete event handling is permitted and means that event is not accepted for some inputs. Without guard domains, multiple transitions for one source/event are rejected as ambiguous.</p>
+<p>Transitions may name <code>actions</code> as references to scoped definitions. They remain documentation references; the trace checker records their IDs and performs no side effects. Nested regions/fields, parallel states, history states, entry/exit actions, timers and hierarchical transitions are not implemented by this flat profile. Full SCXML explicitly covers broader state behavior [Q5]; this profile must not be advertised as an SCXML implementation.</p>
+<h2>23.5 Trace verification</h2>
+<p>A trace contains at most 1,000 ordered records <code>{event, data?}</code>. Data defaults to an empty record and must satisfy the declared input domains; use optional inputs for events that omit them. The initial marker's automatic step chooses the initial active state. Each event must match exactly one outgoing transition whose guard holds.</p>
+<pre><code>const result = workspace.simulateLifecycle(&quot;views.ddn&quot;, &quot;lifecycle&quot;, [
+    {event:&quot;submit&quot;}, {event:&quot;accept&quot;}, {event:&quot;investigated&quot;},
+    {event:&quot;verify&quot;, data:{passed:false}},
+    {event:&quot;investigated&quot;}, {event:&quot;verify&quot;,data:{passed:true}},
+    {event:&quot;close&quot;}
+], &quot;meridian.quality.review::lifecycle.closed&quot;);</code></pre>
+<p>The result reports final state, terminal status, each transition's IDs and recorded action references, and <code>actionsExecuted:false</code>. An unavailable event, ambiguous branch, malformed input or expected-final-state mismatch fails. Optional projection <code>traces</code> permit up to 100 named fixtures validated before rendering. Event sequence is semantic data; line positions and numeric legend keys do not define it.</p>
+<p>The lifecycle renderer uses conventional initial/final circular markers and state cards. Event/guard labels are derived from transition metadata. Outlines and annotations can be styled, but source endpoints and conditions do not change. Marker/actor contour escapes reach the outside of conservative node bounds without passing through another object; the existing short-route regression remains mandatory.</p>
+<h2>23.6 Scope, editor, and acceptance</h2>
+<p>Studio's full source editor can change inputs, predicates, rules, guards and traces. Generic property editing is available, but there is not yet a specialized graphical condition-builder for every predicate. The live laboratory exposes bounded evaluator and trace input controls. Changes validate the selected view; other views revalidate when rendered.</p>
+<p><code>DDN-QD001..008</code> and <code>DDN-QL001..007</code> cover typed domains/predicates, policies/budgets, overlap and uncovered witnesses, input checking, state structure, ambiguity, trace shape, unavailable events and final-state mismatches. There is no hidden rule bypass in style/layout controls. In the synthetic example, low severity at score 4.999 releases, low severity at 5 inspects, and high severity quarantines; this is a fixture, not a universal disposition policy.</p>
+<p>Acceptance covers threshold ties, holes, conflicting rules, first-hit shadowing, collect output, null/missing differences, unsafe operators, budget exhaustion, unreachable states, forbidden terminal transitions, rework loops, wrong expected endpoints and zero executed actions. Source-bound identity must survive redraw, upload, download and undo.</p>
+<p>[Q5] W3C SCXML, https://www.w3.org/TR/scxml/ (checked 2026-09-08). Reference is used to explain the scope boundary, not to claim SCXML conformance.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

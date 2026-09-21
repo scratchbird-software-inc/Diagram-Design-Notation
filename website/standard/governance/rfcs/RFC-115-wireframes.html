@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 115 — Wireframe stencil profile (wireframe.ui@1) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 115 — Wireframe stencil profile (<code>wireframe.ui@1</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; profile wireframe.ui@1; kinds ui.* (7); warning DDN-PJ128</p>
+<h2>Problem and motivating example</h2>
+<p>Early UI sketches should be boxes and labels, not widget frameworks (D1). The existing <code>graph</code> projection draws nodes and links, and view frames already group members around a scoped element — but nothing expresses a low-fidelity screen area with contained controls as a fixed, documented stencil.</p>
+<p>Motivating example: a synthetic settings screen with a profile section, a notifications checkbox and a save button. Users write <code>projection { kind:graph; profile:&quot;wireframe.ui@1&quot;; }</code>. This is profile-level notation coverage, not a UI-toolkit or UX certification.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change (D2, verified: profiles and kinds are registry entries; <code>standard/grammar/ddn.ebnf</code> is untouched).</p>
+<ul><li>One new profile <code>wireframe.ui@1</code> bound to the existing projection</li></ul>
+<p>  <code>kind:graph</code>.</p>
+<ul><li>Seven new profile kinds (all family <code>interface</code>, fallback <code>application</code>,</li></ul>
+<p>  glyph <code>object</code>):</p>
+<ul><li><code>ui.frame</code> (silhouette <code>rect</code>, code <code>UI_FRAME</code>),</li><li><code>ui.label</code> (<code>rect</code>, <code>UI_LABEL</code>),</li><li><code>ui.input</code> (<code>rect</code>, <code>UI_INPUT</code>),</li><li><code>ui.button</code> (<code>round</code>, <code>UI_BUTTON</code>),</li><li><code>ui.image</code> (<code>rect</code>, <code>UI_IMAGE</code>),</li><li><code>ui.checkbox</code> (<code>rect</code>, <code>UI_CHECKBOX</code>),</li><li><code>ui.list</code> (<code>rect</code>, <code>UI_LIST</code>).</li><li>No new verbs: links, if any, use the core <code>assoc</code> relation.</li><li>No extension properties.</li></ul>
+<pre><code>data m {
+    object settings &quot;Settings&quot; { kind: &quot;ui.frame&quot;; }
+    object profile_label &quot;Profile&quot; { kind: &quot;ui.label&quot;; }
+    object display_name &quot;Display name&quot; { kind: &quot;ui.input&quot;; }
+    object save_button &quot;Save&quot; { kind: &quot;ui.button&quot;; }
+}
+view settings &quot;Settings&quot; {
+    data: [@m];
+    projection { kind: graph; profile: &quot;wireframe.ui@1&quot;; }
+    style { look: classic; theme: neutral; }
+    frame settings_area &quot;Settings&quot; {
+        scope: @m.settings;
+        members: [@m.profile_label, @m.display_name, @m.save_button];
+    }
+}</code></pre>
+<h2>Semantic normalization and identity effects</h2>
+<p>A screen area = a <code>ui.frame</code> object; nesting = a view <code>frame</code> declaration whose <code>scope</code> references the <code>ui.frame</code> object and whose <code>members</code> are the contained controls; controls = objects of the other six <code>ui.*</code> kinds; a <code>ui.frame</code> may itself be a member of another <code>ui.frame</code>'s frame (nested containers) (D3). Frames are the existing view-level machinery — the same scope/member matching the <code>uml.usecase@2</code> validator already uses (<code>DDN-PX006</code> block) — so no new normalization or identity rule is introduced.</p>
+<p>Rejection behavior (D4):</p>
+<ul><li><code>DDN-PJ128</code> (NEW, <strong>warning</strong>, not thrown) — a selected control (any</li></ul>
+<p>  <code>ui.*</code> kind except <code>ui.frame</code>) that is not a member of any view frame   whose scope resolves to a <code>ui.frame</code> element. Emitted as a   <code>severity:'warning'</code> diagnostic; the view still renders normally. The   message names the control.</p>
+<p>Rationale for warning severity: sketches legitimately start as loose boxes before being grouped; blocking render would hurt the sketching workflow, while silence would hide a real organisational smell.</p>
+<p>Surfacing (verified): <code>Profiles.validate()</code> previously ended in <code>return []</code>; it now returns a collected <code>diagnostics</code> array (mirroring <code>Contracts.validate</code>'s <code>warn()</code> shape), and <code>build()</code> already pushes it into <code>ir.diagnostics</code> (<code>ddn-core.js</code>, <code>ir.diagnostics.push(...Profiles.validate(...))</code>). The CLI <code>check</code> command prints those as the JSON <code>warnings</code> array (<code>{status:'pass-core', …, warnings: ir.diagnostics}</code>); the SDK <code>renderSync</code> result carries them in <code>diagnostics[]</code>. The existing <code>fail()</code> thrown paths in <code>validate()</code> are unchanged.</p>
+<p>Verified free before allocation: <code>grep -rhoE &quot;DDN-PJ128&quot; notation/ standard/ website/examples/</code> prints nothing.</p>
+<h2>Visual encoding and routing effects</h2>
+<p>Plain rect/round silhouettes in the CLASSIC look with the NEUTRAL (grey) theme — the fixed pairing <code>style { look:classic; theme:neutral; }</code> used by the example and documented in the spec chapter (D5; NOT handDrawn: the stencil is meant to read as clean low-fi boxes). Control kind is shown as the existing kind token; <code>ui.image</code> content = the object's label text (no image fetching — the runtime never fetches); <code>ui.list</code> shows its label plus field rows when fields are declared. No renderer change; routing is unchanged (core <code>assoc</code> edges only).</p>
+<h2>Alternatives considered</h2>
+<ul><li>handDrawn low-fi default (D6) — rejected: the pairing is fixed as</li></ul>
+<p>  classic+neutral per the brief; handDrawn remains available as an   ordinary style override.</p>
+<ul><li>New <code>ui.*</code> silhouettes in the renderer (D6) — rejected: rect variants</li></ul>
+<p>  suffice for low-fi.</p>
+<ul><li>Error severity for orphan controls (D6) — rejected per the D4 rationale.</li><li>A panels-projection variant (D6) — rejected: wireframes need free</li></ul>
+<p>  nesting; panels are span grids.</p>
+<h2>Compatibility and migration</h2>
+<p>Additive only (D7): no existing profile, kind, verb, code, glyph or capability line changes meaning. Published profiles are untouched. The <code>validate()</code> change converts only the previously constant <code>return []</code> into a returned (still usually empty) diagnostics array; no thrown path is altered, and <code>build()</code> already spread-pushes the result, so consumers see no behavioural difference beyond the new warning.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>The new check is set membership over <code>ir.view.frames</code> and the selected element set — bounded, pure, no I/O, no dynamic code. No artwork is added: the stencil reuses existing <code>rect</code>/<code>round</code> silhouettes and the registered <code>object</code> glyph, so no copied icons, fonts or images are introduced. <code>ui.image</code> renders label text only; the runtime never fetches external images. Control names remain visible text, so meaning survives monochrome rendering and text extraction.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/profiles/catalogue.json</code> — <code>kinds[]</code> gains the seven</li></ul>
+<p>  kinds; <code>profiles[]</code> gains <code>wireframe.ui@1</code>.</p>
+<ul><li><code>notation/runtime/ddn-profiles.js</code> <code>validate()</code> — introduces a collected</li></ul>
+<p>  <code>diagnostics</code> array (replacing the final <code>return []</code>) and a   <code>wireframe.ui@1</code> block that pushes <code>DDN-PJ128</code> warnings.</p>
+<ul><li><code>standard/registry/capabilities.json</code> — <code>implemented[]</code> gains the</li></ul>
+<p>  wireframe line; <code>installedProfiles</code> +1.</p>
+<ul><li>New diagnostic: <code>DDN-PJ128</code> (warning — control declared outside any</li></ul>
+<p>  <code>ui.frame</code>).</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive: <code>website/examples/basics/55-wireframe.ddn</code> — the <code>settings</code> view</li></ul>
+<p>  renders the grey settings mock: frame, label, input, checkbox, list,   image and button inside the scoped frame; <code>check</code> reports no PJ128   warning.</p>
+<ul><li>Negative (warning, not error): a selected <code>ui.*</code> control that is not a</li></ul>
+<p>  member of any <code>ui.frame</code>-scoped view frame → <code>DDN-PJ128</code>   <code>severity:'warning'</code> diagnostic, and the render still succeeds.</p>
+<h2>Implementation/conformance impact</h2>
+<ul><li><code>notation/runtime/ddn-profiles.js</code> — <code>validate()</code> diagnostics collection</li></ul>
+<p>  plus the <code>wireframe.ui@1</code> orphan-control warning block.</p>
+<ul><li>Suite <code>notation/tests/wireframes.js</code> (<code>test:wireframes</code>) covers the</li></ul>
+<p>  fixtures above plus nesting, nested frames, warning-vs-thrown contrast   and determinism.</p>
+<ul><li><code>npm --prefix notation run build:sdk</code> rebuilds <code>notation/dist/</code>.</li></ul>
+<h2>Open questions and decision record</h2>
+<p>Fixed decisions (recorded, not open): D1 motivation; D2 vocabulary (profile <code>wireframe.ui@1</code> on <code>graph</code>; seven <code>ui.*</code> kinds, family <code>interface</code>, fallback <code>application</code>, glyph <code>object</code>; no verbs, no extensions, no grammar change); D3 scoped-frame nesting semantics (including nested <code>ui.frame</code> containers); D4 rejection behavior (<code>DDN-PJ128</code> as a warning, with severity rationale); D5 visual encoding (fixed classic+neutral pairing, kind tokens, label-only <code>ui.image</code>, field rows on <code>ui.list</code>); D6 alternatives rejected; D7 compatibility (additive only). Responsive behavior, real widget toolkit export, pixel-exact mockup fidelity and image fetching remain on the profile's <code>unsupported</code> list.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

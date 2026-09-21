@@ -1,0 +1,6 @@
+import './ddn-core.js';
+import './ddn-graph.js';
+import './ddn-projections.js';
+const ddn=globalThis.DDNLive;
+export const {VERSION,runtime,createWorkspace,registerWorkspace,mount,fromSnapshot,authoring,io,parse,profileCatalogue}=ddn;
+export default ddn;

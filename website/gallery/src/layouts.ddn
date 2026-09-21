@@ -1,0 +1,78 @@
+ddn "0.4";
+module "ddn.gallery.layouts";
+
+// Gallery layout sheet. A small holding-company hierarchy rendered once per
+// placement algorithm accepted by the runtime (native grid/manual/layered/
+// tree/mindmap/grouped plus the pattern-based fit_grid/circular/radial/
+// spanning_tree/organic).
+data model {
+    object holding "Meridian Holdings" { kind: context; role: group; }
+    object energy "Meridian Energy" { kind: application; role: core; }
+    object freight "Meridian Freight" { kind: application; role: core; }
+    object media "Meridian Media" { kind: application; role: support; }
+    object wind "Wind operations" { kind: process; role: core; }
+    object solar "Solar operations" { kind: process; role: core; }
+    relation own_e @holding -> @energy { kind: assoc; }
+    relation own_f @holding -> @freight { kind: assoc; }
+    relation own_m @holding -> @media { kind: assoc; }
+    relation split_w @energy -> @wind { kind: assoc; }
+    relation split_s @energy -> @solar { kind: assoc; }
+}
+
+format gallery {
+    style standard { look: classic; theme: default; font: sans; }
+    display readable { kind: icon_token; fields: none; badges: none; maturity: none; }
+    publication screen { size: content; fit: none; minimum_text: 8pt; }
+    legend key { mode: text; placement: right; width: 260px; }
+}
+
+view grid "Layouts / grid" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: grid; columns: 3; }
+}
+view manual "Layouts / manual (pinned)" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: manual; }
+    place @model.holding { at: [400px,0px]; }
+    place @model.energy { at: [0px,240px]; }
+    place @model.freight { at: [400px,240px]; }
+    place @model.media { at: [800px,240px]; }
+    place @model.wind { at: [0px,480px]; }
+    place @model.solar { at: [400px,480px]; }
+}
+view layered "Layouts / layered" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: layered; direction: right; }
+}
+view tree "Layouts / tree" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: tree; root: @model.holding; hierarchy: [assoc]; }
+}
+view mindmap "Layouts / mindmap" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: mindmap; root: @model.holding; hierarchy: [assoc]; routing: curved; curve: bezier; }
+}
+view grouped "Layouts / grouped" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: grouped; group_by: role; columns: 2; }
+}
+view fit_grid "Layouts / fit_grid" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: fit_grid; }
+}
+view circular "Layouts / circular" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: circular; }
+}
+view radial "Layouts / radial" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: radial; root: @model.holding; }
+}
+view spanning_tree "Layouts / spanning_tree" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: spanning_tree; root: @model.holding; }
+}
+view organic "Layouts / organic" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: organic; }
+}

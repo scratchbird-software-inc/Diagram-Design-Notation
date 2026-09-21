@@ -1,0 +1,761 @@
+{
+  "version": "0.6.0-beta.1",
+  "generatedBy": "tools/build-gallery.js (every SVG via notation/cli/cli.js render)",
+  "profiles": {
+    "archimate.basic@1": {
+      "entry": "website/examples/basics/51-archimate.ddn",
+      "view": "landscape",
+      "title": "Order platform landscape",
+      "svg": "profiles/archimate-basic-1.svg"
+    },
+    "bpmn.basic@1": {
+      "entry": "website/examples/basics/46-bpmn.ddn",
+      "view": "collaboration",
+      "title": "Buyer / seller collaboration",
+      "svg": "profiles/bpmn-basic-1.svg"
+    },
+    "c4.component@1": {
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "component",
+      "title": "Synthetic shop / C4 component",
+      "svg": "profiles/c4-component-1.svg"
+    },
+    "c4.container@1": {
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "container",
+      "title": "Synthetic shop / C4 container",
+      "svg": "profiles/c4-container-1.svg"
+    },
+    "c4.context@1": {
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "context",
+      "title": "Synthetic shop / C4 context",
+      "svg": "profiles/c4-context-1.svg"
+    },
+    "canvas.bmc@1": {
+      "entry": "website/examples/basics/31-canvas-pack-a.ddn",
+      "view": "bmc",
+      "title": "Coffee cart / business model canvas",
+      "svg": "profiles/canvas-bmc-1.svg"
+    },
+    "canvas.empathy@1": {
+      "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+      "view": "empathy",
+      "title": "Support team / empathy map",
+      "svg": "profiles/canvas-empathy-1.svg"
+    },
+    "canvas.lean@1": {
+      "entry": "website/examples/basics/31-canvas-pack-a.ddn",
+      "view": "lean",
+      "title": "Coffee cart / lean canvas",
+      "svg": "profiles/canvas-lean-1.svg"
+    },
+    "canvas.pest@1": {
+      "entry": "website/examples/basics/32-canvas-pack-b.ddn",
+      "view": "pest",
+      "title": "Fizzberry in Aurelia / PEST scan",
+      "svg": "profiles/canvas-pest-1.svg"
+    },
+    "canvas.pestle@1": {
+      "entry": "website/examples/basics/32-canvas-pack-b.ddn",
+      "view": "pestle",
+      "title": "Fizzberry in Aurelia / PESTLE scan",
+      "svg": "profiles/canvas-pestle-1.svg"
+    },
+    "canvas.porter5@1": {
+      "entry": "website/examples/basics/32-canvas-pack-b.ddn",
+      "view": "porter5",
+      "title": "Fizzberry in Aurelia / five forces",
+      "svg": "profiles/canvas-porter5-1.svg"
+    },
+    "canvas.scorecard@1": {
+      "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+      "view": "scorecard",
+      "title": "Department / balanced scorecard",
+      "svg": "profiles/canvas-scorecard-1.svg"
+    },
+    "chart.basic@1": {
+      "entry": "website/examples/basics/59-data-refresh.ddn",
+      "view": "latency_chart",
+      "title": "Latency / chart",
+      "svg": "profiles/chart-basic-1.svg"
+    },
+    "chart.candlestick@1": {
+      "entry": "website/examples/basics/22-candlestick-chart.ddn",
+      "view": "candlestick",
+      "title": "Synthetic trading sessions / candlestick",
+      "svg": "profiles/chart-candlestick-1.svg"
+    },
+    "chart.funnel@1": {
+      "entry": "website/examples/basics/20-funnel-chart.ddn",
+      "view": "funnel",
+      "title": "Synthetic sales pipeline / funnel",
+      "svg": "profiles/chart-funnel-1.svg"
+    },
+    "chart.gauge@1": {
+      "entry": "website/examples/basics/21-gauge-chart.ddn",
+      "view": "gauge",
+      "title": "Synthetic SLA attainment / gauge",
+      "svg": "profiles/chart-gauge-1.svg"
+    },
+    "chart.quality@1": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "grouped_bars",
+      "title": "06 / Defects — grouped bars",
+      "svg": "profiles/chart-quality-1.svg"
+    },
+    "chart.radar@1": {
+      "entry": "website/examples/basics/19-radar-chart.ddn",
+      "view": "radar",
+      "title": "Product comparison / radar",
+      "svg": "profiles/chart-radar-1.svg"
+    },
+    "chart.sankey@1": {
+      "entry": "website/examples/basics/24-sankey.ddn",
+      "view": "sankey",
+      "title": "Synthetic energy spend across three stages / sankey",
+      "svg": "profiles/chart-sankey-1.svg"
+    },
+    "chart.treemap@1": {
+      "entry": "website/examples/basics/23-treemap.ddn",
+      "view": "treemap",
+      "title": "Synthetic storage by domain and table / treemap",
+      "svg": "profiles/chart-treemap-1.svg"
+    },
+    "chen.basic@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chen",
+      "title": "11 / Chen binary projection",
+      "svg": "profiles/chen-basic-1.svg"
+    },
+    "chen.binary@2": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "chen_extended",
+      "title": "18 / Binary Chen details",
+      "svg": "profiles/chen-binary-2.svg"
+    },
+    "cmmn.basic@1": {
+      "entry": "website/examples/basics/49-cmmn.ddn",
+      "view": "case",
+      "title": "Claim handling",
+      "svg": "profiles/cmmn-basic-1.svg"
+    },
+    "concept.map@1": {
+      "entry": "website/examples/basics/29-concept-map.ddn",
+      "view": "concepts",
+      "title": "Synthetic order-to-cash concepts / concept map",
+      "svg": "profiles/concept-map-1.svg"
+    },
+    "ddn@1": {
+      "entry": "website/examples/basics/01-customer.ddn",
+      "view": "overview",
+      "title": "Customer data / a shared model",
+      "svg": "profiles/ddn-1.svg"
+    },
+    "decision.rules@1": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_unique",
+      "title": "14 / Disposition policy — unique",
+      "svg": "profiles/decision-rules-1.svg"
+    },
+    "dfd.gane_sarson@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "dfd_gane",
+      "title": "05 / Numbered Gane–Sarson-style DFD",
+      "svg": "profiles/dfd-gane-sarson-1.svg"
+    },
+    "dfd.yourdon@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "dfd_yourdon",
+      "title": "06 / Yourdon-style DFD",
+      "svg": "profiles/dfd-yourdon-1.svg"
+    },
+    "epc.basic@1": {
+      "entry": "website/examples/basics/30-epc.ddn",
+      "view": "epc",
+      "title": "Synthetic order-to-cash / EPC",
+      "svg": "profiles/epc-basic-1.svg"
+    },
+    "erd.crowfoot@1": {
+      "entry": "website/examples/basics/37-crows-foot-erd.ddn",
+      "view": "erd",
+      "title": "Synthetic sales / crow's-foot ERD",
+      "svg": "profiles/erd-crowfoot-1.svg"
+    },
+    "event.tree@1": {
+      "entry": "website/examples/basics/53-fault-event-tree.ddn",
+      "view": "event",
+      "title": "Alarm event tree",
+      "svg": "profiles/event-tree-1.svg"
+    },
+    "family.tree@1": {
+      "entry": "website/examples/basics/56-family-tree.ddn",
+      "view": "family",
+      "title": "Three generations",
+      "svg": "profiles/family-tree-1.svg"
+    },
+    "fault.tree@1": {
+      "entry": "website/examples/basics/53-fault-event-tree.ddn",
+      "view": "fault",
+      "title": "Service outage fault tree",
+      "svg": "profiles/fault-tree-1.svg"
+    },
+    "fishbone.basic@1": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "fishbone",
+      "title": "01 / Possible causes",
+      "svg": "profiles/fishbone-basic-1.svg"
+    },
+    "flow.basic@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "flowchart",
+      "title": "01 / Purchasing control flow",
+      "svg": "profiles/flow-basic-1.svg"
+    },
+    "flow.documented@2": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "flow_documented",
+      "title": "21 / Documented cross-sheet control flow",
+      "svg": "profiles/flow-documented-2.svg"
+    },
+    "matrix.ansoff@1": {
+      "entry": "website/examples/basics/33-matrix-pack.ddn",
+      "view": "ansoff",
+      "title": "Synthetic portfolio / Ansoff",
+      "svg": "profiles/matrix-ansoff-1.svg"
+    },
+    "matrix.bcg@1": {
+      "entry": "website/examples/basics/33-matrix-pack.ddn",
+      "view": "bcg",
+      "title": "Synthetic portfolio / BCG",
+      "svg": "profiles/matrix-bcg-1.svg"
+    },
+    "matrix.crud@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "crud",
+      "title": "04 / Model-derived CRUD",
+      "svg": "profiles/matrix-crud-1.svg"
+    },
+    "matrix.heatmap@1": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_numeric",
+      "title": "02 / Review score — numeric",
+      "svg": "profiles/matrix-heatmap-1.svg"
+    },
+    "matrix.raci@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "raci",
+      "title": "03 / Model-derived RACI",
+      "svg": "profiles/matrix-raci-1.svg"
+    },
+    "matrix.relations@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "matrix_general",
+      "title": "26 / General relationship matrix",
+      "svg": "profiles/matrix-relations-1.svg"
+    },
+    "matrix.storymap@1": {
+      "entry": "website/examples/basics/36-story-map.ddn",
+      "view": "storymap",
+      "title": "Shop rebuild / story map",
+      "svg": "profiles/matrix-storymap-1.svg"
+    },
+    "matrix.tows@1": {
+      "entry": "website/examples/basics/33-matrix-pack.ddn",
+      "view": "tows",
+      "title": "Synthetic portfolio / TOWS",
+      "svg": "profiles/matrix-tows-1.svg"
+    },
+    "mindmap.basic@1": {
+      "entry": "website/examples/basics/28-mind-map.ddn",
+      "view": "mindmap",
+      "title": "Synthetic brainstorm / mind map",
+      "svg": "profiles/mindmap-basic-1.svg"
+    },
+    "network.basic@1": {
+      "entry": "website/examples/basics/54-network-diagram.ddn",
+      "view": "lan",
+      "title": "Office LAN",
+      "svg": "profiles/network-basic-1.svg"
+    },
+    "network.rack@1": {
+      "entry": "website/examples/basics/54-network-diagram.ddn",
+      "view": "rack",
+      "title": "Rack A elevation",
+      "svg": "profiles/network-rack-1.svg"
+    },
+    "org.tree@1": {
+      "entry": "website/examples/basics/26-org-chart.ddn",
+      "view": "org",
+      "title": "Synthetic organisation / org chart",
+      "svg": "profiles/org-tree-1.svg"
+    },
+    "panels.basic@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "swot",
+      "title": "23 / Reusable SWOT panel template",
+      "svg": "profiles/panels-basic-1.svg"
+    },
+    "panels.composed@1": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "dashboard_quality",
+      "title": "17 / Dashboard Quality",
+      "svg": "profiles/panels-composed-1.svg"
+    },
+    "panels.journey@1": {
+      "entry": "website/examples/basics/35-journey-map.ddn",
+      "view": "returns",
+      "title": "Returns journey / synthetic",
+      "svg": "profiles/panels-journey-1.svg"
+    },
+    "panels.pyramid@1": {
+      "entry": "website/examples/basics/39-pyramid.ddn",
+      "view": "tiers",
+      "title": "Support tiers / pyramid",
+      "svg": "profiles/panels-pyramid-1.svg"
+    },
+    "panels.venn@1": {
+      "entry": "website/examples/basics/40-venn.ddn",
+      "view": "overlap",
+      "title": "Feature overlap / venn",
+      "svg": "profiles/panels-venn-1.svg"
+    },
+    "pert.cpm@1": {
+      "entry": "website/examples/basics/52-pert-cpm.ddn",
+      "view": "plan",
+      "title": "Release plan",
+      "svg": "profiles/pert-cpm-1.svg"
+    },
+    "requirements.basic@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "requirements",
+      "title": "09 / Requirement traceability",
+      "svg": "profiles/requirements-basic-1.svg"
+    },
+    "state.composite@1": {
+      "entry": "website/examples/basics/44-hierarchical-state.ddn",
+      "view": "lifecycle",
+      "title": "Order lifecycle / composite states",
+      "svg": "profiles/state-composite-1.svg"
+    },
+    "state.flat@1": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "lifecycle",
+      "title": "12 / Corrective-action lifecycle",
+      "svg": "profiles/state-flat-1.svg"
+    },
+    "sysml.bdd@1": {
+      "entry": "website/examples/basics/50-sysml.ddn",
+      "view": "bdd",
+      "title": "Pump station block definition",
+      "svg": "profiles/sysml-bdd-1.svg"
+    },
+    "sysml.ibd@1": {
+      "entry": "website/examples/basics/50-sysml.ddn",
+      "view": "ibd",
+      "title": "Pump station internal block",
+      "svg": "profiles/sysml-ibd-1.svg"
+    },
+    "sysml.parametric@1": {
+      "entry": "website/examples/basics/50-sysml.ddn",
+      "view": "parametric",
+      "title": "Pump station flow balance",
+      "svg": "profiles/sysml-parametric-1.svg"
+    },
+    "table.records@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "record_table",
+      "title": "19 / Shared observation table",
+      "svg": "profiles/table-records-1.svg"
+    },
+    "timeline.basic@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "gantt",
+      "title": "21 / Supplied-date procurement schedule",
+      "svg": "profiles/timeline-basic-1.svg"
+    },
+    "uml.activity@1": {
+      "entry": "website/examples/basics/45-activity-diagram.ddn",
+      "view": "fulfilment",
+      "title": "Order fulfilment activity",
+      "svg": "profiles/uml-activity-1.svg"
+    },
+    "uml.communication@1": {
+      "entry": "website/examples/basics/42-communication-diagram.ddn",
+      "view": "communication",
+      "title": "Synthetic order flow / communication",
+      "svg": "profiles/uml-communication-1.svg"
+    },
+    "uml.interaction_overview@1": {
+      "entry": "website/examples/basics/48-interaction-overview.ddn",
+      "view": "overview",
+      "title": "Checkout interaction overview",
+      "svg": "profiles/uml-interaction-overview-1.svg"
+    },
+    "uml.object@1": {
+      "entry": "website/examples/basics/43-object-diagram.ddn",
+      "view": "objects",
+      "title": "Synthetic snapshot / objects",
+      "svg": "profiles/uml-object-1.svg"
+    },
+    "uml.sequence@1": {
+      "entry": "website/examples/basics/41-sequence-diagram.ddn",
+      "view": "sequence",
+      "title": "Synthetic order flow / sequence",
+      "svg": "profiles/uml-sequence-1.svg"
+    },
+    "uml.structure@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "structure",
+      "title": "07 / Declared class / interface subset",
+      "svg": "profiles/uml-structure-1.svg"
+    },
+    "uml.timing@1": {
+      "entry": "website/examples/basics/47-timing-diagram.ddn",
+      "view": "timing",
+      "title": "Synthetic traffic lights / timing (seconds)",
+      "svg": "profiles/uml-timing-1.svg"
+    },
+    "uml.usecase@1": {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "usecases",
+      "title": "08 / Actor and use-case subset",
+      "svg": "profiles/uml-usecase-1.svg"
+    },
+    "uml.usecase@2": {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "usecases_extended",
+      "title": "20 / Use-case subjects and extension points",
+      "svg": "profiles/uml-usecase-2.svg"
+    },
+    "wbs.tree@1": {
+      "entry": "website/examples/basics/27-wbs.ddn",
+      "view": "wbs",
+      "title": "Synthetic project / work breakdown structure",
+      "svg": "profiles/wbs-tree-1.svg"
+    },
+    "wireframe.ui@1": {
+      "entry": "website/examples/basics/55-wireframe.ddn",
+      "view": "settings",
+      "title": "Settings screen",
+      "svg": "profiles/wireframe-ui-1.svg"
+    }
+  },
+  "sheets": {
+    "marks": {
+      "title": "Chart marks",
+      "source": "website/examples/gallery/src/marks.ddn",
+      "views": [
+        {
+          "view": "mark_bar",
+          "title": "Chart marks / bar",
+          "svg": "marks/bar.svg"
+        },
+        {
+          "view": "mark_line",
+          "title": "Chart marks / line",
+          "svg": "marks/line.svg"
+        },
+        {
+          "view": "mark_area",
+          "title": "Chart marks / area",
+          "svg": "marks/area.svg"
+        },
+        {
+          "view": "mark_point",
+          "title": "Chart marks / point",
+          "svg": "marks/point.svg"
+        },
+        {
+          "view": "mark_pie",
+          "title": "Chart marks / pie",
+          "svg": "marks/pie.svg"
+        },
+        {
+          "view": "mark_donut",
+          "title": "Chart marks / donut",
+          "svg": "marks/donut.svg"
+        },
+        {
+          "view": "mark_radar",
+          "title": "Chart marks / radar",
+          "svg": "marks/radar.svg"
+        },
+        {
+          "view": "mark_funnel",
+          "title": "Chart marks / funnel",
+          "svg": "marks/funnel.svg"
+        },
+        {
+          "view": "mark_gauge",
+          "title": "Chart marks / gauge",
+          "svg": "marks/gauge.svg"
+        },
+        {
+          "view": "mark_candlestick",
+          "title": "Chart marks / candlestick",
+          "svg": "marks/candlestick.svg"
+        },
+        {
+          "view": "mark_treemap",
+          "title": "Chart marks / treemap",
+          "svg": "marks/treemap.svg"
+        },
+        {
+          "view": "mark_sankey",
+          "title": "Chart marks / sankey",
+          "svg": "marks/sankey.svg"
+        }
+      ]
+    },
+    "looks": {
+      "title": "Looks × palettes",
+      "source": "website/examples/gallery/src/looks.ddn",
+      "views": [
+        {
+          "view": "classic_default",
+          "title": "Looks / classic × default",
+          "svg": "looks/classic_default.svg"
+        },
+        {
+          "view": "classic_neutral",
+          "title": "Looks / classic × neutral",
+          "svg": "looks/classic_neutral.svg"
+        },
+        {
+          "view": "classic_dark",
+          "title": "Looks / classic × dark",
+          "svg": "looks/classic_dark.svg"
+        },
+        {
+          "view": "classic_night",
+          "title": "Looks / classic × night",
+          "svg": "looks/classic_night.svg"
+        },
+        {
+          "view": "classic_forest",
+          "title": "Looks / classic × forest",
+          "svg": "looks/classic_forest.svg"
+        },
+        {
+          "view": "classic_base",
+          "title": "Looks / classic × base",
+          "svg": "looks/classic_base.svg"
+        },
+        {
+          "view": "handdrawn_default",
+          "title": "Looks / handDrawn × default",
+          "svg": "looks/handdrawn_default.svg"
+        },
+        {
+          "view": "handdrawn_neutral",
+          "title": "Looks / handDrawn × neutral",
+          "svg": "looks/handdrawn_neutral.svg"
+        },
+        {
+          "view": "handdrawn_dark",
+          "title": "Looks / handDrawn × dark",
+          "svg": "looks/handdrawn_dark.svg"
+        },
+        {
+          "view": "handdrawn_night",
+          "title": "Looks / handDrawn × night",
+          "svg": "looks/handdrawn_night.svg"
+        },
+        {
+          "view": "handdrawn_forest",
+          "title": "Looks / handDrawn × forest",
+          "svg": "looks/handdrawn_forest.svg"
+        },
+        {
+          "view": "handdrawn_base",
+          "title": "Looks / handDrawn × base",
+          "svg": "looks/handdrawn_base.svg"
+        },
+        {
+          "view": "neo_default",
+          "title": "Looks / neo × default",
+          "svg": "looks/neo_default.svg"
+        },
+        {
+          "view": "neo_neutral",
+          "title": "Looks / neo × neutral",
+          "svg": "looks/neo_neutral.svg"
+        },
+        {
+          "view": "neo_dark",
+          "title": "Looks / neo × dark",
+          "svg": "looks/neo_dark.svg"
+        },
+        {
+          "view": "neo_night",
+          "title": "Looks / neo × night",
+          "svg": "looks/neo_night.svg"
+        },
+        {
+          "view": "neo_forest",
+          "title": "Looks / neo × forest",
+          "svg": "looks/neo_forest.svg"
+        },
+        {
+          "view": "neo_base",
+          "title": "Looks / neo × base",
+          "svg": "looks/neo_base.svg"
+        }
+      ]
+    },
+    "routing": {
+      "title": "Routing × look",
+      "source": "website/examples/gallery/src/routing.ddn",
+      "views": [
+        {
+          "view": "orthogonal_classic",
+          "title": "Routing / orthogonal × classic",
+          "svg": "routing/orthogonal_classic.svg"
+        },
+        {
+          "view": "straight_classic",
+          "title": "Routing / straight × classic",
+          "svg": "routing/straight_classic.svg"
+        },
+        {
+          "view": "curved_classic",
+          "title": "Routing / curved bezier × classic",
+          "svg": "routing/curved_classic.svg"
+        },
+        {
+          "view": "rounded_classic",
+          "title": "Routing / rounded × classic",
+          "svg": "routing/rounded_classic.svg"
+        },
+        {
+          "view": "orthogonal_handdrawn",
+          "title": "Routing / orthogonal × handDrawn",
+          "svg": "routing/orthogonal_handdrawn.svg"
+        },
+        {
+          "view": "straight_handdrawn",
+          "title": "Routing / straight × handDrawn",
+          "svg": "routing/straight_handdrawn.svg"
+        },
+        {
+          "view": "curved_handdrawn",
+          "title": "Routing / curved bezier × handDrawn",
+          "svg": "routing/curved_handdrawn.svg"
+        },
+        {
+          "view": "rounded_handdrawn",
+          "title": "Routing / rounded × handDrawn",
+          "svg": "routing/rounded_handdrawn.svg"
+        },
+        {
+          "view": "orthogonal_neo",
+          "title": "Routing / orthogonal × neo",
+          "svg": "routing/orthogonal_neo.svg"
+        },
+        {
+          "view": "straight_neo",
+          "title": "Routing / straight × neo",
+          "svg": "routing/straight_neo.svg"
+        },
+        {
+          "view": "curved_neo",
+          "title": "Routing / curved bezier × neo",
+          "svg": "routing/curved_neo.svg"
+        },
+        {
+          "view": "rounded_neo",
+          "title": "Routing / rounded × neo",
+          "svg": "routing/rounded_neo.svg"
+        }
+      ]
+    },
+    "layouts": {
+      "title": "Layout algorithms",
+      "source": "website/examples/gallery/src/layouts.ddn",
+      "views": [
+        {
+          "view": "grid",
+          "title": "Layouts / grid",
+          "svg": "layouts/grid.svg"
+        },
+        {
+          "view": "manual",
+          "title": "Layouts / manual (pinned)",
+          "svg": "layouts/manual.svg"
+        },
+        {
+          "view": "layered",
+          "title": "Layouts / layered",
+          "svg": "layouts/layered.svg"
+        },
+        {
+          "view": "tree",
+          "title": "Layouts / tree",
+          "svg": "layouts/tree.svg"
+        },
+        {
+          "view": "mindmap",
+          "title": "Layouts / mindmap",
+          "svg": "layouts/mindmap.svg"
+        },
+        {
+          "view": "grouped",
+          "title": "Layouts / grouped",
+          "svg": "layouts/grouped.svg"
+        },
+        {
+          "view": "fit_grid",
+          "title": "Layouts / fit_grid",
+          "svg": "layouts/fit_grid.svg"
+        },
+        {
+          "view": "circular",
+          "title": "Layouts / circular",
+          "svg": "layouts/circular.svg"
+        },
+        {
+          "view": "radial",
+          "title": "Layouts / radial",
+          "svg": "layouts/radial.svg"
+        },
+        {
+          "view": "spanning_tree",
+          "title": "Layouts / spanning_tree",
+          "svg": "layouts/spanning_tree.svg"
+        },
+        {
+          "view": "organic",
+          "title": "Layouts / organic",
+          "svg": "layouts/organic.svg"
+        }
+      ]
+    },
+    "spacing": {
+      "title": "Spacing levels",
+      "source": "website/examples/gallery/src/spacing.ddn",
+      "views": [
+        {
+          "view": "tight",
+          "title": "Spacing / tight",
+          "svg": "spacing/tight.svg"
+        },
+        {
+          "view": "normal",
+          "title": "Spacing / normal",
+          "svg": "spacing/normal.svg"
+        },
+        {
+          "view": "loose",
+          "title": "Spacing / loose",
+          "svg": "spacing/loose.svg"
+        },
+        {
+          "view": "expanded",
+          "title": "Spacing / expanded",
+          "svg": "spacing/expanded.svg"
+        }
+      ]
+    }
+  }
+}

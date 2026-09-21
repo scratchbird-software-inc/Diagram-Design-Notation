@@ -2,10 +2,29 @@
 
 All notable changes to the Diagram Design Notation project are documented here.
 Component-level history predating the monorepo import lives in
-`notation/CHANGELOG.md` and `examples/use-cases/CHANGELOG.md`.
+`notation/CHANGELOG.md` and `website/examples/use-cases/CHANGELOG.md`.
 
 ## [Unreleased]
 
+- B1-017: the repository root stops being the website — **`website/` is now
+  the deployable, fully self-contained static site** (works from `file://` and
+  any static host; no `../` escapes, enforced by `tests/website-links.js`).
+  `examples/` moved to `website/examples/` and `docs/` to `website/docs/`
+  (git mv, history preserved); the old root `index.html` was superseded by a
+  redesigned `website/index.html` (shared design system `website/assets/site.css`,
+  hero + live in-browser render panel, feature grid, responsive to 360 px).
+  New zero-dependency generator `website/build-site.mjs` (`npm run build:site`)
+  mirrors the standalone tools (`tools/viewer/`, `tools/designer/`,
+  `tools/studio/`), the gallery (`gallery/`), the notation plates (`plates/`),
+  and the runtime bundles (`dist/`), and renders all Markdown documentation —
+  `website/docs/**`, `website/examples/README.md`, `standard/specification/*`,
+  `standard/governance/**`, Studio tool docs — to shell-wrapped HTML with a
+  small deterministic built-in renderer. Generated outputs are committed;
+  `tests/website-links.js` (`npm run test:site`, wired into `npm test`) checks
+  every link on every page and re-runs the build into a temp directory to
+  byte-compare freshness. `standard/` stays at the repository root; the site
+  surfaces it as rendered HTML copies. Root README rewritten; CI smoke-test
+  paths, test suites, gallery builder, and tooling updated for the new paths.
 - B1-016: project renamed to **Diagram Design Notation** (formerly "Data"
   rather than "Diagram"; every user-visible occurrence of the old long name
   was swept). The acronym **DDN is unchanged** — every machine identifier

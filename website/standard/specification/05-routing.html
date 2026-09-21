@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Native placement and routing contract — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Native placement and routing contract</h1>
+<h2>Placement presets</h2>
+<table><thead><tr><th>Algorithm</th><th>Executed behavior</th></tr></thead><tbody><tr><td>grid</td><td>Variable-size rows/columns in selection order, with independent horizontal/vertical gaps.</td></tr><tr><td>manual</td><td>Supplied pins; remaining objects receive nonoverlapping automatic grid placement.</td></tr><tr><td>layered</td><td>Directed ranks, strongly connected components for cycles, deterministic barycentric sweeps; original edge directions are never reversed in the model.</td></tr><tr><td>tree</td><td>Explicit hierarchy with one parent per child; cycles/multiple parents fail.</td></tr><tr><td>mindmap</td><td>Two-sided root with alternating primary branches; otherwise a forest layout.</td></tr><tr><td>grouped</td><td>Groups by a declared property path, then places a grid in each group. The grouping does not create containment facts.</td></tr></tbody></table>
+<p>Spacing values are preferences subject to minimum port/edge clearances. Hard pins cannot overlap. <code>direction</code> controls ranked orientation for layered layout and endpoint preference for grid/manual. Tree/mind-map use a horizontal branching arrangement in this edition; a renderer must not claim arbitrary orientation of those algorithms.</p>
+<h2>Endpoint and route pipeline</h2>
+<p>Measure visible cards and rows → place nodes → reserve every field/object port stub → assign independent endpoint slots → route around inflated object boxes and prior callout envelopes → place callouts → validate the complete scene. A later edge cannot overwrite an earlier label or borrow an unrelated connector track.</p>
+<p>The native router uses deterministic orthogonal candidates and bounded A* over an obstacle visibility grid. It penalizes bends/crossings and reserves independent lanes. It is not an optimality proof. Exhausted search or infeasible hard geometry returns a diagnostic; no invisible topology mutation is permitted. Rendering the same model, profile and metric environment is deterministic. A changed model may legitimately trigger a different layout; stable coordinates across arbitrary edits are not guaranteed.</p>
+<h2>Crossing semantics</h2>
+<p>An unrelated crossing is not a connection. <code>gap</code>, rounded <code>bridge</code>, and <code>square_bridge</code> are visual crossing treatments. Endpoint semantics and model identities are unchanged. Rounded bridge geometry is a local exception to rectilinear segments. T contacts and shared independent trunks are rejected/avoided rather than drawn as accidental junctions. The reference does not implement arbitrary bus/network junction graphs; <code>shared_segments:declared</code> is explicitly rejected. Declared bus membership via profile <code>network.basic@1</code> (spec 40) is notation, not routing geometry.</p>
+<h2>Hints and diagnostics</h2>
+<p><code>route {via:[...];source_side:east;target_side:west;callout:[...];}</code> supplies optional geometry. <code>route_policy:repair</code> emits DDN-LW02 and reroutes an unsafe hint. <code>strict</code> rejects it. Fields retain their endpoint identities when collapsed. Anchor fractions cannot override field endpoints.</p>
+<p>DDN200–218 cover hierarchy, pins, port escape, bounded routing, independent lanes and quality failures. <code>quality:error</code> is the default; <code>warn</code> is an explicit exploratory output policy, not a conformance pass. <code>scene.quality</code> records the checks. The enterprise build additionally runs an independent Python geometry scan.</p>
+<h2>Relationship labels</h2>
+<p>Numbered callouts are circles with ordinary digits; no circled-Unicode font dependence. Text/token modes use measured label boxes. Labels avoid objects, other labels, unrelated paths and reserved future ports. A full legend explains visible keys. Number scope is separate from sequence identity, and shared keysets preserve IDs across views.</p>
+<h2>Publication</h2>
+<p>Post-layout bounds include object bodies, frames, routes and callouts. The legend is measured and space is reserved separately. A full enterprise graph is not silently scaled to unreadable paper. Use linked bounded views or a larger content-sized artboard. Automatic multi-sheet tiling remains an explicit future capability, not a silently accepted <code>fit</code> value.</p>
+<h2>Curved route geometry</h2>
+<p><code>routing:curved</code> adds checked cubic curves. <code>curve:bezier</code> prefers broad mind-map branches; <code>curve:rounded</code> softens corridor corners. The selection is independent of <code>algorithm</code> and <code>style.look</code>, and can be overridden on one relation. See <a href="13-curved-relations.html">Curved relations</a> for syntax, endpoint tangents, crossing cuts/jumps, diagnostics and the scene-control contract. Crossing and label validation must use the resulting curve, not just the original rectangular route plan.</p>
+<h2>Route efficiency and labels — 0.4.0-draft.2 correction</h2>
+<p>A crossing-free route is not necessarily an efficient route. Automatic endpoint optimization MUST also consider excessive path stretch and label-generated detours, even when the crossing counter is zero. The current bounded heuristic identifies a non-self route for further trials when its length exceeds 1.8 times its endpoint Manhattan distance plus 120 CSS units, or it required a label corridor. This is a candidate-selection heuristic, not an error threshold and not proof that every longer path is avoidable.</p>
+<p>For unbound body attachments, try aligning a legal source/target fraction with the opposite endpoint before trying alternative sides. Authored sides and fractions remain constraints; a named field or port MUST NOT be replaced by a free body anchor. Crossings and overall length/bend cost still determine whether a trial is accepted. Node movement follows attachment trials rather than substituting for a simple endpoint alignment.</p>
+<p>A label that narrowly misses a short segment MUST NOT automatically move a nearby connector to the centre of the complete graph. Try local corridors around the related endpoints, score feasible alternatives by path length and bends, and expand that local search only within a bounded budget. A hard waypoint route that cannot accommodate its label is rejected instead of being rewritten.</p>
+<p>Low-bend route candidates are incumbents: when their score is substantially above the Manhattan lower bound, bounded visibility search may choose a much shorter route with additional bends. Existing incumbent cost bounds prune the search. Obstacles, independent tracks, labels, and mandatory endpoints remain hard validity checks. This does not promise global minimum length or crossings.</p>
+<p>Curved routes terminating at nonrectangular shapes are checked against the owner's actual contour. Empty corners of an owner's rectangular bounding box are not solid material. Unrelated shapes still use conservative obstacle bounds; actual contour penetration is not allowed.</p>
+<p><code>npm run test:routing-efficiency</code> retains the reported purchasing-flow witness, short-path assertions, fixed endpoints/waypoints, style variants, and alternating barrier counterexamples. See <code>../release/ROUTING-FIX.md</code> and the machine-readable report in <code>../release/validation/routing-efficiency.json</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

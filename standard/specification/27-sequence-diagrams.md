@@ -39,7 +39,7 @@ view sequence "Synthetic order flow / sequence" {
 
 with `data flow` declaring three objects (`customer_app`, `checkout`,
 `inventory`) and five `uml.message` relations — see
-`examples/basics/41-sequence-diagram.ddn`.
+`website/examples/basics/41-sequence-diagram.ddn`.
 
 ## Geometry rules
 

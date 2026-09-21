@@ -78,6 +78,6 @@ view payment_flow "Payment flow detail" {
 }
 ```
 
-See `examples/basics/48-interaction-overview.ddn` for the full synthetic
+See `website/examples/basics/48-interaction-overview.ddn` for the full synthetic
 checkout example (overview plus `payment_flow` and `stock_flow` detail views
 in one file).

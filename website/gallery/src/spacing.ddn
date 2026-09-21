@@ -1,0 +1,36 @@
+ddn "0.4";
+module "ddn.gallery.spacing";
+
+// Gallery spacing sheet. One library-lending graph rendered at each spacing
+// level (tight, normal, loose, expanded).
+data model {
+    object member "Library member" { kind: actor; }
+    object catalogue "Catalogue search" { kind: application; }
+    object loans "Loans register" { kind: table; fields { field loan_id; field due_date; } }
+    object notices "Overdue notices" { kind: process; }
+    relation searches @member -> @catalogue { kind: assoc; }
+    relation borrows "borrows a copy recorded in the loans register" @member -> @loans { kind: assoc; }
+    relation flags "flags overdue loans for the notice run" @loans -> @notices { kind: assoc; }
+}
+
+format gallery {
+    style standard { look: classic; theme: default; font: sans; }
+    layout flow_right { algorithm: layered; direction: right; routing: orthogonal; }
+    display readable { kind: icon_token; fields: names; badges: none; maturity: none; }
+    publication screen { size: content; fit: none; minimum_text: 8pt; }
+    legend key { mode: text; placement: right; width: 260px; }
+    bundle common { style: @standard; layout: @flow_right; display: @readable; publication: @screen; legend: @key; }
+}
+
+view tight "Spacing / tight" {
+    data: [@model]; format: @gallery.common; spacing: tight;
+}
+view normal "Spacing / normal" {
+    data: [@model]; format: @gallery.common; spacing: normal;
+}
+view loose "Spacing / loose" {
+    data: [@model]; format: @gallery.common; spacing: loose;
+}
+view expanded "Spacing / expanded" {
+    data: [@model]; format: @gallery.common; spacing: expanded;
+}

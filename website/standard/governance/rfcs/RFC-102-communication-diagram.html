@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 102 — Communication diagram profile (uml.communication@1 on kind:graph) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 102 — Communication diagram profile (<code>uml.communication@1</code> on <code>kind:graph</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; profile uml.communication@1; extension x_message</p>
+<h2>Problem and motivating example</h2>
+<p>RFC 101 / RT-101 delivered the sequence view (<code>kind:sequence</code>, <code>uml.sequence@1</code>): participants as lifelines, messages ordered top-to-bottom in declaration order. That view emphasizes <em>time</em>. The complementary interaction view — the communication/collaboration diagram — emphasizes <em>structure</em>: which participants are connected to which, with messages shown as numbered labels on the links between them. Authors who declare the same participants and <code>uml.message</code> relations today have no way to see that structural view without losing the message ordering entirely (a plain graph edge label carries only the relation name).</p>
+<p>Motivating example: the RT-101 synthetic three-party order flow (customer app → checkout → inventory, with a dashed return and a self-message) re-rendered as a graph layout where every message edge is labelled with its declared sequence number — <code>1 · Submit order</code>, <code>2 · Reserve stock</code>, <code>2.1 · Stock reserved</code> — so the reader sees both the connection topology and the interaction order.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Profiles and extension properties are atom/record property values (<code>property = identifier &quot;:&quot; value &quot;;&quot;</code>); everything below parses today.</p>
+<ul><li>New profile <code>uml.communication@1</code> bound to the existing projection</li></ul>
+<p>  <code>kind:graph</code>. No new projection kind: a communication view is a graph-shaped   view, and the projection SDK already covers it.</p>
+<ul><li>New registered extension property <code>x_message</code> on relations:</li></ul>
+<p>  ``<code>json   { &quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;seq&quot;],     &quot;properties&quot;: { &quot;seq&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;minLength&quot;: 1 } },     &quot;additionalProperties&quot;: false }   </code>``</p>
+<ul><li>No new verbs: the profile reuses <code>uml.message</code> and <code>x_return</code> from RFC 101</li></ul>
+<p>  unchanged.</p>
+<ul><li>No new projection properties: the graph projection block is untouched.</li></ul>
+<pre><code>relation reserve_stock &quot;Reserve stock&quot; @checkout -&gt; @inventory
+    { kind: &quot;uml.message&quot;; x_message: { seq: &quot;2&quot;; }; }
+relation reserve_stock_reply &quot;Stock reserved&quot; @inventory -&gt; @checkout
+    { kind: &quot;uml.message&quot;; x_return: true; x_message: { seq: &quot;2.1&quot; }; }
+
+view communication &quot;Synthetic order flow / communication&quot; {
+    data: [@flow];
+    projection { kind: graph; profile: &quot;uml.communication@1&quot;; }
+    layout { algorithm: layered; }
+}</code></pre>
+<h3>Declared numbering rule</h3>
+<p>The sequence number is <strong>author-declared</strong> as <code>x_message: { seq: &quot;2.1&quot; }</code> — numbers are data, not derived. Convention:</p>
+<ul><li>Top-level messages are numbered <code>1</code>, <code>2</code>, <code>3</code>, … in declaration order by</li></ul>
+<p>  convention (the author writes the numbers; the tool checks shape, not   sequence).</p>
+<ul><li>A reply (<code>x_return: true</code>) is dotted under its request: request <code>2</code>, reply</li></ul>
+<p>  <code>2.1</code> (second reply <code>2.2</code>, and so on).</p>
+<p>Rationale: derived numbering would make the rejection behavior below unreachable — a tool that computes numbers from declaration order can never report &quot;message with no sequence number&quot;, and would silently renumber when the author reorders declarations. Declared numbers keep the author in control and keep the validator honest. This refines the original workplan brief, which mandated both derived numbering and a missing-number error.</p>
+<h2>Semantic normalization and identity effects</h2>
+<p>None. The communication view is an ordinary graph projection: the same elements, the same relations, the same visibility rules. Message numbers are display metadata carried on the relation; element and relation identities are untouched and every rendered edge remains traceable to the declared relation (<code>data-id</code> / <code>data-source-ids</code> as on any graph edge).</p>
+<h2>Visual encoding and routing effects</h2>
+<p>Ordinary graph rendering. Before render, the engine dispatcher relabels each visible <code>uml.message</code> relation from <code>name</code> to <code>&quot;&lt;seq&gt; · &lt;name&gt;&quot;</code> (mirroring the existing <code>state.flat@1</code> branch in <code>ddn-engine.js</code>, which rewrites relation names from <code>x_transition</code> before render). Edge labels already come from <code>r.name</code> in the renderer (<code>labelMeasure</code> in <code>ddn-render.js</code>), so no renderer change is needed once names carry the numbers. Layout is the author's choice; the reference example uses <code>layout { algorithm: layered; }</code>. Returns keep their usual graph styling; the dotted number (not a dashed line) is what marks the reply in this view.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Derive numbers from declaration order</strong> — rejected (see &quot;Declared</li></ul>
+<p>  numbering rule&quot;): makes the missing-number error unreachable and silently   renumbers on reorder.</p>
+<ul><li><strong>A new projection kind <code>communication</code></strong> — rejected: the view is</li></ul>
+<p>  graph-shaped; the graph projection and its layout algorithms already express   it. A new kind would duplicate the entire graph pipeline for a relabel.</p>
+<ul><li><strong>Legend-number callouts</strong> (<code>legend.mode:numbers</code>) — rejected: that is a</li></ul>
+<p>  page-wide legend system with its own <code>DDN061</code> completeness rule and numbered   marker glyphs, unrelated to per-message ordering on the edges themselves.</p>
+<h2>Compatibility and migration</h2>
+<p>Purely additive. No existing profile, kind, verb, or property is edited. <code>uml.sequence@1</code> rendering is unaffected (the sequence renderer draws its own numbered labels from declaration order and never reads <code>x_message</code>). Sources that do not use <code>uml.communication@1</code> or <code>x_message</code> are byte-for-byte unaffected; unregistered <code>x_*</code> properties continue to parse freely and warn <code>DDN-W103</code> only when <code>validation.unknown_extensions</code> is enabled, and registration of <code>x_message</code> removes that warning for conforming sources.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new inputs: messages, participants and numbers are already-declared model data. Rendered text is escaped through the shared <code>esc()</code> helper like every other graph edge label. Edges keep <code>data-id</code>/<code>data-source-ids</code> and the existing keyboard/assistive inspection path. The diagram makes no protocol-correctness claim: numbers are author-declared and are validated for shape only.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/profiles/catalogue.json</code>: new <code>profiles[]</code> entry</li></ul>
+<p>  <code>uml.communication@1</code> (projection <code>graph</code>). Additive only; published profiles   are immutable.</p>
+<ul><li><code>notation/runtime/ddn-profiles.js</code> <code>registry()</code> and</li></ul>
+<p>  <code>standard/registry/extensions.json</code> <code>contracts{}</code>: register <code>x_message</code> with   the schema above, target <code>relation</code>.</p>
+<ul><li><code>standard/registry/capabilities.json</code>: one <code>implemented[]</code> line appended;</li></ul>
+<p>  <code>installedProfiles[]</code> gains the <code>uml.communication@1</code> entry (list mirrors the   profile catalogue). No <code>profiles.projection.kind</code> change — the projection   stays <code>graph</code>.</p>
+<ul><li>New error <code>DDN-PJ111</code> — under <code>uml.communication@1</code>, a visible <code>uml.message</code></li></ul>
+<p>  relation:</p>
+<ol><li>lacks <code>x_message.seq</code>, or</li><li>carries a <code>seq</code> that does not match <code>/^\d+(\.\d+)*$/</code>, or</li><li>breaks the reply convention: a reply (<code>x_return: true</code>) carries an</li></ol>
+<p>     undotted <code>seq</code>, or a non-reply carries a dotted <code>seq</code>.</p>
+<p>  The message names the relation and the rule broken. The code lives in the   additive profile-completion validator <code>ddn-profile-quality.js</code>; code series   do not have to match file names (the PJ series already spans several files).</p>
+<ul><li>Existing codes unchanged: <code>DDN-PJ110</code> still guards <code>uml.message</code> endpoint</li></ul>
+<p>  kinds on the sequence projection; <code>DDN-W103</code> still warns on unregistered   extensions.</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive example: <code>website/examples/basics/42-communication-diagram.ddn</code> — the RT-101</li></ul>
+<p>  three-party order flow as a layered graph with declared numbers <code>1</code>, <code>2</code>,   reply <code>2.1</code>, self-message <code>3</code>, and <code>4</code>.</p>
+<ul><li>Test suite: <code>notation/tests/communication-diagram.js</code> — positive render with</li></ul>
+<p>  numbered edge labels, dotted reply label, all three <code>DDN-PJ111</code> failure modes   (missing, malformed, reply/non-reply mismatch), unrelated relation kinds   unlabelled, byte-identical determinism, and an <code>uml.sequence@1</code> regression   render of the same model.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: <code>standard/governance/rfcs/RFC-102-communication-diagram.md</code> (this document), profile catalogue (<code>uml.communication@1</code> entry), <code>ddn-profiles.js</code>/<code>extensions.json</code> (<code>x_message</code> contract), <code>ddn-engine.js</code> (relabel branch beside <code>state.flat@1</code>), <code>ddn-profile-quality.js</code> (<code>DDN-PJ111</code> block mirroring the <code>flow.documented@2</code> style), <code>capabilities.json</code> (<code>implemented[]</code> + <code>installedProfiles[]</code>), example 42, test suite, spec chapter <code>28-communication-diagrams.md</code>. The renderer (<code>ddn-render.js</code>) needs no edit; the grammar (<code>standard/grammar/ddn.ebnf</code>) is untouched.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 motivation, D2 vocabulary, D3 declared numbering (including the refinement</li></ul>
+<p>  of the workplan brief), D4 rejection behavior, D5 visual encoding, D6   alternatives, D7 compatibility: recorded above as fixed decisions of this   RFC.</p>
+<ul><li>Open: whether a later RFC validates cross-message consistency (gap-free</li></ul>
+<p>  top-level numbering, replies attached to an existing request number);   <code>uml.communication@1</code> deliberately checks shape only, per D3.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DDN 0.3 — Data model and executable contracts — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>DDN 0.3 — Data model and executable contracts</h1>
+<p>The canonical model records elements, recursive fields, ports, relations and typed assertions. A view occurrence is not a deployed copy. A SQL namespace is not a host; a logical shard is not a replica. Definition, instance, fragment and copy relationships retain separate IDs and declared responsibilities.</p>
+<h2>Semantic identities</h2>
+<p>Element identity is module/path or an explicit <code>uid</code>. Field identity is independent of its visible label. Nested field parents and paths are materialized in the resolved model. Imports and view selections do not duplicate elements. A declared sample column binds a field identity, not merely a column heading.</p>
+<h2>Domains and representation</h2>
+<p>A domain carries shared meaning before a physical representation is selected. A field's established <code>domain</code> reference must resolve to a semantic domain. Candidate relationships remain proposals. The renderer can expose domains and datatypes independently; neither display choice changes model semantics. An SQL-domain kind is different from a pre-implementation semantic domain.</p>
+<h2>Structure and presence</h2>
+<p>Field <code>shape</code> is scalar, object, record, array, map, set or variant. <code>presence: optional</code> and <code>nullable: true</code> are independent. A variant requires distinct alternative names and an explicit discriminator. These declarations describe shape; they do not substitute for a full JSON document validator. Sample <code>missing</code> and <code>null</code> remain different values. Samples do not silently establish enumeration, uniqueness or datatype constraints.</p>
+<h2>Relationships</h2>
+<p>Every registered relationship has source/target kind constraints, member-endpoint applicability and self-relationship policy. Invalid known kinds fail. An unspecified sketch kind causes a deferred-check warning; strict mode refuses that unproven endpoint. Structural multiplicity markers cannot be placed on a replication/flow edge. Replication from a team to a table fails; a valid table/copy-to-table/copy relation remains representable.</p>
+<p>Registered <code>x_erp</code> field metadata checks nullable flags and the bounded proposed SQL type vocabulary. Table metadata validates required fields and key membership. Relation metadata validates join tuple names, same-company tuple presence and the distinction between database and reconciliation enforcement. These are logical checks, not installation of physical constraints.</p>
+<h2>Business assertions</h2>
+<p><code>x_affinity</code> declares field comparisons and enforcement responsibility. <code>x_reconciliation</code> declares idempotency identity, pending/accepted/rejected/compensated states, timeout, compensation and evidence obligations. <code>x_constraint</code> describes uniqueness, half-open non-overlap and immutable-state guards for supplied fixtures. A check over sample rows cannot establish race-free behavior in a database engine.</p>
+<p><code>x_ui</code> binds controls to fields and requires command authorization, validation, concurrency, failure and audit contracts. <code>x_report</code> names grain, source fields, aggregations, cutoff and reconciliation. These are model contracts, not executable UI applications or report SQL.</p>
+<p><code>x_requirement</code>, <code>x_evidence</code>, and <code>x_custody</code> model review obligations and the evidence they require. An accepted requirement needs evidence references; a passing evidence declaration needs a digest. The compiler does not authenticate the digest's origin or the signer's professional authority.</p>
+<p>Full machine structure is in <code>schema/resolved.schema.json</code>; endpoint contracts and extension schemas are in <code>registry/</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

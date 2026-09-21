@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>40. Network/bus and rack profiles (network.basic@1, network.rack@1) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>40. Network/bus and rack profiles (<code>network.basic@1</code>, <code>network.rack@1</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-114 (<code>standard/governance/rfcs/RFC-114-network.md</code>). Source grammar remains DDN 0.5; the profiles, kinds, verb, glyphs and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Small network overviews (a bus with attached devices) and rack elevations are everyday infrastructure sketches. Both profiles run on the existing <code>graph</code> projection. Users write <code>projection { kind:graph; profile:&quot;network.basic@1&quot;; }</code> (or <code>&quot;network.rack@1&quot;</code>). This is profile-level notation coverage, not a network-management or cloud-provider notation.</p>
+<h2>Metamodel</h2>
+<ul><li><code>network.bus</code> — a bus segment (silhouette <code>rect</code>, fallback <code>network</code>,</li></ul>
+<p>  family <code>deployment</code>, code <code>BUS</code>, glyph <code>network-bus</code>). The bus is an   ordinary node kind: the author sizes it (a wide thin rect) with   <code>place … { size:[w,h]; }</code>.</p>
+<ul><li><code>network.switch</code> (silhouette <code>rect</code>, fallback <code>router</code>, family</li></ul>
+<p>  <code>deployment</code>, code <code>SWITCH</code>, glyph <code>network-switch</code>).</p>
+<ul><li><code>network.server</code> (silhouette <code>rect</code>, fallback <code>host</code>, family</li></ul>
+<p>  <code>deployment</code>, code <code>SERVER</code>, glyph <code>network-server</code>).</p>
+<ul><li><code>network.rack</code> (silhouette <code>rect</code>, fallback <code>device</code>, family</li></ul>
+<p>  <code>deployment</code>, code <code>RACK</code>, glyph <code>network-rack</code>).</p>
+<ul><li><code>network.attaches</code> — attachment verb (&quot;attaches to&quot;, family</li></ul>
+<p>  <code>structural</code>, code <code>ATTACHES</code>, <code>start:'none'</code>, <code>end:'none'</code>,   <code>source:['<em>']</code>, <code>target:['</em>']</code>, <code>allow_self:false</code>,   <code>member_endpoints:true</code>). An attachment may target a bus element or a   port member on any element.</p>
+<ul><li><code>x_rack</code> — registered extension on objects:</li></ul>
+<p>  <code>{ &quot;type&quot;:&quot;object&quot;, &quot;properties&quot;:{ &quot;units&quot;:{ &quot;type&quot;:&quot;integer&quot;, &quot;minimum&quot;:1 }, &quot;unit&quot;:{ &quot;type&quot;:&quot;integer&quot;, &quot;minimum&quot;:1 } }, &quot;additionalProperties&quot;:false }</code>.   <code>units</code> on the rack is its total U height; <code>unit</code> on a device is its   lowest slot. Malformed values are rejected by the schema contract   (<code>DDN105</code>).</p>
+<h2>The bus is a declared node, not routing geometry</h2>
+<p>This item deliberately does not touch the routing junction machinery. The router still rejects <code>layout.junctions!=='explicit'</code> and <code>shared_segments!=='forbidden'</code> (<code>DDN046</code>; spec 05, spec 13): arbitrary routing-geometry bus/junction networks remain outside this release. The bus here is an ordinary node with declared many-to-one <code>network.attaches</code> relations — membership is declared data, not shared-trunk geometry. The <code>capabilities.json</code> <code>unsupported[]</code> line <code>native bus/junction-network drawing</code> was removed by RFC-114 for exactly this reason: the declared-node form is now covered, while routing-geometry junction networks stay rejected.</p>
+<h2>The attachment rule (<code>DDN-PJ127</code>)</h2>
+<p>Under either profile, every visible <code>network.attaches</code> relation must TARGET a <code>network.bus</code> element or a port member (<code>to.member</code> set). Anything else — for example an element-level edge to a switch or server — is rejected as <code>DDN-PJ127</code>; the message names the relation and the rule.</p>
+<h2>The rack slot rule (<code>DDN-PJ127</code>)</h2>
+<p>Under <code>network.rack@1</code>, a rack is a view <code>frame</code> whose <code>scope</code> resolves to a <code>network.rack</code> object and whose <code>members</code> are the mounted devices. Each member device carrying <code>x_rack.unit</code> must declare a slot of at least 1 and at most the rack's <code>x_rack.units</code>, and no two devices in one rack frame may declare the same <code>unit</code>; violations are rejected as <code>DDN-PJ127</code>, the message naming the device, the slot and the rule broken. v1 does not reorder the layout: devices are stacked bottom-up with explicit <code>place</code> pins, and exact 1U geometry is not claimed — the slot number is validated metadata.</p>
+<h2>Visual encoding</h2>
+<p>The bus is a wide thin rect node; attachments are plain edges (arrowhead <code>none</code>); the rack frame encloses its member devices. No renderer change.</p>
+<h2>Glyph provenance</h2>
+<p>All four glyphs (<code>g-network-bus</code>, <code>g-network-switch</code>, <code>g-network-server</code>, <code>g-network-rack</code>) are original DDN line art drawn for this profile pack (<code>stroke=&quot;currentColor&quot;</code>, 24×24 viewBox), registered in <code>standard/registry/glyph-library.svg</code> and mapped in <code>standard/registry/catalogue.json</code>. No vendor logos, fonts or cloud-provider icon sets are introduced, in compliance with <code>NOTICE.md</code>.</p>
+<h2>Example</h2>
+<p><code>website/examples/basics/54-network-diagram.ddn</code> — a synthetic office network: one bus, one switch, two servers (each with an <code>eth0</code> port; the file server attaches via <code>@m.file_server.eth0</code>) and an uplink router attached to the switch's <code>wan</code> port, plus a 4U rack elevation with the two servers pinned bottom-up in slots 1 and 3.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

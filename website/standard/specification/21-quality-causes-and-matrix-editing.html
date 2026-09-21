@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>21. Quality causes, encoded matrices, and source-assignment editing — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>21. Quality causes, encoded matrices, and source-assignment editing</h1>
+<p><strong>DDN 0.6.0-beta.1. Implemented reference contract.</strong> This chapter adds profiles without changing the separation of data, reusable formats, and named views. Source remains UTF-8. Runtime capabilities, examples, validators, and the public library must agree; a source property must not silently select an unimplemented algorithm.</p>
+<h2>21.1 Fishbone / Ishikawa profile</h2>
+<p><code>projection.kind: fishbone</code> with <code>profile: &quot;fishbone.basic@1&quot;</code> selects a measured spine-and-branch projection. Objects have kinds <code>quality.effect</code>, <code>quality.category</code>, and <code>quality.cause</code>. Directed <code>quality.cause</code> relations point <strong>from contributing cause to parent cause/category/effect</strong>. The source identifies possible causal relationships; the renderer does not establish their truth. This follows the qualitative cause/category purpose described by ASQ [Q1], not a statistical causality test.</p>
+<pre><code>projection {
+    kind: fishbone;
+    profile: &quot;fishbone.basic@1&quot;;
+    effect: @m.causes.effect;
+    relation: &quot;quality.cause&quot;;
+}</code></pre>
+<p><code>effect</code> is one selected <code>quality.effect</code>. Its first incoming level contains one to twelve <code>quality.category</code> definitions. Deeper branches are selected cause definitions. The renderer walks incoming relationships and places alternating categories above and below the spine. Branch hierarchy, label widths, and depth determine spacing. The head contains the effect label. Contour/rib lines are visual representations of the declared relations, not newly created data objects or electrical junctions.</p>
+<p>One cause may participate under multiple categories. It remains one semantic object and has several appearance IDs built from its path. A repeated subcause expands under each participating path. Selection maps every appearance to the original cause and contributing relation. A child is not duplicated into the source to satisfy a particular picture.</p>
+<p>The profile rejects causal cycles, disconnected selected cause relationships, missing/out-of-view references, field-level endpoints, empty category sets, more than twelve root categories, more than four cause levels, or more than 250 expanded occurrences. These are declared runtime limits, not properties of the Ishikawa method. New graph-placement or hard-position controls are not applicable to the specialized projection; controls must reject them rather than falsely claim to honor pins.</p>
+<p>Classic, hand-drawn, and neo treatment affect the furniture and strokes, not parentage. Source order supplies deterministic branch order; other layouts do not infer causal strength. Arbitrarily long labels and very dense cause trees remain subject to measurement and page guards; split the review into linked views rather than shrinking labels into illegibility.</p>
+<h2>21.2 Matrix encodings</h2>
+<p>The existing matrix planner derives each cell from a relationship kind and row/column identities. The new <code>matrix.heatmap@1</code> profile adds an explicit <code>encoding</code>. A cell with no source relationship is <strong>missing</strong>, and must remain distinct from a known zero. Numeric strings are not coerced to numbers. More than one contributing relationship is not silently aggregated by this profile.</p>
+<pre><code>projection {
+    kind: matrix;
+    profile: &quot;matrix.heatmap@1&quot;;
+    rows: [@m.responsibilities.inspect, @m.responsibilities.contain];
+    columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b];
+    relation: assoc;
+    value: &quot;x_record.score&quot;;
+    write_data: @m.responsibilities;
+    encoding: {mode: numeric, domain: [0, 10], palette: blue};
+}</code></pre>
+<table><thead><tr><th>Mode</th><th>Required parameters</th><th>Validity and rendering</th></tr></thead><tbody><tr><td><code>numeric</code></td><td><code>domain: [low, high]</code></td><td>Two finite strictly increasing limits. Values outside the domain fail instead of clamping. Intensity is <code>(value-low)/(high-low)</code>.</td></tr><tr><td><code>category</code></td><td><code>values: [...]</code>, <code>labels: [...]</code></td><td>Distinct scalar categories with equal-length, nonempty labels. Unmapped values fail. Maximum twelve categories.</td></tr><tr><td><code>bands</code></td><td><code>boundaries: [...]</code>, <code>labels: [...]</code></td><td>Increasing finite bounds; one label for each interval. <code>[low,high)</code> except final upper bound inclusive. Values outside all bands fail.</td></tr></tbody></table>
+<p><code>palette</code> chooses a registered <code>blue</code> or <code>diverging</code> value scale; it does not redefine entity or relation colours. Every encoded cell retains its value/status text and a legend. Missing cells explicitly say no record. A supplied score is not automatically an arithmetic risk measure; its calculation and suitability are data-policy requirements outside the renderer.</p>
+<p>The numeric/category assignments are source relations, not a cached numeric array. Cell marks include <code>rowId</code>, <code>columnId</code>, relationship IDs, the value-binding path and original scalar. Selected cells can be edited through source-aware tools.</p>
+<h2>21.3 Matrix write-back</h2>
+<p>A matrix view may select <code>write_data</code>, a reference to a shared data block explicitly present in that view's <code>data</code> collection. If omitted, the authoring layer attempts the unambiguous selected data block containing the first row declaration. If no suitable imported target exists, creation fails and requests an explicit <code>write_data</code>. It never silently creates assignments in a view-local block that another view of the shared model cannot see.</p>
+<pre><code>DDNLive.authoring.setMatrixCell(workspace, &quot;views.ddn&quot;, &quot;raci&quot;,
+    rowId, columnId, &quot;C&quot;);
+DDNLive.authoring.setMatrixCell(workspace, &quot;views.ddn&quot;, &quot;raci&quot;,
+    rowId, columnId, null, {remove: true});
+DDNLive.authoring.setMatrixCells(workspace, &quot;views.ddn&quot;, &quot;raci&quot;, [
+    {row: taskId, column: oldOwnerId, value: &quot;C&quot;},
+    {row: taskId, column: newOwnerId, value: &quot;A&quot;}
+]);</code></pre>
+<p>The binding must address a safe extension property, for example <code>x_assignment.code</code> or <code>x_record.score</code>. A creation inserts a named relationship in the shared data section and uses resolvable source references to both endpoints. Existing assignments update only their selected property. Remove deletes the specific relationship definition. Joined/multisource cells are not directly editable as one assignment. Unknown keys, invalid identifiers, nonfinite values, duplicate cell operations and targets outside the matrix fail before mutation.</p>
+<p>A batch contains one to 100 operations and commits atomically after the selected view validates. This supports transferring an accountable role without an intermediate state with zero or two accountable assignments. Undo restores the exact prior source buffers. Other views are revalidated on their next render; this is not yet global transactional validation of all dependent views. Raw source drafts intentionally can remain invalid.</p>
+<p>RACI's supplied policy remains exactly one <code>A</code> and at least one <code>R</code> per row, with only R/A/C/I codes. CRUD accepts distinct C/R/U/D letters. This is an explicit installed policy, not a universal assertion about all organizations' responsibility methods. A colour/style toggle never edits any assignment.</p>
+<h2>21.4 Diagnostics and acceptance</h2>
+<p><code>DDN-QF001..004</code> cover fishbone references, roles, cycles, expansion limits and disconnected paths. <code>DDN-QM001..002</code> cover encoding shape/parameters and incompatible cell values. <code>DDN-E007</code> covers guarded matrix editing. General parser, profile, unit, page, and export diagnostics still apply.</p>
+<p>Acceptance must include repeated cause identities; cycle/depth rejection; numeric zero versus absent cells; edge-inclusive bands; numeric-string rejection; empty-cell creation observable in a second graph view; invalid RACI creation with no source mutation; batched accountability changes; and exact undo. No image-only fixture can establish these properties.</p>
+<p>Source witness: <code>website/examples/quality/model.ddn</code>, <code>views.ddn</code>; tests: <code>tests/quality.js</code>. [Q1] ASQ, Fishbone: https://asq.org/quality-resources/fishbone (checked 2026-09-08). The implementation is original; no ASQ artwork is redistributed.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

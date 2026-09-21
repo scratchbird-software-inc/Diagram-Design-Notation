@@ -87,5 +87,5 @@ GEDCOM or other external interchange, adoption/step-family nuance beyond
 the two-parent rule, and records verification remain on the profile's
 `unsupported` list.
 
-See `examples/basics/56-family-tree.ddn` for a fictional three-generation
+See `website/examples/basics/56-family-tree.ddn` for a fictional three-generation
 family with two partnerships.

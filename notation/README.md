@@ -32,7 +32,7 @@ Zero runtime dependencies; runs in Node 22+ and browsers. Implements
 ```sh
 npm test                                   # all suites
 npm run build:sdk                          # rebuild dist/ from runtime/ + studio/src
-node cli/cli.js check ../examples/basics/01-customer.ddn --workspace ..
+node cli/cli.js check ../website/examples/basics/01-customer.ddn --workspace ..
 ```
 
 All public output goes through the export/profile machinery — hiding is not

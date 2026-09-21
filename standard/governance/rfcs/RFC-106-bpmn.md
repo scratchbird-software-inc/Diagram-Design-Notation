@@ -84,7 +84,7 @@ Rejection behavior (D4):
   `DDN105`; this code covers the missing-property case and any residual
   invalid value). The message names the gateway.
 
-Codes verified free: `grep -rhoE "DDN-PJ11(6|7)" notation/ standard/ examples/`
+Codes verified free: `grep -rhoE "DDN-PJ11(6|7)" notation/ standard/ website/examples/`
 prints nothing (RT-101…105 took PJ110–PJ115 + PJW03).
 
 ## Visual encoding and routing effects
@@ -149,7 +149,7 @@ profile-level coverage, not BPMN conformance.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/46-bpmn.ddn` — synthetic buyer/seller
+- Positive example: `website/examples/basics/46-bpmn.ddn` — synthetic buyer/seller
   collaboration: two pool frames, typed start/end events (`none`, `message`,
   `timer`, `error`), an exclusive gateway, `uml.flow` sequence edges within
   each pool, and one dashed `bpmn.messageflow` from `request_quote` to

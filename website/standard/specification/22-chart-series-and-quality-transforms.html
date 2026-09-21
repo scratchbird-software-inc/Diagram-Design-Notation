@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>22. Shared chart series, layers, and bounded quality transforms — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>22. Shared chart series, layers, and bounded quality transforms</h1>
+<p><strong>DDN 0.6.0-beta.1.</strong> <code>chart.basic@1</code> remains unchanged for earlier single-series and arc examples. The additive <code>chart.quality@1</code> profile supplies explicit series, layered marks, and four named transforms. No JavaScript/SQL/FEEL expression evaluation or remote data loading is introduced.</p>
+<h2>22.1 Source contract</h2>
+<pre><code>projection {
+    kind: chart;
+    profile: &quot;chart.quality@1&quot;;
+    records: [@m.series.s0_0, @m.series.s0_1, @m.series.s1_0, @m.series.s1_1];
+    x: &quot;x_record.stage&quot;;
+    y: &quot;x_record.count&quot;;
+    series: &quot;x_record.series&quot;;
+    mark: bar;
+    arrangement: group;
+    unit: &quot;defects&quot;;
+}</code></pre>
+<p>Records are distinct selected object references; maximum 1,000. <code>x</code> and <code>y</code> use the safe property-binding grammar from chapter 16, not arbitrary code. <code>y</code> must be a finite number. A present <code>unit</code> requires every input record's <code>x_record.unit</code> to match exactly. Missing/null values fail unless <code>missing: skip</code> explicitly excludes them. Excluded/skipped IDs remain in the plan. Numeric strings are not coerced. The runtime limits visible nodes/relationships and source size still apply before projection planning.</p>
+<p>The optional filter supports explicit equality or set membership; order specifies a scalar binding and ascending/descending direction. Source ordering and stable identities break ties. A filter that removes all records fails rather than yielding a misleading successful empty picture.</p>
+<h2>22.2 Series and layers</h2>
+<table><thead><tr><th>Property</th><th>Values / meaning</th></tr></thead><tbody><tr><td><code>transform</code></td><td><code>identity</code> (default), <code>histogram</code>, <code>pareto</code>, <code>waterfall</code>, <code>boxplot</code>.</td></tr><tr><td><code>series</code></td><td>Text property binding; absent means one series named Value. At most twenty series, text keys up to eighty characters.</td></tr><tr><td><code>mark</code></td><td><code>bar</code>, <code>line</code>, <code>area</code>, <code>point</code>; <code>box</code> only with boxplot transform.</td></tr><tr><td><code>arrangement</code></td><td><code>group</code>, <code>stack</code>, <code>percent</code>, <code>overlay</code>. Default group.</td></tr><tr><td><code>x_type</code></td><td><code>category</code> (default), finite <code>number</code>, or validated ISO date-only <code>date</code>.</td></tr><tr><td><code>layers</code></td><td>Exactly one <code>{series, mark}</code> definition per series when supplied.</td></tr><tr><td><code>aggregate</code></td><td><code>none</code>, <code>sum</code>, <code>count</code>, <code>min</code>, <code>max</code>, <code>mean</code> for duplicate series/coordinate rows.</td></tr><tr><td><code>series_missing</code></td><td><code>gap</code> (default), <code>zero</code>, <code>error</code>. Zero-fill creates an explicitly synthetic mark with no invented contributor.</td></tr><tr><td><code>target</code></td><td>Optional finite value on the same y scale; percent target is in 0..100.</td></tr></tbody></table>
+<p>All series in this slice share one y scale and unit. There is no general independent multi-axis chart. A mixed actual/target chart may use bars for Actual and a line for Target; neither is a presentation-only number. Duplicate series/coordinate pairs require an explicit aggregate. <code>count</code> cannot retain an input measure's unit as though counts were that measure.</p>
+<p>Grouped bars receive separate category slots. Stacked bars/areas use signed cumulative offsets, with separate positive and negative accumulation. Percent stacks require nonnegative observations and a positive total at every category; their displayed y unit is percent while raw values remain inspectable. Stack/percent rejects incomplete series unless explicit zero-fill or complete data supplies all cells. Stacks must be all bars or all areas. Numeric/date x cannot be used for bars in this bounded implementation. Categorical domains have at most 200 positions; page width grows to retain minimum category spacing.</p>
+<p>Line/area gaps are not bridged across missing observations. Layer identities, source contributors, raw value, normalized value and stack start/end are retained in scene marks. Quantitative coordinates remain exact under hand-drawn styling; only the chart furniture adopts the drawing treatment. Selecting free-node placement or dragging a mark as though it were a graph object is prohibited.</p>
+<h2>22.3 Histogram</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.quality@1&quot;;
+    records: [@m.measurements.m0_0, @m.measurements.m0_1];
+    transform: histogram; mark: bar;
+    y: &quot;x_record.value&quot;; unit: &quot;mm&quot;;
+    bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3];
+    normalize: density;
+    outside: error;
+}</code></pre>
+<p>Bins require two to 101 finite strictly increasing boundaries. Intervals are lower-inclusive/upper-exclusive, except the final bin includes its upper bound. Outside values fail by default; <code>outside: exclude</code> explicitly removes them and records their identities. At least one observation must remain in the bins. No automatic bin estimator is hidden in the renderer.</p>
+<p><code>normalize: count</code> draws frequency. <code>proportion</code> divides each count by the retained observation count. <code>density</code> additionally divides by bin width, so the sum of height × width is one. Counts and densities are different axes. Unequal bin widths are represented geometrically; raw counts are also available on marks. This normalization distinction follows the statistical distinction described by NIST [Q2].</p>
+<p>A zero-count bin has no fake source record. Total overflow, nonpositive widths, no retained data and out-of-range values are explicit errors.</p>
+<h2>22.4 Pareto</h2>
+<p><code>transform: pareto; mark: bar</code> aggregates nonnegative <code>y</code> by categorical <code>x</code>, sorts descending with stable ties, and computes cumulative totals and percentages. A positive total is required. The cumulative line's primary scale is the same total-valued axis as the bars; the right scale labels the equivalent percentages. There is no unrelated secondary numeric variable. Each cumulative marker records the contributors through that category.</p>
+<p>The diagram does not infer that precisely 80% of an outcome is attributable to 20% of the categories. Its job is to expose the supplied descending distribution; ASQ describes the underlying descending-category chart purpose [Q3]. All quantities, labels and source identities remain inspectable.</p>
+<h2>22.5 Waterfall</h2>
+<p><code>transform: waterfall; mark: bar</code> adds a <code>step</code> property binding. Every record supplies one of <code>delta</code>, <code>subtotal</code>, or <code>total</code>, and a finite <code>y</code> value. <code>baseline</code> defaults to zero.</p>
+<p>A delta goes from the previous running value to <code>running + y</code>. A total/subtotal goes from zero to the current running value and must assert that same value in <code>y</code>; it does <strong>not</strong> add it again. Assertion tolerance is <code>max(1, abs(running)) × 1e-10</code>, reflecting the explicitly nonauthoritative finite-Number implementation. A mismatch fails. Records still define the order; neither names such as Total nor colours determine step type.</p>
+<p>Each bar retains start, end, signed value, step role, its value source, and cumulative contributors. Adjacent connectors show the previous running level. The fixture totals 330 synthetic CAD after inspection 120, rework 180, scrap 70 and recovery -40. The asserted 300 subtotal is not a fifth change.</p>
+<h2>22.6 Box plots</h2>
+<p><code>transform: boxplot; mark: box</code> groups observations by x. <code>quartiles: linear_r7</code> is the one supported method: for sorted values and probability p, interpolate at index <code>(n−1)p</code>. This is an explicitly selected convention, not a claim that every package uses the same quartiles.</p>
+<p><code>whiskers: minmax</code> reaches the minimum and maximum observations. <code>tukey_1_5</code> reaches the outermost observations within <code>Q1−1.5 IQR</code> and <code>Q3+1.5 IQR</code>, including fence ties. Points outside the fences are individual source-bound outlier marks. Both variants are related to the distinct presentations described by NIST [Q4], but this profile does not calculate statistical significance, confidence intervals or process-control capability.</p>
+<p>The plot reports sample sizes, quartile method and whisker rule. It does not force zero onto a tightly clustered measurement scale; it includes the complete observed/outlier extent plus declared renderer padding. Single-value and tied samples produce degenerate boxes/whiskers, not division errors. Nonfinite derived quartiles, ranges or fences fail.</p>
+<h2>22.7 Radar/spider charts</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.radar@1&quot;;
+    records: [@facts.a1, @facts.a2, @facts.a3, @facts.n1, @facts.n2, @facts.n3];
+    mark: radar;
+    x: &quot;x_record.criterion&quot;; y: &quot;x_record.score&quot;;
+    series: &quot;x_record.product&quot;; unit: &quot;points&quot;;
+}</code></pre>
+<p><code>mark: radar</code> arranges the distinct <code>x</code> categories as spokes at equal angles, starting at 12 o'clock and proceeding clockwise, in record order (no sorting). Four grid rings mark 25/50/75/100% of one shared <code>0 … max</code> scale computed over all points — per-axis normalization is deliberately not applied, so values on different spokes remain directly comparable. Each series (or the single implicit series when <code>series</code> is absent) is one closed polygon whose vertices sit at <code>radius × y / max</code> on each spoke, stroked in the registered palette with a 12% opacity fill; category labels sit outside the outer ring and the series legend matches the other chart families. A series with no observation on a spoke simply omits that vertex; no value is invented.</p>
+<p>Radar requires categorical <code>x</code> (<code>DDN-PJ030</code> otherwise), rejects aggregation (<code>DDN-PJ031</code>), requires at least three distinct categories (<code>DDN-PJ071</code>), and requires every <code>y</code> to be a finite number greater than or equal to zero (<code>DDN-PJ072</code>). Radar has no faithful Vega-Lite mapping, so the optional adapter rejects it with <code>DDN-PJ070</code>; the native SVG projection is the render path. Unsupported: multi-axis scales and filled-curvature interpolation.</p>
+<h2>22.8 Funnel</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.funnel@1&quot;;
+    records: [@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5];
+    mark: funnel;
+    x: &quot;x_record.stage&quot;; y: &quot;x_record.value&quot;;
+    unit: &quot;deals&quot;;
+}</code></pre>
+<p><code>mark: funnel</code> draws one horizontal band per stage, stacked top to bottom in declaration order (after any <code>filter</code>/<code>order</code>); the category axis value (<code>x</code>) is the stage label and one record supplies one value per stage. All bands share equal heights (<code>plotH / N</code>) and are centered on one vertical axis. Band <code>i</code> is a trapezoid whose top edge width is <code>plotW × yᵢ / maxY</code> and whose bottom edge width is <code>plotW × yᵢ₊₁ / maxY</code> for <code>i &lt; N − 1</code>; the final band's bottom edge is <code>max(24 × scale, topWidth × 0.35)</code> wide — a fixed, deterministic taper. Each band is filled from the registered palette and stroked with the surface colour, labels read <code>stage: value unit</code> (centered inside the band when it fits, otherwise to the right), and a footer states the stage count and total.</p>
+<p>Funnel requires categorical <code>x</code> (<code>DDN-PJ030</code> otherwise), rejects any <code>series</code> binding (<code>DDN-PJ030</code>) and any aggregation (<code>DDN-PJ031</code>) — duplicate stage labels are rejected by the existing <code>DDN-PJ036</code> check since no aggregate is permitted. A funnel needs at least two distinct stages (<code>DDN-PJ073</code>) and every stage value must be a nonnegative number (<code>DDN-PJ107</code>); non-finite or missing values fail earlier with <code>DDN-PJ032</code>. Funnel has no faithful Vega-Lite mapping, so the optional adapter rejects it with <code>DDN-PJ070</code>; the native SVG projection is the render path. Limitations: per-stage conversion rates are not computed, and curved or necked funnel variants are unsupported.</p>
+<h2>22.9 Gauge/KPI dial</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.gauge@1&quot;;
+    records: [@sla.q1];
+    mark: gauge;
+    x: &quot;x_record.kpi&quot;; y: &quot;x_record.value&quot;;
+    unit: &quot;%&quot;; target: 95;
+}</code></pre>
+<p><code>mark: gauge</code> draws one semicircular 180° dial (from 180° at the left to 0° at the right) for a single percentage value. Four equal tick bands (0–25, 25–50, 50–75, 75–100) are drawn as concentric arc segments in registered palette order, tick labels 0/25/50/75/100 sit outside the arc, and a needle runs from the dial center at angle <code>π × (1 − y / 100)</code>. The center label reads the value plus <code>%</code> (plus <code>unit</code> when set and not already <code>%</code>), and the record's <code>x</code> value is rendered as the caption below the dial. When <code>target</code> (a plain number in 0..100) is set, a short radial tick is drawn on the outer arc at angle <code>π × (1 − target / 100)</code>.</p>
+<p>Exactly one record must remain after any <code>filter</code> — the KPI — otherwise <code>DDN-PJ074</code> is raised before the duplicate-<code>x</code> grouping, so two same-<code>x</code> records also fail with <code>DDN-PJ074</code>. Both the value and <code>target</code> must be finite numbers in 0..100 (<code>DDN-PJ075</code>); non-finite or missing values fail earlier with <code>DDN-PJ032</code>. Gauge requires categorical <code>x</code> (<code>DDN-PJ030</code>), rejects any <code>series</code> binding (<code>DDN-PJ030</code>) and any aggregation other than <code>none</code> (<code>DDN-PJ031</code>).</p>
+<p><code>target</code> is the same chart property used by <code>chart.quality@1</code> (§22.1), where it is a numeric reference on the shared y scale. A gauge view bypasses the quality planner entirely (<code>chartRequested</code> returns false for <code>mark: gauge</code>), so gauge <code>target</code> keeps its own 0..100 dial semantics and never triggers a quality transform. Gauge has no faithful Vega-Lite mapping, so the optional adapter rejects it with <code>DDN-PJ070</code>; the native SVG projection is the render path. Unsupported: multi-needle dials, custom band colour thresholds, and full-circle dials.</p>
+<h2>22.10 Candlestick/OHLC</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.candlestick@1&quot;;
+    records: [@trading.d1, @trading.d2, @trading.d3, @trading.d4];
+    mark: candlestick;
+    x: &quot;x_record.day&quot;; x_type: date;
+    open: &quot;x_record.open&quot;; high: &quot;x_record.high&quot;;
+    low: &quot;x_record.low&quot;; close: &quot;x_record.close&quot;;
+    unit: &quot;CAD&quot;;
+}</code></pre>
+<p><code>mark: candlestick</code> draws one candle per record: a vertical wick line from <code>low</code> to <code>high</code> and a body rectangle from <code>open</code> to <code>close</code>, centred on the record's category slot. Four additive chart properties — <code>open</code>, <code>high</code>, <code>low</code>, <code>close</code> — are property bindings with the same grammar as <code>x</code>/<code>y</code> and are resolved per record. Candlestick binds <code>x</code>, <code>open</code>, <code>high</code>, <code>low</code> and <code>close</code>; it does not use <code>y</code> (the shared axis-range and unit machinery keeps working because each point's <code>y</code> is set to <code>close</code>). <code>x_type</code> is <code>category</code> (default) or <code>date</code>; a numeric <code>x</code> is rejected (<code>DDN-PJ030</code>). Aggregation is meaningless for OHLC, so any <code>aggregate</code> other than <code>none</code> is rejected (<code>DDN-PJ031</code>), any <code>series</code> binding is rejected (<code>DDN-PJ030</code>), and duplicate <code>x</code> values keep failing with <code>DDN-PJ036</code>.</p>
+<p>Every record must supply finite numeric open/high/low/close values (<code>DDN-PJ076</code>); <code>high</code> must be at least <code>low</code> and both <code>open</code> and <code>close</code> must lie within <code>[low, high]</code> (<code>DDN-PJ077</code>). The y scale spans <code>min(low) … max(high)</code> with the standard six grid lines and labels; a flat range is guarded by the usual <code>hi = lo + 1</code> idiom. Body width is <code>max(2, plotW / N × 0.5)</code>. Up sessions (<code>close ≥ open</code>) use palette colour 1 (green <code>#34976E</code>), down sessions palette colour 2 (<code>#AC6538</code>) — a fixed, deterministic assignment in both directions. Each candle is one provenance group carrying the record's open/high/low/close values, and tick labels show each session's category or ISO date. Candlestick has no faithful Vega-Lite mapping, so the optional adapter rejects it with <code>DDN-PJ070</code>; the native SVG projection is the render path. The footer reads &quot;Source-bound candlestick · N marks · supplied data, not a financial calculation certificate.&quot;</p>
+<p><code>chart.basic@1</code> continues to list candlestick in its <code>unsupported</code> set; the capability ships as the new <code>chart.candlestick@1</code> profile rather than by editing a published profile. Unsupported: intraday tick aggregation, volume columns, and financial advice/computation.</p>
+<h2>22.11 Treemap</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.treemap@1&quot;;
+    records: [@storage.r1, @storage.r2, @storage.r3];
+    mark: treemap;
+    x: &quot;x_record.path&quot;; y: &quot;x_record.value&quot;;
+    unit: &quot;GB&quot;;
+}</code></pre>
+<p><code>mark: treemap</code> draws nested rectangular tiles whose areas are proportional to record values. The hierarchy lives in the <code>x</code> value, not the binding: the resolved category string is split on <code>.</code>, so <code>&quot;analytics.events&quot;</code> nests tile <code>events</code> inside group <code>analytics</code>, and a plain category (<code>&quot;logs&quot;</code>) is a single-level tile. Paths have at most 3 levels; deeper or empty-segment paths are rejected (<code>DDN-PJ030</code>, &quot;Treemap paths have at most 3 levels&quot;). Declaration order (after <code>filter</code>/<code>order</code>) is preserved at every level — siblings are never re-sorted by value.</p>
+<p>The layout is slice-and-dice: a node's rectangle is split among its children in proportion to their values, and the cut direction alternates by depth (depth 0 vertical cuts = side-by-side columns, depth 1 horizontal, depth 2 vertical again). Internal group values are the sums of their descendant leaf values; groups get a header band with the group name and total plus a transparent outline, and every leaf tile is a provenance mark carrying its full dotted <code>path</code> and <code>value</code>. A fixed inner gap of <code>4 × s</code> separates sibling tiles and group headers visually; the allotted tile boxes remain exactly proportional to values. Leaf labels show the last path segment plus the formatted value, wrapped and dropped when the tile is too small; the <code>&lt;title&gt;</code> tooltip always carries the full label. The footer reports the tile count and grand total.</p>
+<p>Treemap requires categorical <code>x</code> (<code>DDN-PJ030</code>); any <code>aggregate</code> other than <code>none</code> is rejected (<code>DDN-PJ031</code>), any <code>series</code> binding is rejected (<code>DDN-PJ030</code>), and duplicate full paths keep failing with <code>DDN-PJ036</code>. Tile values must be nonnegative finite numbers: negative values fail with <code>DDN-PJ078</code>, missing or non-numeric values with <code>DDN-PJ032</code>. Treemap has no faithful Vega-Lite mapping, so the optional adapter rejects it with <code>DDN-PJ070</code>; the native SVG projection is the render path.</p>
+<p>Unsupported: squarified layout, zoomable/interactive drill-down, and colour-encoded secondary measures.</p>
+<h2>22.12 Sankey</h2>
+<pre><code>projection {
+    kind: chart; profile: &quot;chart.sankey@1&quot;;
+    records: [@energy.f1, @energy.f2, @energy.f3];
+    mark: sankey;
+    x: &quot;x_record.source&quot;; target: &quot;x_record.target&quot;; y: &quot;x_record.value&quot;;
+    unit: &quot;MWh&quot;;
+}</code></pre>
+<p><code>mark: sankey</code> draws a flow diagram: one node per distinct endpoint name and one translucent ribbon per record, with ribbon thickness proportional to the record value. Each record is one explicit flow: <code>x</code> resolves to the source name, <code>target</code> to the target name and <code>y</code> to the flow value.</p>
+<p>The <code>target</code> property name is shared with <code>chart.quality@1</code>, with mark-scoped semantics: under <code>chart.quality@1</code> it is a numeric reference line on the shared y scale; under <code>mark: sankey</code> it MUST be a property binding string resolving to the target endpoint text — a numeric <code>target</code> is rejected (<code>DDN-PJ030</code>, &quot;Sankey target is a property binding, not a numeric reference&quot;). Sankey always sets <code>target</code>, so it is exempted from the quality-planner routing that <code>target</code> otherwise triggers; sankey plans bypass the quality chart planner entirely.</p>
+<p>Nodes are the distinct source/target names in declaration order of first appearance; each node carries its contributing record sourceIds. Columns are assigned by breadth-first depth from pure sources: nodes that never appear as a target are depth 0, and depth(n) = 1 + the maximum depth of its upstream nodes. A cycle makes this impossible and fails with <code>DDN-PJ079</code> (&quot;Sankey flow graph contains a cycle&quot;). Sources repeat legitimately across records, so sankey skips the duplicate-x grouping/aggregation path; duplicate (source,target) pairs are allowed and their ribbons stack in declaration order at both endpoints.</p>
+<p>Rendering: one column per depth; node boxes of fixed width <code>14 × s</code> whose height encodes max(inflow, outflow) on a scale chosen so the tallest column fills the plot height; nodes stack vertically in declaration order with <code>12 × s</code> gaps; labels sit left of the box (depth 0 and intermediate columns) or right of it (last depth). Each ribbon is a filled cubic-Bezier path from the source box's right edge to the target box's left edge at the same value scale, drawn at <code>fill-opacity=&quot;.25&quot;</code> with the ribbon colour taken from the shared categorical palette by link index, and is a provenance mark carrying the flow value; each node box is a provenance mark carrying its aggregated record sourceIds. The footer reports node/flow counts, the depth-column count and the unit.</p>
+<p>Validation: categorical <code>x</code> only (<code>DDN-PJ030</code>); any <code>aggregate</code> other than <code>none</code> is rejected (<code>DDN-PJ031</code>) and any <code>series</code> binding is rejected (<code>DDN-PJ030</code>); endpoints must be distinct nonempty category text (<code>DDN-PJ032</code>, &quot;Sankey endpoints are category text&quot;); missing or non-finite values keep failing with <code>DDN-PJ032</code>; values must be positive — zero or negative flows fail with <code>DDN-PJ108</code> (&quot;Sankey flows require positive values&quot;). Sankey has no faithful Vega-Lite mapping, so the optional adapter rejects it with <code>DDN-PJ070</code>; the native SVG projection is the render path.</p>
+<p>Unsupported: cyclic flows, multi-port nodes, and flow conservation auditing.</p>
+<h2>22.13 Unsupported combinations and publication</h2>
+<p>Special transforms reject series/layer/arrangement, unrelated transform parameters, or aggregate settings that would be ignored. Boxplot requires box marks; histogram/Pareto/waterfall require bars. Chart-basic arc rendering remains available in the earlier profile. Arbitrary formulas, regression, statistical tests, logarithmic/independent axes and responsive business dashboards are not introduced here.</p>
+<p>The page engine measures labels/legend rows, expands categorical spacing where required, and validates output size. A fixed page that cannot retain its minimum text size fails. Do not use browser zoom as proof that an exported PDF target is readable. Grouped legends and data labels retain unit and series meanings in all palettes. There is no global label-placement optimality guarantee for every possible dataset.</p>
+<p><code>DDN-QC001..022</code>, <code>DDN-Q001..005</code>, core publication diagnostics and capability errors report invalid bindings, parameters, units, aggregates, ranges and unsupported combinations. <code>tests/quality.js</code> includes exact bin counts, density integral, boundary inclusion, cumulative totals, stacks, R7 values, outliers, numeric-string rejection and source edits shared across tables/plots.</p>
+<h2>Sources</h2>
+<p>References support background chart definitions, not approval of this implementation. Checked 2026-09-08.</p>
+<p>[Q2] NIST histogram: https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm</p>
+<p>[Q3] ASQ Pareto: https://asq.org/quality-resources/pareto</p>
+<p>[Q4] NIST box plot: https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

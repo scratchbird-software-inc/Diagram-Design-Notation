@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 112 — PERT/CPM critical-path profile (pert.cpm@1 on kind:graph) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 112 — PERT/CPM critical-path profile (<code>pert.cpm@1</code> on <code>kind:graph</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; profile pert.cpm@1; extension x_estimate; capabilities.json unsupported[] clause removal (critical-path scheduling)</p>
+<h2>Problem and motivating example</h2>
+<p>Project plans need the computed critical path, not just drawn dependencies (D1). The existing <code>graph</code> projection can draw tasks and finish-before links (<code>analysis.task</code>, <code>analysis.precedes</code>), but nothing computes which chain of tasks actually determines the delivery date, so the most decision-relevant fact in a plan is left to the reader's eyeballing.</p>
+<p>Motivating example: a synthetic release plan where the design→build→integrate→test chain determines the ship date — <code>design</code> (3d) precedes <code>build_api</code> (4d) and <code>build_ui</code> (5d), both precede <code>integrate</code> (2d), then <code>test</code> (2d), then <code>ship</code> (1d). The computed critical chain is design→build_ui→integrate→test→ship (13 days); <code>build_api</code> carries 1 day of slack. Users write <code>projection { kind:graph; profile:&quot;pert.cpm@1&quot;; }</code>.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change (D2, verified: profiles, kinds and verbs are registry entries built by <code>notation/runtime/ddn-profiles.js</code> <code>registry()</code> from <code>standard/registry/profiles/catalogue.json</code>; <code>standard/grammar/ddn.ebnf</code> is untouched). No new kinds or verbs; no new projection properties.</p>
+<ul><li>New profile, bound to the existing projection <code>kind:graph</code>:</li><li><code>pert.cpm@1</code> — tasks with declared day estimates and finish-before</li></ul>
+<p>    dependencies; computed forward/backward pass; zero-slack critical path     accented.</p>
+<ul><li>New registered extension property:</li><li><code>x_estimate</code> on objects — <code>{ &quot;type&quot;:&quot;number&quot; }</code>; task duration in days,</li></ul>
+<p>    finite, ≥ 0 (the range is enforced by the planner, not the schema     subset).</p>
+<ul><li>Tasks are <code>analysis.task</code> objects; dependencies are visible</li></ul>
+<p>  <code>analysis.precedes</code> relations (&quot;Must finish before&quot;).</p>
+<pre><code>data m {
+    object design &quot;Design&quot; { kind: &quot;analysis.task&quot;; x_estimate: 3; }
+    object build_ui &quot;Build UI&quot; { kind: &quot;analysis.task&quot;; x_estimate: 5; }
+    relation d_b &quot;before&quot; @design -&gt; @build_ui { kind: &quot;analysis.precedes&quot;; }
+}
+view plan &quot;Release plan&quot; {
+    data: [@m];
+    projection { kind: graph; profile: &quot;pert.cpm@1&quot;; }
+}</code></pre>
+<h2>Semantic normalization and identity effects</h2>
+<p>The planner computes the schedule over shown <code>analysis.task</code> objects and visible <code>analysis.precedes</code> edges (D3), deterministically, on plain numbers — no dates, no calendars:</p>
+<ul><li>Forward pass: <code>ES = max(EF</code> of predecessors, default 0),</li></ul>
+<p>  <code>EF = ES + x_estimate</code>; project duration = max <code>EF</code>.</p>
+<ul><li>Backward pass: <code>LF = min(LS</code> of successors, default duration),</li></ul>
+<p>  <code>LS = LF - x_estimate</code>.</p>
+<ul><li><code>slack = LS - ES</code>; critical tasks have <code>slack === 0</code>.</li><li>An <code>analysis.precedes</code> relation is critical when both endpoints are</li></ul>
+<p>  critical and <code>EF(source) === ES(target)</code>.</p>
+<ul><li>Longest-path ordering via topological order (the active/seen DFS pattern</li></ul>
+<p>  used by <code>acyclic</code> in <code>ddn-profiles.js</code>).</p>
+<p>Rejection behavior (D4):</p>
+<ul><li><code>DDN-PJ124</code> (error) — the task/dependency graph contains a cycle; the</li></ul>
+<p>  message names a task on the cycle.</p>
+<ul><li><code>DDN-PJ125</code> (error) — a shown <code>analysis.task</code> lacks <code>x_estimate</code>, or it is</li></ul>
+<p>  not a finite number ≥ 0; the message names the task.</p>
+<p>The plan exposes <code>{tasks:{id→{es,ef,ls,lf,slack,estimate}},criticalTasks:[ids],criticalRelations:[ids],duration}</code> (tasks is a plain record keyed by task id so the plan survives the JSON-cloned public API) so the same numbers drive the drawing and any downstream inspection. No source identity changes: the computation reads the resolved model and never rewrites it.</p>
+<h2>Visual encoding and routing effects</h2>
+<p>Ordinary graph rendering (D5). Before render, the engine clones the resolved IR, marks each critical relation <code>properties.x_critical=true</code>, and suffixes each task's display name with <code> (&lt;estimate&gt;d, slack &lt;n&gt;d)</code>. The renderer draws an accent-colour overlay (<code>t.accent</code>, width 3·s) on <code>x_critical</code> routes, mirroring the <code>x_chen_total</code> total-participation overlay precedent in <code>ddn-render.js</code>. Routing is unchanged; the overlay re-strokes the same route pieces.</p>
+<h2>Alternatives considered</h2>
+<ul><li>Computing in the renderer (D6) — rejected: plans are computed once, in the</li></ul>
+<p>  planner, like <code>lifecycle</code>; the renderer must stay a pure function of its   input.</p>
+<ul><li>Calendar/working-day scheduling (D6) — rejected: abstract day numbers</li></ul>
+<p>  only; calendar-aware scheduling stays on the profile's <code>unsupported</code> list.</p>
+<ul><li>Editing the timeline profile (D6) — rejected: published profiles are</li></ul>
+<p>  immutable (<code>standard/governance/VERSIONING.md</code>).</p>
+<h2>Compatibility and migration</h2>
+<p>Additive except one documented registry line (D7): no existing profile, kind, verb or code changes meaning.</p>
+<p>This change removes the clause 'critical-path scheduling' from <code>standard/registry/capabilities.json</code> <code>unsupported[]</code> (the remainder of the line — DMN-FEEL rule execution and engineering solvers — stays); <code>timeline.basic@1.unsupported</code> is immutable and unchanged. It remains true that the TIMELINE profile does not compute critical paths; the new capability lives on the graph profile <code>pert.cpm@1</code>.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>The computation is bounded (one DFS per node set, linear edge scans) and pure — no dynamic code, no loaders, no I/O. The critical-path accent is a stroke overlay in addition to the ordinary relation stroke, not the sole carrier of meaning: task names also carry the numeric estimate and slack, so the information survives monochrome rendering, text extraction and screen readers.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/profiles/catalogue.json</code> — one new <code>profiles[]</code> entry</li></ul>
+<p>  <code>pert.cpm@1</code> (projection <code>graph</code>).</p>
+<ul><li><code>standard/registry/extensions.json</code> — new <code>contracts{}</code> entry</li></ul>
+<p>  <code>x_estimate</code>: <code>{ &quot;type&quot;:&quot;number&quot; }</code> on target <code>object</code>.</p>
+<ul><li><code>standard/registry/capabilities.json</code> — <code>unsupported[]</code> line edited per</li></ul>
+<p>  Compatibility above; <code>implemented[]</code> gains the PERT/CPM line;   <code>installedProfiles</code> count +1.</p>
+<ul><li>New diagnostics: <code>DDN-PJ124</code> (dependency cycle), <code>DDN-PJ125</code> (missing or</li></ul>
+<p>  invalid <code>x_estimate</code>). Verified free:   <code>grep -rhoE &quot;DDN-PJ12(4|5)&quot; notation/ standard/ website/examples/</code> prints nothing.</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive: <code>website/examples/basics/52-pert-cpm.ddn</code> — six tasks; critical chain</li></ul>
+<p>  design→build_ui→integrate→test→ship (13d) accent-stroked; <code>build_api</code>   shows 1d slack and its edges are not accented.</p>
+<ul><li>Negative: dependency cycle <code>a→b→a</code> → <code>DDN-PJ124</code>; task without</li></ul>
+<p>  <code>x_estimate</code> → <code>DDN-PJ125</code>; task with <code>x_estimate:-1</code> → <code>DDN-PJ125</code>;   <code>traces:[…]</code> on this profile → <code>DDN-Q005</code> (existing guard intact).</p>
+<h2>Implementation/conformance impact</h2>
+<ul><li><code>notation/runtime/ddn-quality-data.js</code> — new <code>Quality.cpm(ir,ErrorClass)</code></li></ul>
+<p>  beside <code>lifecycle</code>.</p>
+<ul><li><code>notation/runtime/ddn-projection-data.js</code> — planner branch for</li></ul>
+<p>  <code>pert.cpm@1</code> beside the <code>state.flat@1</code> branch.</p>
+<ul><li><code>notation/runtime/ddn-engine.js</code> — <code>pert.cpm@1</code> branch that obtains the</li></ul>
+<p>  plan, clones the IR, sets <code>x_critical</code> and suffixes task names (D5).</p>
+<ul><li><code>notation/runtime/ddn-render.js</code> — accent overlay for <code>x_critical</code> routes</li></ul>
+<p>  beside the <code>x_chen_total</code> overlay.</p>
+<ul><li><code>notation/runtime/ddn-profiles.js</code> — <code>registry()</code> extension contract for</li></ul>
+<p>  <code>x_estimate</code>.</p>
+<ul><li>Suite <code>notation/tests/pert-cpm.js</code> (<code>test:pert-cpm</code>) covers the fixtures</li></ul>
+<p>  above plus computed-value assertions, capabilities bookkeeping and   determinism.</p>
+<h2>Open questions and decision record</h2>
+<p>Fixed decisions (recorded, not open): D1 motivation and capabilities clause removal; D2 vocabulary (profile <code>pert.cpm@1</code>, extension <code>x_estimate</code>, reuse of <code>analysis.task</code>/<code>analysis.precedes</code>); D3 deterministic pass computation; D4 rejection behavior (<code>DDN-PJ124</code>/<code>DDN-PJ125</code>); D5 visual encoding (accent overlay + name suffix); D6 alternatives rejected; D7 compatibility (additive except the single documented capabilities clause). Resource leveling, calendar-aware scheduling and probabilistic (three-point) estimation remain on the profile's <code>unsupported</code> list.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typed semantic-property contracts — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Typed semantic-property contracts</h1>
+<p>This chapter defines the core production property vocabulary. It supplements, rather than replaces, the 165-item descriptive metadata inventory. The demonstrator preserves many values without enforcing all of these rules; do not mistake successful reference parsing for M1 semantic validation.</p>
+<h2>Value and applicability rules</h2>
+<p>Properties omitted from source are <strong>not asserted</strong>. An explicit <code>undecided</code> is a design assertion. <code>not_applicable</code> is permitted only when the target kind and selected profile justify it. <code>null</code> is a value, never a synonym for absence. The formatter must not populate absent properties with guessed defaults.</p>
+<p>The registry's per-kind <code>defaults</code> objects (chapter 04 §10) are the one sanctioned defaults source, and they are not a loophole in the rule above: each entry is a documented registry value drawn from this chapter's vocabulary, type-checked against <code>registry/data-properties.json</code> at schema-build time, and it becomes source only through an explicit authoring action (palette creation, a creation command or a script calling <code>defaults.forKind</code>). An omitted property stays not asserted at render time; a populated default is indistinguishable from a hand-written property and is overridden by any explicit declaration, view or occurrence value.</p>
+<p>Lengths use px, pt, mm or in; time durations use ms, s, min, h or d. Absolute timestamp fields use an explicit time-zone offset where they represent instants. Units are checked by property category, not by merely accepting a number. Locale must not reinterpret decimal separators or timestamps.</p>
+<p>Registered fields are subject to target applicability and validation stage. Summary strings in sketch records must be visibly marked incomplete for a physical or observed-state claim. Unknown unqualified properties produce a profile diagnostic; declared namespaced extension properties require their extension contract. This requirement is stricter than the demonstrator's generic metadata preservation.</p>
+<p>A union of value types is not a license to choose a semantically different interpretation at render time. References remain references; code/expression records name their language, and their contents are never run by a diagram renderer.</p>
+<p>The machine contract is <code>registry/data-properties.json</code>. Its targets and validation constraints are normative for this proposal. Format/style properties have their own registry in <code>registry/profile-properties.json</code>.</p>
+<h2>Identity and evidence</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>uid</code></th><th>element, field, port, relation</th><th>nonempty string</th><th>Workspace-unique stable identity; compare exactly, do not fetch it as a URL.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>description</code></th><th>element, field, port, relation</th><th>string</th><th>Literal explanatory content, never executable markup.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>aliases</code></th><th>element, field, port, relation</th><th>string[]</th><th>Alternative display/search names; do not introduce duplicate semantic identities.</th></tr></thead><tbody></tbody></table>
+<h2>Element identity</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>kind</code></th><th>element</th><th>registered kind keyword</th><th>Canonical registry ID after alias resolution; display look cannot change it.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>level</code></th><th>element</th><th>concept/definition/instance/fragment/copy</th><th>Omission is permitted in sketches; a view occurrence is not a data level.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>maturity</code></th><th>element</th><th>draft/review/approved/deprecated/retired/rejected or undecided</th><th>Independent of style, runtime health and evidence.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>meaning</code></th><th>element</th><th>string</th><th>Semantic definition; no implicit datatype selection.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>workload</code></th><th>element</th><th>array of oltp/olap/mixed/streaming/batch</th><th>An explicitly mixed workload may carry multiple compatible values.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>role</code></th><th>element</th><th>authoritative/derived/cache/archive/primary/follower</th><th>Include authority or replica scope where claimed; incompatible roles require distinct assertions.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>location</code></th><th>element</th><th>local/cloud/edge</th><th>Applicable to deployment scopes and instances; not automatic placement for abstract concepts.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>distribution</code></th><th>element</th><th>hash/range/list/composite/unpartitioned</th><th>Requires a declared partition policy before physical implementation claims.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>representation</code></th><th>element</th><th>reference or structured record</th><th>Domain-to-platform representation, not a universal datatype.</th></tr></thead><tbody></tbody></table>
+<h2>Fields and shape</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>shape</code></th><th>field</th><th>scalar/object/record/array/map/set/variant</th><th>Structural category; optional nested fields do not imply a separate stored object.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>key</code></th><th>field</th><th>primary/candidate/business/partition/clustering</th><th>A shorthand single key role. Composite/multiple roles require referenced key definitions.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>domain</code></th><th>field</th><th>reference to semantic domain</th><th>Established meaning binding, not a candidate suggestion or an SQL datatype.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>datatype</code></th><th>field</th><th>string or representation binding reference</th><th>Physical profile interprets it; parser never assumes a vendor type universally exists.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>presence</code></th><th>field</th><th>required/optional</th><th>Required presence and nullable values are independent.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>nullable</code></th><th>field</th><th>boolean</th><th>True permits null; it does not mean the property can be absent.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>min_items</code></th><th>field</th><th>nonnegative integer</th><th>Arrays/sets; must not exceed max_items when finite.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>max_items</code></th><th>field</th><th>nonnegative integer or unbounded</th><th>Arrays/sets; is not maximum rows in a dataset.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>ordered</code></th><th>field</th><th>boolean</th><th>A set defaults are not invented from examples; ordering scope must be explicit.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>unique</code></th><th>field</th><th>boolean</th><th>State whether item identity/value uniqueness is intended; enforcement is separate.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>default</code></th><th>field</th><th>literal or expression record</th><th>Record distinguishes a literal value from code; drawing never evaluates it.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>generated</code></th><th>field</th><th>expression record</th><th>Name language, text and evaluation scope; no evaluation during rendering.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>discriminator</code></th><th>field</th><th>field reference</th><th>Union variants must specify unique matching cases where closed/discriminated.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>variants</code></th><th>field</th><th>reference[]</th><th>Each target is a shape definition; mutual recursion must be represented without infinite expansion.</th></tr></thead><tbody></tbody></table>
+<h2>Domains and bindings</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>allowed_values</code></th><th>domain, element</th><th>literal[] or enumeration reference</th><th>Exhaustive only when explicitly declared; never inferred from samples.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>unit</code></th><th>domain, element</th><th>unit definition reference</th><th>Quantity meaning, conversion and precision are defined by the unit profile.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>normalization</code></th><th>domain, element</th><th>rule reference or record</th><th>Does not silently transform identifiers or literal source sample values.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>equality</code></th><th>domain, element</th><th>rule reference or string</th><th>Explicit comparison scope; physical collation binding can differ by platform.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>platform</code></th><th>domain, element</th><th>string</th><th>Binding applicability, not a remote service to contact.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>platform_version</code></th><th>domain, element</th><th>string</th><th>Physical profile version; cannot be replaced silently by latest.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>precision</code></th><th>domain, element</th><th>nonnegative integer</th><th>Applicable representation specifies decimal/binary/significant-digit interpretation.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>scale</code></th><th>domain, element</th><th>integer</th><th>Applicable numeric binding supplies units and valid range.</th></tr></thead><tbody></tbody></table>
+<h2>Relations</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>kind</code></th><th>relation</th><th>registered relation keyword</th><th>Normalizes to a fixed family, verb, orientation and compatible endpoints.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>source_mark</code></th><th>relation</th><th>registered structural endpoint</th><th>Valid only where relation semantics permit participation or composition.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>target_mark</code></th><th>relation</th><th>registered structural endpoint</th><th>At target B describes how many B instances per one A; never packet count.</th></tr></thead><tbody></tbody></table>
+<p>The crow's-foot cardinality value set is <code>one</code> (exactly one — bar and bar), <code>zeroone</code> (zero or one — circle and bar), <code>many</code> (one or many — bar and crowfoot) and <code>zeromany</code> (zero or many — circle and crowfoot); the marks are drawn by the shared endpoint renderer. Under the <code>erd.crowfoot@1</code> profile every view relation must be <code>ref</code> or <code>assoc</code> and must carry both <code>source_mark</code> and <code>target_mark</code> from this set; violations fail with <code>DDN-PJ087</code>, while a lexically unknown mark string still fails with <code>DDN114</code> under any profile.</p>
+<table><thead><tr><th><code>enforcement</code></th><th>relation</th><th>database/application/expected/none or undecided</th><th>A drawn relation does not imply database enforcement.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>scope</code></th><th>relation</th><th>string or reference</th><th>Authority, delivery, ordering or other qualifier's named scope.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>source_min</code></th><th>relation</th><th>nonnegative integer</th><th>Structural participation lower bound at source; must not exceed finite source_max.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>source_max</code></th><th>relation</th><th>nonnegative integer or unbounded</th><th>Explicit bounds supersede compact endpoint shorthand only consistently.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>target_min</code></th><th>relation</th><th>nonnegative integer</th><th>Structural participation lower bound at target.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>target_max</code></th><th>relation</th><th>nonnegative integer or unbounded</th><th>Explicit numeric limits must agree with compact displayed symbols.</th></tr></thead><tbody></tbody></table>
+<h2>Flow contract</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>capture</code></th><th>flow, relation</th><th>cdc/snapshot/polling/application/manual</th><th>Capture method is separate from transport and transformation.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>transport</code></th><th>flow, relation</th><th>string or channel reference</th><th>For example kafka; no delivery guarantee is inferred from the name.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>transformation</code></th><th>flow, relation</th><th>string or activity reference</th><th>An overview description should refine to activities when detailed validation is required.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>cadence</code></th><th>flow, relation</th><th>continuous/batch/microbatch/on_demand</th><th>Schedule/timezone is additional when relevant.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>delivery</code></th><th>flow, relation</th><th>requirement/evidence record or undecided</th><th>Delivery record fields required and verified remain independent assertions.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>payload</code></th><th>flow, relation</th><th>shape reference</th><th>Payload identity/version, not a copy of the schema inside every connector.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>ordering</code></th><th>flow, relation</th><th>scope record</th><th>Total/per-key/per-partition ordering must identify the relevant stream and key.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>initial_load</code></th><th>flow, relation</th><th>flow/activity reference</th><th>Initial snapshot/catch-up coordination is not implied by CDC.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>delete_handling</code></th><th>flow, relation</th><th>rule/reference</th><th>Explicit deletion/tombstone policy; drawing an arrow does not establish completeness.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>retry</code></th><th>flow, relation</th><th>policy record/reference</th><th>Attempts, backoff and exhaustion target; not an execution loop inferred from geometry.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>freshness</code></th><th>flow, relation</th><th>duration requirement/evidence record</th><th>Duration is measured relative to the declared clock and observation point.</th></tr></thead><tbody></tbody></table>
+<h2>Time and recovery</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>temporal</code></th><th>element, flow</th><th>current/valid/recorded/bitemporal/event_history/snapshot</th><th>Temporal categories do not imply PITR or complete reconstructability.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time</code></th><th>element, flow</th><th>structured time-axis record</th><th>Keyed valid and recorded axes or overview descriptions; production requires field/system/interval details.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time.valid</code></th><th>element, flow</th><th>axis record</th><th>Contains start/end field refs, business clock, interval semantics and open-end representation.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time.recorded</code></th><th>element, flow</th><th>axis record</th><th>Contains start/end fields, named recording system and correction semantics.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time.retention</code></th><th>element, flow</th><th>duration or policy reference</th><th>Retention scope must identify which axes, rows, logs or snapshots it covers.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time.event</code></th><th>element, flow</th><th>field reference</th><th>Occurrence time; distinct from arrival and processing timestamps.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time.arrival</code></th><th>element, flow</th><th>field reference</th><th>Ingestion timestamp of a named system; not automatically business-valid time.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>time.processing</code></th><th>element, flow</th><th>field reference</th><th>Processing timestamp tied to an execution/system.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>snapshot_at</code></th><th>element, flow</th><th>timestamp or version reference</th><th>Consistency scope and source completeness must be explicit for recovery claims.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>recovery_window</code></th><th>element, flow</th><th>interval/policy record</th><th>PITR scope, oldest/newest recoverable state, backup/log evidence.</th></tr></thead><tbody></tbody></table>
+<h2>Deployment</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>provider</code></th><th>element</th><th>string</th><th>Provider identity; never infer region or capabilities from a logo.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>region</code></th><th>element</th><th>reference or string</th><th>Scope within provider/account; not a globally unique bare region token.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>environment</code></th><th>element</th><th>string/reference</th><th>Intended environment; production does not imply healthy.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>partition_key</code></th><th>element</th><th>ordered field references</th><th>All fields belong to the partitioned definition or an explicit mapping.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>partition_rule</code></th><th>element</th><th>rule reference/record</th><th>Hash/range/version and boundaries are explicit policy information.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>replication_factor</code></th><th>element</th><th>positive integer</th><th>State whether the primary is counted and which fragment/set the count applies to.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>replica_role</code></th><th>element</th><th>primary/follower/multiwriter</th><th>Belongs to a copy with named coordination scope and observation time when observed.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>consistency</code></th><th>element</th><th>policy record</th><th>Scope must specify read/write/replication semantics rather than one unlabeled word.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>residency</code></th><th>element</th><th>policy/reference</th><th>Allowed locations and evidence are separate; a frame alone is not proof.</th></tr></thead><tbody></tbody></table>
+<h2>Governance and SQL metadata</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>owner</code></th><th>element, field, relation</th><th>responsible-party reference</th><th>Responsibility relationship, not physical containment.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>classification</code></th><th>element, field, relation</th><th>classification reference/string</th><th>Inheritance only under an explicitly selected governance profile.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>contract</code></th><th>element, field, relation</th><th>contract reference</th><th>Contract version and producer/consumer roles remain resolvable.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>quality</code></th><th>element, field, relation</th><th>rule/assertion references</th><th>Validation result and requirement are independent.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>dialect</code></th><th>element, field, relation</th><th>string</th><th>SQL dialect/platform profile; syntax is not executed by the renderer.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>definition</code></th><th>element, field, relation</th><th>text/code-reference record</th><th>Explicit content/language; remote content is not fetched without resolver authority.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>parameters</code></th><th>element, field, relation</th><th>parameter-definition references</th><th>Parameters are not mislabeled as storage columns.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>refresh</code></th><th>element, field, relation</th><th>policy record</th><th>Materialized view refresh method, schedule and scope.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>index_method</code></th><th>element, field, relation</th><th>string</th><th>Validated only against the selected platform/version profile.</th></tr></thead><tbody></tbody></table>
+<h2>Samples</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>mode</code></th><th>sample</th><th>synthetic/sanitized/observed/expected/counterexample</th><th>A sample's role controls validation expectations and disclosure rules.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>columns</code></th><th>sample</th><th>ordered field references</th><th>Every entry resolves to a field identity, not a coincidental displayed name.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>rows</code></th><th>sample</th><th>arrays of literal values</th><th>Each row has exactly columns.length cells. Null and missing stay distinct.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>source</code></th><th>sample</th><th>evidence reference/string</th><th>Required for observed samples; no implicit authorization to publish the contents.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>model_revision</code></th><th>sample</th><th>revision reference/string</th><th>The design context of the example, not the time in its data cells.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>expected</code></th><th>sample</th><th>result/assertion references</th><th>Required when a sample is promoted to an executable test fixture.</th></tr></thead><tbody></tbody></table>
+<h2>Assertions</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>subject</code></th><th>assertion</th><th>reference</th><th>Object, field, relation or other asserted subject.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>property</code></th><th>assertion</th><th>property-path string</th><th>Resolvable in the selected property/extension profile.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>value</code></th><th>assertion</th><th>typed value</th><th>Must match the property's applicable value contract when known.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>state</code></th><th>assertion</th><th>known/undecided/not_applicable/conflicting</th><th>Absent is no assertion; hidden is only a view operation.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>basis</code></th><th>assertion</th><th>intended/observed/inferred/measured/verified</th><th>Requirements and measurements never overwrite each other implicitly.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>source</code></th><th>assertion</th><th>evidence reference/string</th><th>Mandatory for observed/measured/verified assertions.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>observed_at</code></th><th>assertion</th><th>timestamp string</th><th>Explicit timezone/offset for absolute instants; never guessed from browser locale.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>confidence</code></th><th>assertion</th><th>number in [0,1] or confidence scheme</th><th>Only meaningful with declared method; not a substitute for evidence.</th></tr></thead><tbody></tbody></table>
+<h2>Ports</h2>
+<table><thead><tr><th>Property</th><th>Applies to</th><th>Value shape</th><th>Constraint</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>direction</code></th><th>port</th><th>input/output/inout</th><th>Relation orientation still comes from the connector; direction restricts compatible use.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>payload</code></th><th>port</th><th>shape reference</th><th>Names the contract at an interface.</th></tr></thead><tbody></tbody></table>
+<table><thead><tr><th><code>binding</code></th><th>port</th><th>field/port/element reference</th><th>Balanced collapsed views map each external port to a real internal interface.</th></tr></thead><tbody></tbody></table>
+<h2>Structured records and profile expansion</h2>
+<p>A time-axis record has <code>start</code>, optional <code>end</code>, <code>system</code> or <code>clock</code>, <code>interval</code> (<code>closed_open</code>, <code>closed_closed</code>, <code>open_closed</code>, <code>open_open</code>), and an explicit <code>open_end</code> representation when needed. A bitemporal physical claim requires both valid and recorded records, not just the summary badge.</p>
+<p>A delivery record has independent <code>required</code> and <code>verified</code> entries. A verified entry references an evidence assertion whose scope matches the actual end-to-end path; a transport name cannot satisfy this requirement. An ordering record declares <code>scope</code>, <code>key</code> where relevant, and the responsible channel or processing system.</p>
+<p>A code record has <code>language</code>, either <code>text</code> or a local authorized <code>source</code> reference, and optional <code>dialect</code>. A binding record has <code>platform</code>, optional <code>platform_version</code>, <code>type</code>, and optional constraints. Semantics such as a SQL precision limit belong to that platform binding, not to the generic SVG renderer.</p>
+<p>Constraints, partition policies, recovery plans, entitlements and other rich concepts may be first-class objects with their own references instead of repeated inline records. When a profile supports both forms, it must define their identical normalized semantics. Production implementations must not treat the inline form as an unrelated fact.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

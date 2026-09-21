@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>25. Diagram field guide and executable documentation — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>25. Diagram field guide and executable documentation</h1>
+<p><strong>Documentation edition: field-guide.1. Runtime: DDN 0.6.0-beta.1.</strong></p>
+<p>The field guide is the user-oriented counterpart to the language specification. A notation registry is not a tutorial, and a list of rendered files is not a diagram-type catalogue.</p>
+<h2>Required chapter contract</h2>
+<p>Every supported diagram/use-case chapter supplies: a stable chapter ID; the diagram's purpose; why and when it is useful; required input information; a reading walkthrough; one real source workspace and selected view; a tested editable exercise; an authoring walkthrough; explicit profile and projection identity; scope and common mistakes; and background references where applicable.</p>
+<p>The live diagram MUST use the same public <code>DDNLive</code> distribution as Studio. Changing an appearance control MUST re-render the source or alter viewport magnification as appropriate; it MUST NOT select a cached look-specific screenshot. A data exercise MUST edit the actual source and preserve contributing identities unless identity itself is intentionally edited.</p>
+<p>Source files, format definitions and view references are shared. Each lesson loads its import closure; a paired view uses the union of both closures. A related view is not automatically a claim of semantic identity. The series, target and waterfall table comparisons in this edition use the actual records consumed by their charts.</p>
+<h2>Inventory and support levels</h2>
+<p>The guide has 104 diagram/use-case chapters and 15 technique chapters. They cover all 24 installed profile versions and all nine projection families, plus the bounded interaction renderer. The full source index has 391 views. These counts describe this edition's curated coverage, not the number of all imaginable diagram types or an external-product parity score.</p>
+<ul><li><strong>Native:</strong> a directly implemented DDN capability within its declared limits.</li><li><strong>Equivalent:</strong> a constructive DDN teaching template for the same information; no external notation certification is implied.</li><li><strong>Subset:</strong> an explicitly bounded implementation of a wider diagram family.</li><li><strong>Technique:</strong> layout, routing, detail, palette or publication choices; not an additional diagram type.</li><li><strong>Unsupported/limited appendix:</strong> a gap and the closest honest alternative, not a fake supported diagram.</li></ul>
+<p>Chapter coverage is enumerated in <code>field-guide/catalogue.json</code>; profile/projection coverage is in <code>field-guide/coverage.json</code>. <code>field-guide/example-index.json</code> maps every current source view to a chapter or related family. The pre-existing Visual Paradigm comparison remains a dated historical assessment; this guide supplies current scope rather than rewriting its original evidence.</p>
+<h2>Editing and file behavior</h2>
+<p>The reader can modify labels, fields, values, relationships and format/view declarations through the source pane. Unapplied drafts survive file changes. Applying invalid source retains the draft, marks the previous output as stale and disables current-SVG export. Guided edits use the public authoring/transaction API and can be undone. Navigation asks before discarding local changes.</p>
+<p>The guide can open raw DDN files and source workspace ZIP/JSON. It can download the current raw DDN file, a complete dependency workspace ZIP, successful SVG, and decision/trace results. A single DDN file may not be self-contained: downloading a workspace preserves imports. Source workspaces are internal design material, not redacted publications.</p>
+<p>The full Studio remains the richer environment for file renaming, creation/deletion, graphical pinning and workspace management. The field guide is an executable tutorial, not a second rendering implementation.</p>
+<h2>Testing and regeneration</h2>
+<p><code>npm run build:field-guide</code> creates the teaching templates, updates the shared source map, compiles chapter fixtures, tests source edits and byte-exact undo, and rebuilds the HTML/Markdown guide. <code>npm run test:field-guide</code> independently audits coverage and renders the complete catalogue. <code>npm run test:field-guide-browser</code> exercises real guide controls in an installed browser.</p>
+<p>Each source exercise has before/after SVG hashes; examples keep source IDs and dependency paths. Warnings are preserved. The <code>Complete</code> purchasing connector remains subject to the original efficiency regression.</p>
+<p>The website has a portable self-contained edition and per-chapter pages with readable static text. The portable edition has no external runtime/CSS/source/image requirement; its optional link to full Studio is not part of rendering. Only the active diagram and optional companion are mounted, rather than hundreds of hidden diagrams.</p>
+<h2>Boundaries</h2>
+<p>A successful documentation fixture is not professional approval, a proof of globally optimal layout, deployed accounting/security behavior, or external standard conformance. Current browser/CSP/accessibility/font qualification and the prior production assurance gates remain separate. No confidential source should be delivered to a public viewer merely to hide it using presentation settings.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -79,7 +79,7 @@ Rejection behavior (D4):
   The message names the gate, its input count and its declared type.
 
 Verified free before allocation:
-`grep -rhoE "DDN-PJ126" notation/ standard/ examples/` prints nothing.
+`grep -rhoE "DDN-PJ126" notation/ standard/ website/examples/` prints nothing.
 
 ## Visual encoding and routing effects
 
@@ -125,7 +125,7 @@ diamond/circle silhouettes are an additional, not sole, carrier.
 
 ## Positive and negative fixtures
 
-- Positive: `examples/basics/53-fault-event-tree.ddn` — fault view renders
+- Positive: `website/examples/basics/53-fault-event-tree.ddn` — fault view renders
   the OR top gate, one AND gate and five event circles top-down, edges
   without arrowheads; event view renders the small second tree under
   `event.tree@1`.

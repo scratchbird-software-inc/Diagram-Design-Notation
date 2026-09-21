@@ -61,7 +61,7 @@ view communication "Synthetic order flow / communication" {
 
 with `data flow` declaring three objects (`customer_app`, `checkout`,
 `inventory`) and five `uml.message` relations numbered `1`, `2`, `2.1` (reply),
-`3`, `4` — see `examples/basics/42-communication-diagram.ddn`, which reuses the
+`3`, `4` — see `website/examples/basics/42-communication-diagram.ddn`, which reuses the
 RT-101 order flow.
 
 ## Validation and diagnostics

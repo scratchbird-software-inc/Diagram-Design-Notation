@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 117 — Self-contained multi-module files and bundling — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 117 — Self-contained multi-module files and bundling</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive grammar change (document structure); no registry changes; new diagnostic DDN015; new public surface <code>DDNLive.io.bundle(files, entry)</code> and CLI <code>bundle</code> command.</p>
+<h2>Problem and motivating example</h2>
+<p>DDN aims to be a self-contained, mermaid-class notation: a full design should be able to live in ONE file. Today a <code>.ddn</code> file holds exactly one module — a second <code>module &quot;…&quot;;</code> header is a parse error (DDN010) — so even the smallest self-contained example must be split across at least two files (one for the model, one for shared formats) plus an import line. That is friction for paste-into-viewer workflows, documentation snippets, and single-file sharing.</p>
+<p>Motivating example: one file carrying model, data and views as three marked sections:</p>
+<pre><code>ddn &quot;0.5&quot;;
+
+module &quot;shop.model&quot;;
+data model {
+ object customer &quot;Customer&quot; { kind: table; fields { field id; field name; } }
+}
+
+module &quot;shop.views&quot;;
+view overview { data: [@shop.model.model]; }</code></pre>
+<p>A workspace of several files must also be mergeable (&quot;bundled&quot;) into one such file and behave identically: checking the bundled file passes, and rendering every view produces byte-identical SVG to rendering the original workspace.</p>
+<h2>Proposed syntax</h2>
+<p>Grammar change to the document rule (D1):</p>
+<pre><code>document  = &quot;ddn&quot;, string, &quot;;&quot;, { import }, section, { section } ;
+section   = &quot;module&quot;, string, &quot;;&quot;, { top } ;</code></pre>
+<ul><li>A file contains one or more <code>module &quot;id&quot;;</code> sections. Each header starts a</li></ul>
+<p>  section; all following top-level declarations belong to that module until the   next header or end of file.</p>
+<ul><li>Imports stay FILE-level. The canonical position for file-level imports is</li></ul>
+<p>  before the first module header (immediately after the <code>ddn &quot;…&quot;;</code> line). For   backward compatibility, imports may also appear in the legacy position —   immediately after the FIRST module header, before that section's first   declaration. Both sets merge into one file-level import list; alias   uniqueness (DDN014) applies across the merged list.</p>
+<ul><li>An <code>import</code> anywhere else — after a declaration has started, or inside a</li></ul>
+<p>  second or later section — is rejected with the new diagnostic DDN015   (&quot;Import must precede the first module header or follow it in the legacy   position&quot;). Older runtimes reject multi-module files cleanly with DDN010,   because the second header parses as a declaration whose name is missing.</p>
+<h2>Semantic normalization and identity effects</h2>
+<ul><li>Loader (D2): a file registers ALL its modules. Module identity stays unique</li></ul>
+<p>  across the whole workspace: a duplicate section id within one file, or two   files declaring the same module id, keeps the existing DDN023. Symbol   collisions across sections keep DDN024 (symbol keys remain   <code>module::path</code>).</p>
+<ul><li>Sibling sections in the SAME file are implicitly visible to each other via</li></ul>
+<p>  module-qualified ids (<code>@otherModule.path.to.id</code>) — no import needed between   them; they are, by construction, in the same file.</p>
+<ul><li>Imports of a multi-module file by OTHER files import the file (all its</li></ul>
+<p>  modules), exactly as today: <code>@alias.path</code> resolves against every section of   the imported file in section order.</p>
+<ul><li>Bundling (D4): new public surface <code>api.io.bundle(files, entry)</code> plus CLI</li></ul>
+<p>  <code>node notation/cli/cli.js bundle &lt;entry.ddn&gt; --workspace . --out out.ddn</code>:</p>
+<ul><li>Output: a <code>ddn &quot;…&quot;;</code> header carrying the maximum language version in use,</li></ul>
+<p>    then sections in deterministic order — the entry file's module(s) first     (in file order), then remaining modules sorted by module id.</p>
+<ul><li>Section bodies are the files' ORIGINAL source text minus their header</li></ul>
+<p>    lines (version/module/import) — comments and formatting preserved, no     re-serialization.</p>
+<ul><li>Import lines BETWEEN bundled files are dropped (they become siblings);</li></ul>
+<p>    references written through the dropped aliases are canonicalized to     module-qualified sibling references (token-precise; see Alternatives).     Imports to files NOT in the bundle set are kept verbatim at the top of the     output, and the bundle emits a warning diagnostic listing them — a     workspace is only fully self-contained when closed.</p>
+<ul><li>Deterministic: same workspace → identical bytes.</li></ul>
+<h2>Visual encoding and routing effects</h2>
+<p>None. Section membership affects namespacing only; the resolved IR and every rendered byte are unchanged (this is the D5 acceptance core: byte-identical render round-trip between a workspace and its bundle).</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Import elision rewrites</strong>: rewriting <code>@alias::</code> references when bundling.</li></ul>
+<p>  Rejected as a GENERAL rewrite (D7): section bodies are never re-serialized   and comments/formatting survive byte-for-byte. One token-precise exception   proved necessary: references written through an alias whose import is being   dropped (<code>@alias.path</code>) are canonicalized to the module-qualified sibling   form (<code>@moduleId.path</code>) at the alias token only — strings and comments are   untouched — because a dropped alias no longer resolves once the sections   are siblings. The item's premise that &quot;references stay valid by D2&quot; holds   only when alias == module id; the existing example corpus uses distinct   aliases (<code>import &quot;customer-data.ddn&quot; as customer</code>), so D5 (byte-identical   renders) forces the canonicalization. It is deterministic and documented.</p>
+<ul><li><strong>Cross-file symbol renaming on bundle</strong>: rejected (D7); collisions were</li></ul>
+<p>  already impossible in a valid workspace (DDN023/DDN024).</p>
+<ul><li><strong>Bumping the source version to &quot;0.6&quot;</strong>: rejected (D3, see below).</li></ul>
+<h2>Compatibility and migration</h2>
+<ul><li>Source version stays <code>&quot;0.5&quot;</code> (D3). The change is additive: every existing</li></ul>
+<p>  single-module file — including the legacy import position after the module   header — parses, loads and renders exactly as before. No migration burden.</p>
+<ul><li>Multi-section files are invalid in older runtimes with a clean DDN010, so</li></ul>
+<p>  old tooling fails loudly rather than misreading content.</p>
+<ul><li>No registry changes; no published profile is touched.</li></ul>
+<h2>Security, privacy and accessibility</h2>
+<p>No new I/O surface: bundling operates on an in-memory file map the caller already trusts. The CLI <code>bundle</code> command inherits the CLI's existing workspace confinement (symlink/traversal checks). Output size is bounded by the input workspace size. No accessibility impact.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li>New diagnostic: <strong>DDN015</strong> — import placed after the first module header in</li></ul>
+<p>  a non-legacy position (after declarations began, or in a later section).</p>
+<ul><li>New bundle warnings: <strong>DDN-W013</strong> — external imports kept at the top of the</li></ul>
+<p>  bundle; <strong>DDN-W014</strong> — conflicting external alias (first kept) or a   reference that could not be canonicalized.</p>
+<ul><li>Preserved codes: DDN010 (older runtimes on multi-module files), DDN013</li></ul>
+<p>  (module identity syntax, per section), DDN014 (alias uniqueness across the   merged file-level import list), DDN023 (duplicate module identity across   sections/files), DDN024 (duplicate declaration across sections).</p>
+<ul><li><code>parse</code> results gain a <code>sections</code> array (<code>{module, declarations}</code> per</li></ul>
+<p>  section); <code>module</code> and <code>declarations</code> keep their legacy meaning (first   section's id; all declarations in file order) so existing consumers are   unchanged.</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive: two-section file parses/checks; sibling cross-reference by</li></ul>
+<p>  module-qualified id renders; other-file importing a multi-module file gets   all modules; <code>61-self-contained.ddn</code> (three sections: model, data, views).</p>
+<ul><li>Negative: duplicate section id in one file → DDN023; import after a</li></ul>
+<p>  section's declarations → DDN015; symbol collision across sections → DDN024.</p>
+<ul><li>Round-trip: for every example workspace (a fixed list including projections</li></ul>
+<p>  and quality suites), <code>check</code> on the bundle passes and every view renders   byte-identical SVG; bundle output is deterministic; comments survive   bundling; external imports produce the warning diagnostic and are kept at   the top.</p>
+<h2>Implementation/conformance impact</h2>
+<ul><li><code>notation/runtime/ddn-core.js</code>: parser (sections, DDN015), loader</li></ul>
+<p>  (per-section module records, sibling resolution), <code>bundle</code> source helper.</p>
+<ul><li><code>standard/grammar/ddn.ebnf</code> and <code>standard/specification/01-language.md</code></li></ul>
+<p>  document the new document rule; <code>16-workspace-and-editing.md</code> notes the   workspace model change.</p>
+<ul><li>Studio/viewer load multi-module files through the same <code>parse</code>/<code>build</code></li></ul>
+<p>  path; the one navigation site that matched <code>doc.module</code> against a target   view now scans sections.</p>
+<ul><li>CLI gains the <code>bundle</code> command. No new npm dependencies.</li></ul>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 grammar/section model — fixed (this RFC).</li><li>D2 loader identity + sibling visibility — fixed.</li><li>D3 version stays <code>&quot;0.5&quot;</code>; older runtimes reject with DDN010 — fixed.</li><li>D4 bundle surface and determinism — fixed.</li><li>D5 byte-identical render round-trip as acceptance — fixed.</li><li>D6 minimal studio/viewer adaptation — fixed.</li><li>D7 non-goals: no cross-file renaming, no general import-elision rewrites — fixed, with the recorded exception: dropped-alias reference canonicalization to module-qualified ids (forced by D5 on alias-based corpora; token-precise, deterministic).</li></ul>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

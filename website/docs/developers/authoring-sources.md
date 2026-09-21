@@ -83,7 +83,7 @@ diagram family: `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`,
 `fishbone`, `decision`, `sequence`, `timing`, or a specialised `graph`
 profile. All 73 installed profiles are listed in
 `standard/registry/profiles/catalogue.json` and each has a rendered example
-in the gallery (`examples/gallery/index.html`). The projection chapters:
+in the gallery (`website/examples/gallery/index.html`). The projection chapters:
 `16-profiles-and-projections.md` through `42-family-trees.md` (matrices and
 panels 18, charts/time 19 + 22, lifecycles/rule tables 23, sequence 27,
 BPMN 32, SysML 36, ArchiMate 37, and so on).
@@ -103,4 +103,4 @@ operations the visual designer uses) are documented in
 itself is spec `16-workspace-and-editing.md`.
 
 More prose, lesson-style: `25-diagram-field-guide.md`. The largest
-collection of real sources to copy from is `examples/basics/` (01–60).
+collection of real sources to copy from is `website/examples/basics/` (01–60).

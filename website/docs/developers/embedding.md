@@ -69,8 +69,8 @@ about *your sources*:
 - `createWorkspace` takes source text, not URLs — reading `.ddn` files from
   disk is your job. Over `file://`, use a file picker (`DDNLive.io.open`),
   drag-drop, paste, or inline the sources as the examples under
-  `examples/embed/` do.
-- The gallery page (`examples/gallery/index.html`) links pre-rendered SVG
+  `website/examples/embed/` do.
+- The gallery page (`website/examples/gallery/index.html`) links pre-rendered SVG
   files with plain `<img src>` precisely so it needs no runtime at all.
 - The single-file viewer (`ddn-viewer.html`, see [viewer.md](viewer.md))
   inlines the runtime and loads sources through pickers/drag-drop/paste, so

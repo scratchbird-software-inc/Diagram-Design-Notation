@@ -68,7 +68,7 @@ never `DDN102`.
 A viewpoint is a named `view` with an explicit `select:[…]` list (chapter
 03): a "business viewpoint" is a view selecting only the `archi.business_*`
 objects. No new machinery is involved. See the `business_viewpoint` view of
-`examples/basics/51-archimate.ddn`.
+`website/examples/basics/51-archimate.ddn`.
 
 ## Diagnostics
 

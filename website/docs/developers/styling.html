@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Styling rendered diagrams — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Styling rendered diagrams</h1>
+<p>B1-003 added stable CSS class hooks to every rendered diagram plus an optional stylesheet, <code>notation/dist/ddn.css</code> (source: <code>notation/studio/src/ddn.css</code>). The contract: <strong>page CSS fills the gaps the script left unset</strong> — script-level presentation (format palette, look, object/occurrence overrides) is emitted as inline SVG presentation attributes and therefore always wins over page rules. No <code>!important</code> appears anywhere in DDN output.</p>
+<h2>Class hooks emitted by the renderer</h2>
+<p>Structural classes (present on every render):</p>
+<table><thead><tr><th>Class</th><th>On</th></tr></thead><tbody><tr><td><code>ddn-svg</code></td><td>the root <code>&lt;svg&gt;</code> element</td></tr><tr><td><code>ddn-node</code></td><td>every object group (<code>&lt;g&gt;</code>), with <code>data-id=&quot;&lt;element id&gt;&quot;</code></td></tr><tr><td><code>ddn-rel</code>, <code>ddn-relation</code></td><td>every relation group</td></tr><tr><td><code>ddn-label</code></td><td>label text runs</td></tr><tr><td><code>ddn-field</code></td><td>field/compartment text runs</td></tr><tr><td><code>ddn-mark</code></td><td>quantitative chart marks (e.g. <code>ddn-mark-bar</code>)</td></tr><tr><td><code>ddn-callout</code></td><td>legend/callout furniture</td></tr></tbody></table>
+<p>Semantic hooks (vary per diagram):</p>
+<table><thead><tr><th>Class pattern</th><th>Meaning</th></tr></thead><tbody><tr><td><code>ddn-view-&lt;kind&gt;</code></td><td>projection kind of the view (<code>ddn-view-graph</code>, <code>ddn-view-chart</code>, …)</td></tr><tr><td><code>ddn-profile-&lt;profile-slug&gt;</code></td><td>resolved profile, e.g. <code>ddn-profile-ddn-1</code>, <code>ddn-profile-chart-basic-1</code></td></tr><tr><td><code>ddn-kind-&lt;code&gt;</code></td><td>object kind code from the registry (<code>ddn-kind-tbl</code>, <code>ddn-kind-dom</code>, <code>ddn-kind-smp</code>, …)</td></tr><tr><td><code>ddn-verb-&lt;verb&gt;</code></td><td>relation verb (<code>ddn-verb-ref</code>, <code>ddn-verb-domain</code>, …)</td></tr><tr><td><code>ddn-font-&lt;hash&gt;</code></td><td>font-stack bucket used for the render</td></tr></tbody></table>
+<p>The viewer (B1-007) builds its colour overrides on <code>.ddn-kind-&lt;code&gt;</code>, <code>.ddn-verb-&lt;verb&gt;</code>, and <code>[data-ddn-id=&quot;&lt;element id&gt;&quot;]</code> attribute selectors.</p>
+<h2>Per-kind typography CSS</h2>
+<p>B1-011 added per-kind font overrides in the viewer, emitted as viewer-page rules of the form:</p>
+<pre><code>.ddn-svg .ddn-kind-tbl text { font-family: &quot;DejaVu Sans Mono&quot;, monospace; font-size: 20px; }</code></pre>
+<p>The family is always one of the four runtime stacks (<code>sans</code>, <code>serif</code>, <code>mono</code>, <code>handwriting</code>) and the size 8–24 px. Unlike the global font-size dropdown (which re-renders through the override channel and reflows the layout), these rules are a stylesheet overlay: text is restyled in place and long labels can overflow their shapes. To do the same in your own page, target <code>.ddn-kind-&lt;code&gt; text</code> the same way.</p>
+<h2><code>ddn.css</code> custom properties</h2>
+<pre><code>:root {
+  --ddn-font: &quot;DejaVu Sans&quot;, Arial, sans-serif;
+  --ddn-ink: #203047;
+  --ddn-node-fill: #ffffff;
+  --ddn-node-stroke: #285ea8;
+  --ddn-label-color: var(--ddn-ink);
+  --ddn-field-color: var(--ddn-ink);
+  --ddn-rel-stroke: #285ea8;
+  --ddn-mark-fill: #337db7;
+}</code></pre>
+<p>The stylesheet maps them onto the structural classes:</p>
+<pre><code>.ddn-svg   { font-family: var(--ddn-font); }
+.ddn-node  { fill: var(--ddn-node-fill); stroke: var(--ddn-node-stroke); }
+.ddn-rel   { stroke: var(--ddn-rel-stroke); }
+.ddn-label { fill: var(--ddn-label-color); }
+.ddn-field { fill: var(--ddn-field-color); }
+.ddn-mark  { fill: var(--ddn-mark-fill); }</code></pre>
+<p>Include <code>ddn.css</code> on a page that embeds rendered SVG, then override the properties — dark page chrome, brand palette — without touching the diagram source:</p>
+<pre><code>:root { --ddn-node-fill: #101820; --ddn-node-stroke: #6ab0ff; --ddn-ink: #dfe7f0; }</code></pre>
+<h2>Cascade rules, precisely</h2>
+<ol><li>Script-level presentation (the view's format bundle, look/palette</li></ol>
+<p>   resolution, per-object overrides) is written as inline SVG presentation    attributes. It always wins.</p>
+<ol><li>Your page rules (including <code>ddn.css</code>) only paint where the script left a</li></ol>
+<p>   property unset; classed groups inherit into descendants without inline    attributes.</p>
+<ol><li>Specificity works normally within tier 2: <code>.ddn-kind-tbl</code> beats</li></ol>
+<p>   <code>.ddn-node</code>; <code>[data-ddn-id=&quot;model.order&quot;]</code> beats both.</p>
+<p>A runnable example ships in <code>website/examples/basics/58-css-hooks.ddn</code> + <code>58-css-hooks.html</code>, and the class contract is pinned by <code>notation/tests/css-classes.js</code>.</p>
+</article>
+<p><small>Rendered from <a href="styling.md">styling.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

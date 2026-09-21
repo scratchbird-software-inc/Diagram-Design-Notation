@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 107 — Timing diagram projection (kind:timing, profile uml.timing@1) — DDN</title>
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 107 — Timing diagram projection (<code>kind:timing</code>, profile <code>uml.timing@1</code>)</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive; new projection kind timing; profile uml.timing@1; extension x_states</p>
+<h2>Problem and motivating example</h2>
+<p>DDN 0.5 ships ten projection kinds — graph, chen, matrix, panels, table, chart, timeline, fishbone, decision, sequence — but has no state-over-time view. The date-interval timeline (<code>kind:timeline</code>, <code>timeline.basic@1</code>) shows spans between UTC dates; it cannot express a digital-signal-style picture in which a participant occupies one named state at a time and steps between states at declared time points.</p>
+<p>Motivating example: a synthetic traffic-light controller and its pedestrian signal over 60 seconds. The controller is <code>red</code> from 0, <code>green</code> from 25, <code>amber</code> from 55; the pedestrian signal is <code>wait</code> from 0, <code>walk</code> from 25, <code>wait</code> again from 45. Today this can only be drawn as a graph or a timeline of artificial one-day spans, losing the plateau-step reading that is the entire point of the diagram.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Projection kinds are atom property values (<code>property = identifier &quot;:&quot; value &quot;;&quot;</code>); <code>kind:timing;</code> parses today and is rejected semantically by <code>DDN046</code>/<code>DDN-PJ001</code>. This RFC makes it valid:</p>
+<ul><li>New projection kind token <code>timing</code> in the semantic kind enum.</li><li>New profile <code>uml.timing@1</code> bound to projection <code>timing</code>.</li><li>New registered extension property <code>x_states</code> (array, object target). Each</li></ul>
+<p>  entry is <code>{ at: &lt;finite number&gt;, state: &lt;nonempty string&gt; }</code>, interpreted   as &quot;from <code>at</code> onward the participant is in <code>state</code> until the next entry&quot;.</p>
+<p>No new kinds or verbs. No new projection properties: <code>timing</code> accepts only the common block (<code>kind</code>, <code>profile</code>, <code>width</code>, <code>height</code>).</p>
+<pre><code>data traffic {
+    object controller &quot;Controller&quot; {
+        kind: application;
+        x_states: [{ at: 0, state: &quot;red&quot; }, { at: 25, state: &quot;green&quot; }, { at: 55, state: &quot;amber&quot; }];
+    }
+}
+
+view timing {
+    data: [@traffic];
+    projection { kind: timing; profile: &quot;uml.timing@1&quot;; }
+}</code></pre>
+<h2>Semantic normalization and identity effects</h2>
+<p>Normalization is declaration order plus declared time points — never geometry, never simulation, never invented times:</p>
+<ul><li><strong>Participants</strong> are the view's selected <code>object</code>-type elements in</li></ul>
+<p>  <code>ir.elements</code> declaration order (the identical rule and helper as   RFC-101's sequence projection).</p>
+<ul><li>Every participant must carry <code>x_states</code> with at least one entry; entries</li></ul>
+<p>  must be well-formed (<code>at</code> a finite number, <code>state</code> a nonempty string) and   in strictly ascending <code>at</code> order.</p>
+<ul><li>Time is an abstract numeric axis in the author's unit; the unit belongs in</li></ul>
+<p>  the view label or a footer note. There is no unit conversion.</p>
+<ul><li>A state plateau runs from its <code>at</code> to the next entry's <code>at</code>; the last</li></ul>
+<p>  state runs to the axis maximum (the greatest declared <code>at</code>).</p>
+<p>Element identities are untouched; every mark carries its source ids, so a plateau band remains traceable to the declared participant.</p>
+<h2>Visual encoding and routing effects</h2>
+<p>Deterministic native SVG, derived only from the scale <code>s</code>, the theme, measured label widths, and the declared time points:</p>
+<ul><li>One horizontal band per participant, declaration order top to bottom;</li></ul>
+<p>  participant names at the left.</p>
+<ul><li>Within a band, states are plateau levels indexed by first-appearance order</li></ul>
+<p>  per participant (first state = top plateau); steps are vertical   transitions at each <code>at</code>.</p>
+<ul><li>The time axis runs along the bottom with min/max ticks taken from the</li></ul>
+<p>  data.</p>
+<ul><li>Plateau state labels sit on each segment.</li><li>A footer note states that the diagram shows supplied time points, not a</li></ul>
+<p>  simulation.</p>
+<p>All marks are registered through the shared <code>group()</code> helper with <code>sourceIds</code>. There is no routing; there is no clock or randomness anywhere in the layout or render path.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Reuse <code>kind:timeline</code> with zero-width intervals</strong> — rejected: plateaus</li></ul>
+<p>  are value steps, not date spans; the timeline's UTC-date validation would   be wrong for an abstract numeric axis.</p>
+<ul><li><strong>Derive states from relations</strong> (transition edges between state nodes) —</li></ul>
+<p>  rejected: states are record data carried by the participant, not a   relational structure.</p>
+<ul><li><strong>Full UML 2.5 timing diagram</strong> — rejected: out of scope (duration and</li></ul>
+<p>  slew-rate annotations, clock/unit conversion, full UML conformance).</p>
+<h2>Compatibility and migration</h2>
+<p>Purely additive. No existing profile, kind, verb or property is edited. <code>timeline.basic@1</code> is untouched, including the &quot;UML timing&quot; entry in its <code>unsupported</code> list — that entry stays true for <code>timeline.basic@1</code> because this RFC ships a new kind and profile rather than editing the immutable published profile. Sources that do not use <code>kind:timing</code> or <code>x_states</code> are byte-for-byte unaffected.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new inputs: participants are already-declared model elements and <code>x_states</code> is author-supplied record data. Rendered text is escaped through the shared <code>esc()</code> helper. Marks carry <code>data-source-ids</code> and <code>tabindex</code>/<code>role=&quot;group&quot;</code> like every other projection mark, so keyboard and assistive inspection work the same way. The diagram makes no simulation or conformance claim; the footer says so.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li><code>standard/registry/capabilities.json</code>: <code>timing</code> added to</li></ul>
+<p>  <code>profiles.projection.kind[]</code>; <code>projectionProperties.timing =   [&quot;kind&quot;,&quot;profile&quot;,&quot;width&quot;,&quot;height&quot;]</code>; one <code>implemented[]</code> line appended;   <code>installedProfiles[]</code> gains the <code>uml.timing@1</code> entry (60 after this RFC).</p>
+<ul><li><code>standard/registry/profiles/catalogue.json</code> <code>profiles[]</code> gains</li></ul>
+<p>  <code>uml.timing@1</code>.</p>
+<ul><li><code>ddn-profiles.js</code> <code>registry()</code> and <code>standard/registry/extensions.json</code></li></ul>
+<p>  gain the <code>x_states</code> contract: <code>{ &quot;type&quot;: &quot;array&quot; }</code> on the <code>object</code>   target (element content is validated by the planner, not the schema   subset).</p>
+<ul><li>New error <code>DDN-PJ118</code> — a participant lacks <code>x_states</code>, or an entry is</li></ul>
+<p>  malformed (<code>at</code> not a finite number / <code>state</code> not a nonempty string), or   entries are not in strictly ascending <code>at</code> order. The message names the   participant and the offending entry/index. (Verified free: PJ110–PJ117   and PJW03 were taken by RT-101…106.)</p>
+<ul><li>Existing codes unchanged: unknown kind → <code>DDN-PJ001</code>; unknown projection</li></ul>
+<p>  property → <code>DDN-PJ005</code>; width/height guards → <code>DDN-PJ006</code>; graph geometry   in a data-bound view → <code>DDN-PJ002</code>; Vega-Lite export of a timing view →   <code>DDN-PJ070</code>.</p>
+<h2>Positive and negative fixtures</h2>
+<ul><li>Positive example: <code>website/examples/basics/47-timing-diagram.ddn</code> (synthetic</li></ul>
+<p>  traffic-light controller and pedestrian signal over 60 seconds).</p>
+<ul><li>Test suite: <code>notation/tests/timing-diagram.js</code> — positive render,</li></ul>
+<p>  geometry/order invariants (step x positions proportional to <code>at</code>),   <code>DDN-PJ118</code> for all three failure modes (descending <code>at</code>, non-number   <code>at</code>, missing <code>x_states</code>), <code>DDN-PJ005</code>/<code>DDN-PJ002</code>/<code>DDN-PJ070</code>, the   RT-101 sequence regression (same participant helper), and byte-identical   determinism.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: <code>ddn-core.js</code> (<code>CHOICES.projection.kind</code>), <code>ddn-projection-data.js</code> (<code>supported</code> map + planning branch reusing the RT-101 <code>participants</code> helper), <code>ddn-projections.js</code> (renderer branch), <code>capabilities.json</code> (kind list + projection properties + installed profiles), <code>ddn-profiles.js</code>/<code>extensions.json</code> (<code>x_states</code> contract), profile catalogue (<code>uml.timing@1</code> profile). The engine dispatcher needs no edit: non-graph kinds already route to <code>ddn-projections.js</code>.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 motivation, D2 vocabulary, D3 metamodel, D4 rejection behavior, D5</li></ul>
+<p>  visual encoding, D6 alternatives, D7 compatibility: recorded above as   fixed decisions of this RFC.</p>
+<ul><li>Open: whether a later RFC adds duration/slew-rate annotations behind a</li></ul>
+<p>  new profile version; explicitly unsupported in <code>uml.timing@1</code>.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

@@ -84,7 +84,7 @@ view ibd "Pump station internal block" {
 }
 ```
 
-See `examples/basics/50-sysml.ddn` for the full runnable example with all
+See `website/examples/basics/50-sysml.ddn` for the full runnable example with all
 three views (`bdd`, `ibd`, `parametric`).
 
 ## Out of scope

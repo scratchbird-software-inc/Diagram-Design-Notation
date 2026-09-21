@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>29. Object diagrams (profile uml.object@1 on projection graph) — DDN</title>
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><span class="badge">DDN</span> Diagram Design Notation</a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>29. Object diagrams (profile <code>uml.object@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-103 (<code>standard/governance/rfcs/RFC-103-object-diagram.md</code>). Source grammar remains DDN 0.5; profiles and extension properties are atom/record property values, so this chapter is a semantic addition, not a grammar change.</p>
+<p>An object (instance-snapshot) view shows concrete example objects — instances that name their classifier — on the ordinary graph projection. Structure views such as <code>uml.structure@1</code> show <em>types</em>; this profile shows <em>instances</em>: record cards whose slots are filled in, linked by plain relations. There is no new projection kind; the view is an ordinary graph layout.</p>
+<p>This is profile-level coverage, not UML conformance.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Classifier</strong> — any referenced element, expected kind <code>uml.class</code>, possibly</li></ul>
+<p>  declared in an imported module of the same workspace.</p>
+<ul><li><strong>Instance</strong> — a selected <code>object</code> of kind <code>record</code> carrying the registered</li></ul>
+<p>  extension property <code>x_instance</code> (object target):   <code>{ &quot;type&quot;:&quot;object&quot;, &quot;required&quot;:[&quot;classifier&quot;], &quot;additionalProperties&quot;:true }</code>.   The classifier is written as a reference, <code>x_instance: { classifier: @m.Order; };</code>,   and arrives at the validator resolved as <code>{ classifier: { $ref: &quot;&lt;uid&gt;&quot; } }</code>;   an unresolvable reference fails at build (<code>DDN031</code>-class).</p>
+<ul><li><strong>Slots</strong> — the instance's declared <code>fields</code>, rendered as ordinary field</li></ul>
+<p>  rows on the record card (<code>measureNode</code>/<code>renderNode</code> in <code>ddn-render.js</code>); no   renderer change.</p>
+<ul><li><strong>Links</strong> — plain core relations between instances (verb <code>assoc</code>, whose</li></ul>
+<p>  endpoint contract accepts any object endpoints).</p>
+<h2>Skip rule for fieldless classifiers</h2>
+<p><code>DDN-PJ112</code> is checked ONLY when the classifier resolves to an in-workspace element that declares fields. If the classifier resolves but declares no fields, the slot check is skipped and the view renders; the instance's slots are then entirely the author's. A classifier reference always resolves at build time or the build already failed, so there is no &quot;unresolved&quot; case at validation time.</p>
+<h2>Validation and diagnostics</h2>
+<ul><li><code>DDN-PJ112</code> (error) — under <code>uml.object@1</code>, an instance declares a slot</li></ul>
+<p>  (field) whose name matches no field of its classifier (matching accepts the   classifier field's display <code>name</code> or its <code>local</code> id), while the classifier   declares fields. The message names the instance, the slot and the classifier.</p>
+<ul><li><code>DDN105</code> (error) — <code>x_instance</code> without a <code>classifier</code> key violates the</li></ul>
+<p>  registered extension contract.</p>
+<ul><li>Unregistered extension typos (e.g. <code>x_instnce</code>) warn <code>DDN-W103</code> in logical</li></ul>
+<p>  mode and fail <code>DDN103</code> under <code>validation { mode: strict; }</code>, as for every   extension property.</p>
+<h2>Visual encoding</h2>
+<p>None beyond the graph renderer's existing record cards with field rows. The instance's name may follow UML-ish <code>name : Classifier</code> text as plain label text (author's choice; no parser support). Links render as ordinary graph edges; layout is the author's choice (<code>layout { algorithm: layered; }</code> is a good default).</p>
+<h2>Source example</h2>
+<pre><code>object sample_order &quot;sample_order : Order&quot; {
+    kind: record; x_instance: { classifier: @model.order; };
+    fields { field order_id &quot;O-4711&quot;; field total &quot;129.50&quot;; }
+}
+
+view objects &quot;Synthetic snapshot / objects&quot; {
+    data: [@model];
+    projection { kind: graph; profile: &quot;uml.object@1&quot;; }
+    layout { algorithm: layered; }
+}</code></pre>
+<p>See <code>website/examples/basics/43-object-diagram.ddn</code>: synthetic <code>Customer</code>/<code>Order</code> classifiers, two record instances with matching slots, and one <code>assoc</code> link.</p>
+<h2>Unsupported</h2>
+<p>Object identity semantics beyond labels; slot datatype checking (names only in v1); full UML conformance.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.6.0-beta.1 · proposed standard, pre-1.0</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

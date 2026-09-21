@@ -91,7 +91,7 @@ layout are exactly the graph projection's.
 - **Reuse the view-level `subdiagram` declaration** — rejected for this
   purpose: it places a floating reference box on the canvas, not a flow node
   in the flowchart's layout. It stays available and unchanged
-  (`examples/basics/08-subdiagrams.ddn` renders identically).
+  (`website/examples/basics/08-subdiagrams.ddn` renders identically).
 - **`@`-reference properties** (`x_subdiagram:{view:@payment_flow}`) —
   rejected: unresolvable refs fail the build inside `resolveValue` before any
   profile validation runs, making the dedicated missing-view diagnostic
@@ -138,7 +138,7 @@ markup like every other node.
 
 ## Positive and negative fixtures
 
-- Positive example: `examples/basics/48-interaction-overview.ddn` (synthetic
+- Positive example: `website/examples/basics/48-interaction-overview.ddn` (synthetic
   checkout: `overview` plus detail views `payment_flow` and `stock_flow` in
   one file).
 - Test suite: `notation/tests/interaction-overview.js` — positive render with
