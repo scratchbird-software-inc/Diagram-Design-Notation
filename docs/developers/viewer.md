@@ -25,24 +25,48 @@ source*.
 - **Zoom / fit modes** — *Fit page*, *Fit width*, *Fit height*, *100%*, and
   `−` / `+` buttons; the current percentage is shown. Fits recompute on
   window resize; pressing `−`/`+` switches to an explicit scale.
-- **Font override** — a CSS font-family stack (e.g. `Georgia, serif`)
-  applied to all diagram text.
+- **Font family / size dropdowns** (top bar) — the four runtime font stacks
+  (`sans`, `serif`, `mono`, `handwriting`, shown with their real rendered
+  names) and sizes 8–24 px, or *source default*. Applied through the render
+  override channel (`font` / `fontSize`) — the diagram is re-laid out, so the
+  size dropdown is the reflow-safe control.
+- **Typography per kind** — a sidebar row (family + size dropdowns) for every
+  object kind present in the view. These are CSS rules on
+  `.ddn-kind-<code> text` in the viewer stylesheet: they do **not** re-run
+  layout (a larger size can overflow a shape) — see
+  [styling.md](styling.md#per-kind-typography-css).
 - **Colour overrides** — the sidebar lists every object kind and relation
   class present in the current view, each with a colour picker. Clicking an
   object in the diagram overrides that one object only. Overrides are CSS
   rules on the B1-003 class hooks (`.ddn-kind-<code>`, `.ddn-verb-<verb>`,
   `[data-ddn-id="<element id>"]`) — see [styling.md](styling.md).
-- **Reset overrides** — clears all font/colour overrides.
+- **Relations editor** — master row for all relation types (routing
+  `orthogonal`/`straight`/`curved`/`rounded`, curve tension 0–1, curve radius
+  px, crossings `gap`/`bridge`/`square bridge`, endpoint ordering
+  `optimize`/`preserve`), one routing dropdown per verb in the view, and a
+  click-an-edge panel that binds routing to a single relation id. All of it
+  rides the render override channel (`routing`, `crossings`,
+  `endpointOrdering`, `curveTension`, `curveRadius`, `relationRouting` — see
+  [api-reference.md](api-reference.md)); id keys win over verb keys, verb
+  keys win over the master row. Crossings and endpoint ordering are
+  master-level only (pairwise canvas postprocessing). There is no junctions
+  control by design: the runtime only permits explicit junction semantics
+  (`DDN046`), so junctions are not routing geometry.
+- **Reset typography / Reset relations / Reset overrides** — each section
+  resets independently; *Reset overrides* clears everything.
 - **Export SVG / Export PNG** — downloads the diagram as currently
   presented, overrides included; PNG is rasterised on a 2× canvas.
 
 ## Override model
 
-Overrides live in a `<style>` element in the viewer page; the loaded `.ddn`
+The viewer keeps a single `presentation` state object (global font, per-kind
+typography, colour overrides, relation options). Render-channel entries are
+merged into `renderSync({ overrides })` — a temporary view overlay; CSS
+entries live in a `<style>` element in the viewer page. The loaded `.ddn`
 source text is never modified — the status bar says so at all times
 ("presentation overrides; source unchanged"). Because overrides ride on the
-renderer class hooks, they survive re-renders and apply across views of the
-same model.
+renderer class hooks and the override channel, they survive re-renders and
+apply across views of the same model.
 
 ## Browser support
 

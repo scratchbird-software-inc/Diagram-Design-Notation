@@ -25,7 +25,8 @@ p { margin: 0; }
 .ddn-topbar .ddn-sep { width: 1px; height: 24px; background: var(--line); margin: 0 4px; }
 #ddn-view-picker { min-width: 220px; }
 #ddn-zoom-pct { min-width: 52px; text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); }
-#ddn-font { width: 220px; }
+#ddn-font-family { width: 200px; }
+#ddn-font-size { width: 110px; }
 
 .ddn-body { display: grid; grid-template-columns: 250px 1fr; height: calc(100vh - 121px); min-height: 420px; }
 .ddn-side { background: #fff; border-right: 1px solid var(--line); overflow: auto; padding: 4px 14px 20px; }
@@ -34,6 +35,11 @@ p { margin: 0; }
 .ddn-mini { min-height: 24px; padding: 1px 7px; font-size: 11px; }
 .ddn-dim { color: var(--muted); }
 #ddn-object-id { font-size: 11px; word-break: break-all; display: block; margin: 4px 0 8px; }
+#ddn-relation-id { font-size: 11px; word-break: break-all; display: block; margin: 4px 0 8px; }
+.ddn-rel-master { display: grid; gap: 4px; margin-bottom: 6px; }
+.ddn-rel-field { display: grid; gap: 2px; font-size: 11px; color: var(--muted); }
+.ddn-rel-field select, .ddn-rel-field input { width: 100%; }
+#ddn-type-list select { min-height: 26px; padding: 1px 4px; font-size: 11px; max-width: 110px; }
 #ddn-paste { width: 100%; min-height: 90px; box-sizing: border-box; }
 
 #ddn-stage { overflow: auto; position: relative; background: radial-gradient(#ced9e4 .7px, transparent .7px); background-size: 18px 18px; background-color: #f3f6fa; }

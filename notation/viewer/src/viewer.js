@@ -1,6 +1,7 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-007 end-user viewer logic.
- * Pure functions (computeFitScale, overrideRuleFor, viewListFrom) are exported
- * for node unit tests; the DOM boot runs only in a browser with DDNLive loaded.
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-007/B1-011 end-user viewer logic.
+ * Pure functions (computeFitScale, overrideRuleFor, typographyRuleFor,
+ * relationOverrideState, viewerOverrides, viewListFrom) are exported for node
+ * unit tests; the DOM boot runs only in a browser with DDNLive loaded.
  * No Chrome-only APIs: file reading uses File/input elements, raster export uses
  * a 2D canvas + toDataURL, downloads use Blob + object URLs — all supported by
  * current Chrome and Firefox, including from file://. */
@@ -26,6 +27,19 @@ const slug = s => String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]+/g
 function cssString(s) {
   return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\a ');
 }
+
+/* Runtime font stacks (notation/runtime/ddn-text.js FONTS) — the family
+ * dropdowns display these real rendered names for the four runtime keywords. */
+const FONT_STACKS = {
+  sans: 'DejaVu Sans, Arial, sans-serif',
+  serif: 'DejaVu Serif, Georgia, serif',
+  mono: 'DejaVu Sans Mono, monospace',
+  handwriting: 'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'
+};
+const FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24];
+const ROUTING_VALUES = ['orthogonal', 'straight', 'curved', 'rounded'];
+const CROSSING_VALUES = ['gap', 'bridge', 'square_bridge'];
+const ENDPOINT_ORDERING_VALUES = ['optimize', 'preserve'];
 
 /* One presentation-override CSS rule. CSS always beats SVG presentation
  * attributes, so these rules restyle the render without touching the source.
@@ -54,6 +68,90 @@ function overrideRuleFor(target, value) {
   throw new Error('unknown override type: ' + target.type);
 }
 
+/* Per-kind typography CSS overlay (B1-011 D2). `style` is
+ * {family:'source'|sans|serif|mono|handwriting, size:'source'|<px 8-24>}.
+ * This is a viewer stylesheet overlay: it does NOT re-run layout, so long
+ * labels can overflow their shapes (the global font-size dropdown is the
+ * reflow-safe control — it goes through the render override channel). */
+function typographyRuleFor(code, style) {
+  const decls = [];
+  if (style && style.family != null && style.family !== 'source') {
+    const stack = FONT_STACKS[style.family];
+    if (!stack) throw new Error('unknown font family: ' + style.family);
+    decls.push('font-family: ' + stack);
+  }
+  if (style && style.size != null && style.size !== 'source') {
+    const n = Number(style.size);
+    if (!Number.isFinite(n) || n < 8 || n > 24) throw new Error('font size must be between 8 and 24px');
+    decls.push('font-size: ' + n + 'px');
+  }
+  if (!decls.length) throw new Error('typography rule needs a family or a size');
+  return '.ddn-svg .ddn-kind-' + slug(code) + ' text { ' + decls.join('; ') + '; }';
+}
+
+/* Merge the relations presentation state into a renderSync overrides object
+ * (B1-011 D3-D6). 'source'/empty entries are dropped so the override channel
+ * stays inactive on untouched controls. Relation-id keys win over verb keys.
+ * Crossings and endpoint ordering are view-level only (pairwise canvas
+ * postprocessing), so they only ever come from the master row. */
+function relationOverrideState(relations) {
+  const r = relations || {}, o = {};
+  if (r.routing != null && r.routing !== 'source') {
+    if (!ROUTING_VALUES.includes(r.routing)) throw new Error('unknown routing: ' + r.routing);
+    o.routing = r.routing;
+  }
+  if (r.crossings != null && r.crossings !== 'source') {
+    if (!CROSSING_VALUES.includes(r.crossings)) throw new Error('unknown crossings: ' + r.crossings);
+    o.crossings = r.crossings;
+  }
+  if (r.endpointOrdering != null && r.endpointOrdering !== 'source') {
+    if (!ENDPOINT_ORDERING_VALUES.includes(r.endpointOrdering)) throw new Error('unknown endpoint ordering: ' + r.endpointOrdering);
+    o.endpointOrdering = r.endpointOrdering;
+  }
+  if (r.curveTension != null && r.curveTension !== '') {
+    const t = Number(r.curveTension);
+    if (!Number.isFinite(t) || t < 0 || t > 1) throw new Error('curve tension must be between 0 and 1');
+    o.curveTension = t;
+  }
+  if (r.curveRadius != null && r.curveRadius !== '') {
+    const n = Number(r.curveRadius);
+    if (!Number.isFinite(n) || n < 0 || n > 512) throw new Error('curve radius must be between 0 and 512px');
+    o.curveRadius = n;
+  }
+  const rr = {};
+  for (const [k, v] of Object.entries(r.verbRouting || {})) {
+    if (v == null || v === 'source') continue;
+    if (!ROUTING_VALUES.includes(v)) throw new Error('unknown routing for verb ' + k + ': ' + v);
+    rr[k] = v;
+  }
+  for (const [k, v] of Object.entries(r.relationRouting || {})) {
+    if (v == null || v === 'source') continue;
+    if (!ROUTING_VALUES.includes(v)) throw new Error('unknown routing for relation ' + k + ': ' + v);
+    rr[k] = v;
+  }
+  if (Object.keys(rr).length) o.relationRouting = rr;
+  return o;
+}
+
+/* Full renderSync overrides from the unified presentation state (B1-011 D7):
+ * global font family/size go through the override channel (proper reflow);
+ * relation options come from relationOverrideState. Per-kind typography and
+ * colours stay CSS-only (see overrideCss). */
+function viewerOverrides(presentation) {
+  const p = presentation || {}, o = relationOverrideState(p.relations);
+  const f = p.font || {};
+  if (f.family != null && f.family !== 'source') {
+    if (!FONT_STACKS[f.family]) throw new Error('unknown font family: ' + f.family);
+    o.font = f.family;
+  }
+  if (f.size != null && f.size !== 'source') {
+    const n = Number(f.size);
+    if (!Number.isFinite(n) || n < 8 || n > 64) throw new Error('font size must be between 8 and 64px');
+    o.fontSize = n;
+  }
+  return o;
+}
+
 /* Flatten the workspace entries() surface into a picker list:
  * [{entry, view, label}]. Accepts the array returned by ws.entries(). */
 function viewListFrom(entries) {
@@ -65,7 +163,7 @@ function viewListFrom(entries) {
   return out;
 }
 
-const pure = { computeFitScale, overrideRuleFor, viewListFrom };
+const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNViewer = pure; return; }
 
@@ -76,9 +174,16 @@ const els = {
   open: $('ddn-open'), fileInput: $('ddn-file'), paste: $('ddn-paste'), loadPaste: $('ddn-load-paste'),
   picker: $('ddn-view-picker'), fitPage: $('ddn-fit-page'), fitWidth: $('ddn-fit-width'),
   fitHeight: $('ddn-fit-height'), fit100: $('ddn-fit-100'), zoomOut: $('ddn-zoom-out'),
-  zoomIn: $('ddn-zoom-in'), zoomPct: $('ddn-zoom-pct'), font: $('ddn-font'),
+  zoomIn: $('ddn-zoom-in'), zoomPct: $('ddn-zoom-pct'),
+  fontFamily: $('ddn-font-family'), fontSize: $('ddn-font-size'),
+  typeList: $('ddn-type-list'), typeReset: $('ddn-type-reset'),
   kinds: $('ddn-kind-list'), verbs: $('ddn-verb-list'), objectPanel: $('ddn-object-panel'),
   objectId: $('ddn-object-id'), objectColour: $('ddn-object-colour'), objectClear: $('ddn-object-clear'),
+  relRouting: $('ddn-rel-routing'), relTension: $('ddn-rel-tension'), relRadius: $('ddn-rel-radius'),
+  relCrossings: $('ddn-rel-crossings'), relEndpointOrdering: $('ddn-rel-endpoint-ordering'),
+  verbRoutingList: $('ddn-verb-routing-list'), relationsReset: $('ddn-relations-reset'),
+  relationPanel: $('ddn-relation-panel'), relationId: $('ddn-relation-id'),
+  relationRouting: $('ddn-relation-routing'), relationClear: $('ddn-relation-clear'),
   reset: $('ddn-reset'), exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'),
   status: $('ddn-status'), stage: $('ddn-stage'), paper: $('ddn-paper'), hint: $('ddn-hint')
 };
@@ -86,10 +191,21 @@ const overrideStyle = document.createElement('style');
 overrideStyle.id = 'ddn-presentation-overrides';
 document.head.appendChild(overrideStyle);
 
+/* Unified presentation state (D7): global font (override channel), per-kind
+ * typography (CSS), colour overrides (CSS), relation options (override channel). */
+function emptyPresentation() {
+  return {
+    font: { family: 'source', size: 'source' },
+    typography: {},
+    kindColours: {}, verbColours: {}, objectColours: {},
+    relations: { routing: 'source', curveTension: '', curveRadius: '', crossings: 'source', endpointOrdering: 'source', verbRouting: {}, relationRouting: {} }
+  };
+}
 const state = {
   files: {}, entry: null, view: null, ws: null,
-  fit: 'page', zoom: null, font: '',
-  kindColours: {}, verbColours: {}, objectColours: {}, selected: null,
+  fit: 'page', zoom: null,
+  presentation: emptyPresentation(),
+  selected: null, selectedRelation: null,
   svgText: '', svgW: 0, svgH: 0
 };
 
@@ -131,6 +247,55 @@ function colourRow(labelText, code, current, onPick, onClear) {
   return row;
 }
 
+function fillSelect(sel, options, current, ariaLabel) {
+  sel.innerHTML = '';
+  for (const [value, label] of options) {
+    const o = document.createElement('option');
+    o.value = value; o.textContent = label;
+    sel.appendChild(o);
+  }
+  sel.value = current;
+  if (ariaLabel) sel.setAttribute('aria-label', ariaLabel);
+  return sel;
+}
+const familyOptions = () => [['source', 'source default']].concat(Object.entries(FONT_STACKS).map(([k, stack]) => [k, k + ' — ' + stack.split(',')[0]]));
+const sizeOptions = () => [['source', 'source default']].concat(FONT_SIZES.map(n => [String(n), n + ' px']));
+const routingOptions = () => [['source', 'default']].concat(ROUTING_VALUES.map(v => [v, v]));
+
+function typographyRow(labelText, code) {
+  const row = document.createElement('div'); row.className = 'ddn-colour-row';
+  const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText;
+  const cur = state.presentation.typography[code] || { family: 'source', size: 'source' };
+  const fam = fillSelect(document.createElement('select'), familyOptions(), cur.family || 'source', 'font family for ' + labelText);
+  const siz = fillSelect(document.createElement('select'), sizeOptions(), String(cur.size || 'source'), 'font size for ' + labelText);
+  const update = () => {
+    if (fam.value === 'source' && siz.value === 'source') delete state.presentation.typography[code];
+    else state.presentation.typography[code] = { family: fam.value, size: siz.value };
+    applyOverrides();
+  };
+  fam.addEventListener('change', update); siz.addEventListener('change', update);
+  const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
+  clr.addEventListener('click', () => { delete state.presentation.typography[code]; repopulateOverrides(); applyOverrides(); });
+  row.append(lab, fam, siz, clr);
+  return row;
+}
+
+function verbRoutingRow(labelText, keyword) {
+  const row = document.createElement('div'); row.className = 'ddn-colour-row';
+  const lab = document.createElement('span'); lab.className = 'ddn-colour-label'; lab.textContent = labelText;
+  const cur = state.presentation.relations.verbRouting[keyword] || 'source';
+  const sel = fillSelect(document.createElement('select'), routingOptions(), cur, 'routing for ' + labelText);
+  sel.addEventListener('change', () => {
+    if (sel.value === 'source') delete state.presentation.relations.verbRouting[keyword];
+    else state.presentation.relations.verbRouting[keyword] = sel.value;
+    render();
+  });
+  const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ddn-mini'; clr.textContent = 'clear';
+  clr.addEventListener('click', () => { delete state.presentation.relations.verbRouting[keyword]; repopulateOverrides(); render(); });
+  row.append(lab, sel, clr);
+  return row;
+}
+
 function repopulateOverrides() {
   const ir = state.ws.resolve(state.entry, state.view);
   const kindByKeyword = new Map(DDNLive.kinds.map(k => [k.id, k]));
@@ -142,47 +307,55 @@ function repopulateOverrides() {
   }
   for (const rel of ir.relations || []) {
     const v = verbByKeyword.get(rel.kind);
-    if (v && !verbs.has(v.code)) verbs.set(v.code, v.label);
+    if (v && !verbs.has(v.id)) verbs.set(v.id, v);
   }
+  els.typeList.innerHTML = '<h3>Typography per kind</h3><p class="ddn-dim">CSS overlay — resizes do not reflow the layout (the global size dropdown does).</p>';
+  if (!kinds.size) els.typeList.insertAdjacentHTML('beforeend', '<p class="ddn-dim">none in this view</p>');
+  for (const [code, label] of [...kinds].sort()) els.typeList.appendChild(typographyRow(label + ' (' + code + ')', code));
   els.kinds.innerHTML = '<h3>Object kinds</h3>';
   if (!kinds.size) els.kinds.insertAdjacentHTML('beforeend', '<p class="ddn-dim">none in this view</p>');
-  for (const [code, label] of [...kinds].sort()) els.kinds.appendChild(colourRow(label + ' (' + code + ')', code, state.kindColours[code],
-    (c, col) => { state.kindColours[c] = col; applyOverrides(); },
-    c => { delete state.kindColours[c]; repopulateOverrides(); applyOverrides(); }));
+  for (const [code, label] of [...kinds].sort()) els.kinds.appendChild(colourRow(label + ' (' + code + ')', code, state.presentation.kindColours[code],
+    (c, col) => { state.presentation.kindColours[c] = col; applyOverrides(); },
+    c => { delete state.presentation.kindColours[c]; repopulateOverrides(); applyOverrides(); }));
   els.verbs.innerHTML = '<h3>Relation classes</h3>';
   if (!verbs.size) els.verbs.insertAdjacentHTML('beforeend', '<p class="ddn-dim">none in this view</p>');
-  for (const [code, label] of [...verbs].sort()) els.verbs.appendChild(colourRow(label + ' (' + code + ')', code, state.verbColours[code],
-    (c, col) => { state.verbColours[c] = col; applyOverrides(); },
-    c => { delete state.verbColours[c]; repopulateOverrides(); applyOverrides(); }));
+  for (const [keyword, v] of [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1)) els.verbs.appendChild(colourRow(v.label + ' (' + v.code + ')', v.code, state.presentation.verbColours[v.code],
+    (c, col) => { state.presentation.verbColours[c] = col; applyOverrides(); },
+    c => { delete state.presentation.verbColours[c]; repopulateOverrides(); applyOverrides(); }));
+  els.verbRoutingList.innerHTML = '';
+  if (!verbs.size) els.verbRoutingList.insertAdjacentHTML('beforeend', '<p class="ddn-dim">none in this view</p>');
+  for (const [keyword, v] of [...verbs].sort((a, b) => a[1].code < b[1].code ? -1 : 1)) els.verbRoutingList.appendChild(verbRoutingRow(v.label + ' (' + keyword + ')', keyword));
 }
 
 function overrideCss() {
-  const rules = [];
-  if (state.font.trim()) rules.push(overrideRuleFor({ type: 'font' }, state.font));
-  for (const [code, col] of Object.entries(state.kindColours)) rules.push(overrideRuleFor({ type: 'kind', code }, col));
-  for (const [code, col] of Object.entries(state.verbColours)) rules.push(overrideRuleFor({ type: 'verb', code }, col));
-  for (const [id, col] of Object.entries(state.objectColours)) rules.push(overrideRuleFor({ type: 'object', id }, col));
+  const p = state.presentation, rules = [];
+  for (const [code, style] of Object.entries(p.typography)) rules.push(typographyRuleFor(code, style));
+  for (const [code, col] of Object.entries(p.kindColours)) rules.push(overrideRuleFor({ type: 'kind', code }, col));
+  for (const [code, col] of Object.entries(p.verbColours)) rules.push(overrideRuleFor({ type: 'verb', code }, col));
+  for (const [id, col] of Object.entries(p.objectColours)) rules.push(overrideRuleFor({ type: 'object', id }, col));
+  if (state.selectedRelation) rules.push('.ddn-svg [data-id="' + cssString(state.selectedRelation) + '"] path { stroke: #d97706; stroke-width: 2.5px; }');
   return rules.join('\n');
 }
 
 function applyOverrides() {
   overrideStyle.textContent = overrideCss();
-  const n = Object.keys(state.kindColours).length + Object.keys(state.verbColours).length + Object.keys(state.objectColours).length + (state.font.trim() ? 1 : 0);
-  status(n ? n + ' override(s) active' : null);
+  const p = state.presentation;
+  const n = Object.keys(p.kindColours).length + Object.keys(p.verbColours).length + Object.keys(p.objectColours).length + Object.keys(p.typography).length;
+  status(n ? n + ' CSS override(s) active' : null);
 }
 
 function render() {
   try {
-    const r = state.ws.renderSync({ entry: state.entry, view: state.view });
+    const r = state.ws.renderSync({ entry: state.entry, view: state.view, overrides: viewerOverrides(state.presentation) });
     state.svgText = r.svg;
     els.paper.innerHTML = r.svg;
     const svg = els.paper.querySelector('svg');
     state.svgW = parseFloat(svg.getAttribute('width')) || 800;
     state.svgH = parseFloat(svg.getAttribute('height')) || 600;
     els.hint.style.display = 'none';
-    state.selected = null;
-    updateObjectPanel();
     repopulateOverrides();
+    updateObjectPanel();
+    updateRelationPanel();
     applyOverrides();
     applyFit();
   } catch (e) { fail(e && e.message); }
@@ -216,11 +389,27 @@ function updateObjectPanel() {
   els.objectPanel.classList.toggle('ddn-dim', !has);
   els.objectId.textContent = has ? state.selected : '(click an object in the diagram)';
   els.objectColour.disabled = !has; els.objectClear.disabled = !has;
-  if (has) els.objectColour.value = state.objectColours[state.selected] || '#888888';
+  if (has) els.objectColour.value = state.presentation.objectColours[state.selected] || '#888888';
+}
+
+function updateRelationPanel() {
+  const has = !!state.selectedRelation;
+  els.relationPanel.classList.toggle('ddn-dim', !has);
+  els.relationId.textContent = has ? state.selectedRelation : '(click a relation in the diagram)';
+  els.relationRouting.disabled = !has; els.relationClear.disabled = !has;
+  els.relationRouting.value = has ? (state.presentation.relations.relationRouting[state.selectedRelation] || 'source') : 'source';
 }
 
 els.paper.addEventListener('click', e => {
-  const g = e.target && e.target.closest ? e.target.closest('[data-ddn-id]') : null;
+  if (!e.target || !e.target.closest) return;
+  const rel = e.target.closest('.ddn-relation[data-id]');
+  if (rel && els.paper.contains(rel)) {
+    state.selectedRelation = rel.getAttribute('data-id');
+    updateRelationPanel(); applyOverrides();
+    status('selected relation ' + state.selectedRelation);
+    return;
+  }
+  const g = e.target.closest('[data-ddn-id]');
   if (!g || !els.paper.contains(g)) return;
   state.selected = g.getAttribute('data-ddn-id');
   updateObjectPanel();
@@ -228,13 +417,24 @@ els.paper.addEventListener('click', e => {
 });
 els.objectColour.addEventListener('input', () => {
   if (!state.selected) return;
-  state.objectColours[state.selected] = els.objectColour.value;
+  state.presentation.objectColours[state.selected] = els.objectColour.value;
   applyOverrides();
 });
 els.objectClear.addEventListener('click', () => {
   if (!state.selected) return;
-  delete state.objectColours[state.selected];
+  delete state.presentation.objectColours[state.selected];
   updateObjectPanel(); applyOverrides();
+});
+els.relationRouting.addEventListener('change', () => {
+  if (!state.selectedRelation) return;
+  if (els.relationRouting.value === 'source') delete state.presentation.relations.relationRouting[state.selectedRelation];
+  else state.presentation.relations.relationRouting[state.selectedRelation] = els.relationRouting.value;
+  render();
+});
+els.relationClear.addEventListener('click', () => {
+  if (!state.selectedRelation) return;
+  delete state.presentation.relations.relationRouting[state.selectedRelation];
+  updateRelationPanel(); render();
 });
 
 els.open.addEventListener('click', () => els.fileInput.click());
@@ -270,11 +470,43 @@ els.fitHeight.addEventListener('click', () => setFit('height'));
 els.fit100.addEventListener('click', () => setFit('100'));
 els.zoomOut.addEventListener('click', () => zoomStep(1 / 1.25));
 els.zoomIn.addEventListener('click', () => zoomStep(1.25));
-els.font.addEventListener('input', () => { state.font = els.font.value; applyOverrides(); });
+
+function syncTypographyControls() {
+  els.fontFamily.value = state.presentation.font.family;
+  els.fontSize.value = state.presentation.font.size;
+}
+els.fontFamily.addEventListener('change', () => { state.presentation.font.family = els.fontFamily.value; render(); });
+els.fontSize.addEventListener('change', () => { state.presentation.font.size = els.fontSize.value; render(); });
+els.typeReset.addEventListener('click', () => {
+  state.presentation.font = { family: 'source', size: 'source' };
+  state.presentation.typography = {};
+  syncTypographyControls(); repopulateOverrides(); render();
+});
+
+function syncRelationControls() {
+  const r = state.presentation.relations;
+  els.relRouting.value = r.routing;
+  els.relTension.value = r.curveTension;
+  els.relRadius.value = r.curveRadius;
+  els.relCrossings.value = r.crossings;
+  els.relEndpointOrdering.value = r.endpointOrdering;
+}
+els.relRouting.addEventListener('change', () => { state.presentation.relations.routing = els.relRouting.value; render(); });
+els.relTension.addEventListener('change', () => { state.presentation.relations.curveTension = els.relTension.value; render(); });
+els.relRadius.addEventListener('change', () => { state.presentation.relations.curveRadius = els.relRadius.value; render(); });
+els.relCrossings.addEventListener('change', () => { state.presentation.relations.crossings = els.relCrossings.value; render(); });
+els.relEndpointOrdering.addEventListener('change', () => { state.presentation.relations.endpointOrdering = els.relEndpointOrdering.value; render(); });
+els.relationsReset.addEventListener('click', () => {
+  state.presentation.relations = emptyPresentation().relations;
+  state.selectedRelation = null;
+  syncRelationControls(); repopulateOverrides(); updateRelationPanel(); render();
+});
+
 els.reset.addEventListener('click', () => {
-  state.font = ''; els.font.value = '';
-  state.kindColours = {}; state.verbColours = {}; state.objectColours = {};
-  repopulateOverrides(); updateObjectPanel(); applyOverrides();
+  state.presentation = emptyPresentation();
+  state.selected = null; state.selectedRelation = null;
+  syncTypographyControls(); syncRelationControls();
+  repopulateOverrides(); updateObjectPanel(); updateRelationPanel(); render();
 });
 host.addEventListener('resize', () => { if (state.ws) applyFit(); });
 
@@ -320,11 +552,23 @@ els.exportPng.addEventListener('click', () => {
 
 host.DDNViewer = Object.assign({}, pure, {
   loadFiles, setFit, zoomStep, render, applyOverrides, exportSvgString,
-  setFont: v => { els.font.value = v; state.font = v; applyOverrides(); },
-  setKindColour: (code, col) => { state.kindColours[code] = col; applyOverrides(); },
-  setVerbColour: (code, col) => { state.verbColours[code] = col; applyOverrides(); },
-  setObjectColour: (id, col) => { state.objectColours[id] = col; applyOverrides(); },
+  setFontFamily: v => { state.presentation.font.family = v; syncTypographyControls(); render(); },
+  setFontSize: v => { state.presentation.font.size = String(v); syncTypographyControls(); render(); },
+  setKindTypography: (code, style) => { state.presentation.typography[code] = style; repopulateOverrides(); applyOverrides(); },
+  setKindColour: (code, col) => { state.presentation.kindColours[code] = col; applyOverrides(); },
+  setVerbColour: (code, col) => { state.presentation.verbColours[code] = col; applyOverrides(); },
+  setObjectColour: (id, col) => { state.presentation.objectColours[id] = col; applyOverrides(); },
   selectObject: id => { state.selected = id; updateObjectPanel(); },
+  setRouting: v => { state.presentation.relations.routing = v; syncRelationControls(); render(); },
+  setCurveTension: v => { state.presentation.relations.curveTension = String(v); syncRelationControls(); render(); },
+  setCurveRadius: v => { state.presentation.relations.curveRadius = String(v); syncRelationControls(); render(); },
+  setCrossings: v => { state.presentation.relations.crossings = v; syncRelationControls(); render(); },
+  setEndpointOrdering: v => { state.presentation.relations.endpointOrdering = v; syncRelationControls(); render(); },
+  setVerbRouting: (verb, v) => { state.presentation.relations.verbRouting[verb] = v; repopulateOverrides(); render(); },
+  selectRelation: id => { state.selectedRelation = id; updateRelationPanel(); applyOverrides(); },
+  setRelationRouting: (id, v) => { state.presentation.relations.relationRouting[id] = v; render(); },
+  resetTypography: () => els.typeReset.click(),
+  resetRelations: () => els.relationsReset.click(),
   resetOverrides: () => els.reset.click(),
   sourceText: () => els.paste.value,
   state

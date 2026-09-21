@@ -1622,13 +1622,16 @@ const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Intera
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
 const fail=(code,message)=>{throw new LiveError(code,message);};
 const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
-const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null};
+const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
+const routingValues=['orthogonal','straight','curved','rounded'];
 function checkOptions(o={}){
  if(!o||typeof o!=='object'||Array.isArray(o))fail('LIVE001','Presentation options must be a record.');
  for(const k of Object.keys(o))if(!Object.hasOwn(defaults,k))fail('LIVE001','Unsupported presentation option: '+k);
  for(const [k,values]of Object.entries(choices))if(o[k]!=null&&!values.includes(o[k]))fail('LIVE002',`Unsupported ${k}: ${o[k]}`);
- for(const [k,min,max]of [['width',400,32000],['height',400,32000],['roughness',0,3],['fontSize',8,64],['gridStep',8,512],['depth',0,64]])if(o[k]!=null&&(!Number.isFinite(o[k])||o[k]<min||o[k]>max||(k==='depth'&&!Number.isInteger(o[k]))))fail('LIVE003',`${k} must be between ${min} and ${max}.`);
+ for(const [k,min,max]of [['width',400,32000],['height',400,32000],['roughness',0,3],['fontSize',8,64],['gridStep',8,512],['depth',0,64],['curveTension',0,1],['curveRadius',0,512]])if(o[k]!=null&&(!Number.isFinite(o[k])||o[k]<min||o[k]>max||(k==='depth'&&!Number.isInteger(o[k]))))fail('LIVE003',`${k} must be between ${min} and ${max}.`);
  for(const k of ['autoPlace','hachure'])if(o[k]!=null&&typeof o[k]!=='boolean')fail('LIVE003',k+' must be boolean or null.');
+ if(o.relationRouting!=null){if(typeof o.relationRouting!=='object'||Array.isArray(o.relationRouting))fail('LIVE022','relationRouting must be a record keyed by verb or relation id.');
+  for(const [key,value]of Object.entries(o.relationRouting))if(!routingValues.includes(value))fail('LIVE023',`Unsupported relationRouting value for ${key}: ${value}`);}
  return o;
 }
 function pathChecked(k){
@@ -1647,8 +1650,8 @@ function capabilities(ir){const projection=ir.view.profiles.projection?.kind||'g
 function apply(base,overrides){
  const ir={...base,view:clone(base.view)},o={...defaults,...checkOptions(overrides)},p=ir.view.profiles,caps=capabilities(ir);
  if(o.mark!=='source'){if(caps.projection!=='chart'||!caps.marks.includes(o.mark))fail('LIVE021','Requested mark is not supported by this projection/transform');p.projection.mark=o.mark;}
- if(caps.dataBound||caps.projection==='chen'){for(const key of ['placement','routing','crossings','fields','domains','datatypes','labels','kind','center','endpointOrdering'])if(o[key]!=='source')fail('LIVE021','This projection does not allow graph setting '+key);if(o.autoPlace!==null||o.gridStep!==null||o.depth!==null)fail('LIVE021','Data-bound coordinates cannot be replaced with automatic graph placement');}
- if(caps.sequence){for(const k of ['placement','routing','fields','labels','page','kind','crossings'])if(!caps[k].includes(o[k]))fail('LIVE020','Interaction projection does not support '+k+'='+o[k]);if(o.autoPlace!==null||o.gridStep!==null||o.center!=='source'||o.fontSize!==null||o.domains!=='source'||o.datatypes!=='source'||o.depth!==null||o.endpointOrdering!=='source')fail('LIVE020','Interaction projection retains its fixed lanes and typography.');}
+ if(caps.dataBound||caps.projection==='chen'){for(const key of ['placement','routing','crossings','fields','domains','datatypes','labels','kind','center','endpointOrdering'])if(o[key]!=='source')fail('LIVE021','This projection does not allow graph setting '+key);if(o.autoPlace!==null||o.gridStep!==null||o.depth!==null||o.relationRouting!==null)fail('LIVE021','Data-bound coordinates cannot be replaced with automatic graph placement');}
+ if(caps.sequence){for(const k of ['placement','routing','fields','labels','page','kind','crossings'])if(!caps[k].includes(o[k]))fail('LIVE020','Interaction projection does not support '+k+'='+o[k]);if(o.autoPlace!==null||o.gridStep!==null||o.center!=='source'||o.fontSize!==null||o.domains!=='source'||o.datatypes!=='source'||o.depth!==null||o.endpointOrdering!=='source'||o.relationRouting!==null)fail('LIVE020','Interaction projection retains its fixed lanes and typography.');}
  if(o.endpointOrdering!=='source')p.layout.endpoint_ordering=o.endpointOrdering;
  if(o.placement!=='source'){p.layout.algorithm=o.placement;if(o.center==='source')p.layout.center='pins';}
  if(o.autoPlace!==null)p.layout.auto_place=o.autoPlace;
@@ -1658,6 +1661,32 @@ function apply(base,overrides){
   p.layout.routing=o.routing==='rounded'?'curved':o.routing;p.layout.curve=o.routing==='rounded'?'rounded':'bezier';
   // The toolbar is a temporary view overlay. Explicit per-relation routing
   // selections still win; their presence is shown in the resolved source.
+ }
+ if(o.curveTension!==null)p.layout.curve_tension=o.curveTension;
+ if(o.curveRadius!==null)p.layout.curve_radius=Q(o.curveRadius);
+ if(o.relationRouting!==null){
+  // Per-verb / per-relation routing overlay (D4): written into the same
+  // per-relation hint channel the parser populates from `route` blocks
+  // (ir.view.routes), which layout honours over the view-level routing.
+  // Verb keys apply first, relation-id keys second so ids always win.
+  const visible=new Set(ir.view.relations),byId=new Map(ir.relations.filter(r=>visible.has(r.id)).map(r=>[r.id,r]));
+  const verbs=new Set([...visible].map(id=>byId.get(id)?.kind).filter(v=>v!=null));
+  const entries=Object.entries(o.relationRouting);
+  for(const [key]of entries)if(!byId.has(key)&&!verbs.has(key))fail('LIVE022','relationRouting key is not a verb or relation in this view: '+key);
+  for(const pass of [0,1]){
+   for(const [key,value]of entries){
+    const isId=byId.has(key);
+    if(pass===(isId?1:0)){
+     const targets=isId?[key]:[...visible].filter(id=>byId.get(id)?.kind===key);
+     for(const id of targets){
+      const hint={...(ir.view.routes||{})[id]};
+      hint.routing=value==='rounded'?'curved':value;
+      if(value==='rounded')hint.curve='rounded';
+      (ir.view.routes=ir.view.routes||{})[id]=hint;
+     }
+    }
+   }
+  }
  }
  if(o.crossings!=='source')p.layout.crossings=o.crossings;
  for(const k of ['theme','font'])if(o[k]!=='source')p.style[k]=o[k];

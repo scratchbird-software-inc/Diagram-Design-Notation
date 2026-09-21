@@ -87,6 +87,20 @@ document.querySelector("#out").innerHTML = r.svg;
 mark, placement, spacing-era presentation switches). `'source'` means "keep
 what the view declared".
 
+Relation-rendering override keys (B1-011):
+
+- `relationRouting: Record<string, 'orthogonal'|'straight'|'curved'|'rounded'>`
+  — per-verb / per-relation routing overlay. Keys are verb ids or relation
+  ids of the current view; relation-id keys win over verb keys, and verb keys
+  win over the view-level `routing`. `rounded` maps to a curved route with
+  rounded bends, per relation. Unknown keys reject `LIVE022` (naming the
+  key), unsupported values reject `LIVE023`; data-bound/chen views reject it
+  with `LIVE021` and interaction (fixed-lane) views with `LIVE020`, exactly
+  like `routing`.
+- `curveTension: number` (0–1) and `curveRadius: number` (px, 0–512) —
+  view-level curve quantities; out-of-range values reject `LIVE003`. They are
+  accepted but inert when the effective routing is not curved.
+
 ### `render(request)`
 
 `ws.render(request): Promise<RenderResult>` — the async twin of

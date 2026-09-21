@@ -14,6 +14,15 @@ export interface Options {
   page?: 'source'|'content'|'web'|'a4-landscape'|'a4-portrait'|'letter-landscape'|'letter-portrait'|'custom';
   width?: number; height?: number; font?: 'source'|'sans'|'serif'|'mono'|'handwriting'; fontSize?: number|null;
   roughness?: number|null; hachure?: boolean|null;
+  /** Per-verb / per-relation routing overlay (B1-011). Keys are verb ids or relation ids of the current view;
+   *  relation-id keys win over verb keys, verb keys win over the view-level `routing`. Values map onto the
+   *  per-relation routing hints (`rounded` → curved route with rounded bends). Unknown keys reject LIVE022,
+   *  unsupported values reject LIVE023; rejected with LIVE021 on data-bound/chen views and LIVE020 on sequence views. */
+  relationRouting?: Record<string,'orthogonal'|'straight'|'curved'|'rounded'>|null;
+  /** View-level curve tension 0..1 (LIVE003 out of range); inert unless the effective routing is curved. */
+  curveTension?: number|null;
+  /** View-level rounded-corner radius in px, 0..512 (LIVE003 out of range); inert unless the effective routing is curved. */
+  curveRadius?: number|null;
 }
 export interface LayoutState { format:'ddn-layout-state@1'; view:string; positions:Record<string,[number,number]> }
 export interface Diagnostic {code:string;severity?:'info'|'warning'|'error';message:string;source?:string;offset?:number}

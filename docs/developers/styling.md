@@ -36,6 +36,22 @@ The viewer (B1-007) builds its colour overrides on
 `.ddn-kind-<code>`, `.ddn-verb-<verb>`, and `[data-ddn-id="<element id>"]`
 attribute selectors.
 
+## Per-kind typography CSS
+
+B1-011 added per-kind font overrides in the viewer, emitted as viewer-page
+rules of the form:
+
+```css
+.ddn-svg .ddn-kind-tbl text { font-family: "DejaVu Sans Mono", monospace; font-size: 20px; }
+```
+
+The family is always one of the four runtime stacks (`sans`, `serif`,
+`mono`, `handwriting`) and the size 8–24 px. Unlike the global font-size
+dropdown (which re-renders through the override channel and reflows the
+layout), these rules are a stylesheet overlay: text is restyled in place and
+long labels can overflow their shapes. To do the same in your own page,
+target `.ddn-kind-<code> text` the same way.
+
 ## `ddn.css` custom properties
 
 ```css

@@ -26,7 +26,20 @@
   <button id="ddn-zoom-in" type="button" aria-label="Zoom in">+</button>
   <span id="ddn-zoom-pct">—</span>
   <span class="ddn-sep"></span>
-  <input id="ddn-font" type="text" placeholder="Font family override, e.g. Georgia, serif" aria-label="Font family override">
+  <select id="ddn-font-family" aria-label="Global font family override">
+    <option value="source">source default</option>
+    <option value="sans">sans — DejaVu Sans</option>
+    <option value="serif">serif — DejaVu Serif</option>
+    <option value="mono">mono — DejaVu Sans Mono</option>
+    <option value="handwriting">handwriting — Comic Neue</option>
+  </select>
+  <select id="ddn-font-size" aria-label="Global font size override (reflows the layout)">
+    <option value="source">source default</option>
+    <option value="8">8 px</option><option value="9">9 px</option><option value="10">10 px</option>
+    <option value="11">11 px</option><option value="12">12 px</option><option value="14">14 px</option>
+    <option value="16">16 px</option><option value="18">18 px</option><option value="20">20 px</option>
+    <option value="24">24 px</option>
+  </select>
   <span class="ddn-sep"></span>
   <button id="ddn-export-svg" type="button">Export SVG</button>
   <button id="ddn-export-png" type="button">Export PNG</button>
@@ -34,8 +47,62 @@
 </header>
 <main class="ddn-body">
   <aside class="ddn-side">
+    <div id="ddn-type-list"><h3>Typography per kind</h3><p class="ddn-dim">load a source</p></div>
+    <p><button id="ddn-type-reset" type="button" class="ddn-mini">Reset typography</button></p>
     <div id="ddn-kind-list"><h3>Object kinds</h3><p class="ddn-dim">load a source</p></div>
     <div id="ddn-verb-list"><h3>Relation classes</h3><p class="ddn-dim">load a source</p></div>
+    <div id="ddn-relations">
+      <h3>Relations</h3>
+      <div class="ddn-rel-master">
+        <label class="ddn-rel-field">All relation types — routing
+          <select id="ddn-rel-routing" aria-label="Routing for all relation types">
+            <option value="source">default</option>
+            <option value="orthogonal">orthogonal</option>
+            <option value="straight">straight</option>
+            <option value="curved">curved (bezier bends)</option>
+            <option value="rounded">rounded (curved, rounded bends)</option>
+          </select>
+        </label>
+        <label class="ddn-rel-field">Curve tension (0–1)
+          <input id="ddn-rel-tension" type="number" min="0" max="1" step="0.05" placeholder="source" aria-label="Curve tension for curved routes">
+        </label>
+        <label class="ddn-rel-field">Curve radius (px)
+          <input id="ddn-rel-radius" type="number" min="0" max="512" step="1" placeholder="source" aria-label="Corner radius for rounded bends">
+        </label>
+        <label class="ddn-rel-field">Crossings (all relations)
+          <select id="ddn-rel-crossings" aria-label="Crossing treatment for all relations">
+            <option value="source">default</option>
+            <option value="gap">gap</option>
+            <option value="bridge">bridge</option>
+            <option value="square_bridge">square bridge</option>
+          </select>
+        </label>
+        <label class="ddn-rel-field">Endpoint ordering
+          <select id="ddn-rel-endpoint-ordering" aria-label="Endpoint ordering for all relations">
+            <option value="source">default</option>
+            <option value="optimize">optimize</option>
+            <option value="preserve">preserve</option>
+          </select>
+        </label>
+        <p class="ddn-dim">Crossings and endpoint ordering apply to all relation types at once — they are pairwise canvas postprocessing, not per-edge geometry.</p>
+      </div>
+      <div id="ddn-verb-routing-list"><p class="ddn-dim">load a source</p></div>
+      <div id="ddn-relation-panel" class="ddn-dim">
+        <h3>Selected relation</h3>
+        <code id="ddn-relation-id">(click a relation in the diagram)</code>
+        <div class="ddn-colour-row">
+          <select id="ddn-relation-routing" disabled aria-label="Routing for the selected relation">
+            <option value="source">default</option>
+            <option value="orthogonal">orthogonal</option>
+            <option value="straight">straight</option>
+            <option value="curved">curved (bezier bends)</option>
+            <option value="rounded">rounded (curved, rounded bends)</option>
+          </select>
+          <button id="ddn-relation-clear" type="button" class="ddn-mini" disabled>clear</button>
+        </div>
+      </div>
+      <p><button id="ddn-relations-reset" type="button" class="ddn-mini">Reset relations</button></p>
+    </div>
     <div id="ddn-object-panel" class="ddn-dim">
       <h3>Selected object</h3>
       <code id="ddn-object-id">(click an object in the diagram)</code>

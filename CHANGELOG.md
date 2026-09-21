@@ -6,6 +6,26 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-011: viewer typography + relation options — the end-user viewer's
+  free-text font input is replaced by global family/size dropdowns (the four
+  runtime stacks, 8–24 px, applied through the reflow-safe `font`/`fontSize`
+  override channel); a per-kind typography section mirrors the colour
+  enumeration with family+size dropdowns per kind as CSS overlays on
+  `.ddn-kind-<code> text` (no reflow, documented); relations get a full
+  options editor — a master row (routing orthogonal/straight/curved/rounded,
+  curve tension, curve radius, crossings gap/bridge/square bridge, endpoint
+  ordering optimize/preserve), one routing row per verb, and a
+  click-an-edge per-relation routing editor (highlight + panel). The render
+  override channel is extended additively: `relationRouting` keyed by verb or
+  relation id (id wins over verb, verb wins over view routing; `rounded` →
+  curved+rounded per relation; unknown keys LIVE022, bad values LIVE023,
+  LIVE021/LIVE020 guards) and view-level `curveTension`/`curveRadius`
+  (LIVE003 range-checked, inert when routing is not curved). No junctions
+  control ships by design: the core only permits explicit junction semantics
+  (DDN046). New suite `notation/tests/render-overrides.js` (10 tests) +
+  extended `tests/viewer.js`; all presentation-only — source bytes never
+  modified, zero golden changes.
+
 - B1-010: full example gallery + developer documentation — new deterministic
   generator `tools/build-gallery.js` (wired as `npm run build:gallery`)
   produces `examples/gallery/`: one CLI-rendered SVG for every installed
