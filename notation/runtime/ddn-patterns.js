@@ -13,10 +13,11 @@ const center = n => [n.x+n.w/2,n.y+n.h/2];
 const dist = (a,b) => Math.hypot(a[0]-b[0],a[1]-b[1]);
 const overlaps = (a,b,gap=0) => a.x < b.x+b.w+gap-EPS && a.x+a.w > b.x-gap+EPS && a.y < b.y+b.h+gap-EPS && a.y+a.h > b.y-gap+EPS;
 const error = (code,message) => { throw Object.assign(new Error(message),{code}); };
+const maxOf=(xs,f,seed=-Infinity)=>{let m=seed;for(const x of xs){const v=f(x);if(v>m)m=v;}return m;};
 function bounds(nodes) {
  if (!nodes.length) return null;
- const x=Math.min(...nodes.map(n=>n.x)), y=Math.min(...nodes.map(n=>n.y));
- return {x,y,w:Math.max(...nodes.map(n=>n.x+n.w))-x,h:Math.max(...nodes.map(n=>n.y+n.h))-y};
+ const minX=nodes.reduce((m,n)=>Math.min(m,n.x),Infinity), minY=nodes.reduce((m,n)=>Math.min(m,n.y),Infinity);
+ return {x:minX,y:minY,w:nodes.reduce((m,n)=>Math.max(m,n.x+n.w),-Infinity)-minX,h:nodes.reduce((m,n)=>Math.max(m,n.y+n.h),-Infinity)-minY};
 }
 function constraintsFor(ir) {
  const result=new Map();
@@ -48,7 +49,7 @@ function distances(nodes,adj,roots) {
  for(let i=0;i<queue.length;i++) for(const id of adj.get(queue[i]) || []) if(!rank.has(id)) {
   rank.set(id,rank.get(queue[i])+1);parent.set(id,queue[i]);queue.push(id);
  }
- const reachableMax=Math.max(0,...rank.values()),disconnected=[];
+ const reachableMax=maxOf(rank.values(),v=>v,0),disconnected=[];
  // Retain disconnected components, with their own breadth-first order outside
  // the reachable layers. No component is silently discarded.
  for(const n of nodes) if(!rank.has(n.id)) {
@@ -64,12 +65,24 @@ function directedRanks(nodes,rels) {
  for(const r of rels) if(adj.has(r.from.element)&&adj.has(r.to.element)&&r.from.element!==r.to.element) adj.get(r.from.element).push(r.to.element);
  for(const a of adj.values())a.sort(cmp);
  let tick=0;const idx=new Map(),low=new Map(),stack=[],active=new Set(),parts=[];
- function visit(id) {
-  idx.set(id,tick);low.set(id,tick++);stack.push(id);active.add(id);
-  for(const to of adj.get(id))if(!idx.has(to)){visit(to);low.set(id,Math.min(low.get(id),low.get(to)));}else if(active.has(to))low.set(id,Math.min(low.get(id),idx.get(to)));
-  if(low.get(id)===idx.get(id)){const part=[];let item;do{item=stack.pop();active.delete(item);part.push(item);}while(item!==id);parts.push(part.sort(cmp));}
+ // Iterative Tarjan: deep graphs must not exhaust the call stack.
+ for(const first of nodes) {
+  if(idx.has(first.id))continue;
+  idx.set(first.id,tick);low.set(first.id,tick++);stack.push(first.id);active.add(first.id);
+  const call=[[first.id,0]];
+  while(call.length) {
+   const frame=call.at(-1),id=frame[0],kids=adj.get(id);
+   if(frame[1]<kids.length) {
+    const to=kids[frame[1]++];
+    if(!idx.has(to)){idx.set(to,tick);low.set(to,tick++);stack.push(to);active.add(to);call.push([to,0]);}
+    else if(active.has(to))low.set(id,Math.min(low.get(id),idx.get(to)));
+   } else {
+    call.pop();
+    if(call.length){const parent=call.at(-1)[0];low.set(parent,Math.min(low.get(parent),low.get(id)));}
+    if(low.get(id)===idx.get(id)){const part=[];let item;do{item=stack.pop();active.delete(item);part.push(item);}while(item!==id);parts.push(part.sort(cmp));}
+   }
+  }
  }
- for(const n of nodes)if(!idx.has(n.id))visit(n.id);
  const group=new Map();parts.forEach((p,i)=>p.forEach(id=>group.set(id,i)));
  const out=parts.map(()=>new Set()),inc=parts.map(()=>0),rank=parts.map(()=>0);
  for(const [a,bs] of adj)for(const b of bs){const x=group.get(a),y=group.get(b);if(x!==y&&!out[x].has(y)){out[x].add(y);inc[y]++;}}
@@ -98,12 +111,15 @@ function orderFree(ctx) {
  return [...ctx.free].sort((a,b)=>bfs.rank.get(a.id)-bfs.rank.get(b.id)||ctx.adj.get(b.id).length-ctx.adj.get(a.id).length||cmp(a.id,b.id));
 }
 function candidateOK(ctx,n,c,placed,pad=ctx.gap/2) {
- const box={...n,x:c[0]-n.w/2,y:c[1]-n.h/2};ctx.attempts++;
+ // Bounded search, like the orthogonal router: infeasible constrained inputs
+ // must fail with a diagnostic, not hang in quadratic candidate scans.
+ if(++ctx.attempts>5000000)error('LIVE-P002','Placement search budget exhausted; split the view or relax fixed frames.');
+ const box={...n,x:c[0]-n.w/2,y:c[1]-n.h/2};
  return fits(box,ctx.constraints.get(n.id))&&!placed.some(o=>o!==n&&overlaps(box,o,pad));
 }
 function fitGrid(ctx) {
- const pitchX=Math.ceil((Math.max(1,...ctx.ordered.map(n=>n.w))+ctx.gap)/ctx.step)*ctx.step;
- const pitchY=Math.ceil((Math.max(1,...ctx.ordered.map(n=>n.h))+ctx.gap)/ctx.step)*ctx.step;
+ const pitchX=Math.ceil((maxOf(ctx.ordered,n=>n.w,1)+ctx.gap)/ctx.step)*ctx.step;
+ const pitchY=Math.ceil((maxOf(ctx.ordered,n=>n.h,1)+ctx.gap)/ctx.step)*ctx.step;
  ctx.pitch=[pitchX,pitchY];const placed=[...ctx.pins];let sx=0,sy=0,count=0;
  for(const n of orderFree(ctx)) {
   let chosen=null,best=Infinity;
@@ -124,8 +140,8 @@ function fitGrid(ctx) {
   record(ctx,n,chosen.c,'grid',{column:chosen.ix,row:chosen.iy});placed.push(n);sx+=chosen.c[0]-ctx.anchor[0];sy+=chosen.c[1]-ctx.anchor[1];count++;
  }
 }
-function outerRadius(ctx) {return Math.max(0,...ctx.pins.map(n=>Math.hypot(Math.abs(center(n)[0]-ctx.anchor[0])+n.w/2,Math.abs(center(n)[1]-ctx.anchor[1])+n.h/2)));}
-function ringRadius(nodes,gap) {const diam=Math.max(1,...nodes.map(n=>Math.hypot(n.w,n.h)));return nodes.length>1?(diam+gap)/(2*Math.sin(Math.PI/nodes.length)):(diam+gap)/2;}
+function outerRadius(ctx) {return maxOf(ctx.pins,n=>Math.hypot(Math.abs(center(n)[0]-ctx.anchor[0])+n.w/2,Math.abs(center(n)[1]-ctx.anchor[1])+n.h/2),0);}
+function ringRadius(nodes,gap) {const diam=maxOf(nodes,n=>Math.hypot(n.w,n.h),1);return nodes.length>1?(diam+gap)/(2*Math.sin(Math.PI/nodes.length)):(diam+gap)/2;}
 function ring(ctx,list,minimum,level,placed) {
  if(!list.length)return minimum;
  let radius=Math.max(minimum,ringRadius(list,ctx.gap));
@@ -140,7 +156,7 @@ function ring(ctx,list,minimum,level,placed) {
  }
  error('LIVE-P003','The requested ring cannot fit fixed frames or obstacles. Increase available space, reduce detail, or choose another pattern.');
 }
-function circular(ctx){const free=orderFree(ctx),half=Math.max(1,...free.map(n=>Math.hypot(n.w,n.h)/2));ring(ctx,free,outerRadius(ctx)+half+ctx.gap,1,[...ctx.pins]);}
+function circular(ctx){const free=orderFree(ctx),half=maxOf(free,n=>Math.hypot(n.w,n.h)/2,1);ring(ctx,free,outerRadius(ctx)+half+ctx.gap,1,[...ctx.pins]);}
 function radial(ctx){
  const bfs=distances(ctx.ordered,ctx.adj,ctx.roots);ctx.disconnected=bfs.disconnected;ctx.level=bfs.rank;
  const placed=[...ctx.pins],root=!ctx.pins.length?ctx.ordered.find(n=>n.id===ctx.roots[0]):null;
@@ -149,7 +165,7 @@ function radial(ctx){
  const layers=new Map();for(const n of ctx.free)if(n!==root){const lev=Math.max(1,bfs.rank.get(n.id));if(!layers.has(lev))layers.set(lev,[]);layers.get(lev).push(n);}
  for(const [lev,list] of [...layers].sort((a,b)=>a[0]-b[0])){
   list.sort((a,b)=>cmp(bfs.parent.get(a.id)||'',bfs.parent.get(b.id)||'')||cmp(a.id,b.id));
-  const half=Math.max(...list.map(n=>Math.hypot(n.w,n.h)/2));radius=ring(ctx,list,radius+previousHalf+half+ctx.gap,lev,placed);previousHalf=half;
+  const half=maxOf(list,n=>Math.hypot(n.w,n.h)/2,0);radius=ring(ctx,list,radius+previousHalf+half+ctx.gap,lev,placed);previousHalf=half;
  }
 }
 function layers(ctx,rels,down,tree=false) {
@@ -157,8 +173,8 @@ function layers(ctx,rels,down,tree=false) {
  ctx.level=ranking.rank;ctx.cycles=ranking.cycles||[];ctx.disconnected=ranking.disconnected||[];
  const pinnedRanks=ctx.pins.map(n=>ctx.level.get(n.id)).sort((a,b)=>a-b);
  const referenceRank=pinnedRanks.length?pinnedRanks[Math.floor((pinnedRanks.length-1)/2)]:0;
- const pitchPrimary=Math.max(1,...ctx.ordered.map(n=>down?n.h:n.w))+ctx.gap;
- const pitchSecondary=Math.max(1,...ctx.ordered.map(n=>down?n.w:n.h))+ctx.gap;
+ const pitchPrimary=maxOf(ctx.ordered,n=>down?n.h:n.w,1)+ctx.gap;
+ const pitchSecondary=maxOf(ctx.ordered,n=>down?n.w:n.h,1)+ctx.gap;
  ctx.pitch=down?[pitchSecondary,pitchPrimary]:[pitchPrimary,pitchSecondary];ctx.referenceRank=referenceRank;
  const placed=[...ctx.pins],free=[...ctx.free].sort((a,b)=>ctx.level.get(a.id)-ctx.level.get(b.id)||cmp(ranking.parent?.get(a.id)||'',ranking.parent?.get(b.id)||'')||cmp(a.id,b.id));
  const byLevel=new Map();for(const n of free){const lev=ctx.level.get(n.id);if(!byLevel.has(lev))byLevel.set(lev,[]);byLevel.get(lev).push(n);}
@@ -176,6 +192,8 @@ function layers(ctx,rels,down,tree=false) {
  if(!ctx.pins.length){const b=bounds(ctx.ordered),c=center(b);for(const n of ctx.free){n.x-=c[0];n.y-=c[1];const s=ctx.slots.get(n.id);s.center=center(n);} }
 }
 function organic(ctx,rels) {
+ // The all-pairs force solver is O(n²) per iteration; bound the input size.
+ if(ctx.ordered.length>4000)error('LIVE-P002','Organic placement is bounded to 4000 elements; split the view or choose another pattern.');
  circular(ctx);const all=ctx.ordered,by=new Map(all.map(n=>[n.id,n]));
  // A deterministic small force solver. Pins participate in the forces but are
  // never integrated. Final projection resolves measured rectangle collisions.

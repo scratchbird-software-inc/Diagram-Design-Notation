@@ -211,10 +211,34 @@ function workflowErrors(w){
  if(!Array.isArray(w.terminal)||!w.terminal.length||w.terminal.some(x=>!states.has(x)))errors.push('explicit terminal states are required');
  if(!Array.isArray(w.transitions))return [...errors,'transitions required'];
  const ids=new Set();for(const t of w.transitions){if(!t.id||ids.has(t.id))errors.push('transition identity missing or repeated');ids.add(t.id);if(!states.has(t.from)||!states.has(t.to))errors.push('unknown transition endpoint');if(!t.event)errors.push('transition requires event');if(t.guard!==undefined)errors.push(...guardErrors(t.guard));if(t.max_visits!==undefined&&(!Number.isSafeInteger(t.max_visits)||t.max_visits<1))errors.push('max_visits must be a positive integer');if(w.terminal.includes(t.from))errors.push('terminal state has outgoing transition');}
- const reachable=new Set([w.initial]);for(let i=0;i<states.size;i++)for(const t of w.transitions)if(reachable.has(t.from))reachable.add(t.to);
+ const adjacency=new Map(),unbounded=new Map();
+ for(const t of w.transitions){
+  if(!adjacency.has(t.from))adjacency.set(t.from,[]);adjacency.get(t.from).push(t.to);
+  if(t.max_visits===undefined){if(!unbounded.has(t.from))unbounded.set(t.from,[]);unbounded.get(t.from).push(t.to);}
+ }
+ // Breadth-first reachability over an adjacency map: O(states+transitions),
+ // not the former O(states × transitions) fixpoint loop.
+ const reachable=new Set([w.initial]),queue=[w.initial];
+ for(let i=0;i<queue.length;i++)for(const to of adjacency.get(queue[i])||[])if(!reachable.has(to)){reachable.add(to);queue.push(to);}
  for(const s of states)if(!reachable.has(s))errors.push('unreachable state '+s);
- // Every cycle must be cut by at least one explicitly bounded edge.
- const active=new Set(),done=new Set();function visit(s){if(active.has(s)){errors.push('cycle requires a bounded max_visits transition');return;}if(done.has(s))return;active.add(s);for(const t of w.transitions)if(t.from===s&&t.max_visits===undefined)visit(t.to);active.delete(s);done.add(s);}for(const s of states)visit(s);
+ // Every cycle must be cut by at least one explicitly bounded edge. Iterative
+ // DFS with an explicit stack: deep transition chains must not overflow the
+ // call stack (the report surfaces via DDN130).
+ const active=new Set(),done=new Set();
+ for(const s0 of states){
+  if(done.has(s0))continue;
+  const stack=[[s0,(unbounded.get(s0)||[])[Symbol.iterator]()]];
+  active.add(s0);
+  while(stack.length){
+   const [node,it]=stack.at(-1),next=it.next();
+   if(next.done){stack.pop();active.delete(node);done.add(node);continue;}
+   const to=next.value;
+   if(active.has(to)){errors.push('cycle requires a bounded max_visits transition');continue;}
+   if(done.has(to))continue;
+   active.add(to);
+   stack.push([to,(unbounded.get(to)||[])[Symbol.iterator]()]);
+  }
+ }
  // Structural ambiguities are rejected. Arbitrary logical disjointness is not guessed.
  const groups=new Map();for(const t of w.transitions){const k=t.from+'\0'+t.event;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(t);}
  for(const ts of groups.values())if(ts.length>1){const guards=ts.map(t=>t.guard);if(guards.some(g=>!isObject(g)||g.op!=='eq')||new Set(guards.map(g=>g.field)).size!==1||new Set(guards.map(g=>JSON.stringify(g.value))).size!==guards.length)errors.push('same-event branches must have distinct equality guards on the same field');}

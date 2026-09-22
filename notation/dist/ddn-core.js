@@ -19,6 +19,8 @@ function use(reg){registry=reg||null;return api;}
 // Deep copy of the registered defaults for a kind keyword (or kind id);
 // `{}` when the kind or its defaults are absent. Mutating the result never
 // pollutes the registry. An explicit registry argument overrides use().
+// The copy is JSON.parse(JSON.stringify(...)): registry defaults must stay
+// pure JSON data — values JSON cannot represent would be silently mangled.
 function forKind(id,reg){
  const kinds=(reg||registry||{}).kinds||[];
  const kind=kinds.find(k=>k.keyword===id||k.id===id);
@@ -966,10 +968,34 @@ function workflowErrors(w){
  if(!Array.isArray(w.terminal)||!w.terminal.length||w.terminal.some(x=>!states.has(x)))errors.push('explicit terminal states are required');
  if(!Array.isArray(w.transitions))return [...errors,'transitions required'];
  const ids=new Set();for(const t of w.transitions){if(!t.id||ids.has(t.id))errors.push('transition identity missing or repeated');ids.add(t.id);if(!states.has(t.from)||!states.has(t.to))errors.push('unknown transition endpoint');if(!t.event)errors.push('transition requires event');if(t.guard!==undefined)errors.push(...guardErrors(t.guard));if(t.max_visits!==undefined&&(!Number.isSafeInteger(t.max_visits)||t.max_visits<1))errors.push('max_visits must be a positive integer');if(w.terminal.includes(t.from))errors.push('terminal state has outgoing transition');}
- const reachable=new Set([w.initial]);for(let i=0;i<states.size;i++)for(const t of w.transitions)if(reachable.has(t.from))reachable.add(t.to);
+ const adjacency=new Map(),unbounded=new Map();
+ for(const t of w.transitions){
+  if(!adjacency.has(t.from))adjacency.set(t.from,[]);adjacency.get(t.from).push(t.to);
+  if(t.max_visits===undefined){if(!unbounded.has(t.from))unbounded.set(t.from,[]);unbounded.get(t.from).push(t.to);}
+ }
+ // Breadth-first reachability over an adjacency map: O(states+transitions),
+ // not the former O(states × transitions) fixpoint loop.
+ const reachable=new Set([w.initial]),queue=[w.initial];
+ for(let i=0;i<queue.length;i++)for(const to of adjacency.get(queue[i])||[])if(!reachable.has(to)){reachable.add(to);queue.push(to);}
  for(const s of states)if(!reachable.has(s))errors.push('unreachable state '+s);
- // Every cycle must be cut by at least one explicitly bounded edge.
- const active=new Set(),done=new Set();function visit(s){if(active.has(s)){errors.push('cycle requires a bounded max_visits transition');return;}if(done.has(s))return;active.add(s);for(const t of w.transitions)if(t.from===s&&t.max_visits===undefined)visit(t.to);active.delete(s);done.add(s);}for(const s of states)visit(s);
+ // Every cycle must be cut by at least one explicitly bounded edge. Iterative
+ // DFS with an explicit stack: deep transition chains must not overflow the
+ // call stack (the report surfaces via DDN130).
+ const active=new Set(),done=new Set();
+ for(const s0 of states){
+  if(done.has(s0))continue;
+  const stack=[[s0,(unbounded.get(s0)||[])[Symbol.iterator]()]];
+  active.add(s0);
+  while(stack.length){
+   const [node,it]=stack.at(-1),next=it.next();
+   if(next.done){stack.pop();active.delete(node);done.add(node);continue;}
+   const to=next.value;
+   if(active.has(to)){errors.push('cycle requires a bounded max_visits transition');continue;}
+   if(done.has(to))continue;
+   active.add(to);
+   stack.push([to,(unbounded.get(to)||[])[Symbol.iterator]()]);
+  }
+ }
  // Structural ambiguities are rejected. Arbitrary logical disjointness is not guessed.
  const groups=new Map();for(const t of w.transitions){const k=t.from+'\0'+t.event;if(!groups.has(k))groups.set(k,[]);groups.get(k).push(t);}
  for(const ts of groups.values())if(ts.length>1){const guards=ts.map(t=>t.guard);if(guards.some(g=>!isObject(g)||g.op!=='eq')||new Set(guards.map(g=>g.field)).size!==1||new Set(guards.map(g=>JSON.stringify(g.value))).size!==guards.length)errors.push('same-event branches must have distinct equality guards on the same field');}
@@ -1101,8 +1127,8 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
     return {version,module:sections[0].module,imports,sections,declarations,source,text};
   }
   function normalizePath(base,relative){
-    if(/^(?:[a-z]+:|\/|\\)/i.test(relative)||relative.includes('\\'))throw new DDNError('DDN020','Imports must be workspace-relative POSIX paths',base);
-    const p=base.split('/').slice(0,-1);for(const bit of relative.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!p.length)throw new DDNError('DDN020','Import escapes workspace',base);p.pop();}else p.push(bit);}return p.join('/');
+    if(/^(?:[a-z]+:|\/|\\)/i.test(relative)||relative.includes('\\'))throw new DDNError('DDN020','Imports must be workspace-relative POSIX paths: '+JSON.stringify(relative),base);
+    const p=base.split('/').slice(0,-1);for(const bit of relative.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!p.length)throw new DDNError('DDN020','Import escapes workspace: '+JSON.stringify(relative),base);p.pop();}else p.push(bit);}return p.join('/');
   }
   // RFC-117 D4: merge a workspace (entry + transitive imports) into one
   // self-contained multi-module file. Section bodies are the original source
@@ -1116,7 +1142,9 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
   function bundle(files,entry){
     if(!Object.hasOwn(files,entry))throw new DDNError('DDN022','Missing workspace file '+entry,entry);
     const set=new Set(),order=[];
-    (function visit(path){if(set.has(path))return;if(!Object.hasOwn(files,path))return;set.add(path);order.push(path);const d=parse(files[path],path);for(const imp of d.imports)visit(normalizePath(path,imp.path));})(entry);
+    // Explicit stack: deep import chains must not exhaust the call stack.
+    const pending=[entry];
+    while(pending.length){const path=pending.pop();if(set.has(path)||!Object.hasOwn(files,path))continue;set.add(path);order.push(path);const d=parse(files[path],path);for(const imp of d.imports)pending.push(normalizePath(path,imp.path));}
     // Symbol index: which module of each bundled file holds each declaration
     // path — needed when a dropped alias points at a multi-module file.
     const owner=new Map();
@@ -1131,7 +1159,7 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
     const diagnostics=[],sections=[],external=new Map(),externalOrder=[];let maxVersion=0;
     for(const path of [...order].sort((a,b)=>a===entry?-1:b===entry?1:a.localeCompare(b,'en'))){
       let text=files[path];
-      const tokens=lex(text,path),starts=[0];
+      const tokens=lex(text,path),starts=[0],lines=text.split('\n');
       for(let i=0;i<text.length;i++)if(text[i]==='\n')starts.push(i+1);
       const lineOf=o=>{let lo=0,hi=starts.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(starts[mid]<=o)lo=mid;else hi=mid-1;}return lo;};
       const removed=new Set(),headers=[],dropped=new Map();let depth=0;
@@ -1148,36 +1176,48 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
           else if(t.value==='import'){
             const alias=tokens[j-1].value,target=normalizePath(path,tokens[i+1].value);
             if(set.has(target))dropped.set(alias,target);
-            else{const key=alias+' '+target,line=text.split('\n')[lineOf(t.start)];
-              if(!external.has(key)){external.set(key,{alias,target,line});externalOrder.push(key);}
-              else if(external.get(key).line!==line)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+'; first occurrence kept.',source:path});}
+            else{
+              // Keyed by alias alone: two distinct external targets under one
+              // alias would re-emit a duplicate alias and fail DDN014 on re-parse.
+              const prev=external.get(alias),line=lines[lineOf(t.start)];
+              if(!prev){external.set(alias,{alias,target,line});externalOrder.push(alias);}
+              else if(prev.target!==target)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+' ('+prev.target+' vs '+target+'); first occurrence kept.',source:path});
+              else if(prev.line!==line)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+'; first occurrence kept.',source:path});
+            }
           }
           i=j;
         }
       }
       if(dropped.size){
-        const edits=[];
+        const edits=[],targetDocs=new Map();
+        const docOf=p=>{if(!targetDocs.has(p))targetDocs.set(p,parse(files[p],p));return targetDocs.get(p);};
         for(let i=0;i<tokens.length-2;i++){
           const at=tokens[i];
           if(at.type!=='@'||tokens[i+1].type!=='id'||!dropped.has(tokens[i+1].value)||tokens[i+2].type!=='.')continue;
           const target=dropped.get(tokens[i+1].value);
           let rest=[],k=i+2;
           while(tokens[k].type==='.'&&tokens[k+1].type==='id'){rest.push(tokens[k+1].value);k+=2;}
-          const targetDoc=parse(files[target],target);
+          const targetDoc=docOf(target);
           let module=null;
           if(targetDoc.sections.length===1)module=targetDoc.sections[0].module;
           else module=owner.get(target)?.get(rest.join('.'))||null;
-          if(module&&module!==tokens[i+1].value)edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
+          // A module id that the lexer cannot express as a reference component
+          // (/, :, leading digit) must not be substituted: it would produce
+          // text the internal re-parse cannot tokenize.
+          if(module&&module!==tokens[i+1].value){
+            if(/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/.test(module))edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
+            else diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+': module identity '+JSON.stringify(module)+' is not expressible as a reference; reference left as-is.',source:path});
+          }
           else if(!module)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+'; reference left as-is.',source:path});
         }
         edits.sort((a,b)=>b.start-a.start);
         for(const e of edits)text=text.slice(0,e.start)+e.text+text.slice(e.end);
       }
-      const d=parse(text,path),lines=text.split('\n');
+      const d=parse(text,path),bodyLines=text.split('\n');
       maxVersion=Math.max(maxVersion,SOURCE_VERSIONS.indexOf(d.version));
       for(let k=0;k<headers.length;k++){
-        const from=headers[k].line+1,to=k+1<headers.length?headers[k+1].line:lines.length;
-        let body=lines.slice(from,to).filter((_,i)=>!removed.has(from+i));
+        const from=headers[k].line+1,to=k+1<headers.length?headers[k+1].line:bodyLines.length;
+        let body=bodyLines.slice(from,to).filter((_,i)=>!removed.has(from+i));
         while(body.length&&!body[0].trim())body.shift();
         while(body.length&&!body.at(-1).trim())body.pop();
         sections.push({file:path,module:d.sections[k].module,body:body.join('\n')});
@@ -1193,17 +1233,36 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
 
   function createWorkspace(files,entry){
     const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set();
-    function load(path){if(active.has(path))throw new DDNError('DDN021','Import cycle: '+[...active,path].join(' → '),path);if(docs.has(path))return docs.get(path);if(!Object.hasOwn(files,path))throw new DDNError('DDN022','Missing workspace file '+path,path);
-      active.add(path);const d=parse(files[path],path);docs.set(path,d);d.imported=new Map();
-      // A file registers ALL its module sections (RFC-117 D2). Module records
-      // are what nodes carry as n.doc: identity, own declarations and the
-      // file-level import map.
-      d.moduleRecords=d.sections.map(s=>{
-        if(modules.has(s.module))throw new DDNError('DDN023','Duplicate module identity '+s.module,path);
-        const rec={file:d,module:s.module,declarations:s.declarations,source:path,imported:d.imported};modules.set(s.module,rec);return rec;});
-      d.moduleById=new Map(d.moduleRecords.map(r=>[r.module,r]));
-      for(const imp of d.imports)d.imported.set(imp.alias,load(normalizePath(path,imp.path)));
-      active.delete(path);return d;}
+    // Iterative load: deep import chains must not exhaust the call stack.
+    // Frames preserve the original pre-order (a file's module sections are
+    // registered before its imports are descended into).
+    function load(path){
+      if(active.has(path))throw new DDNError('DDN021','Import cycle: '+[...active,path].join(' → '),path);
+      if(docs.has(path))return docs.get(path);
+      const stack=[];
+      const open=p=>{
+        if(!Object.hasOwn(files,p))throw new DDNError('DDN022','Missing workspace file '+p,p);
+        active.add(p);const d=parse(files[p],p);docs.set(p,d);d.imported=new Map();
+        // A file registers ALL its module sections (RFC-117 D2). Module records
+        // are what nodes carry as n.doc: identity, own declarations and the
+        // file-level import map.
+        d.moduleRecords=d.sections.map(s=>{
+          if(modules.has(s.module))throw new DDNError('DDN023','Duplicate module identity '+s.module,p);
+          const rec={file:d,module:s.module,declarations:s.declarations,source:p,imported:d.imported};modules.set(s.module,rec);return rec;});
+        d.moduleById=new Map(d.moduleRecords.map(r=>[r.module,r]));
+        stack.push({path:p,d,queue:[...d.imports]});
+      };
+      open(path);
+      while(stack.length){
+        const top=stack.at(-1);
+        if(!top.queue.length){active.delete(top.path);stack.pop();continue;}
+        const imp=top.queue[0],child=normalizePath(top.path,imp.path);
+        if(active.has(child))throw new DDNError('DDN021','Import cycle: '+[...active,child].join(' → '),child);
+        if(docs.has(child)){top.d.imported.set(imp.alias,docs.get(child));top.queue.shift();continue;}
+        open(child);
+      }
+      return docs.get(path);
+    }
     const main=load(entry).moduleRecords[0];
     function index(n,d,parent=''){
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;
@@ -1217,7 +1276,7 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
       else{
         // Sibling sections are visible via module-qualified ids; module ids
         // may themselves be dotted, so match the LONGEST module-id prefix.
-        for(let k=Math.min(parts.length-1,16);k>=1;k--){
+        for(let k=parts.length-1;k>=1;k--){
           const sib=doc.file.moduleById.get(parts.slice(0,k).join('.'));
           if(sib){const node=symbols.get(sib.module+'::'+parts.slice(k).join('.'));if(node)return node;}
         }
@@ -1320,7 +1379,8 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
     if(p.layout.junctions!==undefined&&p.layout.junctions!=='explicit')throw new DDNError('DDN046','Only explicit junction semantics are allowed',view.source,view.start);
     if(p.layout.shared_segments!==undefined&&p.layout.shared_segments!=='forbidden')throw new DDNError('DDN046','Shared network trunks require an adopted network profile; independent sharing is forbidden',view.source,view.start);
     if(p.publication.metrics!==undefined&&!['required','allow_estimated'].includes(p.publication.metrics))throw new DDNError('DDN046','metrics must be required or allow_estimated',view.source,view.start);
-    if(quantity(p.publication.margin,32)<0)throw new DDNError('DDN046','Page margin must be nonnegative',view.source,view.start);
+    if(quantity(p.publication.margin,32)<0||!Number.isFinite(quantity(p.publication.margin,32))||quantity(p.publication.margin,32)>10000)throw new DDNError('DDN046','Page margin must be a finite length from 0 to 10000px',view.source,view.start);
+    for(const prop of ['width','height']){const v=quantity(p.publication[prop],prop==='width'?1280:800);if(!Number.isFinite(v)||v<64||v>100000)throw new DDNError('DDN046','publication.'+prop+' must be a finite length from 64 to 100000px',view.source,view.start);}
     if(p.publication.orientation!==undefined&&!['portrait','landscape'].includes(p.publication.orientation))throw new DDNError('DDN046','Unknown page orientation',view.source,view.start);
     for(const prop of ['title','caption'])if(p.publication[prop]!==undefined&&typeof p.publication[prop]!=='string')throw new DDNError('DDN046','Publication '+prop+' must be text',view.source,view.start);
     function validateCurvePolicy(policy,source,offset){
@@ -1351,7 +1411,7 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
     const excluded=(view.props.exclude||[]).map(r=>ws.resolve(r,view).uid);selected=[...new Set(selected)].filter(id=>!excluded.includes(id));
     if(p.display.samples==='hide')selected=selected.filter(id=>elements.find(n=>n.id===id).type!=='sample');
     const shown=new Set(selected),visibleRelations=p.display.relations==='none'?[]:relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
-    const keys={},seen=new Map();
+    const keys=Object.create(null),seen=new Map();
     for(const [ref,num] of Object.entries(p.legend.keys||{})){
       let matches=relations.filter(r=>r.id===ref||r.ref===ref||r.ref.split('.').at(-1)===ref);if(matches.length>1)throw new DDNError('DDN058','Ambiguous legend key '+ref,view.source,view.start);let target=matches[0];
       if(!target)throw new DDNError('DDN058','Legend key refers to unknown relation '+ref,view.source,view.start);
@@ -1359,7 +1419,7 @@ return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,read
       if(seen.has(num)&&seen.get(num)!==target.id)throw new DDNError('DDN060','Duplicate callout number '+num,view.source,view.start);seen.set(num,target.id);keys[target.id]=num;
     }
     if(p.legend.mode==='numbers')for(const r of visibleRelations)if(!keys[r.id])throw new DDNError('DDN061','Missing explicit callout number for '+r.ref,view.source,view.start);
-    const placements={},routes={},subdiagrams=[],frames=[];
+    const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[];
     for(const n of view.children.filter(n=>!n.group)){
       if(n.type==='place'){const target=ws.resolve(n.target,view);if(!shown.has(target.uid))throw new DDNError('DDN062','Placement target is not selected',n.source,n.start);placements[target.uid]=clean(n.props);}
       else if(n.type==='route'){validateCurvePolicy(n.props,n.source,n.start);const target=ws.resolve(n.target,view);if(!visibleRelations.some(r=>r.id===target.uid))throw new DDNError('DDN063','Route target is not visible',n.source,n.start);routes[target.uid]=clean(n.props);}
@@ -1410,10 +1470,11 @@ const center = n => [n.x+n.w/2,n.y+n.h/2];
 const dist = (a,b) => Math.hypot(a[0]-b[0],a[1]-b[1]);
 const overlaps = (a,b,gap=0) => a.x < b.x+b.w+gap-EPS && a.x+a.w > b.x-gap+EPS && a.y < b.y+b.h+gap-EPS && a.y+a.h > b.y-gap+EPS;
 const error = (code,message) => { throw Object.assign(new Error(message),{code}); };
+const maxOf=(xs,f,seed=-Infinity)=>{let m=seed;for(const x of xs){const v=f(x);if(v>m)m=v;}return m;};
 function bounds(nodes) {
  if (!nodes.length) return null;
- const x=Math.min(...nodes.map(n=>n.x)), y=Math.min(...nodes.map(n=>n.y));
- return {x,y,w:Math.max(...nodes.map(n=>n.x+n.w))-x,h:Math.max(...nodes.map(n=>n.y+n.h))-y};
+ const minX=nodes.reduce((m,n)=>Math.min(m,n.x),Infinity), minY=nodes.reduce((m,n)=>Math.min(m,n.y),Infinity);
+ return {x:minX,y:minY,w:nodes.reduce((m,n)=>Math.max(m,n.x+n.w),-Infinity)-minX,h:nodes.reduce((m,n)=>Math.max(m,n.y+n.h),-Infinity)-minY};
 }
 function constraintsFor(ir) {
  const result=new Map();
@@ -1445,7 +1506,7 @@ function distances(nodes,adj,roots) {
  for(let i=0;i<queue.length;i++) for(const id of adj.get(queue[i]) || []) if(!rank.has(id)) {
   rank.set(id,rank.get(queue[i])+1);parent.set(id,queue[i]);queue.push(id);
  }
- const reachableMax=Math.max(0,...rank.values()),disconnected=[];
+ const reachableMax=maxOf(rank.values(),v=>v,0),disconnected=[];
  // Retain disconnected components, with their own breadth-first order outside
  // the reachable layers. No component is silently discarded.
  for(const n of nodes) if(!rank.has(n.id)) {
@@ -1461,12 +1522,24 @@ function directedRanks(nodes,rels) {
  for(const r of rels) if(adj.has(r.from.element)&&adj.has(r.to.element)&&r.from.element!==r.to.element) adj.get(r.from.element).push(r.to.element);
  for(const a of adj.values())a.sort(cmp);
  let tick=0;const idx=new Map(),low=new Map(),stack=[],active=new Set(),parts=[];
- function visit(id) {
-  idx.set(id,tick);low.set(id,tick++);stack.push(id);active.add(id);
-  for(const to of adj.get(id))if(!idx.has(to)){visit(to);low.set(id,Math.min(low.get(id),low.get(to)));}else if(active.has(to))low.set(id,Math.min(low.get(id),idx.get(to)));
-  if(low.get(id)===idx.get(id)){const part=[];let item;do{item=stack.pop();active.delete(item);part.push(item);}while(item!==id);parts.push(part.sort(cmp));}
+ // Iterative Tarjan: deep graphs must not exhaust the call stack.
+ for(const first of nodes) {
+  if(idx.has(first.id))continue;
+  idx.set(first.id,tick);low.set(first.id,tick++);stack.push(first.id);active.add(first.id);
+  const call=[[first.id,0]];
+  while(call.length) {
+   const frame=call.at(-1),id=frame[0],kids=adj.get(id);
+   if(frame[1]<kids.length) {
+    const to=kids[frame[1]++];
+    if(!idx.has(to)){idx.set(to,tick);low.set(to,tick++);stack.push(to);active.add(to);call.push([to,0]);}
+    else if(active.has(to))low.set(id,Math.min(low.get(id),idx.get(to)));
+   } else {
+    call.pop();
+    if(call.length){const parent=call.at(-1)[0];low.set(parent,Math.min(low.get(parent),low.get(id)));}
+    if(low.get(id)===idx.get(id)){const part=[];let item;do{item=stack.pop();active.delete(item);part.push(item);}while(item!==id);parts.push(part.sort(cmp));}
+   }
+  }
  }
- for(const n of nodes)if(!idx.has(n.id))visit(n.id);
  const group=new Map();parts.forEach((p,i)=>p.forEach(id=>group.set(id,i)));
  const out=parts.map(()=>new Set()),inc=parts.map(()=>0),rank=parts.map(()=>0);
  for(const [a,bs] of adj)for(const b of bs){const x=group.get(a),y=group.get(b);if(x!==y&&!out[x].has(y)){out[x].add(y);inc[y]++;}}
@@ -1495,12 +1568,15 @@ function orderFree(ctx) {
  return [...ctx.free].sort((a,b)=>bfs.rank.get(a.id)-bfs.rank.get(b.id)||ctx.adj.get(b.id).length-ctx.adj.get(a.id).length||cmp(a.id,b.id));
 }
 function candidateOK(ctx,n,c,placed,pad=ctx.gap/2) {
- const box={...n,x:c[0]-n.w/2,y:c[1]-n.h/2};ctx.attempts++;
+ // Bounded search, like the orthogonal router: infeasible constrained inputs
+ // must fail with a diagnostic, not hang in quadratic candidate scans.
+ if(++ctx.attempts>5000000)error('LIVE-P002','Placement search budget exhausted; split the view or relax fixed frames.');
+ const box={...n,x:c[0]-n.w/2,y:c[1]-n.h/2};
  return fits(box,ctx.constraints.get(n.id))&&!placed.some(o=>o!==n&&overlaps(box,o,pad));
 }
 function fitGrid(ctx) {
- const pitchX=Math.ceil((Math.max(1,...ctx.ordered.map(n=>n.w))+ctx.gap)/ctx.step)*ctx.step;
- const pitchY=Math.ceil((Math.max(1,...ctx.ordered.map(n=>n.h))+ctx.gap)/ctx.step)*ctx.step;
+ const pitchX=Math.ceil((maxOf(ctx.ordered,n=>n.w,1)+ctx.gap)/ctx.step)*ctx.step;
+ const pitchY=Math.ceil((maxOf(ctx.ordered,n=>n.h,1)+ctx.gap)/ctx.step)*ctx.step;
  ctx.pitch=[pitchX,pitchY];const placed=[...ctx.pins];let sx=0,sy=0,count=0;
  for(const n of orderFree(ctx)) {
   let chosen=null,best=Infinity;
@@ -1521,8 +1597,8 @@ function fitGrid(ctx) {
   record(ctx,n,chosen.c,'grid',{column:chosen.ix,row:chosen.iy});placed.push(n);sx+=chosen.c[0]-ctx.anchor[0];sy+=chosen.c[1]-ctx.anchor[1];count++;
  }
 }
-function outerRadius(ctx) {return Math.max(0,...ctx.pins.map(n=>Math.hypot(Math.abs(center(n)[0]-ctx.anchor[0])+n.w/2,Math.abs(center(n)[1]-ctx.anchor[1])+n.h/2)));}
-function ringRadius(nodes,gap) {const diam=Math.max(1,...nodes.map(n=>Math.hypot(n.w,n.h)));return nodes.length>1?(diam+gap)/(2*Math.sin(Math.PI/nodes.length)):(diam+gap)/2;}
+function outerRadius(ctx) {return maxOf(ctx.pins,n=>Math.hypot(Math.abs(center(n)[0]-ctx.anchor[0])+n.w/2,Math.abs(center(n)[1]-ctx.anchor[1])+n.h/2),0);}
+function ringRadius(nodes,gap) {const diam=maxOf(nodes,n=>Math.hypot(n.w,n.h),1);return nodes.length>1?(diam+gap)/(2*Math.sin(Math.PI/nodes.length)):(diam+gap)/2;}
 function ring(ctx,list,minimum,level,placed) {
  if(!list.length)return minimum;
  let radius=Math.max(minimum,ringRadius(list,ctx.gap));
@@ -1537,7 +1613,7 @@ function ring(ctx,list,minimum,level,placed) {
  }
  error('LIVE-P003','The requested ring cannot fit fixed frames or obstacles. Increase available space, reduce detail, or choose another pattern.');
 }
-function circular(ctx){const free=orderFree(ctx),half=Math.max(1,...free.map(n=>Math.hypot(n.w,n.h)/2));ring(ctx,free,outerRadius(ctx)+half+ctx.gap,1,[...ctx.pins]);}
+function circular(ctx){const free=orderFree(ctx),half=maxOf(free,n=>Math.hypot(n.w,n.h)/2,1);ring(ctx,free,outerRadius(ctx)+half+ctx.gap,1,[...ctx.pins]);}
 function radial(ctx){
  const bfs=distances(ctx.ordered,ctx.adj,ctx.roots);ctx.disconnected=bfs.disconnected;ctx.level=bfs.rank;
  const placed=[...ctx.pins],root=!ctx.pins.length?ctx.ordered.find(n=>n.id===ctx.roots[0]):null;
@@ -1546,7 +1622,7 @@ function radial(ctx){
  const layers=new Map();for(const n of ctx.free)if(n!==root){const lev=Math.max(1,bfs.rank.get(n.id));if(!layers.has(lev))layers.set(lev,[]);layers.get(lev).push(n);}
  for(const [lev,list] of [...layers].sort((a,b)=>a[0]-b[0])){
   list.sort((a,b)=>cmp(bfs.parent.get(a.id)||'',bfs.parent.get(b.id)||'')||cmp(a.id,b.id));
-  const half=Math.max(...list.map(n=>Math.hypot(n.w,n.h)/2));radius=ring(ctx,list,radius+previousHalf+half+ctx.gap,lev,placed);previousHalf=half;
+  const half=maxOf(list,n=>Math.hypot(n.w,n.h)/2,0);radius=ring(ctx,list,radius+previousHalf+half+ctx.gap,lev,placed);previousHalf=half;
  }
 }
 function layers(ctx,rels,down,tree=false) {
@@ -1554,8 +1630,8 @@ function layers(ctx,rels,down,tree=false) {
  ctx.level=ranking.rank;ctx.cycles=ranking.cycles||[];ctx.disconnected=ranking.disconnected||[];
  const pinnedRanks=ctx.pins.map(n=>ctx.level.get(n.id)).sort((a,b)=>a-b);
  const referenceRank=pinnedRanks.length?pinnedRanks[Math.floor((pinnedRanks.length-1)/2)]:0;
- const pitchPrimary=Math.max(1,...ctx.ordered.map(n=>down?n.h:n.w))+ctx.gap;
- const pitchSecondary=Math.max(1,...ctx.ordered.map(n=>down?n.w:n.h))+ctx.gap;
+ const pitchPrimary=maxOf(ctx.ordered,n=>down?n.h:n.w,1)+ctx.gap;
+ const pitchSecondary=maxOf(ctx.ordered,n=>down?n.w:n.h,1)+ctx.gap;
  ctx.pitch=down?[pitchSecondary,pitchPrimary]:[pitchPrimary,pitchSecondary];ctx.referenceRank=referenceRank;
  const placed=[...ctx.pins],free=[...ctx.free].sort((a,b)=>ctx.level.get(a.id)-ctx.level.get(b.id)||cmp(ranking.parent?.get(a.id)||'',ranking.parent?.get(b.id)||'')||cmp(a.id,b.id));
  const byLevel=new Map();for(const n of free){const lev=ctx.level.get(n.id);if(!byLevel.has(lev))byLevel.set(lev,[]);byLevel.get(lev).push(n);}
@@ -1573,6 +1649,8 @@ function layers(ctx,rels,down,tree=false) {
  if(!ctx.pins.length){const b=bounds(ctx.ordered),c=center(b);for(const n of ctx.free){n.x-=c[0];n.y-=c[1];const s=ctx.slots.get(n.id);s.center=center(n);} }
 }
 function organic(ctx,rels) {
+ // The all-pairs force solver is O(n²) per iteration; bound the input size.
+ if(ctx.ordered.length>4000)error('LIVE-P002','Organic placement is bounded to 4000 elements; split the view or choose another pattern.');
  circular(ctx);const all=ctx.ordered,by=new Map(all.map(n=>[n.id,n]));
  // A deterministic small force solver. Pins participate in the forces but are
  // never integrated. Final projection resolves measured rectangle collisions.
@@ -1660,12 +1738,15 @@ function sql(ir){
  const allowed=new Set(policy.elements.map(ref)),allowedFields=new Set((policy.fields||[]).map(ref));
  const pkAllowed=new Set(policy.properties||[]).has('key');
  const snake=v=>String(v).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+ // Ids/kinds are interpolated into `-- ` line comments verbatim; a newline in
+ // an id would break out of the comment and inject attacker-chosen SQL text.
+ const cmt=v=>String(v).replace(/[^\x20-\x7E]/g,'?');
  const tables=new Map(),elementNotes=new Map(),relationNotes=[],tablesSeen=new Map();
  for(const n of ir.elements){
   if(!allowed.has(n.id)||n.type==='sample'||n.kind==='sample')continue;
-  if(n.kind!=='table'){elementNotes.set(n.id,`-- skipped: ${n.id} (kind ${n.kind} is not table)`);continue;}
+  if(n.kind!=='table'){elementNotes.set(n.id,`-- skipped: ${cmt(n.id)} (kind ${cmt(n.kind)} is not table)`);continue;}
   const tname=snake(n.name);
-  if(!tname){elementNotes.set(n.id,`-- skipped: ${n.id} (name has no SQL identifier characters)`);continue;}
+  if(!tname){elementNotes.set(n.id,`-- skipped: ${cmt(n.id)} (name has no SQL identifier characters)`);continue;}
   if(tablesSeen.has(tname))throw Object.assign(new Error('Duplicate SQL identifier after snake_case normalization: '+tname),{code:'DDN-PJ092'});
   tablesSeen.set(tname,n.id);
   const fields=n.fields.filter(f=>allowedFields.has(f.id)),colsSeen=new Map(),cols=[];
@@ -1674,12 +1755,12 @@ function sql(ir){
  }
  for(const r of ir.relations){
   if(!allowed.has(r.from.element)||!allowed.has(r.to.element))continue; // excluded records stay invisible: no counts or identifiers
-  if(!tables.has(r.from.element)||!tables.has(r.to.element)){relationNotes.push(`-- skipped: ${r.id} (endpoint is not an exported table)`);continue;}
-  if(r.kind!=='ref'){relationNotes.push(`-- skipped: ${r.id} (kind ${r.kind} is not ref)`);continue;}
-  if(!r.properties||r.properties.enforcement!=='database'){relationNotes.push(`-- skipped: ${r.id} (enforcement is not "database")`);continue;}
-  if(!r.from.member||!r.to.member){relationNotes.push(`-- skipped: ${r.id} (no field-level endpoints)`);continue;}
+  if(!tables.has(r.from.element)||!tables.has(r.to.element)){relationNotes.push(`-- skipped: ${cmt(r.id)} (endpoint is not an exported table)`);continue;}
+  if(r.kind!=='ref'){relationNotes.push(`-- skipped: ${cmt(r.id)} (kind ${cmt(r.kind)} is not ref)`);continue;}
+  if(!r.properties||r.properties.enforcement!=='database'){relationNotes.push(`-- skipped: ${cmt(r.id)} (enforcement is not "database")`);continue;}
+  if(!r.from.member||!r.to.member){relationNotes.push(`-- skipped: ${cmt(r.id)} (no field-level endpoints)`);continue;}
   const from=tables.get(r.from.element),to=tables.get(r.to.element),fc=from.cols.find(c=>c.id===r.from.member),tc=to.cols.find(c=>c.id===r.to.member);
-  if(!allowedFields.has(r.from.member)||!allowedFields.has(r.to.member)||!fc||!tc){relationNotes.push(`-- skipped: ${r.id} (endpoint field outside field allowlist)`);continue;}
+  if(!allowedFields.has(r.from.member)||!allowedFields.has(r.to.member)||!fc||!tc){relationNotes.push(`-- skipped: ${cmt(r.id)} (endpoint field outside field allowlist)`);continue;}
   from.fks.push(`FOREIGN KEY (${fc.col}) REFERENCES ${to.name}(${tc.col})`);
  }
  if(!tables.size)throw Object.assign(new Error('SQL export found no allowlisted table objects; nothing to export'),{code:'DDN-PJ088'});

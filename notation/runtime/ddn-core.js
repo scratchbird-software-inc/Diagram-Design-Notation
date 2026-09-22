@@ -103,8 +103,8 @@
     return {version,module:sections[0].module,imports,sections,declarations,source,text};
   }
   function normalizePath(base,relative){
-    if(/^(?:[a-z]+:|\/|\\)/i.test(relative)||relative.includes('\\'))throw new DDNError('DDN020','Imports must be workspace-relative POSIX paths',base);
-    const p=base.split('/').slice(0,-1);for(const bit of relative.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!p.length)throw new DDNError('DDN020','Import escapes workspace',base);p.pop();}else p.push(bit);}return p.join('/');
+    if(/^(?:[a-z]+:|\/|\\)/i.test(relative)||relative.includes('\\'))throw new DDNError('DDN020','Imports must be workspace-relative POSIX paths: '+JSON.stringify(relative),base);
+    const p=base.split('/').slice(0,-1);for(const bit of relative.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!p.length)throw new DDNError('DDN020','Import escapes workspace: '+JSON.stringify(relative),base);p.pop();}else p.push(bit);}return p.join('/');
   }
   // RFC-117 D4: merge a workspace (entry + transitive imports) into one
   // self-contained multi-module file. Section bodies are the original source
@@ -118,7 +118,9 @@
   function bundle(files,entry){
     if(!Object.hasOwn(files,entry))throw new DDNError('DDN022','Missing workspace file '+entry,entry);
     const set=new Set(),order=[];
-    (function visit(path){if(set.has(path))return;if(!Object.hasOwn(files,path))return;set.add(path);order.push(path);const d=parse(files[path],path);for(const imp of d.imports)visit(normalizePath(path,imp.path));})(entry);
+    // Explicit stack: deep import chains must not exhaust the call stack.
+    const pending=[entry];
+    while(pending.length){const path=pending.pop();if(set.has(path)||!Object.hasOwn(files,path))continue;set.add(path);order.push(path);const d=parse(files[path],path);for(const imp of d.imports)pending.push(normalizePath(path,imp.path));}
     // Symbol index: which module of each bundled file holds each declaration
     // path — needed when a dropped alias points at a multi-module file.
     const owner=new Map();
@@ -133,7 +135,7 @@
     const diagnostics=[],sections=[],external=new Map(),externalOrder=[];let maxVersion=0;
     for(const path of [...order].sort((a,b)=>a===entry?-1:b===entry?1:a.localeCompare(b,'en'))){
       let text=files[path];
-      const tokens=lex(text,path),starts=[0];
+      const tokens=lex(text,path),starts=[0],lines=text.split('\n');
       for(let i=0;i<text.length;i++)if(text[i]==='\n')starts.push(i+1);
       const lineOf=o=>{let lo=0,hi=starts.length-1;while(lo<hi){const mid=(lo+hi+1)>>1;if(starts[mid]<=o)lo=mid;else hi=mid-1;}return lo;};
       const removed=new Set(),headers=[],dropped=new Map();let depth=0;
@@ -150,36 +152,48 @@
           else if(t.value==='import'){
             const alias=tokens[j-1].value,target=normalizePath(path,tokens[i+1].value);
             if(set.has(target))dropped.set(alias,target);
-            else{const key=alias+' '+target,line=text.split('\n')[lineOf(t.start)];
-              if(!external.has(key)){external.set(key,{alias,target,line});externalOrder.push(key);}
-              else if(external.get(key).line!==line)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+'; first occurrence kept.',source:path});}
+            else{
+              // Keyed by alias alone: two distinct external targets under one
+              // alias would re-emit a duplicate alias and fail DDN014 on re-parse.
+              const prev=external.get(alias),line=lines[lineOf(t.start)];
+              if(!prev){external.set(alias,{alias,target,line});externalOrder.push(alias);}
+              else if(prev.target!==target)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+' ('+prev.target+' vs '+target+'); first occurrence kept.',source:path});
+              else if(prev.line!==line)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Conflicting external import alias '+alias+'; first occurrence kept.',source:path});
+            }
           }
           i=j;
         }
       }
       if(dropped.size){
-        const edits=[];
+        const edits=[],targetDocs=new Map();
+        const docOf=p=>{if(!targetDocs.has(p))targetDocs.set(p,parse(files[p],p));return targetDocs.get(p);};
         for(let i=0;i<tokens.length-2;i++){
           const at=tokens[i];
           if(at.type!=='@'||tokens[i+1].type!=='id'||!dropped.has(tokens[i+1].value)||tokens[i+2].type!=='.')continue;
           const target=dropped.get(tokens[i+1].value);
           let rest=[],k=i+2;
           while(tokens[k].type==='.'&&tokens[k+1].type==='id'){rest.push(tokens[k+1].value);k+=2;}
-          const targetDoc=parse(files[target],target);
+          const targetDoc=docOf(target);
           let module=null;
           if(targetDoc.sections.length===1)module=targetDoc.sections[0].module;
           else module=owner.get(target)?.get(rest.join('.'))||null;
-          if(module&&module!==tokens[i+1].value)edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
+          // A module id that the lexer cannot express as a reference component
+          // (/, :, leading digit) must not be substituted: it would produce
+          // text the internal re-parse cannot tokenize.
+          if(module&&module!==tokens[i+1].value){
+            if(/^[A-Za-z_][A-Za-z0-9_-]*(\.[A-Za-z_][A-Za-z0-9_-]*)*$/.test(module))edits.push({start:tokens[i+1].start,end:tokens[i+1].end,text:module});
+            else diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+': module identity '+JSON.stringify(module)+' is not expressible as a reference; reference left as-is.',source:path});
+          }
           else if(!module)diagnostics.push({code:'DDN-W014',severity:'warning',message:'Cannot canonicalize @'+tokens[i+1].value+'.'+rest.join('.')+' in '+path+'; reference left as-is.',source:path});
         }
         edits.sort((a,b)=>b.start-a.start);
         for(const e of edits)text=text.slice(0,e.start)+e.text+text.slice(e.end);
       }
-      const d=parse(text,path),lines=text.split('\n');
+      const d=parse(text,path),bodyLines=text.split('\n');
       maxVersion=Math.max(maxVersion,SOURCE_VERSIONS.indexOf(d.version));
       for(let k=0;k<headers.length;k++){
-        const from=headers[k].line+1,to=k+1<headers.length?headers[k+1].line:lines.length;
-        let body=lines.slice(from,to).filter((_,i)=>!removed.has(from+i));
+        const from=headers[k].line+1,to=k+1<headers.length?headers[k+1].line:bodyLines.length;
+        let body=bodyLines.slice(from,to).filter((_,i)=>!removed.has(from+i));
         while(body.length&&!body[0].trim())body.shift();
         while(body.length&&!body.at(-1).trim())body.pop();
         sections.push({file:path,module:d.sections[k].module,body:body.join('\n')});
@@ -195,17 +209,36 @@
 
   function createWorkspace(files,entry){
     const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set();
-    function load(path){if(active.has(path))throw new DDNError('DDN021','Import cycle: '+[...active,path].join(' → '),path);if(docs.has(path))return docs.get(path);if(!Object.hasOwn(files,path))throw new DDNError('DDN022','Missing workspace file '+path,path);
-      active.add(path);const d=parse(files[path],path);docs.set(path,d);d.imported=new Map();
-      // A file registers ALL its module sections (RFC-117 D2). Module records
-      // are what nodes carry as n.doc: identity, own declarations and the
-      // file-level import map.
-      d.moduleRecords=d.sections.map(s=>{
-        if(modules.has(s.module))throw new DDNError('DDN023','Duplicate module identity '+s.module,path);
-        const rec={file:d,module:s.module,declarations:s.declarations,source:path,imported:d.imported};modules.set(s.module,rec);return rec;});
-      d.moduleById=new Map(d.moduleRecords.map(r=>[r.module,r]));
-      for(const imp of d.imports)d.imported.set(imp.alias,load(normalizePath(path,imp.path)));
-      active.delete(path);return d;}
+    // Iterative load: deep import chains must not exhaust the call stack.
+    // Frames preserve the original pre-order (a file's module sections are
+    // registered before its imports are descended into).
+    function load(path){
+      if(active.has(path))throw new DDNError('DDN021','Import cycle: '+[...active,path].join(' → '),path);
+      if(docs.has(path))return docs.get(path);
+      const stack=[];
+      const open=p=>{
+        if(!Object.hasOwn(files,p))throw new DDNError('DDN022','Missing workspace file '+p,p);
+        active.add(p);const d=parse(files[p],p);docs.set(p,d);d.imported=new Map();
+        // A file registers ALL its module sections (RFC-117 D2). Module records
+        // are what nodes carry as n.doc: identity, own declarations and the
+        // file-level import map.
+        d.moduleRecords=d.sections.map(s=>{
+          if(modules.has(s.module))throw new DDNError('DDN023','Duplicate module identity '+s.module,p);
+          const rec={file:d,module:s.module,declarations:s.declarations,source:p,imported:d.imported};modules.set(s.module,rec);return rec;});
+        d.moduleById=new Map(d.moduleRecords.map(r=>[r.module,r]));
+        stack.push({path:p,d,queue:[...d.imports]});
+      };
+      open(path);
+      while(stack.length){
+        const top=stack.at(-1);
+        if(!top.queue.length){active.delete(top.path);stack.pop();continue;}
+        const imp=top.queue[0],child=normalizePath(top.path,imp.path);
+        if(active.has(child))throw new DDNError('DDN021','Import cycle: '+[...active,child].join(' → '),child);
+        if(docs.has(child)){top.d.imported.set(imp.alias,docs.get(child));top.queue.shift();continue;}
+        open(child);
+      }
+      return docs.get(path);
+    }
     const main=load(entry).moduleRecords[0];
     function index(n,d,parent=''){
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;
@@ -219,7 +252,7 @@
       else{
         // Sibling sections are visible via module-qualified ids; module ids
         // may themselves be dotted, so match the LONGEST module-id prefix.
-        for(let k=Math.min(parts.length-1,16);k>=1;k--){
+        for(let k=parts.length-1;k>=1;k--){
           const sib=doc.file.moduleById.get(parts.slice(0,k).join('.'));
           if(sib){const node=symbols.get(sib.module+'::'+parts.slice(k).join('.'));if(node)return node;}
         }
@@ -322,7 +355,8 @@
     if(p.layout.junctions!==undefined&&p.layout.junctions!=='explicit')throw new DDNError('DDN046','Only explicit junction semantics are allowed',view.source,view.start);
     if(p.layout.shared_segments!==undefined&&p.layout.shared_segments!=='forbidden')throw new DDNError('DDN046','Shared network trunks require an adopted network profile; independent sharing is forbidden',view.source,view.start);
     if(p.publication.metrics!==undefined&&!['required','allow_estimated'].includes(p.publication.metrics))throw new DDNError('DDN046','metrics must be required or allow_estimated',view.source,view.start);
-    if(quantity(p.publication.margin,32)<0)throw new DDNError('DDN046','Page margin must be nonnegative',view.source,view.start);
+    if(quantity(p.publication.margin,32)<0||!Number.isFinite(quantity(p.publication.margin,32))||quantity(p.publication.margin,32)>10000)throw new DDNError('DDN046','Page margin must be a finite length from 0 to 10000px',view.source,view.start);
+    for(const prop of ['width','height']){const v=quantity(p.publication[prop],prop==='width'?1280:800);if(!Number.isFinite(v)||v<64||v>100000)throw new DDNError('DDN046','publication.'+prop+' must be a finite length from 64 to 100000px',view.source,view.start);}
     if(p.publication.orientation!==undefined&&!['portrait','landscape'].includes(p.publication.orientation))throw new DDNError('DDN046','Unknown page orientation',view.source,view.start);
     for(const prop of ['title','caption'])if(p.publication[prop]!==undefined&&typeof p.publication[prop]!=='string')throw new DDNError('DDN046','Publication '+prop+' must be text',view.source,view.start);
     function validateCurvePolicy(policy,source,offset){
@@ -353,7 +387,7 @@
     const excluded=(view.props.exclude||[]).map(r=>ws.resolve(r,view).uid);selected=[...new Set(selected)].filter(id=>!excluded.includes(id));
     if(p.display.samples==='hide')selected=selected.filter(id=>elements.find(n=>n.id===id).type!=='sample');
     const shown=new Set(selected),visibleRelations=p.display.relations==='none'?[]:relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
-    const keys={},seen=new Map();
+    const keys=Object.create(null),seen=new Map();
     for(const [ref,num] of Object.entries(p.legend.keys||{})){
       let matches=relations.filter(r=>r.id===ref||r.ref===ref||r.ref.split('.').at(-1)===ref);if(matches.length>1)throw new DDNError('DDN058','Ambiguous legend key '+ref,view.source,view.start);let target=matches[0];
       if(!target)throw new DDNError('DDN058','Legend key refers to unknown relation '+ref,view.source,view.start);
@@ -361,7 +395,7 @@
       if(seen.has(num)&&seen.get(num)!==target.id)throw new DDNError('DDN060','Duplicate callout number '+num,view.source,view.start);seen.set(num,target.id);keys[target.id]=num;
     }
     if(p.legend.mode==='numbers')for(const r of visibleRelations)if(!keys[r.id])throw new DDNError('DDN061','Missing explicit callout number for '+r.ref,view.source,view.start);
-    const placements={},routes={},subdiagrams=[],frames=[];
+    const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[];
     for(const n of view.children.filter(n=>!n.group)){
       if(n.type==='place'){const target=ws.resolve(n.target,view);if(!shown.has(target.uid))throw new DDNError('DDN062','Placement target is not selected',n.source,n.start);placements[target.uid]=clean(n.props);}
       else if(n.type==='route'){validateCurvePolicy(n.props,n.source,n.start);const target=ws.resolve(n.target,view);if(!visibleRelations.some(r=>r.id===target.uid))throw new DDNError('DDN063','Route target is not visible',n.source,n.start);routes[target.uid]=clean(n.props);}

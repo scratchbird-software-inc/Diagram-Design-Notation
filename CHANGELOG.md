@@ -6,6 +6,37 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-018a: runtime parser/render hardening from the runtime audit
+  (`notation/runtime/`). `bundle()` no longer crashes when a module identity
+  is not lexable as a reference component (`/`, `:`, leading digit) — it emits
+  `DDN-W014` and leaves the reference as-is — and external import aliases are
+  now keyed by alias alone, so two distinct external targets under one alias
+  produce a `DDN-W014` naming both targets instead of an invalid bundle that
+  fails `DDN014` on re-parse; target files are parsed once per bundle, not
+  once per reference. `workflowErrors` reachability is now breadth-first over
+  an adjacency map (was O(states × transitions); a 200k-state input hung), and
+  its cycle-cut DFS, `createWorkspace` import loading, `bundle()`'s import
+  walk, the layered-layout Tarjan SCC, the tree/mindmap subtree walks, and the
+  pattern solver's `directedRanks` are all iterative — deep hostile inputs can
+  no longer cause uncaught `RangeError` stack overflows. A `uid` of
+  `"__proto__"` can no longer corrupt the placement/route/key maps (now
+  null-prototype objects). Module ids deeper than 16 dotted segments resolve
+  as sibling references; `publication.width`/`height`/`margin` must be finite
+  and bounded (`DDN046`); `DDN020` messages now name the offending import
+  path. Render lane: SQL DDL export sanitizes ids/kinds interpolated into
+  `-- ` comments (newline injection into the `.sql` artifact is neutralized);
+  the text-metrics request capture map is bounded at 4096 entries (FIFO);
+  registry-supplied colours, dash patterns, and silhouettes are escaped in SVG
+  attributes (matching `ddn-sketch.js`); subdiagram reference hrefs accept
+  only safe relative identifiers (new code `DDN078`); spread-based
+  `Math.min/max` over model-size arrays is replaced with reduces; sample
+  tables render at most 1000 rows with an explicit "+N rows not rendered"
+  note; unknown `style.font` falls back to the sans family instead of emitting
+  `font-family:undefined`; pattern solvers enforce a search-budget cap (new
+  code `LIVE-P002`). Regression tests: `notation/tests/audit-hardening.js`
+  (`npm --prefix notation run test:audit-hardening`), every test verified to
+  fail against the pre-fix sources.
+
 - B1-018b: designer/viewer hardening from the pages audit. The viewer's view
   picker works again (options are now index-valued into the picker list —
   the old empty-separator join/`split('')` made every switch fail with

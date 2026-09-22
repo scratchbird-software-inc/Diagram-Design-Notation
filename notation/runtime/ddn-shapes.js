@@ -96,7 +96,7 @@ function render(g,p,theme){
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?Sketch.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
  const text=(xx,yy,txt,size=13,weight=400,extra='')=>{Text.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
- let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-shape="${shape}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
+ let out=`<g class="ddn-node ddn-kind-${slug(k.code)}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-shape="${esc(shape)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
  if(['initial','final'].includes(shape)){
   const cx=x+w/2,cy=y+h/2-8,r=12*s;
   if(shape==='initial')out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${ink}"/>`;

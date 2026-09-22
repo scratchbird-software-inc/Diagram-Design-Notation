@@ -38,12 +38,15 @@ function sql(ir){
  const allowed=new Set(policy.elements.map(ref)),allowedFields=new Set((policy.fields||[]).map(ref));
  const pkAllowed=new Set(policy.properties||[]).has('key');
  const snake=v=>String(v).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+ // Ids/kinds are interpolated into `-- ` line comments verbatim; a newline in
+ // an id would break out of the comment and inject attacker-chosen SQL text.
+ const cmt=v=>String(v).replace(/[^\x20-\x7E]/g,'?');
  const tables=new Map(),elementNotes=new Map(),relationNotes=[],tablesSeen=new Map();
  for(const n of ir.elements){
   if(!allowed.has(n.id)||n.type==='sample'||n.kind==='sample')continue;
-  if(n.kind!=='table'){elementNotes.set(n.id,`-- skipped: ${n.id} (kind ${n.kind} is not table)`);continue;}
+  if(n.kind!=='table'){elementNotes.set(n.id,`-- skipped: ${cmt(n.id)} (kind ${cmt(n.kind)} is not table)`);continue;}
   const tname=snake(n.name);
-  if(!tname){elementNotes.set(n.id,`-- skipped: ${n.id} (name has no SQL identifier characters)`);continue;}
+  if(!tname){elementNotes.set(n.id,`-- skipped: ${cmt(n.id)} (name has no SQL identifier characters)`);continue;}
   if(tablesSeen.has(tname))throw Object.assign(new Error('Duplicate SQL identifier after snake_case normalization: '+tname),{code:'DDN-PJ092'});
   tablesSeen.set(tname,n.id);
   const fields=n.fields.filter(f=>allowedFields.has(f.id)),colsSeen=new Map(),cols=[];
@@ -52,12 +55,12 @@ function sql(ir){
  }
  for(const r of ir.relations){
   if(!allowed.has(r.from.element)||!allowed.has(r.to.element))continue; // excluded records stay invisible: no counts or identifiers
-  if(!tables.has(r.from.element)||!tables.has(r.to.element)){relationNotes.push(`-- skipped: ${r.id} (endpoint is not an exported table)`);continue;}
-  if(r.kind!=='ref'){relationNotes.push(`-- skipped: ${r.id} (kind ${r.kind} is not ref)`);continue;}
-  if(!r.properties||r.properties.enforcement!=='database'){relationNotes.push(`-- skipped: ${r.id} (enforcement is not "database")`);continue;}
-  if(!r.from.member||!r.to.member){relationNotes.push(`-- skipped: ${r.id} (no field-level endpoints)`);continue;}
+  if(!tables.has(r.from.element)||!tables.has(r.to.element)){relationNotes.push(`-- skipped: ${cmt(r.id)} (endpoint is not an exported table)`);continue;}
+  if(r.kind!=='ref'){relationNotes.push(`-- skipped: ${cmt(r.id)} (kind ${cmt(r.kind)} is not ref)`);continue;}
+  if(!r.properties||r.properties.enforcement!=='database'){relationNotes.push(`-- skipped: ${cmt(r.id)} (enforcement is not "database")`);continue;}
+  if(!r.from.member||!r.to.member){relationNotes.push(`-- skipped: ${cmt(r.id)} (no field-level endpoints)`);continue;}
   const from=tables.get(r.from.element),to=tables.get(r.to.element),fc=from.cols.find(c=>c.id===r.from.member),tc=to.cols.find(c=>c.id===r.to.member);
-  if(!allowedFields.has(r.from.member)||!allowedFields.has(r.to.member)||!fc||!tc){relationNotes.push(`-- skipped: ${r.id} (endpoint field outside field allowlist)`);continue;}
+  if(!allowedFields.has(r.from.member)||!allowedFields.has(r.to.member)||!fc||!tc){relationNotes.push(`-- skipped: ${cmt(r.id)} (endpoint field outside field allowlist)`);continue;}
   from.fks.push(`FOREIGN KEY (${fc.col}) REFERENCES ${to.name}(${tc.col})`);
  }
  if(!tables.size)throw Object.assign(new Error('SQL export found no allowlisted table objects; nothing to export'),{code:'DDN-PJ088'});

@@ -14,6 +14,8 @@ function use(reg){registry=reg||null;return api;}
 // Deep copy of the registered defaults for a kind keyword (or kind id);
 // `{}` when the kind or its defaults are absent. Mutating the result never
 // pollutes the registry. An explicit registry argument overrides use().
+// The copy is JSON.parse(JSON.stringify(...)): registry defaults must stay
+// pure JSON data — values JSON cannot represent would be silently mangled.
 function forKind(id,reg){
  const kinds=(reg||registry||{}).kinds||[];
  const kind=kinds.find(k=>k.keyword===id||k.id===id);

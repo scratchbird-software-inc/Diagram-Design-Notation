@@ -17,6 +17,8 @@ const same=(a,b)=>Math.abs(a[0]-b[0])<EPS&&Math.abs(a[1]-b[1])<EPS;
 const segs=ps=>ps.slice(1).map((b,i)=>({a:ps[i],b,i}));
 const length=s=>Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]);
 const box=(g,p=0)=>({x:g.x-p,y:g.y-p,w:g.w+2*p,h:g.h+2*p,id:g.id});
+const maxOf=(xs,f,seed=-Infinity)=>{let m=seed;for(const x of xs){const v=f(x);if(v>m)m=v;}return m;};
+const minOf=(xs,f,seed=Infinity)=>{let m=seed;for(const x of xs){const v=f(x);if(v<m)m=v;}return m;};
 function overlap(a,b,p=0){return a.x<b.x+b.w+p-EPS&&a.x+a.w>b.x-p+EPS&&a.y<b.y+b.h+p-EPS&&a.y+a.h>b.y-p+EPS;}
 function pointInside(p,b){return p[0]>b.x+EPS&&p[0]<b.x+b.w-EPS&&p[1]>b.y+EPS&&p[1]<b.y+b.h-EPS;}
 function segmentBox(s,b){
@@ -47,8 +49,24 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
   // Tarjan SCCs preserve cycles as explicit same-layer groups; no edge reversal mutates the model.
   const adj=new Map(nodes.map(n=>[n.id,[]]));edges.forEach(e=>adj.get(e.from.element).push(e.to.element));for(const a of adj.values())a.sort((a,b)=>order.get(a)-order.get(b));
   let counter=0;const ix=new Map(),low=new Map(),stack=[],on=new Set(),components=[];
-  function visit(id){ix.set(id,counter);low.set(id,counter++);stack.push(id);on.add(id);for(const j of adj.get(id)){if(!ix.has(j)){visit(j);low.set(id,Math.min(low.get(id),low.get(j)));}else if(on.has(j))low.set(id,Math.min(low.get(id),ix.get(j)));}if(low.get(id)===ix.get(id)){let c=[],x;do{x=stack.pop();on.delete(x);c.push(x);}while(x!==id);c.sort((a,b)=>order.get(a)-order.get(b));components.push(c);}}
-  nodes.forEach(n=>{if(!ix.has(n.id))visit(n.id);});const comp=new Map();components.forEach((c,i)=>c.forEach(id=>comp.set(id,i)));const rank=components.map(()=>0);for(let i=0;i<components.length;i++)for(const e of edges){const a=comp.get(e.from.element),b=comp.get(e.to.element);if(a!==b)rank[b]=Math.max(rank[b],rank[a]+1);}
+  // Iterative Tarjan: deep graphs must not exhaust the call stack.
+  for(const first of nodes){
+   if(ix.has(first.id))continue;
+   ix.set(first.id,counter);low.set(first.id,counter++);stack.push(first.id);on.add(first.id);
+   const call=[[first.id,0]];
+   while(call.length){
+    const frame=call.at(-1),id=frame[0],kids=adj.get(id);
+    if(frame[1]<kids.length){
+     const j=kids[frame[1]++];
+     if(!ix.has(j)){ix.set(j,counter);low.set(j,counter++);stack.push(j);on.add(j);call.push([j,0]);}
+     else if(on.has(j))low.set(id,Math.min(low.get(id),ix.get(j)));
+    }else{
+     call.pop();
+     if(call.length){const parent=call.at(-1)[0];low.set(parent,Math.min(low.get(parent),low.get(id)));}
+     if(low.get(id)===ix.get(id)){let c=[],x;do{x=stack.pop();on.delete(x);c.push(x);}while(x!==id);c.sort((a,b)=>order.get(a)-order.get(b));components.push(c);}
+    }
+   }
+  }const comp=new Map();components.forEach((c,i)=>c.forEach(id=>comp.set(id,i)));const rank=components.map(()=>0);for(let i=0;i<components.length;i++)for(const e of edges){const a=comp.get(e.from.element),b=comp.get(e.to.element);if(a!==b)rank[b]=Math.max(rank[b],rank[a]+1);}
   const layers=[];nodes.forEach(n=>(layers[rank[comp.get(n.id)]]??=[]).push(n));
   const pred=new Map(nodes.map(n=>[n.id,[]]));edges.forEach(e=>pred.get(e.to.element).push(e.from.element));
   for(let sweep=0;sweep<3;sweep++)for(let i=1;i<layers.length;i++){const pos=new Map(layers[i-1].map((n,j)=>[n.id,j]));const bary=n=>{const ps=pred.get(n.id).filter(id=>pos.has(id));return ps.length?ps.reduce((s,id)=>s+pos.get(id),0)/ps.length:order.get(n.id);};layers[i].sort((a,b)=>bary(a)-bary(b)||order.get(a.id)-order.get(b.id));}
@@ -61,20 +79,68 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
   for(const [id,n]of incoming)if(n>1)throw new ErrorClass('DDN201','Tree hierarchy has multiple parents: '+id+'; select hierarchy relationship kinds or use layered.');
   const roots=nodes.filter(n=>incoming.get(n.id)===0).map(n=>n.id),root=p.root?.$ref||p.root;
   if(root&&!ids.has(root))throw new ErrorClass('DDN202','Layout root is outside selected view');if(!roots.length&&nodes.length)throw new ErrorClass('DDN201','Tree hierarchy contains a cycle');
-  const seen=new Set(),active=new Set();function height(id){if(active.has(id))throw new ErrorClass('DDN201','Tree hierarchy contains a cycle');active.add(id);seen.add(id);const n=byId.get(id),ch=kids.get(id),h=Math.max(n.h,ch.reduce((sum,c)=>sum+height(c)+rowGap,0)-(ch.length?rowGap:0));active.delete(id);n.subtreeHeight=h;return h;}roots.forEach(height);if(seen.size!==nodes.length)throw new ErrorClass('DDN201','Unreachable hierarchy cycle');
-  const levelWidth=Math.max(270,...nodes.map(n=>n.w))+gap;function tree(id,depth,top,sign=1){const n=byId.get(id);n.x=depth*levelWidth*sign;n.y=top+(n.subtreeHeight-n.h)/2;let y=top;for(const c of kids.get(id)){tree(c,depth+1,y,sign);y+=byId.get(c).subtreeHeight+rowGap;}}
-  const levelDepth=Math.max(...nodes.map(n=>n.h))+rowGap;function width(id){const n=byId.get(id),ch=kids.get(id),w=Math.max(n.w,ch.reduce((sum,c)=>sum+width(c)+gap,0)-(ch.length?gap:0));n.subtreeWidth=w;return w;}
-  function vtree(id,depth,left){const n=byId.get(id);n.y=depth*levelDepth;n.x=left+(n.subtreeWidth-n.w)/2;let x=left;for(const c of kids.get(id)){vtree(c,depth+1,x);x+=byId.get(c).subtreeWidth+gap;}}
+  // Iterative subtree walks (post-order heights/widths, pre-order placement):
+  // deep hierarchies must not exhaust the call stack.
+  const seen=new Set(),active=new Set();
+  for(const root of roots){
+   if(seen.has(root))continue;
+   active.add(root);seen.add(root);
+   const st=[[root,0]];
+   while(st.length){
+    const f=st.at(-1),id=f[0],ch=kids.get(id);
+    if(f[1]<ch.length){
+     const c=ch[f[1]++];
+     if(active.has(c))throw new ErrorClass('DDN201','Tree hierarchy contains a cycle');
+     if(seen.has(c))continue;
+     active.add(c);seen.add(c);st.push([c,0]);
+    }else{
+     const n=byId.get(id);
+     n.subtreeHeight=Math.max(n.h,ch.reduce((sum,c)=>sum+byId.get(c).subtreeHeight+rowGap,0)-(ch.length?rowGap:0));
+     active.delete(id);st.pop();
+    }
+   }
+  }
+  if(seen.size!==nodes.length)throw new ErrorClass('DDN201','Unreachable hierarchy cycle');
+  const levelWidth=maxOf(nodes,n=>n.w,270)+gap;
+  function tree(id,depth,top,sign=1){
+   const st=[[id,depth,top,sign]];
+   while(st.length){
+    const [cid,cdepth,ctop,csign]=st.pop(),n=byId.get(cid);
+    n.x=cdepth*levelWidth*csign;n.y=ctop+(n.subtreeHeight-n.h)/2;
+    let y=ctop;const items=kids.get(cid).map(c=>{const it=[c,cdepth+1,y,csign];y+=byId.get(c).subtreeHeight+rowGap;return it;});
+    for(let i=items.length-1;i>=0;i--)st.push(items[i]);
+   }
+  }
+  const levelDepth=maxOf(nodes,n=>n.h,0)+rowGap;
+  function width(rootIds){
+   for(const r of rootIds){
+    const st=[[r,0]];
+    while(st.length){
+     const f=st.at(-1),ch=kids.get(f[0]);
+     if(f[1]<ch.length)st.push([ch[f[1]++],0]);
+     else{const n=byId.get(f[0]);n.subtreeWidth=Math.max(n.w,ch.reduce((sum,c)=>sum+byId.get(c).subtreeWidth+gap,0)-(ch.length?gap:0));st.pop();}
+    }
+   }
+  }
+  function vtree(id,depth,left){
+   const st=[[id,depth,left]];
+   while(st.length){
+    const [cid,cdepth,cleft]=st.pop(),n=byId.get(cid);
+    n.y=cdepth*levelDepth;n.x=cleft+(n.subtreeWidth-n.w)/2;
+    let x=cleft;const items=kids.get(cid).map(c=>{const it=[c,cdepth+1,x];x+=byId.get(c).subtreeWidth+gap;return it;});
+    for(let i=items.length-1;i>=0;i--)st.push(items[i]);
+   }
+  }
   if(p.algorithm==='mindmap'&&roots.length===1){const id=root||roots[0];if(incoming.get(id)!==0)throw new ErrorClass('DDN202','Mind-map root must be a hierarchy root');const n=byId.get(id),ch=kids.get(id),left=ch.filter((_,i)=>i%2),right=ch.filter((_,i)=>!(i%2));const span=a=>a.reduce((s,id)=>s+byId.get(id).subtreeHeight+rowGap,0)-(a.length?rowGap:0),full=Math.max(n.h,span(left),span(right));n.x=0;n.y=(full-n.h)/2;for(const [a,sign]of [[left,-1],[right,1]]){let y=(full-span(a))/2;for(const c of a){tree(c,1,y,sign);y+=byId.get(c).subtreeHeight+rowGap;}}}
-  else if(vertical){roots.forEach(width);let x=0;for(const id of roots){vtree(id,0,x);x+=byId.get(id).subtreeWidth+gap;}}
+  else if(vertical){width(roots);let x=0;for(const id of roots){vtree(id,0,x);x+=byId.get(id).subtreeWidth+gap;}}
   else {let y=0;for(const id of roots){tree(id,0,y);y+=byId.get(id).subtreeHeight+rowGap;}}
-  if(vertical&&p.direction==='up'){const max=Math.max(...nodes.map(n=>n.y+n.h));nodes.forEach(n=>n.y=max-n.y-n.h);}
-  const minX=Math.min(0,...nodes.map(n=>n.x));nodes.forEach(n=>n.x-=minX);
+  if(vertical&&p.direction==='up'){const max=maxOf(nodes,n=>n.y+n.h,0);nodes.forEach(n=>n.y=max-n.y-n.h);}
+  const minX=minOf(nodes,n=>n.x,0);nodes.forEach(n=>n.x-=minX);
  }else if(p.algorithm==='grouped'){
   const path=String(p.group_by||'kind').split('.'),read=n=>path.reduce((v,k)=>v?.[k],n.properties)??path.reduce((v,k)=>v?.[k],n.n?.properties)??n.n?.kind??'unassigned';
-  const groups=new Map();for(const n of nodes){let key=String(read(n));if(!groups.has(key))groups.set(key,[]);groups.get(key).push(n);}let x=0;for(const [label,ns]of groups){grid(ns,x,50);x=Math.max(...ns.map(n=>n.x+n.w))+gap*2;ns.forEach(n=>n.group=label);}
+  const groups=new Map();for(const n of nodes){let key=String(read(n));if(!groups.has(key))groups.set(key,[]);groups.get(key).push(n);}let x=0;for(const [label,ns]of groups){grid(ns,x,50);x=maxOf(ns,n=>n.x+n.w,0)+gap*2;ns.forEach(n=>n.group=label);}
  }else throw new ErrorClass('DDN203','No native placement algorithm '+p.algorithm);
- if(p.algorithm==='layered'&&['left','up'].includes(p.direction)){if(horizontal){const max=Math.max(...nodes.map(n=>n.x+n.w));nodes.forEach(n=>n.x=max-n.x-n.w);}else{const max=Math.max(...nodes.map(n=>n.y+n.h));nodes.forEach(n=>n.y=max-n.y-n.h);}}
+ if(p.algorithm==='layered'&&['left','up'].includes(p.direction)){if(horizontal){const max=maxOf(nodes,n=>n.x+n.w,0);nodes.forEach(n=>n.x=max-n.x-n.w);}else{const max=maxOf(nodes,n=>n.y+n.h,0);nodes.forEach(n=>n.y=max-n.y-n.h);}}
  const pinned=[];for(const n of nodes){const at=placements[n.id]?.at;if(at){n.x=q(at[0]);n.y=q(at[1]);pinned.push(n);}}
  for(let i=0;i<pinned.length;i++)for(let j=i+1;j<pinned.length;j++)if(overlap(pinned[i],pinned[j]))throw new ErrorClass('DDN204','Conflicting hard placements: '+pinned[i].id+' / '+pinned[j].id);
  const settled=[...pinned];for(const n of nodes.filter(n=>!placements[n.id]?.at)){let tries=0;while(settled.some(o=>overlap(n,o,20))){n.y+=n.h+rowGap;if(++tries>nodes.length+2)throw new ErrorClass('DDN204','Unable to honor pinned geometry');}settled.push(n);}
@@ -134,7 +200,7 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
  // placed labels reserve broader bands before later relations are routed.
  const labelMargin=round(8*spacingScale(p)),labelRouteMargin=round(10*spacingScale(p));
  const assignments=portAssignments(nodes,rels,profiles,hints),routes=[],labels=[],diagnostics=[];
- const bounds={minX:Math.min(0,...nodes.map(n=>n.x)),minY:Math.min(0,...nodes.map(n=>n.y)),maxX:Math.max(100,...nodes.map(n=>n.x+n.w)),maxY:Math.max(100,...nodes.map(n=>n.y+n.h))};
+ const bounds={minX:minOf(nodes,n=>n.x,0),minY:minOf(nodes,n=>n.y,0),maxX:maxOf(nodes,n=>n.x+n.w,100),maxY:maxOf(nodes,n=>n.y+n.h,100)};
  const inflated=nodes.map(n=>box(n,clear));
  const reservations=[];for(const r of rels){const ep=assignments.get(r.id);for(const which of ['source','target']){const pt=ep[which],dir=ep[which+'_direction'],out=[round(pt[0]+dir[0]*(clear+port)),round(pt[1]+dir[1]*(clear+port))];reservations.push({id:r.id+':reserved:'+which,owner:r.id,points:[pt,out]});}}
  for(const r of rels)if((hints[r.id]?.routing||p.routing)==='straight'){const ep=assignments.get(r.id);reservations.push({id:r.id+':reserved:direct',owner:r.id,points:[ep.source,ep.target]});}

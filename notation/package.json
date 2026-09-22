@@ -9,24 +9,54 @@
   "types": "dist/ddn.d.ts",
   "exports": {
     ".": {
-      "import": { "types": "./dist/ddn.d.mts", "default": "./dist/ddn.mjs" },
-      "require": { "types": "./dist/ddn.d.ts", "default": "./dist/ddn.global.js" }
+      "import": {
+        "types": "./dist/ddn.d.mts",
+        "default": "./dist/ddn.mjs"
+      },
+      "require": {
+        "types": "./dist/ddn.d.ts",
+        "default": "./dist/ddn.global.js"
+      }
     },
     "./core": {
-      "import": { "types": "./dist/ddn-core.d.mts", "default": "./dist/ddn-core.mjs" },
-      "require": { "types": "./dist/ddn-core.d.ts", "default": "./dist/ddn-core.js" }
+      "import": {
+        "types": "./dist/ddn-core.d.mts",
+        "default": "./dist/ddn-core.mjs"
+      },
+      "require": {
+        "types": "./dist/ddn-core.d.ts",
+        "default": "./dist/ddn-core.js"
+      }
     },
     "./graph": {
-      "import": { "types": "./dist/ddn-graph.d.mts", "default": "./dist/ddn-graph.mjs" },
-      "require": { "types": "./dist/ddn-graph.d.ts", "default": "./dist/ddn-graph.js" }
+      "import": {
+        "types": "./dist/ddn-graph.d.mts",
+        "default": "./dist/ddn-graph.mjs"
+      },
+      "require": {
+        "types": "./dist/ddn-graph.d.ts",
+        "default": "./dist/ddn-graph.js"
+      }
     },
     "./projections": {
-      "import": { "types": "./dist/ddn-projections.d.mts", "default": "./dist/ddn-projections.mjs" },
-      "require": { "types": "./dist/ddn-projections.d.ts", "default": "./dist/ddn-projections.js" }
+      "import": {
+        "types": "./dist/ddn-projections.d.mts",
+        "default": "./dist/ddn-projections.mjs"
+      },
+      "require": {
+        "types": "./dist/ddn-projections.d.ts",
+        "default": "./dist/ddn-projections.js"
+      }
     },
     "./quality": {
-      "import": { "types": "./dist/ddn-quality.d.mts", "default": "./dist/ddn-quality.mjs" },
-      "require": { "types": "./dist/ddn-quality.d.ts", "default": "./dist/ddn-quality.js" }
+      "import": {
+        "types": "./dist/ddn-quality.d.mts",
+        "default": "./dist/ddn-quality.mjs"
+      },
+      "require": {
+        "types": "./dist/ddn-quality.d.ts",
+        "default": "./dist/ddn-quality.js"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -36,7 +66,7 @@
   ],
   "sideEffects": true,
   "scripts": {
-    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:funnel && npm run test:gauge && npm run test:candlestick && npm run test:treemap && npm run test:sankey && npm run test:c4 && npm run test:org && npm run test:wbs && npm run test:mindmap && npm run test:conceptmap && npm run test:epc && npm run test:canvas-pack-a && npm run test:canvas-pack-b && npm run test:matrix-pack && npm run test:empathy-scorecard && npm run test:journey-map && npm run test:story-map && npm run test:crows-foot && npm run test:sql-export && npm run test:pyramid && npm run test:venn && npm run test:sequence && npm run test:communication && npm run test:object-diagram && npm run test:routing-efficiency && npm run test:sdk && npm run test:hierarchical-state && npm run test:endpoint-ordering && npm run test:activity && npm run test:bpmn && npm run test:timing && npm run test:interaction-overview && npm run test:cmmn && npm run test:sysml && npm run test:archimate && npm run test:pert-cpm && npm run test:fault-event-tree && npm run test:network && npm run test:wireframes && npm run test:family-tree && npm run test:defaults && npm run test:css-classes && npm run test:modular-bundles && npm run test:data-refresh && npm run test:viewer && npm run test:render-overrides && npm run test:spacing-hints && npm run test:doc-snippets && npm run test:gallery-coverage && npm run test:glyphs && npm run test:multi-module && npm run test:bundle",
+    "test": "npm run test:core && npm run test:remediation && npm run test:curves && npm run test:patterns && npm run test:use-cases && npm run test:projections && npm run test:quality && npm run test:radar && npm run test:funnel && npm run test:gauge && npm run test:candlestick && npm run test:treemap && npm run test:sankey && npm run test:c4 && npm run test:org && npm run test:wbs && npm run test:mindmap && npm run test:conceptmap && npm run test:epc && npm run test:canvas-pack-a && npm run test:canvas-pack-b && npm run test:matrix-pack && npm run test:empathy-scorecard && npm run test:journey-map && npm run test:story-map && npm run test:crows-foot && npm run test:sql-export && npm run test:pyramid && npm run test:venn && npm run test:sequence && npm run test:communication && npm run test:object-diagram && npm run test:routing-efficiency && npm run test:sdk && npm run test:hierarchical-state && npm run test:endpoint-ordering && npm run test:activity && npm run test:bpmn && npm run test:timing && npm run test:interaction-overview && npm run test:cmmn && npm run test:sysml && npm run test:archimate && npm run test:pert-cpm && npm run test:fault-event-tree && npm run test:network && npm run test:wireframes && npm run test:family-tree && npm run test:defaults && npm run test:css-classes && npm run test:modular-bundles && npm run test:data-refresh && npm run test:viewer && npm run test:render-overrides && npm run test:spacing-hints && npm run test:doc-snippets && npm run test:gallery-coverage && npm run test:glyphs && npm run test:multi-module && npm run test:bundle && npm run test:audit-hardening",
     "test:core": "node tests/run.js",
     "test:remediation": "node tests/0.3-regressions.js",
     "test:curves": "node tests/curved-relations.js",
@@ -99,7 +129,8 @@
     "test:gallery-coverage": "node tests/gallery-coverage.js",
     "test:glyphs": "node tests/glyphs.js",
     "test:multi-module": "node tests/multi-module.js",
-    "test:bundle": "node tests/bundle.js"
+    "test:bundle": "node tests/bundle.js",
+    "test:audit-hardening": "node tests/audit-hardening.js"
   },
   "prepublishOnly": "npm run build:sdk",
   "engines": {

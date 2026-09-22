@@ -12,7 +12,10 @@ function measure(s,size=14,font='sans',weight=400){s=String(s??'');const k=key(s
  if(provider){counts.provider++;result=provider(s,size,FONTS[font]||font,weight);if(!result||!Number.isFinite(result.width))throw new Error('Text measurement provider returned invalid width');return {...result,method:providerName};}
  if(typeof document!=='undefined'&&document.createElement){try{context??=document.createElement('canvas').getContext('2d');if(context){counts.canvas++;context.font=`${weight} ${size}px ${FONTS[font]||font}`;const m=context.measureText(s);return{width:m.width,ascent:m.actualBoundingBoxAscent||size*.85,descent:m.actualBoundingBoxDescent||size*.25,method:'browser-canvas'};}}catch{}}
  if(cache[k]){counts.cache++;return {...cache[k],method:'pinned-measurement-cache'};}
- counts.estimated++;requests.set(k,{text:s,size,font,weight});
+ counts.estimated++;
+ // Bounded retention: the capture map is a debugging aid, not a leak. FIFO-evict
+ // past the cap so many unique labels cannot grow the process heap without bound.
+ if(!requests.has(k)){if(requests.size>=4096)requests.delete(requests.keys().next().value);requests.set(k,{text:s,size,font,weight});}
  let width=0;for(const g of graphemes(s)){if(/^\s+$/u.test(g))width+=size*.34;else if(/[\p{Script=Han}\p{Script=Hangul}\p{Script=Hiragana}\p{Script=Katakana}\p{Extended_Pictographic}]/u.test(g))width+=size*1.08;else if(/[MW@#%&]/.test(g))width+=size*.9;else if(/[il.,:;!'|]/.test(g))width+=size*.34;else width+=size*(font==='mono'?.64:.64);}
  return{width,ascent:size*.88,descent:size*.28,method:'estimated'};
 }
