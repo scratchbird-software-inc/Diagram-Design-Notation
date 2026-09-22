@@ -1470,6 +1470,13 @@ function splitterDrag(which,startWidth,startClientX,clientX){
  const delta=clientX-startClientX;
  return clampWidth(which,which==='left'?startWidth+delta:startWidth-delta);
 }
+// Boot-time read of a persisted splitter width: localStorage is user-writable,
+// so anything that is not a finite positive number falls back to the default
+// rather than throwing in gridColumns or collapsing the panel to 0px.
+function bootWidth(which,raw){
+ const v=+raw;
+ return Number.isFinite(v)&&v>0?clampWidth(which,v):SPLITTER_DEFAULTS[which];
+}
 function gridColumns(leftWidth,inspectorWidth){
  // 0 marks a detached (floating) panel: its column and splitter collapse so the
  // canvas grows to fill. Re-attach restores the persisted splitter width.
@@ -1561,5 +1568,5 @@ const EXPORT_FORMATS=[
  {id:'png',label:'Current PNG (2×)',file:'designer-prototype.png',mime:'image/png',guarded:true,scale:2},
  {id:'webp',label:'Current WebP (2×)',file:'designer-prototype.webp',mime:'image/webp',guarded:true,scale:2}
 ];
-return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS,splitters:{SPLITTER_LIMITS,SPLITTER_DEFAULTS,clampWidth,splitterDrag,gridColumns},DENSITY,DENSITY_DEFAULT,EXPORT_FORMATS,TEXT_FORMATS,bundleWorkspace,display:{FONT_STACKS:DISPLAY_FONT_STACKS,FONT_SIZES:DISPLAY_FONT_SIZES,ROUTING:DISPLAY_ROUTING,CROSSINGS:DISPLAY_CROSSINGS,ENDPOINT_ORDERING:DISPLAY_ENDPOINT_ORDERING,typographyRule:displayTypographyRule,colourRule:displayColourRule,css:displayCss,slug:cssSlug}};
+return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDeclaration,reorderLifelines,addSequenceMessage,setMessageReturn,setMessageLabel,removeSequenceMessage,createLane,renameLane,resizeLane,assignToLane,unassignFromLane,addExistingToView,removeOccurrence,moveOccurrences,setViewOverride,applyCreationAction,prepareReconnect,reconnectRelation,previewReconnect,setMatrixAssignments,editRecordValue,addChartRecord,deleteChartRecord,setChartMark,setChartBinding,setTimelineDates,addTimelineRecord,linkTimelineDependency,unlinkTimelineDependency,setFishboneEffectLabel,addFishboneCategory,addFishboneCause,attachExistingCause,removeFishboneCause,setPanels,renamePanel,movePanelSpan,addPanel,removePanel,movePanelItem,addPanelItem,bindPanelChildView,addDecisionRule,editDecisionRule,reorderDecisionRules,deleteDecisionRule,setDecisionPolicy,evaluateDecisionFixture,createCanvasFromTemplate,CANVAS_TEMPLATES,dataBlocks,defaultFormatRef,validate,classifyCode,pendingViewsAfterCommit,INCOMPLETE_CODE_PREFIXES,INCOMPLETE_CODES,PROJECTION_PROPERTY_KEYS,CHART_BINDING_KEYS,splitters:{SPLITTER_LIMITS,SPLITTER_DEFAULTS,clampWidth,splitterDrag,bootWidth,gridColumns},DENSITY,DENSITY_DEFAULT,EXPORT_FORMATS,TEXT_FORMATS,bundleWorkspace,display:{FONT_STACKS:DISPLAY_FONT_STACKS,FONT_SIZES:DISPLAY_FONT_SIZES,ROUTING:DISPLAY_ROUTING,CROSSINGS:DISPLAY_CROSSINGS,ENDPOINT_ORDERING:DISPLAY_ENDPOINT_ORDERING,typographyRule:displayTypographyRule,colourRule:displayColourRule,css:displayCss,slug:cssSlug}};
 });

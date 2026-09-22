@@ -6,6 +6,24 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-018b: designer/viewer hardening from the pages audit. The viewer's view
+  picker works again (options are now index-valued into the picker list —
+  the old empty-separator join/`split('')` made every switch fail with
+  LIVE012); renderer SVG enters the DOM through a `safeSVG()` sanitizer
+  ported from the designer (DOMParser + script/foreignObject/on\*/href
+  stripping) instead of raw `innerHTML`; the drop filter's dead `|| true`
+  clause is gone (only plausible `.ddn`/text files accepted); opened files
+  are capped at 50 MB with a user-facing message, stored in a
+  prototype-free map (duplicate basenames reported, `__proto__` safe), and
+  the file input resets after load; loading a new document resets selection
+  and presentation overrides; PNG export canvas is capped at 16384 px per
+  side. Designer: persisted splitter widths are validated at boot
+  (`splitters.bootWidth`) so corrupt localStorage values can no longer throw
+  or collapse panels; the dead `#fileInput` element was removed; `setView`'s
+  unknown-view fallback scans real workspace entries. Regenerated artifacts:
+  `notation/viewer/ddn-viewer.html`, designer `index.html`/`standalone.html`,
+  website mirrors.
+
 - B1-017: the repository root stops being the website — **`website/` is now
   the deployable, fully self-contained static site** (works from `file://` and
   any static host; no `../` escapes, enforced by `tests/website-links.js`).

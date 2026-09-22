@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-007/B1-011 end-user viewer logic.
  * Pure functions (computeFitScale, overrideRuleFor, typographyRuleFor,
- * relationOverrideState, viewerOverrides, viewListFrom) are exported for node
+ * relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile,
+ * rasterCanvasSize) are exported for node
  * unit tests; the DOM boot runs only in a browser with DDNLive loaded.
  * No Chrome-only APIs: file reading uses File/input elements, raster export uses
  * a 2D canvas + toDataURL, downloads use Blob + object URLs — all supported by
@@ -163,7 +164,31 @@ function viewListFrom(entries) {
   return out;
 }
 
-const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
+/* A dropped/selected file is plausible DDN source when its name ends in .ddn
+ * (or embeds .ddn., e.g. archive members) or the browser typed it as text. */
+function isPlausibleSourceFile(f) {
+  if (!f || typeof f.name !== 'string') return false;
+  return /\.ddn($|\.)/i.test(f.name) || (typeof f.type === 'string' && f.type.startsWith('text/'));
+}
+
+/* Dropped/selected files are read fully into memory before parsing, so cap
+ * them; a multi-GB drop would otherwise hang or crash the tab. */
+const MAX_FILE_BYTES = 50_000_000;
+
+/* Raster export allocates a scale× canvas from the source-declared page size;
+ * clamp each side so a hostile/buggy publication size cannot request an
+ * enormous canvas. Throws on sizes beyond the cap. */
+const MAX_RASTER_PX = 16384;
+function rasterCanvasSize(w, h, scale) {
+  const s = scale || 2;
+  if (!(w > 0) || !(h > 0)) throw new Error('nothing rendered yet');
+  const cw = Math.round(w * s), ch = Math.round(h * s);
+  if (cw > MAX_RASTER_PX || ch > MAX_RASTER_PX)
+    throw new Error('PNG export refused: ' + cw + '×' + ch + ' px exceeds the ' + MAX_RASTER_PX + ' px per-side cap; the source declares a very large page');
+  return { width: cw, height: ch };
+}
+
+const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNViewer = pure; return; }
 
@@ -202,7 +227,7 @@ function emptyPresentation() {
   };
 }
 const state = {
-  files: {}, entry: null, view: null, ws: null,
+  files: {}, entry: null, view: null, ws: null, viewList: [],
   fit: 'page', zoom: null,
   presentation: emptyPresentation(),
   selected: null, selectedRelation: null,
@@ -222,14 +247,22 @@ function loadFiles(files, entry) {
     const list = viewListFrom(ws.entries());
     if (!list.length) { fail('no view declared in the loaded source'); return; }
     state.ws = ws; state.files = files;
+    // Fresh document: selection and presentation state from any previously
+    // loaded source must not carry over (overrides key on object ids).
+    state.selected = null; state.selectedRelation = null;
+    state.presentation = emptyPresentation();
+    syncTypographyControls(); syncRelationControls();
     const first = list.find(v => v.entry === entry) || list[0];
+    state.viewList = list;
     els.picker.innerHTML = '';
-    for (const v of list) {
+    list.forEach((v, i) => {
       const o = document.createElement('option');
-      o.value = v.entry + '' + v.view; o.textContent = v.label;
+      // Index into state.viewList: entry/view ids may contain any character,
+      // so a concatenated separator encoding can never round-trip safely.
+      o.value = String(i); o.textContent = v.label;
       els.picker.appendChild(o);
-    }
-    els.picker.value = first.entry + '' + first.view;
+    });
+    els.picker.value = String(list.indexOf(first));
     state.entry = first.entry; state.view = first.view;
     render();
   } catch (e) { fail(e && e.message); }
@@ -346,11 +379,28 @@ function applyOverrides() {
   status(n ? n + ' CSS override(s) active' : null);
 }
 
+/* Sanitize renderer output before it enters the live DOM (ported from the
+ * designer's safeSVG, designer/prototype/app.js): parse as image/svg+xml,
+ * strip script/foreignObject, all on* attributes and non-fragment hrefs,
+ * then insert an imported node — never innerHTML. The renderer escapes all
+ * diagram text today; this keeps a future escaping gap from becoming XSS. */
+function safeSVG(text) {
+  const doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) throw new Error('Invalid SVG');
+  doc.querySelectorAll('script,foreignObject').forEach(x => x.remove());
+  doc.querySelectorAll('*').forEach(e => {
+    for (const a of [...e.attributes]) {
+      if (/^on/i.test(a.name) || ((a.name === 'href' || a.name === 'xlink:href') && !a.value.startsWith('#'))) e.removeAttribute(a.name);
+    }
+  });
+  return document.importNode(doc.documentElement, true);
+}
+
 function render() {
   try {
     const r = state.ws.renderSync({ entry: state.entry, view: state.view, overrides: viewerOverrides(state.presentation) });
     state.svgText = r.svg;
-    els.paper.innerHTML = r.svg;
+    els.paper.replaceChildren(safeSVG(r.svg));
     const svg = els.paper.querySelector('svg');
     state.svgW = parseFloat(svg.getAttribute('width')) || 800;
     state.svgH = parseFloat(svg.getAttribute('height')) || 600;
@@ -440,12 +490,31 @@ els.relationClear.addEventListener('click', () => {
 });
 
 els.open.addEventListener('click', () => els.fileInput.click());
+/* Read a FileList into a null-prototype name→text map: size-capped, duplicate
+ * basenames keep the first file, and a file literally named "__proto__"
+ * cannot trip the prototype setter. */
+function readSourceFiles(list) {
+  const files = Object.create(null), dupes = [];
+  return Promise.all(list.map(f => {
+    if (f.size > MAX_FILE_BYTES)
+      throw new Error(f.name + ' is ' + Math.round(f.size / 1e6) + ' MB — the viewer accepts sources up to ' + (MAX_FILE_BYTES / 1e6) + ' MB');
+    return f.text().then(t => {
+      if (Object.prototype.hasOwnProperty.call(files, f.name)) { dupes.push(f.name); return; }
+      files[f.name] = t;
+    });
+  })).then(() => ({ files, dupes }));
+}
 els.fileInput.addEventListener('change', () => {
-  const files = {};
   const list = [...els.fileInput.files];
+  // Reset so re-selecting the same (edited) file fires change again.
+  els.fileInput.value = '';
   if (!list.length) return;
-  Promise.all(list.map(f => f.text().then(t => { files[f.name] = t; })))
-    .then(() => { els.paste.value = files[list[0].name]; loadFiles(files, list[0].name); })
+  readSourceFiles(list)
+    .then(({ files, dupes }) => {
+      els.paste.value = files[list[0].name];
+      loadFiles(files, list[0].name);
+      if (dupes.length) status('duplicate name skipped: ' + dupes.join(', '));
+    })
     .catch(e => fail(e && e.message));
 });
 els.loadPaste.addEventListener('click', () => {
@@ -455,16 +524,21 @@ els.loadPaste.addEventListener('click', () => {
 });
 for (const ev of ['dragover', 'drop']) document.addEventListener(ev, e => e.preventDefault());
 document.addEventListener('drop', e => {
-  const list = [...(e.dataTransfer && e.dataTransfer.files || [])].filter(f => /\.ddn$|\.ddn\./i.test(f.name) || true);
-  if (!list.length) return;
-  const files = {};
-  Promise.all(list.map(f => f.text().then(t => { files[f.name] = t; })))
-    .then(() => { els.paste.value = files[list[0].name]; loadFiles(files, list[0].name); })
+  const all = [...(e.dataTransfer && e.dataTransfer.files || [])];
+  const list = all.filter(isPlausibleSourceFile);
+  if (!list.length) { if (all.length) fail('drop a .ddn or text file'); return; }
+  readSourceFiles(list)
+    .then(({ files, dupes }) => {
+      els.paste.value = files[list[0].name];
+      loadFiles(files, list[0].name);
+      if (dupes.length) status('duplicate name skipped: ' + dupes.join(', '));
+    })
     .catch(err => fail(err && err.message));
 });
 els.picker.addEventListener('change', () => {
-  const [entry, view] = els.picker.value.split('');
-  state.entry = entry; state.view = view; render();
+  const v = (state.viewList || [])[+els.picker.value];
+  if (!v) return;
+  state.entry = v.entry; state.view = v.view; render();
 });
 els.fitPage.addEventListener('click', () => setFit('page'));
 els.fitWidth.addEventListener('click', () => setFit('width'));
@@ -539,13 +613,16 @@ els.exportPng.addEventListener('click', () => {
     const svg = exportSvgString();
     const img = new Image();
     img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width = Math.round(state.svgW * 2); c.height = Math.round(state.svgH * 2);
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
-      ctx.drawImage(img, 0, 0, c.width, c.height);
-      download((state.view || 'diagram') + '.png', c.toDataURL('image/png'));
-      status('PNG exported at 2×');
+      try {
+        const size = rasterCanvasSize(state.svgW, state.svgH, 2);
+        const c = document.createElement('canvas');
+        c.width = size.width; c.height = size.height;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        download((state.view || 'diagram') + '.png', c.toDataURL('image/png'));
+        status('PNG exported at 2×');
+      } catch (err) { fail(err && err.message); }
     };
     img.onerror = () => fail('PNG rasterisation failed');
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);

@@ -161,5 +161,72 @@ test('viewerOverrides: global font via the reflow override channel merged with r
   assert.throws(() => V.viewerOverrides({ font: { size: '7' } }), /between 8 and 64/);
 });
 
+/* --- B1-018b audit-hardening regressions --- */
+
+test('view picker: index-based option values always round-trip into the view list', () => {
+  const ws = A.createWorkspace({ 'fixture.ddn': fixture });
+  const list = V.viewListFrom(ws.entries());
+  // The pre-fix encoding concatenated entry+view with an empty separator and
+  // split('') on read, so any switch landed on entry=<first char> → LIVE012.
+  // Index values are immune to every character legal in file/view ids.
+  for (let i = 0; i < list.length; i++)
+    assert.deepEqual(list[+String(i)], list[i]);
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.ok(!src.includes(".split('')"), "empty-separator split('') is still present");
+  assert.ok(src.includes('o.value = String(i)'), 'picker options are not index-valued');
+  assert.ok(src.includes('(state.viewList || [])[+els.picker.value]'), 'picker change handler does not resolve via the view list');
+  ws.destroy();
+});
+
+test('viewer render path sanitizes renderer SVG (safeSVG port, no innerHTML sink)', () => {
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.ok(src.includes('function safeSVG('), 'safeSVG sanitizer missing');
+  assert.ok(src.includes('els.paper.replaceChildren(safeSVG(r.svg))'), 'render() does not insert sanitized nodes');
+  assert.ok(!src.includes('els.paper.innerHTML'), 'raw innerHTML sink remains');
+  assert.ok(src.includes("doc.querySelectorAll('script,foreignObject')"), 'script/foreignObject strip missing');
+  assert.ok(src.includes("/^on/i.test(a.name)"), 'on* attribute strip missing');
+  const built = fs.readFileSync(path.join(root, 'notation/viewer/ddn-viewer.html'), 'utf8');
+  assert.ok(built.includes('els.paper.replaceChildren(safeSVG(r.svg))'), 'built ddn-viewer.html is stale — run npm --prefix notation run build:viewer');
+});
+
+test('isPlausibleSourceFile: .ddn names or text/* types, everything else rejected', () => {
+  assert.ok(V.isPlausibleSourceFile({ name: 'model.ddn' }));
+  assert.ok(V.isPlausibleSourceFile({ name: 'MODEL.DDN' }));
+  assert.ok(V.isPlausibleSourceFile({ name: 'bundle.ddn.txt' }));
+  assert.ok(V.isPlausibleSourceFile({ name: 'notes', type: 'text/plain' }));
+  assert.ok(!V.isPlausibleSourceFile({ name: 'photo.png', type: 'image/png' }), 'the pre-fix || true filter accepted this');
+  assert.ok(!V.isPlausibleSourceFile({ name: 'archive.zip', type: 'application/zip' }));
+  assert.ok(!V.isPlausibleSourceFile({ name: 'binary.bin' }));
+  assert.ok(!V.isPlausibleSourceFile(null));
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.ok(!src.includes('|| true'), 'dead filter clause remains');
+});
+
+test('file open: size cap, __proto__/duplicate-safe store, input reset', () => {
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.strictEqual(V.MAX_FILE_BYTES, 50_000_000);
+  assert.ok(src.includes('f.size > MAX_FILE_BYTES'), 'no size cap before f.text()');
+  assert.ok(src.includes('Object.create(null)'), 'files store is not prototype-safe');
+  assert.ok(src.includes("els.fileInput.value = ''"), 'file input is not reset after load');
+  assert.ok(src.includes('duplicate name skipped'), 'duplicate basenames silently overwrite');
+});
+
+test('rasterCanvasSize: 2× canvas, capped per side, degenerate sizes rejected', () => {
+  assert.deepEqual(V.rasterCanvasSize(100, 50, 2), { width: 200, height: 100 });
+  assert.deepEqual(V.rasterCanvasSize(8000, 8192, 2), { width: 16000, height: 16384 });
+  assert.throws(() => V.rasterCanvasSize(9000, 100, 2), /16384/, 'oversize page must refuse, not allocate');
+  assert.throws(() => V.rasterCanvasSize(100, 9000, 2), /PNG export refused/);
+  assert.throws(() => V.rasterCanvasSize(0, 0, 2), /nothing rendered/);
+});
+
+test('loadFiles resets selection and presentation state from any previous document', () => {
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  const m = src.match(/function loadFiles\(files, entry\) \{[\s\S]*?render\(\);/);
+  assert.ok(m, 'loadFiles not found');
+  assert.ok(m[0].includes('state.selected = null'), 'stale object selection carried across loads');
+  assert.ok(m[0].includes('state.selectedRelation = null'), 'stale relation selection carried across loads');
+  assert.ok(m[0].includes('state.presentation = emptyPresentation()'), 'stale presentation overrides carried across loads');
+});
+
 const n = results.length, ok = results.filter(r => r.pass).length;
 console.log(`Viewer ${ok}/${n}`);
