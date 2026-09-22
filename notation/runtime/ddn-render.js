@@ -1,7 +1,18 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Deterministic illustrative SVG renderer.
  * Not a replacement for the production layout/conformance requirements in spec/.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-core.js'),require('./ddn-sketch.js'),require('./ddn-layout.js'),require('./ddn-text.js'),require('./ddn-export.js'),require('./ddn-placement.js'),require('./ddn-palette.js'),require('./ddn-shapes.js'));else root.DDNRender=factory(root.DDN,root.DDNSketch,root.DDNLayout,root.DDNText,root.DDNExport,root.DDNPlacement,root.DDNPalette,root.DDNShapes);})(typeof globalThis!=='undefined'?globalThis:this,function(DDN,Sketch,Layout,Text,Export,Placement,Palette,Shapes){
+import {publishNamespace} from './ddn-module-registry.js';
+import Sketch from './ddn-sketch.js';
+import Layout from './ddn-layout.js';
+import Text from './ddn-text.js';
+import Placement from './ddn-placement.js';
+import Palette from './ddn-palette.js';
+import Shapes from './ddn-shapes.js';
+import './ddn-core.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import './ddn-export.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import {namespace} from './ddn-module-registry.js';
+const DDN=namespace('DDN');
+const Export=namespace('DDNExport');
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const fmt=n=>Number(n.toFixed(3));
@@ -251,5 +262,6 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  scene.textMeasurement={mode:estimated?'estimated':'measured',requestedFont:p.style.font,provider:textAfter.canvas>textBefore.canvas?'browser-canvas':'pinned-cache'};
  return{svg:out,scene,diagnostics:diags,_drawing:diagram,_defs:glyphDefs,_ir:ir};
 }
-return{palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark,cls,slug};
-});
+const api={palette:Palette,render,measureNode,visibleRoutePieces,esc,hash,wrap,text,multilines,line,glyph,rect,badge,pretty,themes,pathD,endMark,cls,slug};
+publishNamespace('DDNRender',api);
+export default api;

@@ -1,5 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. DDN profile packs: data-only definitions and bounded validators. */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('../../standard/registry/profiles/catalogue.json'),require('./ddn-projection-data'),require('./ddn-profile-quality'));else root.DDNProfiles=factory(root.DDNProfileCatalogue,root.DDNProjectionData,root.DDNProfileQuality);})(typeof globalThis!=='undefined'?globalThis:this,function(catalogue,Bindings,Extra){
+import {publishNamespace} from './ddn-module-registry.js';
+import catalogue from './assets/profiles-catalogue.js';
+import Bindings from './ddn-projection-data.js';
+import Extra from './ddn-profile-quality.js';
 'use strict';
 const VERSION='0.6.0-beta.1';
 const cache=new WeakMap();
@@ -140,5 +143,6 @@ function validate(ir,reg,ErrorClass){
  Bindings.plan(ir,ErrorClass);
  return diagnostics;
 }
-return{VERSION,registry,validate,catalogue,get};
-});
+const api={VERSION,registry,validate,catalogue,get};
+publishNamespace('DDNProfiles',api);
+export default api;

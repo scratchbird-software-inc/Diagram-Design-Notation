@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Additive profile-completion contracts. */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNProfileQuality=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 function validate(ir,E){
  const ns=new Map(ir.elements.map(n=>[n.id,n])),shown=new Set(ir.view.selected),profile=ir.view.profiles.projection.profile;
@@ -136,5 +136,6 @@ function validate(ir,E){
   }
  }
 }
-return{VERSION:'0.6.0-beta.1',validate};
-});
+const api={VERSION:'0.6.0-beta.1',validate};
+publishNamespace('DDNProfileQuality',api);
+export default api;

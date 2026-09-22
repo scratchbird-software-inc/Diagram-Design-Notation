@@ -2,7 +2,8 @@
  * DDN 0.3 deterministic native layout and obstacle-aware orthogonal routing.
  * Bounded search is deliberate: infeasibility produces a diagnostic, never an invisible topology change.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-shapes'));else root.DDNLayout=factory(root.DDNShapes);})(typeof globalThis!=='undefined'?globalThis:this,function(Shapes){
+import {publishNamespace} from './ddn-module-registry.js';
+import Shapes from './ddn-shapes.js';
 'use strict';
 const VERSION='0.6.0-beta.1',EPS=.01;
 const q=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
@@ -459,5 +460,6 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  return {...result,routes,crossings,labels,quality,curveTolerance:CURVE_TOLERANCE};
 }
 
-return {crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION,q,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale};
-});
+const api={crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION,q,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale};
+publishNamespace('DDNLayout',api);
+export default api;

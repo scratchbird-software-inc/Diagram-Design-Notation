@@ -1,5 +1,16 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Data-bound SVG projections using one shared model and publication contract. */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-core'),require('./ddn-projection-data'),require('./ddn-render'),require('./ddn-text'),require('./ddn-palette'),require('./ddn-quality-render'));else root.DDNProjections=factory(root.DDN,root.DDNProjectionData,root.DDNRender,root.DDNText,root.DDNPalette,root.DDNQualityRender);})(typeof globalThis!=='undefined'?globalThis:this,function(D,Data,R,Text,Palette,QualityRender){
+import {publishNamespace} from './ddn-module-registry.js';
+import './ddn-core.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import './ddn-projection-data.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import './ddn-render.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import './ddn-text.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import './ddn-palette.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import {namespace,optionalNamespace} from './ddn-module-registry.js';
+const D=namespace('DDN');
+const Data=namespace('DDNProjectionData');
+const R=namespace('DDNRender');
+const Text=namespace('DDNText');
+const Palette=namespace('DDNPalette');
 'use strict';
 const esc=R.esc,f=n=>Number(n.toFixed(3)),q=D.quantity,clone=x=>JSON.parse(JSON.stringify(x));
 function chen(ir,reg,glyphs,options){
@@ -32,7 +43,7 @@ function render(ir,reg,glyphs='',options={}){
  const colours=['#337DB7','#34976E','#AC6538','#8259B1','#967421','#347D8E','#AC5573'];
  const colour=i=>Palette.semantic(colours[i%colours.length],t);
  let composedSubs=[];
- const QR=QualityRender||(typeof globalThis!=='undefined'?globalThis.DDNQualityRender:null);
+ const QR=optionalNamespace('DDNQualityRender');
  if((plan.quality||plan.kind==='fishbone'||plan.kind==='decision')&&!QR)throw new D.DDNError('DDN-E010','Projection '+plan.profile+' is provided by ddn-quality.js; load it after ddn-core.js and ddn-graph.js.');
  const qualityBody=QR?QR.draw(plan,ir,{text,lines,wrap,line,rect,group,colour,s,theme:t,W,H:q(pr.height,600*s)}):null;
  if(qualityBody){body=qualityBody.body;W=qualityBody.W;H=qualityBody.H;}
@@ -339,5 +350,6 @@ function vegaLite(ir){
  else{if(['radar','funnel','gauge','candlestick','treemap','sankey'].includes(plan.mark))throw new D.DDNError('DDN-PJ070','Radar, funnel, gauge, candlestick, treemap and sankey marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projection');spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
  return spec;
 }
-return{VERSION:'0.6.0-beta.1',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};
-});
+const api={VERSION:'0.6.0-beta.1',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};
+publishNamespace('DDNProjections',api);
+export default api;

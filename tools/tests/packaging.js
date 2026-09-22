@@ -27,7 +27,7 @@ test('package.json carries main/module/types/exports/files/sideEffects',()=>{
   assert.ok(pj.exports[k].import.default.endsWith('.mjs')&&pj.exports[k].require.default.endsWith('.js'),k);
   assert.ok(pj.exports[k].import.types.endsWith('.d.mts')&&pj.exports[k].require.types.endsWith('.d.ts'),k);
  }
- assert.deepEqual(pj.files,['dist','README.md']);assert.equal(pj.sideEffects,true);
+ assert.deepEqual(pj.files,['dist','README.md']);assert.deepEqual(pj.sideEffects,['dist/*.js']);
 });
 test('tarball file list matches the files allowlist (dist + README.md + package.json)',()=>{
  const list=cp.execFileSync('tar',['-tzf',path.join(tmp,tgz)],{encoding:'utf8'}).trim().split('\n');
@@ -75,6 +75,17 @@ test('ESM wrappers import prerequisites first; same-version stacking is a no-op'
  const svg=g.default.createWorkspace(${erd}).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
  if(svg!==fs.readFileSync(${ref},'utf8'))throw new Error('ESM render mismatch vs full');`;
  run(script,true);
+});
+test('minified bundles and source maps ship in the tarball and work',()=>{
+ const list=cp.execFileSync('tar',['-tzf',path.join(tmp,tgz)],{encoding:'utf8'}).trim().split('\n');
+ for(const f of ['ddn.global.min.js','ddn.global.min.js.map','ddn-core.min.js','ddn-core.min.js.map','ddn-graph.min.js','ddn-quality.min.js','ddn-projections.min.js'])
+  assert.ok(list.includes('package/dist/'+f),'missing '+f);
+ run(`const api=require(${JSON.stringify(path.join(pkg,'dist/ddn.global.min.js'))});
+ if(api.VERSION!=='0.6.0-beta.1')throw new Error('bad VERSION in minified bundle');
+ const svg=api.createWorkspace(${erd}).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
+ if(!svg.includes('<svg'))throw new Error('minified bundle did not render');`);
+ const map=JSON.parse(fs.readFileSync(path.join(pkg,'dist/ddn.global.min.js.map'),'utf8'));
+ assert.equal(map.version,3);assert.ok(map.sources.length>10&&map.mappings.length>100,'source map content');
 });
 test('no dependencies added to the shipped package',()=>{
  assert.ok(!pj.dependencies&&!pj.peerDependencies,'shipped package must stay dependency-free');

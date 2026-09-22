@@ -178,7 +178,7 @@ function page(base, active, title, inner, description) {
 
 // Runtime bundles: served for the embed examples and the download page.
 for (const f of fs.readdirSync(path.join(REPO, 'notation/dist')).sort()) {
-  if (/\.(js|mjs|css|d\.ts|d\.mts)$/.test(f)) copyOut('dist/' + f, path.join(REPO, 'notation/dist', f));
+  if (/\.(js|mjs|css|d\.ts|d\.mts|map)$/.test(f)) copyOut('dist/' + f, path.join(REPO, 'notation/dist', f));
 }
 
 // Gallery (pre-rendered SVGs, page, coverage map) — mirrored from the moved corpus.
@@ -431,7 +431,7 @@ writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
 
 // Download page: clone/npm instructions + dist bundle table with byte sizes.
 const distRows = fs.readdirSync(path.join(REPO, 'notation/dist')).sort()
-  .filter(f => /\.(js|mjs|css|d\.ts|d\.mts)$/.test(f))
+  .filter(f => /\.(js|mjs|css|d\.ts|d\.mts|map)$/.test(f))
   .map(f => '<tr><td><a href="../dist/' + f + '"><code>' + f + '</code></a></td><td>' + fs.statSync(path.join(REPO, 'notation/dist', f)).size + '</td></tr>');
 writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<h1 class="page-title">Download</h1>\n' +

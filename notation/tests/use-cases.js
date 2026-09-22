@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Deterministic build and semantic checks for the teaching gallery. */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const root=path.resolve(__dirname,'..'),DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-render.js');
+const root=path.resolve(__dirname,'..'),DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/ddn-render.js').default;
 const hash=s=>crypto.createHash('sha256').update(s).digest('hex'),reg=JSON.parse(fs.readFileSync(path.join(root,'../standard/registry/catalogue.json'),'utf8'));
 const defs=fs.readFileSync(path.join(root,'../standard/registry/glyph-library.svg'),'utf8').match(/<defs>([\s\S]*?)<\/defs>/)[1];
 const uc=path.join(root,'../website/examples/use-cases');

@@ -5,7 +5,7 @@
  * without properties renders exactly as before. Authoring tools merge them
  * before explicit properties (explicit wins) and write them into source.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNDefaults=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const VERSION='0.1.0';
 let registry=null;
@@ -23,5 +23,5 @@ function forKind(id,reg){
  return JSON.parse(JSON.stringify(kind.defaults));
 }
 const api={VERSION,use,forKind};
-return api;
-});
+publishNamespace('DDNDefaults',api);
+export default api;

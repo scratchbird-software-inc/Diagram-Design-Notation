@@ -26,7 +26,7 @@ function workspace(changes={}){return A.createWorkspace({'main.ddn':SRC,...chang
 function run(changes={},overrides={}){return workspace(changes).renderSync({entry:'main.ddn',view:'sequence',overrides});}
 const edit=(before,after)=>{assert.ok(SRC.includes(before),'Mutation target missing: '+before);return{'main.ddn':SRC.replace(before,after)};};
 const throws=(fn,code)=>assert.throws(fn,e=>{if(code&&e.code!==code)console.error('Expected',code,'got',e.code,e.message);return code?e.code===code:typeof e.code==='string';});
-const Data=require('../runtime/ddn-projection-data.js');
+const Data=require('../runtime/ddn-projection-data.js').default;
 const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 const id=short=>'test.sequence::flow.'+short;
 const groupOf=(svg,dataId)=>{const at=svg.indexOf('data-id="'+dataId+'"');assert.ok(at>=0,'mark missing for '+dataId);const rest=svg.slice(at);return rest.slice(0,rest.indexOf('</g>'));};

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Counterexamples are preserved as executable acceptance tests. */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const D=require('../runtime/ddn-core'),R=require('../runtime/ddn-render'),C=require('../runtime/ddn-contracts'),X=require('../runtime/ddn-export'),T=require('../runtime/ddn-text');
+const D=require('../runtime/ddn-core').default,R=require('../runtime/ddn-render').default,C=require('../runtime/ddn-contracts').default,X=require('../runtime/ddn-export').default,T=require('../runtime/ddn-text').default;
 const root=path.resolve(__dirname,'..'),reg=require('../../standard/registry/catalogue.json'),defs=fs.readFileSync(path.join(root,'../standard/registry/glyph-library.svg'),'utf8').match(/<defs>([\s\S]*?)<\/defs>/)[1],tests=[];
 function test(finding,name,fn){try{fn();tests.push({finding,name,status:'pass'});}catch(e){tests.push({finding,name,status:'fail',message:e.stack});console.error('FAIL',name,e.message);}}
 function build(body,options='',imports={}){const source=`ddn "0.3";module "regression";data m {${body}}view v {data:[@m];publication {size:content;fit:none;overflow:error;} ${options}}`;return D.build({'main.ddn':source,...imports},'main.ddn','v',reg).ir;}

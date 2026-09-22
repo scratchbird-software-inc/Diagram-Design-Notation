@@ -6,9 +6,15 @@ Small tools shared by the monorepo components. Per-component test suites live in
 - `serve.js` — local, read-only static server for the repository root
   (`node serve.js` → http://127.0.0.1:8080; Studio at `/notation/studio/editor.html`,
   designer prototype at `/designer/prototype/index.html`).
-- `build-sdk.js` — builds the single-file public runtime `notation/dist/ddn.global.js`
-  (plus `ddn.mjs`, `ddn.d.ts`) from `notation/runtime/` + `notation/studio/src/`,
-  embedding the registry from `standard/registry/`. Run via `npm run build:sdk`.
+- `build-sdk.js` — builds the public runtime bundles in `notation/dist/` from the
+  ES-module sources in `notation/runtime/` + `notation/studio/src/` with Rollup
+  (`rollup.config.mjs`; pinned `rollup` + `@rollup/plugin-terser` devDependencies):
+  five bundles (`ddn-core`, `ddn-graph`, `ddn-quality`, `ddn-projections`,
+  `ddn.global`) × three formats (IIFE `.js`, ESM `.mjs`, minified `.min.js` +
+  source map), plus types, CSS, the freshness manifest and the generated dist
+  README. `build-assets.js` generates the registry/glyph asset modules under
+  `notation/runtime/assets/` from `standard/registry/` first. Run via
+  `npm run build:sdk`.
 - `build-schemas.py` — regenerates the JSON Schemas in `standard/schemas/` from the
   pinned vocabulary in `standard/registry/` (Python 3, stdlib only).
 - `build-standalone-pages.js` — rebuilds `standard/plates/index.html` with all

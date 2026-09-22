@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Allowlisted SQL DDL export (export format sql): golden, mapping, gates, and JSON regression. */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const D=require('../runtime/ddn-core'),X=require('../runtime/ddn-export'),reg=require('../../standard/registry/catalogue.json');
+const D=require('../runtime/ddn-core').default,X=require('../runtime/ddn-export').default,reg=require('../../standard/registry/catalogue.json');
 const dir=path.resolve(__dirname,'../../website/examples/basics'),FILE='38-sql-ddl-export.ddn';
 const base={[FILE]:fs.readFileSync(dir+'/'+FILE,'utf8'),'shared.ddn':fs.readFileSync(dir+'/shared.ddn','utf8')};
 const GOLDEN=fs.readFileSync(path.resolve(__dirname,'fixtures/sql-ddl-export.sql'),'utf8');

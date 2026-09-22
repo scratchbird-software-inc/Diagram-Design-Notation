@@ -75,11 +75,22 @@ test('determinism preserved in modular rendering',()=>{
  const g=context('core','graph'),gw=g.DDNLive.createWorkspace(ERD);
  assert.equal(gw.renderSync({entry:'01-customer.ddn',view:'overview'}).svg,gw.renderSync({entry:'01-customer.ddn',view:'overview'}).svg);
 });
-test('sdk-build.json lists every bundle with bytes/sha256/files',()=>{
+test('sdk-build.json lists every bundle with bytes/sha256/files and per-format freshness digests',()=>{
  const b=JSON.parse(fs.readFileSync(path.join(root,'../release/validation/sdk-build.json'),'utf8')).bundles;
  for(const n of ['core','graph','projections','quality','global']){assert.ok(b[n],'bundle '+n);assert.ok(b[n].bytes>0&&/^[a-f0-9]{64}$/.test(b[n].sha256)&&b[n].files.length>0);}
  assert.equal(b.core.bytes,fs.statSync(path.join(dist,'ddn-core.js')).size);
  assert.equal(b.global.bytes,fs.statSync(path.join(dist,'ddn.global.js')).size);
+ const crypto=require('node:crypto'),sha=s=>crypto.createHash('sha256').update(s).digest('hex');
+ for(const [n,info] of Object.entries(b)){
+  const stem=n==='global'?'ddn.global':'ddn-'+n;
+  for(const [fmt,meta] of Object.entries(info.formats)){
+   const f=fmt==='mjs'&&n==='global'?'ddn.mjs':stem+'.'+fmt;
+   const content=fs.readFileSync(path.join(dist,f));
+   assert.equal(meta.bytes,content.length,n+' '+f+' bytes stale — run build:sdk');
+   assert.equal(meta.sha256,sha(content),n+' '+f+' sha256 stale — run build:sdk');
+   assert.ok(meta.gzipBytes>0);
+  }
+ }
 });
 const passed=results.filter(r=>r.pass).length;console.log(`modular-bundles ${passed}/${results.length}`);
 if(passed!==results.length)process.exitCode=1;

@@ -2,7 +2,7 @@
  * ZIP writer uses STORE; reader accepts STORE/DEFLATE and validates CRC32.
  * CRC is corruption detection, not authentication. No archive code is run.
  */
-function installIO(api){
+export function installIO(api){
 'use strict';
 const MAX=16_000_000,MAX_TEXT=12_000_000,enc=new TextEncoder(),dec=new TextDecoder('utf-8',{fatal:true});
 const fail=(code,message)=>{throw Object.assign(new Error(message),{code});};

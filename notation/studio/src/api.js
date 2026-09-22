@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Public SDK on the consolidated DDN 0.3 core. */
-function makeLiveAPI(backend,assets){
+export function makeLiveAPI(backend,assets){
 'use strict';
 const VERSION='0.6.0-beta.1',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
 assets={...assets,registry:D.profiles.registry(assets.registry)};

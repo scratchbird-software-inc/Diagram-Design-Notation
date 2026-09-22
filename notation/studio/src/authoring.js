@@ -2,7 +2,7 @@
  * Guided actions validate the resulting workspace before atomic application.
  * Raw text editing intentionally permits temporarily invalid source.
  */
-function installAuthoring(api,backend,assets){
+export function installAuthoring(api,backend,assets){
 'use strict';
 const D=backend.DDN,fail=(code,message)=>{throw Object.assign(new Error(message),{code});};
 const idOK=id=>{if(!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(id)||['__proto__','constructor','prototype'].includes(id))fail('DDN-E001','Use a valid, nonreserved DDN identifier.');return id;};

@@ -1,85 +1,116 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. One public distribution built from the active 0.3 sources. */
+#!/usr/bin/env node
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-019: SDK distribution build.
+ * Generates the runtime asset modules (tools/build-assets.js), bundles the
+ * ESM sources with Rollup (tools/rollup.config.mjs) into the five public
+ * bundles × three formats (IIFE .js, minified .min.js + source map, ESM .mjs),
+ * copies types/CSS, and writes the freshness manifest + generated dist README.
+ * Output overrides for the freshness test: DDN_SDK_OUT, DDN_SDK_MANIFEST. */
 'use strict';
-const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto');
-const root=path.resolve(__dirname,'..'),read=n=>fs.readFileSync(path.join(root,n),'utf8');
-const version=require('../package.json').version;
-const rt=n=>'notation/runtime/'+n+'.js';
-/* Data-driven bundle definitions (B1-004). The full bundle concatenates the same
- * map, so the all-in-one cannot drift from the parts. Load order: core → graph →
- * quality → projections (projections read DDNQualityRender lazily, so the two
- * siblings may load in either order; quality plans need both). */
-const BUNDLES={
- core:{files:['ddn-defaults','ddn-quality-data','ddn-projection-data','ddn-profile-quality','ddn-profiles','ddn-contracts','ddn-core','ddn-patterns','ddn-export','ddn-engine'],studio:['api','io','authoring'],needs:[],marker:'DDNLive',
-  blurb:'Parse/build/validate/export plus the workspace API (no rendering).'},
- graph:{files:['ddn-palette','ddn-text','ddn-sketch','ddn-shapes','ddn-layout','ddn-placement','ddn-render','ddn-interaction'],studio:[],needs:['core'],marker:'DDNRender',
-  blurb:'Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind.',
-  register:'host.DDNEngine.registerProjectionRenderer(\'graph\',host.DDNInteraction.render);'},
- quality:{files:['ddn-quality-render'],studio:[],needs:['core','graph'],marker:'DDNQualityRender',
-  blurb:'Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js.',
-  register:`for(const k of['fishbone','decision'])host.DDNEngine.registerProjectionRenderer(k,(kind=>(ir,reg,g,opts)=>{if(!host.DDNProjections)throw new host.DDN.DDNError('DDN-E010','Projection kind "'+kind+'" renders through ddn-projections.js; load it together with ddn-quality.js.');return host.DDNProjections.render(ir,reg,g,opts);})(k));`},
- projections:{files:['ddn-projections'],studio:[],needs:['core','graph'],marker:'DDNProjections',
-  blurb:'Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen.',
-  register:`for(const k of['chart','matrix','panels','timeline','table','sequence','timing','chen'])host.DDNEngine.registerProjectionRenderer(k,host.DDNProjections.render);`}};
-const NEED_GUARD={core:"if(!host.DDNLive)throw new Error('ddn-NAME requires ddn-core.js to be loaded first');",graph:"if(!host.DDNRender)throw new Error('ddn-NAME requires ddn-graph.js to be loaded first');"};
-const registry=JSON.parse(read('standard/registry/catalogue.json')),glyphs=read('standard/registry/glyph-library.svg').match(/<defs>([\s\S]*?)<\/defs>/)[1];
-const assets=`const assets=`+JSON.stringify({registry,glyphs}).replace(/</g,'\\u003c')+';\n';
-const backendKeys=['DDN','Defaults','Render','Interaction','Placement','Text','Export','Projections','Engine','ProjectionData','QualityData'];
-const backendGlobals={DDN:'DDN',Defaults:'DDNDefaults',Render:'DDNRender',Interaction:'DDNInteraction',Placement:'DDNPlacement',Text:'DDNText',Export:'DDNExport',Projections:'DDNProjections',Engine:'DDNEngine',ProjectionData:'DDNProjectionData',QualityData:'DDNQualityData'};
-const partsOf=names=>names.map(n=>read(rt(n))).join('\n');
-const shadow=list=>`(function(){const globalThis=host,module=undefined;\n`+list+`\n})();\n`;
-/* Full all-in-one bundle (current behavior, current name): identical structure to
- * before, built from the same BUNDLES map. */
-const fullParts=[...BUNDLES.core.files,...BUNDLES.graph.files,...BUNDLES.quality.files,...BUNDLES.projections.files].map(rt);
-const header=`/*! DDN ${version} · GPL-2.0-or-later · unified public runtime (no old compatibility renderer) */\n(function(host){'use strict';\nif(host.DDNLive?.VERSION===${JSON.stringify(version)}){if(typeof module==='object'&&module.exports)module.exports=host.DDNLive;return;}\nif(host.DDNLive)throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');\nconst backend=(function(){const globalThis={};const module=undefined;globalThis.DDNProfileCatalogue=${JSON.stringify(JSON.parse(read('standard/registry/profiles/catalogue.json'))).replace(/</g,'\\u003c')};\n`;
-const registrations=`\nglobalThis.DDNEngine.registerProjectionRenderer('graph',globalThis.DDNInteraction.render);for(const k of['chart','matrix','panels','timeline','table','sequence','timing','chen','fishbone','decision'])globalThis.DDNEngine.registerProjectionRenderer(k,globalThis.DDNProjections.render);`;
-const body=header+fullParts.map(read).join('\n')+registrations+`\nreturn{`+backendKeys.map(k=>k+':globalThis.'+backendGlobals[k]).join(',')+`};})();\n`+assets+['api','io','authoring','component'].map(n=>read('notation/studio/src/'+n+'.js')).join('\n')+`\nconst api=makeLiveAPI(backend,assets);installIO(api);installAuthoring(api,backend,assets);host.DDNLive=api;installComponents(api,host);if(typeof module==='object'&&module.exports)module.exports=api;\n})(typeof globalThis!=='undefined'?globalThis:this);\n`;
-/* Modular bundles. */
-const profiles=JSON.stringify(JSON.parse(read('standard/registry/profiles/catalogue.json'))).replace(/</g,'\\u003c');
-function modular(name,def){
- const guards=[...def.needs.map(n=>NEED_GUARD[n].replaceAll('NAME',name)),`if(host.DDNLive.VERSION!==${JSON.stringify(version)})throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');`,`if(host.${def.marker})return;`].join('\n');
- const banner=`/*! DDN ${version} · GPL-2.0-or-later · modular runtime bundle: ddn-${name} — ${def.blurb} */\n`;
- if(name==='core'){
-  const backend=`const backend={`+backendKeys.map(k=>`get ${k}(){return host.${backendGlobals[k]}}`).join(',')+`};\n`;
-  return banner+`(function(host){'use strict';\nif(host.DDNLive){if(host.DDNLive.VERSION===${JSON.stringify(version)}){if(typeof module==='object'&&module.exports)module.exports=host.DDNLive;return;}throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');}\nhost.DDNProfileCatalogue=${profiles};\n`+shadow(partsOf(def.files))+backend+assets+def.studio.map(n=>read('notation/studio/src/'+n+'.js')).join('\n')+`\nconst api=makeLiveAPI(backend,assets);installIO(api);installAuthoring(api,backend,assets);host.DDNLive=api;if(typeof module==='object'&&module.exports)module.exports=api;\n})(typeof globalThis!=='undefined'?globalThis:this);\n`;
- }
- return banner+`(function(host){'use strict';\n`+guards+'\n'+shadow(partsOf(def.files))+def.register+`\nif(typeof module==='object'&&module.exports)module.exports=host.DDNLive;\n})(typeof globalThis!=='undefined'?globalThis:this);\n`;
-}
-const out=path.join(root,'notation/dist');fs.mkdirSync(out,{recursive:true});fs.mkdirSync(path.join(root,'release/validation'),{recursive:true});
-const written={};
-for(const [name,def]of Object.entries(BUNDLES)){
- const b=modular(name,def);written[name]=b;
- fs.writeFileSync(path.join(out,'ddn-'+name+'.js'),b);
- fs.writeFileSync(path.join(out,'ddn-'+name+'.mjs'),def.needs.map(n=>`import './ddn-${n}.js';\n`).join('')+`import './ddn-${name}.js';\nconst ddn=globalThis.DDNLive;\nexport const {VERSION,runtime,createWorkspace,registerWorkspace,mount,fromSnapshot,authoring,io,parse,profileCatalogue}=ddn;\nexport default ddn;\n`);
- for(const ext of['d.ts','d.mts'])fs.copyFileSync(path.join(root,'notation/studio/src/public.d.ts'),path.join(out,'ddn-'+name+'.'+ext));
-}
-fs.writeFileSync(path.join(out,'ddn.global.js'),body);fs.copyFileSync(path.join(root,'notation/studio/src/public.d.ts'),path.join(out,'ddn.d.ts'));fs.copyFileSync(path.join(root,'notation/studio/src/public.d.ts'),path.join(out,'ddn.d.mts'));
-fs.copyFileSync(path.join(root,'notation/studio/src/ddn.css'),path.join(out,'ddn.css'));
-fs.writeFileSync(path.join(out,'ddn.mjs'),`import './ddn.global.js';\nconst ddn=globalThis.DDNLive;\nexport const {VERSION,runtime,createWorkspace,registerWorkspace,mount,fromSnapshot,authoring,io,parse,profileCatalogue}=ddn;\nexport default ddn;\n`);
-const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
-const bundles=Object.fromEntries(Object.entries(BUNDLES).map(([name,def])=>[name,{bytes:Buffer.byteLength(written[name]),sha256:sha(written[name]),files:def.files.map(n=>'notation/runtime/'+n+'.js').concat(def.studio.map(n=>'notation/studio/src/'+n+'.js'))}]));
-bundles.global={bytes:Buffer.byteLength(body),sha256:sha(body),files:fullParts.concat(['api','io','authoring','component'].map(n=>'notation/studio/src/'+n+'.js'))};
-fs.writeFileSync(path.join(root,'release/validation/sdk-build.json'),JSON.stringify({version,sourceFiles:fullParts,sha256:sha(body),bytes:Buffer.byteLength(body),gzipBytes:zlib.gzipSync(body).length,core:require('../notation/runtime/ddn-core.js').VERSION,oldCompatibilityRendererIncluded:false,fontFilesIncluded:false,bundles},null,2)+'\n');
-/* dist/README.md is generated (D6) — never hand-edit. */
-const rows=[...Object.entries(BUNDLES).map(([name,def])=>`| \`ddn-${name}.js\` | ${def.blurb} | ${def.needs.length?def.needs.map(n=>'ddn-'+n+'.js').join(' + '):'—'} | ${Buffer.byteLength(written[name])} |`),`| \`ddn.global.js\` | All-in-one: every bundle above plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | ${Buffer.byteLength(body)} |`];
-const readme=`# DDN runtime bundles (dist/)
+const fs = require('node:fs'), path = require('node:path'), zlib = require('node:zlib'), crypto = require('node:crypto');
+const root = path.resolve(__dirname, '..');
+const version = require('../package.json').version;
 
-Generated by \`tools/build-sdk.js\` at build time — do not hand-edit. Version ${version}.
+require('./build-assets.js'); // writes notation/runtime/assets/*.js (deterministic)
 
-| Bundle | Contains | Requires loaded first | Bytes |
-|---|---|---|---|
-${rows.join('\n')}
+const out = process.env.DDN_SDK_OUT || path.join(root, 'notation/dist');
+const manifestPath = process.env.DDN_SDK_MANIFEST || path.join(root, 'release/validation/sdk-build.json');
+const stem = n => (n === 'global' ? 'ddn.global' : 'ddn-' + n);
+const sha = s => crypto.createHash('sha256').update(s).digest('hex');
+const entryFiles = n => fs.readdirSync(path.join(root, 'notation/runtime')).filter(f => f.endsWith('.js'));
 
-Every \`ddn-X.js\` has a matching \`ddn-X.mjs\` ES-module wrapper and \`ddn-X.d.ts\` /
-\`ddn-X.d.mts\` type copies. \`ddn.css\` carries the default mark styles (page CSS wins
-over script-inlined presentation). Non-core \`.mjs\` wrappers import their prerequisite
-bundles first, so a single \`import\` of \`./ddn-graph.mjs\` (etc.) is self-sufficient.
+(async () => {
+  const { rollup } = require('rollup');
+  const { default: configs, MEMBERS, BUNDLES } = await import('./rollup.config.mjs');
+  fs.mkdirSync(out, { recursive: true });
+  fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+  const bytes = {};
+  for (const config of configs) {
+    const bundle = await rollup(config);
+    const outputs = Array.isArray(config.output) ? config.output : [config.output];
+    for (const o of outputs) {
+      const { output } = await bundle.write(o);
+      for (const chunk of output) bytes[path.basename(chunk.fileName)] = chunk.type === 'chunk' ? Buffer.byteLength(chunk.code) : Buffer.byteLength(chunk.source ?? '');
+    }
+    await bundle.close();
+  }
+  // Types + CSS copies (unchanged from the concatenation build).
+  for (const n of [...Object.keys(BUNDLES).filter(n => n !== 'global'), '']) {
+    const base = n ? stem(n) : 'ddn';
+    for (const ext of ['d.ts', 'd.mts']) fs.copyFileSync(path.join(root, 'notation/studio/src/public.d.ts'), path.join(out, base + '.' + ext));
+  }
+  fs.copyFileSync(path.join(root, 'notation/studio/src/ddn.css'), path.join(out, 'ddn.css'));
+
+  const read = f => fs.readFileSync(path.join(out, f));
+  const bundles = {};
+  for (const n of Object.keys(BUNDLES)) {
+    const s = stem(n);
+    const mjs = n === 'global' ? 'ddn.mjs' : s + '.mjs';
+    const formats = {};
+    for (const f of [s + '.js', mjs, s + '.min.js', s + '.min.js.map']) {
+      const content = read(f);
+      formats[f === mjs ? 'mjs' : f.slice(s.length + 1)] = { bytes: content.length, sha256: sha(content), gzipBytes: zlib.gzipSync(content).length };
+    }
+    bundles[n] = {
+      bytes: formats['js'].bytes, sha256: formats['js'].sha256,
+      files: (MEMBERS[n] || Object.values(MEMBERS).flat()).map(f => 'notation/runtime/' + f + '.js'),
+      formats,
+    };
+  }
+  const coreVersion = require('../notation/runtime/ddn-core.js').default.VERSION;
+  const full = read('ddn.global.js');
+  fs.writeFileSync(manifestPath, JSON.stringify({
+    version,
+    builder: 'rollup@' + JSON.parse(fs.readFileSync(path.join(root, 'node_modules/rollup/package.json'), 'utf8')).version + ' (@rollup/plugin-terser@' + JSON.parse(fs.readFileSync(path.join(root, 'node_modules/@rollup/plugin-terser/package.json'), 'utf8')).version + ')',
+    sourceFiles: bundles.global.files,
+    sha256: sha(full), bytes: full.length, gzipBytes: zlib.gzipSync(full).length,
+    core: coreVersion,
+    oldCompatibilityRendererIncluded: false,
+    fontFilesIncluded: false,
+    bundles,
+  }, null, 2) + '\n');
+
+  /* dist/README.md is generated — never hand-edit. */
+  const row = (n, blurb, needs) => {
+    const s = stem(n), f = bundles[n].formats;
+    return `| \`${s}.js\` / \`.mjs\` / \`.min.js\` | ${blurb} | ${needs} | ${f.js.bytes} | ${f.mjs.bytes} | ${f['min.js'].bytes} | ${f['min.js'].gzipBytes} |`;
+  };
+  const readme = `# DDN runtime bundles (dist/)
+
+Generated by \`tools/build-sdk.js\` (Rollup) at build time — do not hand-edit. Version ${version}.
+The runtime has **zero runtime dependencies**; the build toolchain (Rollup +
+terser) is a pinned devDependency and never ships inside these bundles.
+
+| Bundle | Contains | Requires loaded first | .js bytes | .mjs bytes | .min.js bytes | .min.js gzip |
+|---|---|---|---|---|---|
+${row('core', BUNDLES.core.blurb, '—')}
+${row('graph', BUNDLES.graph.blurb, 'ddn-core.js')}
+${row('quality', BUNDLES.quality.blurb, 'ddn-core.js + ddn-graph.js')}
+${row('projections', BUNDLES.projections.blurb, 'ddn-core.js + ddn-graph.js')}
+${row('global', 'All-in-one: every bundle above plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed.', '—')}
+
+Every bundle ships three formats: a readable browser IIFE (\`.js\`, publishes
+the documented globals \`DDNLive\`, \`DDNRender\`, \`DDNProjections\`,
+\`DDNQualityRender\`), a minified IIFE with source map (\`.min.js\` +
+\`.min.js.map\`), and a real ES module (\`.mjs\`). Types: \`d.ts\`/\`d.mts\`
+copies per bundle. \`ddn.css\` carries the default mark styles (page CSS wins
+over script-inlined presentation).
+
+## ES modules and tree-shaking
+
+The \`.mjs\` bundles are Rollup-built ES modules with named exports for both the
+live API (\`VERSION\`, \`createWorkspace\`, \`parse\`, …, plus default) and the
+internal namespaces (\`DDN\`, \`DDNRender\`, \`DDNProjections\`, …). Non-core
+\`.mjs\` files import their prerequisite bundles first, so a single \`import\`
+of \`./ddn-graph.mjs\` (etc.) is self-sufficient. The package carries a
+\`sideEffects\` annotation covering the IIFE entry points, so downstream
+bundlers can tree-shake the \`.mjs\` builds when you import just what you need.
 
 ## npm subpaths
 
 \`@ddn/notation\` resolves to \`ddn.global.js\`/\`ddn.mjs\`; the subpaths \`./core\`,
 \`./graph\`, \`./projections\`, \`./quality\` resolve to the matching modular bundles
 (\`require\` → \`.js\`, \`import\` → \`.mjs\`, types → \`.d.ts\`/\`.d.mts\`). In ESM the
-wrappers load prerequisites automatically; in CommonJS \`require('@ddn/notation/core')\`
+modules load prerequisites automatically; in CommonJS \`require('@ddn/notation/core')\`
 before any non-core subpath (same realm, same-version module stacking is a no-op).
 
 ## Load order
@@ -116,5 +147,7 @@ authoring serializer and returns \`{revision, diagnostics}\` — coded errors \`
 Hosts then call \`renderSync\`/\`mount\` again; a same-values refresh re-renders every view
 byte-identical. See \`examples/embed/data-refresh.html\`.
 `;
-fs.writeFileSync(path.join(out,'README.md'),readme);
-console.log('SDK',version,Buffer.byteLength(body),'bytes;','bundles:',Object.entries(written).map(([n,b])=>'ddn-'+n+'.js='+Buffer.byteLength(b)).join(' '));
+  fs.writeFileSync(path.join(out, 'README.md'), readme);
+  console.log('SDK', version, bytes['ddn.global.js'], 'bytes;',
+    Object.keys(BUNDLES).map(n => stem(n) + '.js=' + bytes[stem(n) + '.js'] + ' .min.js=' + bytes[stem(n) + '.min.js'] + ' .mjs=' + bytes[(n === 'global' ? 'ddn' : stem(n)) + '.mjs']).join(' '));
+})().catch(e => { console.error(e); process.exitCode = 1; });

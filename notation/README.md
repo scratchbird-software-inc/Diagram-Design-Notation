@@ -4,25 +4,34 @@ Pure-JavaScript (ES2022+) reference implementation of the Data Design
 Notation language: **parse → validate → lay out → render deterministic SVG**.
 Zero runtime dependencies; runs in Node 22+ and browsers. Implements
 `standard/` (the specification, grammar, schemas, and vocabulary registry).
+Build tooling (Rollup + terser) is a pinned devDependency used only to
+produce `dist/`; it never ships in the package or the bundles.
 
 ## Layout
 
-- `runtime/` — the modules: `ddn-core.js` (lexer/parser, workspace
+- `runtime/` — ES modules (nested `package.json` sets `type: module`):
+  `ddn-core.js` (lexer/parser, workspace
   resolution, resolved IR), `ddn-contracts.js` (registry/ERP validation),
   `ddn-layout.js` (placement + orthogonal/curved routing), `ddn-render.js`
   + `ddn-engine.js` (SVG renderer/dispatcher), `ddn-sketch.js` (seeded
   hand-drawn style), `ddn-export.js` (publication projection),
   `ddn-shapes.js`, `ddn-palette.js`, `ddn-profiles.js`, `ddn-projections.js`,
-  quality modules, and `ddn-interaction.js`.
+  quality modules, and `ddn-interaction.js`. Cross-bundle coupling resolves
+  through `ddn-module-registry.js`; `ddn-full.js` wires every renderer onto
+  the engine for direct Node consumers (CLI, test suites), mirroring
+  `ddn.global.js`. Registry/glyph/profile assets are generated into
+  `runtime/assets/` by `tools/build-assets.js` (freshness-gated).
 - `cli/cli.js` — `check | render | resolve <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR]`
   (enforces workspace containment; rejects symlink escapes and remote imports).
 - `studio/` — browser Studio (source-first editor) and portable editor.
 - `adapters/vega-lite/` — optional Vega-Lite export adapter (not in the runtime bundle).
 - `dist/` — shipped builds, committed so Studio and examples work without a
   build step: the all-in-one `ddn.global.js` (+ `ddn.mjs`, `ddn.d.ts`) and the
-  modular bundles `ddn-core.js` / `ddn-graph.js` / `ddn-projections.js` /
-  `ddn-quality.js` (each with `.mjs`/`.d.ts` copies; contents and load order in
-  the generated `dist/README.md`). Regenerate with `npm run build:sdk`.
+  modular bundles `ddn-core` / `ddn-graph` / `ddn-projections` /
+  `ddn-quality` — each in three formats (IIFE `.js`, ES module `.mjs`,
+  minified `.min.js` + `.min.js.map`, with `.d.ts`/`.d.mts` copies; contents
+  and load order in the generated `dist/README.md`). Regenerate with
+  `npm run build:sdk` (Rollup; see `../tools/rollup.config.mjs`).
 - `tests/` — node suites: 150 core fixtures, 0.3 regressions, curved
   relations, patterns, projections, quality, use-cases, SDK, endpoint
   ordering, routing efficiency.

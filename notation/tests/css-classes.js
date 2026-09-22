@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-003 deterministic CSS class hooks + ddn.css. */
 'use strict';
-const A=require('../dist/ddn.global.js'),DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-render.js');
+const A=require('../dist/ddn.global.js'),DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/ddn-render.js').default;
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}

@@ -6,6 +6,27 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-019: ESM migration + Rollup build (RC1 preparation). Every
+  `notation/runtime/*.js` and the Studio library sources
+  (`notation/studio/src/{api,io,authoring,component}.js`) are now real ES
+  modules with explicit imports/exports; the bespoke concatenation builder
+  and its global-shadowing IIFE trick are gone. `tools/build-sdk.js` now
+  drives Rollup (`tools/rollup.config.mjs`; pinned devDependencies
+  `rollup@4.63.4` + `@rollup/plugin-terser@0.4.4` — the runtime still has
+  zero runtime dependencies, and docs/tests now say so explicitly). Each of
+  the five public bundles (`ddn-core`, `ddn-graph`, `ddn-quality`,
+  `ddn-projections`, `ddn.global`) ships three formats: readable browser
+  IIFE (`.js`, unchanged globals/guards/DDN-E010 semantics), minified IIFE
+  with source map (`.min.js` + `.min.js.map`), and a real ES module
+  (`.mjs`) with named namespace exports for tree-shaking; the package
+  `sideEffects` annotation is now `["dist/*.js"]`. Cross-bundle coupling
+  goes through an explicit module registry
+  (`notation/runtime/ddn-module-registry.js`) instead of `host.*` lookups
+  inside runtime code. Registry/glyph/profile assets are generated ESM
+  modules (`notation/runtime/assets/`, freshness-gated). Behavior is
+  unchanged: goldens byte-identical, full `npm test` green, new
+  `test:esm-dist` (ESM smoke + measured tree-shaking) and
+  `test:dist-freshness` (byte-freshness for all artifacts) suites.
 - B1-018a: runtime parser/render hardening from the runtime audit
   (`notation/runtime/`). `bundle()` no longer crashes when a module identity
   is not lexable as a reference component (`/`, `:`, leading digit) — it emits

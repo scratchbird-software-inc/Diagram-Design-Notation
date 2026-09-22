@@ -2,7 +2,7 @@
  * Quality/lifecycle/reporting plans. Bounded pure operations; no dynamic code,
  * remote loaders, implicit policy inference, or authoritative financial math.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNQualityData=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const VERSION='0.6.0-beta.1';
 const MISSING=Object.freeze({$missing:true});
@@ -172,5 +172,6 @@ function cpm(ir,E){
  const criticalRelations=es.filter(r=>sched[r.from.element].slack===0&&sched[r.to.element].slack===0&&sched[r.from.element].ef===sched[r.to.element].es).map(r=>r.id);
  return{tasks:sched,criticalTasks,criticalRelations,duration};
 }
-return{VERSION,chartRequested,chart,fishbone,matrixEncoding,decision,evaluateDecision,lifecycle,simulate,cpm,formatPredicate,inputs,predicates,match,analyze,inDomain};
-});
+const api={VERSION,chartRequested,chart,fishbone,matrixEncoding,decision,evaluateDecision,lifecycle,simulate,cpm,formatPredicate,inputs,predicates,match,analyze,inDomain};
+publishNamespace('DDNQualityData',api);
+export default api;

@@ -3,7 +3,7 @@
  * Original bounded algorithms; no yWorks/yEd/yFiles code or assets are used.
  * Node pins are world-space top-left coordinates, never suggestions.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNPinPlacement=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const MODES = ['fit_grid', 'circular', 'radial', 'layered', 'tree', 'organic'];
 const EPS = 0.01;
@@ -238,5 +238,6 @@ function centeredBounds(raw,anchor) {
  const rx=Math.max(Math.abs(raw.x-anchor[0]),Math.abs(raw.x+raw.w-anchor[0]),50),ry=Math.max(Math.abs(raw.y-anchor[1]),Math.abs(raw.y+raw.h-anchor[1]),50);
  return {x:anchor[0]-rx,y:anchor[1]-ry,w:2*rx,h:2*ry};
 }
-return {MODES,place,bounds,center,centeredBounds,constraintsFor,fits};
-});
+const api={MODES,place,bounds,center,centeredBounds,constraintsFor,fits};
+publishNamespace('DDNPinPlacement',api);
+export default api;

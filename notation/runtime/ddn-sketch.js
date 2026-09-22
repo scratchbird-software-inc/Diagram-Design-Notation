@@ -3,10 +3,7 @@
  * Pure vector geometry; no raster filter, remote resource, DOM, or font file.
  * Model coordinates are never mutated by a drawing treatment.
  */
-(function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory();
-  else root.DDNSketch=factory();
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const f=n=>Number(n.toFixed(3));
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -153,5 +150,6 @@ function curve(commands,options={}){
   }paths.push(d);
  }return `<g data-sketch="curve">`+strokes(paths,o)+'</g>';
 }
-return {box,polygon,polyline,curve};
-});
+const api={box,polygon,polyline,curve};
+publishNamespace('DDNSketch',api);
+export default api;

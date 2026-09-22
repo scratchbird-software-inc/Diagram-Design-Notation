@@ -4,7 +4,7 @@
  */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const A=require('../dist/ddn.global'),L=require('../runtime/ddn-layout');
+const A=require('../dist/ddn.global'),L=require('../runtime/ddn-layout').default;
 const root=path.resolve(__dirname,'..'),out=path.join(root,'tests/validation/routing-fix');fs.mkdirSync(out,{recursive:true});
 const base=Object.fromEntries(['model.ddn','views.ddn','formats.ddn'].map(f=>[f,fs.readFileSync(path.join(root,'../website/examples/projections',f),'utf8')]));
 const checks=[],renders=[];
@@ -58,7 +58,7 @@ test('Impossible label on a strict path is reported rather than changing its way
  const ns=[{id:'a',x:0,y:0,w:50,h:50},{id:'b',x:180,y:0,w:50,h:50}];
  assert.throws(()=>L.routing(ns,mazeRels,mazeProfiles,{r:{via:[],policy:'strict'}},()=>({w:500,h:28})),e=>e.code==='DDN217'||e.message==='DDN217');
 });
-const Shapes=require('../runtime/ddn-shapes');
+const Shapes=require('../runtime/ddn-shapes').default;
 for(const silhouette of ['diamond','parallelogram','ellipse']){
  const g={x:0,y:0,w:100,h:80,silhouette};
  test('Curved owner contour rejects a line through '+silhouette,()=>assert.equal(Shapes.segmentInterior({a:[-30,40],b:[130,40]},g),true));

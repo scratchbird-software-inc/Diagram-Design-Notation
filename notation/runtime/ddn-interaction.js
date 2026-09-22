@@ -3,10 +3,12 @@
  * This uses the DDN 0.3 core while preserving its notation. It is not a protocol engine,
  * a cryptographic implementation, or full UML/sequence conformance.
  */
-(function(root,factory){
-  if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-core.js'),require('./ddn-render.js'),require('./ddn-sketch.js'));
-  else root.DDNInteraction=factory(root.DDN,root.DDNRender,root.DDNSketch);
-})(typeof globalThis!=='undefined'?globalThis:this,function(DDN,Base,Sketch){
+import {publishNamespace} from './ddn-module-registry.js';
+import Base from './ddn-render.js';
+import Sketch from './ddn-sketch.js';
+import './ddn-core.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import {namespace} from './ddn-module-registry.js';
+const DDN=namespace('DDN');
 'use strict';
 const VERSION='0.1.1', PROFILE='session-bootstrap@0.1';
 const esc=Base.esc, text=Base.text, q=DDN.quantity;
@@ -116,5 +118,6 @@ function render(ir,registry,defs,options={}){
   const diagnostics=[...ir.diagnostics,{code:'DDN-IW01',severity:'warning',message:'Experimental interaction projection validates declared predecessor/correlation metadata. It does not validate cryptographic security, real network behavior or full UML sequence semantics.'}];
   return {svg:out,scene,diagnostics};
 }
-return {VERSION,PROFILE,validate,render};
-});
+const api={VERSION,PROFILE,validate,render};
+publishNamespace('DDNInteraction',api);
+export default api;

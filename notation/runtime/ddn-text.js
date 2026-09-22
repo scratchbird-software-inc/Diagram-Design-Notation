@@ -1,6 +1,18 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Measured text service with explicit fallback provenance. No font files bundled. */
-(function(root,factory){if(typeof module==='object'&&module.exports){let cache=null;try{cache=require('../../standard/registry/text-metrics.json');}catch{}module.exports=factory(cache);}else root.DDNText=factory(root.DDNTextMetrics||null);})(typeof globalThis!=='undefined'?globalThis:this,function(initial){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
+/* Pinned measurement cache: loaded from the standard registry when running
+ * under Node directly from the sources (import.meta.url resolves). In the
+ * built dist bundles import.meta.url is rewritten to `undefined`, so the
+ * browser/estimation path is taken exactly as before. */
+let initial=null;
+if(typeof process!=='undefined'&&process.getBuiltinModule){
+ try{
+  const url=process.getBuiltinModule('node:url'),path=process.getBuiltinModule('node:path'),fs=process.getBuiltinModule('node:fs');
+  const here=path.dirname(url.fileURLToPath(import.meta.url));
+  initial=JSON.parse(fs.readFileSync(path.join(here,'../../standard/registry/text-metrics.json'),'utf8'));
+ }catch{}
+}
 const FONTS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
 let cache=initial?.measurements||{},provider=null,providerName=null,context=null;const requests=new Map();const counts={estimated:0,canvas:0,cache:0,provider:0};
 const key=(s,size,font,weight)=>JSON.stringify([String(s),+size,font,weight]);
@@ -26,8 +38,9 @@ function wrap(s,maxWidth,size=14,font='sans',weight=400){
   lines.push(current.trimEnd());}
  return lines.length?lines:[''];
 }
-if(typeof process!=='undefined'&&process.env?.DDN_METRICS_CAPTURE){process.on('exit',()=>{const fs=require('node:fs'),p=process.env.DDN_METRICS_CAPTURE;let old={};try{old=JSON.parse(fs.readFileSync(p,'utf8'));}catch{}for(const[k,v]of requests)old[k]=v;fs.writeFileSync(p,JSON.stringify(old));});}
+if(typeof process!=='undefined'&&process.env?.DDN_METRICS_CAPTURE){process.on('exit',()=>{const fs=process.getBuiltinModule('node:fs'),p=process.env.DDN_METRICS_CAPTURE;let old={};try{old=JSON.parse(fs.readFileSync(p,'utf8'));}catch{}for(const[k,v]of requests)old[k]=v;fs.writeFileSync(p,JSON.stringify(old));});}
 function pending(){return [...requests.values()];}
 function clearRequests(){requests.clear();}
-return{stats:()=>({...counts}),FONTS,key,measure,wrap,graphemes,setMetrics,setProvider,pending,clearRequests};
-});
+const api={stats:()=>({...counts}),FONTS,key,measure,wrap,graphemes,setMetrics,setProvider,pending,clearRequests};
+publishNamespace('DDNText',api);
+export default api;

@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-002 registry-driven element defaults. */
 'use strict';
-const A=require('../dist/ddn.global.js'),Defaults=require('../runtime/ddn-defaults.js'),DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-render.js');
+const A=require('../dist/ddn.global.js'),Defaults=require('../runtime/ddn-defaults.js').default,DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/ddn-render.js').default;
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..');
 const reg=JSON.parse(fs.readFileSync(path.join(root,'../standard/registry/catalogue.json'),'utf8'));

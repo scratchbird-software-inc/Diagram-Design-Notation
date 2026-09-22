@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-render.js'),Engine=require('../runtime/ddn-engine.js');
+const DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/ddn-render.js').default,Engine=require('../runtime/ddn-full.js').default;
 const root=path.resolve(__dirname,'..'),reg=JSON.parse(fs.readFileSync(path.join(root,'../standard/registry/catalogue.json'),'utf8'));
 const defs=fs.readFileSync(path.join(root,'../standard/registry/glyph-library.svg'),'utf8').match(/<defs>([\s\S]*?)<\/defs>/)[1];
 const results=[];function test(name,fn){try{fn();results.push({name,status:'pass'});console.log('PASS',name);}catch(e){results.push({name,status:'fail',message:e.stack});console.error('FAIL',name,e.message);}}
@@ -71,7 +71,7 @@ test('collapsed interface mode not falsely claimed',()=>reject(base.replace('dat
 test('invalid UTF-8 is rejected by fatal decoder',()=>assert.throws(()=>new TextDecoder('utf-8',{fatal:true}).decode(new Uint8Array([0xc3,0x28]))));
 
 // Rendering-specific regressions: comparing file hashes alone is not enough.
-const Sketch=require('../runtime/ddn-sketch.js');
+const Sketch=require('../runtime/ddn-sketch.js').default;
 function handIR(extra=''){return compile(base.replace('data:[@m];',`data:[@m];style {look:handDrawn;${extra}}`));}
 function handRender(extra=''){return Render.render(handIR(extra),reg,defs);}
 test('handDrawn has organic cubic line geometry',()=>{const s=handRender().svg;assert.ok(s.includes('data-sketch="outline"'));assert.match(s,/<path d="M[^\"]*C/);});

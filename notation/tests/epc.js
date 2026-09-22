@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. EPC profile (epc.basic@1): positive, negative and determinism fixtures. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const Shapes=require('../runtime/ddn-shapes.js');
+const Shapes=require('../runtime/ddn-shapes.js').default;
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 const throws=(fn,code)=>assert.throws(fn,e=>{if(code&&e.code!==code)console.error('Expected',code,'got',e.code,e.message);return code?e.code===code:typeof e.code==='string';});
 const SRC=`ddn "0.5";

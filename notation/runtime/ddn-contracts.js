@@ -2,7 +2,7 @@
  * DDN 0.3 semantic contracts. Pure data validation; no eval, network, or ERP execution.
  * The small schema vocabulary is explicit: never describe it as a complete JSON Schema implementation.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNContracts=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const VERSION='0.3.0-draft.1';
 const isObject=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
@@ -262,5 +262,6 @@ function contractErrorsMissing(c,f){return constraintErrors(c,f).length>0;}
 function checkMutation(contract,before,after){if(contract.immutable_when&&evaluateGuard(contract.immutable_when,before)&&JSON.stringify(before)!==JSON.stringify(after))return{valid:false,reason:'immutable pre-state'};return{valid:true};}
 function checkAffinity(rules,records){return rules.every(r=>{const left=records[refId(r.left)],right=records[refId(r.right)];if(left===undefined||right===undefined)throw new Error('Missing affinity comparison input');return r.op==='eq'&&left===right;});}
 function readiness(ir){const requirements=ir.elements.filter(x=>x.properties.x_requirement),byId=new Map(ir.elements.map(x=>[x.id,x]));return requirements.map(n=>{const r=n.properties.x_requirement,ev=(r.evidence||[]).map(e=>byId.get(refId(e))?.properties.x_evidence),blocked=!['accepted','waived'].includes(r.state)||!ev.length||ev.some(x=>!x||x.result!=='pass');return{id:r.id,owner:r.owner,state:r.state,blocked,reason:blocked?'Requirement lacks accepted, passing, scoped evidence':'Declared evidence present; authenticity and professional authority are not verified by the diagram compiler'};});}
-return {VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,readiness,constraintErrors,checkRecords,checkMutation,checkAffinity};
-});
+const api={VERSION,schemaErrors,validate,workflowErrors,evaluateGuard,runTrace,readiness,constraintErrors,checkRecords,checkMutation,checkAffinity};
+publishNamespace('DDNContracts',api);
+export default api;

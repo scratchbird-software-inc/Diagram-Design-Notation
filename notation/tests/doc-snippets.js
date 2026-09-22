@@ -20,7 +20,7 @@
  */
 'use strict';
 const fs=require('node:fs'),path=require('node:path');
-const DDN=require('../runtime/ddn-core.js');
+const DDN=require('../runtime/ddn-core.js').default;
 const root=path.resolve(__dirname,'..','..');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false});console.error('FAIL',name,e.stack);}}
 

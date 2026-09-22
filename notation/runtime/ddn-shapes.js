@@ -1,5 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Composable profile outlines with measured compartments and contour attachments. */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-sketch'),require('./ddn-text'),require('./ddn-palette'));else root.DDNShapes=factory(root.DDNSketch,root.DDNText,root.DDNPalette);})(typeof globalThis!=='undefined'?globalThis:this,function(Sketch,Text,Palette){
+import {publishNamespace} from './ddn-module-registry.js';
+import Sketch from './ddn-sketch.js';
+import Text from './ddn-text.js';
+import Palette from './ddn-palette.js';
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const f=x=>Math.round(x*1000)/1000;
@@ -144,5 +147,6 @@ function render(g,p,theme){
  if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
  return out+'</g>';
 }
-return{VERSION:'0.6.0-beta.1',measure,render,anchor,polygon,shapeOf,segmentInterior};
-});
+const api={VERSION:'0.6.0-beta.1',measure,render,anchor,polygon,shapeOf,segmentInterior};
+publishNamespace('DDNShapes',api);
+export default api;

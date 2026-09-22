@@ -6,11 +6,11 @@
  * DDN_RT overrides the runtime directory (used to demonstrate fail-before). */
 'use strict';
 const RT = process.env.DDN_RT || '../runtime';
-const D = require(RT + '/ddn-core.js'), C = require(RT + '/ddn-contracts.js'),
-  X = require(RT + '/ddn-export.js'), T = require(RT + '/ddn-text.js'),
-  L = require(RT + '/ddn-layout.js'), P = require(RT + '/ddn-patterns.js'),
-  R = require(RT + '/ddn-render.js'), Shapes = require(RT + '/ddn-shapes.js'),
-  Palette = require(RT + '/ddn-palette.js');
+const D = require(RT + '/ddn-core.js').default, C = require(RT + '/ddn-contracts.js').default,
+  X = require(RT + '/ddn-export.js').default, T = require(RT + '/ddn-text.js').default,
+  L = require(RT + '/ddn-layout.js').default, P = require(RT + '/ddn-patterns.js').default,
+  R = require(RT + '/ddn-render.js').default, Shapes = require(RT + '/ddn-shapes.js').default,
+  Palette = require(RT + '/ddn-palette.js').default;
 const assert = require('node:assert/strict');
 const reg = require('../../standard/registry/catalogue.json');
 const results = [];

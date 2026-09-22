@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Explicit allowlist export, separate from display hiding.
  * The caller is responsible for authorization and classification decisions. This is not a DLP classifier.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.DDNExport=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
 const ref=v=>typeof v==='string'?v:v?.$ref;
 const copy=x=>JSON.parse(JSON.stringify(x));
@@ -79,5 +79,6 @@ function sql(ir){
  return blocks.join('\n\n')+'\n';
 }
 function serialize(ir){const policy=ir.view.profiles.export||{};if(policy.format==='sql')return sql(ir);return JSON.stringify(project(ir),null,2)+'\n';}
-return {project,serialize,sql};
-});
+const api={project,serialize,sql};
+publishNamespace('DDNExport',api);
+export default api;

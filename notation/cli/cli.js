@@ -2,8 +2,8 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 'use strict';
 const fs=require('node:fs'),path=require('node:path');
-const Export=require('../runtime/ddn-export.js');
-const DDN=require('../runtime/ddn-core.js'),Render=require('../runtime/ddn-engine.js');
+const Export=require('../runtime/ddn-export.js').default;
+const DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/ddn-full.js').default;
 function usage(){console.log('Usage: node notation/cli/cli.js check|render|resolve|bundle <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR]');}
 function main(){
  const args=process.argv.slice(2);if(args.length<2){usage();process.exitCode=2;return;}

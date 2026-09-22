@@ -2,7 +2,7 @@
  * endpoint-order patch. Assertions are fixture-bounded, not optimality proofs. */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const R=path.resolve(__dirname,'..'),A=require('../dist/ddn.global.js'),L=require('../runtime/ddn-layout.js'),P=require('../runtime/ddn-placement.js');
+const R=path.resolve(__dirname,'..'),A=require('../dist/ddn.global.js'),L=require('../runtime/ddn-layout.js').default,P=require('../runtime/ddn-placement.js').default;
 require('../studio/assets/workspaces.js');
 const checks=[],out=path.join(R,'tests/validation/endpoint-ordering');fs.mkdirSync(out,{recursive:true});
 const copy=x=>JSON.parse(JSON.stringify(x));

@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Bounded, typed projection plans. No expressions, external loaders or implicit joins. */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-quality-data'));else root.DDNProjectionData=factory(root.DDNQualityData);})(typeof globalThis!=='undefined'?globalThis:this,function(Quality){
+import {publishNamespace} from './ddn-module-registry.js';
+import Quality from './ddn-quality-data.js';
 'use strict';
 const common=['kind','profile','width','height'];
 const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common]};
@@ -256,5 +257,6 @@ function plan(ir,ErrorClass=Error){
  }
 }
 function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}
-return{VERSION:'0.6.0-beta.1',get,date,plan,supported,participants:orderedParticipants,quality:Quality};
-});
+const api={VERSION:'0.6.0-beta.1',get,date,plan,supported,participants:orderedParticipants,quality:Quality};
+publishNamespace('DDNProjectionData',api);
+export default api;

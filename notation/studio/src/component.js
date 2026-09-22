@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. UI is optional and isolated from host styles. */
-function installComponents(api,host){
+export function installComponents(api,host){
 if(!host.document||!host.customElements)return;
 const STYLE=`
 :host([source-hidden]) .source{display:none}:host{display:block;color:#21334b;font:14px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--line:#dbe3ed;--accent:#245ac8;--paper:#fff}

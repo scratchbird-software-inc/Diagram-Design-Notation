@@ -1,7 +1,12 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. SVG bodies for explicit quality projections.
  * Numeric coordinates remain exact even when outlines use a sketch treatment.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-quality-data'),require('./ddn-sketch'));else root.DDNQualityRender=factory(root.DDNQualityData,root.DDNSketch);})(typeof globalThis!=='undefined'?globalThis:this,function(Q,Sketch){
+import {publishNamespace} from './ddn-module-registry.js';
+import './ddn-quality-data.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import './ddn-sketch.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import {namespace} from './ddn-module-registry.js';
+const Q=namespace('DDNQualityData');
+const Sketch=namespace('DDNSketch');
 'use strict';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const f=n=>Number(n.toFixed(3));
@@ -98,5 +103,6 @@ function draw(plan,ir,c){
  body+=lines(wrap(foot,W-24*s,11),12*s,H-43*s,11)+text(12*s,H-14*s,'Supplied synthetic observations / source-bound marks / finite JavaScript arithmetic, not certified financial computation.',11);
  return{body,W,H};
 }
-return{VERSION:'0.6.0-beta.1',draw,encodedColour};
-});
+const api={VERSION:'0.6.0-beta.1',draw,encodedColour};
+publishNamespace('DDNQualityRender',api);
+export default api;

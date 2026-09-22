@@ -2,7 +2,11 @@
  * Consolidated 0.3 placement orchestration. Keeps the 0.3 native router, text,
  * publication and export checks; imports only pin-pattern geometry from Live.
  */
-(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory(require('./ddn-layout.js'),require('./ddn-patterns.js'));else root.DDNPlacement=factory(root.DDNLayout,root.DDNPinPlacement);})(typeof globalThis!=='undefined'?globalThis:this,function(Layout,Patterns){
+import {publishNamespace} from './ddn-module-registry.js';
+import Layout from './ddn-layout.js';
+import './ddn-patterns.js'; // sibling bundle: load order only; the namespace comes from the module registry
+import {namespace} from './ddn-module-registry.js';
+const Patterns=namespace('DDNPinPlacement');
 'use strict';
 const VERSION='0.6.0-beta.1',q=Layout.q,clone=x=>JSON.parse(JSON.stringify(x));
 function fail(code,message){throw Object.assign(new Error(message),{code});}
@@ -200,5 +204,6 @@ function route(nodes,rels,ir,labelMeasure,obstacles,placed){
  if(placed.pattern)for(const n of nodes)if(placed.pattern.slots[n.id]){placed.pattern.slots[n.id].center=center(n);placed.pattern.slots[n.id].finalCenter=center(n);}
  return{...best,telemetry:{portChanges,nodeMoves,portTrials:trials,endpointOrdering,stages,pattern:placed.pattern,remainingCrossings:best.crossings.length}};
 }
-return{VERSION,place,route,stateChecked,centeredBounds:Patterns.centeredBounds};
-});
+const api={VERSION,place,route,stateChecked,centeredBounds:Patterns.centeredBounds};
+publishNamespace('DDNPlacement',api);
+export default api;

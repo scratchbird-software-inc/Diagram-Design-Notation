@@ -2,10 +2,9 @@
  * DDN reference decoder, 0.6.0-beta.1. No runtime dependencies.
  * This is an executable core demonstrator, NOT a complete conformance implementation.
  */
-(function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory(require('./ddn-contracts.js'),require('./ddn-profiles.js'));
-  else root.DDN = factory(root.DDNContracts,root.DDNProfiles);
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (Contracts,Profiles) {
+import {publishNamespace} from './ddn-module-registry.js';
+import Contracts from './ddn-contracts.js';
+import Profiles from './ddn-profiles.js';
   'use strict';
   const VERSION = '0.6.0-beta.1';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
@@ -428,5 +427,6 @@
     return {ir,workspace:ws,viewNode:view};
   }
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
-  return {VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
-});
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
+  publishNamespace('DDN',api);
+  export default api;
