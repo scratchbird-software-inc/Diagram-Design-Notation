@@ -459,6 +459,8 @@ for (const f of ddnFiles) {
  * exact and keeps the site builder free of a runtime load. */
 const hasImports = f => /^[ \t]*import[ \t]+"/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
 const srcParam = f => '../examples/' + f.split('/').map(encodeURIComponent).join('/');
+// The designer still sits one directory deeper than the unified tool.
+const designerSrcParam = f => '../../examples/' + f.split('/').map(encodeURIComponent).join('/');
 writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
   '<h1 class="page-title">Examples</h1>\n' +
   '<p class="lede">' + ddnFiles.length + ' runnable <code>.ddn</code> sources — served raw for download. ' +
@@ -472,7 +474,7 @@ writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
       const size = fs.statSync(path.join(examplesRoot, f)).size;
       const open = hasImports(f)
         ? '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> <small>(multi-file — tool only)</small>'
-        : '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> · <a href="../tools/designer/index.html?src=' + srcParam(f) + '">Designer</a>';
+        : '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> · <a href="../tools/designer/index.html?src=' + designerSrcParam(f) + '">Designer</a>';
       return '<tr><td><a href="' + f.split('/').map(encodeURIComponent).join('/') + '"><code>' + esc(f) + '</code></a></td><td>' + size + '</td><td>' + open + '</td></tr>';
     }).join('\n') + '\n</tbody></table>').join('\n')));
 
