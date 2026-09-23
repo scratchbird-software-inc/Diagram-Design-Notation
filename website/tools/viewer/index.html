@@ -422,7 +422,31 @@ function rasterCanvasSize(w, h, scale) {
   return { width: cw, height: ch };
 }
 
-const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
+/* B1-023 (D1): `?src=<relative .ddn path>` deep link. Returns the src value
+ * from a query string, or null when absent. Strictly relative: any scheme
+ * (javascript:/data:/https:), scheme-relative //host, or absolute /path is
+ * rejected — the viewer only ever fetches siblings of its own page. */
+function srcFromQuery(search) {
+  const params = new URLSearchParams(String(search || '').replace(/^\?/, ''));
+  const src = params.get('src');
+  if (src == null) return null;
+  const v = src.trim();
+  if (!v) throw new Error('?src= is empty — give a relative path to a .ddn file');
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(v)) throw new Error('?src= must be a relative path, not a URL with a scheme: ' + v);
+  if (v.startsWith('//') || v.startsWith('/')) throw new Error('?src= must be a relative path (no host, no absolute path): ' + v);
+  if (!/\.ddn$/i.test(v.split(/[?#]/)[0])) throw new Error('?src= must point at a .ddn source: ' + v);
+  return v;
+}
+
+/* Fetch failures over file:// are browser restrictions, not missing files —
+ * say so plainly instead of surfacing a bare TypeError. */
+function srcFetchErrorMessage(err, protocol, src) {
+  if (protocol === 'file:')
+    return 'cannot fetch ' + src + ' — browsers block file:// page fetches. Serve the site over HTTP (npm run serve) or use Open file / paste instead.';
+  return err && err.message || 'fetch failed';
+}
+
+const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNViewer = pure; return; }
 
@@ -756,6 +780,24 @@ els.loadPaste.addEventListener('click', () => {
   if (!t) { fail('paste a .ddn source first'); return; }
   loadFiles({ 'pasted.ddn': els.paste.value }, 'pasted.ddn');
 });
+
+/* B1-023 (D1): deep link — `index.html?src=<relative .ddn path>` fetches the
+ * source next to the page and loads it as a single-file workspace, first view
+ * selected. The fetched text is size-capped like a dropped file and parsed via
+ * the normal loadFiles path, so parse errors show in the standard status line. */
+function loadFromSrc(src) {
+  status('loading ' + src + ' …');
+  fetch(src)
+    .then(r => { if (!r.ok) throw new Error(src + ' — HTTP ' + r.status); return r.text(); })
+    .then(text => {
+      if (text.length > MAX_FILE_BYTES)
+        throw new Error(src + ' is ' + Math.round(text.length / 1e6) + ' MB — the viewer accepts sources up to ' + (MAX_FILE_BYTES / 1e6) + ' MB');
+      const name = src.split('/').pop().split(/[?#]/)[0];
+      els.paste.value = text;
+      loadFiles({ [name]: text }, name);
+    })
+    .catch(e => fail(srcFetchErrorMessage(e, host.location && host.location.protocol, src)));
+}
 for (const ev of ['dragover', 'drop']) document.addEventListener(ev, e => e.preventDefault());
 document.addEventListener('drop', e => {
   const all = [...(e.dataTransfer && e.dataTransfer.files || [])];
@@ -887,6 +929,12 @@ host.DDNViewer = Object.assign({}, pure, {
   state
 });
 status('open a .ddn file, drop it anywhere, or paste a source');
+/* Deep link boot (B1-023): runs after every control is wired so the loaded
+ * source lands in a fully initialised viewer. */
+try {
+  const bootSrc = srcFromQuery(host.location && host.location.search);
+  if (bootSrc) loadFromSrc(bootSrc);
+} catch (e) { fail(e && e.message); }
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 </script>
 </body>

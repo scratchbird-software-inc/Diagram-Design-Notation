@@ -1802,7 +1802,9 @@ return{createInView,editProjectionProperty,editViewProperty,occurrences,moveDecl
 'use strict';
 const D=window.DDNLive, $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const initial=JSON.parse($('#sourceFiles').textContent), ws=D.createWorkspace(initial);
+const initial=JSON.parse($('#sourceFiles').textContent);
+// `let`: B1-023 ?src= replaces the boot workspace with the fetched document.
+let ws=D.createWorkspace(initial);
 let entry='model.ddn',view='overview',ir=null,result=null,selected='designer.sample::model.customer',tab='meaning',left='add',mode='select',connectFrom=null,zoom=1,toastTimer,drag=null,counter=1;
 let overrides={page:'content',look:'classic',theme:'default'},renderFailure=false;
 let mPlan=null,mSel=null,mBatch=[];
@@ -3355,6 +3357,37 @@ bindPanelDrag($('#leftPanel'));bindPanelDrag($('#inspectorPanel'));
 applyDensity();applyColumns();updatePanelChrome();
 window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelReconnectDrag();cancelTimelineDrag();connectFrom=null;seqConnectFrom=null;mode='select';if(drag){drag.el.removeAttribute('transform');drag=null;}$('#connectTool').classList.remove('active');$('#selectTool').classList.add('active');}if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?ws.redo():ws.undo();draw();}if(e.key==='Delete'&&graph()&&findSelection()?.kind==='node')panelRoot('inspectorBody').querySelector('#hideSelected')?.click();});
 window.DesignerPrototype={workspace:ws,getState:()=>({entry,view,selected,tab,result,commands:actualCommands,overrides,renderFailure,incompleteBadge,pendingViews:[...pendingViews],issues:currentIssues(),density:density.current,widths:{...widths},floating:{...floatingPanels},popped:{left:!!popped.left,inspector:!!popped.inspector},display:displayGet(),webpSupported}),select:choose,setView,story,draw,transaction,setProblemsOpen:v=>{problemsOpen=!!v;renderProblems();},revalidateWorkspace,setFloating,popOutPanel,redockPanel,panelRoot,applyDisplay,rasterize};
+// B1-023 (D1/D3): ?src=<relative .ddn path> opens that source as a new
+// single-file document — the boot fixture workspace is replaced, the file's
+// first view is selected. Strictly relative (no scheme/host/absolute path);
+// the fetched text is size-capped like the viewer's drop cap and parsed via
+// createWorkspace, so syntax errors surface through the normal problem path.
+(function(){
+ let src=null;
+ try{src=new URLSearchParams(location.search).get('src');}catch{return;}
+ if(src==null)return;
+ const v=String(src).trim();
+ const reject=m=>announce('?src= rejected: '+m,true);
+ if(!v)return reject('empty — give a relative path to a .ddn file');
+ if(/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(v))return reject('must be a relative path, not a URL with a scheme: '+v);
+ if(v.startsWith('//')||v.startsWith('/'))return reject('must be a relative path (no host, no absolute path): '+v);
+ if(!/\.ddn$/i.test(v.split(/[?#]/)[0]))return reject('must point at a .ddn source: '+v);
+ if(actualCommands.length&&!confirm('Opening '+v+' replaces the current workspace. Unsaved changes will be lost — continue?'))return;
+ fetch(v).then(r=>{if(!r.ok)throw new Error(v+' — HTTP '+r.status);return r.text();}).then(text=>{
+  if(text.length>50000000)throw new Error(v+' is '+Math.round(text.length/1e6)+' MB — sources are accepted up to 50 MB');
+  const name=v.split('/').pop().split(/[?#]/)[0];
+  const fresh=D.createWorkspace({[name]:text});
+  const first=fresh.entries().flatMap(e=>((e&&e.views)||[]).map(x=>({file:e.file,view:x.id})))[0];
+  if(!first){fresh.destroy();throw new Error('no view declared in '+name);}
+  ws.destroy();ws=fresh;window.DesignerPrototype.workspace=ws;
+  entry=first.file;view=first.view;ir=null;result=null;selected=null;zoom=1;updateZoom();mode='select';connectFrom=null;
+  overrides={page:'content',look:'classic',theme:'default'};
+  mPlan=null;mSel=null;mBatch=[];chartSel=null;chartNotice=null;timelineNotice=null;tDrag=null;fishboneNotice=null;panelsNotice=null;panelsSel=null;decisionNotice=null;decisionFixture=null;laneNotice=null;sequenceNotice=null;seqConnectFrom=null;pendingViews.clear();wsIssues=[];
+  draw();announce('Opened '+v+' as a single-file document · first view selected');
+ }).catch(e=>{
+  announce(location.protocol==='file:'?'cannot fetch '+v+' — browsers block file:// page fetches. Serve over HTTP (npm run serve) and retry, or open the file from the source drawer.':(e&&(e.code||'LOAD')+': '+e.message),true);
+ });
+})();
 draw();
 })();
 </script>

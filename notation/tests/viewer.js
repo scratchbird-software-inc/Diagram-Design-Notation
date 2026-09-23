@@ -228,5 +228,42 @@ test('loadFiles resets selection and presentation state from any previous docume
   assert.ok(m[0].includes('state.presentation = emptyPresentation()'), 'stale presentation overrides carried across loads');
 });
 
+/* --- B1-023 ?src= deep link (D1/D5) --- */
+
+test('srcFromQuery: absent/valid relative paths; strict rejection of schemes, hosts, absolute paths', () => {
+  assert.strictEqual(V.srcFromQuery(''), null);
+  assert.strictEqual(V.srcFromQuery('?foo=bar'), null);
+  assert.strictEqual(V.srcFromQuery('?src=../../examples/basics/01-customer.ddn'), '../../examples/basics/01-customer.ddn');
+  assert.strictEqual(V.srcFromQuery('?src=model.ddn&x=1'), 'model.ddn');
+  assert.strictEqual(V.srcFromQuery('src=a/b.ddn'), 'a/b.ddn', 'leading ? optional');
+  assert.strictEqual(V.srcFromQuery('?src=%20b.ddn%20'), 'b.ddn', 'decoded then trimmed');
+  assert.throws(() => V.srcFromQuery('?src=javascript:alert(1)'), /scheme/);
+  assert.throws(() => V.srcFromQuery('?src=data:text/plain,x.ddn'), /scheme/);
+  assert.throws(() => V.srcFromQuery('?src=https://evil.example/x.ddn'), /scheme/);
+  assert.throws(() => V.srcFromQuery('?src=//evil.example/x.ddn'), /no host/);
+  assert.throws(() => V.srcFromQuery('?src=/etc/passwd.ddn'), /absolute path/);
+  assert.throws(() => V.srcFromQuery('?src='), /empty/);
+  assert.throws(() => V.srcFromQuery('?src=notes.txt'), /\.ddn/);
+});
+
+test('srcFetchErrorMessage: file:// gets the serve-over-HTTP guidance; HTTP passes the error through', () => {
+  assert.ok(V.srcFetchErrorMessage(new Error('Failed to fetch'), 'file:', 'a.ddn').includes('serve over HTTP') ||
+    V.srcFetchErrorMessage(new Error('Failed to fetch'), 'file:', 'a.ddn').includes('Serve the site over HTTP'));
+  assert.ok(V.srcFetchErrorMessage(new Error('Failed to fetch'), 'file:', 'a.ddn').includes('Open file'));
+  assert.strictEqual(V.srcFetchErrorMessage(new Error('HTTP 404'), 'http:', 'a.ddn'), 'HTTP 404');
+});
+
+test('?src= loader: size-capped fetch, basename workspace key, normal loadFiles path, boot wiring', () => {
+  const src = fs.readFileSync(path.join(root, 'notation/viewer/src/viewer.js'), 'utf8');
+  assert.ok(src.includes('function loadFromSrc(src)'), 'loadFromSrc missing');
+  assert.ok(src.includes('text.length > MAX_FILE_BYTES'), 'fetched text is not size-capped');
+  assert.ok(src.includes("src.split('/').pop()"), 'workspace key is not the basename');
+  assert.ok(src.includes('loadFiles({ [name]: text }, name)'), 'fetched source bypasses the normal load path');
+  assert.ok(src.includes('srcFromQuery(host.location && host.location.search)'), 'boot does not read the query string');
+  assert.ok(src.includes('srcFetchErrorMessage(e, host.location && host.location.protocol, src)'), 'fetch failures lack the file:// guidance');
+  const built = fs.readFileSync(path.join(root, 'notation/viewer/ddn-viewer.html'), 'utf8');
+  assert.ok(built.includes('function loadFromSrc(src)'), 'built ddn-viewer.html is stale — run npm --prefix notation run build:viewer');
+});
+
 const n = results.length, ok = results.filter(r => r.pass).length;
 console.log(`Viewer ${ok}/${n}`);

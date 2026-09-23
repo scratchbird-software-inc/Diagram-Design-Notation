@@ -406,7 +406,7 @@ writeOut('tools/index.html', page('../', 'tools', 'Tools — DDN',
   '<p class="lede">Every tool is a single self-contained HTML file — open it from disk or any static host. All processing is local.</p>\n' +
   '<div class="grid">\n' +
   '  <a class="card" href="designer/index.html"><h3>Visual designer</h3><p>Visual-first editor prototype: full kind palette, inspector, live source transactions, matrix and chart editors, display options, pop-out panels, SVG/PNG/WebP and .ddn/ZIP downloads.</p><small>standalone</small></a>\n' +
-  '  <a class="card" href="viewer/index.html"><h3>End-user viewer</h3><p>Open or paste a .ddn source, pick a view, fit and zoom, restyle kinds and relations, export SVG/PNG.</p><small>standalone</small></a>\n' +
+  '  <a class="card" href="viewer/index.html"><h3>End-user viewer</h3><p>Open or paste a .ddn source, pick a view, fit and zoom, restyle kinds and relations, export SVG/PNG. Deep-link any example with <code>?src=&lt;relative .ddn path&gt;</code> (serve over HTTP).</p><small>standalone</small></a>\n' +
   '  <a class="card" href="studio/index.html"><h3>Studio — example library</h3><p>Self-contained library of the full example corpus with live rendering: graphs, ERDs, matrices, panels, charts, timelines, layouts, looks, routing variants.</p><small>standalone</small></a>\n' +
   '  <a class="card" href="studio/editor.html"><h3>Studio — source editor</h3><p>Source-first editing with live rendering, guided graph edits, and workspace I/O.</p><small>standalone</small></a>\n' +
   '  <a class="card" href="../plates/index.html"><h3>Notation plates</h3><p>SVG plates of the vocabulary: object kinds, facets, relationship families, looks, and routing.</p><small>standalone</small></a>\n' +
@@ -452,17 +452,28 @@ for (const f of ddnFiles) {
   if (!groups.has(dir)) groups.set(dir, []);
   groups.get(dir).push(f);
 }
+/* B1-023 (D2): per-example "open in" links. A file with `import "..." as …;`
+ * lines is multi-file: it gets a viewer-only link plus a note (the designer is
+ * a single-document surface). Detection is a line-anchored grep — imports are
+ * top-level line statements in the grammar, so scanning the source text is
+ * exact and keeps the site builder free of a runtime load. */
+const hasImports = f => /^[ \t]*import[ \t]+"/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
+const srcParam = f => '../../examples/' + f.split('/').map(encodeURIComponent).join('/');
 writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
   '<h1 class="page-title">Examples</h1>\n' +
   '<p class="lede">' + ddnFiles.length + ' runnable <code>.ddn</code> sources — served raw for download. ' +
-  'Open any of them in the <a href="../tools/viewer/index.html">viewer</a> or render with the CLI: ' +
+  'Open any of them one click in the viewer (and single-file ones in the designer) via the links below, or render with the CLI: ' +
   '<code>node notation/cli/cli.js render website/examples/basics/01-customer.ddn --workspace website/examples/basics --out out.svg</code>. ' +
+  'The tools take a <code>?src=</code> relative-path deep link (<code>tools/viewer/index.html?src=../../examples/basics/01-customer.ddn</code>) — serve the site over HTTP (<code>npm run serve</code>) for browser fetches. ' +
   'See the <a href="README.html">examples README</a> and the <a href="../gallery/index.html">rendered gallery</a>.</p>\n' +
   [...groups.entries()].map(([dir, files]) =>
-    '<h2>' + esc(dir === '.' ? 'Top level' : dir + '/') + ' <small>(' + files.length + ')</small></h2>\n<table>\n<thead><tr><th>File</th><th>Bytes</th></tr></thead><tbody>\n' +
+    '<h2>' + esc(dir === '.' ? 'Top level' : dir + '/') + ' <small>(' + files.length + ')</small></h2>\n<table>\n<thead><tr><th>File</th><th>Bytes</th><th>Open in</th></tr></thead><tbody>\n' +
     files.map(f => {
       const size = fs.statSync(path.join(examplesRoot, f)).size;
-      return '<tr><td><a href="' + f.split('/').map(encodeURIComponent).join('/') + '"><code>' + esc(f) + '</code></a></td><td>' + size + '</td></tr>';
+      const open = hasImports(f)
+        ? '<a href="../tools/viewer/index.html?src=' + srcParam(f) + '">Viewer</a> <small>(multi-file — viewer only)</small>'
+        : '<a href="../tools/viewer/index.html?src=' + srcParam(f) + '">Viewer</a> · <a href="../tools/designer/index.html?src=' + srcParam(f) + '">Designer</a>';
+      return '<tr><td><a href="' + f.split('/').map(encodeURIComponent).join('/') + '"><code>' + esc(f) + '</code></a></td><td>' + size + '</td><td>' + open + '</td></tr>';
     }).join('\n') + '\n</tbody></table>').join('\n')));
 
 // Download page: clone/npm instructions + dist bundle table with byte sizes.

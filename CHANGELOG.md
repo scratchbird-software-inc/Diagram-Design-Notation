@@ -6,6 +6,30 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- One-click "open in viewer / designer" from the examples browser (B1-023):
+  every `.ddn` row on the examples page now links the end-user viewer via a
+  `?src=<relative path>` deep link; single-file examples (no `import "…"`
+  lines) also link the visual designer, while multi-file examples are
+  viewer-only with a note. The viewer and the designer standalone pages both
+  accept `?src=` (query-string mechanism chosen; `#src=` rejected — fragment
+  state would collide with future in-page anchors and is invisible to access
+  logs): the source is fetched relative to the page, size-capped at the same
+  50 MB as file drops, loaded as a single-file workspace, and its first view
+  selected. Validation is strict — any scheme (`javascript:`/`data:`/`https:`),
+  scheme-relative host, absolute path, or non-`.ddn` target is
+  rejected inline; under `file://` a blocked fetch explains "serve over HTTP
+  (`npm run serve`) or use Open file" instead of failing silently. The
+  designer replaces its boot fixture workspace with the fetched document and
+  confirms before discarding unsaved edits. Surface: `viewer.js`
+  `srcFromQuery`/`srcFetchErrorMessage`/`loadFromSrc`, designer `app.js` boot
+  hook, `build-site.mjs` "Open in" column (import detection is a line-anchored
+  grep — imports are top-level line statements, so the site builder needs no
+  runtime load). Tests: `notation/tests/viewer.js` query-param units, new
+  `tests/viewer-src-http.js` headless-chromium-over-`tools/serve.js` proof
+  (renders an example, rejects `javascript:`, reports HTTP 404), and a
+  per-row link-rule assertion in `tests/website-links.js` (120 examples: 35
+  designer + 120 viewer links).
+
 - `layout.frame_overflow: expand | confine` for scoped frames (B1-022,
   RFC-118): a view `frame` and its members can no longer disagree. Under the
   default `expand`, a declared `at`/`size` frame rect grows to enclose the

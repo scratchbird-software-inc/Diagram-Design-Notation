@@ -14,10 +14,21 @@ the built file.
 
 ## Loading sources
 
-Three client-side ways: **Open .ddn…** (file picker; multiple files allowed —
+Four client-side ways: **Open .ddn…** (file picker; multiple files allowed —
 the first is the entry, the rest satisfy `import`), **drag-drop** anywhere on
-the page, or **paste** source text into the sidebar and press *Load pasted
-source*.
+the page, **paste** source text into the sidebar and press *Load pasted
+source*, or a **`?src=` deep link** (B1-023): open
+`ddn-viewer.html?src=<relative .ddn path>` and the viewer fetches that source
+relative to the page, loads it as a single-file workspace, and selects its
+first view. The website examples browser emits one such link per example. The
+path must be strictly relative — any scheme (`javascript:`, `data:`, even
+`https:`), host, or absolute path is rejected inline; the fetched text is
+size-capped at 50 MB like a dropped file, and parse errors show via the
+normal status-line error path. Over `file://` browsers block page fetches, so
+a deep link there answers a clear "serve over HTTP (`npm run serve`) or use
+Open file" message instead of failing silently. The designer standalone page
+(`tools/designer/index.html?src=…`) accepts the same contract, loading the
+file as a new single-file document.
 
 ## Controls
 
