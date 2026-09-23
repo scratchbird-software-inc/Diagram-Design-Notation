@@ -584,7 +584,7 @@ function syncOptionInputs() {
       if (key === 'autoPlace') v = info ? info.profiles.layout.auto_place !== false : true;
       else if (key === 'hachure') v = info ? info.profiles.style.hachure !== false : true;
       else if (key === 'width') v = 1600; else if (key === 'height') v = 1000;
-      else v = '';
+      else v = input.type === 'number' ? '' : 'source';
     }
     if (input.type === 'checkbox') input.checked = !!v; else input.value = String(v);
     const caps = d && d.capabilities;

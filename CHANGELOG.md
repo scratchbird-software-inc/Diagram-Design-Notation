@@ -6,6 +6,29 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Unified diagram tool (B1-027): one page — `notation/tool/ddn-tool.html`,
+  served as `tools/index.html` — replaces the end-user viewer, the studio
+  gallery and the studio editor. Diagram stage with pointer-drag pan, wheel
+  and slider zoom and fit page/width/height/100%; a slim icon toolbar; and
+  four pop-in drawers — appearance (top), source (bottom), files (left),
+  export (right) — each independently `open`/`closed`/`none` via the
+  `?drawers=` URL parameter, a gear-popup setting persisted to
+  `localStorage` (`ddn-tool-drawers`), and `?mode=` presets (`diagram`,
+  `view`, `explore` default, `edit`). All features of the three retired
+  pages are reachable: multi-file open/drop/paste and catalogue boot,
+  `?src=` (import-aware, B1-026) and `?entry=&view=` deep links, full
+  appearance/layout/page controls, per-kind/verb/object colour and per-kind
+  typography CSS overlays, per-verb and per-relation routing, source editing
+  with apply/discard + live apply, guided inspector edits with undo/redo,
+  drag-to-pin, workspace zip/json I/O, dirty guard, and SVG/PNG/WebP export.
+  Rendering reuses the shared `<ddn-example>` component with its internal
+  chrome hidden; the built file is produced by `tools/build-tool.js`
+  (freshness-gated in `notation/tests/tool.js`). The three old URLs
+  (`tools/viewer/index.html`, `tools/studio/index.html`,
+  `tools/studio/editor.html`) are redirect stubs that map their parameters
+  to the new page (`notation/tool/src/redirect.js`); the old sources and
+  build scripts are kept, marked deprecated, and still tested.
+
 - Fixed: viewer `?src=` deep links now fetch the entry file's whole import
   closure (B1-026). Multi-file examples (everything under
   `website/examples/use-cases/`) previously rendered an empty stage with a

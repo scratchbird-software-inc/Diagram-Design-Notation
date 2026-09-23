@@ -1,5 +1,9 @@
 # Studio guide
 
+> Deprecated (B1-027): the studio gallery and editor were replaced by the unified diagram tool
+> (`notation/tool/ddn-tool.html`, served as `tools/index.html`; the old studio URLs redirect).
+> This guide is kept for reference against the kept sources.
+
 Open `live/editor.html` through the supplied local server, or use `live/portable-editor.html`. The portable editor embeds the same runtime and example source and does not depend on neighbouring assets to function. `dist/editor.html` is a smaller standalone editor with a starter model, not the full example catalogue.
 
 ## Existing work

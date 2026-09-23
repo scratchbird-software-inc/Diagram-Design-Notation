@@ -1,4 +1,8 @@
-# DDN Viewer (`ddn-viewer.html`)
+# DDN Viewer (`ddn-viewer.html`) — deprecated
+
+> Deprecated (B1-027): superseded by the unified diagram tool (`notation/tool/ddn-tool.html`,
+> served on the website as `tools/index.html`; `tools/viewer/index.html` is now a redirect stub).
+> These sources and `tools/build-viewer.js` are kept and still tested, but no longer served.
 
 A single-file, non-designer viewer for `.ddn` diagrams. It runs from `file://` —
 no server, no install, no network: the full DDN runtime is inlined into the one
