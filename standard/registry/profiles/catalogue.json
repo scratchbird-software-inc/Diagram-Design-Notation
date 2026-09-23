@@ -2891,6 +2891,155 @@
         "adoption/step-family nuance beyond the two-parent rule",
         "records verification"
       ]
+    },
+    {
+      "id": "chart.histogram@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Histogram"
+      ],
+      "scope": "Equal-width binning of one numeric sample (x_type:number, measurement on x); bar heights are bin counts; record provenance per bin.",
+      "validation": [
+        "numeric finite measurements (DDN-PJ032)",
+        "at least 2 observations (DDN-PJ135)",
+        "bin_count is an integer 2..100 (DDN-PJ131)",
+        "no y/series bindings (DDN-PJ134)"
+      ],
+      "unsupported": [
+        "density normalization",
+        "unequal bins (use chart.quality@1 transform for declared boundaries)"
+      ]
+    },
+    {
+      "id": "chart.density@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Probability density"
+      ],
+      "scope": "Gaussian kernel density of one numeric sample; Silverman bandwidth; fixed 81-point evaluation grid.",
+      "validation": [
+        "at least 2 observations (DDN-PJ135)",
+        "zero-variance sample is UNKNOWN (DDN-PJ132)",
+        "no y/series bindings (DDN-PJ134)"
+      ],
+      "unsupported": [
+        "adaptive bandwidth",
+        "multivariate density"
+      ]
+    },
+    {
+      "id": "chart.qq@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Q-Q plot"
+      ],
+      "scope": "Sample quantiles vs theoretical standard-normal quantiles (Acklam inversion); dashed reference through the quartile pair.",
+      "validation": [
+        "at least 2 observations (DDN-PJ135)",
+        "zero-variance sample is UNKNOWN (DDN-PJ132)",
+        "no y/series bindings (DDN-PJ134)"
+      ],
+      "unsupported": [
+        "non-normal theoretical distributions",
+        "normality testing"
+      ]
+    },
+    {
+      "id": "chart.quantiledot@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Quantile dotplot"
+      ],
+      "scope": "Up to 20 dots at equal-mass quantile positions of the sample; deterministic vertical stacking against overlap; stacking encodes nothing.",
+      "validation": [
+        "at least 2 observations (DDN-PJ135)",
+        "no y/series bindings (DDN-PJ134)"
+      ],
+      "unsupported": [
+        "weighted quantiles"
+      ]
+    },
+    {
+      "id": "chart.dotplot@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Dot/strip plot"
+      ],
+      "scope": "One dot per record at (category, value); tied values dodge sideways deterministically; horizontal displacement encodes nothing.",
+      "validation": [
+        "categorical x (DDN-PJ030)",
+        "finite numeric y (DDN-PJ032)",
+        "no series binding (DDN-PJ134)"
+      ],
+      "unsupported": [
+        "aggregation (raw records only)"
+      ]
+    },
+    {
+      "id": "chart.boxplot@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Box plot"
+      ],
+      "scope": "Per-category five-number summary: R-7 quartiles, Tukey 1.5xIQR whiskers, outlier records drawn individually.",
+      "validation": [
+        "categorical x (DDN-PJ030)",
+        "finite numeric y (DDN-PJ032)",
+        "at most 40 categories (DDN-PJ135)"
+      ],
+      "unsupported": [
+        "notched boxes",
+        "log scales"
+      ]
+    },
+    {
+      "id": "chart.violin@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Violin plot"
+      ],
+      "scope": "Per-category mirrored Gaussian KDE with shared density scale; inner IQR bar and median dot.",
+      "validation": [
+        "at least 2 non-identical observations per category (DDN-PJ132)",
+        "at most 40 categories (DDN-PJ135)"
+      ],
+      "unsupported": [
+        "split violins",
+        "per-category density normalization"
+      ]
+    },
+    {
+      "id": "chart.beeswarm@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Beeswarm"
+      ],
+      "scope": "One dot per record; deterministic greedy non-overlap lanes widen each category swarm; displacement encodes nothing.",
+      "validation": [
+        "categorical x (DDN-PJ030)",
+        "finite numeric y (DDN-PJ032)",
+        "no series binding (DDN-PJ134)"
+      ],
+      "unsupported": [
+        "sized bubbles"
+      ]
+    },
+    {
+      "id": "chart.topk@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Top-K bar chart"
+      ],
+      "scope": "Categories ranked by value (desc, name asc, declaration order); top k kept, remainder merged into an Others bar unless others:false.",
+      "validation": [
+        "categorical x (DDN-PJ030)",
+        "k integer 1..100 (DDN-PJ133)",
+        "others boolean (DDN-PJ133)",
+        "duplicate categories need an explicit aggregate (DDN-PJ036)"
+      ],
+      "unsupported": [
+        "percentage-of-total view"
+      ]
     }
   ],
   "shapes": [

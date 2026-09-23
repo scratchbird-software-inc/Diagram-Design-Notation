@@ -3,7 +3,7 @@ import {publishNamespace} from './ddn-module-registry.js';
 import Quality from './ddn-quality-data.js';
 'use strict';
 const common=['kind','profile','width','height'];
-const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common]};
+const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common]};
 const ref=x=>typeof x==='string'?x:x?.$ref;
 function get(record,path){
  if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
@@ -23,7 +23,7 @@ function plan(ir,ErrorClass=Error){
  const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
  if(kind==='fishbone')return Quality.fishbone(ir,ErrorClass,get);
  if(kind==='decision')return Quality.decision(ir,ErrorClass,get);
- if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
+ if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
  if(kind==='graph'&&p.profile==='state.flat@1')return{kind,profile:p.profile,lifecycle:Quality.lifecycle(ir,ErrorClass,get)};
  if(kind==='graph'&&['inputs','analysis_budget','traces'].some(k=>p[k]!==undefined))fail('DDN-Q005','Lifecycle properties require state.flat@1');
  if(kind==='graph'&&p.profile==='pert.cpm@1')return{kind,profile:p.profile,cpm:Quality.cpm(ir,ErrorClass)};
@@ -129,7 +129,8 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),...(venn?{venn}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey');
+  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'];
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
@@ -144,15 +145,31 @@ function plan(ir,ErrorClass=Error){
   if(p.mark==='sankey'&&p.series!==undefined)fail('DDN-PJ030','Sankey encodes flows between endpoints; do not set series');
   if(p.mark==='sankey'&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Sankey flows encode supplied values; aggregation is not available');
   if(p.mark==='sankey'&&typeof p.target!=='string')fail('DDN-PJ030','Sankey target is a property binding, not a numeric reference');
+  if(DIST1D.includes(p.mark)){
+   if((p.x_type||'category')!=='number')fail('DDN-PJ030',p.mark+' measures one numeric sample; set x_type:number with x as the measurement binding');
+   if(p.y!==undefined)fail('DDN-PJ134',p.mark+' binds only the numeric measurement x; do not set y');
+   if(p.series!==undefined)fail('DDN-PJ134',p.mark+' pools one sample; do not set series');
+   if(p.bin_count!==undefined&&p.mark!=='histogram')fail('DDN-PJ131','bin_count is a histogram setting');
+  }
+  if(DIST2D.includes(p.mark)||p.mark==='topk'){
+   if((p.x_type||'category')!=='category')fail('DDN-PJ030',p.mark+' groups require categorical x (x_type must be category)');
+   if(p.series!==undefined)fail('DDN-PJ134',p.mark+' draws one distribution per category; do not set series');
+  }
+  if(p.mark==='histogram'&&p.bin_count!==undefined&&(!Number.isInteger(p.bin_count)||p.bin_count<2||p.bin_count>100))fail('DDN-PJ131','Histogram bin_count is an integer 2..100');
+  if(p.mark==='topk'){
+   if(p.k!==undefined&&(!Number.isInteger(p.k)||p.k<1||p.k>100))fail('DDN-PJ133','Top-K k is an integer 1..100');
+   if(p.others!==undefined&&typeof p.others!=='boolean')fail('DDN-PJ133','Top-K others is true or false');
+  }
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
-  if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
+  if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):DIST1D.includes(p.mark)?false:typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
   if(p.aggregate==='count'&&p.unit)fail('DDN-PJ034','Count is dimensionless; do not label it as currency or another input unit');
-  if(p.aggregate&&p.aggregate!=='none'&&!['bar','pie','donut'].includes(p.mark))fail('DDN-PJ031','Aggregation is available on category bars/arcs only');
+  if(p.aggregate&&p.aggregate!=='none'&&!['bar','pie','donut','topk'].includes(p.mark))fail('DDN-PJ031','Aggregation is available on category bars/arcs only');
+  if(DIST1D.includes(p.mark)&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Distribution marks measure raw records; aggregation is not available');
   if(p.missing!==undefined&&!['error','skip'].includes(p.missing))fail('DDN-PJ019','Chart missing policy is error or skip');
   if(p.inner_radius!==undefined&&(!Number.isFinite(p.inner_radius)||p.inner_radius<0||p.inner_radius>=.9))fail('DDN-PJ030','inner_radius is a radius fraction 0..0.9 exclusive');
   let points=[],skipped=[];for(const n of filtered()){
-   let x=get(n,p.x),y=p.mark==='candlestick'?undefined:get(n,p.y),ohlc=null;
+   let x=get(n,p.x),y=DIST1D.includes(p.mark)?1:(p.mark==='candlestick'?undefined:get(n,p.y)),ohlc=null;
    if(p.mark==='candlestick'){const o=get(n,p.open),h=get(n,p.high),l=get(n,p.low),c=get(n,p.close);ohlc={o,h,l,c};y=c;}
    if((x===undefined||x===null||y===undefined||y===null)&&p.missing==='skip'){skipped.push(n.id);continue;}
    if(p.mark==='candlestick'){
@@ -182,7 +199,7 @@ function plan(ir,ErrorClass=Error){
   }
   if(p.mark==='point'&&(p.x_type||'category')!=='number')fail('DDN-PJ030','Scatter/bubble requires x_type:number');
   if(['pie','donut','bar','radar','funnel'].includes(p.mark)&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Bars, arcs, radar spokes and funnel stages currently require categorical x');
-  const groups=new Map();if(!['point','radar','sankey'].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
+  const groups=new Map();if(!['point','radar','sankey',...DIST1D,...DIST2D].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
   if([...groups.values()].some(a=>a.length>1)){
    if(!p.aggregate||p.aggregate==='none')fail('DDN-PJ036','Duplicate x/category: supply an explicit aggregate or distinct coordinates');
    points=[...groups.values()].map(v=>({x:v[0].x,rawX:v[0].rawX,size:1,y:p.aggregate==='count'?v.length:p.aggregate==='sum'?v.reduce((s,p)=>s+p.y,0):p.aggregate==='mean'?v.reduce((s,p)=>s+p.y,0)/v.length:p.aggregate==='min'?Math.min(...v.map(p=>p.y)):Math.max(...v.map(p=>p.y)),sourceIds:v.flatMap(p=>p.sourceIds)}));
@@ -214,6 +231,58 @@ function plan(ir,ErrorClass=Error){
    if(moved||depth.some(d=>d<0))fail('DDN-PJ079','Sankey flow graph contains a cycle');
    sankeyFlow={nodes:names.map((name,i)=>({name,depth:depth[i],sourceIds:[...new Set(links.filter(l=>l.source===i||l.target===i).flatMap(l=>l.sourceIds))]})),links};
   }
+  let dist=null,topkInfo=null;
+  if(DIST1D.includes(p.mark)){
+   const vals=points.map(pt=>pt.x).sort((a,b)=>a-b),n=vals.length,min=vals[0],max=vals[n-1];
+   if(n<2)fail('DDN-PJ135',p.mark+' needs at least 2 finite observations; got '+n);
+   const mean=vals.reduce((a,b)=>a+b,0)/n,sd=Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/n);
+   if(p.mark==='histogram'){
+    const m=p.bin_count??Math.min(40,Math.max(5,Math.ceil(Math.sqrt(n)))),span=max-min||1;
+    const bins=Array.from({length:m},(_,i)=>({x0:min+span*i/m,x1:min+span*(i+1)/m,count:0,sourceIds:[]}));
+    for(const pt of points){const i=Math.min(m-1,Math.max(0,Math.floor((pt.x-min)/span*m)));bins[i].count++;bins[i].sourceIds.push(...pt.sourceIds);}
+    dist={kind:'histogram',bins,count:n,min,max};
+   }else if(p.mark==='density'){
+    if(sd===0)fail('DDN-PJ132','Density of a zero-variance sample is UNKNOWN; the kernel bandwidth is undefined');
+    const h=1.06*sd*Math.pow(n,-0.2),pad=3*h,g=80,c=1/(n*h*Math.sqrt(2*Math.PI));
+    const curve=Array.from({length:g+1},(_,i)=>{const x=min-pad+(max-min+2*pad)*i/g;return[x,points.reduce((s,pt)=>s+Math.exp(-0.5*((x-pt.x)/h)**2),0)*c];});
+    dist={kind:'density',curve,bandwidth:h,count:n,min,max};
+   }else if(p.mark==='qq'){
+    if(sd===0)fail('DDN-PJ132','Q-Q spread of a zero-variance sample is UNKNOWN; the normal reference is undefined');
+    const sorted=points.slice().sort((a,b)=>a.x-b.x),obs=sorted.map((pt,i)=>({t:normPPF((i+0.5)/n),v:pt.x,sourceIds:pt.sourceIds}));
+    dist={kind:'qq',observations:obs,line:{t1:normPPF(.25),v1:quantile(vals,.25),t3:normPPF(.75),v3:quantile(vals,.75)},count:n};
+   }else{
+    const Q=Math.min(n,20),dots=[];
+    for(let i=0;i<Q;i++){const v=quantile(vals,(i+0.5)/Q);dots.push({value:v,sourceIds:points.filter(pt=>pt.x===v).flatMap(pt=>pt.sourceIds)});}
+    dist={kind:'quantiledot',dots,quantiles:Q,count:n,min:vals[0],max:vals[n-1]};
+   }
+  }
+  if(p.mark==='boxplot'||p.mark==='violin'){
+   const cats=[],byCat=new Map();
+   for(const pt of points){const k=JSON.stringify(pt.rawX);if(!byCat.has(k)){byCat.set(k,[]);cats.push(pt.rawX);}byCat.get(k).push(pt);}
+   if(cats.length>40)fail('DDN-PJ135',p.mark+' draws at most 40 categories; got '+cats.length);
+   const groupsOut=cats.map(cat=>{
+    const a=byCat.get(JSON.stringify(cat)),vals=a.map(pt=>pt.y).sort((x,y)=>x-y),n=vals.length;
+    if(p.mark==='boxplot'){
+     const q1=quantile(vals,.25),median=quantile(vals,.5),q3=quantile(vals,.75),iqr=q3-q1,lower=q1-1.5*iqr,upper=q3+1.5*iqr;
+     const inside=vals.filter(v=>v>=lower&&v<=upper),outliers=a.filter(pt=>pt.y<lower||pt.y>upper);
+     return{cat,q1,median,q3,low:inside[0],high:inside[inside.length-1],outliers:outliers.map(pt=>({y:pt.y,sourceIds:pt.sourceIds})),count:n,sourceIds:a.flatMap(pt=>pt.sourceIds)};
+    }
+    const mean=vals.reduce((x,y)=>x+y,0)/n,sd=Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/n);
+    if(n<2||sd===0)fail('DDN-PJ132','Violin density of '+JSON.stringify(cat)+' is UNKNOWN: a kernel needs at least 2 non-identical observations per category');
+    const h=1.06*sd*Math.pow(n,-0.2),pad=3*h,g=60,c=1/(n*h*Math.sqrt(2*Math.PI)),min=vals[0],max=vals[n-1];
+    const curve=Array.from({length:g+1},(_,i)=>{const x=min-pad+(max-min+2*pad)*i/g;return[x,a.reduce((s,pt)=>s+Math.exp(-0.5*((x-pt.y)/h)**2),0)*c];});
+    return{cat,curve,bandwidth:h,q1:quantile(vals,.25),median:quantile(vals,.5),q3:quantile(vals,.75),count:n,sourceIds:a.flatMap(pt=>pt.sourceIds)};
+   });
+   dist={kind:p.mark,groups:groupsOut};
+  }
+  if(p.mark==='topk'){
+   const k=p.k??10,ranked=points.map((pt,i)=>({pt,i})).sort((a,b)=>b.pt.y-a.pt.y||String(a.pt.rawX)<String(b.pt.rawX)?-1:String(a.pt.rawX)>String(b.pt.rawX)?1:a.i-b.i).map(o=>o.pt);
+   const top=ranked.slice(0,k),rest=ranked.slice(k),withOthers=p.others??true;
+   let othersPoint=null;
+   if(rest.length&&withOthers)othersPoint={x:'Others',rawX:'Others',y:rest.reduce((s,pt)=>s+pt.y,0),size:1,sourceIds:rest.flatMap(pt=>pt.sourceIds),others:true};
+   topkInfo={kept:top.length,total:ranked.length,merged:withOthers?rest.length:0,dropped:withOthers?0:rest.length,droppedIds:withOthers?[]:rest.flatMap(pt=>pt.sourceIds)};
+   points=othersPoint?[...top,othersPoint]:top;
+  }
   if(['pie','donut'].includes(p.mark)&&(points.some(p=>p.y<0)||!Number.isFinite(points.reduce((s,p)=>s+p.y,0))||points.reduce((s,p)=>s+p.y,0)<=0))fail('DDN-PJ037','Arcs require nonnegative values and a positive total');
   if(!Number.isFinite(Math.max(0,...points.map(n=>n.y))-Math.min(0,...points.map(n=>n.y))))fail('DDN-PJ032','Quantitative axis range overflow');
   if((p.x_type==='number')&&!Number.isFinite(Math.max(...points.map(n=>n.x))-Math.min(...points.map(n=>n.x))))fail('DDN-PJ032','Quantitative x range overflow');
@@ -224,7 +293,7 @@ function plan(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return{kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
@@ -257,6 +326,19 @@ function plan(ir,ErrorClass=Error){
  }
 }
 function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}
-const api={VERSION:'0.6.0-beta.1',get,date,plan,supported,participants:orderedParticipants,quality:Quality};
+/* Sample quantile, linear interpolation (R type 7). Input must be sorted ascending. */
+function quantile(sorted,q){const n=sorted.length;if(!n)return NaN;const h=(n-1)*q,i=Math.floor(h),j=Math.min(n-1,i+1);return sorted[i]+(h-i)*(sorted[j]-sorted[i]);}
+/* Standard normal quantile function (Acklam's rational approximation, max |err| 1.15e-9). Deterministic. */
+function normPPF(p){
+ const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+ const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+ const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+ const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00],pl=0.02425;
+ if(p<pl){const q=Math.sqrt(-2*Math.log(p));return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+ if(p>1-pl){const q=Math.sqrt(-2*Math.log(1-p));return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);}
+ const q=p-0.5,r=q*q;
+ return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+const api={VERSION:'0.6.0-beta.1',get,date,plan,supported,participants:orderedParticipants,quantile,normPPF,quality:Quality};
 publishNamespace('DDNProjectionData',api);
 export default api;

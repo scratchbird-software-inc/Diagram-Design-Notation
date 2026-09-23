@@ -1,0 +1,91 @@
+ddn "0.5";
+module "ddn.examples.distribution-charts";
+
+// Synthetic latency sample: 30 response-time observations across three
+// services. All data is synthetic; not a measurement of any real system.
+data latency {
+    object a1 "alpha #1" { kind: record; x_record: {"service": "alpha", "ms": 42, "unit": "ms"}; }
+    object a2 "alpha #2" { kind: record; x_record: {"service": "alpha", "ms": 45, "unit": "ms"}; }
+    object a3 "alpha #3" { kind: record; x_record: {"service": "alpha", "ms": 47, "unit": "ms"}; }
+    object a4 "alpha #4" { kind: record; x_record: {"service": "alpha", "ms": 48, "unit": "ms"}; }
+    object a5 "alpha #5" { kind: record; x_record: {"service": "alpha", "ms": 50, "unit": "ms"}; }
+    object a6 "alpha #6" { kind: record; x_record: {"service": "alpha", "ms": 51, "unit": "ms"}; }
+    object a7 "alpha #7" { kind: record; x_record: {"service": "alpha", "ms": 53, "unit": "ms"}; }
+    object a8 "alpha #8" { kind: record; x_record: {"service": "alpha", "ms": 55, "unit": "ms"}; }
+    object a9 "alpha #9" { kind: record; x_record: {"service": "alpha", "ms": 58, "unit": "ms"}; }
+    object a10 "alpha #10" { kind: record; x_record: {"service": "alpha", "ms": 96, "unit": "ms"}; }
+    object b1 "beta #1" { kind: record; x_record: {"service": "beta", "ms": 61, "unit": "ms"}; }
+    object b2 "beta #2" { kind: record; x_record: {"service": "beta", "ms": 63, "unit": "ms"}; }
+    object b3 "beta #3" { kind: record; x_record: {"service": "beta", "ms": 64, "unit": "ms"}; }
+    object b4 "beta #4" { kind: record; x_record: {"service": "beta", "ms": 66, "unit": "ms"}; }
+    object b5 "beta #5" { kind: record; x_record: {"service": "beta", "ms": 68, "unit": "ms"}; }
+    object b6 "beta #6" { kind: record; x_record: {"service": "beta", "ms": 69, "unit": "ms"}; }
+    object b7 "beta #7" { kind: record; x_record: {"service": "beta", "ms": 71, "unit": "ms"}; }
+    object b8 "beta #8" { kind: record; x_record: {"service": "beta", "ms": 74, "unit": "ms"}; }
+    object b9 "beta #9" { kind: record; x_record: {"service": "beta", "ms": 79, "unit": "ms"}; }
+    object b10 "beta #10" { kind: record; x_record: {"service": "beta", "ms": 85, "unit": "ms"}; }
+    object c1 "gamma #1" { kind: record; x_record: {"service": "gamma", "ms": 30, "unit": "ms"}; }
+    object c2 "gamma #2" { kind: record; x_record: {"service": "gamma", "ms": 33, "unit": "ms"}; }
+    object c3 "gamma #3" { kind: record; x_record: {"service": "gamma", "ms": 52, "unit": "ms"}; }
+    object c4 "gamma #4" { kind: record; x_record: {"service": "gamma", "ms": 55, "unit": "ms"}; }
+    object c5 "gamma #5" { kind: record; x_record: {"service": "gamma", "ms": 72, "unit": "ms"}; }
+    object c6 "gamma #6" { kind: record; x_record: {"service": "gamma", "ms": 90, "unit": "ms"}; }
+    object c7 "gamma #7" { kind: record; x_record: {"service": "gamma", "ms": 94, "unit": "ms"}; }
+    object c8 "gamma #8" { kind: record; x_record: {"service": "gamma", "ms": 118, "unit": "ms"}; }
+    object c9 "gamma #9" { kind: record; x_record: {"service": "gamma", "ms": 121, "unit": "ms"}; }
+    object c10 "gamma #10" { kind: record; x_record: {"service": "gamma", "ms": 150, "unit": "ms"}; }
+}
+
+view histogram "Response times / histogram" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.histogram@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:histogram; x:"x_record.ms"; x_type:number; bin_count:8; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view density "Response times / probability density" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.density@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:density; x:"x_record.ms"; x_type:number; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view qq "Response times / normal Q-Q" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.qq@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:qq; x:"x_record.ms"; x_type:number; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view quantiledot "Response times / quantile dotplot" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.quantiledot@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:quantiledot; x:"x_record.ms"; x_type:number; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view dotplot "Response times by service / dot plot" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.dotplot@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:dotplot; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view boxplot "Response times by service / box plot" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.boxplot@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:boxplot; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view violin "Response times by service / violin" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.violin@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:violin; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view beeswarm "Response times by service / beeswarm" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.beeswarm@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:beeswarm; x:"x_record.service"; y:"x_record.ms"; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view topk "Slowest services / top-K" {
+    data: [@latency];
+    projection { kind:chart; profile:"chart.topk@1"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:topk; x:"x_record.service"; y:"x_record.ms"; aggregate:mean; k:2; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}

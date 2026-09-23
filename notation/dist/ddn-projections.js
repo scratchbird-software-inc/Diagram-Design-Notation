@@ -237,6 +237,89 @@
       body+=lines(wrap(tick,plotW/pts.length-8*s,11),cx,bottom+25*s,11,400,'middle');
      }
      body+=text(left,H-15*s,'Source-bound candlestick · '+pts.length+' marks'+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · supplied data, not a financial calculation certificate.',11);
+    }else if(plan.mark==='histogram'){
+     const bins=plan.dist.bins,maxC=Math.max(1,...bins.map(b=>b.count)),min=plan.dist.min,max=plan.dist.max,span=max-min||1,fx=v=>left+(v-min)/span*plotW,fy=c=>bottom-c/maxC*plotH;
+     for(let j=0;j<=5;j++){const c=maxC*j/5,y=fy(c);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(c),11,400,'end');}
+     body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,'count',12,650);
+     bins.forEach((b,i)=>{const x=fx(b.x0),w=Math.max(1,fx(b.x1)-x-1),h=bottom-fy(b.count);
+      body+=group(b.sourceIds[0]||'bin:'+i,b.sourceIds,`<title>${esc(fmtNumber(b.x0)+' to '+fmtNumber(b.x1)+': '+b.count)}</title><rect class="ddn-histogram-bin" data-count="${b.count}" x="${f(x)}" y="${f(fy(b.count))}" width="${f(w)}" height="${f(h)}" fill="${colour(0)}" stroke="${t.surface}"/>`,{x,y:fy(b.count),w,h,value:b.count},pr.x);});
+     for(let j=0;j<=4;j++){const v=min+span*j/4;body+=text(fx(v),bottom+25*s,fmtNumber(v),11,400,'middle');}
+     body+=text(left,H-15*s,plan.dist.count+' observations · '+bins.length+' equal-width bins over ['+fmtNumber(min)+', '+fmtNumber(max)+']'+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · intervals are [lower, upper), the last bin includes the maximum.',11);
+    }else if(plan.mark==='density'){
+     const curve=plan.dist.curve,min=plan.dist.min,max=plan.dist.max,pad=3*plan.dist.bandwidth,span=max-min+2*pad,maxD=Math.max(...curve.map(c=>c[1])),fx=v=>left+(v-(min-pad))/span*plotW,fy=d=>bottom-d/maxD*plotH;
+     for(let j=0;j<=4;j++){const v=min-pad+span*j/4;body+=line(fx(v),top,fx(v),bottom)+text(fx(v),bottom+25*s,fmtNumber(v),11,400,'middle');}
+     body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,'density',12,650);
+     const d=curve.map((c,i)=>(i?'L':'M')+f(fx(c[0]))+' '+f(fy(c[1]))).join('');
+     body+=group(plan.sourceIds[0],plan.sourceIds,`<title>${esc('Gaussian KDE · bandwidth '+fmtNumber(plan.dist.bandwidth)+' · n='+plan.dist.count)}</title><path class="ddn-density-curve" data-bandwidth="${plan.dist.bandwidth}" d="${d}L${f(fx(curve.at(-1)[0]))} ${f(bottom)}L${f(fx(curve[0][0]))} ${f(bottom)}Z" fill="${colour(0)}" fill-opacity=".18" stroke="${colour(0)}" stroke-width="2.5"/>`,{x:left,y:top,w:plotW,h:plotH},pr.x);
+     body+=text(left,H-15*s,'Gaussian kernel density · Silverman bandwidth '+fmtNumber(plan.dist.bandwidth)+' · n='+plan.dist.count+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · fixed 81-point grid; area under the curve integrates to 1.',11);
+    }else if(plan.mark==='qq'){
+     const obs=plan.dist.observations,ts=obs.map(o=>o.t),vs=obs.map(o=>o.v),t0=Math.min(...ts),t1=Math.max(...ts),v0=Math.min(...vs),v1=Math.max(...vs),fx=v=>left+(v-t0)/(t1-t0||1)*plotW,fy=v=>bottom-(v-v0)/(v1-v0||1)*plotH;
+     body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,'sample quantile ('+(plan.unit||pr.x)+')',12,650)+text(right,H-42*s,'theoretical normal quantile',11,400,'end');
+     for(let j=0;j<=4;j++){const v=t0+(t1-t0)*j/4;body+=line(fx(v),top,fx(v),bottom)+text(fx(v),bottom+25*s,fmtNumber(v),11,400,'middle');}
+     for(let j=0;j<=4;j++){const v=v0+(v1-v0)*j/4;body+=line(left,fy(v),right,fy(v))+text(left-12*s,fy(v)+4*s,fmtNumber(v),11,400,'end');}
+     const L=plan.dist.line,slope=(L.v3-L.v1)/(L.t3-L.t1),ya=L.v1+slope*(t0-L.t1),yb=L.v1+slope*(t1-L.t1);
+     body+=`<path class="ddn-qq-reference" d="M${f(fx(t0))} ${f(fy(ya))}L${f(fx(t1))} ${f(fy(yb))}" stroke="${t.rule}" stroke-width="1.6" stroke-dasharray="6 4" fill="none"/>`;
+     for(const o of obs)body+=group(o.sourceIds[0],o.sourceIds,`<title>${esc('theoretical '+fmtNumber(o.t)+' · sample '+fmtNumber(o.v))}</title><circle class="ddn-qq-point" data-theoretical="${f(o.t)}" data-sample="${o.v}" cx="${f(fx(o.t))}" cy="${f(fy(o.v))}" r="${f(4*s)}" fill="${colour(0)}" fill-opacity=".82" stroke="${t.surface}"/>`,{x:fx(o.t)-4*s,y:fy(o.v)-4*s,w:8*s,h:8*s,theoretical:o.t,value:o.v},pr.x);
+     body+=text(left,H-15*s,'Normal Q-Q plot · n='+plan.dist.count+' · sample quantiles vs theoretical N(0,1) quantiles (Acklam inversion) · dashed reference through the first/third quartile pair · supplied data, not a normality certificate.',11);
+    }else if(plan.mark==='quantiledot'){
+     const dots=plan.dist.dots,min=plan.dist.min,max=plan.dist.max,span=max-min||1,fx=v=>left+(v-min)/span*plotW,r=7*s,rows=[];
+     for(const d of dots){const px=fx(d.value);let row=rows.findIndex(last=>px-last>=2.4*r);if(row<0){row=rows.length;rows.push(-Infinity);}rows[row]=px;d.px=px;d.row=row;}
+     for(let j=0;j<=4;j++){const v=min+span*j/4;body+=line(fx(v),top,fx(v),bottom)+text(fx(v),bottom+25*s,fmtNumber(v),11,400,'middle');}
+     body+=line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,plan.dist.quantiles+' quantiles of '+(plan.unit||pr.x),12,650);
+     dots.forEach((d,i)=>{const cy=bottom-r-d.row*2.4*r;body+=group(d.sourceIds[0]||'q:'+i,d.sourceIds,`<title>${esc('quantile '+(i+1)+'/'+plan.dist.quantiles+': '+fmtNumber(d.value))}</title><circle class="ddn-quantile-dot" data-value="${d.value}" cx="${f(d.px)}" cy="${f(cy)}" r="${f(r)}" fill="${colour(0)}" fill-opacity=".85" stroke="${t.surface}"/>`,{x:d.px-r,y:cy-r,w:2*r,h:2*r,value:d.value},pr.x);});
+     body+=text(left,H-15*s,plan.dist.quantiles+'-quantile dotplot of n='+plan.dist.count+' · each dot sits at the '+(100/plan.dist.quantiles)+'% slice boundary of the sorted sample · vertical stacking only avoids overlap; it encodes nothing.',11);
+    }else if(['dotplot','beeswarm'].includes(plan.mark)){
+     const cats=[];for(const pt of pts)if(!cats.some(v=>JSON.stringify(v)===JSON.stringify(pt.rawX)))cats.push(pt.rawX);
+     const N=cats.length,ys=pts.map(p=>p.y),lo=Math.min(...ys),hi0=Math.max(...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH,fx=i=>left+(i+.5)*plotW/N,r=Math.min(9*s,plotW/N/8);
+     for(let j=0;j<=5;j++){const v=lo+(hi-lo)*(j/5),y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
+     body+=line(left,top,left,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+     cats.forEach((c,i)=>{
+      const groupPts=pts.map((pt,idx)=>({pt,idx})).filter(o=>JSON.stringify(o.pt.rawX)===JSON.stringify(c));
+      groupPts.sort((a,b)=>a.pt.y-b.pt.y||a.idx-b.idx);
+      const lanes=new Map(),order=[0];for(let l=1;l<=24;l++){order.push(l,-l);}
+      for(const {pt} of groupPts){const py=fy(pt.y);let lane=0;
+       if(plan.mark==='beeswarm'){for(const L of order){const occ=lanes.get(L)||[];if(occ.every(v=>Math.abs(v-py)>=2.3*r)){lane=L;break;}}}
+       else {const tied=groupPts.filter(o=>Math.abs(o.pt.y-pt.y)<1e-12);const rank=tied.findIndex(o=>o.pt===pt);lane=rank-(tied.length-1)/2;}
+       if(!lanes.has(lane))lanes.set(lane,[]);lanes.get(lane).push(py);
+       const cx=fx(i)+lane*2.3*r;
+       body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(String(pt.rawX)+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><circle class="ddn-${plan.mark==='beeswarm'?'beeswarm':'dotplot'}-point" data-value="${pt.y}" cx="${f(cx)}" cy="${f(py)}" r="${f(r)}" fill="${colour(i)}" fill-opacity=".85" stroke="${t.surface}"/>`,{x:cx-r,y:py-r,w:2*r,h:2*r,value:pt.y,dataX:pt.rawX},pr.y);}
+      body+=lines(wrap(String(c),plotW/N-8*s,11),fx(i),bottom+25*s,11,400,'middle');
+     });
+     body+=text(left,H-15*s,(plan.mark==='beeswarm'?'Beeswarm: one dot per record, deterministic non-overlap lanes widen the swarm':'Dot plot: one dot per record, tied values dodge sideways')+' · '+pts.length+' marks'+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · horizontal displacement encodes nothing.',11);
+    }else if(plan.mark==='boxplot'){
+     const groups=plan.dist.groups,N=groups.length,allY=groups.flatMap(g=>[g.low,g.high,...g.outliers.map(o=>o.y)]),lo=Math.min(...allY),hi0=Math.max(...allY),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH,fx=i=>left+(i+.5)*plotW/N,bw=Math.min(70*s,plotW/N*.45);
+     for(let j=0;j<=5;j++){const v=lo+(hi-lo)*(j/5),y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
+     body+=line(left,top,left,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+     groups.forEach((g,i)=>{const cx=fx(i),col=colour(i);
+      let content=`<title>${esc(String(g.cat)+': median '+fmtNumber(g.median)+' · IQR ['+fmtNumber(g.q1)+', '+fmtNumber(g.q3)+'] · whiskers ['+fmtNumber(g.low)+', '+fmtNumber(g.high)+'] · n='+g.count)}</title>`;
+      content+=`<path class="ddn-boxplot-whisker" d="M${f(cx)} ${f(fy(g.high))}L${f(cx)} ${f(fy(g.q3))}M${f(cx)} ${f(fy(g.q1))}L${f(cx)} ${f(fy(g.low))}M${f(cx-bw/3)} ${f(fy(g.high))}L${f(cx+bw/3)} ${f(fy(g.high))}M${f(cx-bw/3)} ${f(fy(g.low))}L${f(cx+bw/3)} ${f(fy(g.low))}" stroke="${col}" stroke-width="1.6" fill="none"/>`;
+      content+=`<rect class="ddn-boxplot-box" data-q1="${g.q1}" data-median="${g.median}" data-q3="${g.q3}" x="${f(cx-bw/2)}" y="${f(fy(g.q3))}" width="${f(bw)}" height="${f(Math.max(1,fy(g.q1)-fy(g.q3)))}" fill="${col}" fill-opacity=".22" stroke="${col}" stroke-width="2"/>`;
+      content+=`<path class="ddn-boxplot-median" d="M${f(cx-bw/2)} ${f(fy(g.median))}L${f(cx+bw/2)} ${f(fy(g.median))}" stroke="${col}" stroke-width="3" fill="none"/>`;
+      body+=group(g.sourceIds[0],g.sourceIds,content,{x:cx-bw/2,y:fy(g.high),w:bw,h:fy(g.low)-fy(g.high)},pr.y);
+      for(const o of g.outliers){const cy=fy(o.y);body+=group(o.sourceIds[0],o.sourceIds,`<title>${esc(String(g.cat)+' outlier: '+fmtNumber(o.y))}</title><circle class="ddn-boxplot-outlier" data-value="${o.y}" cx="${f(cx)}" cy="${f(cy)}" r="${f(4.5*s)}" fill="${t.surface}" stroke="${col}" stroke-width="2"/>`,{x:cx-5*s,y:cy-5*s,w:10*s,h:10*s,value:o.y},pr.y);}
+      body+=lines(wrap(String(g.cat)+' (n='+g.count+')',plotW/N-8*s,11),cx,bottom+25*s,11,400,'middle');});
+     body+=text(left,H-15*s,'Box plot · quartiles by linear interpolation (R-7) · Tukey 1.5×IQR whiskers · '+N+' categories · outliers beyond the fences are individual records, never dropped silently.',11);
+    }else if(plan.mark==='violin'){
+     const groups=plan.dist.groups,N=groups.length,maxD=Math.max(...groups.flatMap(g=>g.curve.map(c=>c[1]))),fx=i=>left+(i+.5)*plotW/N,half=plotW/N*.42;
+     groups.forEach((g,i)=>{g.y0=Math.min(...g.curve.map(c=>c[0]));g.y1=Math.max(...g.curve.map(c=>c[0]));});
+     const lo=Math.min(...groups.map(g=>g.y0)),hi0=Math.max(...groups.map(g=>g.y1)),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;
+     for(let j=0;j<=5;j++){const v=lo+(hi-lo)*(j/5),y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
+     body+=line(left,top,left,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+     groups.forEach((g,i)=>{const cx=fx(i),col=colour(i),w=d=>d/maxD*half;
+      const d=g.curve.map((c,j)=>(j?'L':'M')+f(cx+w(c[1]))+' '+f(fy(c[0]))).join('')+g.curve.slice().reverse().map((c,j)=>'L'+f(cx-w(c[1]))+' '+f(fy(c[0]))).join('')+'Z';
+      let content=`<title>${esc(String(g.cat)+': Gaussian KDE · bandwidth '+fmtNumber(g.bandwidth)+' · median '+fmtNumber(g.median)+' · n='+g.count)}</title><path class="ddn-violin-shape" data-bandwidth="${g.bandwidth}" d="${d}" fill="${col}" fill-opacity=".2" stroke="${col}" stroke-width="2"/>`;
+      content+=`<rect class="ddn-violin-iqr" x="${f(cx-2.5*s)}" y="${f(fy(g.q3))}" width="${f(5*s)}" height="${f(Math.max(1,fy(g.q1)-fy(g.q3)))}" fill="${col}"/><circle class="ddn-violin-median" data-median="${g.median}" cx="${f(cx)}" cy="${f(fy(g.median))}" r="${f(3.5*s)}" fill="${t.surface}" stroke="${col}" stroke-width="2"/>`;
+      body+=group(g.sourceIds[0],g.sourceIds,content,{x:cx-half,y:fy(g.y1),w:2*half,h:fy(g.y0)-fy(g.y1)},pr.y);
+      body+=lines(wrap(String(g.cat)+' (n='+g.count+')',plotW/N-8*s,11),cx,bottom+25*s,11,400,'middle');});
+     body+=text(left,H-15*s,'Violin · per-category Gaussian KDE, Silverman bandwidth, shared density scale across categories · inner bar is the IQR, dot the median · '+N+' categories.',11);
+    }else if(plan.mark==='topk'){
+     const info=plan.topk,maxY=Math.max(1,...pts.map(p=>p.y)),fy=n=>bottom-n/maxY*plotH,fx=i=>left+(i+.5)*plotW/pts.length,bw=Math.max(2,plotW/pts.length*.65);
+     for(let j=0;j<=5;j++){const v=maxY*j/5,y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
+     body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+     pts.forEach((pt,i)=>{const x=fx(i),h=bottom-fy(pt.y),col=pt.others?t.rule:colour(i);
+      body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(String(pt.rawX)+': '+fmtNumber(pt.y)+' '+plan.unit+(pt.others?' · merged '+info.merged+' remaining categories':''))}</title><rect class="ddn-topk-bar"${pt.others?' data-others="true"':''} data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(fy(pt.y))}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`,{x:x-bw/2,y:fy(pt.y),w:bw,h,value:pt.y,dataX:pt.rawX},pr.y);
+      body+=lines(wrap(String(pt.rawX),plotW/pts.length-8*s,11),x,bottom+25*s,11,400,'middle');});
+     body+=text(left,H-15*s,'Top '+info.kept+' of '+info.total+' categories by value'+(info.merged?' · '+info.merged+' remaining categories summed into Others':'')+(info.dropped?' · '+info.dropped+' categories excluded by others:false':'')+' · ranking is explicit and deterministic (value desc, name asc, declaration order).',11);
     }else {
      const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
      if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;
