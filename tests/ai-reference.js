@@ -10,6 +10,11 @@ const root = path.resolve(__dirname, '..');
 const file = path.join(root, 'AI-REFERENCE.md');
 const cli = path.join(root, 'notation', 'cli', 'cli.js');
 
+if (!fs.existsSync(file)) {
+  console.log('ai-reference: skipped: internal file absent (AI-REFERENCE.md is gitignored; drop the internal copy at the repo root to enable this gate)');
+  process.exit(0);
+}
+
 const lines = fs.readFileSync(file, 'utf8').split('\n');
 const blocks = [];
 for (let i = 0; i < lines.length; i++) {

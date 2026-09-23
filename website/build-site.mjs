@@ -268,7 +268,6 @@ addMdTree(path.join(REPO, 'standard/specification'), 'standard/specification', '
 addMdTree(path.join(REPO, 'standard/governance'), 'standard/governance', 'standard');
 addMdTree(path.join(REPO, 'notation/studio/docs'), 'tools/studio/docs', 'tools');
 mdJobs.push({ absSource: path.join(REPO, 'website/examples/README.md'), outRel: 'examples/README.html', active: 'examples' });
-mdJobs.push({ absSource: path.join(REPO, 'AI-REFERENCE.md'), outRel: 'docs/ai-reference.html', active: 'docs' });
 
 const mdHtmlMap = new Map(mdJobs.map(j => [j.absSource, j.outRel]));
 for (const j of mdJobs) {
@@ -428,8 +427,7 @@ writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
   '<h1 class="page-title">Documentation</h1>\n' +
   '<p class="lede">Developer documentation for embedding, the workspace API, styling hooks, data refresh, and authoring .ddn sources — rendered from the Markdown in <code>website/docs/</code>.</p>\n' +
   '<h2>Developer guide</h2>\n' + docList(path.join(REPO, 'website/docs/developers'), 'docs/developers', 'developers/') +
-  '<h2>Engineering notes</h2>\n' + docList(path.join(REPO, 'website/docs/notes'), 'docs/notes', 'notes/') +
-  '<h2>AI authoring</h2>\n<ul>\n  <li><a href="ai-reference.html">DDN — AI Authoring Reference</a> — single-file language reference designed to be handed to an AI so it can author .ddn sources (rendered from the repo-root <code>AI-REFERENCE.md</code>)</li>\n</ul>'));
+  '<h2>Engineering notes</h2>\n' + docList(path.join(REPO, 'website/docs/notes'), 'docs/notes', 'notes/')));
 
 // Standard landing.
 writeOut('standard/index.html', page('../', 'standard', 'The DDN standard — DDN',

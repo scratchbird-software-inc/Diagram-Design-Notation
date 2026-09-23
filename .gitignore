@@ -19,6 +19,9 @@ notation/tests/use-cases-report.json
 notation/tests/validation/
 /release/
 
+# Internal-only AI authoring reference (not part of the public repo)
+AI-REFERENCE.md
+
 # Generated render/build output (notation/dist is deliberately committed)
 rendered/
 site/

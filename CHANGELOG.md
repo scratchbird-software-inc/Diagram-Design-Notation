@@ -6,6 +6,7 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- `AI-REFERENCE.md` is now internal-only: gitignored and removed from the public repo/website; `tests/ai-reference.js` skips gracefully when it is absent.
 - One-click "open in viewer / designer" from the examples browser (B1-023):
   every `.ddn` row on the examples page now links the end-user viewer via a
   `?src=<relative path>` deep link; single-file examples (no `import "…"`
