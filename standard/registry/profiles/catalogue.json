@@ -3040,6 +3040,81 @@
       "unsupported": [
         "percentage-of-total view"
       ]
+    },
+    {
+      "id": "chart.tidytree@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Tree diagram"
+      ],
+      "scope": "Tidy tree of a dotted-path hierarchy (shared treemap paths); leaves take consecutive slots in declaration order, parents centre over children.",
+      "validation": [
+        "categorical dotted paths, at most 3 levels (DDN-PJ030)",
+        "nonnegative finite values (DDN-PJ136, DDN-PJ032)",
+        "no aggregation or series (DDN-PJ030, DDN-PJ031)"
+      ],
+      "unsupported": [
+        "edge lengths weighted by value",
+        "collapsible subtrees"
+      ]
+    },
+    {
+      "id": "chart.radialtree@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Radial tree"
+      ],
+      "scope": "Tidy tree mapped to polar coordinates: leaf slots become equal angles, depth becomes radius.",
+      "validation": [
+        "as chart.tidytree@1"
+      ],
+      "unsupported": [
+        "node-link edge bundling"
+      ]
+    },
+    {
+      "id": "chart.circlepack@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Circle packing"
+      ],
+      "scope": "Nested circles; leaf area encodes value; deterministic descending-size ring packing of siblings; enclosing circles are padded approximations.",
+      "validation": [
+        "as chart.tidytree@1"
+      ],
+      "unsupported": [
+        "minimal (optimal) enclosing circles"
+      ]
+    },
+    {
+      "id": "chart.sunburst@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Sunburst"
+      ],
+      "scope": "Radial partition: angle encodes value share within each parent, rings are hierarchy depth; zero-value leaves take no angle.",
+      "validation": [
+        "as chart.tidytree@1"
+      ],
+      "unsupported": [
+        "icicle variant",
+        "percentage labels"
+      ]
+    },
+    {
+      "id": "chart.packedbubble@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Packed bubble chart"
+      ],
+      "scope": "Bubbles sized by value, grouped by first path segment in deterministic ring packing; group position encodes nothing.",
+      "validation": [
+        "as chart.tidytree@1"
+      ],
+      "unsupported": [
+        "force-relaxed bubble layouts",
+        "collision animation"
+      ]
     }
   ],
   "shapes": [

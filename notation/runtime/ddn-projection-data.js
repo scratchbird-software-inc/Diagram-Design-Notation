@@ -23,7 +23,7 @@ function plan(ir,ErrorClass=Error){
  const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
  if(kind==='fishbone')return Quality.fishbone(ir,ErrorClass,get);
  if(kind==='decision')return Quality.decision(ir,ErrorClass,get);
- if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
+ if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
  if(kind==='graph'&&p.profile==='state.flat@1')return{kind,profile:p.profile,lifecycle:Quality.lifecycle(ir,ErrorClass,get)};
  if(kind==='graph'&&['inputs','analysis_budget','traces'].some(k=>p[k]!==undefined))fail('DDN-Q005','Lifecycle properties require state.flat@1');
  if(kind==='graph'&&p.profile==='pert.cpm@1')return{kind,profile:p.profile,cpm:Quality.cpm(ir,ErrorClass)};
@@ -129,8 +129,8 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),...(venn?{venn}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'];
-  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk'].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk');
+  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'],TREEMARKS=['tidytree','radialtree','circlepack','sunburst','packedbubble'];
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk',...TREEMARKS].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
@@ -141,6 +141,11 @@ function plan(ir,ErrorClass=Error){
   if(p.mark==='treemap'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Treemap paths require categorical x (x_type must be category)');
   if(p.mark==='treemap'&&p.series!==undefined)fail('DDN-PJ030','Treemap tiles encode one value per record; do not set series');
   if(p.mark==='treemap'&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Treemap tiles encode supplied values; aggregation is not available');
+  if(TREEMARKS.includes(p.mark)){
+   if((p.x_type||'category')!=='category')fail('DDN-PJ030',p.mark+' paths require categorical x (x_type must be category)');
+   if(p.series!==undefined)fail('DDN-PJ030',p.mark+' encodes one value per record; do not set series');
+   if(p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031',p.mark+' leaves encode supplied values; aggregation is not available');
+  }
   if(p.mark==='sankey'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Sankey sources require categorical x (x_type must be category)');
   if(p.mark==='sankey'&&p.series!==undefined)fail('DDN-PJ030','Sankey encodes flows between endpoints; do not set series');
   if(p.mark==='sankey'&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Sankey flows encode supplied values; aggregation is not available');
@@ -189,6 +194,7 @@ function plan(ir,ErrorClass=Error){
   }
   if(!points.length)fail('DDN-PJ012','No chart points remain');
   if(p.mark==='treemap'&&points.some(pt=>pt.y<0))fail('DDN-PJ078','Treemap tile values must be nonnegative numbers; filter out or explicitly skip negative records');
+  if(TREEMARKS.includes(p.mark)&&points.some(pt=>pt.y<0))fail('DDN-PJ136',p.mark+' hierarchy values must be nonnegative numbers; filter out or explicitly skip negative records');
   if(p.mark==='gauge'&&points.length!==1)fail('DDN-PJ074','Gauge requires exactly one record after filtering (the KPI); supply one record or filter to one');
   if(p.mark==='gauge'){if(points[0].y<0||points[0].y>100)fail('DDN-PJ075','Gauge value must be a finite number in 0..100');if(p.target!==undefined&&(typeof p.target!=='number'||!Number.isFinite(p.target)||p.target<0||p.target>100))fail('DDN-PJ075','Gauge target must be a finite number in 0..100');}
   let funnelCategories;
@@ -205,17 +211,9 @@ function plan(ir,ErrorClass=Error){
    points=[...groups.values()].map(v=>({x:v[0].x,rawX:v[0].rawX,size:1,y:p.aggregate==='count'?v.length:p.aggregate==='sum'?v.reduce((s,p)=>s+p.y,0):p.aggregate==='mean'?v.reduce((s,p)=>s+p.y,0)/v.length:p.aggregate==='min'?Math.min(...v.map(p=>p.y)):Math.max(...v.map(p=>p.y)),sourceIds:v.flatMap(p=>p.sourceIds)}));
   }else if(p.aggregate==='count')points=points.map(p=>({...p,y:1}));
   if(points.some(p=>!Number.isFinite(p.y)))fail('DDN-PJ032','Aggregate overflow');
-  let treemapTiles;
-  if(p.mark==='treemap'){
-   const roots=[];for(const pt of points){
-    const segs=String(pt.rawX).split('.');if(segs.length>3||segs.some(sg=>!sg.trim()))fail('DDN-PJ030','Treemap paths have at most 3 levels');
-    let siblings=roots,path='',parent=null;
-    for(let d=0;d<segs.length-1;d++){path=path?path+'.'+segs[d]:segs[d];let g=siblings.find(n=>!n.leaf&&n.path===path);if(!g){g={name:segs[d],path,value:0,children:[],leaf:false,sourceIds:[]};siblings.push(g);}parent=g;siblings=g.children;}
-    const leaf={name:segs[segs.length-1],path:path?path+'.'+segs[segs.length-1]:segs[0],value:pt.y,children:[],leaf:true,sourceIds:pt.sourceIds};
-    (parent?parent.children:roots).push(leaf);
-   }
-   const sum=n=>{if(!n.leaf){n.value=n.children.reduce((s,c)=>s+sum(c),0);n.sourceIds=n.children.flatMap(c=>c.sourceIds);}return n.value;};
-   roots.forEach(sum);treemapTiles=roots;
+  let treemapTiles,hierTree;
+  if(p.mark==='treemap'||TREEMARKS.includes(p.mark)){
+   const roots=hierarchy(points,fail,p.mark);treemapTiles=p.mark==='treemap'?roots:undefined;if(TREEMARKS.includes(p.mark))hierTree={roots,maxDepth:Math.max(...roots.map(n=>depth(n)))};
   }
   let sankeyFlow;
   if(p.mark==='sankey'){
@@ -293,7 +291,7 @@ function plan(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return{kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
@@ -326,6 +324,20 @@ function plan(ir,ErrorClass=Error){
  }
 }
 function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}
+/* Dotted-path hierarchy (shared by treemap and the B1-024 tree marks). At most 3 levels; internal values are child sums; provenance unions upward. */
+function hierarchy(points,fail,mark){
+ const roots=[];
+ for(const pt of points){
+  const segs=String(pt.rawX).split('.');if(segs.length>3||segs.some(sg=>!sg.trim()))fail('DDN-PJ030',(mark==='treemap'?'Treemap':'Hierarchy')+' paths have at most 3 levels');
+  let siblings=roots,path='',parent=null;
+  for(let d=0;d<segs.length-1;d++){path=path?path+'.'+segs[d]:segs[d];let g=siblings.find(n=>!n.leaf&&n.path===path);if(!g){g={name:segs[d],path,value:0,children:[],leaf:false,sourceIds:[]};siblings.push(g);}parent=g;siblings=g.children;}
+  const leaf={name:segs[segs.length-1],path:path?path+'.'+segs[segs.length-1]:segs[0],value:pt.y,children:[],leaf:true,sourceIds:pt.sourceIds};
+  (parent?parent.children:roots).push(leaf);
+ }
+ const sum=n=>{if(!n.leaf){n.value=n.children.reduce((s,c)=>s+sum(c),0);n.sourceIds=n.children.flatMap(c=>c.sourceIds);}return n.value;};
+ roots.forEach(sum);return roots;
+}
+function depth(n){return n.leaf?1:1+Math.max(...n.children.map(depth));}
 /* Sample quantile, linear interpolation (R type 7). Input must be sorted ascending. */
 function quantile(sorted,q){const n=sorted.length;if(!n)return NaN;const h=(n-1)*q,i=Math.floor(h),j=Math.min(n-1,i+1);return sorted[i]+(h-i)*(sorted[j]-sorted[i]);}
 /* Standard normal quantile function (Acklam's rational approximation, max |err| 1.15e-9). Deterministic. */

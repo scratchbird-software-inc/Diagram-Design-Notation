@@ -45,6 +45,23 @@
   const Text=namespace('DDNText');
   const Palette=namespace('DDNPalette');
   const esc=R.esc,f=n=>Number(n.toFixed(3)),q=D.quantity,clone=x=>JSON.parse(JSON.stringify(x));
+  /* Deterministic sibling ring packing (B1-024 circlepack/packedbubble): descending radii on a
+   * ring whose radius grows until angular gaps satisfy non-overlap; parent circle encloses the ring. */
+  function ringPack(node){
+   const cs=node.children;
+   if(cs.length===1){cs[0].px=0;cs[0].py=0;node.r=cs[0].r*1.15+1e-4;return;}
+   const sorted=cs.map((c,i)=>({c,i})).sort((a,b)=>b.c.r-a.c.r||a.i-b.i).map(o=>o.c);
+   let R=sorted.reduce((s,c)=>s+2*c.r,0)/(2*Math.PI)||1e-4;
+   const half=(a,b)=>2*Math.asin(Math.min(1,(a+b)/(2*R)));
+   for(let iter=0;iter<200;iter++){let need=0;for(let i=0;i<sorted.length;i++)need+=half(sorted[i].r,sorted[(i+1)%sorted.length].r);if(need<=2*Math.PI)break;R*=1.05;}
+   let angle=0;
+   for(let i=0;i<sorted.length;i++){
+    angle+=half(sorted[i].r,sorted[(i-1+sorted.length)%sorted.length].r)/2+ (i?half(sorted[i-1].r,sorted[i].r)/2:0);
+    sorted[i].px=Math.cos(angle)*R;sorted[i].py=Math.sin(angle)*R;
+    angle+=half(sorted[i].r,sorted[(i+1)%sorted.length].r)/2;
+   }
+   node.r=Math.max(...sorted.map(c=>Math.hypot(c.px,c.py)+c.r))*1.02+1e-4;
+  }
   function chen(ir,reg,glyphs,options){
    const projected=clone(ir),selected=new Set(ir.view.selected),nodes=ir.elements.filter(n=>selected.has(n.id)),edges=ir.relations.filter(r=>ir.view.relations.includes(r.id));
    if(nodes.some(n=>n.kind!=='entity')||edges.some(r=>!['assoc','ref'].includes(r.kind)||r.from.member||r.to.member))throw new D.DDNError('DDN-PJ050','Chen subset requires entity objects and binary object-level assoc/ref relationships');
@@ -320,6 +337,72 @@
       body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(String(pt.rawX)+': '+fmtNumber(pt.y)+' '+plan.unit+(pt.others?' · merged '+info.merged+' remaining categories':''))}</title><rect class="ddn-topk-bar"${pt.others?' data-others="true"':''} data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(fy(pt.y))}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`,{x:x-bw/2,y:fy(pt.y),w:bw,h,value:pt.y,dataX:pt.rawX},pr.y);
       body+=lines(wrap(String(pt.rawX),plotW/pts.length-8*s,11),x,bottom+25*s,11,400,'middle');});
      body+=text(left,H-15*s,'Top '+info.kept+' of '+info.total+' categories by value'+(info.merged?' · '+info.merged+' remaining categories summed into Others':'')+(info.dropped?' · '+info.dropped+' categories excluded by others:false':'')+' · ranking is explicit and deterministic (value desc, name asc, declaration order).',11);
+    }else if(plan.mark==='tidytree'||plan.mark==='radialtree'){
+     const roots=plan.tree.roots,maxD=plan.tree.maxDepth;let slots=0;
+     const layout=(n,d)=>{n.depth=d;if(n.leaf)n.lx=slots++;else {n.children.forEach(c=>layout(c,d+1));n.lx=n.children.reduce((s,c)=>s+c.lx,0)/n.children.length;}};
+     roots.forEach(n=>layout(n,0));slots=Math.max(1,slots);
+     const radial=plan.mark==='radialtree',cx=left+plotW/2,cy=top+plotH/2,RAD=Math.max(50*s,Math.min(plotW,plotH)/2-60*s);
+     const fx=n=>left+(n.lx+.5)/slots*plotW,fy=n=>top+(maxD===1?plotH/2:n.depth/(maxD-1)*plotH);
+     const pt=n=>{if(!radial)return [fx(n),fy(n)];const a=-Math.PI/2+(n.lx+.5)/slots*2*Math.PI,r=maxD===1?0:(n.depth+1)/maxD*RAD;return [cx+Math.cos(a)*r,cy+Math.sin(a)*r];};
+     const walk=(n,par)=>{const[x,y]=pt(n);
+      if(par){const[px0,py0]=pt(par);body+=`<path class="ddn-tree-link" d="M${f(px0)} ${f(py0)}L${f(x)} ${f(y)}" stroke="${t.rule}" stroke-width="1.4" fill="none"/>`;}
+      let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title><circle class="ddn-tree-node" data-path="${esc(n.path)}" data-depth="${n.depth}" cx="${f(x)}" cy="${f(y)}" r="${f(n.leaf?6*s:8*s)}" fill="${n.leaf?colour(n.lx):t.ink}"${n.leaf?' stroke="'+t.surface+'"':''}/>`;
+      const label=String(n.name),anchor=radial?(x<cx-2?'end':x>cx+2?'start':'middle'):'middle',dy=radial?4*s:-14*s;
+      content+=text(x,y+dy,label,11,n.leaf?400:650,anchor);
+      body+=group(n.sourceIds[0]||n.path,n.sourceIds,content,{x:x-9*s,y:y-9*s,w:18*s,h:18*s,path:n.path,depth:n.depth,value:n.value},pr.x);
+      n.children.forEach(c=>walk(c,n));};
+     roots.forEach(n=>walk(n,null));
+     body+=text(left,H-15*s,(radial?'Radial tidy tree':'Tidy tree')+' · '+slots+' leaf slots · depth '+maxD+' · parents centred over children in declaration order · area-independent: positions encode structure only, values in tooltips.',11);
+    }else if(plan.mark==='circlepack'){
+     const roots=plan.tree.roots;
+     const scale=Math.sqrt(pts.reduce((s,p)=>s+p.y,0))||1;
+     const pack=n=>{n.px=0;n.py=0;if(n.leaf){n.r=Math.sqrt(n.value)/scale;return;}
+      n.children.forEach(pack);ringPack(n);};
+     roots.forEach(pack);
+     const totalR=roots.reduce((s,n)=>s+n.r,0)+8e-3*roots.length,gap=totalR*.04,k=Math.min(plotW/(2*totalR+gap*(roots.length-1)),plotH/(2*Math.max(...roots.map(n=>n.r))));
+     let ox=left+ (plotW-k*(2*totalR+gap*(roots.length-1)))/2;
+     const cy=top+plotH/2;
+     roots.forEach((n,gi)=>{const base=ox+n.r*k;ox+=(2*n.r+gap)*k;
+      const draw=(m,dx,dy,d)=>{const x=dx+m.px*k,y=dy+m.py*k,r=m.r*k;
+       let content=`<title>${esc(m.path+': '+fmtNumber(m.value)+' '+plan.unit)}</title><circle class="ddn-circlepack-${m.leaf?'leaf':'group'}" data-path="${esc(m.path)}" cx="${f(x)}" cy="${f(y)}" r="${f(Math.max(.5,r))}" fill="${m.leaf?colour(d):'none'}"${m.leaf?` fill-opacity=".8" stroke="${t.surface}"`:` stroke="${t.rule}"`} stroke-width="1.2"/>`;
+       if(m.leaf&&r>16*s){const fit=wrap(String(m.name),2*r*.8,11);if(fit.length*13<=2*r*.8)content+=lines(fit,x,y+3*s,11,400,'middle');}
+       body+=group(m.sourceIds[0]||m.path,m.sourceIds,content,{x:x-r,y:y-r,w:2*r,h:2*r,path:m.path,value:m.value},pr.x);
+       m.children.forEach((c,i)=>draw(c,x,y,d+i));};
+      draw(n,base,cy,gi);});
+     body+=text(left,H-15*s,'Circle packing · leaf area encodes value · deterministic ring packing of siblings (size order), enclosing circles are padded approximations, not minimal · '+pts.length+' leaves.',11);
+    }else if(plan.mark==='sunburst'){
+     const roots=plan.tree.roots,maxD=plan.tree.maxDepth,cx=left+plotW/2,cy=top+plotH/2,RAD=Math.max(60*s,Math.min(plotW,plotH)/2-40*s),ring=RAD/maxD;
+     const arc=(a0,a1,r0,r1)=>{const p=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r],[x0,y0]=p(a0,r1),[x1,y1]=p(a1,r1),[x2,y2]=p(a1,r0),[x3,y3]=p(a0,r0),lg=a1-a0>Math.PI?1:0;
+      return `M${f(x0)} ${f(y0)}A${f(r1)} ${f(r1)} 0 ${lg} 1 ${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}A${f(r0)} ${f(r0)} 0 ${lg} 0 ${f(x3)} ${f(y3)}Z`;};
+     const total=roots.reduce((s,n)=>s+n.value,0)||1;let angle=-Math.PI/2;let ci=0;
+     const draw=(n,a0,a1,d,colIx)=>{
+      if(a1-a0<=1e-9)return;
+      const r0=d*ring,r1=(d+1)*ring,mid=(a0+a1)/2;
+      let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title><path class="ddn-sunburst-arc" data-path="${esc(n.path)}" data-depth="${d}" data-value="${n.value}" d="${arc(a0,a1,Math.max(0,r0),r1)}" fill="${colour(colIx)}" fill-opacity="${n.leaf?'.85':'.45'}" stroke="${t.surface}" stroke-width="1.5"/>`;
+      const label=String(n.name),rm=(r0+r1)/2,lx=cx+Math.cos(mid)*rm,ly=cy+Math.sin(mid)*rm;
+      if((a1-a0)*rm>Text.measure(label,11*s,p.style.font,400).width+10*s)content+=text(lx,ly+3*s,label,11,400,'middle');
+      body+=group(n.sourceIds[0]||n.path,n.sourceIds,content,{x:cx-r1,y:cy-r1,w:2*r1,h:2*r1,path:n.path,depth:d,value:n.value},pr.x);
+      const sum=n.children.reduce((s,c)=>s+c.value,0)||1,span=a1-a0,share=n.value?span:0;let a=a0;
+      n.children.forEach((c,i)=>{const w=share*(c.value/sum);draw(c,a,a+w,d+1,colIx+i);a+=w;});};
+     roots.forEach(n=>{const w=2*Math.PI*(n.value/total);draw(n,angle,angle+w,0,ci);ci+=n.children.length+1;angle+=w;});
+     body+=text(left,H-15*s,'Sunburst · angle encodes value share within each parent, rings are hierarchy depth · declaration-order partition · zero-value leaves take no angle.',11);
+    }else if(plan.mark==='packedbubble'){
+     const groups=plan.tree.roots,scale=Math.sqrt(Math.max(...pts.map(p=>p.y)))||1;
+     const packGroup=g=>{const leaves=[];const collect=n=>n.leaf?leaves.push(n):n.children.forEach(collect);collect(g);
+      leaves.forEach(l=>{l.r=Math.sqrt(l.value)/scale;l.px=0;l.py=0;});
+      if(leaves.length>1){const proxy={children:leaves};ringPack(proxy);g.r=proxy.r;}
+      else g.r=leaves[0].r*1.2;
+      g.leaves=leaves;};
+     groups.forEach(packGroup);
+     const gap=30*s,totalW=groups.reduce((s,g)=>s+2*g.r,0)+gap/ (1) *(groups.length-1),k=Math.min(plotW/totalW,plotH/(2*Math.max(...groups.map(g=>g.r))));
+     let ox=left+(plotW-totalW*k)/2;const cy=top+plotH/2;
+     groups.forEach((g,gi)=>{const gx=ox+g.r*k;ox+=2*g.r*k+gap*k;
+      g.leaves.forEach((l,i)=>{const x=gx+l.px*k,y=cy+l.py*k,r=Math.max(2,l.r*k);
+       let content=`<title>${esc(l.path+': '+fmtNumber(l.value)+' '+plan.unit)}</title><circle class="ddn-bubble" data-path="${esc(l.path)}" data-group="${esc(g.name)}" data-value="${l.value}" cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${colour(gi)}" fill-opacity=".78" stroke="${t.surface}" stroke-width="1.5"/>`;
+       if(r>17*s)content+=lines(wrap(String(l.name),2*r*.8,11),x,y+3*s,11,400,'middle');
+       body+=group(l.sourceIds[0],l.sourceIds,content,{x:x-r,y:y-r,w:2*r,h:2*r,path:l.path,value:l.value},pr.y);});
+      body+=text(gx,cy+(g.r*k)+22*s,String(g.name)+' · '+fmtNumber(g.value)+' '+plan.unit,11,650,'middle');});
+     body+=text(left,H-15*s,'Packed bubbles · bubble area encodes value · bubbles grouped by first path segment in deterministic ring packing · group position encodes nothing.',11);
     }else {
      const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
      if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;

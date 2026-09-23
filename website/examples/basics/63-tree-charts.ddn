@@ -1,0 +1,46 @@
+ddn "0.5";
+module "ddn.examples.tree-charts";
+
+// Synthetic product-catalogue hierarchy: region.family.item dotted paths with
+// quarterly sales values. All data is synthetic.
+data sales {
+    object n1 "North.Hardware.Tools" { kind: record; x_record: {"path": "North.Hardware.Tools", "sales": 120, "unit": "kEUR"}; }
+    object n2 "North.Hardware.Parts" { kind: record; x_record: {"path": "North.Hardware.Parts", "sales": 80, "unit": "kEUR"}; }
+    object n3 "North.Software.Licenses" { kind: record; x_record: {"path": "North.Software.Licenses", "sales": 150, "unit": "kEUR"}; }
+    object n4 "North.Software.Support" { kind: record; x_record: {"path": "North.Software.Support", "sales": 60, "unit": "kEUR"}; }
+    object s1 "South.Hardware.Tools" { kind: record; x_record: {"path": "South.Hardware.Tools", "sales": 90, "unit": "kEUR"}; }
+    object s2 "South.Hardware.Parts" { kind: record; x_record: {"path": "South.Hardware.Parts", "sales": 45, "unit": "kEUR"}; }
+    object s3 "South.Software.Licenses" { kind: record; x_record: {"path": "South.Software.Licenses", "sales": 110, "unit": "kEUR"}; }
+    object s4 "South.Software.Support" { kind: record; x_record: {"path": "South.Software.Support", "sales": 35, "unit": "kEUR"}; }
+    object s5 "South.Services" { kind: record; x_record: {"path": "South.Services", "sales": 70, "unit": "kEUR"}; }
+}
+
+view tidytree "Sales hierarchy / tidy tree" {
+    data: [@sales];
+    projection { kind:chart; profile:"chart.tidytree@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:tidytree; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view radialtree "Sales hierarchy / radial tree" {
+    data: [@sales];
+    projection { kind:chart; profile:"chart.radialtree@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:radialtree; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view circlepack "Sales hierarchy / circle packing" {
+    data: [@sales];
+    projection { kind:chart; profile:"chart.circlepack@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:circlepack; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view sunburst "Sales hierarchy / sunburst" {
+    data: [@sales];
+    projection { kind:chart; profile:"chart.sunburst@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:sunburst; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view packedbubble "Sales by region / packed bubbles" {
+    data: [@sales];
+    projection { kind:chart; profile:"chart.packedbubble@1"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:packedbubble; x:"x_record.path"; y:"x_record.sales"; unit:"kEUR"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
