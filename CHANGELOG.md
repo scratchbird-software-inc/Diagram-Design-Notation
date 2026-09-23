@@ -6,6 +6,13 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Fixed fresh-checkout CI (B1-028): the use-case golden fixtures under
+  `website/examples/use-cases/rendered/` are now committed — the bare
+  `rendered/` gitignore rule that excluded them was removed and the
+  fixtures regenerated via `tools/build-use-cases-manifest.mjs`, so a
+  pristine checkout passes `npm --prefix notation test` (including the
+  committed-SVG-vs-fresh-render freshness guard in
+  `notation/tests/use-cases.js`) without any generation step.
 - Unified diagram tool (B1-027): one page — `notation/tool/ddn-tool.html`,
   served as `tools/index.html` — replaces the end-user viewer, the studio
   gallery and the studio editor. Diagram stage with pointer-drag pan, wheel
