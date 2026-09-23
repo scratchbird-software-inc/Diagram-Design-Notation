@@ -168,7 +168,7 @@ function shell({ base, title, active, body, description }) {
     body + '\n' +
     '<footer class="site-footer"><div class="inner">\n' +
     '  <span>ScratchWeaver ' + VERSION + ' — the DDN toolkit · proposed standard, pre-1.0</span>\n' +
-    '  <span>A ScratchBird Software Inc. project · GPL-2.0-or-later</span>\n' +
+    '  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>\n' +
     '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
