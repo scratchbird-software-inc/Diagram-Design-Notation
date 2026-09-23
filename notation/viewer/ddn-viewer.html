@@ -446,7 +446,32 @@ function srcFetchErrorMessage(err, protocol, src) {
   return err && err.message || 'fetch failed';
 }
 
-const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
+/* B1-026 (D1): import closure for ?src= deep links. Fetches the entry file and
+ * recursively every file it imports, keyed by workspace-relative name, so
+ * multi-file examples render instead of dying on DDN022. `fetchFn(url)` must
+ * return a fetch-like Response; `parseImports(text, name)` returns import path
+ * strings; `resolvePath(name, path)` gives the workspace-relative file name
+ * (DDNLive.parse / DDNLive.resolvePath in the browser, stubs in node tests).
+ * Cycle-safe: a file is recorded before its imports are followed, so re-visits
+ * stop at the hasOwnProperty guard. Fetch failures name the missing file. */
+function srcImportClosure(src, pageHref, fetchFn, parseImports, resolvePath) {
+  const files = Object.create(null);
+  const entryName = src.split('/').pop().split(/[?#]/)[0];
+  const pull = (url, name) => fetchFn(url).then(r => {
+    if (!r.ok) throw new Error(name + ' — HTTP ' + r.status + ' (' + url + ')');
+    return r.text();
+  }).then(text => {
+    if (text.length > MAX_FILE_BYTES)
+      throw new Error(name + ' is ' + Math.round(text.length / 1e6) + ' MB — the viewer accepts sources up to ' + (MAX_FILE_BYTES / 1e6) + ' MB');
+    if (Object.prototype.hasOwnProperty.call(files, name)) return null;
+    files[name] = text;
+    return Promise.all(parseImports(text, name).map(p =>
+      pull(new URL(p, url), resolvePath(name, p))));
+  });
+  return pull(new URL(src, pageHref), entryName).then(() => ({ files, entryName }));
+}
+
+const pure = { computeFitScale, overrideRuleFor, typographyRuleFor, relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES, ENDPOINT_ORDERING_VALUES };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNViewer = pure; return; }
 
@@ -781,20 +806,20 @@ els.loadPaste.addEventListener('click', () => {
   loadFiles({ 'pasted.ddn': els.paste.value }, 'pasted.ddn');
 });
 
-/* B1-023 (D1): deep link — `index.html?src=<relative .ddn path>` fetches the
- * source next to the page and loads it as a single-file workspace, first view
- * selected. The fetched text is size-capped like a dropped file and parsed via
- * the normal loadFiles path, so parse errors show in the standard status line. */
+/* B1-023 (D1) + B1-026 (D1): deep link — `index.html?src=<relative .ddn path>`
+ * fetches the source next to the page together with its whole import closure
+ * (multi-file examples) and loads it as a workspace, first view selected. Every
+ * fetched text is size-capped like a dropped file and parsed via the normal
+ * loadFiles path, so parse errors show in the standard status line. */
 function loadFromSrc(src) {
   status('loading ' + src + ' …');
-  fetch(src)
-    .then(r => { if (!r.ok) throw new Error(src + ' — HTTP ' + r.status); return r.text(); })
-    .then(text => {
-      if (text.length > MAX_FILE_BYTES)
-        throw new Error(src + ' is ' + Math.round(text.length / 1e6) + ' MB — the viewer accepts sources up to ' + (MAX_FILE_BYTES / 1e6) + ' MB');
-      const name = src.split('/').pop().split(/[?#]/)[0];
-      els.paste.value = text;
-      loadFiles({ [name]: text }, name);
+  srcImportClosure(src, host.location.href,
+    url => fetch(url),
+    (text, name) => DDNLive.parse(text, name).imports.map(imp => imp.path),
+    (name, p) => DDNLive.resolvePath(name, p))
+    .then(({ files, entryName }) => {
+      els.paste.value = files[entryName];
+      loadFiles(files, entryName);
     })
     .catch(e => fail(srcFetchErrorMessage(e, host.location && host.location.protocol, src)));
 }

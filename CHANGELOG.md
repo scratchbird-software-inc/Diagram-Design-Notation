@@ -6,6 +6,14 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Fixed: viewer `?src=` deep links now fetch the entry file's whole import
+  closure (B1-026). Multi-file examples (everything under
+  `website/examples/use-cases/`) previously rendered an empty stage with a
+  `DDN022` status-line error because only the entry file was fetched;
+  `srcImportClosure` in `notation/viewer/src/viewer.js` recursively pulls
+  imported siblings (cycle-safe, size-capped, fetch errors name the missing
+  file), matching the studio's closure pattern.
+
 - Optional geographic module `ddn-geo` (B1-025) — the sixth runtime bundle,
   never embedded in `ddn.global.js`, loaded only when a page renders map
   views:

@@ -5,7 +5,15 @@ const root = path.resolve(__dirname, '..', '..');
 const V = require('../viewer/src/viewer.js');
 const A = require('../dist/ddn.global.js');
 const results = [];
-function test(name, fn) { try { fn(); results.push({ name, pass: true }); console.log('PASS', name); } catch (e) { results.push({ name, pass: false }); console.error('FAIL', name, e.stack); process.exitCode = 1; } }
+const pending = [];
+function test(name, fn) {
+  const done = r => { results.push(r); if (r.pass) console.log('PASS', name); else { console.error('FAIL', name, r.err.stack); process.exitCode = 1; } };
+  try {
+    const out = fn();
+    if (out && typeof out.then === 'function') pending.push(out.then(() => done({ name, pass: true }), err => done({ name, pass: false, err })));
+    else done({ name, pass: true });
+  } catch (e) { done({ name, pass: false, err: e }); }
+}
 
 const fixture = `ddn "0.5";
 module "demo";
@@ -258,12 +266,61 @@ test('?src= loader: size-capped fetch, basename workspace key, normal loadFiles 
   assert.ok(src.includes('function loadFromSrc(src)'), 'loadFromSrc missing');
   assert.ok(src.includes('text.length > MAX_FILE_BYTES'), 'fetched text is not size-capped');
   assert.ok(src.includes("src.split('/').pop()"), 'workspace key is not the basename');
-  assert.ok(src.includes('loadFiles({ [name]: text }, name)'), 'fetched source bypasses the normal load path');
+  assert.ok(src.includes('loadFiles(files, entryName)'), 'fetched source bypasses the normal load path');
+  assert.ok(src.includes('srcImportClosure(src, host.location.href'), 'loader does not walk the import closure');
   assert.ok(src.includes('srcFromQuery(host.location && host.location.search)'), 'boot does not read the query string');
   assert.ok(src.includes('srcFetchErrorMessage(e, host.location && host.location.protocol, src)'), 'fetch failures lack the file:// guidance');
   const built = fs.readFileSync(path.join(root, 'notation/viewer/ddn-viewer.html'), 'utf8');
   assert.ok(built.includes('function loadFromSrc(src)'), 'built ddn-viewer.html is stale — run npm --prefix notation run build:viewer');
 });
 
-const n = results.length, ok = results.filter(r => r.pass).length;
-console.log(`Viewer ${ok}/${n}`);
+/* B1-026: the ?src= closure walker, driven with a stubbed fetch and the real
+ * DDNLive parse/resolvePath. */
+function stubFetch(pages) {
+  const fetched = [];
+  const fn = url => {
+    const u = String(url); fetched.push(u);
+    const key = u.replace(/^https?:\/\/[^/]+\//, '');
+    const text = pages[key];
+    return Promise.resolve(text == null
+      ? { ok: false, status: 404, text: () => Promise.resolve('') }
+      : { ok: true, status: 200, text: () => Promise.resolve(text) });
+  };
+  return { fn, fetched };
+}
+const importsOf = (text, name) => A.parse(text, name).imports.map(imp => imp.path);
+const HREF = 'http://127.0.0.1/viewer/index.html';
+
+test('srcImportClosure: multi-file entry with nested imports fetches the whole graph', async () => {
+  const s = stubFetch({
+    'examples/entry.ddn': fixture.replace('ddn "0.5";', 'ddn "0.5";\nimport "shared.ddn" as sh;'),
+    'examples/shared.ddn': fixture.replace('module "demo";', 'module "demo.shared";\nimport "data/deep.ddn" as d;'),
+    'examples/data/deep.ddn': fixture.replace('module "demo";', 'module "demo.deep";')
+  });
+  const { files, entryName } = await V.srcImportClosure('../../examples/entry.ddn', HREF, s.fn, importsOf, A.resolvePath);
+  assert.strictEqual(entryName, 'entry.ddn');
+  assert.deepEqual(Object.keys(files).sort(), ['data/deep.ddn', 'entry.ddn', 'shared.ddn']);
+  assert.strictEqual(s.fetched.length, 3, 'each file fetched exactly once');
+});
+
+test('srcImportClosure: an import cycle terminates with each file once', async () => {
+  const a = fixture.replace('ddn "0.5";', 'ddn "0.5";\nimport "b.ddn" as b;');
+  const b = fixture.replace('ddn "0.5";', 'ddn "0.5";\nimport "a.ddn" as a;').replace('module "demo";', 'module "demo.b";');
+  const s = stubFetch({ 'x/a.ddn': a, 'x/b.ddn': b });
+  const { files } = await V.srcImportClosure('../../x/a.ddn', HREF, s.fn, importsOf, A.resolvePath);
+  assert.deepEqual(Object.keys(files).sort(), ['a.ddn', 'b.ddn']);
+});
+
+test('srcImportClosure: a missing import rejects with an error naming the file', async () => {
+  const s = stubFetch({
+    'examples/entry.ddn': fixture.replace('ddn "0.5";', 'ddn "0.5";\nimport "gone.ddn" as g;')
+  });
+  await assert.rejects(
+    V.srcImportClosure('../../examples/entry.ddn', HREF, s.fn, importsOf, A.resolvePath),
+    /gone\.ddn — HTTP 404/);
+});
+
+Promise.all(pending).then(() => {
+  const n = results.length, ok = results.filter(r => r.pass).length;
+  console.log(`Viewer ${ok}/${n}`);
+});
