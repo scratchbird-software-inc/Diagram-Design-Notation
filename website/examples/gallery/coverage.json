@@ -74,17 +74,77 @@
       "title": "Department / balanced scorecard",
       "svg": "profiles/canvas-scorecard-1.svg"
     },
+    "chart.arc@1": {
+      "entry": "website/examples/basics/65-network-charts.ddn",
+      "view": "arc",
+      "title": "Service calls / arc diagram",
+      "svg": "profiles/chart-arc-1.svg"
+    },
     "chart.basic@1": {
       "entry": "website/examples/basics/59-data-refresh.ddn",
       "view": "latency_chart",
       "title": "Latency / chart",
       "svg": "profiles/chart-basic-1.svg"
     },
+    "chart.beeswarm@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "beeswarm",
+      "title": "Response times by service / beeswarm",
+      "svg": "profiles/chart-beeswarm-1.svg"
+    },
+    "chart.boxplot@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "boxplot",
+      "title": "Response times by service / box plot",
+      "svg": "profiles/chart-boxplot-1.svg"
+    },
+    "chart.calendar@1": {
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "calendar",
+      "title": "Deploys per day / calendar",
+      "svg": "profiles/chart-calendar-1.svg"
+    },
     "chart.candlestick@1": {
       "entry": "website/examples/basics/22-candlestick-chart.ddn",
       "view": "candlestick",
       "title": "Synthetic trading sessions / candlestick",
       "svg": "profiles/chart-candlestick-1.svg"
+    },
+    "chart.circlepack@1": {
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "circlepack",
+      "title": "Sales hierarchy / circle packing",
+      "svg": "profiles/chart-circlepack-1.svg"
+    },
+    "chart.density@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "density",
+      "title": "Response times / probability density",
+      "svg": "profiles/chart-density-1.svg"
+    },
+    "chart.densityheatmap@1": {
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "densityheatmap",
+      "title": "Latency vs payload / density heatmap",
+      "svg": "profiles/chart-densityheatmap-1.svg"
+    },
+    "chart.dotplot@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "dotplot",
+      "title": "Response times by service / dot plot",
+      "svg": "profiles/chart-dotplot-1.svg"
+    },
+    "chart.edgebundle@1": {
+      "entry": "website/examples/basics/65-network-charts.ddn",
+      "view": "edgebundle",
+      "title": "Deployment routes / edge bundling",
+      "svg": "profiles/chart-edgebundle-1.svg"
+    },
+    "chart.force@1": {
+      "entry": "website/examples/basics/65-network-charts.ddn",
+      "view": "force",
+      "title": "Service calls / force-directed",
+      "svg": "profiles/chart-force-1.svg"
     },
     "chart.funnel@1": {
       "entry": "website/examples/basics/20-funnel-chart.ddn",
@@ -98,11 +158,47 @@
       "title": "Synthetic SLA attainment / gauge",
       "svg": "profiles/chart-gauge-1.svg"
     },
+    "chart.heatmap@1": {
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "heatmap",
+      "title": "Requests by hour and endpoint / heatmap",
+      "svg": "profiles/chart-heatmap-1.svg"
+    },
+    "chart.histogram@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "histogram",
+      "title": "Response times / histogram",
+      "svg": "profiles/chart-histogram-1.svg"
+    },
+    "chart.packedbubble@1": {
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "packedbubble",
+      "title": "Sales by region / packed bubbles",
+      "svg": "profiles/chart-packedbubble-1.svg"
+    },
+    "chart.parallelcoords@1": {
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "parallelcoords",
+      "title": "Service metric vectors / parallel coordinates",
+      "svg": "profiles/chart-parallelcoords-1.svg"
+    },
+    "chart.qq@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "qq",
+      "title": "Response times / normal Q-Q",
+      "svg": "profiles/chart-qq-1.svg"
+    },
     "chart.quality@1": {
       "entry": "website/examples/quality/views.ddn",
       "view": "grouped_bars",
       "title": "06 / Defects — grouped bars",
       "svg": "profiles/chart-quality-1.svg"
+    },
+    "chart.quantiledot@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "quantiledot",
+      "title": "Response times / quantile dotplot",
+      "svg": "profiles/chart-quantiledot-1.svg"
     },
     "chart.radar@1": {
       "entry": "website/examples/basics/19-radar-chart.ddn",
@@ -110,17 +206,53 @@
       "title": "Product comparison / radar",
       "svg": "profiles/chart-radar-1.svg"
     },
+    "chart.radialtree@1": {
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "radialtree",
+      "title": "Sales hierarchy / radial tree",
+      "svg": "profiles/chart-radialtree-1.svg"
+    },
     "chart.sankey@1": {
       "entry": "website/examples/basics/24-sankey.ddn",
       "view": "sankey",
       "title": "Synthetic energy spend across three stages / sankey",
       "svg": "profiles/chart-sankey-1.svg"
     },
+    "chart.sunburst@1": {
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "sunburst",
+      "title": "Sales hierarchy / sunburst",
+      "svg": "profiles/chart-sunburst-1.svg"
+    },
+    "chart.tidytree@1": {
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "tidytree",
+      "title": "Sales hierarchy / tidy tree",
+      "svg": "profiles/chart-tidytree-1.svg"
+    },
+    "chart.topk@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "topk",
+      "title": "Slowest services / top-K",
+      "svg": "profiles/chart-topk-1.svg"
+    },
     "chart.treemap@1": {
       "entry": "website/examples/basics/23-treemap.ddn",
       "view": "treemap",
       "title": "Synthetic storage by domain and table / treemap",
       "svg": "profiles/chart-treemap-1.svg"
+    },
+    "chart.violin@1": {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "violin",
+      "title": "Response times by service / violin",
+      "svg": "profiles/chart-violin-1.svg"
+    },
+    "chart.wordcloud@1": {
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "wordcloud",
+      "title": "Incident tags / word cloud",
+      "svg": "profiles/chart-wordcloud-1.svg"
     },
     "chen.basic@1": {
       "entry": "website/examples/projections/views.ddn",
@@ -505,6 +637,116 @@
           "view": "mark_sankey",
           "title": "Chart marks / sankey",
           "svg": "marks/sankey.svg"
+        },
+        {
+          "view": "mark_histogram",
+          "title": "Chart marks / histogram",
+          "svg": "marks/histogram.svg"
+        },
+        {
+          "view": "mark_density",
+          "title": "Chart marks / density",
+          "svg": "marks/density.svg"
+        },
+        {
+          "view": "mark_qq",
+          "title": "Chart marks / qq",
+          "svg": "marks/qq.svg"
+        },
+        {
+          "view": "mark_quantiledot",
+          "title": "Chart marks / quantiledot",
+          "svg": "marks/quantiledot.svg"
+        },
+        {
+          "view": "mark_dotplot",
+          "title": "Chart marks / dotplot",
+          "svg": "marks/dotplot.svg"
+        },
+        {
+          "view": "mark_boxplot",
+          "title": "Chart marks / boxplot",
+          "svg": "marks/boxplot.svg"
+        },
+        {
+          "view": "mark_violin",
+          "title": "Chart marks / violin",
+          "svg": "marks/violin.svg"
+        },
+        {
+          "view": "mark_beeswarm",
+          "title": "Chart marks / beeswarm",
+          "svg": "marks/beeswarm.svg"
+        },
+        {
+          "view": "mark_topk",
+          "title": "Chart marks / topk",
+          "svg": "marks/topk.svg"
+        },
+        {
+          "view": "mark_tidytree",
+          "title": "Chart marks / tidytree",
+          "svg": "marks/tidytree.svg"
+        },
+        {
+          "view": "mark_radialtree",
+          "title": "Chart marks / radialtree",
+          "svg": "marks/radialtree.svg"
+        },
+        {
+          "view": "mark_circlepack",
+          "title": "Chart marks / circlepack",
+          "svg": "marks/circlepack.svg"
+        },
+        {
+          "view": "mark_sunburst",
+          "title": "Chart marks / sunburst",
+          "svg": "marks/sunburst.svg"
+        },
+        {
+          "view": "mark_packedbubble",
+          "title": "Chart marks / packedbubble",
+          "svg": "marks/packedbubble.svg"
+        },
+        {
+          "view": "mark_heatmap",
+          "title": "Chart marks / heatmap",
+          "svg": "marks/heatmap.svg"
+        },
+        {
+          "view": "mark_densityheatmap",
+          "title": "Chart marks / densityheatmap",
+          "svg": "marks/densityheatmap.svg"
+        },
+        {
+          "view": "mark_calendar",
+          "title": "Chart marks / calendar",
+          "svg": "marks/calendar.svg"
+        },
+        {
+          "view": "mark_parallelcoords",
+          "title": "Chart marks / parallelcoords",
+          "svg": "marks/parallelcoords.svg"
+        },
+        {
+          "view": "mark_wordcloud",
+          "title": "Chart marks / wordcloud",
+          "svg": "marks/wordcloud.svg"
+        },
+        {
+          "view": "mark_arc",
+          "title": "Chart marks / arc",
+          "svg": "marks/arc.svg"
+        },
+        {
+          "view": "mark_force",
+          "title": "Chart marks / force",
+          "svg": "marks/force.svg"
+        },
+        {
+          "view": "mark_edgebundle",
+          "title": "Chart marks / edgebundle",
+          "svg": "marks/edgebundle.svg"
         }
       ]
     },

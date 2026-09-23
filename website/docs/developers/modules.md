@@ -15,11 +15,11 @@ Every bundle ships three formats: readable browser IIFE (`.js`), ES module
 
 | Bundle | `.js` bytes | `.min.js` (gzip) | Provides | Load after |
 |---|---:|---:|---|---|
-| `ddn-core` | 644,384 | 556,499 (120,672) | Parse, resolve, validate (`createWorkspace`, `parse`, `resolve`, `analyze`, authoring, io). No rendering. | — |
-| `ddn-graph` | 146,146 | 104,829 (38,933) | Graph-family rendering: layout, routing, shapes, palettes, interaction validation. | `ddn-core.js` |
-| `ddn-projections` | 52,224 | 42,708 (16,962) | Fixed-grid projections: chart, matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
+| `ddn-core` | 674,871 | 582,407 (128,877) | Parse, resolve, validate (`createWorkspace`, `parse`, `resolve`, `analyze`, authoring, io). No rendering. | — |
+| `ddn-graph` | 146,951 | 105,209 (39,045) | Graph-family rendering: layout, routing, shapes, palettes, interaction validation. | `ddn-core.js` |
+| `ddn-projections` | 89,704 | 73,999 (27,241) | Fixed-grid projections: chart (basic marks plus the Category-2 pack — distributions, tree, grid, network families and statistical overlays), matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
 | `ddn-quality` | 20,469 | 15,633 (7,022) | Quality charts, fishbone causes, decision/rule-table rendering. | `ddn-graph.js` (renders through `ddn-projections.js`) |
-| `ddn.global` | 884,121 | 743,085 (188,182) | All of the above plus the web component — one file, nothing to order. | — |
+| `ddn.global` | 952,893 | 800,865 (206,640) | All of the above plus the web component — one file, nothing to order. | — |
 
 The `.mjs` files are real ES modules (named exports for the live API and the
 internal namespaces); non-core `.mjs` files import their prerequisites

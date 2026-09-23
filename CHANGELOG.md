@@ -6,6 +6,49 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Category-2 chart pack in the optional `ddn-projections` bundle (B1-024) —
+  ddn-core does not grow semantically (only five new projection property
+  keywords: `bin_count`, `k`, `others`, `error`, `trend). Twenty-two new
+  chart marks, all deterministic SVG, data-bound via the existing
+  records/x/y/series/target machinery, each with its own installed profile,
+  gallery plate and runnable example:
+  - Distributions: `histogram` (equal-width binning, `bin_count`), `density`
+    (Gaussian KDE, Silverman bandwidth, fixed 81-point grid), `qq` (normal
+    Q-Q, Acklam inversion, quartile reference), `quantiledot`, `dotplot`,
+    `boxplot` (R-7 quartiles, Tukey 1.5×IQR, outlier records), `violin`
+    (per-category KDE, shared density scale), `beeswarm` (deterministic
+    non-overlap lanes), `topk` (`k`, `others` merge/drop).
+  - Tree family (dotted-path hierarchy shared with treemap): `tidytree`,
+    `radialtree`, `circlepack` (deterministic ring packing), `sunburst`,
+    `packedbubble`.
+  - Grid/other: `heatmap` (x × series intensity grid), `densityheatmap`
+    (bin_count² 2D binning), `calendar` (Monday-first UTC week grid),
+    `parallelcoords` (per-axis normalization; constant axes/missing values
+    are UNKNOWN mid-height with `DDN-PJW04`, never zeros), `wordcloud`
+    (greedy Archimedean-spiral placer on the shared text measurer).
+  - Network: `arc` (weight-ordered axis), `force` (deterministic seeded
+    Fruchterman–Reingold, fixed seed 0xB1024, 300 cooling iterations — same
+    seed pattern as sketch/organic), `edgebundle` (LCA routing over the
+    dotted-path hierarchy on a radial tidy layout).
+  - Statistical overlays (not new views): `error:"binding"` draws I-beam
+    error bars on `bar`/`point` marks; `trend:linear|loess` overlays a
+    least-squares line or a tricube loess curve (span 0.3, 51-point grid) on
+    numeric point/line charts, with the axis extended to cover the overlay.
+  - Value-state discipline: zero-variance KDE/Q-Q/trend inputs refuse as
+    UNKNOWN (`DDN-PJ132`) instead of drawing silent zeros; insufficient
+    samples, invalid `bin_count`/`k`/`others`, duplicate cells/words/days,
+    and nonpositive weights/links are coded refusals (`DDN-PJ131`, `PJ133`
+    … `PJ138`, `PJ141`, `PJ142`). Profiles `chart.histogram@1` …
+    `chart.edgebundle@1` registered in `standard/registry/profiles/
+    catalogue.json` (95 installed profiles, mirrored into
+    `capabilities.json`). Examples `62-distribution-charts`,
+    `63-tree-charts`, `64-grid-charts`, `65-network-charts`,
+    `66-chart-overlays`; the gallery marks sheet now plates every mark
+    (34 views). Bundle delta: `ddn-projections.js` 52,224 → 89,704 bytes
+    (min 42,708 → 73,999; min+gzip ~16.8 KB → ~27.0 KB). Tests:
+    `distribution-charts.js`, `tree-charts.js`, `grid-charts.js`,
+    `network-charts.js`, `chart-overlays.js` wired into `npm test`.
+
 - `AI-REFERENCE.md` is now internal-only: gitignored and removed from the public repo/website; `tests/ai-reference.js` skips gracefully when it is absent.
 - One-click "open in viewer / designer" from the examples browser (B1-023):
   every `.ddn` row on the examples page now links the end-user viewer via a

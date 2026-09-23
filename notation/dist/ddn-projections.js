@@ -52,13 +52,13 @@
    if(cs.length===1){cs[0].px=0;cs[0].py=0;node.r=cs[0].r*1.15+1e-4;return;}
    const sorted=cs.map((c,i)=>({c,i})).sort((a,b)=>b.c.r-a.c.r||a.i-b.i).map(o=>o.c);
    let R=sorted.reduce((s,c)=>s+2*c.r,0)/(2*Math.PI)||1e-4;
+   R=Math.max(R,...sorted.map((c,i)=>(c.r+sorted[(i+1)%sorted.length].r)/2));
    const half=(a,b)=>2*Math.asin(Math.min(1,(a+b)/(2*R)));
    for(let iter=0;iter<200;iter++){let need=0;for(let i=0;i<sorted.length;i++)need+=half(sorted[i].r,sorted[(i+1)%sorted.length].r);if(need<=2*Math.PI)break;R*=1.05;}
    let angle=0;
    for(let i=0;i<sorted.length;i++){
-    angle+=half(sorted[i].r,sorted[(i-1+sorted.length)%sorted.length].r)/2+ (i?half(sorted[i-1].r,sorted[i].r)/2:0);
+    if(i)angle+=half(sorted[i-1].r,sorted[i].r);
     sorted[i].px=Math.cos(angle)*R;sorted[i].py=Math.sin(angle)*R;
-    angle+=half(sorted[i].r,sorted[(i+1)%sorted.length].r)/2;
    }
    node.r=Math.max(...sorted.map(c=>Math.hypot(c.px,c.py)+c.r))*1.02+1e-4;
   }

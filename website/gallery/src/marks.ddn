@@ -117,3 +117,109 @@ view mark_sankey "Chart marks / sankey" {
     format: @gallery.common; data: [@flows];
     projection { kind: chart; profile: "chart.sankey@1"; records: [@flows.f1, @flows.f2, @flows.f3, @flows.f4, @flows.f5]; mark: sankey; x: "x_record.source"; target: "x_record.target"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
 }
+
+data days {
+    object m1 "2026-03-02" { kind: record; x_record: {"day": "2026-03-02", "mwh": 96, "unit": "MWh"}; }
+    object m2 "2026-03-03" { kind: record; x_record: {"day": "2026-03-03", "mwh": 104, "unit": "MWh"}; }
+    object m3 "2026-03-04" { kind: record; x_record: {"day": "2026-03-04", "mwh": 88, "unit": "MWh"}; }
+    object m4 "2026-03-06" { kind: record; x_record: {"day": "2026-03-06", "mwh": 112, "unit": "MWh"}; }
+    object m5 "2026-03-09" { kind: record; x_record: {"day": "2026-03-09", "mwh": 121, "unit": "MWh"}; }
+    object m6 "2026-03-11" { kind: record; x_record: {"day": "2026-03-11", "mwh": 99, "unit": "MWh"}; }
+}
+
+data routes {
+    object g1 "EU web to EU api" { kind: record; x_record: {"from": "eu.frontend.web", "to": "eu.backend.api", "n": 32, "unit": "req/min"}; }
+    object g2 "EU api to EU auth" { kind: record; x_record: {"from": "eu.backend.api", "to": "eu.backend.auth", "n": 18, "unit": "req/min"}; }
+    object g3 "EU api to US store" { kind: record; x_record: {"from": "eu.backend.api", "to": "us.backend.store", "n": 24, "unit": "req/min"}; }
+    object g4 "US web to US api" { kind: record; x_record: {"from": "us.frontend.web", "to": "us.backend.api", "n": 15, "unit": "req/min"}; }
+    object g5 "US api to US store" { kind: record; x_record: {"from": "us.backend.api", "to": "us.backend.store", "n": 21, "unit": "req/min"}; }
+}
+
+view mark_histogram "Chart marks / histogram" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.histogram@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: histogram; x: "x_record.mwh"; x_type: number; bin_count: 4; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_density "Chart marks / density" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.density@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: density; x: "x_record.mwh"; x_type: number; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_qq "Chart marks / qq" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.qq@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: qq; x: "x_record.mwh"; x_type: number; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_quantiledot "Chart marks / quantiledot" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.quantiledot@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: quantiledot; x: "x_record.mwh"; x_type: number; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_dotplot "Chart marks / dotplot" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.dotplot@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: dotplot; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_boxplot "Chart marks / boxplot" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.boxplot@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: boxplot; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_violin "Chart marks / violin" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.violin@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: violin; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_beeswarm "Chart marks / beeswarm" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.beeswarm@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: beeswarm; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_topk "Chart marks / topk" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.topk@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: topk; x: "x_record.source"; y: "x_record.mwh"; aggregate: sum; k: 1; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_tidytree "Chart marks / tidytree" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.tidytree@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: tidytree; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; width: 1050px; height: 640px; }
+}
+view mark_radialtree "Chart marks / radialtree" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.radialtree@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: radialtree; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; width: 1050px; height: 640px; }
+}
+view mark_circlepack "Chart marks / circlepack" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.circlepack@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: circlepack; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; width: 1050px; height: 640px; }
+}
+view mark_sunburst "Chart marks / sunburst" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.sunburst@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: sunburst; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; width: 1050px; height: 640px; }
+}
+view mark_packedbubble "Chart marks / packedbubble" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.packedbubble@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: packedbubble; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; width: 1050px; height: 640px; }
+}
+view mark_heatmap "Chart marks / heatmap" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.heatmap@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: heatmap; x: "x_record.quarter"; y: "x_record.mwh"; series: "x_record.source"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_densityheatmap "Chart marks / densityheatmap" {
+    format: @gallery.common; data: [@market];
+    projection { kind: chart; profile: "chart.densityheatmap@1"; records: [@market.d1, @market.d2, @market.d3, @market.d4, @market.d5]; mark: densityheatmap; x: "x_record.open"; x_type: number; y: "x_record.close"; bin_count: 3; unit: "EUR"; width: 1050px; height: 640px; }
+}
+view mark_calendar "Chart marks / calendar" {
+    format: @gallery.common; data: [@days];
+    projection { kind: chart; profile: "chart.calendar@1"; records: [@days.m1, @days.m2, @days.m3, @days.m4, @days.m5, @days.m6]; mark: calendar; x: "x_record.day"; x_type: date; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_parallelcoords "Chart marks / parallelcoords" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.parallelcoords@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4, @quarterly.s1, @quarterly.s2, @quarterly.s3, @quarterly.s4]; mark: parallelcoords; x: "x_record.quarter"; y: "x_record.mwh"; series: "x_record.source"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_wordcloud "Chart marks / wordcloud" {
+    format: @gallery.common; data: [@criteria];
+    projection { kind: chart; profile: "chart.wordcloud@1"; records: [@criteria.r1, @criteria.r2, @criteria.r3, @criteria.r4, @criteria.r5]; mark: wordcloud; x: "x_record.criterion"; y: "x_record.score"; unit: "points"; width: 1050px; height: 640px; }
+}
+view mark_arc "Chart marks / arc" {
+    format: @gallery.common; data: [@flows];
+    projection { kind: chart; profile: "chart.arc@1"; records: [@flows.f1, @flows.f2, @flows.f3, @flows.f4, @flows.f5]; mark: arc; x: "x_record.source"; target: "x_record.target"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_force "Chart marks / force" {
+    format: @gallery.common; data: [@flows];
+    projection { kind: chart; profile: "chart.force@1"; records: [@flows.f1, @flows.f2, @flows.f3, @flows.f4, @flows.f5]; mark: force; x: "x_record.source"; target: "x_record.target"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
+}
+view mark_edgebundle "Chart marks / edgebundle" {
+    format: @gallery.common; data: [@routes];
+    projection { kind: chart; profile: "chart.edgebundle@1"; records: [@routes.g1, @routes.g2, @routes.g3, @routes.g4, @routes.g5]; mark: edgebundle; x: "x_record.from"; target: "x_record.to"; y: "x_record.n"; unit: "req/min"; width: 1050px; height: 640px; }
+}

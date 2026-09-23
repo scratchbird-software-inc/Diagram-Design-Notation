@@ -9,8 +9,8 @@ terser) is a pinned devDependency and never ships inside these bundles.
 | `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 674871 | 670149 | 582407 | 128877 |
 | `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 146951 | 144196 | 105209 | 39045 |
 | `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 20469 | 20005 | 15633 | 7022 |
-| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 89704 | 88274 | 73999 | 27241 |
-| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 952893 | 943947 | 800865 | 206640 |
+| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 89652 | 88222 | 73979 | 27241 |
+| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 952841 | 943895 | 800845 | 206636 |
 
 Every bundle ships three formats: a readable browser IIFE (`.js`, publishes
 the documented globals `DDNLive`, `DDNRender`, `DDNProjections`,
