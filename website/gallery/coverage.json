@@ -350,6 +350,24 @@
       "title": "21 / Documented cross-sheet control flow",
       "svg": "profiles/flow-documented-2.svg"
     },
+    "geo.choropleth@1": {
+      "entry": "website/examples/basics/67-geo-choropleth.ddn",
+      "view": "choropleth",
+      "title": "Synthetic adoption index / world choropleth",
+      "svg": "profiles/geo-choropleth-1.svg"
+    },
+    "geo.outline@1": {
+      "entry": "website/examples/basics/69-geo-projections.ddn",
+      "view": "mercator",
+      "title": "World outline / mercator",
+      "svg": "profiles/geo-outline-1.svg"
+    },
+    "geo.symbols@1": {
+      "entry": "website/examples/basics/68-geo-symbols.ddn",
+      "view": "symbols",
+      "title": "Synthetic seismic catalog / symbol map",
+      "svg": "profiles/geo-symbols-1.svg"
+    },
     "matrix.ansoff@1": {
       "entry": "website/examples/basics/33-matrix-pack.ddn",
       "view": "ansoff",

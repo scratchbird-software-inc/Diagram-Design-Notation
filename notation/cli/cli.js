@@ -4,6 +4,14 @@
 const fs=require('node:fs'),path=require('node:path');
 const Export=require('../runtime/ddn-export.js').default;
 const DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/ddn-full.js').default;
+/* B1-025: the CLI is a full-featured host — it wires the optional geo module and
+ * pre-registers the world-110m asset (under its repo-relative and bare names). */
+const Geo=require('../runtime/ddn-geo.js').default;
+Render.registerProjectionRenderer('geo',Geo.render,{optional:true});
+try{
+ const asset=path.join(__dirname,'../../assets/geo/world-110m.json');
+ if(fs.existsSync(asset)){const g=fs.readFileSync(asset,'utf8');Geo.registerGeography('assets/geo/world-110m.json',g);Geo.registerGeography('world-110m',g);}
+}catch{}
 function usage(){console.log('Usage: node notation/cli/cli.js check|render|resolve|bundle <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR]');}
 function main(){
  const args=process.argv.slice(2);if(args.length<2){usage();process.exitCode=2;return;}

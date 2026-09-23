@@ -6,6 +6,41 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Optional geographic module `ddn-geo` (B1-025) — the sixth runtime bundle,
+  never embedded in `ddn.global.js`, loaded only when a page renders map
+  views:
+  - Pure-math projections with zero dependencies: `mercator`,
+    `equirectangular`, `albers` (29.5°/45.5° parallels, latitude-clamped fit
+    for whole-world data), `equalEarth`; verified against independently
+    computed reference coordinates.
+  - GeoJSON ingestion (`Feature`/`FeatureCollection`;
+    `Polygon`/`MultiPolygon`/`Point`/`MultiPoint`) with antimeridian-safe
+    path generation; `DDNGeo.geoPath`/`DDNGeo.projections` exposed for
+    host-side geometry (contour-ready).
+  - Three installed profiles: `geo.choropleth@1` (region join by feature id
+    or name, sequential ramp, legend), `geo.symbols@1` (lon/lat symbols with
+    sqrt size scale), `geo.outline@1` (base map / projection-comparison
+    plates, optional 10° graticule).
+  - Geography ships separately as the optional ~96 KB asset
+    `assets/geo/world-110m.json` (Natural Earth 110m, public domain, built
+    by `tools/build-geo-assets.mjs`); views reference it by name/URL
+    (`geography:"assets/geo/world-110m.json"`, host registers it via
+    `DDNGeo.registerGeography`; the CLI pre-registers it) or bind inline
+    GeoJSON (`geography: @data.record`) for self-contained files.
+  - Graceful missing behavior (owner-directed): the `geo` kind registers
+    `optional: true`; rendering a geo view without `ddn-geo.js` yields a
+    visible inline SVG placeholder ("Map view requires ddn-geo.js") plus the
+    coded `DDN-E010` diagnostic on the diagnostics channel — never silent.
+    Planning and all other kinds keep the hard `DDN-E010` throw.
+  - New diagnostics `DDN-PJ143`–`DDN-PJ148` and info `DDN-PJW05`;
+    ddn-core grows only the `geo` kind keyword and three projection
+    property keywords (`geography`, `method`, `graticule`).
+  - Examples `67-geo-choropleth.ddn`, `68-geo-symbols.ddn`,
+    `69-geo-projections.ddn` (four projection plates); gallery plates,
+    packaging (`@ddn/notation/geo` subpath), download table and modules
+    guide updated; Vega-parity note: the dorling cartogram is deferred
+    (needs a distortion kernel — see the B1-025 report).
+
 - Category-2 chart pack in the optional `ddn-projections` bundle (B1-024) —
   ddn-core does not grow semantically (only five new projection property
   keywords: `bin_count`, `k`, `others`, `error`, `trend). Twenty-two new

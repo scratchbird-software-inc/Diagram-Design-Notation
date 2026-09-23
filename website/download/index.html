@@ -32,15 +32,21 @@
 cd data-design-notation
 npm test          # full verification suite, exit 0 expected</code></pre>
 <h2>Runtime bundles</h2>
-<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>
+<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>, plus the optional <code>ddn-geo</code> for map views). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>
 <table>
 <thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>
 <tr><td><a href="../dist/ddn-core.d.mts"><code>ddn-core.d.mts</code></a></td><td>9645</td></tr>
 <tr><td><a href="../dist/ddn-core.d.ts"><code>ddn-core.d.ts</code></a></td><td>9645</td></tr>
-<tr><td><a href="../dist/ddn-core.js"><code>ddn-core.js</code></a></td><td>674871</td></tr>
-<tr><td><a href="../dist/ddn-core.min.js"><code>ddn-core.min.js</code></a></td><td>582407</td></tr>
-<tr><td><a href="../dist/ddn-core.min.js.map"><code>ddn-core.min.js.map</code></a></td><td>1167187</td></tr>
-<tr><td><a href="../dist/ddn-core.mjs"><code>ddn-core.mjs</code></a></td><td>670149</td></tr>
+<tr><td><a href="../dist/ddn-core.js"><code>ddn-core.js</code></a></td><td>680026</td></tr>
+<tr><td><a href="../dist/ddn-core.min.js"><code>ddn-core.min.js</code></a></td><td>586662</td></tr>
+<tr><td><a href="../dist/ddn-core.min.js.map"><code>ddn-core.min.js.map</code></a></td><td>1175380</td></tr>
+<tr><td><a href="../dist/ddn-core.mjs"><code>ddn-core.mjs</code></a></td><td>675272</td></tr>
+<tr><td><a href="../dist/ddn-geo.d.mts"><code>ddn-geo.d.mts</code></a></td><td>9645</td></tr>
+<tr><td><a href="../dist/ddn-geo.d.ts"><code>ddn-geo.d.ts</code></a></td><td>9645</td></tr>
+<tr><td><a href="../dist/ddn-geo.js"><code>ddn-geo.js</code></a></td><td>23771</td></tr>
+<tr><td><a href="../dist/ddn-geo.min.js"><code>ddn-geo.min.js</code></a></td><td>16201</td></tr>
+<tr><td><a href="../dist/ddn-geo.min.js.map"><code>ddn-geo.min.js.map</code></a></td><td>44909</td></tr>
+<tr><td><a href="../dist/ddn-geo.mjs"><code>ddn-geo.mjs</code></a></td><td>23139</td></tr>
 <tr><td><a href="../dist/ddn-graph.d.mts"><code>ddn-graph.d.mts</code></a></td><td>9645</td></tr>
 <tr><td><a href="../dist/ddn-graph.d.ts"><code>ddn-graph.d.ts</code></a></td><td>9645</td></tr>
 <tr><td><a href="../dist/ddn-graph.js"><code>ddn-graph.js</code></a></td><td>146951</td></tr>
@@ -62,10 +68,10 @@ npm test          # full verification suite, exit 0 expected</code></pre>
 <tr><td><a href="../dist/ddn.css"><code>ddn.css</code></a></td><td>1267</td></tr>
 <tr><td><a href="../dist/ddn.d.mts"><code>ddn.d.mts</code></a></td><td>9645</td></tr>
 <tr><td><a href="../dist/ddn.d.ts"><code>ddn.d.ts</code></a></td><td>9645</td></tr>
-<tr><td><a href="../dist/ddn.global.js"><code>ddn.global.js</code></a></td><td>952841</td></tr>
-<tr><td><a href="../dist/ddn.global.min.js"><code>ddn.global.min.js</code></a></td><td>800845</td></tr>
-<tr><td><a href="../dist/ddn.global.min.js.map"><code>ddn.global.min.js.map</code></a></td><td>1757163</td></tr>
-<tr><td><a href="../dist/ddn.mjs"><code>ddn.mjs</code></a></td><td>943895</td></tr>
+<tr><td><a href="../dist/ddn.global.js"><code>ddn.global.js</code></a></td><td>957996</td></tr>
+<tr><td><a href="../dist/ddn.global.min.js"><code>ddn.global.min.js</code></a></td><td>805100</td></tr>
+<tr><td><a href="../dist/ddn.global.min.js.map"><code>ddn.global.min.js.map</code></a></td><td>1765133</td></tr>
+<tr><td><a href="../dist/ddn.mjs"><code>ddn.mjs</code></a></td><td>949018</td></tr>
 </tbody></table>
 <h2>License</h2>
 <p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>

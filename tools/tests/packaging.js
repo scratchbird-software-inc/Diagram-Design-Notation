@@ -22,8 +22,8 @@ const erd=JSON.stringify(ERD),ref=JSON.stringify(path.join(consumer,'ref.svg'));
 test('package.json carries main/module/types/exports/files/sideEffects',()=>{
  assert.equal(pj.name,'@ddn/notation');assert.equal(pj.version,'0.6.0-beta.1');
  assert.equal(pj.main,'dist/ddn.global.js');assert.equal(pj.module,'dist/ddn.mjs');assert.equal(pj.types,'dist/ddn.d.ts');
- assert.deepEqual(Object.keys(pj.exports),['.','./core','./graph','./projections','./quality','./package.json']);
- for(const k of['.','./core','./graph','./projections','./quality']){
+ assert.deepEqual(Object.keys(pj.exports),['.','./core','./graph','./projections','./quality','./geo','./package.json']);
+ for(const k of['.','./core','./graph','./projections','./quality','./geo']){
   assert.ok(pj.exports[k].import.default.endsWith('.mjs')&&pj.exports[k].require.default.endsWith('.js'),k);
   assert.ok(pj.exports[k].import.types.endsWith('.d.mts')&&pj.exports[k].require.types.endsWith('.d.ts'),k);
  }
@@ -37,7 +37,7 @@ test('tarball file list matches the files allowlist (dist + README.md + package.
 });
 test('exports map targets all exist inside the tarball',()=>{
  const list=new Set(cp.execFileSync('tar',['-tzf',path.join(tmp,tgz)],{encoding:'utf8'}).trim().split('\n'));
- for(const k of['.','./core','./graph','./projections','./quality'])
+ for(const k of['.','./core','./graph','./projections','./quality','./geo'])
   for(const cond of['import','require'])for(const leaf of['default','types'])
    assert.ok(list.has('package/'+pj.exports[k][cond][leaf].replace('./','')),k+' '+cond+' '+leaf);
 });
@@ -78,7 +78,7 @@ test('ESM wrappers import prerequisites first; same-version stacking is a no-op'
 });
 test('minified bundles and source maps ship in the tarball and work',()=>{
  const list=cp.execFileSync('tar',['-tzf',path.join(tmp,tgz)],{encoding:'utf8'}).trim().split('\n');
- for(const f of ['ddn.global.min.js','ddn.global.min.js.map','ddn-core.min.js','ddn-core.min.js.map','ddn-graph.min.js','ddn-quality.min.js','ddn-projections.min.js'])
+ for(const f of ['ddn.global.min.js','ddn.global.min.js.map','ddn-core.min.js','ddn-core.min.js.map','ddn-graph.min.js','ddn-quality.min.js','ddn-projections.min.js','ddn-geo.min.js','ddn-geo.min.js.map'])
   assert.ok(list.includes('package/dist/'+f),'missing '+f);
  run(`const api=require(${JSON.stringify(path.join(pkg,'dist/ddn.global.min.js'))});
  if(api.VERSION!=='0.6.0-beta.1')throw new Error('bad VERSION in minified bundle');
@@ -86,6 +86,15 @@ test('minified bundles and source maps ship in the tarball and work',()=>{
  if(!svg.includes('<svg'))throw new Error('minified bundle did not render');`);
  const map=JSON.parse(fs.readFileSync(path.join(pkg,'dist/ddn.global.min.js.map'),'utf8'));
  assert.equal(map.version,3);assert.ok(map.sources.length>10&&map.mappings.length>100,'source map content');
+});
+test('geo subpath registers the optional geo kind; missing module yields placeholder + DDN-E010 diagnostic',()=>{
+ run(`const api=require(${JSON.stringify(path.join(pkg,'dist/ddn-core.js'))});
+ require(${JSON.stringify(path.join(pkg,'dist/ddn-graph.js'))});
+ const files=${erd};
+ const svg=api.createWorkspace(files).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
+ require(${JSON.stringify(path.join(pkg,'dist/ddn-geo.js'))});
+ if(!globalThis.DDNGeo||typeof globalThis.DDNGeo.registerGeography!=='function')throw new Error('DDNGeo global missing');
+ if(typeof globalThis.DDNGeo.projections.mercator!=='function')throw new Error('projection math missing');`);
 });
 test('no dependencies added to the shipped package',()=>{
  assert.ok(!pj.dependencies&&!pj.peerDependencies,'shipped package must stay dependency-free');

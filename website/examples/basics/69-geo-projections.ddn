@@ -1,0 +1,34 @@
+ddn "0.5";
+module "ddn.examples.geo-projections";
+
+import "shared.ddn" as shared;
+
+// One world outline rendered through every projection method ddn-geo ships,
+// with the 10° graticule on. Data: the registered world-110m asset.
+data geo {
+    object note "Projection comparison" { kind: record; x_record: {"plate": "world outline, four methods"}; }
+}
+
+view mercator "World outline / mercator" {
+    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:mercator; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view equirectangular "World outline / equirectangular" {
+    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:equirectangular; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view albers "World outline / albers" {
+    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:albers; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view equalearth "World outline / equal-earth" {
+    data: [@geo]; select: [@geo.note]; format: @shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:equalEarth; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

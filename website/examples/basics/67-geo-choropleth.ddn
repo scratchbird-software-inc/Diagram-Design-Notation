@@ -1,0 +1,27 @@
+ddn "0.5";
+module "ddn.examples.geo-choropleth";
+
+import "shared.ddn" as shared;
+
+// Synthetic indicator dataset: one value per country, joined to the world-110m
+// outline by ISO 3166-1 numeric feature id. All data is synthetic.
+data indicators {
+    object c840 "United States" { kind: record; x_record: {"id": "840", "value": 86, "unit": "index"}; }
+    object c156 "China" { kind: record; x_record: {"id": "156", "value": 74, "unit": "index"}; }
+    object c356 "India" { kind: record; x_record: {"id": "356", "value": 58, "unit": "index"}; }
+    object c276 "Germany" { kind: record; x_record: {"id": "276", "value": 81, "unit": "index"}; }
+    object c076 "Brazil" { kind: record; x_record: {"id": "076", "value": 49, "unit": "index"}; }
+    object c566 "Nigeria" { kind: record; x_record: {"id": "566", "value": 31, "unit": "index"}; }
+    object c392 "Japan" { kind: record; x_record: {"id": "392", "value": 78, "unit": "index"}; }
+    object c036 "Australia" { kind: record; x_record: {"id": "036", "value": 69, "unit": "index"}; }
+    object c124 "Canada" { kind: record; x_record: {"id": "124", "value": 77, "unit": "index"}; }
+    object c710 "South Africa" { kind: record; x_record: {"id": "710", "value": 42, "unit": "index"}; }
+    object c752 "Sweden" { kind: record; x_record: {"id": "752", "value": 88, "unit": "index"}; }
+    object c484 "Mexico" { kind: record; x_record: {"id": "484", "value": 53, "unit": "index"}; }
+}
+
+view choropleth "Synthetic adoption index / world choropleth" {
+    data: [@indicators]; format: @shared.styles.technical;
+    projection { kind:geo; profile:"geo.choropleth@1"; records:[@indicators.c840, @indicators.c156, @indicators.c356, @indicators.c276, @indicators.c076, @indicators.c566, @indicators.c392, @indicators.c036, @indicators.c124, @indicators.c710, @indicators.c752, @indicators.c484]; mark:choropleth; geography:"assets/geo/world-110m.json"; method:equalEarth; x:"x_record.id"; value:"x_record.value"; unit:"index"; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

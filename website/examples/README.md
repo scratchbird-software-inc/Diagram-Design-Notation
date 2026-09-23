@@ -7,7 +7,7 @@ node ../../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tm
 node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 61 numbered examples (01-customer … 61-self-contained)
+- `basics/` — 69 numbered examples (01-customer … 69-geo-projections)
   plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
   `manifest.json` was removed in B1-010: it covered only examples 01–18,
   pointed at nonexistent `website/examples/rendered/` paths, was stamped
@@ -36,7 +36,12 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
   `ws.replaceData` (`59-data-refresh.ddn`), and spacing hints
   (tight/normal/loose/expanded) on views and formats (`60-spacing-hints.ddn`),
   and a three-section self-contained file (model + data + views, no imports;
-  RFC-117) (`61-self-contained.ddn`).
+  RFC-117) (`61-self-contained.ddn`), and the Category-2 chart pack
+  (`62`–`66`: distributions, tree, grid and network families, statistical
+  overlays), and geographic maps via the optional ddn-geo module
+  (`67-geo-choropleth.ddn`, `68-geo-symbols.ddn`, `69-geo-projections.ddn` —
+  CLI-rendered through `assets/geo/world-110m.json`; hosts without ddn-geo.js
+  render the visible "Map view requires ddn-geo.js" placeholder).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

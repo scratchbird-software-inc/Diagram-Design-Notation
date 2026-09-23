@@ -32,7 +32,7 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <body>
 <header>
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation 0.6.0-beta.1: 95 installed profiles plus 79 variation renders — 174 SVGs, each produced by the reference CLI render path.</p>
+<p>Full notation coverage for Diagram Design Notation 0.6.0-beta.1: 98 installed profiles plus 79 variation renders — 177 SVGs, each produced by the reference CLI render path.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>.</p>
 </header>
 <nav>
@@ -46,7 +46,7 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <a href="#coverage">Coverage table</a>
 </nav>
 <main>
-<h2 id="profiles">Installed profiles (95)</h2>
+<h2 id="profiles">Installed profiles (98)</h2>
 <p>One render per installed profile from <code>standard/registry/profiles/catalogue.json</code>. Each entry reuses the nearest existing example under <code>website/examples/basics/</code> or <code>website/examples/projections/</code>; the coverage map is generated, not hand-written, and is enforced by <code>notation/tests/gallery-coverage.js</code>.</p>
 <section class="family" id="family-archimate">
 <h3>archimate</h3>
@@ -194,6 +194,14 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <div class="grid">
 <figure id="profile-flow-basic-1"><a href="profiles/flow-basic-1.svg"><img src="profiles/flow-basic-1.svg" alt="flow.basic@1 — 01 / Purchasing control flow" loading="lazy"></a><figcaption><code>flow.basic@1</code><br>01 / Purchasing control flow<br><small>website/examples/projections/views.ddn · view <code>flowchart</code></small></figcaption></figure>
 <figure id="profile-flow-documented-2"><a href="profiles/flow-documented-2.svg"><img src="profiles/flow-documented-2.svg" alt="flow.documented@2 — 21 / Documented cross-sheet control flow" loading="lazy"></a><figcaption><code>flow.documented@2</code><br>21 / Documented cross-sheet control flow<br><small>website/examples/quality/views.ddn · view <code>flow_documented</code></small></figcaption></figure>
+</div>
+</section>
+<section class="family" id="family-geo">
+<h3>geo</h3>
+<div class="grid">
+<figure id="profile-geo-choropleth-1"><a href="profiles/geo-choropleth-1.svg"><img src="profiles/geo-choropleth-1.svg" alt="geo.choropleth@1 — Synthetic adoption index / world choropleth" loading="lazy"></a><figcaption><code>geo.choropleth@1</code><br>Synthetic adoption index / world choropleth<br><small>website/examples/basics/67-geo-choropleth.ddn · view <code>choropleth</code></small></figcaption></figure>
+<figure id="profile-geo-outline-1"><a href="profiles/geo-outline-1.svg"><img src="profiles/geo-outline-1.svg" alt="geo.outline@1 — World outline / mercator" loading="lazy"></a><figcaption><code>geo.outline@1</code><br>World outline / mercator<br><small>website/examples/basics/69-geo-projections.ddn · view <code>mercator</code></small></figcaption></figure>
+<figure id="profile-geo-symbols-1"><a href="profiles/geo-symbols-1.svg"><img src="profiles/geo-symbols-1.svg" alt="geo.symbols@1 — Synthetic seismic catalog / symbol map" loading="lazy"></a><figcaption><code>geo.symbols@1</code><br>Synthetic seismic catalog / symbol map<br><small>website/examples/basics/68-geo-symbols.ddn · view <code>symbols</code></small></figcaption></figure>
 </div>
 </section>
 <section class="family" id="family-matrix">
@@ -475,6 +483,9 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <tr><td><code>fishbone.basic@1</code></td><td><a href="#profile-fishbone-basic-1">01 / Possible causes</a></td><td><code>website/examples/quality/views.ddn</code></td><td><a href="profiles/fishbone-basic-1.svg">SVG</a></td></tr>
 <tr><td><code>flow.basic@1</code></td><td><a href="#profile-flow-basic-1">01 / Purchasing control flow</a></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/flow-basic-1.svg">SVG</a></td></tr>
 <tr><td><code>flow.documented@2</code></td><td><a href="#profile-flow-documented-2">21 / Documented cross-sheet control flow</a></td><td><code>website/examples/quality/views.ddn</code></td><td><a href="profiles/flow-documented-2.svg">SVG</a></td></tr>
+<tr><td><code>geo.choropleth@1</code></td><td><a href="#profile-geo-choropleth-1">Synthetic adoption index / world choropleth</a></td><td><code>website/examples/basics/67-geo-choropleth.ddn</code></td><td><a href="profiles/geo-choropleth-1.svg">SVG</a></td></tr>
+<tr><td><code>geo.outline@1</code></td><td><a href="#profile-geo-outline-1">World outline / mercator</a></td><td><code>website/examples/basics/69-geo-projections.ddn</code></td><td><a href="profiles/geo-outline-1.svg">SVG</a></td></tr>
+<tr><td><code>geo.symbols@1</code></td><td><a href="#profile-geo-symbols-1">Synthetic seismic catalog / symbol map</a></td><td><code>website/examples/basics/68-geo-symbols.ddn</code></td><td><a href="profiles/geo-symbols-1.svg">SVG</a></td></tr>
 <tr><td><code>matrix.ansoff@1</code></td><td><a href="#profile-matrix-ansoff-1">Synthetic portfolio / Ansoff</a></td><td><code>website/examples/basics/33-matrix-pack.ddn</code></td><td><a href="profiles/matrix-ansoff-1.svg">SVG</a></td></tr>
 <tr><td><code>matrix.bcg@1</code></td><td><a href="#profile-matrix-bcg-1">Synthetic portfolio / BCG</a></td><td><code>website/examples/basics/33-matrix-pack.ddn</code></td><td><a href="profiles/matrix-bcg-1.svg">SVG</a></td></tr>
 <tr><td><code>matrix.crud@1</code></td><td><a href="#profile-matrix-crud-1">04 / Model-derived CRUD</a></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/matrix-crud-1.svg">SVG</a></td></tr>

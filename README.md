@@ -45,13 +45,14 @@ The browser SDK in `notation/dist/` ships as optional libraries plus the unchang
 
 | Bundle               | Contains                                                                                      | Requires                                            | `.js` bytes | `.min.js` bytes | `.min.js` gzip |
 | -------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------- | ----------- | --------------- | -------------- |
-| `ddn-core`           | Parse/build/validate/export, projection + quality planning data, workspace API (no rendering) | —                                                   | 644,384     | 556,499         | 120,672        |
-| `ddn-graph`          | Graph renderer (ERD/flow/C4/state/BPMN…); registers the `graph` kind                          | `ddn-core.js`                                       | 146,146     | 104,829         | 38,933         |
+| `ddn-core`           | Parse/build/validate/export, projection + quality planning data, workspace API (no rendering) | —                                                   | 680,026     | 586,662         | 130,574        |
+| `ddn-graph`          | Graph renderer (ERD/flow/C4/state/BPMN…); registers the `graph` kind                          | `ddn-core.js`                                       | 146,951     | 105,209         | 39,045         |
 | `ddn-quality`        | Quality charts, decision tables, fishbone renderers                                           | core + graph (renders through `ddn-projections.js`) | 20,469      | 15,633          | 7,022          |
-| `ddn-projections`    | Chart/matrix/panels/timeline/table/sequence/timing/chen                                       | core + graph                                        | 52,224      | 42,708          | 16,962         |
-| `ddn.global`         | All of the above + Studio component (what tests and standalone pages embed)                   | —                                                   | 884,121     | 743,085         | 188,182        |
+| `ddn-projections`    | Chart/matrix/panels/timeline/table/sequence/timing/chen                                       | core + graph                                        | 89,652      | 73,979          | 27,241         |
+| `ddn-geo` (optional) | Map projections (mercator/equirectangular/albers/equalEarth), GeoJSON, choropleth/symbol/outline maps | core + graph                             | 23,771      | 16,201          | 6,841          |
+| `ddn.global`         | All of the above except `ddn-geo` + Studio component (what tests and standalone pages embed)  | —                                                   | 957,996     | 805,100         | 208,228        |
 
-Import just what you need: a downstream bundler pulling only the check-level API from `ddn-core.mjs` emits ≈640 KB instead of ≈876 KB for the all-in-one (measured in `notation/tests/esm-dist.js`), and the minified core gzips to ≈121 KB. Each `ddn-X` bundle has `.js`/`.mjs`/`.min.js` + `.d.ts` copies. Loading modules out of order throws immediately; rendering a kind whose bundle is missing throws coded error `DDN-E010` naming the providing bundle. See `website/examples/embed/` for live proofs.
+Import just what you need: a downstream bundler pulling only the check-level API from `ddn-core.mjs` emits ≈640 KB instead of ≈876 KB for the all-in-one (measured in `notation/tests/esm-dist.js`), and the minified core gzips to ≈121 KB. Each `ddn-X` bundle has `.js`/`.mjs`/`.min.js` + `.d.ts` copies. Loading modules out of order throws immediately; rendering a kind whose bundle is missing throws coded error `DDN-E010` naming the providing bundle — with one owner-directed exception: the optional `ddn-geo` module degrades to a visible inline placeholder ("Map view requires ddn-geo.js") plus the coded `DDN-E010` diagnostic, never silently. See `website/examples/embed/` for live proofs.
 
 **Data refresh:** a host page (dashboard, live report) can replace the records of a named `data` block without touching the model, views or layout — `ws.replaceData(name, records)` rewrites only that block's record lines and returns `{revision, diagnostics}`. Records must carry the same keys as the block's existing first record (`DDN-E011` otherwise; unknown block name is `DDN-E002`; the source is untouched on error). Same values re-render every view byte-identical; changed values move only the marks of data-driven views. 
 
@@ -86,6 +87,7 @@ once published). Subpaths resolve in both CommonJS and ESM:
 | `@ddn/notation/graph`       | `dist/ddn-graph.js` / `.mjs`          | graph renderer (ESM wrapper loads core first; CJS: `require('@ddn/notation/core')` first) |
 | `@ddn/notation/projections` | `dist/ddn-projections.js` / `.mjs`    | chart/matrix/panels/timeline/table/sequence/timing/chen                                   |
 | `@ddn/notation/quality`     | `dist/ddn-quality.js` / `.mjs`        | quality charts, decision tables, fishbone                                                 |
+| `@ddn/notation/geo`         | `dist/ddn-geo.js` / `.mjs`            | optional geographic module (map projections, GeoJSON, choropleth/symbol/outline)          |
 
 ```js
 import ddn from '@ddn/notation/graph';              // ESM: prerequisites auto-loaded

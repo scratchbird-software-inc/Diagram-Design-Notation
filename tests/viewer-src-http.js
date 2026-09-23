@@ -37,20 +37,20 @@ try {
   test('viewer ?src= renders an example over HTTP', () => {
     assert.ok(fs.existsSync(BIN), 'missing ' + BIN);
     const dom = dumpDom(PAGE + '?src=../../examples/basics/61-self-contained.ddn');
-    assert.ok(dom.includes('class="ddn-svg ddn-view-'), 'no rendered SVG in the DOM:\n' + statusLine(dom));
+    assert.ok(/<svg[^>]*class="ddn-svg ddn-view-[a-z]/.test(dom), 'no rendered SVG in the DOM:\n' + statusLine(dom));
     assert.ok(!statusLine(dom).startsWith('Error:'), 'unexpected error: ' + statusLine(dom));
     assert.ok(dom.includes('61-self-contained.ddn'), 'loaded entry not reflected in the page');
   });
 
   test('viewer ?src=javascript:… is rejected before any fetch', () => {
     const dom = dumpDom(PAGE + '?src=javascript:alert(1)');
-    assert.ok(!dom.includes('class="ddn-svg ddn-view-'), 'a diagram rendered from a javascript: src');
+    assert.ok(!/<svg[^>]*class="ddn-svg ddn-view-[a-z]/.test(dom), 'a diagram rendered from a javascript: src');
     assert.match(statusLine(dom), /^Error: .*scheme/);
   });
 
   test('viewer ?src= to a missing file reports the HTTP status', () => {
     const dom = dumpDom(PAGE + '?src=../../examples/no-such-file.ddn');
-    assert.ok(!dom.includes('class="ddn-svg ddn-view-'), 'a diagram rendered for a missing file');
+    assert.ok(!/<svg[^>]*class="ddn-svg ddn-view-[a-z]/.test(dom), 'a diagram rendered for a missing file');
     assert.match(statusLine(dom), /^Error: .*HTTP 404/);
   });
 } finally {

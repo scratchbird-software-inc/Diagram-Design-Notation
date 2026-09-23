@@ -6,15 +6,16 @@ terser) is a pinned devDependency and never ships inside these bundles.
 
 | Bundle | Contains | Requires loaded first | .js bytes | .mjs bytes | .min.js bytes | .min.js gzip |
 |---|---|---|---|---|---|
-| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 674871 | 670149 | 582407 | 128877 |
+| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 680026 | 675272 | 586662 | 130574 |
 | `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 146951 | 144196 | 105209 | 39045 |
 | `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 20469 | 20005 | 15633 | 7022 |
 | `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 89652 | 88222 | 73979 | 27241 |
-| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 952841 | 943895 | 800845 | 206636 |
+| `ddn-geo.js` / `.mjs` / `.min.js` | Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23771 | 23139 | 16201 | 6841 |
+| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 957996 | 949018 | 805100 | 208228 |
 
 Every bundle ships three formats: a readable browser IIFE (`.js`, publishes
 the documented globals `DDNLive`, `DDNRender`, `DDNProjections`,
-`DDNQualityRender`), a minified IIFE with source map (`.min.js` +
+`DDNQualityRender`, `DDNGeo`), a minified IIFE with source map (`.min.js` +
 `.min.js.map`), and a real ES module (`.mjs`). Types: `d.ts`/`d.mts`
 copies per bundle. `ddn.css` carries the default mark styles (page CSS wins
 over script-inlined presentation).
@@ -32,15 +33,15 @@ bundlers can tree-shake the `.mjs` builds when you import just what you need.
 ## npm subpaths
 
 `@ddn/notation` resolves to `ddn.global.js`/`ddn.mjs`; the subpaths `./core`,
-`./graph`, `./projections`, `./quality` resolve to the matching modular bundles
+`./graph`, `./projections`, `./quality`, `./geo` resolve to the matching modular bundles
 (`require` → `.js`, `import` → `.mjs`, types → `.d.ts`/`.d.mts`). In ESM the
 modules load prerequisites automatically; in CommonJS `require('@ddn/notation/core')`
 before any non-core subpath (same realm, same-version module stacking is a no-op).
 
 ## Load order
 
-`ddn-core.js` first, then `ddn-graph.js`, then `ddn-quality.js` and
-`ddn-projections.js` in either order. Each non-core bundle throws immediately if its
+`ddn-core.js` first, then `ddn-graph.js`, then `ddn-quality.js`,
+`ddn-projections.js` and the optional `ddn-geo.js` in any order. Each non-core bundle throws immediately if its
 prerequisite is missing; loading the same bundle twice is a no-op; mixing versions
 throws the single-version guard. Do not mix `ddn.global.js` with the modular bundles
 on one page — load either the all-in-one or the modules.
@@ -48,8 +49,12 @@ on one page — load either the all-in-one or the modules.
 The engine is a registry: `DDNEngine.registerProjectionRenderer(name, fn)`. The graph
 renderer registers as `graph` inside ddn-graph.js; chart/matrix/panels/timeline/table/
 sequence/timing/chen register inside ddn-projections.js; fishbone/decision register
-inside ddn-quality.js. Rendering or planning an unregistered kind throws coded error
-`DDN-E010` naming the kind and the bundle that provides it. The fishbone and decision
+inside ddn-quality.js; the optional geographic module registers `geo` inside
+ddn-geo.js with `optional: true`. Rendering or planning an unregistered kind throws coded error
+`DDN-E010` naming the kind and the bundle that provides it — with one owner-directed
+exception: a geo view rendered without ddn-geo.js produces an inline SVG placeholder
+("Map view requires ddn-geo.js") plus the coded `DDN-E010` diagnostic on the
+diagnostics channel (never silent); the rest of the page renders. The fishbone and decision
 renderers compose the page through ddn-projections.js, so those two kinds need both
 ddn-quality.js and ddn-projections.js at render time.
 
@@ -60,7 +65,9 @@ ddn-quality.js and ddn-projections.js at render time.
 - Charts/matrices/timelines: add `ddn-projections.js`.
 - Quality charts, decision tables, fishbone: add `ddn-quality.js` (and
   `ddn-projections.js` for page composition).
-- Everything, one script tag: `ddn.global.js`.
+- Geographic maps: add `ddn-geo.js` (optional; missing module degrades to a
+  visible placeholder, never silently).
+- Everything except geo, one script tag: `ddn.global.js`.
 
 ## Data refresh
 

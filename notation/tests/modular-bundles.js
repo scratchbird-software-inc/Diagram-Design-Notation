@@ -75,9 +75,23 @@ test('determinism preserved in modular rendering',()=>{
  const g=context('core','graph'),gw=g.DDNLive.createWorkspace(ERD);
  assert.equal(gw.renderSync({entry:'01-customer.ddn',view:'overview'}).svg,gw.renderSync({entry:'01-customer.ddn',view:'overview'}).svg);
 });
+test('geo is optional: missing module degrades to placeholder + DDN-E010 diagnostic, loaded module renders',()=>{
+ const GEO={'67-geo-choropleth.ddn':basics('67-geo-choropleth.ddn'),'shared.ddn':basics('shared.ddn')};
+ const world=fs.readFileSync(path.join(root,'../assets/geo/world-110m.json'),'utf8');
+ const c=context('core','graph');
+ const r=c.DDNLive.createWorkspace(GEO).renderSync({entry:'67-geo-choropleth.ddn',view:'choropleth'});
+ assert.ok(r.svg.includes('Map view requires ddn-geo.js')&&r.svg.includes('ddn-missing-module'));
+ assert.equal(r.diagnostics.filter(d=>d.code==='DDN-E010').length,1);
+ const c2=context('core','graph','geo');
+ c2.DDNGeo.registerGeography('assets/geo/world-110m.json',JSON.parse(world));
+ const r2=c2.DDNLive.createWorkspace(GEO).renderSync({entry:'67-geo-choropleth.ddn',view:'choropleth'});
+ assert.ok(r2.svg.includes('ddn-mark-geo-choropleth')&&!r2.svg.includes('Map view requires'));
+ assert.equal(r2.diagnostics.filter(d=>d.code==='DDN-E010').length,0);
+ assert.throws(()=>context('core','geo'),/ddn-geo requires ddn-graph\.js/);
+});
 test('sdk-build.json lists every bundle with bytes/sha256/files and per-format freshness digests',()=>{
  const b=JSON.parse(fs.readFileSync(path.join(root,'../release/validation/sdk-build.json'),'utf8')).bundles;
- for(const n of ['core','graph','projections','quality','global']){assert.ok(b[n],'bundle '+n);assert.ok(b[n].bytes>0&&/^[a-f0-9]{64}$/.test(b[n].sha256)&&b[n].files.length>0);}
+ for(const n of ['core','graph','projections','quality','geo','global']){assert.ok(b[n],'bundle '+n);assert.ok(b[n].bytes>0&&/^[a-f0-9]{64}$/.test(b[n].sha256)&&b[n].files.length>0);}
  assert.equal(b.core.bytes,fs.statSync(path.join(dist,'ddn-core.js')).size);
  assert.equal(b.global.bytes,fs.statSync(path.join(dist,'ddn.global.js')).size);
  const crypto=require('node:crypto'),sha=s=>crypto.createHash('sha256').update(s).digest('hex');

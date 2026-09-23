@@ -3250,6 +3250,63 @@
         "spline-tension controls",
         "directed bundles"
       ]
+    },
+    {
+      "id": "geo.choropleth@1",
+      "projection": "geo",
+      "diagramFamilies": [
+        "Choropleth map"
+      ],
+      "scope": "Region fills encode one numeric measure per region; regions join to records by feature id or name; record provenance. Requires the optional ddn-geo module.",
+      "validation": [
+        "declared geography (registered name/URL or inline GeoJSON record) (DDN-PJ144)",
+        "known projection method (DDN-PJ143)",
+        "scalar unique join keys (DDN-PJ145, DDN-PJ148)",
+        "finite numeric values (DDN-PJ145)",
+        "unmatched features/records reported, never silently dropped (DDN-PJW05)"
+      ],
+      "unsupported": [
+        "cartograms/dorling distortion",
+        "tiles",
+        "routing",
+        "projection animation"
+      ]
+    },
+    {
+      "id": "geo.symbols@1",
+      "projection": "geo",
+      "diagramFamilies": [
+        "Symbol map",
+        "Proportional symbol map"
+      ],
+      "scope": "Point symbols at declared lon/lat over a declared base map; optional size encoding; record provenance. Requires the optional ddn-geo module.",
+      "validation": [
+        "declared geography (DDN-PJ144)",
+        "known projection method (DDN-PJ143)",
+        "finite lon/lat in range (DDN-PJ146)",
+        "finite symbol sizes (DDN-PJ146)"
+      ],
+      "unsupported": [
+        "clustering",
+        "heat interpolation",
+        "tiles"
+      ]
+    },
+    {
+      "id": "geo.outline@1",
+      "projection": "geo",
+      "diagramFamilies": [
+        "Base map",
+        "Projection comparison"
+      ],
+      "scope": "Plain geography outline with optional graticule; projection-method comparison plates. Requires the optional ddn-geo module.",
+      "validation": [
+        "declared geography (DDN-PJ144)",
+        "known projection method (DDN-PJ143)"
+      ],
+      "unsupported": [
+        "thematic encoding (use geo.choropleth@1 or geo.symbols@1)"
+      ]
     }
   ],
   "shapes": [

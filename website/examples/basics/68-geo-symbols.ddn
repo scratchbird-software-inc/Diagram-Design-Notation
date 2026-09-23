@@ -1,0 +1,25 @@
+ddn "0.5";
+module "ddn.examples.geo-symbols";
+
+import "shared.ddn" as shared;
+
+// Synthetic seismic catalog: epicentre lon/lat plus magnitude per event.
+// All data is synthetic.
+data quakes {
+    object q1 "Honshu M7.1" { kind: record; x_record: {"lon": 141.3, "lat": 38.3, "mag": 7.1, "unit": "Mw"}; }
+    object q2 "Aleutians M6.4" { kind: record; x_record: {"lon": -178.6, "lat": 51.9, "mag": 6.4, "unit": "Mw"}; }
+    object q3 "Chile M6.8" { kind: record; x_record: {"lon": -70.7, "lat": -33.4, "mag": 6.8, "unit": "Mw"}; }
+    object q4 "Sumatra M6.2" { kind: record; x_record: {"lon": 100.5, "lat": -0.8, "mag": 6.2, "unit": "Mw"}; }
+    object q5 "Aegean M5.6" { kind: record; x_record: {"lon": 26.8, "lat": 37.9, "mag": 5.6, "unit": "Mw"}; }
+    object q6 "Kermadec M6.9" { kind: record; x_record: {"lon": -177.8, "lat": -29.5, "mag": 6.9, "unit": "Mw"}; }
+    object q7 "Hindu Kush M5.9" { kind: record; x_record: {"lon": 70.9, "lat": 36.5, "mag": 5.9, "unit": "Mw"}; }
+    object q8 "Baja M5.4" { kind: record; x_record: {"lon": -109.6, "lat": 24.1, "mag": 5.4, "unit": "Mw"}; }
+    object q9 "Iceland M5.1" { kind: record; x_record: {"lon": -18.9, "lat": 64.8, "mag": 5.1, "unit": "Mw"}; }
+    object q10 "Vanuatu M6.5" { kind: record; x_record: {"lon": 167.7, "lat": -15.4, "mag": 6.5, "unit": "Mw"}; }
+}
+
+view symbols "Synthetic seismic catalog / symbol map" {
+    data: [@quakes]; format: @shared.styles.technical;
+    projection { kind:geo; profile:"geo.symbols@1"; records:[@quakes.q1, @quakes.q2, @quakes.q3, @quakes.q4, @quakes.q5, @quakes.q6, @quakes.q7, @quakes.q8, @quakes.q9, @quakes.q10]; mark:symbol; geography:"assets/geo/world-110m.json"; method:mercator; x:"x_record.lon"; y:"x_record.lat"; size:"x_record.mag"; unit:"Mw"; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
