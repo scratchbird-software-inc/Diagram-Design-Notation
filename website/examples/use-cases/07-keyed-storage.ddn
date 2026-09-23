@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.usecases.views.keyed-storage";
 import "formats.ddn" as fmt;
 import "data/keyed.ddn" as k;

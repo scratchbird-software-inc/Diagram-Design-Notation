@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.examples.matrix-pack";
 
 import "shared.ddn" as shared;

@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.examples.story-map";
 
 import "shared.ddn" as shared;

@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.gallery.layouts";
 
 // Gallery layout sheet. A small holding-company hierarchy rendered once per
@@ -20,10 +20,10 @@ data model {
 }
 
 format gallery {
-    style standard { look: classic; theme: default; font: sans; }
-    display readable { kind: icon_token; fields: none; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; minimum_text: 8pt; }
-    legend key { mode: text; placement: right; width: 260px; }
+    style standard;
+    display readable { fields: none; badges: none; maturity: none; }
+    publication screen { size: content; fit: none; }
+    legend key { width: 260px; }
 }
 
 view grid "Layouts / grid" {
@@ -50,7 +50,7 @@ view tree "Layouts / tree" {
 }
 view mindmap "Layouts / mindmap" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: mindmap; root: @model.holding; hierarchy: [assoc]; routing: curved; curve: bezier; }
+    layout { algorithm: mindmap; root: @model.holding; hierarchy: [assoc]; routing: curved; }
 }
 view grouped "Layouts / grouped" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;

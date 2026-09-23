@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.live.adaptive-lab";
 // Presentation-only routing laboratory. No physical operations are executed.
 // Default placement is automatic. place.at and route.via remain hard hints.
@@ -62,12 +62,12 @@ data blockers {
     relation a_c "Logical customer reference" @a.customer_id -> @c.customer_id { kind: ref; enforcement: undecided; }
 }
 format shared {
-    style night { look: classic; theme: night; font: sans; seed: 42; }
-    layout adaptive { algorithm: auto; routing: orthogonal; crossings: gap; gap: 90px; }
-    layout grid_seed { algorithm: grid; columns: 3; gap: 100px; routing: orthogonal; crossings: gap; }
-    display details { fields: names; kind: icon_token; maturity: none; badges: tokens; }
-    legend numbered { mode: numbers; placement: right; width: 320px; }
-    publication page { size: content; fit: none; minimum_text: 8pt; overflow: error; }
+    style night { theme: night; }
+    layout adaptive { gap: 90px; }
+    layout grid_seed { algorithm: grid; }
+    display details { maturity: none; }
+    legend numbered { mode: numbers; width: 320px; }
+    publication page { size: content; fit: none; }
     bundle technical { style: @night; layout: @adaptive; display: @details; legend: @numbered; publication: @page; }
 }
 view automatic "Adaptive order flow / no positional coordinates" {

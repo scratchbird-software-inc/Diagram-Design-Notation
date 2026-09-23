@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.usecases.warehouse";
 
 // All names, records and architectures in this catalogue are synthetic teaching examples.

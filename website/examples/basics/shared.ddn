@@ -1,21 +1,21 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.shared";
 
 format styles {
-    notation core { registry: "ddn-core@0.3"; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    style hand { look: handDrawn; theme: default; font: handwriting; seed: 42; roughness: 1.8; hachure: true; }
-    style neo { look: neo; theme: default; font: sans; seed: 42; }
-    style dark { look: classic; theme: dark; font: sans; seed: 42; }
-    style neutral { look: classic; theme: neutral; font: mono; seed: 42; }
-    style forest { look: handDrawn; theme: forest; font: handwriting; seed: 42; roughness: 1.8; hachure: true; }
-    layout wires { algorithm: grid; routing: orthogonal; crossings: gap; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; maturity: token; badges: tokens; }
-    display compact { fields: none; kind: icon_token; maturity: none; badges: none; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
     publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
-    legend numbers { mode: numbers; placement: right; width: 280px; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
     bundle technical {
         notation: @core;
         style: @classic;

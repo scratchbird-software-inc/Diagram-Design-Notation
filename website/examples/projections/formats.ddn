@@ -1,10 +1,10 @@
-ddn "0.4";
+ddn "0.5";
 module "meridian.procurement.formats";
 format shared {
-    style standard {look: classic; theme: default; font: sans; font_size:16px;}
-    layout logical {algorithm: layered;direction:right;routing:orthogonal;gap:140px;row_gap:130px;}
-    display readable {kind: none;badges:none;fields:names;maturity:none;}
-    publication screen {size:content;fit:none;minimum_text:8pt;}
-    legend key {mode:text;placement:none;}
+    style standard;
+    layout logical {algorithm: layered;gap:140px;row_gap:130px;}
+    display readable {kind: none;badges:none;maturity:none;}
+    publication screen {size:content;fit:none;}
+    legend key {placement:none;}
     bundle common {style:@standard;layout:@logical;display:@readable;publication:@screen;legend:@key;}
 }

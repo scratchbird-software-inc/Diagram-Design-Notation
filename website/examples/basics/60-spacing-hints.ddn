@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.spacing-hints";
 import "shared.ddn" as shared;
 data model {

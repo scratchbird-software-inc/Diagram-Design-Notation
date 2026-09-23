@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "meridian.procurement.review";
 
 // One synthetic procurement model, reused by graph, matrix and time projections.

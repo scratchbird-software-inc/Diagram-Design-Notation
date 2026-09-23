@@ -60,12 +60,12 @@ module &quot;shop.views&quot;;                // further sections (RFC-117 multi
 <h3>3.2 <code>format &lt;id&gt; [&quot;label&quot;] { … }</code> — reusable presentation declarations</h3>
 <p>Named declarations: <code>notation</code>, <code>style</code>, <code>layout</code>, <code>display</code>, <code>publication</code>, <code>legend</code>, <code>validation</code>, <code>export</code>, <code>projection</code>, <code>keyset</code>, and <code>bundle</code> (a bundle references one declaration of each concern by <code>@ref</code>). Example:</p>
 <pre><code>format styles {
-    notation core { registry: &quot;ddn-core@0.3&quot;; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; crossings: gap; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; maturity: token; badges: tokens; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { mode: text; width: 280px; }
     bundle technical { notation: @core; style: @classic; layout: @wires; display: @detailed; publication: @screen; legend: @words; }
 }</code></pre>
 <h3>3.3 <code>view &lt;id&gt; [&quot;label&quot;] { … }</code> — the composition point</h3>
@@ -673,7 +673,7 @@ module &quot;shop.views&quot;;                // further sections (RFC-117 multi
 <h2>10. Worked examples (all verified with <code>cli.js check</code>)</h2>
 <p>Each example below was extracted and passes <code>node notation/cli/cli.js check &lt;f&gt; --workspace &lt;tmpdir&gt;</code> (with <code>shared.ddn</code> alongside where imported). Comments annotate the language features.</p>
 <h3>10.1 Graph / crow's-foot ERD (<code>erd.crowfoot@1</code>)</h3>
-<pre><code>ddn &quot;0.3&quot;;                              // version header (write &quot;0.5&quot; for new files)
+<pre><code>ddn &quot;0.5&quot;;                              // version header (newest source dialect)
 module &quot;ddn.examples.crows-foot&quot;;
 
 import &quot;shared.ddn&quot; as shared;          // file-level import, legacy position (after FIRST header, before first declaration)
@@ -722,17 +722,17 @@ view erd &quot;Synthetic sales / crow's-foot ERD&quot; {
     publication { size: content; fit: none; overflow: error; }
 }</code></pre>
 <p><code>shared.ddn</code> (the imported file, shown once; reused by 10.2/10.3/10.4):</p>
-<pre><code>ddn &quot;0.3&quot;;
+<pre><code>ddn &quot;0.5&quot;;
 module &quot;ddn.examples.shared&quot;;
 
 format styles {
-    notation core { registry: &quot;ddn-core@0.3&quot;; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; crossings: gap; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; maturity: token; badges: tokens; }
-    display compact { fields: none; kind: icon_token; maturity: none; badges: none; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { mode: text; width: 280px; }
     bundle technical {
         notation: @core;
         style: @classic;
@@ -743,7 +743,7 @@ format styles {
     }
 }</code></pre>
 <h3>10.2 Flow / pipeline graph (plain <code>ddn@1</code> profile, numbered legend)</h3>
-<pre><code>ddn &quot;0.3&quot;;
+<pre><code>ddn &quot;0.5&quot;;
 module &quot;ddn.examples.flow&quot;;
 import &quot;shared.ddn&quot; as shared;
 
@@ -846,7 +846,7 @@ view lifecycle &quot;Order lifecycle / composite states&quot; {
 }</code></pre>
 <p>(For a validated flat lifecycle use <code>profile: &quot;state.flat@1&quot;</code>: exactly one <code>state.initial</code> with a single unconditional outgoing transition, ≥1 terminal, full reachability — see §6.)</p>
 <h3>10.5 Matrix (<code>matrix.bcg@1</code>, data-bound)</h3>
-<pre><code>ddn &quot;0.4&quot;;
+<pre><code>ddn &quot;0.5&quot;;
 module &quot;ddn.examples.matrix-pack&quot;;
 
 import &quot;shared.ddn&quot; as shared;
@@ -889,12 +889,12 @@ view bcg &quot;Synthetic portfolio / BCG&quot; {
 module &quot;shop.model&quot;;
 
 format styles {
-    notation core { registry: &quot;ddn-core@0.3&quot;; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { mode: text; width: 280px; }
     bundle technical {
         notation: @core;
         style: @classic;

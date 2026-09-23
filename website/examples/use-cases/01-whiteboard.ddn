@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.usecases.views.whiteboard";
 import "formats.ddn" as fmt;
 import "data/sketch.ddn" as s;

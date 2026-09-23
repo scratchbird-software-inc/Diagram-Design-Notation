@@ -81,12 +81,12 @@ Named declarations: `notation`, `style`, `layout`, `display`, `publication`, `le
 
 ```text
 format styles {
-    notation core { registry: "ddn-core@0.3"; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; crossings: gap; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; maturity: token; badges: tokens; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { mode: text; width: 280px; }
     bundle technical { notation: @core; style: @classic; layout: @wires; display: @detailed; publication: @screen; legend: @words; }
 }
 ```
@@ -1857,7 +1857,7 @@ Each example below was extracted and passes `node notation/cli/cli.js check <f> 
 ### 10.1 Graph / crow's-foot ERD (`erd.crowfoot@1`)
 
 ```ddn
-ddn "0.3";                              // version header (write "0.5" for new files)
+ddn "0.5";                              // version header (newest source dialect)
 module "ddn.examples.crows-foot";
 
 import "shared.ddn" as shared;          // file-level import, legacy position (after FIRST header, before first declaration)
@@ -1910,17 +1910,17 @@ view erd "Synthetic sales / crow's-foot ERD" {
 `shared.ddn` (the imported file, shown once; reused by 10.2/10.3/10.4):
 
 ```ddn
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.shared";
 
 format styles {
-    notation core { registry: "ddn-core@0.3"; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; crossings: gap; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; maturity: token; badges: tokens; }
-    display compact { fields: none; kind: icon_token; maturity: none; badges: none; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { mode: text; width: 280px; }
     bundle technical {
         notation: @core;
         style: @classic;
@@ -1935,7 +1935,7 @@ format styles {
 ### 10.2 Flow / pipeline graph (plain `ddn@1` profile, numbered legend)
 
 ```ddn
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.flow";
 import "shared.ddn" as shared;
 
@@ -2052,7 +2052,7 @@ view lifecycle "Order lifecycle / composite states" {
 ### 10.5 Matrix (`matrix.bcg@1`, data-bound)
 
 ```ddn
-ddn "0.4";
+ddn "0.5";
 module "ddn.examples.matrix-pack";
 
 import "shared.ddn" as shared;
@@ -2099,12 +2099,12 @@ ddn "0.5";
 module "shop.model";
 
 format styles {
-    notation core { registry: "ddn-core@0.3"; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { mode: text; width: 280px; }
     bundle technical {
         notation: @core;
         style: @classic;

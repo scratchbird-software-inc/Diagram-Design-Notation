@@ -28,7 +28,7 @@ data chain {
 }
 
 format options {
-    layout epc { algorithm: layered; direction: right; }
+    layout epc { algorithm: layered; }
 }
 
 view epc "Synthetic order-to-cash / EPC" {

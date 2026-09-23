@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.usecases.views.data-flow";
 import "formats.ddn" as fmt;
 import "data/flow.ddn" as f;

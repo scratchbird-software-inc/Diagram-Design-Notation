@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "meridian.procurement.views";
 import "./model.ddn" as m;
 import "./formats.ddn" as f;

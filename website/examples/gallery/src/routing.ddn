@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.gallery.routing";
 
 // Gallery routing sheet. The same publication pipeline graph rendered in every
@@ -32,69 +32,65 @@ data model_straight {
 }
 
 format gallery {
-    layout flow_right { algorithm: layered; direction: right; gap: 150px; row_gap: 130px; }
-    display readable { kind: icon_token; fields: none; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; minimum_text: 8pt; }
-    legend key { mode: text; placement: right; width: 260px; }
+    layout flow_right { algorithm: layered; gap: 150px; row_gap: 130px; }
+    display readable { fields: none; badges: none; maturity: none; }
+    publication screen { size: content; fit: none; }
+    legend key { width: 260px; }
 }
 
 view orthogonal_classic "Routing / orthogonal × classic" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: orthogonal; gap: 150px; row_gap: 130px; }
-    style { look: classic; }
+    layout { algorithm: layered; routing: orthogonal; gap: 150px; row_gap: 130px; }
 }
 view straight_classic "Routing / straight × classic" {
     data: [@model_straight]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: straight; gap: 260px; row_gap: 240px; }
-    style { look: classic; }
+    layout { algorithm: layered; routing: straight; gap: 260px; row_gap: 240px; }
 }
 view curved_classic "Routing / curved bezier × classic" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
-    style { look: classic; }
+    layout { algorithm: layered; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
 }
 view rounded_classic "Routing / rounded × classic" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
-    style { look: classic; }
+    layout { algorithm: layered; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
 }
 view orthogonal_handdrawn "Routing / orthogonal × handDrawn" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: orthogonal; gap: 150px; row_gap: 130px; }
+    layout { algorithm: layered; routing: orthogonal; gap: 150px; row_gap: 130px; }
     style { look: handDrawn; }
 }
 view straight_handdrawn "Routing / straight × handDrawn" {
     data: [@model_straight]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: straight; gap: 260px; row_gap: 240px; }
+    layout { algorithm: layered; routing: straight; gap: 260px; row_gap: 240px; }
     style { look: handDrawn; }
 }
 view curved_handdrawn "Routing / curved bezier × handDrawn" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
+    layout { algorithm: layered; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
     style { look: handDrawn; }
 }
 view rounded_handdrawn "Routing / rounded × handDrawn" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
+    layout { algorithm: layered; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
     style { look: handDrawn; }
 }
 view orthogonal_neo "Routing / orthogonal × neo" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: orthogonal; gap: 150px; row_gap: 130px; }
+    layout { algorithm: layered; routing: orthogonal; gap: 150px; row_gap: 130px; }
     style { look: neo; }
 }
 view straight_neo "Routing / straight × neo" {
     data: [@model_straight]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: straight; gap: 260px; row_gap: 240px; }
+    layout { algorithm: layered; routing: straight; gap: 260px; row_gap: 240px; }
     style { look: neo; }
 }
 view curved_neo "Routing / curved bezier × neo" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
+    layout { algorithm: layered; routing: curved; curve: bezier; curve_tension: 0.5; gap: 150px; row_gap: 130px; }
     style { look: neo; }
 }
 view rounded_neo "Routing / rounded × neo" {
     data: [@model]; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
-    layout { algorithm: layered; direction: right; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
+    layout { algorithm: layered; routing: curved; curve: rounded; curve_radius: 32px; gap: 150px; row_gap: 130px; }
     style { look: neo; }
 }

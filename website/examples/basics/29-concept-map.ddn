@@ -19,7 +19,7 @@ data domain {
 }
 
 format options {
-    layout cmap { algorithm: layered; direction: right; routing: curved; curve: bezier; }
+    layout cmap { algorithm: layered; routing: curved; }
 }
 
 view concepts "Synthetic order-to-cash concepts / concept map" {

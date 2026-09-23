@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.live.routing-lab";
 // This is a diagram, not an executing order processing application.
 data model {
@@ -13,11 +13,11 @@ data model {
     relation event "Publish order-accepted event" @orders -> @publish { kind: flow; }
 }
 format shared {
-    style engineering { look: classic; font: sans; seed: 42; }
+    style engineering;
     layout routes { algorithm: manual; routing: orthogonal; crossings: gap; }
-    display detailed { fields: names; kind: icon_token; maturity: none; badges: tokens; }
-    publication web { size: figure; width: 2040px; height: 740px; minimum_text: 8pt; overflow: error; }
-    legend key { mode: numbers; placement: right; width: 350px; keys: { "model.submit": 1, "model.accept": 2, "model.event": 3 }; }
+    display detailed { maturity: none; }
+    publication web { width: 2040px; height: 740px; }
+    legend key { mode: numbers; width: 350px; keys: { "model.submit": 1, "model.accept": 2, "model.event": 3 }; }
     bundle technical { style: @engineering; layout: @routes; display: @detailed; publication: @web; legend: @key; }
 }
 view diagram "Order acceptance / illustration" {

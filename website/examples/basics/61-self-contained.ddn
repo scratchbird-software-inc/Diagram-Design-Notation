@@ -8,12 +8,12 @@ ddn "0.5";
 module "shop.model";
 
 format styles {
-    notation core { registry: "ddn-core@0.3"; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    layout wires { algorithm: grid; routing: orthogonal; direction: right; gap: 80px; }
-    display detailed { fields: names; kind: icon_token; }
-    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; minimum_text: 8pt; overflow: warn; }
-    legend words { mode: text; placement: right; width: 280px; }
+    notation core;
+    style classic;
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    legend words { width: 280px; }
     bundle technical {
         notation: @core;
         style: @classic;

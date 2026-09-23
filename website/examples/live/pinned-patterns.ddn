@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.live.pinned-patterns";
 // One shared model, six placement patterns. Only place.at locks a position.
 // Synthetic planning diagram, not a running integration architecture.
@@ -24,16 +24,16 @@ data network {
     relation document "Review design" @note -> @hub { kind: note; }
 }
 format patterns {
-    style day { look: classic; theme: default; font: sans; seed: 42; }
-    layout grid { algorithm: fit_grid; auto_place: true; center: pins; grid_step: 32px; gap: 80px; routing: curved; crossings: gap; }
-    layout circle { algorithm: circular; auto_place: true; center: pins; gap: 80px; routing: curved; crossings: gap; }
-    layout rings { algorithm: radial; auto_place: true; center: pins; gap: 80px; routing: curved; crossings: gap; }
-    layout hierarchy { algorithm: layered; auto_place: true; center: pins; direction: right; gap: 80px; routing: orthogonal; crossings: gap; }
-    layout breadth { algorithm: spanning_tree; auto_place: true; center: pins; direction: right; gap: 80px; routing: curved; crossings: gap; }
-    layout force { algorithm: organic; auto_place: true; center: pins; gap: 80px; routing: curved; crossings: gap; }
-    display detail { fields: names; kind: icon_token; maturity: none; badges: tokens; }
-    legend key { mode: numbers; placement: right; width: 330px; keys: {"network.submit":1,"network.route":2,"network.reserve":3,"network.plan":4,"network.persist":5,"network.publish":6,"network.history_projection":7,"network.monitor":8,"network.document":9}; }
-    publication page { size: content; fit: none; minimum_text: 8pt; overflow: error; }
+    style day;
+    layout grid { algorithm: fit_grid; center: pins; gap: 80px; routing: curved; }
+    layout circle { algorithm: circular; center: pins; gap: 80px; routing: curved; }
+    layout rings { algorithm: radial; center: pins; gap: 80px; routing: curved; }
+    layout hierarchy { algorithm: layered; center: pins; gap: 80px; }
+    layout breadth { algorithm: spanning_tree; center: pins; gap: 80px; routing: curved; }
+    layout force { algorithm: organic; center: pins; gap: 80px; routing: curved; }
+    display detail { maturity: none; }
+    legend key { mode: numbers; width: 330px; keys: {"network.submit":1,"network.route":2,"network.reserve":3,"network.plan":4,"network.persist":5,"network.publish":6,"network.history_projection":7,"network.monitor":8,"network.document":9}; }
+    publication page { size: content; fit: none; }
     bundle shared { style: @day; layout: @circle; display: @detail; legend: @key; publication: @page; }
 }
 view circular "Circular / two fixed pins" {

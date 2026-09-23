@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.curved-relations";
 import "shared.ddn" as shared;
 
@@ -48,11 +48,11 @@ data obstruction {
  relation deliver "Route around unrelated storage" @source -> @target { kind: flow; }
 }
 format options {
- layout branch_layout { algorithm: mindmap; root: @capabilities.enterprise; hierarchy: [assoc]; routing: curved; curve: bezier; curve_tension: 0.5; crossings: gap; gap: 150px; row_gap: 100px; }
+ layout branch_layout { algorithm: mindmap; root: @capabilities.enterprise; hierarchy: [assoc]; routing: curved; curve: bezier; curve_tension: 0.5; crossings: gap; gap: 150px; }
  legend branches { mode: numbers; keys: { f01:1,f02:2,f03:3,f04:4,f05:5,f06:6,f07:7,f08:8,f09:9,f10:10 }; width: 350px; }
  legend exchange { mode: numbers; keys: { request:1,response:2,verify:3 }; width: 350px; }
  legend crossing { mode: numbers; keys: { orders:1,stock:2 }; width: 350px; }
- publication screen { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+ publication screen { size: content; fit: none; }
 }
 view mindmap_classic "Curved mind-map / classic" {
  data: [@capabilities]; format: @shared.styles.technical;

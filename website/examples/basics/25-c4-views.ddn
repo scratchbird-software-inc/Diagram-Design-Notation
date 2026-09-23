@@ -23,9 +23,9 @@ data shop {
 }
 
 format options {
-    layout c4ctx { algorithm: layered; direction: right; }
-    layout c4grid { algorithm: grid; direction: right; }
-    layout c4layered { algorithm: layered; direction: right; }
+    layout c4ctx { algorithm: layered; }
+    layout c4grid { algorithm: grid; }
+    layout c4layered { algorithm: layered; }
 }
 
 view context "Synthetic shop / C4 context" {

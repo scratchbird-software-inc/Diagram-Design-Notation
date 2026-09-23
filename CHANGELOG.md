@@ -6,6 +6,25 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Corpus normalization (B1-021): every shipped `.ddn` source is now in the
+  newest source dialect (`ddn "0.5"`) and minimal — declaration properties
+  whose value duplicates the effective default (global `DEFAULTS` merged
+  through the view's format bundle and referenced profile declarations,
+  including the `layout.center` pinned-pattern fallback) are removed, dead
+  empty override blocks are dropped, and emptied profile declarations
+  collapse to the bodyless form (`style classic;`). Demonstrative overrides
+  stay: routing/look/layout/spacing showcases keep the property they
+  demonstrate (keep decisions are logged by the tool). New permanent,
+  zero-dependency tool `tools/normalize-ddn.mjs` (write mode, `--check`
+  gate, `--verify` render-compare mode, `--report` JSON stats), wired into
+  `npm test` as `test:normalize` (`tests/normalize-ddn.js`) so regression
+  to pinned-by-default sources fails CI. Normalization was verified by
+  rendering every view of every changed file before/after: all renders
+  byte-identical except the deliberately un-pinned `08-subdiagrams` views
+  (eyeballed, clean natural reflow). `use-cases/manifest.json` hashes
+  regenerated with the new `tools/build-use-cases-manifest.mjs` (SVGs
+  unchanged; `semanticHash`/`sourceHashes` follow the dialect stamp and
+  minimized sources); gallery + site outputs regenerated unchanged.
 - Demos and tool pages now use the efficient dist builds (B1-019 follow-up).
   The three `website/examples/embed/` proof pages load the minified modular
   IIFEs (`.min.js`); a new `esm-module.html` proof page demonstrates the

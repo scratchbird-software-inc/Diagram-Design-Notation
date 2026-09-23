@@ -21,10 +21,10 @@ data m {
 view settings "Settings screen" {
     data: [@m];
     select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];
-    projection { kind: graph; profile: "wireframe.ui@1"; }
-    style { look: classic; theme: neutral; }
+    projection { profile: "wireframe.ui@1"; }
+    style { theme: neutral; }
     layout { algorithm: layered; direction: down; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    publication { size: content; fit: none; }
     frame settings_area "Settings" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }
     place @m.profile_label { at: [0px, 0px]; }
     place @m.display_name { at: [0px, 120px]; }

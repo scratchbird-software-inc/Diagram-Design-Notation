@@ -28,7 +28,7 @@ data m {
 view family "Three generations" {
     data: [@m];
     select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
-    projection { kind: graph; profile: "family.tree@1"; }
+    projection { profile: "family.tree@1"; }
     layout { algorithm: layered; direction: down; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    publication { size: content; fit: none; }
 }

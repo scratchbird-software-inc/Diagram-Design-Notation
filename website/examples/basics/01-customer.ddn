@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.customer-views";
 import "shared.ddn" as shared;
 import "customer-data.ddn" as customer;

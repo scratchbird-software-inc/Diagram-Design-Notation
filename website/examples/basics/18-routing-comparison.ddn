@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.routing-comparison";
 import "shared.ddn" as shared;
 data model {
@@ -10,8 +10,8 @@ data model {
 }
 format policies {
  layout branch { algorithm: tree; root: @model.scope; hierarchy: [assoc]; gap: 250px; row_gap: 120px; }
- publication screen { size: content; fit: none; minimum_text: 8pt; overflow: error; }
- legend keys { mode: numbers; keys: { a: 1, b: 2 }; placement: right; width: 300px; }
+ publication screen { size: content; fit: none; }
+ legend keys { mode: numbers; keys: { a: 1, b: 2 }; width: 300px; }
 }
 view orthogonal "Orthogonal / sharp corners" {
  data: [@model]; format: @shared.styles.technical; layout: @policies.branch; publication: @policies.screen; legend: @policies.keys;

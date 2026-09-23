@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.gallery.marks";
 
 // Gallery chart-mark sheet. Every mark renders over a small real dataset:
@@ -65,7 +65,7 @@ data flows {
 }
 
 format gallery {
-    publication screen { size: content; fit: none; minimum_text: 8pt; }
+    publication screen { size: content; fit: none; }
     bundle common { publication: @screen; }
 }
 

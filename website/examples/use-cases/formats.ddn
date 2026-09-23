@@ -1,17 +1,17 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.usecases.formats";
 format shared {
-    notation core { registry: "ddn-core@0.3"; }
-    style classic { look: classic; theme: default; font: sans; seed: 42; }
-    style sketch { look: handDrawn; theme: default; font: sans; seed: 42; roughness: 1.8; hachure: true; }
-    style neo { look: neo; theme: default; font: sans; seed: 42; }
-    layout row { algorithm: grid; columns: 3; gap: 120px; direction: right; routing: orthogonal; crossings: gap; }
-    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; routing: orthogonal; crossings: gap; }
-    layout teaching { algorithm: manual; gap: 120px; direction: right; routing: orthogonal; crossings: gap; }
-    display full { fields: names; kind: icon_token; maturity: token; badges: tokens; }
-    display compact { fields: none; kind: icon_token; maturity: none; badges: tokens; }
-    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; minimum_text: 8pt; overflow: error; }
-    legend numbered { mode: numbers; placement: right; width: 340px; }
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
     bundle technical {
         notation: @core;
         style: @classic;

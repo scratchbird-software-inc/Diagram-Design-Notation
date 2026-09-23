@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.examples.native-layouts";
 import "shared.ddn" as shared;
 data model {
@@ -18,7 +18,7 @@ format options {
  layout grid { algorithm: grid; columns: 3; }
  layout layered { algorithm: layered; direction: right; }
  layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
- layout mindmap { algorithm: mindmap; routing: curved; curve: bezier; root: @model.enterprise; hierarchy: [assoc]; }
+ layout mindmap { algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
  layout groups { algorithm: grouped; group_by: role; columns: 2; }
  legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
 }

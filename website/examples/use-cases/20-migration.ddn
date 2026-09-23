@@ -1,4 +1,4 @@
-ddn "0.3";
+ddn "0.5";
 module "ddn.usecases.views.migration";
 import "formats.ddn" as fmt;
 import "data/migration.ddn" as m;

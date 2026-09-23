@@ -28,6 +28,17 @@ Small tools shared by the monorepo components. Per-component test suites live in
   `notation/viewer/ddn-viewer.html` by inlining `notation/dist/ddn.global.js` and
   `notation/viewer/src/{viewer.css,viewer.js}` into `src/template.html`. Run after
   `build:sdk` via `npm --prefix notation run build:viewer`; deterministic output.
+- `normalize-ddn.mjs` — corpus normalizer (B1-021): keeps every tracked `.ddn`
+  source minimal and in the newest dialect. Strips declaration properties that
+  duplicate the effective default (global `DEFAULTS` merged through format
+  bundles and referenced profiles, incl. the `layout.center` fallback), bumps
+  legacy headers to `ddn "0.5"`, drops dead empty override blocks, and keeps
+  demonstrative overrides (logged). Modes: write (default), `--check`
+  (CI gate, wired into `npm test` as `test:normalize`), `--verify`
+  (before/after render compare per view), `--report FILE` (JSON stats).
+- `build-use-cases-manifest.mjs` — regenerates `website/examples/use-cases/
+  manifest.json` hashes plus the (gitignored) `rendered/` SVG/resolved/scene
+  outputs after source or runtime changes.
 - `requirements-dev.txt` — optional Python tooling (markdown rendering, schema
   validation, browser tests). Nothing here is required to run or test the runtime.
 

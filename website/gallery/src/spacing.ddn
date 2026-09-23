@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.gallery.spacing";
 
 // Gallery spacing sheet. One library-lending graph rendered at each spacing
@@ -14,11 +14,11 @@ data model {
 }
 
 format gallery {
-    style standard { look: classic; theme: default; font: sans; }
-    layout flow_right { algorithm: layered; direction: right; routing: orthogonal; }
-    display readable { kind: icon_token; fields: names; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; minimum_text: 8pt; }
-    legend key { mode: text; placement: right; width: 260px; }
+    style standard;
+    layout flow_right { algorithm: layered; }
+    display readable { badges: none; maturity: none; }
+    publication screen { size: content; fit: none; }
+    legend key { width: 260px; }
     bundle common { style: @standard; layout: @flow_right; display: @readable; publication: @screen; legend: @key; }
 }
 

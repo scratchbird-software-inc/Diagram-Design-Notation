@@ -1,4 +1,4 @@
-ddn "0.4";
+ddn "0.5";
 module "ddn.gallery.looks";
 
 // Gallery look/palette sheet. One small order-to-cash graph rendered in every
@@ -17,10 +17,10 @@ data model {
 }
 
 format gallery {
-    layout flow_right { algorithm: layered; direction: right; routing: orthogonal; gap: 120px; row_gap: 110px; }
-    display readable { kind: icon_token; fields: names; badges: none; maturity: none; }
-    publication screen { size: content; fit: none; minimum_text: 8pt; }
-    legend key { mode: text; placement: right; width: 260px; }
+    layout flow_right { algorithm: layered; gap: 120px; row_gap: 110px; }
+    display readable { badges: none; maturity: none; }
+    publication screen { size: content; fit: none; }
+    legend key { width: 260px; }
 }
 
 view classic_default "Looks / classic × default" {

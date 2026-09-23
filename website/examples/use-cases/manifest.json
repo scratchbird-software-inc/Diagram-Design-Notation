@@ -12,19 +12,13 @@
       "resolved": "use-cases/rendered/whiteboard/diagram.resolved.json",
       "scene": "use-cases/rendered/whiteboard/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/01-whiteboard.ddn": "e00c7c13812eda04d4d6da27d4db369867a6a99d64201b69659ab2d437e71e6b",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/sketch.ddn": "e539db47973a5f3406fac887dbe14746ee55399f5b6a40c8228430842bee4680"
+        "use-cases/01-whiteboard.ddn": "355aa1f0deeaf8685637843264e709c61846515013eeb4ab477b5984d6523bb2",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/sketch.ddn": "b36961bc4a698599f3881a906b0d05dce65a60b8500aae8403b28f2732918701"
       },
-      "semanticHash": "0b8c3c20b2e788d104d736f62f116428d3201bec23873c9d2d6c0e66a2f4f513",
+      "semanticHash": "575918c6c912e7d2b3e20ec8aca51476a4eae311a4e405e857ef738a8324b878",
       "svgHash": "d00df3acff62fc8e85c1f5bfb7bfc3c94852e043f485b75cc93340000dda482c",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 2,
@@ -36,19 +30,13 @@
       "resolved": "use-cases/rendered/business-erd/diagram.resolved.json",
       "scene": "use-cases/rendered/business-erd/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/02-business-erd.ddn": "92fef35359829955c1c798d6bd44ebde191dea49b086d38a799f20038ee2d279",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/02-business-erd.ddn": "d6a5e24eee8b9d59357c37e7e3e470dc33e10355f094d8940df16c2c68a1b130",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "69f28dcfafb99db78e363d2cea79ae26402ee3932b3066a9763fe49bf3b3c805",
+      "semanticHash": "e92ed2f7bf9645c1d07b87f1b1b2d17108a77cadcd8a27b55de9c307fade40db",
       "svgHash": "c0f9737c422c83d912e6ce8e7b30ca94d4d27430d09020bc7f04d271911b1add",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 3,
@@ -60,19 +48,13 @@
       "resolved": "use-cases/rendered/relational/diagram.resolved.json",
       "scene": "use-cases/rendered/relational/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/03-relational.ddn": "56056cdaf05875554294487c1bdb4449cab12e1db04a6ca5b48113a5a7139ea7",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/03-relational.ddn": "f0aa0eaec947aba99b16dcf25ea701aea147756219bcc199341cc85b302ed2b7",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
+      "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
       "svgHash": "b6ca4a0a64f7b8e2e8cfab7324ffe364c8c597a892fa58fe2b322e25a181f377",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 3,
@@ -84,19 +66,13 @@
       "resolved": "use-cases/rendered/relational/compact.resolved.json",
       "scene": "use-cases/rendered/relational/compact.scene.json",
       "sourceHashes": {
-        "use-cases/03-relational.ddn": "56056cdaf05875554294487c1bdb4449cab12e1db04a6ca5b48113a5a7139ea7",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/03-relational.ddn": "f0aa0eaec947aba99b16dcf25ea701aea147756219bcc199341cc85b302ed2b7",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
+      "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
       "svgHash": "127d3498bceaa077be19aa571b3f6f2afc7ca101d5b2db30d0f56911484faa0f",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 3,
@@ -108,19 +84,13 @@
       "resolved": "use-cases/rendered/relational/neo.resolved.json",
       "scene": "use-cases/rendered/relational/neo.scene.json",
       "sourceHashes": {
-        "use-cases/03-relational.ddn": "56056cdaf05875554294487c1bdb4449cab12e1db04a6ca5b48113a5a7139ea7",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/03-relational.ddn": "f0aa0eaec947aba99b16dcf25ea701aea147756219bcc199341cc85b302ed2b7",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
+      "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
       "svgHash": "5cda3a2bb3029d808d63d97dd8165ea4ba874accf396859a167823d421618b13",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 4,
@@ -132,20 +102,14 @@
       "resolved": "use-cases/rendered/sql-dependencies/diagram.resolved.json",
       "scene": "use-cases/rendered/sql-dependencies/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/04-sql-dependencies.ddn": "a3db6974c54c8ada6ec0542c947c2ac65192f5cd2f5c89a3b8af1c810d672a6f",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4",
-        "use-cases/data/sql.ddn": "968b8d781e53200c128d74e4a2fa834b707483d09094f1e6e78a59ba5a2d5bda"
+        "use-cases/04-sql-dependencies.ddn": "eea490845a26d198debf122f3888e36889e4670112822369a66d18e198e67d35",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
+        "use-cases/data/sql.ddn": "28dcd884ccafc3829872e2d75e0889e1fd3f4ec59cd607a3a7c9a0b13a4c32a3"
       },
-      "semanticHash": "cc56c73896cc48a3bfe36df13ee70c5995b8ac85b823b88d5987de605ba523ea",
+      "semanticHash": "505002fcd73ded90410369f6d3e44bae59ebd9405042f6ab46822e384d23f076",
       "svgHash": "46aa908cdf65288ec01f603edb9365a995b0066e5f5be2cd3b64248fbb01029d",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 5,
@@ -157,19 +121,13 @@
       "resolved": "use-cases/rendered/documents/diagram.resolved.json",
       "scene": "use-cases/rendered/documents/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/05-documents.ddn": "94e679806d3106a335f6a65d865cc2aad07a6f270910eb0eefcb39314e8dc2ef",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/documents.ddn": "555602b31392b79c981aa7414eeb998bb779d2adad232561a9ea02bddc0a8cee"
+        "use-cases/05-documents.ddn": "60cc6fcb70d6ca00ba32c671715134e0202564b527c35789626404d3909ab162",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/documents.ddn": "d4c658e5f15a98f28a4ffdab02861dcce890a91e13328db6409dd00237cc7e00"
       },
-      "semanticHash": "7dacb9c233592cb20dcfa920e3528d199dc614a34316ff58b6c1ec2cb6ea0fa7",
+      "semanticHash": "fd0488ee20129290db786a4783fc8bcb4d866ea846fef2c530458a8c4fcd80a5",
       "svgHash": "596e287f00523bf0d6cff226bcbb954361c606c227ce38db69e78f036a5d423f",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 6,
@@ -181,19 +139,13 @@
       "resolved": "use-cases/rendered/graph-schema/diagram.resolved.json",
       "scene": "use-cases/rendered/graph-schema/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/06-graph-schema.ddn": "f45bc55ca5478f182a10a5040db67a8371bf9f8b5d163f8199ef5aee14f575d3",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/graph.ddn": "068f59c171cdd40aefacfeb6889ea15e4eba48d5205f364073ad526080a938ca"
+        "use-cases/06-graph-schema.ddn": "27bf1ecb35e95dd405d2db3b76f85917c9120248be092596e14370d75716b792",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/graph.ddn": "9b8efa0d59951b5048b1b176feb5945aad52d83391abe3ec515499479582024b"
       },
-      "semanticHash": "9d03e23f0dc39947c38524b068ec7dec6cb7943717c7f72fc7150e475ad80861",
+      "semanticHash": "d54ba2cdf8f1eb4f94ef8e96769489bb6549b817ae9dcbfab7322391dea73a60",
       "svgHash": "ba6085eeea864f7befc5b0caddb47b9b9b3d9688ffcb35894cdbd7a32761eadf",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 7,
@@ -205,19 +157,13 @@
       "resolved": "use-cases/rendered/keyed-storage/diagram.resolved.json",
       "scene": "use-cases/rendered/keyed-storage/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/07-keyed-storage.ddn": "4d6010fde48c40a151a30235f3f0bd5cf8c55924b8d4184ce54e7b53475db7ea",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/keyed.ddn": "24ac94ac6b92a3fb6ade76010a50f449e075249d657b3361677bd606293a2c28"
+        "use-cases/07-keyed-storage.ddn": "85a5347fcad4aeab0d40066f1a375c7c6ce2d0f6f613c6d6708c047dedf06255",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/keyed.ddn": "b05c2e97b75a8727dc4b9606febc396fb671275097dd315040514941004c3566"
       },
-      "semanticHash": "776bdc8a4659ae6ef2f0436f088027418d6b584bd807573619758e610d2dcda8",
+      "semanticHash": "ddeb5f5e3cea5f7ee1c38177c6477df0c1acaa787aae05601bb3a629b18e0533",
       "svgHash": "54f641300b0d46632c1ddfc685ffc57990355136849524cb1608956adc0b8a8b",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 7,
@@ -229,19 +175,13 @@
       "resolved": "use-cases/rendered/keyed-storage/wide_column.resolved.json",
       "scene": "use-cases/rendered/keyed-storage/wide_column.scene.json",
       "sourceHashes": {
-        "use-cases/07-keyed-storage.ddn": "4d6010fde48c40a151a30235f3f0bd5cf8c55924b8d4184ce54e7b53475db7ea",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/keyed.ddn": "24ac94ac6b92a3fb6ade76010a50f449e075249d657b3361677bd606293a2c28"
+        "use-cases/07-keyed-storage.ddn": "85a5347fcad4aeab0d40066f1a375c7c6ce2d0f6f613c6d6708c047dedf06255",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/keyed.ddn": "b05c2e97b75a8727dc4b9606febc396fb671275097dd315040514941004c3566"
       },
-      "semanticHash": "2a6695dbf397016818d3c6c4af3b46e7ecb9f05c701775d7257e78d9ec581ab1",
+      "semanticHash": "c8d5918d69ee9c21f8c3a0dd0c8a6702f0c232527ed7e9cb56ba0301d0dd6b5d",
       "svgHash": "72da248d2b8b5e2200365cb3c7b79a07710583938408ad98c8873e2c5db5beb6",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 8,
@@ -253,20 +193,14 @@
       "resolved": "use-cases/rendered/domains/diagram.resolved.json",
       "scene": "use-cases/rendered/domains/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/08-domains.ddn": "b17c9d7ed0aea530a8074c6ca715bb38f7a77ec3be433b2656cb18be9ab8f477",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4",
-        "use-cases/data/domains.ddn": "d4c7beb5334479ef08854e53dd65a318b33b957aba90f9adff6e85ec7aff807a"
+        "use-cases/08-domains.ddn": "b04db98b5a0b19b547ece2d15e3f3f69c291090028b2d1443a70ec1b5bec1780",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
+        "use-cases/data/domains.ddn": "d5a2efa191aadde5342cb3f6101e3f06bac8cb4d7c434c739e7b4998f667fdf0"
       },
-      "semanticHash": "c530734d353ce97333bfd976439db36f3765bb64e6e8e4cce84ca54aa0ce4b81",
+      "semanticHash": "1c3a6ee5fb041278e4d0fb8812dcb8500d7eb232ee77c9434e9f706860955212",
       "svgHash": "a1eab91c4189fe638ceaa8d1bf9e1df460b75a6343c82600c3281753aab17b82",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 9,
@@ -278,21 +212,15 @@
       "resolved": "use-cases/rendered/namespaces/diagram.resolved.json",
       "scene": "use-cases/rendered/namespaces/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/09-namespaces.ddn": "1b9b29dce0047586348a7e9a62d699986c6c226ef32cbb76d322518ff766e3b1",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4",
-        "use-cases/data/sql.ddn": "968b8d781e53200c128d74e4a2fa834b707483d09094f1e6e78a59ba5a2d5bda",
-        "use-cases/data/namespace.ddn": "a3e1120259c4739018e18ed62215edcd725b7ffb67dd4429aa9783364a4ad5ed"
+        "use-cases/09-namespaces.ddn": "265e8bce07a95b7b05645e173a7d1243603aafd54ede124294f014891379ee8d",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
+        "use-cases/data/sql.ddn": "28dcd884ccafc3829872e2d75e0889e1fd3f4ec59cd607a3a7c9a0b13a4c32a3",
+        "use-cases/data/namespace.ddn": "e6292d4be221ae9b228c1ee92ebb70d9387a8f7b59e38f255e289bba684e1859"
       },
-      "semanticHash": "9a74eb34f0f8f6a978c84f59f5db2882546d4a0ef3d2d2ec3e6cbcc6f520b3a7",
+      "semanticHash": "774f61e30493ad222175355209b12d384e465af61139c85494dca28dc19deaa8",
       "svgHash": "e4c56a03d915659abf38aa1fc1c19efe0311a982c37f8e558bcd4d0ebf81082b",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 10,
@@ -304,20 +232,14 @@
       "resolved": "use-cases/rendered/hybrid-deployment/diagram.resolved.json",
       "scene": "use-cases/rendered/hybrid-deployment/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/10-hybrid-deployment.ddn": "d46d7f03d24109b533623f3887d110c2dc6ed2ceb02e35c18cc594634cc45c32",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4",
-        "use-cases/data/deployment.ddn": "33be3397137aaa304d5c5f7ea49b3a7ee40a9d13a28f7ee60092be02a2f64562"
+        "use-cases/10-hybrid-deployment.ddn": "56f85b769ca7279fdb586c3c873a71eb615ef4b305ac0267ee7b91f95271ab67",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
+        "use-cases/data/deployment.ddn": "928722c4525f97c85b7ee9c10afda8e6e28a878658a8f039da62ce9815a5f1a5"
       },
-      "semanticHash": "5d2fdb7212c8be4589d8478d8621611ab8dc58dcc9dfcf32f83e7d57b7e7f71f",
+      "semanticHash": "048d418c8e285ee256cbd8b9c0f1b6d56ac2ead7c8c345b9e07c28f8871628dc",
       "svgHash": "671da8bb7ad0b37a1ee2a1620e43ffb39630ada0f014e2db17283504945276aa",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 11,
@@ -329,20 +251,14 @@
       "resolved": "use-cases/rendered/data-flow/diagram.resolved.json",
       "scene": "use-cases/rendered/data-flow/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/11-data-flow.ddn": "31a92c98290769082860f7375cff62e8bc48b52160e3913b32212acddf5245ec",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/flow.ddn": "eb93fb9efe2c6922587d8a79d93db20c797b442d694d69f2c90c8c8e8cb654a7",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/11-data-flow.ddn": "d902f3ff8c26c75004334bcabda88d35a4b59bd087be8c9697d74102659a6e6b",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/flow.ddn": "f58e628ddbc9a506ab018b8621b579e85559ef7da9b272f67ab9749baef99f4b",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "c1663576d0394dae0a45fa4938dd1d5a5368f47f48b1304539baed8ef48f4281",
+      "semanticHash": "f478df2513cd7210adf253b72788089979b6af288161f1c99ee1d72e08340271",
       "svgHash": "f2954e9d5f684ffd7b8481bfd0f75100f55171bca1be1af2fb4cf40acabcf1d0",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 12,
@@ -354,20 +270,14 @@
       "resolved": "use-cases/rendered/streaming/diagram.resolved.json",
       "scene": "use-cases/rendered/streaming/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/12-streaming.ddn": "555f0be036e11bfbad7d6074f53991e5208dfb3285fdc05ae306da35ead566da",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4",
-        "use-cases/data/flow.ddn": "eb93fb9efe2c6922587d8a79d93db20c797b442d694d69f2c90c8c8e8cb654a7"
+        "use-cases/12-streaming.ddn": "8a9fc3e32f7c2686036ff34fe9d672016ea362a8bfaef945186d58d472851271",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
+        "use-cases/data/flow.ddn": "f58e628ddbc9a506ab018b8621b579e85559ef7da9b272f67ab9749baef99f4b"
       },
-      "semanticHash": "599d7da649e3e88ab4859f9ea77e1440ebc68e7811bac887ed178bd134816116",
+      "semanticHash": "5f5943c23fd19201fcfb45ad5b2e7994bc635ff3575a7024cd6e4c605b03f7a0",
       "svgHash": "ddeb0d9200e9eae3c06b275e2d0d36857d77a22019061705729782b0c5f2c9d3",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 13,
@@ -379,20 +289,14 @@
       "resolved": "use-cases/rendered/lineage/diagram.resolved.json",
       "scene": "use-cases/rendered/lineage/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/13-lineage.ddn": "8515c4d6de85df83e3bc4967055e88ba21b04939b2531265da7f05ef1bc77ec9",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4",
-        "use-cases/data/lineage.ddn": "2b7238897c2a10e349f7a1224b1d79e965fe9585b3366b030488a41336b2de8c"
+        "use-cases/13-lineage.ddn": "fea400520e400b0b07c161f36509c244bb104a28bd5920932dc6048e10ad2a14",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
+        "use-cases/data/lineage.ddn": "c82c5997b3bb1066d86a0cb1053783f2cbd40dbfbea19d0eb29225189991edad"
       },
-      "semanticHash": "2e8d0a3e33f58228829eae612ef3ef6b05011f429a02ff7e12c0dc7194add731",
+      "semanticHash": "17e97489b237817e1995a322617884ca919a40b76ea377ba9598083787394772",
       "svgHash": "03e66f8393d5f4b731417e6c9c0074800ea2e0afed11c68d48d47c3e83904ab7",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 14,
@@ -404,19 +308,13 @@
       "resolved": "use-cases/rendered/temporal/diagram.resolved.json",
       "scene": "use-cases/rendered/temporal/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/14-temporal.ddn": "e25fd96cc014ec940abe4669676349104f4e25c62e3335a05dd382b06ff125de",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/temporal.ddn": "794fe480720dc332a4865502304213e73239f1752beab653806920a5cdbdc302"
+        "use-cases/14-temporal.ddn": "1a135ef0a2cc3594ea07375eb9477a8c2646afa945eddbffc8a338e7e3e5d647",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/temporal.ddn": "bb41e785c8e806d269dc23e9f4e53c70c5ed1beeb9d46af54f4b3295bd52090a"
       },
-      "semanticHash": "e09ba19ce1f6ee0dd0c373d83059fd713f0b090793e04a7cba9a9c3066131a1a",
+      "semanticHash": "21477790e96442d806df014439394f5f1d953dbe8e5f732c12572bca6a8b88bf",
       "svgHash": "257deef4fcaa62bcb080777c8a44cc585c833edbeed50e1bae996adc4e6a8424",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 15,
@@ -428,19 +326,13 @@
       "resolved": "use-cases/rendered/warehouse/diagram.resolved.json",
       "scene": "use-cases/rendered/warehouse/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/15-warehouse.ddn": "0b20ddc99313e7c6cc54c6f4b96ea75c35bcf3cc45b8187e0000c986182d6066",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/warehouse.ddn": "021e97d27b46f6e5680706c3d9a3c4b74a08a8f803616c2ec8625f9c21ce0c8c"
+        "use-cases/15-warehouse.ddn": "56befd6dc1499173ffb20365cdd5a9b7729b57a7e9ca25fac57c58a848b576ce",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/warehouse.ddn": "9c751f7b29a3da072722034f3656934e0a36fc9da9fe7f598e5a5de3466947da"
       },
-      "semanticHash": "9af557e9622ad9edff17a4a770eb45e50a7ffb3e0dd1200eeb6a8bbc8b49e4fd",
+      "semanticHash": "49a208d95b2e9bda2242b12731c5448c3de574b353f9ee44b63f6c6bac410c2c",
       "svgHash": "4b2e5a44dbd8271e4b340b2f94f2fd317a69e538587cd55e677bad2b74b029c8",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 16,
@@ -452,19 +344,13 @@
       "resolved": "use-cases/rendered/vector-lineage/diagram.resolved.json",
       "scene": "use-cases/rendered/vector-lineage/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/16-vector-lineage.ddn": "4f6a6e771d61f26ab2e2753b748e8cf265a6288376aaa7982cf01854f3852c70",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/vectors.ddn": "d2475da6417ea69929c593c849520afe06ae7306fc27424c82f97e662e375af8"
+        "use-cases/16-vector-lineage.ddn": "e18bf20ecf9bbcffeae84827711a02c32025ae79ae57e4c4f4b9ffe4d453216d",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/vectors.ddn": "61624ea1d09fd86595ffc3152ee8aaff5258857f916ee4d1c17a31d4e4120b64"
       },
-      "semanticHash": "86e3b5371c087918b4237cbec2538b6c8de806c3cbf6fab1e7517f3965102428",
+      "semanticHash": "20b1b62574b05e2bcc25d539504caa3191c81d34500af84e0f113c48ff719f18",
       "svgHash": "c63108ca576398eac90740221762abdbb344b57c5dd73fd8bf4d843453458d93",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 17,
@@ -476,19 +362,13 @@
       "resolved": "use-cases/rendered/governance/diagram.resolved.json",
       "scene": "use-cases/rendered/governance/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/17-governance.ddn": "5e69e28d390ab068f24fa690f6b1857b05bbfdf214d9056699863b1671251a47",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/governance.ddn": "a1fa016b126774581d8d2505107df5d7ff9df30405a0e4072ec92f83fbf13776"
+        "use-cases/17-governance.ddn": "317c626286e35e5911b8c91745dcaba73fc8b9cf71c3c05cce17fcf8db8103e8",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/governance.ddn": "baabd6c51576faf23dc0c0c894df142e41bf16f211d3037f73d463a18fc06b34"
       },
-      "semanticHash": "3d160ffa378aa711bef97d6f046c802002c78654a024f88657a0203b820caf89",
+      "semanticHash": "af245376408a1d76750a6a07a4cfaaec1adf684af9e03b19a7ec0f6a66b6c645",
       "svgHash": "3cf80d3876df948d139b3a045930b48f9fd18469bf655dc8cbe192998ff43351",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 18,
@@ -500,19 +380,13 @@
       "resolved": "use-cases/rendered/security/diagram.resolved.json",
       "scene": "use-cases/rendered/security/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/18-security.ddn": "a137efe092d3b001baee8d1a81f164e93ec25dfae4926618ece0cb007ead4d4a",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/security.ddn": "6e49abc432a8f8b01ea08b5da163aff03589704c79a289ecf6377b78ee3de9c3"
+        "use-cases/18-security.ddn": "b1311793c0d73f3bcb56046fcc580be60b0b49dd148612c26c00cb971780589c",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/security.ddn": "100277dc87b0660f6c91244237d576c16f731e22b7ce16562660c5e126a7e156"
       },
-      "semanticHash": "c04e350f9ec76c6b9604301575b7fd73c9d8bf83b23f5ed8b26d6c36dd54e7ca",
+      "semanticHash": "768971e5adcd649baab4dc7707bf1aef724a00ba28197a10fe2e9afc660842eb",
       "svgHash": "96414485066e57b6fe9019d3b32a1a45ae80c10508d5f3df4e0e4a752a72fa18",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 19,
@@ -524,19 +398,13 @@
       "resolved": "use-cases/rendered/recovery/diagram.resolved.json",
       "scene": "use-cases/rendered/recovery/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/19-recovery.ddn": "34ff6403e896b85093daf431fb2f43e1deda54ef5c659016ec60077e022ebdbe",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/recovery.ddn": "26671657179120963216c0d36f9397fe7be2d362a75803332238e4f5c27a6fa0"
+        "use-cases/19-recovery.ddn": "3f25e03ecb1935b805730a710100e90b379bcd696087712c42570fd75fb45d10",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/recovery.ddn": "a0f54bd5cc8ce746aecd309e615fe0af417aa2e3dd77e42f6e2e4a561587526e"
       },
-      "semanticHash": "a1618f85e6ff3b4470d153aeee643ca1d39c949d2e4ccefc2dd32669f3980f0d",
+      "semanticHash": "0365c478381002d0c897c9bed4afa7fe54f34b14987a592bd783898b87c9d95b",
       "svgHash": "7752e6171cb77e03c5425de7f48b848ef68a293da918c566a8b5149fe7995ba1",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 20,
@@ -548,19 +416,13 @@
       "resolved": "use-cases/rendered/migration/diagram.resolved.json",
       "scene": "use-cases/rendered/migration/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/20-migration.ddn": "8f745a7fc4b311038f9c57e4161ffa3dc1e34698297bb980017b68b8ad4022d8",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/migration.ddn": "bf26a9c39f23aab82400a0a713d14e61aaeb04fa8196ea3522c9fbff7a6d6e37"
+        "use-cases/20-migration.ddn": "1b4c58415f435c95a4f38967fabd3080177d337dde8df43d6fbf028ce6ab30ab",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/migration.ddn": "47280ecb74ddd8e9fab801c18f429f78530579881b8e8dd47d1b328a2dc0374d"
       },
-      "semanticHash": "c38e4d30532cc015781399cae380cbc707bd7c3154f767fdedb9ceb56d71e3d3",
+      "semanticHash": "8aab7dd0cf5eff335fda1140b96d62f80d93a1cfc1abf9832f03cf4632b0e714",
       "svgHash": "9b116ab7bfbff5078753b100b8096b9dcd4011a97f4fe973cd272a902ed929f5",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 21,
@@ -572,19 +434,13 @@
       "resolved": "use-cases/rendered/quality/diagram.resolved.json",
       "scene": "use-cases/rendered/quality/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/21-quality.ddn": "21614cae246292c47fbf9dc963f79839d553a1bb5aed64215ac98f4eb34b972f",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/quality.ddn": "d62d0881d4423ef60a2704acd503b8aaaa2573bf03ce17c1f1002ddce3cd294d"
+        "use-cases/21-quality.ddn": "173662629f1be02266f09726256d6816eb89c547208e412d807429138077cf65",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/quality.ddn": "0ff24ad4f82e24ace8ee258ef9c30b102cb25feae38be8187aa115fe60de877f"
       },
-      "semanticHash": "44467ec30b87f9408758d4d55a6754d090c7a61692365d66135325f26879032e",
+      "semanticHash": "b6950e18001d82a69a4dfafc85a62c1a523421b73ea07eef9b25d27a67ab49e9",
       "svgHash": "98ac1033b5b1c038347815ee388aa6e4194ef46d6db80701d7d146ac495fbe32",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 22,
@@ -596,19 +452,13 @@
       "resolved": "use-cases/rendered/linked-documentation/diagram.resolved.json",
       "scene": "use-cases/rendered/linked-documentation/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/22-linked-documentation.ddn": "ca6c51631973a7d6e8b16c28e599fffbbac55a05b2b07c920568cc9d405f9bb0",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/22-linked-documentation.ddn": "6509f9967d01347fb51ce5f5d726abbe816df78a1f84f6850a500c43d8858049",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
+      "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
       "svgHash": "0623b24f84e05f7ed9539a0c49e13f08022190801571b290e7dba83729503ae8",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 22,
@@ -620,19 +470,13 @@
       "resolved": "use-cases/rendered/linked-documentation/logical_detail.resolved.json",
       "scene": "use-cases/rendered/linked-documentation/logical_detail.scene.json",
       "sourceHashes": {
-        "use-cases/22-linked-documentation.ddn": "ca6c51631973a7d6e8b16c28e599fffbbac55a05b2b07c920568cc9d405f9bb0",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/22-linked-documentation.ddn": "6509f9967d01347fb51ce5f5d726abbe816df78a1f84f6850a500c43d8858049",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "469dfe00437f69f8a234f165df8bb5ed5ff65b74c211bec1afcd51129845d04e",
+      "semanticHash": "5f920c18a5c1e30f45e4237fcb14baca3ecb7c8cf771901f0c3c295fa184c5c8",
       "svgHash": "c83b5a87a09141e10beb751114f32f990fe2782bcf510a5c0bd3252d56128dfe",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     },
     {
       "case": 22,
@@ -644,19 +488,13 @@
       "resolved": "use-cases/rendered/linked-documentation/business_detail.resolved.json",
       "scene": "use-cases/rendered/linked-documentation/business_detail.scene.json",
       "sourceHashes": {
-        "use-cases/22-linked-documentation.ddn": "ca6c51631973a7d6e8b16c28e599fffbbac55a05b2b07c920568cc9d405f9bb0",
-        "use-cases/formats.ddn": "b49c5173db84e7441f65bb566313c992d1c93a23baa1b0a2dfe9f2b44dbbec33",
-        "use-cases/data/commerce.ddn": "24d9b5e750ea8ace6928d233bf8d717b5b900073d035b62a6a1d83219a196da4"
+        "use-cases/22-linked-documentation.ddn": "6509f9967d01347fb51ce5f5d726abbe816df78a1f84f6850a500c43d8858049",
+        "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
+        "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1"
       },
-      "semanticHash": "69f28dcfafb99db78e363d2cea79ae26402ee3932b3066a9763fe49bf3b3c805",
+      "semanticHash": "e92ed2f7bf9645c1d07b87f1b1b2d17108a77cadcd8a27b55de9c307fade40db",
       "svgHash": "199dc31ce3de6a833b2e4735fc0f12c835bdb969ca791503a79fbcf3f1e940b8",
-      "diagnostics": [
-        {
-          "code": "DDN-TW01",
-          "severity": "warning",
-          "message": "Some text runs used estimated metrics; this is not a typography-certified publication."
-        }
-      ]
+      "diagnostics": []
     }
   ]
 }
