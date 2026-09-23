@@ -17,7 +17,10 @@ core-report.json
 notation/tests/core-report.json
 notation/tests/use-cases-report.json
 notation/tests/validation/
-/release/
+/release/*
+!/release/validation/
+/release/validation/*
+!/release/validation/sdk-build.json
 
 # Internal-only AI authoring reference (not part of the public repo)
 AI-REFERENCE.md
