@@ -1,0 +1,307 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/16-vector-lineage.ddn",
+  "view": {
+    "id": "ddn.usecases.views.vector-lineage::diagram",
+    "name": "16 / Vector and embedding lineage",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.vectors::model.source",
+      "ddn.usecases.vectors::model.embedding",
+      "ddn.usecases.vectors::model.index"
+    ],
+    "relations": [
+      "ddn.usecases.vectors::model.r_input",
+      "ddn.usecases.vectors::model.r_output"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "neo",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_input": 1,
+          "model.r_output": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.vectors::model.r_input": 1,
+      "ddn.usecases.vectors::model.r_output": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/16-vector-lineage.ddn",
+      "start": 241,
+      "end": 590,
+      "bodyEnd": 589
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.vectors::model.source",
+      "ref": "model.source",
+      "local": "source",
+      "name": "Product descriptions",
+      "type": "object",
+      "kind": "dataset",
+      "kindCode": "DST",
+      "properties": {
+        "kind": "dataset"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/vectors.ddn",
+        "start": 152,
+        "end": 219
+      }
+    },
+    {
+      "id": "ddn.usecases.vectors::model.embedding",
+      "ref": "model.embedding",
+      "local": "embedding",
+      "name": "Build embeddings",
+      "type": "object",
+      "kind": "activity",
+      "kindCode": "ACT",
+      "properties": {
+        "kind": "activity",
+        "description": "Record the embedding model and preprocessing version before implementation approval."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/vectors.ddn",
+        "start": 224,
+        "end": 400
+      }
+    },
+    {
+      "id": "ddn.usecases.vectors::model.index",
+      "ref": "model.index",
+      "local": "index",
+      "name": "Product vectors",
+      "type": "object",
+      "kind": "vector",
+      "kindCode": "VEC",
+      "properties": {
+        "kind": "vector",
+        "role": "derived"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.vectors::model.index.product_id",
+          "name": "product_id",
+          "local": "product_id",
+          "path": "product_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/vectors.ddn",
+            "start": 512,
+            "end": 529
+          }
+        },
+        {
+          "id": "ddn.usecases.vectors::model.index.embedding",
+          "name": "embedding",
+          "local": "embedding",
+          "path": "embedding",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/vectors.ddn",
+            "start": 542,
+            "end": 558
+          }
+        },
+        {
+          "id": "ddn.usecases.vectors::model.index.model_version",
+          "name": "model_version",
+          "local": "model_version",
+          "path": "model_version",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/vectors.ddn",
+            "start": 571,
+            "end": 591
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/vectors.ddn",
+        "start": 405,
+        "end": 607
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.vectors::model.r_input",
+      "ref": "model.r_input",
+      "name": "used as input by",
+      "kind": "consumed",
+      "kindCode": "CONSUMED",
+      "from": {
+        "element": "ddn.usecases.vectors::model.source"
+      },
+      "to": {
+        "element": "ddn.usecases.vectors::model.embedding"
+      },
+      "properties": {
+        "kind": "consumed"
+      },
+      "source": {
+        "file": "use-cases/data/vectors.ddn",
+        "start": 612,
+        "end": 670
+      }
+    },
+    {
+      "id": "ddn.usecases.vectors::model.r_output",
+      "ref": "model.r_output",
+      "name": "generates",
+      "kind": "generates",
+      "kindCode": "GENERATES",
+      "from": {
+        "element": "ddn.usecases.vectors::model.embedding"
+      },
+      "to": {
+        "element": "ddn.usecases.vectors::model.index"
+      },
+      "properties": {
+        "kind": "generates"
+      },
+      "source": {
+        "file": "use-cases/data/vectors.ddn",
+        "start": 675,
+        "end": 734
+      }
+    }
+  ],
+  "diagnostics": []
+}

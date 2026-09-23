@@ -1,0 +1,349 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/06-graph-schema.ddn",
+  "view": {
+    "id": "ddn.usecases.views.graph-schema::diagram",
+    "name": "06 / Property-graph schema",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.graph::model.customer",
+      "ddn.usecases.graph::model.purchased",
+      "ddn.usecases.graph::model.product"
+    ],
+    "relations": [
+      "ddn.usecases.graph::model.r_source",
+      "ddn.usecases.graph::model.r_target"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "neo",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_source": 1,
+          "model.r_target": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.graph::model.r_source": 1,
+      "ddn.usecases.graph::model.r_target": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/06-graph-schema.ddn",
+      "start": 228,
+      "end": 575,
+      "bodyEnd": 574
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.graph::model.customer",
+      "ref": "model.customer",
+      "local": "customer",
+      "name": "Customer node",
+      "type": "object",
+      "kind": "graph_node",
+      "kindCode": "NOD",
+      "properties": {
+        "kind": "graph_node"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.graph::model.customer.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/graph.ddn",
+            "start": 239,
+            "end": 257
+          }
+        },
+        {
+          "id": "ddn.usecases.graph::model.customer.name",
+          "name": "name",
+          "local": "name",
+          "path": "name",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/graph.ddn",
+            "start": 270,
+            "end": 281
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/graph.ddn",
+        "start": 150,
+        "end": 297
+      }
+    },
+    {
+      "id": "ddn.usecases.graph::model.purchased",
+      "ref": "model.purchased",
+      "local": "purchased",
+      "name": "PURCHASED edge",
+      "type": "object",
+      "kind": "graph_edge",
+      "kindCode": "EDG",
+      "properties": {
+        "kind": "graph_edge"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.graph::model.purchased.purchased_at",
+          "name": "purchased_at",
+          "local": "purchased_at",
+          "path": "purchased_at",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/graph.ddn",
+            "start": 393,
+            "end": 412
+          }
+        },
+        {
+          "id": "ddn.usecases.graph::model.purchased.quantity",
+          "name": "quantity",
+          "local": "quantity",
+          "path": "quantity",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/graph.ddn",
+            "start": 425,
+            "end": 440
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/graph.ddn",
+        "start": 302,
+        "end": 456
+      }
+    },
+    {
+      "id": "ddn.usecases.graph::model.product",
+      "ref": "model.product",
+      "local": "product",
+      "name": "Product node",
+      "type": "object",
+      "kind": "graph_node",
+      "kindCode": "NOD",
+      "properties": {
+        "kind": "graph_node"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.graph::model.product.sku",
+          "name": "sku",
+          "local": "sku",
+          "path": "sku",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/graph.ddn",
+            "start": 548,
+            "end": 558
+          }
+        },
+        {
+          "id": "ddn.usecases.graph::model.product.title",
+          "name": "title",
+          "local": "title",
+          "path": "title",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/graph.ddn",
+            "start": 571,
+            "end": 583
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/graph.ddn",
+        "start": 461,
+        "end": 599
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.graph::model.r_source",
+      "ref": "model.r_source",
+      "name": "source node type",
+      "kind": "assoc",
+      "kindCode": "ASSOC",
+      "from": {
+        "element": "ddn.usecases.graph::model.customer"
+      },
+      "to": {
+        "element": "ddn.usecases.graph::model.purchased"
+      },
+      "properties": {
+        "kind": "assoc"
+      },
+      "source": {
+        "file": "use-cases/data/graph.ddn",
+        "start": 604,
+        "end": 681
+      }
+    },
+    {
+      "id": "ddn.usecases.graph::model.r_target",
+      "ref": "model.r_target",
+      "name": "target node type",
+      "kind": "assoc",
+      "kindCode": "ASSOC",
+      "from": {
+        "element": "ddn.usecases.graph::model.purchased"
+      },
+      "to": {
+        "element": "ddn.usecases.graph::model.product"
+      },
+      "properties": {
+        "kind": "assoc"
+      },
+      "source": {
+        "file": "use-cases/data/graph.ddn",
+        "start": 686,
+        "end": 762
+      }
+    }
+  ],
+  "diagnostics": []
+}

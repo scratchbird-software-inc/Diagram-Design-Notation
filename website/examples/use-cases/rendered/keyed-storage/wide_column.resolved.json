@@ -1,0 +1,319 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/07-keyed-storage.ddn",
+  "view": {
+    "id": "ddn.usecases.views.keyed-storage::wide_column",
+    "name": "07b / Wide-column access pattern",
+    "local": "wide_column",
+    "selected": [
+      "ddn.usecases.keyed::wide.query",
+      "ddn.usecases.keyed::wide.readings",
+      "ddn.usecases.keyed::wide.key"
+    ],
+    "relations": [
+      "ddn.usecases.keyed::wide.r_a",
+      "ddn.usecases.keyed::wide.r_b"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "wide.r_a": 1,
+          "wide.r_b": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.keyed::wide.r_a": 1,
+      "ddn.usecases.keyed::wide.r_b": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/07-keyed-storage.ddn",
+      "start": 540,
+      "end": 762,
+      "bodyEnd": 761
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.keyed::wide.key",
+      "ref": "wide.key",
+      "local": "key",
+      "name": "Device identifier",
+      "type": "domain",
+      "kind": "domain",
+      "kindCode": "DOM",
+      "properties": {
+        "kind": "domain",
+        "meaning": "Identifies the producing sensor.",
+        "representation": {
+          "$state": "undecided"
+        }
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 641,
+        "end": 789
+      }
+    },
+    {
+      "id": "ddn.usecases.keyed::wide.readings",
+      "ref": "wide.readings",
+      "local": "readings",
+      "name": "Readings by device",
+      "type": "object",
+      "kind": "wide_column",
+      "kindCode": "WCF",
+      "properties": {
+        "kind": "wide_column",
+        "workload": [
+          "streaming"
+        ]
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.keyed::wide.readings.device_id",
+          "name": "device_id",
+          "local": "device_id",
+          "path": "device_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "key": "partition"
+          },
+          "source": {
+            "file": "use-cases/data/keyed.ddn",
+            "start": 920,
+            "end": 955
+          }
+        },
+        {
+          "id": "ddn.usecases.keyed::wide.readings.measured_at",
+          "name": "measured_at",
+          "local": "measured_at",
+          "path": "measured_at",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "key": "clustering"
+          },
+          "source": {
+            "file": "use-cases/data/keyed.ddn",
+            "start": 968,
+            "end": 1006
+          }
+        },
+        {
+          "id": "ddn.usecases.keyed::wide.readings.value",
+          "name": "value",
+          "local": "value",
+          "path": "value",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/keyed.ddn",
+            "start": 1019,
+            "end": 1031
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 794,
+        "end": 1047
+      }
+    },
+    {
+      "id": "ddn.usecases.keyed::wide.query",
+      "ref": "wide.query",
+      "local": "query",
+      "name": "Latest device readings",
+      "type": "object",
+      "kind": "qry",
+      "kindCode": "QRY",
+      "properties": {
+        "kind": "qry",
+        "description": "Access pattern; not a claim that a database query has been executed."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 1052,
+        "end": 1209
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.keyed::wide.r_a",
+      "ref": "wide.r_a",
+      "name": "uses semantic domain",
+      "kind": "domain",
+      "kindCode": "DOMAIN",
+      "from": {
+        "element": "ddn.usecases.keyed::wide.readings",
+        "member": "ddn.usecases.keyed::wide.readings.device_id",
+        "role": "field"
+      },
+      "to": {
+        "element": "ddn.usecases.keyed::wide.key"
+      },
+      "properties": {
+        "kind": "domain"
+      },
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 1214,
+        "end": 1272
+      }
+    },
+    {
+      "id": "ddn.usecases.keyed::wide.r_b",
+      "ref": "wide.r_b",
+      "name": "depends on",
+      "kind": "depends",
+      "kindCode": "DEPENDS",
+      "from": {
+        "element": "ddn.usecases.keyed::wide.query"
+      },
+      "to": {
+        "element": "ddn.usecases.keyed::wide.readings"
+      },
+      "properties": {
+        "kind": "depends"
+      },
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 1277,
+        "end": 1328
+      }
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,264 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/19-recovery.ddn",
+  "view": {
+    "id": "ddn.usecases.views.recovery::diagram",
+    "name": "19 / Backup and restore design",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.recovery::model.backup",
+      "ddn.usecases.recovery::model.restore",
+      "ddn.usecases.recovery::model.target"
+    ],
+    "relations": [
+      "ddn.usecases.recovery::model.r_restore",
+      "ddn.usecases.recovery::model.r_output"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_restore": 1,
+          "model.r_output": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.recovery::model.r_restore": 1,
+      "ddn.usecases.recovery::model.r_output": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/19-recovery.ddn",
+      "start": 235,
+      "end": 586,
+      "bodyEnd": 585
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.recovery::model.backup",
+      "ref": "model.backup",
+      "local": "backup",
+      "name": "Full backup artifact",
+      "type": "object",
+      "kind": "backup",
+      "kindCode": "BAK",
+      "properties": {
+        "kind": "backup",
+        "description": "A synthetic backup-artifact definition; test evidence would be a separate assertion."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/recovery.ddn",
+        "start": 153,
+        "end": 328
+      }
+    },
+    {
+      "id": "ddn.usecases.recovery::model.restore",
+      "ref": "model.restore",
+      "local": "restore",
+      "name": "Restore into isolation",
+      "type": "object",
+      "kind": "activity",
+      "kindCode": "ACT",
+      "properties": {
+        "kind": "activity"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/recovery.ddn",
+        "start": 333,
+        "end": 404
+      }
+    },
+    {
+      "id": "ddn.usecases.recovery::model.target",
+      "ref": "model.target",
+      "local": "target",
+      "name": "Restored database",
+      "type": "object",
+      "kind": "database",
+      "kindCode": "DB",
+      "properties": {
+        "kind": "database",
+        "level": "instance"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/recovery.ddn",
+        "start": 409,
+        "end": 499
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.recovery::model.r_restore",
+      "ref": "model.r_restore",
+      "name": "restores into",
+      "kind": "restore",
+      "kindCode": "RESTORE",
+      "from": {
+        "element": "ddn.usecases.recovery::model.backup"
+      },
+      "to": {
+        "element": "ddn.usecases.recovery::model.restore"
+      },
+      "properties": {
+        "kind": "restore"
+      },
+      "source": {
+        "file": "use-cases/data/recovery.ddn",
+        "start": 504,
+        "end": 561
+      }
+    },
+    {
+      "id": "ddn.usecases.recovery::model.r_output",
+      "ref": "model.r_output",
+      "name": "writes output to",
+      "kind": "write",
+      "kindCode": "WRITE",
+      "from": {
+        "element": "ddn.usecases.recovery::model.restore"
+      },
+      "to": {
+        "element": "ddn.usecases.recovery::model.target"
+      },
+      "properties": {
+        "kind": "write"
+      },
+      "source": {
+        "file": "use-cases/data/recovery.ddn",
+        "start": 566,
+        "end": 620
+      }
+    }
+  ],
+  "diagnostics": []
+}

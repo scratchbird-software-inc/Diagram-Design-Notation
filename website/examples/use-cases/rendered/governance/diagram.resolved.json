@@ -1,0 +1,263 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/17-governance.ddn",
+  "view": {
+    "id": "ddn.usecases.views.governance::diagram",
+    "name": "17 / Data products and contracts",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.governance::model.product",
+      "ddn.usecases.governance::model.contract",
+      "ddn.usecases.governance::model.team"
+    ],
+    "relations": [
+      "ddn.usecases.governance::model.r_contract",
+      "ddn.usecases.governance::model.r_owner"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_contract": 1,
+          "model.r_owner": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.governance::model.r_contract": 1,
+      "ddn.usecases.governance::model.r_owner": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/17-governance.ddn",
+      "start": 229,
+      "end": 582,
+      "bodyEnd": 581
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.governance::model.product",
+      "ref": "model.product",
+      "local": "product",
+      "name": "Customer data product",
+      "type": "object",
+      "kind": "data_product",
+      "kindCode": "DPR",
+      "properties": {
+        "kind": "data_product"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/governance.ddn",
+        "start": 155,
+        "end": 229
+      }
+    },
+    {
+      "id": "ddn.usecases.governance::model.contract",
+      "ref": "model.contract",
+      "local": "contract",
+      "name": "Customer export contract",
+      "type": "object",
+      "kind": "dct",
+      "kindCode": "DCT",
+      "properties": {
+        "kind": "dct"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/governance.ddn",
+        "start": 234,
+        "end": 303
+      }
+    },
+    {
+      "id": "ddn.usecases.governance::model.team",
+      "ref": "model.team",
+      "local": "team",
+      "name": "Customer data team",
+      "type": "object",
+      "kind": "team",
+      "kindCode": "TEAM",
+      "properties": {
+        "kind": "team"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/governance.ddn",
+        "start": 308,
+        "end": 368
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.governance::model.r_contract",
+      "ref": "model.r_contract",
+      "name": "conforms to contract",
+      "kind": "contract",
+      "kindCode": "CONTRACT",
+      "from": {
+        "element": "ddn.usecases.governance::model.product"
+      },
+      "to": {
+        "element": "ddn.usecases.governance::model.contract"
+      },
+      "properties": {
+        "kind": "contract"
+      },
+      "source": {
+        "file": "use-cases/data/governance.ddn",
+        "start": 373,
+        "end": 434
+      }
+    },
+    {
+      "id": "ddn.usecases.governance::model.r_owner",
+      "ref": "model.r_owner",
+      "name": "stewarded by",
+      "kind": "steward",
+      "kindCode": "STEWARD",
+      "from": {
+        "element": "ddn.usecases.governance::model.contract"
+      },
+      "to": {
+        "element": "ddn.usecases.governance::model.team"
+      },
+      "properties": {
+        "kind": "steward",
+        "scope": "contract stewardship"
+      },
+      "source": {
+        "file": "use-cases/data/governance.ddn",
+        "start": 439,
+        "end": 524
+      }
+    }
+  ],
+  "diagnostics": []
+}

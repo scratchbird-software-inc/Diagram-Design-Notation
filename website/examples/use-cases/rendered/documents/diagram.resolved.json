@@ -1,0 +1,340 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/05-documents.ddn",
+  "view": {
+    "id": "ddn.usecases.views.documents::diagram",
+    "name": "05 / Nested document structure",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.documents::model.profiles",
+      "ddn.usecases.documents::model.contacts",
+      "ddn.usecases.documents::model.contact"
+    ],
+    "relations": [
+      "ddn.usecases.documents::model.r_a",
+      "ddn.usecases.documents::model.r_b"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_a": 1,
+          "model.r_b": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.documents::model.r_a": 1,
+      "ddn.usecases.documents::model.r_b": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/05-documents.ddn",
+      "start": 233,
+      "end": 577,
+      "bodyEnd": 576
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.documents::model.profiles",
+      "ref": "model.profiles",
+      "local": "profiles",
+      "name": "Customer profile",
+      "type": "object",
+      "kind": "collection",
+      "kindCode": "COL",
+      "properties": {
+        "kind": "collection"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.documents::model.profiles.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/documents.ddn",
+            "start": 246,
+            "end": 264
+          }
+        },
+        {
+          "id": "ddn.usecases.documents::model.profiles.contacts",
+          "name": "contacts",
+          "local": "contacts",
+          "path": "contacts",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "shape": "array"
+          },
+          "source": {
+            "file": "use-cases/data/documents.ddn",
+            "start": 277,
+            "end": 309
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/documents.ddn",
+        "start": 154,
+        "end": 325
+      }
+    },
+    {
+      "id": "ddn.usecases.documents::model.contacts",
+      "ref": "model.contacts",
+      "local": "contacts",
+      "name": "Contacts array",
+      "type": "object",
+      "kind": "array",
+      "kindCode": "ARR",
+      "properties": {
+        "kind": "array",
+        "description": "Embedded collection value, not an independently stored table."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/documents.ddn",
+        "start": 330,
+        "end": 477
+      }
+    },
+    {
+      "id": "ddn.usecases.documents::model.contact",
+      "ref": "model.contact",
+      "local": "contact",
+      "name": "Contact item",
+      "type": "object",
+      "kind": "document",
+      "kindCode": "DOC",
+      "properties": {
+        "kind": "document"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.documents::model.contact.kind",
+          "name": "kind",
+          "local": "kind",
+          "path": "kind",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/documents.ddn",
+            "start": 567,
+            "end": 578
+          }
+        },
+        {
+          "id": "ddn.usecases.documents::model.contact.value",
+          "name": "value",
+          "local": "value",
+          "path": "value",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/documents.ddn",
+            "start": 591,
+            "end": 603
+          }
+        },
+        {
+          "id": "ddn.usecases.documents::model.contact.preferred",
+          "name": "preferred",
+          "local": "preferred",
+          "path": "preferred",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "presence": "optional",
+            "nullable": false
+          },
+          "source": {
+            "file": "use-cases/data/documents.ddn",
+            "start": 616,
+            "end": 672
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/documents.ddn",
+        "start": 482,
+        "end": 688
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.documents::model.r_a",
+      "ref": "model.r_a",
+      "name": "embeds",
+      "kind": "emb",
+      "kindCode": "EMB",
+      "from": {
+        "element": "ddn.usecases.documents::model.profiles"
+      },
+      "to": {
+        "element": "ddn.usecases.documents::model.contacts"
+      },
+      "properties": {
+        "kind": "emb"
+      },
+      "source": {
+        "file": "use-cases/data/documents.ddn",
+        "start": 693,
+        "end": 743
+      }
+    },
+    {
+      "id": "ddn.usecases.documents::model.r_b",
+      "ref": "model.r_b",
+      "name": "item shape",
+      "kind": "mem",
+      "kindCode": "MEM",
+      "from": {
+        "element": "ddn.usecases.documents::model.contacts"
+      },
+      "to": {
+        "element": "ddn.usecases.documents::model.contact"
+      },
+      "properties": {
+        "kind": "mem"
+      },
+      "source": {
+        "file": "use-cases/data/documents.ddn",
+        "start": 748,
+        "end": 810
+      }
+    }
+  ],
+  "diagnostics": []
+}

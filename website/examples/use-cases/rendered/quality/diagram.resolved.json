@@ -1,0 +1,348 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/21-quality.ddn",
+  "view": {
+    "id": "ddn.usecases.views.quality::diagram",
+    "name": "21 / Example-driven data quality",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.quality::model.input",
+      "ddn.usecases.quality::model.check",
+      "ddn.usecases.quality::model.expected"
+    ],
+    "relations": [
+      "ddn.usecases.quality::model.r_input",
+      "ddn.usecases.quality::model.r_result"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 2130,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_input": 1,
+          "model.r_result": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.quality::model.r_input": 1,
+      "ddn.usecases.quality::model.r_result": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/21-quality.ddn",
+      "start": 237,
+      "end": 587,
+      "bodyEnd": 586
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.quality::model.shape",
+      "ref": "model.shape",
+      "local": "shape",
+      "name": "Status record",
+      "type": "object",
+      "kind": "record",
+      "kindCode": "REC",
+      "properties": {
+        "kind": "record"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.quality::model.shape.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/quality.ddn",
+            "start": 234,
+            "end": 252
+          }
+        },
+        {
+          "id": "ddn.usecases.quality::model.shape.status",
+          "name": "status",
+          "local": "status",
+          "path": "status",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "presence": "required",
+            "nullable": false
+          },
+          "source": {
+            "file": "use-cases/data/quality.ddn",
+            "start": 265,
+            "end": 318
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/quality.ddn",
+        "start": 152,
+        "end": 334
+      }
+    },
+    {
+      "id": "ddn.usecases.quality::model.input",
+      "ref": "model.input",
+      "local": "input",
+      "name": "Input / intentional invalid value",
+      "type": "sample",
+      "kind": "sample",
+      "kindCode": "SMP",
+      "properties": {
+        "kind": "sample",
+        "mode": "synthetic",
+        "columns": [
+          {
+            "$ref": "ddn.usecases.quality::model.shape.customer_id"
+          },
+          {
+            "$ref": "ddn.usecases.quality::model.shape.status"
+          }
+        ],
+        "rows": [
+          [
+            "C001",
+            "Active"
+          ],
+          [
+            "C002",
+            null
+          ]
+        ]
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/quality.ddn",
+        "start": 339,
+        "end": 548
+      }
+    },
+    {
+      "id": "ddn.usecases.quality::model.check",
+      "ref": "model.check",
+      "local": "check",
+      "name": "Reject null status",
+      "type": "object",
+      "kind": "activity",
+      "kindCode": "ACT",
+      "properties": {
+        "kind": "activity",
+        "description": "A documented expectation; this diagram renderer does not execute the validation."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/quality.ddn",
+        "start": 553,
+        "end": 723
+      }
+    },
+    {
+      "id": "ddn.usecases.quality::model.expected",
+      "ref": "model.expected",
+      "local": "expected",
+      "name": "Expected accepted rows",
+      "type": "sample",
+      "kind": "sample",
+      "kindCode": "SMP",
+      "properties": {
+        "kind": "sample",
+        "mode": "synthetic",
+        "columns": [
+          {
+            "$ref": "ddn.usecases.quality::model.shape.customer_id"
+          },
+          {
+            "$ref": "ddn.usecases.quality::model.shape.status"
+          }
+        ],
+        "rows": [
+          [
+            "C001",
+            "Active"
+          ]
+        ]
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/quality.ddn",
+        "start": 728,
+        "end": 913
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.quality::model.r_input",
+      "ref": "model.r_input",
+      "name": "read produces input for",
+      "kind": "read",
+      "kindCode": "READ",
+      "from": {
+        "element": "ddn.usecases.quality::model.input"
+      },
+      "to": {
+        "element": "ddn.usecases.quality::model.check"
+      },
+      "properties": {
+        "kind": "read"
+      },
+      "source": {
+        "file": "use-cases/data/quality.ddn",
+        "start": 918,
+        "end": 967
+      }
+    },
+    {
+      "id": "ddn.usecases.quality::model.r_result",
+      "ref": "model.r_result",
+      "name": "expected accepted output",
+      "kind": "write",
+      "kindCode": "WRITE",
+      "from": {
+        "element": "ddn.usecases.quality::model.check"
+      },
+      "to": {
+        "element": "ddn.usecases.quality::model.expected"
+      },
+      "properties": {
+        "kind": "write"
+      },
+      "source": {
+        "file": "use-cases/data/quality.ddn",
+        "start": 972,
+        "end": 1053
+      }
+    }
+  ],
+  "diagnostics": []
+}

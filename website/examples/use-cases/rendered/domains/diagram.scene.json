@@ -1,0 +1,366 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 643,
+  "scale": 1,
+  "origin": [
+    40,
+    131
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.commerce::tables.orders",
+      "w": 270,
+      "h": 200,
+      "fields": [
+        "ddn.usecases.commerce::tables.orders.order_id",
+        "ddn.usecases.commerce::tables.orders.customer_id",
+        "ddn.usecases.commerce::tables.orders.ordered_at"
+      ],
+      "titleLines": [
+        "Orders"
+      ],
+      "footer": [
+        "oltp"
+      ],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.commerce::tables.orders.order_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "order_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.customer_id",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.ordered_at",
+          "top": 120,
+          "h": 28,
+          "labelLines": [
+            "ordered_at"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.domains::model.support",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.domains::model.support.ticket_id",
+        "ddn.usecases.domains::model.support.account_ref"
+      ],
+      "titleLines": [
+        "Support ticket"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.domains::model.support.ticket_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "ticket_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.domains::model.support.account_ref",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "account_ref"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.commerce::domains.customer_id",
+      "w": 270,
+      "h": 134,
+      "fields": [],
+      "titleLines": [
+        "Customer",
+        "identifier"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [
+        "Identifies a customer in the registry."
+      ],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.domains::model.binding",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Customer ID / SQL"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 312,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.domains::model.r_order_domain",
+      "points": [
+        [
+          270,
+          106
+        ],
+        [
+          314,
+          106
+        ],
+        [
+          314,
+          -16
+        ],
+        [
+          736,
+          -16
+        ],
+        [
+          736,
+          33.5
+        ],
+        [
+          780,
+          33.5
+        ]
+      ],
+      "label": {
+        "x": 351.75,
+        "y": -31,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.domains::model.r_support_candidate",
+      "points": [
+        [
+          660,
+          106
+        ],
+        [
+          704,
+          106
+        ],
+        [
+          704,
+          67
+        ],
+        [
+          780,
+          67
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 52,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.domains::model.r_binding",
+      "points": [
+        [
+          780,
+          100.5
+        ],
+        [
+          736,
+          100.5
+        ],
+        [
+          736,
+          362
+        ],
+        [
+          270,
+          362
+        ]
+      ],
+      "label": {
+        "x": 488,
+        "y": 347,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "manual",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 1612,
+        "bends": 8
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 1612,
+        "bends": 8
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 1612,
+        "bends": 8,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 1612,
+        "bends": 8
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 1612,
+        "bends": 8
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 1612,
+        "bends": 8
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 1612,
+        "bends": 8
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": -31,
+    "w": 1080,
+    "h": 473
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 483
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.domains::diagram",
+    "positions": {
+      "ddn.usecases.commerce::tables.orders": [
+        0,
+        0
+      ],
+      "ddn.usecases.domains::model.support": [
+        390,
+        0
+      ],
+      "ddn.usecases.commerce::domains.customer_id": [
+        780,
+        0
+      ],
+      "ddn.usecases.domains::model.binding": [
+        0,
+        312
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

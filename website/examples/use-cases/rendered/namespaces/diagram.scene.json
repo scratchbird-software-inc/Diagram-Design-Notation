@@ -1,0 +1,289 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 400,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.commerce::tables.orders",
+      "w": 270,
+      "h": 200,
+      "fields": [
+        "ddn.usecases.commerce::tables.orders.order_id",
+        "ddn.usecases.commerce::tables.orders.customer_id",
+        "ddn.usecases.commerce::tables.orders.ordered_at"
+      ],
+      "titleLines": [
+        "Orders"
+      ],
+      "footer": [
+        "oltp"
+      ],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.commerce::tables.orders.order_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "order_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.customer_id",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.ordered_at",
+          "top": 120,
+          "h": 28,
+          "labelLines": [
+            "ordered_at"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.sql::model.routine",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Refresh open",
+        "orders"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.namespace::model.schema",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "sales schema"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.namespace::model.r_orders_schema",
+      "points": [
+        [
+          270,
+          100
+        ],
+        [
+          314,
+          100
+        ],
+        [
+          314,
+          116
+        ],
+        [
+          736,
+          116
+        ],
+        [
+          736,
+          66.667
+        ],
+        [
+          780,
+          66.667
+        ]
+      ],
+      "label": {
+        "x": 351.75,
+        "y": 101,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.namespace::model.r_routine_schema",
+      "points": [
+        [
+          660,
+          50
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          704,
+          33.333
+        ],
+        [
+          780,
+          33.333
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 18.333,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "manual",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 712,
+        "bends": 6
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 712,
+        "bends": 6
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 712,
+        "bends": 6,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 712,
+        "bends": 6
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 712,
+        "bends": 6
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 712,
+        "bends": 6
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 712,
+        "bends": 6
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 230
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 240
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.namespaces::diagram",
+    "positions": {
+      "ddn.usecases.commerce::tables.orders": [
+        0,
+        0
+      ],
+      "ddn.usecases.sql::model.routine": [
+        390,
+        0
+      ],
+      "ddn.usecases.namespace::model.schema": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

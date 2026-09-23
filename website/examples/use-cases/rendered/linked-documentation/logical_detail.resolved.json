@@ -1,0 +1,495 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/22-linked-documentation.ddn",
+  "view": {
+    "id": "ddn.usecases.views.linked-documentation::logical_detail",
+    "name": "22b / Logical detail",
+    "local": "logical_detail",
+    "selected": [
+      "ddn.usecases.commerce::tables.orders",
+      "ddn.usecases.commerce::tables.customer"
+    ],
+    "relations": [
+      "ddn.usecases.commerce::tables.r_order_customer"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "tables.r_order_customer": 1
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.commerce::tables.r_order_customer": 1
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/22-linked-documentation.ddn",
+      "start": 740,
+      "end": 959,
+      "bodyEnd": 958
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.commerce::tables.customer",
+      "ref": "tables.customer",
+      "local": "customer",
+      "name": "Customer",
+      "type": "object",
+      "kind": "table",
+      "kindCode": "TBL",
+      "properties": {
+        "kind": "table",
+        "level": "definition",
+        "workload": [
+          "oltp"
+        ],
+        "role": "authoritative",
+        "description": "Authority for the customer registry, not for every customer attribute in all systems."
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.commerce::tables.customer.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "key": "primary",
+            "domain": {
+              "$ref": "ddn.usecases.commerce::domains.customer_id"
+            }
+          },
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1194,
+            "end": 1259
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.customer.display_name",
+          "name": "display_name",
+          "local": "display_name",
+          "path": "display_name",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1272,
+            "end": 1291
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.customer.status",
+          "name": "status",
+          "local": "status",
+          "path": "status",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1304,
+            "end": 1317
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 923,
+        "end": 1333
+      }
+    },
+    {
+      "id": "ddn.usecases.commerce::tables.orders",
+      "ref": "tables.orders",
+      "local": "orders",
+      "name": "Orders",
+      "type": "object",
+      "kind": "table",
+      "kindCode": "TBL",
+      "properties": {
+        "kind": "table",
+        "level": "definition",
+        "workload": [
+          "oltp"
+        ]
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.commerce::tables.orders.order_id",
+          "name": "order_id",
+          "local": "order_id",
+          "path": "order_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "key": "primary",
+            "domain": {
+              "$ref": "ddn.usecases.commerce::domains.order_id"
+            }
+          },
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1466,
+            "end": 1525
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "domain": {
+              "$ref": "ddn.usecases.commerce::domains.customer_id"
+            }
+          },
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1538,
+            "end": 1589
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.ordered_at",
+          "name": "ordered_at",
+          "local": "ordered_at",
+          "path": "ordered_at",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1602,
+            "end": 1619
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 1338,
+        "end": 1635
+      }
+    },
+    {
+      "id": "ddn.usecases.commerce::tables.line",
+      "ref": "tables.line",
+      "local": "line",
+      "name": "Order line",
+      "type": "object",
+      "kind": "table",
+      "kindCode": "TBL",
+      "properties": {
+        "kind": "table",
+        "level": "definition",
+        "workload": [
+          "oltp"
+        ]
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.commerce::tables.line.line_id",
+          "name": "line_id",
+          "local": "line_id",
+          "path": "line_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {
+            "key": "primary"
+          },
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1770,
+            "end": 1801
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.line.order_id",
+          "name": "order_id",
+          "local": "order_id",
+          "path": "order_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1814,
+            "end": 1829
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.line.sku",
+          "name": "sku",
+          "local": "sku",
+          "path": "sku",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1842,
+            "end": 1852
+          }
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.line.quantity",
+          "name": "quantity",
+          "local": "quantity",
+          "path": "quantity",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/commerce.ddn",
+            "start": 1865,
+            "end": 1880
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 1640,
+        "end": 1896
+      }
+    },
+    {
+      "id": "ddn.usecases.commerce::domains.customer_id",
+      "ref": "domains.customer_id",
+      "local": "customer_id",
+      "name": "Customer identifier",
+      "type": "domain",
+      "kind": "domain",
+      "kindCode": "DOM",
+      "properties": {
+        "kind": "domain",
+        "meaning": "Identifies a customer in the registry.",
+        "representation": {
+          "$state": "undecided"
+        }
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 574,
+        "end": 738
+      }
+    },
+    {
+      "id": "ddn.usecases.commerce::domains.order_id",
+      "ref": "domains.order_id",
+      "local": "order_id",
+      "name": "Order identifier",
+      "type": "domain",
+      "kind": "domain",
+      "kindCode": "DOM",
+      "properties": {
+        "kind": "domain",
+        "meaning": "Identifies an order in the order book.",
+        "representation": {
+          "$state": "undecided"
+        }
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 743,
+        "end": 901
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.commerce::tables.r_line_order",
+      "ref": "tables.r_line_order",
+      "name": "references",
+      "kind": "ref",
+      "kindCode": "REF",
+      "from": {
+        "element": "ddn.usecases.commerce::tables.line",
+        "member": "ddn.usecases.commerce::tables.line.order_id",
+        "role": "field"
+      },
+      "to": {
+        "element": "ddn.usecases.commerce::tables.orders",
+        "member": "ddn.usecases.commerce::tables.orders.order_id",
+        "role": "field"
+      },
+      "properties": {
+        "kind": "ref",
+        "source_mark": "many",
+        "target_mark": "one",
+        "enforcement": {
+          "$state": "undecided"
+        }
+      },
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 1901,
+        "end": 2033
+      }
+    },
+    {
+      "id": "ddn.usecases.commerce::tables.r_order_customer",
+      "ref": "tables.r_order_customer",
+      "name": "references",
+      "kind": "ref",
+      "kindCode": "REF",
+      "from": {
+        "element": "ddn.usecases.commerce::tables.orders",
+        "member": "ddn.usecases.commerce::tables.orders.customer_id",
+        "role": "field"
+      },
+      "to": {
+        "element": "ddn.usecases.commerce::tables.customer",
+        "member": "ddn.usecases.commerce::tables.customer.customer_id",
+        "role": "field"
+      },
+      "properties": {
+        "kind": "ref",
+        "source_mark": "zeromany",
+        "target_mark": "one",
+        "enforcement": {
+          "$state": "undecided"
+        }
+      },
+      "source": {
+        "file": "use-cases/data/commerce.ddn",
+        "start": 2038,
+        "end": 2188
+      }
+    }
+  ],
+  "diagnostics": []
+}

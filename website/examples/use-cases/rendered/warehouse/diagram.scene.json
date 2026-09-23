@@ -1,0 +1,478 @@
+{
+  "smallestText": 11,
+  "width": 1564,
+  "height": 748,
+  "scale": 1,
+  "origin": [
+    99,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.warehouse::model.fact",
+      "w": 270,
+      "h": 284,
+      "fields": [
+        "ddn.usecases.warehouse::model.fact.order_id",
+        "ddn.usecases.warehouse::model.fact.line_id",
+        "ddn.usecases.warehouse::model.fact.customer_key",
+        "ddn.usecases.warehouse::model.fact.product_key",
+        "ddn.usecases.warehouse::model.fact.date_key",
+        "ddn.usecases.warehouse::model.fact.net_amount"
+      ],
+      "titleLines": [
+        "Order line fact"
+      ],
+      "footer": [
+        "olap"
+      ],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.warehouse::model.fact.order_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "order_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.line_id",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "line_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.customer_key",
+          "top": 120,
+          "h": 28,
+          "labelLines": [
+            "customer_key"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.product_key",
+          "top": 148,
+          "h": 28,
+          "labelLines": [
+            "product_key"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.date_key",
+          "top": 176,
+          "h": 28,
+          "labelLines": [
+            "date_key"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.net_amount",
+          "top": 204,
+          "h": 28,
+          "labelLines": [
+            "net_amount"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.customer",
+      "w": 270,
+      "h": 152,
+      "fields": [
+        "ddn.usecases.warehouse::model.customer.customer_key",
+        "ddn.usecases.warehouse::model.customer.display_name"
+      ],
+      "titleLines": [
+        "Customer",
+        "dimension"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.warehouse::model.customer.customer_key",
+          "top": 82,
+          "h": 28,
+          "labelLines": [
+            "customer_key"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.customer.display_name",
+          "top": 110,
+          "h": 28,
+          "labelLines": [
+            "display_name"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.product",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.warehouse::model.product.product_key",
+        "ddn.usecases.warehouse::model.product.product_name"
+      ],
+      "titleLines": [
+        "Product dimension"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.warehouse::model.product.product_key",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "product_key"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.product.product_name",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "product_name"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.date",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.warehouse::model.date.date_key",
+        "ddn.usecases.warehouse::model.date.calendar_date"
+      ],
+      "titleLines": [
+        "Date dimension"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 396,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.warehouse::model.date.date_key",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "date_key"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.date.calendar_date",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "calendar_date"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.grain",
+      "w": 270,
+      "h": 152,
+      "fields": [],
+      "titleLines": [
+        "Declare the grain"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [
+        "One fact row per order line. Order",
+        "totals must not be repeated as",
+        "additive line measures."
+      ],
+      "x": 390,
+      "y": 396,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.warehouse::model.r_c",
+      "points": [
+        [
+          270,
+          134
+        ],
+        [
+          314,
+          134
+        ],
+        [
+          314,
+          96
+        ],
+        [
+          390,
+          96
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 81,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.r_p",
+      "points": [
+        [
+          270,
+          162
+        ],
+        [
+          314,
+          162
+        ],
+        [
+          314,
+          168
+        ],
+        [
+          736,
+          168
+        ],
+        [
+          736,
+          78
+        ],
+        [
+          780,
+          78
+        ]
+      ],
+      "label": {
+        "x": 351.75,
+        "y": 153,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.r_d",
+      "points": [
+        [
+          270,
+          190
+        ],
+        [
+          314,
+          190
+        ],
+        [
+          314,
+          300
+        ],
+        [
+          -44,
+          300
+        ],
+        [
+          -44,
+          474
+        ],
+        [
+          0,
+          474
+        ]
+      ],
+      "label": {
+        "x": -59,
+        "y": 372,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "manual",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 1494,
+        "bends": 10
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 1494,
+        "bends": 10
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 1494,
+        "bends": 10,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 1494,
+        "bends": 10
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 1494,
+        "bends": 10
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 1494,
+        "bends": 10
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 1494,
+        "bends": 10
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": -59,
+    "y": 0,
+    "w": 1139,
+    "h": 578
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1139,
+    "h": 588
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.warehouse::diagram",
+    "positions": {
+      "ddn.usecases.warehouse::model.fact": [
+        0,
+        0
+      ],
+      "ddn.usecases.warehouse::model.customer": [
+        390,
+        0
+      ],
+      "ddn.usecases.warehouse::model.product": [
+        780,
+        0
+      ],
+      "ddn.usecases.warehouse::model.date": [
+        0,
+        396
+      ],
+      "ddn.usecases.warehouse::model.grain": [
+        390,
+        396
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

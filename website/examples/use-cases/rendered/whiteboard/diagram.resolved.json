@@ -1,0 +1,264 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/01-whiteboard.ddn",
+  "view": {
+    "id": "ddn.usecases.views.whiteboard::diagram",
+    "name": "01 / Whiteboard sketch",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.sketch::model.customer",
+      "ddn.usecases.sketch::model.order",
+      "ddn.usecases.sketch::model.shipment"
+    ],
+    "relations": [
+      "ddn.usecases.sketch::model.r_a",
+      "ddn.usecases.sketch::model.r_b"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "handDrawn",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42,
+        "roughness": 1.8,
+        "hachure": true
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_a": 1,
+          "model.r_b": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.sketch::model.r_a": 1,
+      "ddn.usecases.sketch::model.r_b": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/01-whiteboard.ddn",
+      "start": 225,
+      "end": 558,
+      "bodyEnd": 557
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.sketch::model.customer",
+      "ref": "model.customer",
+      "local": "customer",
+      "name": "Customer",
+      "type": "object",
+      "kind": "object",
+      "kindCode": "OBJ",
+      "properties": {
+        "kind": "object"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/sketch.ddn",
+        "start": 151,
+        "end": 207
+      }
+    },
+    {
+      "id": "ddn.usecases.sketch::model.order",
+      "ref": "model.order",
+      "local": "order",
+      "name": "Order",
+      "type": "object",
+      "kind": "object",
+      "kindCode": "OBJ",
+      "properties": {
+        "kind": "object"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/sketch.ddn",
+        "start": 212,
+        "end": 262
+      }
+    },
+    {
+      "id": "ddn.usecases.sketch::model.shipment",
+      "ref": "model.shipment",
+      "local": "shipment",
+      "name": "Shipment",
+      "type": "object",
+      "kind": "object",
+      "kindCode": "OBJ",
+      "properties": {
+        "kind": "object"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/sketch.ddn",
+        "start": 267,
+        "end": 323
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.sketch::model.r_a",
+      "ref": "model.r_a",
+      "name": "places",
+      "kind": "assoc",
+      "kindCode": "ASSOC",
+      "from": {
+        "element": "ddn.usecases.sketch::model.customer"
+      },
+      "to": {
+        "element": "ddn.usecases.sketch::model.order"
+      },
+      "properties": {
+        "kind": "assoc"
+      },
+      "source": {
+        "file": "use-cases/data/sketch.ddn",
+        "start": 328,
+        "end": 386
+      }
+    },
+    {
+      "id": "ddn.usecases.sketch::model.r_b",
+      "ref": "model.r_b",
+      "name": "fulfilled by",
+      "kind": "assoc",
+      "kindCode": "ASSOC",
+      "from": {
+        "element": "ddn.usecases.sketch::model.order"
+      },
+      "to": {
+        "element": "ddn.usecases.sketch::model.shipment"
+      },
+      "properties": {
+        "kind": "assoc"
+      },
+      "source": {
+        "file": "use-cases/data/sketch.ddn",
+        "start": 391,
+        "end": 455
+      }
+    }
+  ],
+  "diagnostics": []
+}

@@ -1,0 +1,270 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 362,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.keyed::kv.key",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Session key"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.keyed::kv.sessions",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Session store"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.keyed::kv.value",
+      "w": 270,
+      "h": 162,
+      "fields": [
+        "ddn.usecases.keyed::kv.value.user_id",
+        "ddn.usecases.keyed::kv.value.expires_at",
+        "ddn.usecases.keyed::kv.value.cart_id"
+      ],
+      "titleLines": [
+        "Session value"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.keyed::kv.value.user_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "user_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.keyed::kv.value.expires_at",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "expires_at"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.keyed::kv.value.cart_id",
+          "top": 120,
+          "h": 28,
+          "labelLines": [
+            "cart_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.keyed::kv.r_a",
+      "points": [
+        [
+          270,
+          50
+        ],
+        [
+          390,
+          50
+        ]
+      ],
+      "label": {
+        "x": 315,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.keyed::kv.r_b",
+      "points": [
+        [
+          660,
+          50
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          704,
+          81
+        ],
+        [
+          780,
+          81
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 66,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 271,
+        "bends": 2
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 271,
+        "bends": 2
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 271,
+        "bends": 2,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 271,
+        "bends": 2
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 271,
+        "bends": 2
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 271,
+        "bends": 2
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 271,
+        "bends": 2
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 192
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 202
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.keyed-storage::diagram",
+    "positions": {
+      "ddn.usecases.keyed::kv.key": [
+        0,
+        0
+      ],
+      "ddn.usecases.keyed::kv.sessions": [
+        390,
+        0
+      ],
+      "ddn.usecases.keyed::kv.value": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

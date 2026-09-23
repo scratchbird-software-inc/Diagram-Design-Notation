@@ -23,7 +23,6 @@ notation/tests/validation/
 AI-REFERENCE.md
 
 # Generated render/build output (notation/dist is deliberately committed)
-rendered/
 site/
 packages/
 *.zip

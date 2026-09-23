@@ -1,0 +1,324 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/20-migration.ddn",
+  "view": {
+    "id": "ddn.usecases.views.migration::diagram",
+    "name": "20 / Migration and target design",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.migration::model.legacy",
+      "ddn.usecases.migration::model.convert",
+      "ddn.usecases.migration::model.target"
+    ],
+    "relations": [
+      "ddn.usecases.migration::model.r_extract",
+      "ddn.usecases.migration::model.r_load"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_extract": 1,
+          "model.r_load": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.migration::model.r_extract": 1,
+      "ddn.usecases.migration::model.r_load": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/20-migration.ddn",
+      "start": 234,
+      "end": 585,
+      "bodyEnd": 584
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.migration::model.legacy",
+      "ref": "model.legacy",
+      "local": "legacy",
+      "name": "Customer / legacy",
+      "type": "object",
+      "kind": "table",
+      "kindCode": "TBL",
+      "properties": {
+        "kind": "table",
+        "level": "instance",
+        "maturity": "deprecated"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.migration::model.legacy.id",
+          "name": "id",
+          "local": "id",
+          "path": "id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/migration.ddn",
+            "start": 295,
+            "end": 304
+          }
+        },
+        {
+          "id": "ddn.usecases.migration::model.legacy.full_name",
+          "name": "full_name",
+          "local": "full_name",
+          "path": "full_name",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/migration.ddn",
+            "start": 317,
+            "end": 333
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/migration.ddn",
+        "start": 154,
+        "end": 349
+      }
+    },
+    {
+      "id": "ddn.usecases.migration::model.convert",
+      "ref": "model.convert",
+      "local": "convert",
+      "name": "Map and reconcile",
+      "type": "object",
+      "kind": "activity",
+      "kindCode": "ACT",
+      "properties": {
+        "kind": "activity"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/migration.ddn",
+        "start": 354,
+        "end": 420
+      }
+    },
+    {
+      "id": "ddn.usecases.migration::model.target",
+      "ref": "model.target",
+      "local": "target",
+      "name": "Customer / target",
+      "type": "object",
+      "kind": "table",
+      "kindCode": "TBL",
+      "properties": {
+        "kind": "table",
+        "level": "instance",
+        "maturity": "draft"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.migration::model.target.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/migration.ddn",
+            "start": 561,
+            "end": 579
+          }
+        },
+        {
+          "id": "ddn.usecases.migration::model.target.display_name",
+          "name": "display_name",
+          "local": "display_name",
+          "path": "display_name",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/migration.ddn",
+            "start": 592,
+            "end": 611
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/migration.ddn",
+        "start": 425,
+        "end": 627
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.migration::model.r_extract",
+      "ref": "model.r_extract",
+      "name": "extracts into",
+      "kind": "extract",
+      "kindCode": "EXTRACT",
+      "from": {
+        "element": "ddn.usecases.migration::model.legacy"
+      },
+      "to": {
+        "element": "ddn.usecases.migration::model.convert"
+      },
+      "properties": {
+        "kind": "extract"
+      },
+      "source": {
+        "file": "use-cases/data/migration.ddn",
+        "start": 632,
+        "end": 689
+      }
+    },
+    {
+      "id": "ddn.usecases.migration::model.r_load",
+      "ref": "model.r_load",
+      "name": "loads into",
+      "kind": "load",
+      "kindCode": "LOAD",
+      "from": {
+        "element": "ddn.usecases.migration::model.convert"
+      },
+      "to": {
+        "element": "ddn.usecases.migration::model.target"
+      },
+      "properties": {
+        "kind": "load"
+      },
+      "source": {
+        "file": "use-cases/data/migration.ddn",
+        "start": 694,
+        "end": 745
+      }
+    }
+  ],
+  "diagnostics": []
+}

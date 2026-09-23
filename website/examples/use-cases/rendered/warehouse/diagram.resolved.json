@@ -1,0 +1,521 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/15-warehouse.ddn",
+  "view": {
+    "id": "ddn.usecases.views.warehouse::diagram",
+    "name": "15 / Dimensional warehouse",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.warehouse::model.fact",
+      "ddn.usecases.warehouse::model.customer",
+      "ddn.usecases.warehouse::model.product",
+      "ddn.usecases.warehouse::model.date",
+      "ddn.usecases.warehouse::model.grain"
+    ],
+    "relations": [
+      "ddn.usecases.warehouse::model.r_c",
+      "ddn.usecases.warehouse::model.r_p",
+      "ddn.usecases.warehouse::model.r_d"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "manual",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1680,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 1050,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_c": 1,
+          "model.r_p": 2,
+          "model.r_d": 3
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.warehouse::model.r_c": 1,
+      "ddn.usecases.warehouse::model.r_p": 2,
+      "ddn.usecases.warehouse::model.r_d": 3
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/15-warehouse.ddn",
+      "start": 238,
+      "end": 667,
+      "bodyEnd": 666
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.warehouse::model.fact",
+      "ref": "model.fact",
+      "local": "fact",
+      "name": "Order line fact",
+      "type": "object",
+      "kind": "fact",
+      "kindCode": "FCT",
+      "properties": {
+        "kind": "fact",
+        "workload": [
+          "olap"
+        ],
+        "description": "Grain: one row per order line."
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.warehouse::model.fact.order_id",
+          "name": "order_id",
+          "local": "order_id",
+          "path": "order_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 316,
+            "end": 331
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.line_id",
+          "name": "line_id",
+          "local": "line_id",
+          "path": "line_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 344,
+            "end": 358
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.customer_key",
+          "name": "customer_key",
+          "local": "customer_key",
+          "path": "customer_key",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 371,
+            "end": 390
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.product_key",
+          "name": "product_key",
+          "local": "product_key",
+          "path": "product_key",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 403,
+            "end": 421
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.date_key",
+          "name": "date_key",
+          "local": "date_key",
+          "path": "date_key",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 434,
+            "end": 449
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.fact.net_amount",
+          "name": "net_amount",
+          "local": "net_amount",
+          "path": "net_amount",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 462,
+            "end": 479
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 154,
+        "end": 495
+      }
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.customer",
+      "ref": "model.customer",
+      "local": "customer",
+      "name": "Customer dimension",
+      "type": "object",
+      "kind": "dimension",
+      "kindCode": "DIM",
+      "properties": {
+        "kind": "dimension"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.warehouse::model.customer.customer_key",
+          "name": "customer_key",
+          "local": "customer_key",
+          "path": "customer_key",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 593,
+            "end": 612
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.customer.display_name",
+          "name": "display_name",
+          "local": "display_name",
+          "path": "display_name",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 625,
+            "end": 644
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 500,
+        "end": 660
+      }
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.product",
+      "ref": "model.product",
+      "local": "product",
+      "name": "Product dimension",
+      "type": "object",
+      "kind": "dimension",
+      "kindCode": "DIM",
+      "properties": {
+        "kind": "dimension"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.warehouse::model.product.product_key",
+          "name": "product_key",
+          "local": "product_key",
+          "path": "product_key",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 756,
+            "end": 774
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.product.product_name",
+          "name": "product_name",
+          "local": "product_name",
+          "path": "product_name",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 787,
+            "end": 806
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 665,
+        "end": 822
+      }
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.date",
+      "ref": "model.date",
+      "local": "date",
+      "name": "Date dimension",
+      "type": "object",
+      "kind": "dimension",
+      "kindCode": "DIM",
+      "properties": {
+        "kind": "dimension"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.warehouse::model.date.date_key",
+          "name": "date_key",
+          "local": "date_key",
+          "path": "date_key",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 912,
+            "end": 927
+          }
+        },
+        {
+          "id": "ddn.usecases.warehouse::model.date.calendar_date",
+          "name": "calendar_date",
+          "local": "calendar_date",
+          "path": "calendar_date",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/warehouse.ddn",
+            "start": 940,
+            "end": 960
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 827,
+        "end": 976
+      }
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.grain",
+      "ref": "model.grain",
+      "local": "grain",
+      "name": "Declare the grain",
+      "type": "object",
+      "kind": "note",
+      "kindCode": "NOTE",
+      "properties": {
+        "kind": "note",
+        "description": "One fact row per order line. Order totals must not be repeated as additive line measures."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 981,
+        "end": 1155
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.warehouse::model.r_c",
+      "ref": "model.r_c",
+      "name": "references",
+      "kind": "ref",
+      "kindCode": "REF",
+      "from": {
+        "element": "ddn.usecases.warehouse::model.fact",
+        "member": "ddn.usecases.warehouse::model.fact.customer_key",
+        "role": "field"
+      },
+      "to": {
+        "element": "ddn.usecases.warehouse::model.customer",
+        "member": "ddn.usecases.warehouse::model.customer.customer_key",
+        "role": "field"
+      },
+      "properties": {
+        "kind": "ref",
+        "source_mark": "zeromany",
+        "target_mark": "one"
+      },
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 1160,
+        "end": 1273
+      }
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.r_p",
+      "ref": "model.r_p",
+      "name": "references",
+      "kind": "ref",
+      "kindCode": "REF",
+      "from": {
+        "element": "ddn.usecases.warehouse::model.fact",
+        "member": "ddn.usecases.warehouse::model.fact.product_key",
+        "role": "field"
+      },
+      "to": {
+        "element": "ddn.usecases.warehouse::model.product",
+        "member": "ddn.usecases.warehouse::model.product.product_key",
+        "role": "field"
+      },
+      "properties": {
+        "kind": "ref",
+        "source_mark": "zeromany",
+        "target_mark": "one"
+      },
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 1278,
+        "end": 1388
+      }
+    },
+    {
+      "id": "ddn.usecases.warehouse::model.r_d",
+      "ref": "model.r_d",
+      "name": "references",
+      "kind": "ref",
+      "kindCode": "REF",
+      "from": {
+        "element": "ddn.usecases.warehouse::model.fact",
+        "member": "ddn.usecases.warehouse::model.fact.date_key",
+        "role": "field"
+      },
+      "to": {
+        "element": "ddn.usecases.warehouse::model.date",
+        "member": "ddn.usecases.warehouse::model.date.date_key",
+        "role": "field"
+      },
+      "properties": {
+        "kind": "ref",
+        "source_mark": "zeromany",
+        "target_mark": "one"
+      },
+      "source": {
+        "file": "use-cases/data/warehouse.ddn",
+        "start": 1393,
+        "end": 1494
+      }
+    }
+  ],
+  "diagnostics": []
+}

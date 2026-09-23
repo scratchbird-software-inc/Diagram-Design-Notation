@@ -1,0 +1,468 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 724,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.flow::stream.source",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Customer /",
+        "production"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::stream.capture",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Capture changes"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::stream.topic",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "customer.changed"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::stream.hist_job",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Build customer",
+        "history"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 212,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::stream.search_job",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Build customer",
+        "search"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 212,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::stream.history",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Customer history"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 212,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::stream.search",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Customer search"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 424,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.flow::stream.r_capture",
+      "points": [
+        [
+          270,
+          50
+        ],
+        [
+          390,
+          50
+        ]
+      ],
+      "label": {
+        "x": 315,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.flow::stream.r_publish",
+      "points": [
+        [
+          660,
+          50
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          704,
+          25
+        ],
+        [
+          780,
+          25
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 10,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.flow::stream.r_history_delivery",
+      "points": [
+        [
+          780,
+          50
+        ],
+        [
+          716,
+          50
+        ],
+        [
+          716,
+          196
+        ],
+        [
+          314,
+          196
+        ],
+        [
+          314,
+          245.333
+        ],
+        [
+          270,
+          245.333
+        ]
+      ],
+      "label": {
+        "x": 349.25,
+        "y": 181,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.flow::stream.r_search_delivery",
+      "points": [
+        [
+          780,
+          75
+        ],
+        [
+          736,
+          75
+        ],
+        [
+          736,
+          262
+        ],
+        [
+          660,
+          262
+        ]
+      ],
+      "label": {
+        "x": 683,
+        "y": 247,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.flow::stream.r_history_write",
+      "points": [
+        [
+          270,
+          278.667
+        ],
+        [
+          314,
+          278.667
+        ],
+        [
+          314,
+          328
+        ],
+        [
+          736,
+          328
+        ],
+        [
+          736,
+          278.667
+        ],
+        [
+          780,
+          278.667
+        ]
+      ],
+      "label": {
+        "x": 351.75,
+        "y": 313,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.flow::stream.r_search_write",
+      "points": [
+        [
+          390,
+          262
+        ],
+        [
+          326,
+          262
+        ],
+        [
+          326,
+          474
+        ],
+        [
+          270,
+          474
+        ]
+      ],
+      "label": {
+        "x": 311,
+        "y": 353,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [
+    {
+      "point": [
+        326,
+        328
+      ],
+      "under": "ddn.usecases.flow::stream.r_history_write",
+      "over": "ddn.usecases.flow::stream.r_search_write",
+      "overHorizontal": false
+    }
+  ],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "manual",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 1,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 1,
+        "length": 2234.666,
+        "bends": 14
+      },
+      {
+        "stage": "connection-points",
+        "trials": 14,
+        "accepted": 1,
+        "crossings": 1,
+        "length": 2217.9990000000003,
+        "bends": 14
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 1,
+        "localCrossings": 0,
+        "length": 2217.9990000000003,
+        "bends": 14,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 1,
+        "length": 2217.9990000000003,
+        "bends": 14
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 1,
+        "length": 2217.9990000000003,
+        "bends": 14
+      }
+    ],
+    "portTrials": 26,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 1,
+        "localCrossings": 0,
+        "length": 2217.9990000000003,
+        "bends": 14
+      },
+      "after": {
+        "crossings": 1,
+        "localCrossings": 0,
+        "length": 2217.9990000000003,
+        "bends": 14
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 1,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 554
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 564
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.streaming::diagram",
+    "positions": {
+      "ddn.usecases.flow::stream.source": [
+        0,
+        0
+      ],
+      "ddn.usecases.flow::stream.capture": [
+        390,
+        0
+      ],
+      "ddn.usecases.flow::stream.topic": [
+        780,
+        0
+      ],
+      "ddn.usecases.flow::stream.hist_job": [
+        0,
+        212
+      ],
+      "ddn.usecases.flow::stream.search_job": [
+        390,
+        212
+      ],
+      "ddn.usecases.flow::stream.history": [
+        780,
+        212
+      ],
+      "ddn.usecases.flow::stream.search": [
+        0,
+        424
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

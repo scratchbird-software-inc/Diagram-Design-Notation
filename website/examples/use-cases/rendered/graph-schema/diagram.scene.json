@@ -1,0 +1,299 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 360,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.graph::model.customer",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.graph::model.customer.customer_id",
+        "ddn.usecases.graph::model.customer.name"
+      ],
+      "titleLines": [
+        "Customer node"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.graph::model.customer.customer_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.graph::model.customer.name",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "name"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.graph::model.purchased",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.graph::model.purchased.purchased_at",
+        "ddn.usecases.graph::model.purchased.quantity"
+      ],
+      "titleLines": [
+        "PURCHASED edge"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.graph::model.purchased.purchased_at",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "purchased_at"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.graph::model.purchased.quantity",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "quantity"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.graph::model.product",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.graph::model.product.sku",
+        "ddn.usecases.graph::model.product.title"
+      ],
+      "titleLines": [
+        "Product node"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.graph::model.product.sku",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "sku"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.graph::model.product.title",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "title"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.graph::model.r_source",
+      "points": [
+        [
+          270,
+          67
+        ],
+        [
+          390,
+          67
+        ]
+      ],
+      "label": {
+        "x": 315,
+        "y": 52,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.graph::model.r_target",
+      "points": [
+        [
+          660,
+          67
+        ],
+        [
+          780,
+          67
+        ]
+      ],
+      "label": {
+        "x": 705,
+        "y": 52,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 240,
+        "bends": 0,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 164
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 200
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.graph-schema::diagram",
+    "positions": {
+      "ddn.usecases.graph::model.customer": [
+        0,
+        0
+      ],
+      "ddn.usecases.graph::model.purchased": [
+        390,
+        0
+      ],
+      "ddn.usecases.graph::model.product": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

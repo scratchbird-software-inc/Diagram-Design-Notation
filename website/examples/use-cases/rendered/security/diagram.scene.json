@@ -1,0 +1,318 @@
+{
+  "smallestText": 11,
+  "width": 1545,
+  "height": 428,
+  "scale": 1,
+  "origin": [
+    60,
+    154
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.security::model.source",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.security::model.source.customer_id",
+        "ddn.usecases.security::model.source.email"
+      ],
+      "titleLines": [
+        "Contact records"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.security::model.source.customer_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.security::model.source.email",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "email"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.security::model.mask",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Aggregate +",
+        "remove IDs"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.security::model.export",
+      "w": 270,
+      "h": 152,
+      "fields": [
+        "ddn.usecases.security::model.export.cohort_id",
+        "ddn.usecases.security::model.export.count"
+      ],
+      "titleLines": [
+        "Proposed cohort",
+        "export"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.security::model.export.cohort_id",
+          "top": 82,
+          "h": 28,
+          "labelLines": [
+            "cohort_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.security::model.export.count",
+          "top": 110,
+          "h": 28,
+          "labelLines": [
+            "count"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.security::model.r_input",
+      "points": [
+        [
+          270,
+          67
+        ],
+        [
+          314,
+          67
+        ],
+        [
+          314,
+          50
+        ],
+        [
+          390,
+          50
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.security::model.r_output",
+      "points": [
+        [
+          660,
+          50
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          704,
+          76
+        ],
+        [
+          780,
+          76
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 61,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [
+    {
+      "id": "ddn.usecases.views.security::diagram.restricted",
+      "name": "RESTRICTED / view scope",
+      "scope": "ddn.usecases.security::model.restricted",
+      "members": [
+        "ddn.usecases.security::model.source"
+      ],
+      "x": -20,
+      "y": -54,
+      "w": 310,
+      "h": 210
+    },
+    {
+      "id": "ddn.usecases.views.security::diagram.review",
+      "name": "REVIEW BEFORE RELEASE / view scope",
+      "scope": "ddn.usecases.security::model.egress",
+      "members": [
+        "ddn.usecases.security::model.export"
+      ],
+      "x": 760,
+      "y": -54,
+      "w": 310,
+      "h": 228
+    }
+  ],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 283,
+        "bends": 4
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 283,
+        "bends": 4
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 283,
+        "bends": 4,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 283,
+        "bends": 4
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 283,
+        "bends": 4
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 283,
+        "bends": 4
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 283,
+        "bends": 4
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": -20,
+    "y": -54,
+    "w": 1120,
+    "h": 258
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1120,
+    "h": 268
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.security::diagram",
+    "positions": {
+      "ddn.usecases.security::model.source": [
+        0,
+        0
+      ],
+      "ddn.usecases.security::model.mask": [
+        390,
+        0
+      ],
+      "ddn.usecases.security::model.export": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

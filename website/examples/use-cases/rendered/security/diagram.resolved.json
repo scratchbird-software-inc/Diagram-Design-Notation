@@ -1,0 +1,377 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/18-security.ddn",
+  "view": {
+    "id": "ddn.usecases.views.security::diagram",
+    "name": "18 / Data handling boundaries",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.security::model.source",
+      "ddn.usecases.security::model.mask",
+      "ddn.usecases.security::model.export"
+    ],
+    "relations": [
+      "ddn.usecases.security::model.r_input",
+      "ddn.usecases.security::model.r_output"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_input": 1,
+          "model.r_output": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.security::model.r_input": 1,
+      "ddn.usecases.security::model.r_output": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [
+      {
+        "id": "ddn.usecases.views.security::diagram.restricted",
+        "name": "RESTRICTED / view scope",
+        "scope": "ddn.usecases.security::model.restricted",
+        "members": [
+          "ddn.usecases.security::model.source"
+        ]
+      },
+      {
+        "id": "ddn.usecases.views.security::diagram.review",
+        "name": "REVIEW BEFORE RELEASE / view scope",
+        "scope": "ddn.usecases.security::model.egress",
+        "members": [
+          "ddn.usecases.security::model.export"
+        ]
+      }
+    ],
+    "source": {
+      "file": "use-cases/18-security.ddn",
+      "start": 238,
+      "end": 800,
+      "bodyEnd": 799
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.security::model.source",
+      "ref": "model.source",
+      "local": "source",
+      "name": "Contact records",
+      "type": "object",
+      "kind": "dataset",
+      "kindCode": "DST",
+      "properties": {
+        "kind": "dataset",
+        "level": "instance"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.security::model.source.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/security.ddn",
+            "start": 264,
+            "end": 282
+          }
+        },
+        {
+          "id": "ddn.usecases.security::model.source.email",
+          "name": "email",
+          "local": "email",
+          "path": "email",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/security.ddn",
+            "start": 295,
+            "end": 307
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 153,
+        "end": 323
+      }
+    },
+    {
+      "id": "ddn.usecases.security::model.mask",
+      "ref": "model.mask",
+      "local": "mask",
+      "name": "Aggregate + remove IDs",
+      "type": "object",
+      "kind": "activity",
+      "kindCode": "ACT",
+      "properties": {
+        "kind": "activity"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 328,
+        "end": 396
+      }
+    },
+    {
+      "id": "ddn.usecases.security::model.export",
+      "ref": "model.export",
+      "local": "export",
+      "name": "Proposed cohort export",
+      "type": "object",
+      "kind": "dataset",
+      "kindCode": "DST",
+      "properties": {
+        "kind": "dataset",
+        "level": "instance"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.security::model.export.cohort_id",
+          "name": "cohort_id",
+          "local": "cohort_id",
+          "path": "cohort_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/security.ddn",
+            "start": 519,
+            "end": 535
+          }
+        },
+        {
+          "id": "ddn.usecases.security::model.export.count",
+          "name": "count",
+          "local": "count",
+          "path": "count",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/security.ddn",
+            "start": 548,
+            "end": 560
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 401,
+        "end": 576
+      }
+    },
+    {
+      "id": "ddn.usecases.security::model.restricted",
+      "ref": "model.restricted",
+      "local": "restricted",
+      "name": "Restricted processing",
+      "type": "object",
+      "kind": "security_zone",
+      "kindCode": "SECZ",
+      "properties": {
+        "kind": "security_zone"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 581,
+        "end": 659
+      }
+    },
+    {
+      "id": "ddn.usecases.security::model.egress",
+      "ref": "model.egress",
+      "local": "egress",
+      "name": "Review before release",
+      "type": "object",
+      "kind": "security_zone",
+      "kindCode": "SECZ",
+      "properties": {
+        "kind": "security_zone"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 664,
+        "end": 738
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.security::model.r_input",
+      "ref": "model.r_input",
+      "name": "read produces input for",
+      "kind": "read",
+      "kindCode": "READ",
+      "from": {
+        "element": "ddn.usecases.security::model.source"
+      },
+      "to": {
+        "element": "ddn.usecases.security::model.mask"
+      },
+      "properties": {
+        "kind": "read"
+      },
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 743,
+        "end": 792
+      }
+    },
+    {
+      "id": "ddn.usecases.security::model.r_output",
+      "ref": "model.r_output",
+      "name": "writes output to",
+      "kind": "write",
+      "kindCode": "WRITE",
+      "from": {
+        "element": "ddn.usecases.security::model.mask"
+      },
+      "to": {
+        "element": "ddn.usecases.security::model.export"
+      },
+      "properties": {
+        "kind": "write"
+      },
+      "source": {
+        "file": "use-cases/data/security.ddn",
+        "start": 797,
+        "end": 848
+      }
+    }
+  ],
+  "diagnostics": []
+}

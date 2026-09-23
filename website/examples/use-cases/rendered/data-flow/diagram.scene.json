@@ -1,0 +1,227 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 360,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.flow::dfd.incoming",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Incoming orders"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::dfd.validate",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Validate orders"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.flow::dfd.accepted",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Accepted orders"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.flow::dfd.r_input",
+      "points": [
+        [
+          270,
+          50
+        ],
+        [
+          390,
+          50
+        ]
+      ],
+      "label": {
+        "x": 315,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.flow::dfd.r_output",
+      "points": [
+        [
+          660,
+          50
+        ],
+        [
+          780,
+          50
+        ]
+      ],
+      "label": {
+        "x": 705,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 240,
+        "bends": 0,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 240,
+        "bends": 0
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 240,
+        "bends": 0
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 130
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 200
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.data-flow::diagram",
+    "positions": {
+      "ddn.usecases.flow::dfd.incoming": [
+        0,
+        0
+      ],
+      "ddn.usecases.flow::dfd.validate": [
+        390,
+        0
+      ],
+      "ddn.usecases.flow::dfd.accepted": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

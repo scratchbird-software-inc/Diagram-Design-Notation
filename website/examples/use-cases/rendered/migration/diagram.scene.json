@@ -1,0 +1,291 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 360,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.migration::model.legacy",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.migration::model.legacy.id",
+        "ddn.usecases.migration::model.legacy.full_name"
+      ],
+      "titleLines": [
+        "Customer / legacy"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.migration::model.legacy.id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.migration::model.legacy.full_name",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "full_name"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.migration::model.convert",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Map and reconcile"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.migration::model.target",
+      "w": 270,
+      "h": 134,
+      "fields": [
+        "ddn.usecases.migration::model.target.customer_id",
+        "ddn.usecases.migration::model.target.display_name"
+      ],
+      "titleLines": [
+        "Customer / target"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.migration::model.target.customer_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.migration::model.target.display_name",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "display_name"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.migration::model.r_extract",
+      "points": [
+        [
+          270,
+          67
+        ],
+        [
+          314,
+          67
+        ],
+        [
+          314,
+          50
+        ],
+        [
+          390,
+          50
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.migration::model.r_load",
+      "points": [
+        [
+          660,
+          50
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          704,
+          67
+        ],
+        [
+          780,
+          67
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 52,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 274,
+        "bends": 4
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 274,
+        "bends": 4
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 274,
+        "bends": 4,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 274,
+        "bends": 4
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 274,
+        "bends": 4
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 274,
+        "bends": 4
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 274,
+        "bends": 4
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 164
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 200
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.migration::diagram",
+    "positions": {
+      "ddn.usecases.migration::model.legacy": [
+        0,
+        0
+      ],
+      "ddn.usecases.migration::model.convert": [
+        390,
+        0
+      ],
+      "ddn.usecases.migration::model.target": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

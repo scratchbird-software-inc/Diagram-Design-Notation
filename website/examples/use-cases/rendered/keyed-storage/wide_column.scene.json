@@ -1,0 +1,284 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 418,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.keyed::wide.query",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Latest device",
+        "readings"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.keyed::wide.readings",
+      "w": 270,
+      "h": 218,
+      "fields": [
+        "ddn.usecases.keyed::wide.readings.device_id",
+        "ddn.usecases.keyed::wide.readings.measured_at",
+        "ddn.usecases.keyed::wide.readings.value"
+      ],
+      "titleLines": [
+        "Readings by",
+        "device"
+      ],
+      "footer": [
+        "streaming"
+      ],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.keyed::wide.readings.device_id",
+          "top": 82,
+          "h": 28,
+          "labelLines": [
+            "device_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.keyed::wide.readings.measured_at",
+          "top": 110,
+          "h": 28,
+          "labelLines": [
+            "measured_at"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.keyed::wide.readings.value",
+          "top": 138,
+          "h": 28,
+          "labelLines": [
+            "value"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.keyed::wide.key",
+      "w": 270,
+      "h": 116,
+      "fields": [],
+      "titleLines": [
+        "Device identifier"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [
+        "Identifies the producing sensor."
+      ],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.keyed::wide.r_a",
+      "points": [
+        [
+          660,
+          96
+        ],
+        [
+          704,
+          96
+        ],
+        [
+          704,
+          58
+        ],
+        [
+          780,
+          58
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 43,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.keyed::wide.r_b",
+      "points": [
+        [
+          270,
+          50
+        ],
+        [
+          314,
+          50
+        ],
+        [
+          314,
+          109
+        ],
+        [
+          390,
+          109
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 94,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 337,
+        "bends": 4
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 337,
+        "bends": 4
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 337,
+        "bends": 4,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 337,
+        "bends": 4
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 337,
+        "bends": 4
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 337,
+        "bends": 4
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 337,
+        "bends": 4
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 248
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 258
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.keyed-storage::wide_column",
+    "positions": {
+      "ddn.usecases.keyed::wide.query": [
+        0,
+        0
+      ],
+      "ddn.usecases.keyed::wide.readings": [
+        390,
+        0
+      ],
+      "ddn.usecases.keyed::wide.key": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

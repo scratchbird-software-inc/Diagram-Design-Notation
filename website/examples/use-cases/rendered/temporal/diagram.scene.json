@@ -1,0 +1,265 @@
+{
+  "smallestText": 11,
+  "width": 1537.4375,
+  "height": 502,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.temporal::model.history",
+      "w": 270,
+      "h": 302,
+      "fields": [
+        "ddn.usecases.temporal::model.history.customer_id",
+        "ddn.usecases.temporal::model.history.status",
+        "ddn.usecases.temporal::model.history.valid_from",
+        "ddn.usecases.temporal::model.history.valid_to",
+        "ddn.usecases.temporal::model.history.recorded_from",
+        "ddn.usecases.temporal::model.history.recorded_to"
+      ],
+      "titleLines": [
+        "Customer status",
+        "history"
+      ],
+      "footer": [
+        "bitemporal"
+      ],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.temporal::model.history.customer_id",
+          "top": 82,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.status",
+          "top": 110,
+          "h": 28,
+          "labelLines": [
+            "status"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.valid_from",
+          "top": 138,
+          "h": 28,
+          "labelLines": [
+            "valid_from"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.valid_to",
+          "top": 166,
+          "h": 28,
+          "labelLines": [
+            "valid_to"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.recorded_from",
+          "top": 194,
+          "h": 28,
+          "labelLines": [
+            "recorded_from"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.recorded_to",
+          "top": 222,
+          "h": 28,
+          "labelLines": [
+            "recorded_to"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.temporal::model.example",
+      "w": 692.4375,
+      "h": 270,
+      "fields": [],
+      "titleLines": [
+        "Correction",
+        "received on March",
+        "5"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 103,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.temporal::model.r_example",
+      "points": [
+        [
+          390,
+          135
+        ],
+        [
+          314,
+          135
+        ],
+        [
+          314,
+          151
+        ],
+        [
+          270,
+          151
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 120,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "manual",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 136,
+        "bends": 2
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 136,
+        "bends": 2
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 136,
+        "bends": 2,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 136,
+        "bends": 2
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 136,
+        "bends": 2
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 136,
+        "bends": 2
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 136,
+        "bends": 2
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1112.4375,
+    "h": 332
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1112.4375,
+    "h": 342
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.temporal::diagram",
+    "positions": {
+      "ddn.usecases.temporal::model.history": [
+        0,
+        0
+      ],
+      "ddn.usecases.temporal::model.example": [
+        390,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

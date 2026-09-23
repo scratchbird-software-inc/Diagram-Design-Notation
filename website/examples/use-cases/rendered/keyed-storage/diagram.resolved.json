@@ -1,0 +1,306 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/07-keyed-storage.ddn",
+  "view": {
+    "id": "ddn.usecases.views.keyed-storage::diagram",
+    "name": "07 / Key-value design",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.keyed::kv.key",
+      "ddn.usecases.keyed::kv.sessions",
+      "ddn.usecases.keyed::kv.value"
+    ],
+    "relations": [
+      "ddn.usecases.keyed::kv.r_a",
+      "ddn.usecases.keyed::kv.r_b"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "grid",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1580,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 440,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "kv.r_a": 1,
+          "kv.r_b": 2
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.keyed::kv.r_a": 1,
+      "ddn.usecases.keyed::kv.r_b": 2
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/07-keyed-storage.ddn",
+      "start": 228,
+      "end": 538,
+      "bodyEnd": 537
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.keyed::kv.key",
+      "ref": "kv.key",
+      "local": "key",
+      "name": "Session key",
+      "type": "object",
+      "kind": "identity",
+      "kindCode": "KEY",
+      "properties": {
+        "kind": "identity",
+        "description": "Scope: one active login session."
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 147,
+        "end": 260
+      }
+    },
+    {
+      "id": "ddn.usecases.keyed::kv.sessions",
+      "ref": "kv.sessions",
+      "local": "sessions",
+      "name": "Session store",
+      "type": "object",
+      "kind": "key_value",
+      "kindCode": "KVS",
+      "properties": {
+        "kind": "key_value"
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 265,
+        "end": 329
+      }
+    },
+    {
+      "id": "ddn.usecases.keyed::kv.value",
+      "ref": "kv.value",
+      "local": "value",
+      "name": "Session value",
+      "type": "object",
+      "kind": "record",
+      "kindCode": "REC",
+      "properties": {
+        "kind": "record"
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.keyed::kv.value.user_id",
+          "name": "user_id",
+          "local": "user_id",
+          "path": "user_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/keyed.ddn",
+            "start": 416,
+            "end": 430
+          }
+        },
+        {
+          "id": "ddn.usecases.keyed::kv.value.expires_at",
+          "name": "expires_at",
+          "local": "expires_at",
+          "path": "expires_at",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/keyed.ddn",
+            "start": 443,
+            "end": 460
+          }
+        },
+        {
+          "id": "ddn.usecases.keyed::kv.value.cart_id",
+          "name": "cart_id",
+          "local": "cart_id",
+          "path": "cart_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/keyed.ddn",
+            "start": 473,
+            "end": 487
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 334,
+        "end": 503
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.keyed::kv.r_a",
+      "ref": "kv.r_a",
+      "name": "identifies",
+      "kind": "ident",
+      "kindCode": "IDENT",
+      "from": {
+        "element": "ddn.usecases.keyed::kv.key"
+      },
+      "to": {
+        "element": "ddn.usecases.keyed::kv.sessions"
+      },
+      "properties": {
+        "kind": "ident"
+      },
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 508,
+        "end": 555
+      }
+    },
+    {
+      "id": "ddn.usecases.keyed::kv.r_b",
+      "ref": "kv.r_b",
+      "name": "value shape",
+      "kind": "mem",
+      "kindCode": "MEM",
+      "from": {
+        "element": "ddn.usecases.keyed::kv.sessions"
+      },
+      "to": {
+        "element": "ddn.usecases.keyed::kv.value"
+      },
+      "properties": {
+        "kind": "mem"
+      },
+      "source": {
+        "file": "use-cases/data/keyed.ddn",
+        "start": 560,
+        "end": 621
+      }
+    }
+  ],
+  "diagnostics": []
+}

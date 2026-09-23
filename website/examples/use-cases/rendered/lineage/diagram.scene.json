@@ -1,0 +1,308 @@
+{
+  "smallestText": 11,
+  "width": 1505,
+  "height": 400,
+  "scale": 1,
+  "origin": [
+    40,
+    100
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.commerce::tables.orders",
+      "w": 270,
+      "h": 200,
+      "fields": [
+        "ddn.usecases.commerce::tables.orders.order_id",
+        "ddn.usecases.commerce::tables.orders.customer_id",
+        "ddn.usecases.commerce::tables.orders.ordered_at"
+      ],
+      "titleLines": [
+        "Orders"
+      ],
+      "footer": [
+        "oltp"
+      ],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.commerce::tables.orders.order_id",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "order_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.customer_id",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "customer_id"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.commerce::tables.orders.ordered_at",
+          "top": 120,
+          "h": 28,
+          "labelLines": [
+            "ordered_at"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.lineage::model.daily",
+      "w": 270,
+      "h": 172,
+      "fields": [
+        "ddn.usecases.lineage::model.daily.business_date",
+        "ddn.usecases.lineage::model.daily.order_count"
+      ],
+      "titleLines": [
+        "Daily order totals"
+      ],
+      "footer": [
+        "olap",
+        "derived"
+      ],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": [
+        {
+          "id": "ddn.usecases.lineage::model.daily.business_date",
+          "top": 64,
+          "h": 28,
+          "labelLines": [
+            "business_date"
+          ],
+          "detailLines": [],
+          "depth": 0
+        },
+        {
+          "id": "ddn.usecases.lineage::model.daily.order_count",
+          "top": 92,
+          "h": 28,
+          "labelLines": [
+            "order_count"
+          ],
+          "detailLines": [],
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "id": "ddn.usecases.lineage::model.report",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Operations",
+        "dashboard"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 82,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.lineage::model.r_aggregate",
+      "points": [
+        [
+          270,
+          100
+        ],
+        [
+          314,
+          100
+        ],
+        [
+          314,
+          86
+        ],
+        [
+          390,
+          86
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 71,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.lineage::model.r_report",
+      "points": [
+        [
+          660,
+          86
+        ],
+        [
+          704,
+          86
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          780,
+          50
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 35,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "grid",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 0,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 0,
+        "length": 290,
+        "bends": 4
+      },
+      {
+        "stage": "connection-points",
+        "trials": 0,
+        "accepted": 0,
+        "crossings": 0,
+        "length": 290,
+        "bends": 4
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 290,
+        "bends": 4,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 290,
+        "bends": 4
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 290,
+        "bends": 4
+      }
+    ],
+    "portTrials": 0,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 290,
+        "bends": 4
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 290,
+        "bends": 4
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": 0,
+    "y": 0,
+    "w": 1080,
+    "h": 230
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1080,
+    "h": 240
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.lineage::diagram",
+    "positions": {
+      "ddn.usecases.commerce::tables.orders": [
+        0,
+        0
+      ],
+      "ddn.usecases.lineage::model.daily": [
+        390,
+        0
+      ],
+      "ddn.usecases.lineage::model.report": [
+        780,
+        0
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}

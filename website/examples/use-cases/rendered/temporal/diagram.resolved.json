@@ -1,0 +1,358 @@
+{
+  "format": "ddn-resolved@0.5",
+  "language": "0.5",
+  "registry": "ddn-core@0.3",
+  "entry": "use-cases/14-temporal.ddn",
+  "view": {
+    "id": "ddn.usecases.views.temporal::diagram",
+    "name": "14 / Valid time and recorded time",
+    "local": "diagram",
+    "selected": [
+      "ddn.usecases.temporal::model.history",
+      "ddn.usecases.temporal::model.example"
+    ],
+    "relations": [
+      "ddn.usecases.temporal::model.r_example"
+    ],
+    "profiles": {
+      "projection": {
+        "kind": "graph",
+        "profile": "ddn@1"
+      },
+      "notation": {
+        "registry": "ddn-core@0.3"
+      },
+      "style": {
+        "look": "classic",
+        "theme": "default",
+        "font": "sans",
+        "font_size": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "seed": 42
+      },
+      "layout": {
+        "algorithm": "manual",
+        "auto_place": true,
+        "center": "content",
+        "grid_step": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "optimize": "crossings",
+        "endpoint_ordering": "optimize",
+        "frame_overflow": "expand",
+        "direction": "right",
+        "routing": "orthogonal",
+        "curve": "bezier",
+        "curve_tension": 0.5,
+        "curve_radius": {
+          "$quantity": 32,
+          "unit": "px"
+        },
+        "crossings": "gap",
+        "gap": {
+          "$quantity": 120,
+          "unit": "px"
+        },
+        "row_gap": {
+          "$quantity": 100,
+          "unit": "px"
+        },
+        "columns": 3,
+        "object_clearance": {
+          "$quantity": 16,
+          "unit": "px"
+        },
+        "edge_clearance": {
+          "$quantity": 12,
+          "unit": "px"
+        },
+        "port_clearance": {
+          "$quantity": 28,
+          "unit": "px"
+        },
+        "route_policy": "repair",
+        "quality": "error",
+        "root": null,
+        "group_by": "none",
+        "spacing": "normal"
+      },
+      "display": {
+        "fields": "names",
+        "kind": "icon_token",
+        "maturity": "token",
+        "badges": "tokens",
+        "relations": "between_selected",
+        "samples": "show",
+        "domains": "hide",
+        "datatypes": "hide",
+        "depth": 32
+      },
+      "publication": {
+        "size": "content",
+        "width": {
+          "$quantity": 1700,
+          "unit": "px"
+        },
+        "height": {
+          "$quantity": 850,
+          "unit": "px"
+        },
+        "margin": {
+          "$quantity": 30,
+          "unit": "px"
+        },
+        "fit": "contain",
+        "minimum_text": {
+          "$quantity": 8,
+          "unit": "pt"
+        },
+        "overflow": "error"
+      },
+      "legend": {
+        "mode": "numbers",
+        "placement": "right",
+        "width": {
+          "$quantity": 340,
+          "unit": "px"
+        },
+        "keys": {
+          "model.r_example": 1
+        }
+      },
+      "validation": {
+        "mode": "logical",
+        "unknown_extensions": "warn"
+      },
+      "export": {
+        "mode": "full",
+        "elements": [],
+        "fields": null,
+        "properties": [],
+        "include_samples": false,
+        "identifier_mode": "opaque",
+        "title": "Published data view",
+        "format": "json"
+      }
+    },
+    "keys": {
+      "ddn.usecases.temporal::model.r_example": 1
+    },
+    "placements": {},
+    "routes": {},
+    "subdiagrams": [],
+    "frames": [],
+    "source": {
+      "file": "use-cases/14-temporal.ddn",
+      "start": 227,
+      "end": 564,
+      "bodyEnd": 563
+    }
+  },
+  "elements": [
+    {
+      "id": "ddn.usecases.temporal::model.history",
+      "ref": "model.history",
+      "local": "history",
+      "name": "Customer status history",
+      "type": "object",
+      "kind": "history",
+      "kindCode": "HST",
+      "properties": {
+        "kind": "history",
+        "temporal": "bitemporal",
+        "time": {
+          "valid": "business-effective civil date",
+          "recorded": "warehouse-known civil date",
+          "retention": {
+            "$state": "undecided"
+          }
+        }
+      },
+      "fields": [
+        {
+          "id": "ddn.usecases.temporal::model.history.customer_id",
+          "name": "customer_id",
+          "local": "customer_id",
+          "path": "customer_id",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/temporal.ddn",
+            "start": 398,
+            "end": 416
+          }
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.status",
+          "name": "status",
+          "local": "status",
+          "path": "status",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/temporal.ddn",
+            "start": 429,
+            "end": 442
+          }
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.valid_from",
+          "name": "valid_from",
+          "local": "valid_from",
+          "path": "valid_from",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/temporal.ddn",
+            "start": 455,
+            "end": 472
+          }
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.valid_to",
+          "name": "valid_to",
+          "local": "valid_to",
+          "path": "valid_to",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/temporal.ddn",
+            "start": 485,
+            "end": 500
+          }
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.recorded_from",
+          "name": "recorded_from",
+          "local": "recorded_from",
+          "path": "recorded_from",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/temporal.ddn",
+            "start": 513,
+            "end": 533
+          }
+        },
+        {
+          "id": "ddn.usecases.temporal::model.history.recorded_to",
+          "name": "recorded_to",
+          "local": "recorded_to",
+          "path": "recorded_to",
+          "depth": 0,
+          "parent": null,
+          "properties": {},
+          "source": {
+            "file": "use-cases/data/temporal.ddn",
+            "start": 546,
+            "end": 564
+          }
+        }
+      ],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/temporal.ddn",
+        "start": 153,
+        "end": 580
+      }
+    },
+    {
+      "id": "ddn.usecases.temporal::model.example",
+      "ref": "model.example",
+      "local": "example",
+      "name": "Correction received on March 5",
+      "type": "sample",
+      "kind": "sample",
+      "kindCode": "SMP",
+      "properties": {
+        "kind": "sample",
+        "mode": "synthetic",
+        "columns": [
+          {
+            "$ref": "ddn.usecases.temporal::model.history.customer_id"
+          },
+          {
+            "$ref": "ddn.usecases.temporal::model.history.status"
+          },
+          {
+            "$ref": "ddn.usecases.temporal::model.history.valid_from"
+          },
+          {
+            "$ref": "ddn.usecases.temporal::model.history.valid_to"
+          },
+          {
+            "$ref": "ddn.usecases.temporal::model.history.recorded_from"
+          },
+          {
+            "$ref": "ddn.usecases.temporal::model.history.recorded_to"
+          }
+        ],
+        "rows": [
+          [
+            "C001",
+            "Active",
+            "2026-03-01",
+            null,
+            "2026-03-01",
+            "2026-03-05"
+          ],
+          [
+            "C001",
+            "Active",
+            "2026-03-01",
+            "2026-03-03",
+            "2026-03-05",
+            null
+          ],
+          [
+            "C001",
+            "Suspended",
+            "2026-03-03",
+            null,
+            "2026-03-05",
+            null
+          ]
+        ]
+      },
+      "fields": [],
+      "ports": [],
+      "source": {
+        "file": "use-cases/data/temporal.ddn",
+        "start": 585,
+        "end": 1046
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "ddn.usecases.temporal::model.r_example",
+      "ref": "model.r_example",
+      "name": "illustrates",
+      "kind": "example",
+      "kindCode": "EXAMPLE",
+      "from": {
+        "element": "ddn.usecases.temporal::model.example"
+      },
+      "to": {
+        "element": "ddn.usecases.temporal::model.history"
+      },
+      "properties": {
+        "kind": "example"
+      },
+      "source": {
+        "file": "use-cases/data/temporal.ddn",
+        "start": 1051,
+        "end": 1109
+      }
+    }
+  ],
+  "diagnostics": []
+}

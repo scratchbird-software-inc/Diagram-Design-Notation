@@ -1,0 +1,477 @@
+{
+  "smallestText": 11,
+  "width": 1569,
+  "height": 597,
+  "scale": 1,
+  "origin": [
+    60,
+    154
+  ],
+  "nodes": [
+    {
+      "id": "ddn.usecases.commerce::tables.orders",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Orders"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.deployment::model.shard",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Orders / shard A"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.deployment::model.primary",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Primary copy"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 0,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.deployment::model.follower",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Follower copy"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 0,
+      "y": 212,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.deployment::model.local",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Local SQL service"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 390,
+      "y": 212,
+      "fieldRows": []
+    },
+    {
+      "id": "ddn.usecases.deployment::model.cloud",
+      "w": 270,
+      "h": 100,
+      "fields": [],
+      "titleLines": [
+        "Cloud SQL service"
+      ],
+      "footer": [],
+      "scale": 1,
+      "headerH": 64,
+      "meaningLines": [],
+      "noteLines": [],
+      "x": 780,
+      "y": 212,
+      "fieldRows": []
+    }
+  ],
+  "routes": [
+    {
+      "id": "ddn.usecases.deployment::model.r_part",
+      "points": [
+        [
+          270,
+          50
+        ],
+        [
+          314,
+          50
+        ],
+        [
+          314,
+          33.333
+        ],
+        [
+          390,
+          33.333
+        ]
+      ],
+      "label": {
+        "x": 337,
+        "y": 18.333,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.deployment::model.r_primary_fragment",
+      "points": [
+        [
+          780,
+          33.333
+        ],
+        [
+          704,
+          33.333
+        ],
+        [
+          704,
+          50
+        ],
+        [
+          660,
+          50
+        ]
+      ],
+      "label": {
+        "x": 727,
+        "y": 18.333,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.deployment::model.r_follower_fragment",
+      "points": [
+        [
+          270,
+          237
+        ],
+        [
+          314,
+          237
+        ],
+        [
+          314,
+          66.667
+        ],
+        [
+          390,
+          66.667
+        ]
+      ],
+      "label": {
+        "x": 299,
+        "y": 136.83350000000002,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.deployment::model.r_primary_host",
+      "points": [
+        [
+          1050,
+          50
+        ],
+        [
+          1094,
+          50
+        ],
+        [
+          1094,
+          116
+        ],
+        [
+          704,
+          116
+        ],
+        [
+          704,
+          262
+        ],
+        [
+          660,
+          262
+        ]
+      ],
+      "label": {
+        "x": 737.75,
+        "y": 101,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "east",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.deployment::model.r_follower_host",
+      "points": [
+        [
+          270,
+          287
+        ],
+        [
+          314,
+          287
+        ],
+        [
+          314,
+          328
+        ],
+        [
+          736,
+          328
+        ],
+        [
+          736,
+          262
+        ],
+        [
+          780,
+          262
+        ]
+      ],
+      "label": {
+        "x": 351.75,
+        "y": 313,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "east",
+      "target_side": "west",
+      "routing": "orthogonal"
+    },
+    {
+      "id": "ddn.usecases.deployment::model.r_replication",
+      "points": [
+        [
+          780,
+          66.667
+        ],
+        [
+          676,
+          66.667
+        ],
+        [
+          676,
+          139
+        ],
+        [
+          337,
+          139
+        ],
+        [
+          337,
+          262
+        ],
+        [
+          270,
+          262
+        ]
+      ],
+      "label": {
+        "x": 491.5,
+        "y": 124,
+        "w": 30,
+        "h": 30
+      },
+      "source_side": "west",
+      "target_side": "east",
+      "routing": "orthogonal"
+    }
+  ],
+  "crossings": [],
+  "frames": [
+    {
+      "id": "ddn.usecases.views.hybrid-deployment::diagram.local",
+      "name": "ON-PREMISES / placement view",
+      "scope": null,
+      "members": [
+        "ddn.usecases.deployment::model.primary",
+        "ddn.usecases.deployment::model.local"
+      ],
+      "x": 370,
+      "y": -54,
+      "w": 700,
+      "h": 388
+    },
+    {
+      "id": "ddn.usecases.views.hybrid-deployment::diagram.cloud",
+      "name": "CLOUD / placement view",
+      "scope": null,
+      "members": [
+        "ddn.usecases.deployment::model.follower",
+        "ddn.usecases.deployment::model.cloud"
+      ],
+      "x": -20,
+      "y": 158,
+      "w": 1090,
+      "h": 176
+    }
+  ],
+  "subdiagrams": [],
+  "quality": {
+    "errors": [],
+    "objectOverlaps": [],
+    "routeObjectIntersections": [],
+    "sharedTracks": [],
+    "labelRouteIntersections": []
+  },
+  "layout": {
+    "algorithm": "manual",
+    "pattern": null,
+    "pinned": [],
+    "autoPlace": true,
+    "retentionActive": false,
+    "retained": [],
+    "portChanges": 1,
+    "nodeMoves": 0,
+    "stages": [
+      {
+        "stage": "initial-clear-routing",
+        "crossings": 1,
+        "length": 2218,
+        "bends": 16
+      },
+      {
+        "stage": "connection-points",
+        "trials": 1,
+        "accepted": 1,
+        "crossings": 0,
+        "length": 2576,
+        "bends": 18
+      },
+      {
+        "stage": "local-endpoint-ordering",
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 2576,
+        "bends": 18,
+        "trials": 0,
+        "accepted": 0
+      },
+      {
+        "stage": "unpinned-elements",
+        "accepted": 0,
+        "crossings": 0,
+        "length": 2576,
+        "bends": 18
+      },
+      {
+        "stage": "residual-short-routes-and-crossing-marks",
+        "crossings": 0,
+        "length": 2576,
+        "bends": 18
+      }
+    ],
+    "portTrials": 1,
+    "endpointOrdering": {
+      "policy": "optimize",
+      "trials": 0,
+      "accepted": 0,
+      "slotSwaps": 0,
+      "sideChanges": 0,
+      "budget": 32,
+      "before": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 2576,
+        "bends": 18
+      },
+      "after": {
+        "crossings": 0,
+        "localCrossings": 0,
+        "length": 2576,
+        "bends": 18
+      },
+      "exhausted": false
+    },
+    "remainingCrossings": 0,
+    "routing": "orthogonal",
+    "engine": "ddn-native@0.6.0-beta.1"
+  },
+  "drawingBounds": {
+    "x": -20,
+    "y": -54,
+    "w": 1144,
+    "h": 427
+  },
+  "drawingArea": {
+    "x": 30,
+    "y": 90,
+    "w": 1144,
+    "h": 437
+  },
+  "layoutState": {
+    "format": "ddn-layout-state@1",
+    "view": "ddn.usecases.views.hybrid-deployment::diagram",
+    "positions": {
+      "ddn.usecases.commerce::tables.orders": [
+        0,
+        0
+      ],
+      "ddn.usecases.deployment::model.shard": [
+        390,
+        0
+      ],
+      "ddn.usecases.deployment::model.primary": [
+        780,
+        0
+      ],
+      "ddn.usecases.deployment::model.follower": [
+        0,
+        212
+      ],
+      "ddn.usecases.deployment::model.local": [
+        390,
+        212
+      ],
+      "ddn.usecases.deployment::model.cloud": [
+        780,
+        212
+      ]
+    }
+  },
+  "textMeasurement": {
+    "mode": "estimated",
+    "requestedFont": "sans",
+    "provider": "pinned-cache"
+  }
+}
