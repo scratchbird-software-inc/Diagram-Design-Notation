@@ -27,7 +27,11 @@ The visual editors and viewers are not used in my other projects so they are ver
 | `notation/` | **Notation project**        | Pure-JavaScript reference runtime (parser → validation → layout/routing → deterministic SVG), CLI, browser Studio, adapters, tests                                                                                                                                                                                                                        |
 | `designer/` | **Visual designer project** | Designer specification (0.1), proposed contracts (schemas, UI maps, API types), working prototype with full 188-kind palette, RACI/CRUD matrix cell editor and chart editor, compact-density chrome with splitters/resizable floating or window-popped panels, presentation-only Display tab, SVG/PNG/WebP + .ddn/ZIP text downloads, research, decisions |
 | `tools/`    | **Shared tooling**          | Build scripts (SDK, gallery, standalone pages, viewer), local static server, packaging tests                                                                                                                                                                                                                                                              |
-| `tests/`    | **Repo-level tests**        | Website link-integrity and build-freshness gate                                                                                                                                                                                                                                                                                                           |
+| `tests/`    | **Repo-level tests**        | Website link-integrity and build-freshness gate; AI-REFERENCE.md ddn-block validation gate                                                                                                                                                                                                                                                                                                           |
+
+## Documentation
+
+- `AI-REFERENCE.md` — single-file language reference designed to be handed to an AI so it can author .ddn sources
 
 ## Status
 

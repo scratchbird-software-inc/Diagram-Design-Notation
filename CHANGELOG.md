@@ -6,6 +6,18 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Docs: new repo-root `AI-REFERENCE.md` — a single-file, AI-targeted DDN
+  language reference (vocabulary tables, property contracts, diagnostics,
+  CLI workflow, worked examples) designed to be handed to an AI so it can
+  author `.ddn` sources. Refreshed for B1-019 (dist bundle formats, ESM
+  runtime sources, package `exports` map) and B1-018 (diagnostics table now
+  covers all 357 codes extracted from the runtime + Studio sources,
+  including DDN078, DDN-E001…E011, DDN-IO01…IO09, DDN-W901, LIVE-P002), and
+  names the product as ScratchWeaver per B1-020. Gated by
+  `tests/ai-reference.js` (wired into `npm test`), which extracts every
+  ` ```ddn ` block and runs `cli.js check` on it; linked from the README
+  and rendered into the website docs landing as `docs/ai-reference.html`.
+
 - B1-020: ScratchWeaver branding (look & feel). The product is now
   **ScratchWeaver**, from ScratchBird Software Inc.; the language keeps its
   name, Diagram Design Notation (DDN). New `assets/brand/` pipeline
