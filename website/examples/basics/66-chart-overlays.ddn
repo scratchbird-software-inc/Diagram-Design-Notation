@@ -1,0 +1,46 @@
+ddn "0.5";
+module "ddn.examples.chart-overlays";
+
+// Synthetic bench results: mean render times with measurement error bars, and
+// a payload/latency scatter with regression and loess trend overlays.
+// All data is synthetic.
+data bench {
+    object b1 "parser" { kind: record; x_record: {"stage": "parser", "ms": 18, "err": 2.5, "unit": "ms"}; }
+    object b2 "layout" { kind: record; x_record: {"stage": "layout", "ms": 42, "err": 5, "unit": "ms"}; }
+    object b3 "routing" { kind: record; x_record: {"stage": "routing", "ms": 31, "err": 4, "unit": "ms"}; }
+    object b4 "render" { kind: record; x_record: {"stage": "render", "ms": 55, "err": 6.5, "unit": "ms"}; }
+    object b5 "export" { kind: record; x_record: {"stage": "export", "ms": 12, "err": 1.5, "unit": "ms"}; }
+}
+
+data samples {
+    object s1 "p1" { kind: record; x_record: {"kb": 8, "ms": 24}; }
+    object s2 "p2" { kind: record; x_record: {"kb": 15, "ms": 31}; }
+    object s3 "p3" { kind: record; x_record: {"kb": 22, "ms": 39}; }
+    object s4 "p4" { kind: record; x_record: {"kb": 30, "ms": 44}; }
+    object s5 "p5" { kind: record; x_record: {"kb": 38, "ms": 58}; }
+    object s6 "p6" { kind: record; x_record: {"kb": 47, "ms": 61}; }
+    object s7 "p7" { kind: record; x_record: {"kb": 55, "ms": 79}; }
+    object s8 "p8" { kind: record; x_record: {"kb": 64, "ms": 82}; }
+    object s9 "p9" { kind: record; x_record: {"kb": 72, "ms": 97}; }
+    object s10 "p10" { kind: record; x_record: {"kb": 81, "ms": 103}; }
+    object s11 "p11" { kind: record; x_record: {"kb": 90, "ms": 118}; }
+    object s12 "p12" { kind: record; x_record: {"kb": 99, "ms": 121}; }
+}
+
+view errorbars "Stage timings with measurement error / bar + error bars" {
+    data: [@bench];
+    projection { kind:chart; profile:"chart.basic@1"; records:[@bench.b1, @bench.b2, @bench.b3, @bench.b4, @bench.b5]; mark:bar; x:"x_record.stage"; y:"x_record.ms"; error:"x_record.err"; unit:"ms"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view regression "Payload vs latency / point + least-squares trend" {
+    data: [@samples];
+    projection { kind:chart; profile:"chart.basic@1"; records:[@samples.s1, @samples.s2, @samples.s3, @samples.s4, @samples.s5, @samples.s6, @samples.s7, @samples.s8, @samples.s9, @samples.s10, @samples.s11, @samples.s12]; mark:point; x:"x_record.kb"; x_type:number; y:"x_record.ms"; trend:linear; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view loess "Payload vs latency / point + loess trend" {
+    data: [@samples];
+    projection { kind:chart; profile:"chart.basic@1"; records:[@samples.s1, @samples.s2, @samples.s3, @samples.s4, @samples.s5, @samples.s6, @samples.s7, @samples.s8, @samples.s9, @samples.s10, @samples.s11, @samples.s12]; mark:point; x:"x_record.kb"; x_type:number; y:"x_record.ms"; trend:loess; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}

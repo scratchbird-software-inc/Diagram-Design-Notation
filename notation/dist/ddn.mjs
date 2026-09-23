@@ -422,6 +422,15 @@ function plan$1(ir,ErrorClass=Error){
    if(typeof p.target!=='string')fail('DDN-PJ030',p.mark+' target is a property binding, not a numeric reference');
    if(p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031',p.mark+' links encode supplied values; aggregation is not available');
   }
+  if(p.error!==undefined){
+   if(!['bar','point'].includes(p.mark))fail('DDN-PJ141','Error bars overlay bar/point marks only');
+   if(typeof p.error!=='string')fail('DDN-PJ141','error is a property binding');
+   if(p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ141','Error bars attach to raw records; aggregation is not available');
+  }
+  if(p.trend!==undefined){
+   if(!['point','line'].includes(p.mark)||(p.x_type||'category')!=='number')fail('DDN-PJ142','Trend overlays need a point/line mark with x_type:number');
+   if(!['linear','loess'].includes(p.trend))fail('DDN-PJ142','trend is linear or loess');
+  }
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
   if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):DIST1D.includes(p.mark)?false:typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
@@ -441,13 +450,14 @@ function plan$1(ir,ErrorClass=Error){
    const type=p.x_type||'category',rawX=x;if(type==='number'){if(typeof x!=='number'||!Number.isFinite(x))fail('DDN-PJ032','Numeric x required',n);}else if(type==='date'){x=date(x);if(!Number.isFinite(x))fail('DDN-PJ033','Date x must be a real ISO YYYY-MM-DD date',n);}else if(typeof x!=='string'&&typeof x!=='number')fail('DDN-PJ032','Category x must be text or number',n);
    if(p.unit&&n.properties.x_record?.unit!==p.unit)fail('DDN-PJ034','Every record must declare matching x_record.unit: '+p.unit,n);
    const size=p.size?get$1(n,p.size):1;if(typeof size!=='number'||!Number.isFinite(size)||size<0)fail('DDN-PJ035','Point size must be a finite nonnegative value',n);
+   const err=p.error?get$1(n,p.error):undefined;if(p.error&&(typeof err!=='number'||!Number.isFinite(err)||err<0))fail('DDN-PJ141','Error bar values must be finite nonnegative numbers (UNKNOWN is refused, never drawn as zero)',n);
    if(p.mark==='sankey'||NETMARKS.includes(p.mark)){
     const tv=get$1(n,p.target);
     if(typeof x!=='string'||!x.trim()||typeof tv!=='string'||!tv.trim()||x===tv)fail('DDN-PJ032',(p.mark==='sankey'?'Sankey':'Network')+' endpoints are distinct nonempty category text',n);
     if(y<=0)fail('DDN-PJ108','Network link values must be positive finite numbers');
     points.push({x,y,rawX,target:tv,size:1,sourceIds:[n.id]});continue;
    }
-   if(p.mark==='radar'){const ser=p.series===undefined?'Value':get$1(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else if(p.mark==='heatmap'||p.mark==='parallelcoords'){const ser=get$1(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ137',(p.mark==='heatmap'?'Heatmap row':'Polyline')+' series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else points.push({x,y,rawX,size,sourceIds:[n.id]});
+   if(p.mark==='radar'){const ser=p.series===undefined?'Value':get$1(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else if(p.mark==='heatmap'||p.mark==='parallelcoords'){const ser=get$1(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ137',(p.mark==='heatmap'?'Heatmap row':'Polyline')+' series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else points.push({x,y,rawX,size,...(p.error?{error:err}:{}),sourceIds:[n.id]});
   }
   if(!points.length)fail('DDN-PJ012','No chart points remain');
   if(p.mark==='treemap'&&points.some(pt=>pt.y<0))fail('DDN-PJ078','Treemap tile values must be nonnegative numbers; filter out or explicitly skip negative records');
@@ -608,6 +618,16 @@ function plan$1(ir,ErrorClass=Error){
    const roots=hierarchy(paths.map(p=>({rawX:p,y:0,sourceIds:[]})),fail,p.mark);
    net={kind:'edgebundle',roots,maxDepth:Math.max(...roots.map(n=>depth(n))),links:points.map(pt=>({sourcePath:String(pt.rawX),targetPath:pt.target,value:pt.y,sourceIds:pt.sourceIds}))};
   }
+  let trendLine=null;
+  if(p.trend){
+   const xs=points.map(pt=>pt.x),ys=points.map(pt=>pt.y),n=xs.length;
+   if(n<3)fail('DDN-PJ135','Trend overlays need at least 3 points; got '+n);
+   if(Math.min(...xs)===Math.max(...xs))fail('DDN-PJ132','Trend of a constant-x sample is UNKNOWN; the slope is undefined');
+   if(p.trend==='linear'){
+    const mx=xs.reduce((a,b)=>a+b,0)/n,my=ys.reduce((a,b)=>a+b,0)/n,sxx=xs.reduce((s,v)=>s+(v-mx)**2,0),sxy=xs.reduce((s,v,i)=>s+(v-mx)*(ys[i]-my),0),slope=sxy/sxx;
+    trendLine={kind:'linear',slope,intercept:my-slope*mx};
+   }else trendLine={kind:'loess',points:loess(xs,ys,.3,50),span:.3};
+  }
   if(['pie','donut'].includes(p.mark)&&(points.some(p=>p.y<0)||!Number.isFinite(points.reduce((s,p)=>s+p.y,0))||points.reduce((s,p)=>s+p.y,0)<=0))fail('DDN-PJ037','Arcs require nonnegative values and a positive total');
   if(!Number.isFinite(Math.max(0,...points.map(n=>n.y))-Math.min(0,...points.map(n=>n.y))))fail('DDN-PJ032','Quantitative axis range overflow');
   if((p.x_type==='number')&&!Number.isFinite(Math.max(...points.map(n=>n.x))-Math.min(...points.map(n=>n.x))))fail('DDN-PJ032','Quantitative x range overflow');
@@ -618,7 +638,7 @@ function plan$1(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return {kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return {kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(net?{net}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return {kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(net?{net}:{}),...(trendLine?{trendLine}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get$1(n,p.start),end=get$1(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return {id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
@@ -685,8 +705,20 @@ function forceLayout(n,links,seed){
  }
  return pos;
 }
-/* Sample quantile, linear interpolation (R type 7). Input must be sorted ascending. */
-function quantile(sorted,q){const n=sorted.length;if(!n)return NaN;const h=(n-1)*q,i=Math.floor(h),j=Math.min(n-1,i+1);return sorted[i]+(h-i)*(sorted[j]-sorted[i]);}
+/* LOESS (local weighted linear fit, tricube weights, fixed 51-point grid). Deterministic. */
+function loess(xs,ys,span=0.3,grid=50){
+ const n=xs.length,m=Math.max(2,Math.ceil(span*n)),x0=Math.min(...xs),x1=Math.max(...xs),out=[];
+ for(let g=0;g<=grid;g++){
+  const x=x0+(x1-x0)*g/grid,dists=xs.map((v,i)=>({d:Math.abs(v-x),i})).sort((a,b)=>a.d-b.d||a.i-b.i),dmax=dists[m-1].d||1;
+  let sw=0,swx=0,swy=0,swxx=0,swxy=0;
+  for(let j=0;j<m;j++){const{d,i}=dists[j],u=Math.min(1,d/dmax),w=(1-u**3)**3;
+   sw+=w;swx+=w*xs[i];swy+=w*ys[i];swxx+=w*xs[i]*xs[i];swxy+=w*xs[i]*ys[i];}
+  const det=sw*swxx-swx*swx,y=Math.abs(det)<1e-12?swy/sw:((sw*swxy-swx*swy)/det)*x+(swy*swxx-swx*swxy)/det;
+  out.push([x,y]);
+ }
+ return out;
+}
+/* Sample quantile, linear interpolation (R type 7). Input must be sorted ascending. */function quantile(sorted,q){const n=sorted.length;if(!n)return NaN;const h=(n-1)*q,i=Math.floor(h),j=Math.min(n-1,i+1);return sorted[i]+(h-i)*(sorted[j]-sorted[i]);}
 /* Standard normal quantile function (Acklam's rational approximation, max |err| 1.15e-9). Deterministic. */
 function normPPF(p){
  const a=[-39.69683028665376,2.209460984245205e+02,-275.9285104469687,1.383577518672690e+02,-30.66479806614716,2.506628277459239e+00];
@@ -3975,7 +4007,10 @@ function render(ir,reg,glyphs='',options={}){
    roots.forEach(draw);
    body+=text(left,H-15*s,'Hierarchical edge bundling · '+plan.net.links.length+' links routed through the least common ancestor of the dotted-path hierarchy (radial tidy layout) · shared ancestors share curve segments, bundling related links · thickness encodes value.',11);
   }else {
-   const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
+   let ys=pts.map(p=>p.y);
+   if(pts.some(pt=>pt.error!==undefined))ys=ys.concat(pts.filter(pt=>pt.error!==undefined).flatMap(pt=>[pt.y-pt.error,pt.y+pt.error]));
+   if(plan.trendLine)ys=ys.concat(plan.trendLine.kind==='linear'?[plan.trendLine.intercept+plan.trendLine.slope*Math.min(...pts.map(pt=>pt.x)),plan.trendLine.intercept+plan.trendLine.slope*Math.max(...pts.map(pt=>pt.x))]:plan.trendLine.points.map(q=>q[1]));
+   const lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
    if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;
    else {const xs=pts.map(p=>p.x),min=Math.min(...xs),max=Math.max(...xs);fx=x=>max===min?left+plotW/2:left+(x-min)/(max-min)*plotW;}
    for(let j=0;j<=5;j++){const v=lo+(hi-lo)*(j/5),y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
@@ -3990,7 +4025,17 @@ function render(ir,reg,glyphs='',options={}){
     if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
     else {const radius=plan.mark==='point'&&pr.size?21*Math.sqrt(pt.size/Math.max(Number.MIN_VALUE,...pts.map(p=>p.size))):4;content+=`<circle data-value="${pt.y}" cx="${f(x)}" cy="${f(y)}" r="${f(radius)}" fill="${col}" fill-opacity=".82" stroke="${t.surface}"/>`;box={x:x-radius,y:y-radius,w:radius*2,h:radius*2};}
     body+=group(pt.sourceIds[0],pt.sourceIds,content,{...box,value:pt.y,dataX:pt.x},pr.y);
+    if(pt.error!==undefined){const et=fy(pt.y+pt.error),eb=fy(pt.y-pt.error),cap=Math.min(14*s,(box.w||20*s)/2);
+     body+=`<path class="ddn-error-bar" data-error="${pt.error}" d="M${f(x)} ${f(et)}L${f(x)} ${f(eb)}M${f(x-cap)} ${f(et)}L${f(x+cap)} ${f(et)}M${f(x-cap)} ${f(eb)}L${f(x+cap)} ${f(eb)}" stroke="${t.ink}" stroke-width="1.6" fill="none"/>`;}
     if(plan.xType==='category'){const label=wrap(String(pt.rawX),plotW/pts.length-8*s,11);body+=lines(label,x,bottom+25*s,11,400,'middle');}
+   }
+   if(plan.trendLine){
+    let d,label;
+    if(plan.trendLine.kind==='linear'){const x0=Math.min(...pts.map(pt=>pt.x)),x1=Math.max(...pts.map(pt=>pt.x));
+     d=`M${f(fx(x0))} ${f(fy(plan.trendLine.intercept+plan.trendLine.slope*x0))}L${f(fx(x1))} ${f(fy(plan.trendLine.intercept+plan.trendLine.slope*x1))}`;label='least-squares slope '+fmtNumber(plan.trendLine.slope);}
+    else {d=plan.trendLine.points.map((q,i)=>(i?'L':'M')+f(fx(q[0]))+' '+f(fy(q[1]))).join('');label='loess span '+plan.trendLine.span;}
+    body+=`<path class="ddn-trend-line" data-trend="${plan.trendLine.kind}" d="${d}" stroke="${colour(2)}" stroke-width="2.2" stroke-dasharray="8 5" fill="none"/>`;
+    body+=text(right,bottom+44*s,'trend: '+plan.trendLine.kind+' ('+label+')',11,400,'end');
    }
    if(plan.xType!=='category'){const min=Math.min(...pts.map(p=>p.x)),max=Math.max(...pts.map(p=>p.x));for(let j=0;j<=(min===max?0:4);j++){const v=min+(max-min)*(j/4);body+=text(fx(v),bottom+25*s,plan.xType==='date'?new Date(v).toISOString().slice(0,10):fmtNumber(v),11,400,'middle');}}
    body+=text(left,H-15*s,'Source-bound '+plan.mark+' · '+pts.length+' marks'+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · supplied data, not a financial calculation certificate.',11);

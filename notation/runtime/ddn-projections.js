@@ -469,7 +469,10 @@ function render(ir,reg,glyphs='',options={}){
    roots.forEach(draw);
    body+=text(left,H-15*s,'Hierarchical edge bundling · '+plan.net.links.length+' links routed through the least common ancestor of the dotted-path hierarchy (radial tidy layout) · shared ancestors share curve segments, bundling related links · thickness encodes value.',11);
   }else{
-   const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
+   let ys=pts.map(p=>p.y);
+   if(pts.some(pt=>pt.error!==undefined))ys=ys.concat(pts.filter(pt=>pt.error!==undefined).flatMap(pt=>[pt.y-pt.error,pt.y+pt.error]));
+   if(plan.trendLine)ys=ys.concat(plan.trendLine.kind==='linear'?[plan.trendLine.intercept+plan.trendLine.slope*Math.min(...pts.map(pt=>pt.x)),plan.trendLine.intercept+plan.trendLine.slope*Math.max(...pts.map(pt=>pt.x))]:plan.trendLine.points.map(q=>q[1]));
+   const lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
    if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;
    else{const xs=pts.map(p=>p.x),min=Math.min(...xs),max=Math.max(...xs);fx=x=>max===min?left+plotW/2:left+(x-min)/(max-min)*plotW;}
    for(let j=0;j<=5;j++){const v=lo+(hi-lo)*(j/5),y=fy(v);body+=line(left,y,right,y)+text(left-12*s,y+4*s,fmtNumber(v),11,400,'end');}
@@ -484,7 +487,17 @@ function render(ir,reg,glyphs='',options={}){
     if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
     else {const radius=plan.mark==='point'&&pr.size?21*Math.sqrt(pt.size/Math.max(Number.MIN_VALUE,...pts.map(p=>p.size))):4;content+=`<circle data-value="${pt.y}" cx="${f(x)}" cy="${f(y)}" r="${f(radius)}" fill="${col}" fill-opacity=".82" stroke="${t.surface}"/>`;box={x:x-radius,y:y-radius,w:radius*2,h:radius*2};}
     body+=group(pt.sourceIds[0],pt.sourceIds,content,{...box,value:pt.y,dataX:pt.x},pr.y);
+    if(pt.error!==undefined){const et=fy(pt.y+pt.error),eb=fy(pt.y-pt.error),cap=Math.min(14*s,(box.w||20*s)/2);
+     body+=`<path class="ddn-error-bar" data-error="${pt.error}" d="M${f(x)} ${f(et)}L${f(x)} ${f(eb)}M${f(x-cap)} ${f(et)}L${f(x+cap)} ${f(et)}M${f(x-cap)} ${f(eb)}L${f(x+cap)} ${f(eb)}" stroke="${t.ink}" stroke-width="1.6" fill="none"/>`;}
     if(plan.xType==='category'){const label=wrap(String(pt.rawX),plotW/pts.length-8*s,11);body+=lines(label,x,bottom+25*s,11,400,'middle');}
+   }
+   if(plan.trendLine){
+    let d,label;
+    if(plan.trendLine.kind==='linear'){const x0=Math.min(...pts.map(pt=>pt.x)),x1=Math.max(...pts.map(pt=>pt.x));
+     d=`M${f(fx(x0))} ${f(fy(plan.trendLine.intercept+plan.trendLine.slope*x0))}L${f(fx(x1))} ${f(fy(plan.trendLine.intercept+plan.trendLine.slope*x1))}`;label='least-squares slope '+fmtNumber(plan.trendLine.slope);}
+    else{d=plan.trendLine.points.map((q,i)=>(i?'L':'M')+f(fx(q[0]))+' '+f(fy(q[1]))).join('');label='loess span '+plan.trendLine.span;}
+    body+=`<path class="ddn-trend-line" data-trend="${plan.trendLine.kind}" d="${d}" stroke="${colour(2)}" stroke-width="2.2" stroke-dasharray="8 5" fill="none"/>`;
+    body+=text(right,bottom+44*s,'trend: '+plan.trendLine.kind+' ('+label+')',11,400,'end');
    }
    if(plan.xType!=='category'){const min=Math.min(...pts.map(p=>p.x)),max=Math.max(...pts.map(p=>p.x));for(let j=0;j<=(min===max?0:4);j++){const v=min+(max-min)*(j/4);body+=text(fx(v),bottom+25*s,plan.xType==='date'?new Date(v).toISOString().slice(0,10):fmtNumber(v),11,400,'middle');}}
    body+=text(left,H-15*s,'Source-bound '+plan.mark+' · '+pts.length+' marks'+(plan.skipped.length?' · '+plan.skipped.length+' explicit missing rows skipped':'')+' · supplied data, not a financial calculation certificate.',11);
