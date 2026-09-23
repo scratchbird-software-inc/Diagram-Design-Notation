@@ -31,6 +31,14 @@ Renaming the earlier live value `tree` to `spanning_tree` preserves the stronger
 
 `auto_place` is boolean (default true). `center` is `pins` or `content`. New pin-centred patterns default to pins; inherited original patterns keep their explicit centre. `grid_step` is a finite length 8–512 CSS px. The pattern gap is 16–2000 CSS px; the engine may enlarge it to honour element dimensions and native port clearance. `direction` is right/down/left/up where the underlying algorithm supports orientation.
 
+## Frame overflow
+
+`layout.frame_overflow` is `expand` (default) or `confine` (RFC-118). It governs view `frame` rects relative to their members.
+
+Under `expand`, the rendered frame rect grows to enclose the member bounding box plus the standard frame padding (20 CSS px left/right, 54 top, 22 bottom — the same padding used for member-derived frames). A declared `at`/`size` rect that already encloses its members is unchanged, so existing diagrams render identically; a member-derived frame is by construction already the expanded rect. Members never escape their frame and nothing is hidden.
+
+Under `confine`, the frame keeps its declared or computed rect. A frame with a declared `at`+`size` defines a fixed interior (the declared rect inset by the standard padding); unpinned members are clamped into that interior during placement — automatically what manual `place` pins achieved — and a member too large for the interior still fails (LIVE-P004). A frame without a declared `at`+`size` is member-computed, so confinement is already satisfied. Pins are never moved; a pinned member outside a fixed frame fails as before. Fixed-frame constraints bind placement only under `confine`; under `expand` the frame grows instead of constraining. Any other value fails DDN046.
+
 ## Spacing hints
 
 A view, or a `bundle` inside a format declaration, may carry one optional
@@ -69,7 +77,7 @@ format layouts {
 }
 ```
 
-A view uses `layout:@layouts.orbit;`. Placement, appearance and publication stay separate from semantic data. Relative frames and explicit routing guides remain constraints; infeasible rings inside fixed frames fail rather than silently overflowing.
+A view uses `layout:@layouts.orbit;`. Placement, appearance and publication stay separate from semantic data. Relative frames and explicit routing guides remain constraints; under `frame_overflow: confine`, infeasible rings inside fixed frames fail rather than silently overflowing.
 
 ## Pause and reflow
 

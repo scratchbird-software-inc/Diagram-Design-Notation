@@ -21,6 +21,10 @@ function bounds(nodes) {
 }
 function constraintsFor(ir) {
  const result=new Map();
+ // frame_overflow (RFC-118): fixed-frame interior constraints bind placement
+ // only under `confine`; under the default `expand` the frame rect grows to
+ // enclose members instead of constraining them.
+ if(ir.view.profiles?.layout?.frame_overflow!=='confine')return result;
  for (const frame of ir.view.frames || []) if(frame.at && frame.size) {
   const next={x:q(frame.at[0])+20,y:q(frame.at[1])+54,w:q(frame.size[0])-40,h:q(frame.size[1])-76};
   for(const id of frame.members) {

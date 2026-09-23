@@ -1314,18 +1314,18 @@ publishNamespace('DDNContracts',api$f);
     projection:{kind:'graph',profile:'ddn@1'},
     notation:{registry:'ddn-core@0.3'},
     style:{look:'classic',theme:'default',font:'sans',font_size:{$quantity:16,unit:'px'},seed:42},
-    layout:{algorithm:'auto',auto_place:true,center:'content',grid_step:{$quantity:32,unit:'px'},optimize:'crossings',endpoint_ordering:'optimize',direction:'right',routing:'orthogonal',curve:'bezier',curve_tension:.5,curve_radius:{$quantity:32,unit:'px'},crossings:'gap',gap:{$quantity:100,unit:'px'},row_gap:{$quantity:100,unit:'px'},columns:3,object_clearance:{$quantity:16,unit:'px'},edge_clearance:{$quantity:12,unit:'px'},port_clearance:{$quantity:28,unit:'px'},route_policy:'repair',quality:'error',root:null,group_by:'none'},
+    layout:{algorithm:'auto',auto_place:true,center:'content',grid_step:{$quantity:32,unit:'px'},optimize:'crossings',endpoint_ordering:'optimize',frame_overflow:'expand',direction:'right',routing:'orthogonal',curve:'bezier',curve_tension:.5,curve_radius:{$quantity:32,unit:'px'},crossings:'gap',gap:{$quantity:100,unit:'px'},row_gap:{$quantity:100,unit:'px'},columns:3,object_clearance:{$quantity:16,unit:'px'},edge_clearance:{$quantity:12,unit:'px'},port_clearance:{$quantity:28,unit:'px'},route_policy:'repair',quality:'error',root:null,group_by:'none'},
     display:{fields:'names',kind:'icon_token',maturity:'token',badges:'tokens',relations:'between_selected',samples:'show',domains:'hide',datatypes:'hide',depth:32},
     publication:{size:'figure',width:{$quantity:1280,unit:'px'},height:{$quantity:800,unit:'px'},margin:{$quantity:32,unit:'px'},fit:'contain',minimum_text:{$quantity:8,unit:'pt'},overflow:'error'},
     legend:{mode:'text',placement:'right',width:{$quantity:310,unit:'px'},keys:{}},
     validation:{mode:'logical',unknown_extensions:'warn'},
     export:{mode:'full',elements:[],fields:null,properties:[],include_samples:false,identifier_mode:'opaque',title:'Published data view',format:'json'},
   };
-  const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
+  const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
   const PROPERTIES={
     projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','inputs','outputs','hit_policy','coverage','analysis_budget','traces'],
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
-    layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
+    layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
     publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
     legend:['mode','placement','width','keys','keyset','scope'],
@@ -1490,6 +1490,10 @@ function bounds(nodes) {
 }
 function constraintsFor(ir) {
  const result=new Map();
+ // frame_overflow (RFC-118): fixed-frame interior constraints bind placement
+ // only under `confine`; under the default `expand` the frame rect grows to
+ // enclose members instead of constraining them.
+ if(ir.view.profiles?.layout?.frame_overflow!=='confine')return result;
  for (const frame of ir.view.frames || []) if(frame.at && frame.size) {
   const next={x:q$5(frame.at[0])+20,y:q$5(frame.at[1])+54,w:q$5(frame.size[0])-40,h:q$5(frame.size[1])-76};
   for(const id of frame.members) {
@@ -2679,6 +2683,10 @@ function place(nodes,rels,ir,options={}){
    if(!ok)fail$1('DDN-P003','No space for a new element without moving retained positions: '+n.id);occupied.push(n);
   }
  }
+ // frame_overflow: confine (RFC-118) clamps unpinned, non-retained members
+ // into a fixed frame's interior — automatically what manual pins did. A
+ // member larger than the interior is left for the fits check below.
+ for(const n of nodes){const b=constraints.get(n.id);if(b&&!at[n.id]?.at&&!retained.includes(n.id)&&n.w<=b.w&&n.h<=b.h){n.x=Math.min(Math.max(n.x,b.x),b.x+b.w-n.w);n.y=Math.min(Math.max(n.y,b.y),b.y+b.h-n.h);}}
  for(const n of nodes)if(!Patterns.fits(n,constraints.get(n.id)))fail$1('DDN-P004','Measured element lies outside a fixed frame: '+n.id);
  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)if(api$6.overlap(nodes[i],nodes[j]))fail$1('DDN204','Pinned or retained placements overlap: '+nodes[i].id+' / '+nodes[j].id);
  if(pattern){pattern={...pattern,pattern:algorithm,autoPlace:!paused};for(const n of nodes)if(pattern.slots[n.id]){const slot=pattern.slots[n.id];slot.seedCenter=slot.center.slice();slot.center=center(n);slot.finalCenter=center(n);}}
@@ -2986,7 +2994,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const placed=api$5.place(geoms,rels,ir,options);geoms=placed.nodes;
  geoms.reduce((m,g)=>Math.max(m,g.w),270);geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
- let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q$2(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q$2(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0);return {...f,x,y,w:f.size?q$2(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h:f.size?q$2(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170)};});
+ let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q$2(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q$2(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q$2(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q$2(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
+ // frame_overflow (RFC-118): expand grows a declared rect to enclose members
+ // at the standard padding; when members already fit this is a no-op.
+ if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
+ return {...f,x,y,w,h};});
  let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q$2(d.at?.[0],i*310),y:q$2(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q$2(d.size?.[0],270),h:q$2(d.size?.[1],95)}));
  const labelMeasure=r=>{if(r._visualLabel===false)return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$9.measure(str,12,p.style.font,500).width+20,h:28};};
  const routed=api$5.route(geoms,rels,ir,labelMeasure,subs,placed);

@@ -6,6 +6,29 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- `layout.frame_overflow: expand | confine` for scoped frames (B1-022,
+  RFC-118): a view `frame` and its members can no longer disagree. Under the
+  default `expand`, a declared `at`/`size` frame rect grows to enclose the
+  member bounding box plus the standard frame padding (20 CSS px left/right,
+  54 top, 22 bottom) — a rect that already encloses its members is unchanged,
+  so existing renders are byte-identical; members never escape and nothing is
+  hidden. Under `confine`, the frame keeps its declared/computed rect and
+  unpinned members of a declared `at`+`size` frame are clamped into its padded
+  interior during placement — automatically what manual `place` pins did; a
+  pinned member outside the fixed frame, or a member too large for the
+  interior, still fails (LIVE-P004/DDN-P004). Fixed-frame constraints bind
+  placement only under `confine`; under `expand` the frame grows instead.
+  Invalid values fail DDN046. Surface: `ddn-core.js` CHOICES/DEFAULTS/layout
+  whitelist, `ddn-render.js` frame rect union, `ddn-patterns.js` constraint
+  gating, `ddn-placement.js` confine clamp; spec chapter 15 "Frame overflow"
+  section; capabilities.json property contract + implemented[]; AI-REFERENCE
+  property tables; the corpus normalizer strips explicit
+  `frame_overflow: expand` (gated in `test:normalize`); new suite
+  `notation/tests/frame-overflow.js` (`test:frame-overflow`, 10 tests).
+  Closing proof: `website/examples/basics/55-wireframe.ddn` renders correctly
+  with its member `place` pins removed via the normalizer (screenshot-verified),
+  resolving the wireframe escape noted in the runtime gap log; all other
+  goldens byte-identical.
 - Corpus normalization (B1-021): every shipped `.ddn` source is now in the
   newest source dialect (`ddn "0.5"`) and minimal — declaration properties
   whose value duplicates the effective default (global `DEFAULTS` merged

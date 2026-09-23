@@ -46,7 +46,7 @@ test('Nested frames: a ui.frame member of another ui.frame renders; inner contro
  const changes2={[FILE]:changes[FILE]
   .replace('    select: [@m.profile_label','    select: [@m.advanced, @m.verbose_label, @m.profile_label')
   .replace('members: [@m.profile_label,','members: [@m.advanced, @m.profile_label,')
-  .replace('    place @m.save_button','    frame advanced_area "Advanced" { scope: @m.advanced; members: [@m.verbose_label]; }\n    place @m.advanced { at: [300px, 240px]; }\n    place @m.verbose_label { at: [300px, 500px]; }\n    place @m.save_button')};
+  .replace('@m.save_button]; }','@m.save_button]; }\n    frame advanced_area "Advanced" { scope: @m.advanced; members: [@m.verbose_label]; }\n    place @m.advanced { at: [300px, 240px]; }\n    place @m.verbose_label { at: [300px, 500px]; }')};
  const r=run('settings',changes2);
  assert.equal(r.scene.frames.length,2,'both frames render');
  assert.ok(r.svg.includes('Advanced')&&r.svg.includes('Verbose logging'),'nested frame and its control render');

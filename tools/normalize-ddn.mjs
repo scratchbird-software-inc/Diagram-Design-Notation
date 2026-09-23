@@ -35,7 +35,7 @@ const GROUP_TYPES = Object.keys(DDN.DEFAULTS); // projection, notation, style, l
 const KEEP_RULES = [
   [/routing|route|curve/i, ['layout.routing', 'layout.curve', 'layout.curve_tension', 'layout.curve_radius', 'layout.crossings']],
   [/look|theme|palette|font|handdrawn|css/i, ['style.look', 'style.theme', 'style.font', 'style.font_size', 'style.roughness', 'style.hachure']],
-  [/layout|placement|algorithm/i, ['layout.algorithm', 'layout.direction', 'layout.center', 'layout.columns', 'layout.optimize', 'layout.endpoint_ordering']],
+  [/layout|placement|algorithm/i, ['layout.algorithm', 'layout.direction', 'layout.center', 'layout.columns', 'layout.optimize', 'layout.endpoint_ordering', 'layout.frame_overflow']],
   [/spacing/i, ['spacing', 'layout.gap', 'layout.row_gap', 'layout.object_clearance', 'layout.edge_clearance', 'layout.port_clearance', 'layout.grid_step']],
   [/legend/i, ['legend.mode', 'legend.placement', 'legend.width']],
   [/publication|print|export/i, ['publication.size', 'publication.width', 'publication.height', 'publication.margin', 'publication.fit', 'publication.orientation']],

@@ -73,6 +73,10 @@
         "optimize",
         "preserve"
       ],
+      "frame_overflow": [
+        "expand",
+        "confine"
+      ],
       "direction": [
         "right",
         "down",
@@ -213,6 +217,7 @@
       },
       "optimize": "crossings",
       "endpoint_ordering": "optimize",
+      "frame_overflow": "expand",
       "direction": "right",
       "routing": "orthogonal",
       "curve": "bezier",
@@ -460,6 +465,17 @@
         "preserve"
       ],
       "support": "implemented; scope-specific conditions documented in spec/11-remediation.md and spec/13-curved-relations.md and spec/14-unified-sdk.md and spec/21 through spec/24"
+    },
+    {
+      "id": "layout.frame_overflow",
+      "scope": "layout",
+      "name": "frame_overflow",
+      "default": "expand",
+      "choices": [
+        "expand",
+        "confine"
+      ],
+      "support": "implemented; semantics documented in spec/15-placement-and-low-light.md and governance/rfcs/RFC-118-frame-overflow.md"
     },
     {
       "id": "layout.direction",
@@ -2837,6 +2853,7 @@
   "implemented": [
     "C4-style context/container/component views via c4.*@1 profiles with boundary frames",
     "geometry-ordered free endpoint slots and bounded coupled side/slot refinement",
+    "frame_overflow expand/confine scoped-frame growth and member clamping (RFC-118)",
     "fishbone source-linked cause occurrences",
     "numeric categorical and band encoded heatmaps",
     "shared write_data matrix creation and atomic batch changes",

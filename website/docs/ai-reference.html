@@ -90,7 +90,7 @@ module &quot;shop.views&quot;;                // further sections (RFC-117 multi
 <p><strong>Selection</strong>: <code>select: all</code> (default) or an explicit array of element refs; refs must resolve to in-scope elements (DDN057). <code>exclude</code> removes occurrences. A relation is visible when both endpoints are selected unless <code>display.relations: none</code>.</p>
 <p><strong><code>place</code></strong> (optional hints; omit for automatic layout): properties <code>at: [x, y]</code> (quantity pair), <code>size: [w, h]</code>. Placement targets must be selected (DDN062). Hard pins must not overlap (DDN204).</p>
 <p><strong><code>route</code></strong> (optional per-relation geometry, view-specific; never changes endpoints): <code>via: [[x,y],…]</code> hard waypoints; <code>source_side</code>/<code>target_side</code> in <code>east|west|north|south</code>; <code>source_fraction</code>/<code>target_fraction</code> in (0,1) for unbound body anchors (cannot replace a field/port endpoint, DDN-I030); <code>callout: [x,y]</code> label position; <code>policy: strict|repair</code>; <code>routing: orthogonal|straight|curved</code>; <code>curve: bezier|rounded</code>; <code>curve_tension</code> (0,1]; <code>curve_radius</code> (&gt;0, ≤1000px). Route targets must be visible relations (DDN063). <code>route_policy: repair</code> (default) recomputes an unsafe <code>via</code> hint with info diagnostic DDN-LW02; <code>strict</code> rejects it (DDN073 non-orthogonal / DDN213 unsafe).</p>
-<p><strong><code>frame</code></strong>: <code>scope:</code> (ref to the boundary element, optional), <code>members: [@…]</code> (refs), <code>at</code>, <code>size</code>, <code>label</code>, <code>dimension</code>, plus profile flags like <code>x_region: true</code>, <code>x_pool: true</code> (extension props on frames pass through).</p>
+<p><strong><code>frame</code></strong>: <code>scope:</code> (ref to the boundary element, optional), <code>members: [@…]</code> (refs), <code>at</code>, <code>size</code>, <code>label</code>, <code>dimension</code>, plus profile flags like <code>x_region: true</code>, <code>x_pool: true</code> (extension props on frames pass through). Frame-vs-member geometry follows <code>layout.frame_overflow</code> (<code>expand</code> default, <code>confine</code>; RFC-118): under <code>expand</code> the frame rect grows to enclose members at the standard padding (a declared <code>at</code>/<code>size</code> rect that already fits is unchanged); under <code>confine</code> a declared <code>at</code>+<code>size</code> frame is fixed and unpinned members are clamped into its interior.</p>
 <p><strong><code>subdiagram</code></strong>: <code>view:</code> (must resolve to a view, DDN064), <code>mode: reference|inline</code> (DDN900 otherwise), <code>at</code>, <code>size</code>, <code>label</code>, <code>binding</code>, <code>uid</code>. <code>reference</code> links; <code>inline</code> embeds the child's own selection/presentation — inline recursion or depth &gt; 6 → DDN065.</p>
 <p><strong><code>legend</code> / <code>keyset</code></strong>: numbered mode assigns callout numbers via <code>keys: { &quot;&lt;relation-id-or-local-name&gt;&quot;: n }</code>; ambiguous/unknown keys → DDN058, non-positive-integer numbers → DDN059, duplicate numbers → DDN060. <code>mode: numbers</code> requires a visible legend placement (DDN047) and a number for EVERY visible relation (DDN061); shared <code>keyset</code> declarations preserve numbers across views. Numbers identify relations; they are not time order.</p>
 <p><strong><code>validation { mode: sketch|logical|strict; unknown_extensions: warn|error; }</code></strong> — <code>logical</code> (default): unregistered <code>x_*</code> extensions and unknown semantic properties are preserved with warnings (DDN-W103/DDN-W106); <code>strict</code>: unregistered extensions (DDN103) and unknown semantic properties (DDN106) fail; sketch-mode endpoint kind mismatches defer to warnings (DDN-W102).</p>
@@ -170,6 +170,7 @@ module &quot;shop.views&quot;;                // further sections (RFC-117 multi
   &quot;grid_step&quot;,
   &quot;optimize&quot;,
   &quot;endpoint_ordering&quot;,
+  &quot;frame_overflow&quot;,
   &quot;direction&quot;,
   &quot;routing&quot;,
   &quot;curve&quot;,
@@ -340,6 +341,7 @@ module &quot;shop.views&quot;;                // further sections (RFC-117 multi
   },
   &quot;optimize&quot;: &quot;crossings&quot;,
   &quot;endpoint_ordering&quot;: &quot;optimize&quot;,
+  &quot;frame_overflow&quot;: &quot;expand&quot;,
   &quot;direction&quot;: &quot;right&quot;,
   &quot;routing&quot;: &quot;orthogonal&quot;,
   &quot;curve&quot;: &quot;bezier&quot;,
@@ -495,6 +497,10 @@ module &quot;shop.views&quot;;                // further sections (RFC-117 multi
   &quot;endpoint_ordering&quot;: [
    &quot;optimize&quot;,
    &quot;preserve&quot;
+  ],
+  &quot;frame_overflow&quot;: [
+   &quot;expand&quot;,
+   &quot;confine&quot;
   ],
   &quot;direction&quot;: [
    &quot;right&quot;,

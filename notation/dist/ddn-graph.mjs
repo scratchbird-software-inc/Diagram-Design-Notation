@@ -903,6 +903,10 @@ function place(nodes,rels,ir,options={}){
    if(!ok)fail$1('DDN-P003','No space for a new element without moving retained positions: '+n.id);occupied.push(n);
   }
  }
+ // frame_overflow: confine (RFC-118) clamps unpinned, non-retained members
+ // into a fixed frame's interior — automatically what manual pins did. A
+ // member larger than the interior is left for the fits check below.
+ for(const n of nodes){const b=constraints.get(n.id);if(b&&!at[n.id]?.at&&!retained.includes(n.id)&&n.w<=b.w&&n.h<=b.h){n.x=Math.min(Math.max(n.x,b.x),b.x+b.w-n.w);n.y=Math.min(Math.max(n.y,b.y),b.y+b.h-n.h);}}
  for(const n of nodes)if(!Patterns.fits(n,constraints.get(n.id)))fail$1('DDN-P004','Measured element lies outside a fixed frame: '+n.id);
  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)if(api$4.overlap(nodes[i],nodes[j]))fail$1('DDN204','Pinned or retained placements overlap: '+nodes[i].id+' / '+nodes[j].id);
  if(pattern){pattern={...pattern,pattern:algorithm,autoPlace:!paused};for(const n of nodes)if(pattern.slots[n.id]){const slot=pattern.slots[n.id];slot.seedCenter=slot.center.slice();slot.center=center(n);slot.finalCenter=center(n);}}
@@ -1210,7 +1214,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const placed=api$3.place(geoms,rels,ir,options);geoms=placed.nodes;
  geoms.reduce((m,g)=>Math.max(m,g.w),270);geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
- let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q$1(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q$1(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0);return {...f,x,y,w:f.size?q$1(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h:f.size?q$1(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170)};});
+ let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q$1(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q$1(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q$1(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q$1(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
+ // frame_overflow (RFC-118): expand grows a declared rect to enclose members
+ // at the standard padding; when members already fit this is a no-op.
+ if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
+ return {...f,x,y,w,h};});
  let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q$1(d.at?.[0],i*310),y:q$1(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q$1(d.size?.[0],270),h:q$1(d.size?.[1],95)}));
  const labelMeasure=r=>{if(r._visualLabel===false)return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$7.measure(str,12,p.style.font,500).width+20,h:28};};
  const routed=api$3.route(geoms,rels,ir,labelMeasure,subs,placed);

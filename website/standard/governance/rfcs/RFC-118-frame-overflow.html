@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 118 — frame_overflow: expand | confine for scoped frames — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../examples/index.html">Examples</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 118 — <code>frame_overflow: expand | confine</code> for scoped frames</h1>
+<p>Status: proposed   Authors/reviewers: to be assigned   Language/registry impact: DDN 0.5 additive layout property; no registry or grammar changes (layout properties are not enumerated by the EBNF); no new diagnostic codes (invalid values are rejected by the existing DDN046 unsupported-choice check).</p>
+<h2>Problem and motivating example</h2>
+<p>A view <code>frame</code> scopes members inside a boundary (wireframe <code>ui.frame</code> screens, C4 container boundaries, group frames). Today the rendered frame rect and the member placement disagree in two corners:</p>
+<ul><li>A frame declared with <code>size</code> (with or without <code>at</code>) keeps its declared rect</li></ul>
+<p>  even when auto-placed members measure larger, so members render outside the   boundary that claims to contain them.</p>
+<ul><li>The only author workaround is manual <code>place</code> pins on every member — exactly</li></ul>
+<p>  what a scoped frame should make unnecessary. This was observed during corpus   normalization on <code>website/examples/basics/55-wireframe.ddn</code> (logged in the   runtime gap notes), where the pin set is only there to keep members inside   their screen frame.</p>
+<p>Motivating example: a settings-screen mock whose controls should simply stay inside the screen frame, with no pins:</p>
+<pre><code>view settings &quot;Settings screen&quot; {
+    data: [@m];
+    select: [@m.profile_label, @m.display_name, @m.save_button];
+    projection { profile: &quot;wireframe.ui@1&quot;; }
+    layout { algorithm: layered; direction: down; }
+    frame settings_area &quot;Settings&quot; { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.save_button]; }
+}</code></pre>
+<h2>Proposed syntax</h2>
+<p>One new view layout property (D1):</p>
+<pre><code>layout { frame_overflow: expand; }   // or: confine</code></pre>
+<p><code>frame_overflow</code> lives in the <code>layout</code> group alongside <code>endpoint_ordering</code> and friends, is settable in profile declarations and view override groups, and accepts exactly <code>expand</code> (default) or <code>confine</code>. Any other value fails with DDN046 like every other enumerated layout choice.</p>
+<h2>Semantic normalization and identity effects</h2>
+<p>None. The property is presentation-only; it changes frame geometry and, under <code>confine</code>, auto-placement of unpinned members. It never mutates source pins, element identity, or resolved references. Explicit <code>frame_overflow: expand</code> is the default and normalizes away (the corpus normalizer strips it).</p>
+<h2>Visual encoding and routing effects</h2>
+<ul><li><code>expand</code> (default, D2): the rendered frame rect grows to enclose the union</li></ul>
+<p>  of its declared/computed rect and the member bounding box plus the standard   frame padding (20 CSS px left/right, 54 top, 22 bottom — the same constants   the renderer already uses for member-derived frames). When members already   fit, the union is exactly the declared/computed rect, so existing renders   are byte-identical (D4). Members never escape; nothing is hidden.</p>
+<ul><li><code>confine</code>: the frame keeps its declared (<code>at</code>/<code>size</code>) or member-computed</li></ul>
+<p>  rect. Members of a frame with a declared <code>at</code>+<code>size</code> rect are clamped into   the frame's interior during placement — automatically achieving what manual   pins did — instead of being allowed to drift outside. A member too large for   the interior still fails (LIVE-P004), as today; confinement never resizes or   hides content.</p>
+<p>Routing is unaffected; routes already avoid frame rects as obstacles.</p>
+<h2>Alternatives considered</h2>
+<ul><li><strong>Forced pins</strong>: rejected — pins are view-state noise for a containment</li></ul>
+<p>  contract the frame already declares.</p>
+<ul><li><strong><code>clip</code> mode</strong> (hide escaping members): out of scope by owner decision;</li></ul>
+<p>  hiding content conflicts with the no-silent-overflow principle.</p>
+<ul><li><strong>Frame property instead of layout property</strong>: rejected (D1) — overflow</li></ul>
+<p>  policy is a view layout concern, consistent with <code>endpoint_ordering</code>, and a   per-frame property would splinter one policy across every frame block.</p>
+<h2>Compatibility and migration</h2>
+<p>Fully backward compatible. <code>expand</code> is the default and reproduces current geometry wherever members already fit: member-derived frames use identical padding math, and declared rects that already enclose their members are the union of themselves. The compatibility proof is byte-identical golden renders across the shipped corpus, plus the previously pinned wireframe example now rendering correctly with its pins removed.</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new input channels. The clamp is a bounded arithmetic operation on measured rectangles; placement search budgets (LIVE-P002) are unchanged. No content is hidden in either mode, so accessibility is unaffected.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<p><code>capabilities.json</code>: <code>layout.frame_overflow</code> added to the layout choices, layout defaults (<code>&quot;expand&quot;</code>), the property contract list, and the <code>implemented[]</code> summary. No new diagnostic codes; invalid values fail DDN046.</p>
+<h2>Positive and negative fixtures</h2>
+<p>Positive: unpinned members of a scoped frame render inside it under the default; <code>confine</code> with a declared rect clamps an unpinned member inside; member-derived frames render byte-identical before/after. Negative: <code>layout { frame_overflow: grow; }</code> fails DDN046.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Runtime only: <code>ddn-core.js</code> (CHOICES, DEFAULTS, layout property whitelist), <code>ddn-render.js</code> (frame rect union under <code>expand</code>), <code>ddn-placement.js</code> / <code>ddn-patterns.js</code> (member clamping under <code>confine</code>). Viewer, designer and projections are otherwise unaffected.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>D1 property name/group: <code>layout.frame_overflow</code> — fixed.</li><li>D2 semantics: <code>expand</code> grows, <code>confine</code> clamps; no <code>clip</code> — fixed.</li><li>D3 governance surface: this RFC, spec chapter 15, capabilities.json,</li></ul>
+<p>  AI-REFERENCE — fixed.</p>
+<ul><li>D4 compatibility: default <code>expand</code>, byte-identical goldens proof — fixed.</li><li>D5 full surface: renderer + layout + normalizer default-strip — fixed.</li></ul>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

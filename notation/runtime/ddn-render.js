@@ -179,7 +179,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
  let maxW=geoms.reduce((m,g)=>Math.max(m,g.w),270),maxH=geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
- let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0);return{...f,x,y,w:f.size?q(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h:f.size?q(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170)};});
+ let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
+ // frame_overflow (RFC-118): expand grows a declared rect to enclose members
+ // at the standard padding; when members already fit this is a no-op.
+ if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
+ return{...f,x,y,w,h};});
  let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q(d.at?.[0],i*310),y:q(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q(d.size?.[0],270),h:q(d.size?.[1],95)}));
  const labelMeasure=r=>{if(r._visualLabel===false)return{w:0,h:0};const reg=DDN.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return{w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return{w:Text.measure(str,12,p.style.font,500).width+20,h:28};};
  const routed=Placement.route(geoms,rels,ir,labelMeasure,subs,placed);

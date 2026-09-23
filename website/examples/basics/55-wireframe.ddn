@@ -26,10 +26,4 @@ view settings "Settings screen" {
     layout { algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
     frame settings_area "Settings" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }
-    place @m.profile_label { at: [0px, 0px]; }
-    place @m.display_name { at: [0px, 120px]; }
-    place @m.email_notifications { at: [0px, 240px]; }
-    place @m.timezone_list { at: [0px, 360px]; }
-    place @m.avatar_placeholder { at: [300px, 0px]; }
-    place @m.save_button { at: [300px, 360px]; }
 }

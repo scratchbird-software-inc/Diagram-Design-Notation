@@ -48,6 +48,10 @@ function place(nodes,rels,ir,options={}){
    if(!ok)fail('DDN-P003','No space for a new element without moving retained positions: '+n.id);occupied.push(n);
   }
  }
+ // frame_overflow: confine (RFC-118) clamps unpinned, non-retained members
+ // into a fixed frame's interior — automatically what manual pins did. A
+ // member larger than the interior is left for the fits check below.
+ for(const n of nodes){const b=constraints.get(n.id);if(b&&!at[n.id]?.at&&!retained.includes(n.id)&&n.w<=b.w&&n.h<=b.h){n.x=Math.min(Math.max(n.x,b.x),b.x+b.w-n.w);n.y=Math.min(Math.max(n.y,b.y),b.y+b.h-n.h);}}
  for(const n of nodes)if(!Patterns.fits(n,constraints.get(n.id)))fail('DDN-P004','Measured element lies outside a fixed frame: '+n.id);
  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)if(Layout.overlap(nodes[i],nodes[j]))fail('DDN204','Pinned or retained placements overlap: '+nodes[i].id+' / '+nodes[j].id);
  if(pattern){pattern={...pattern,pattern:algorithm,autoPlace:!paused};for(const n of nodes)if(pattern.slots[n.id]){const slot=pattern.slots[n.id];slot.seedCenter=slot.center.slice();slot.center=center(n);slot.finalCenter=center(n);}}

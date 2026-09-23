@@ -123,7 +123,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 
 **`route`** (optional per-relation geometry, view-specific; never changes endpoints): `via: [[x,y],…]` hard waypoints; `source_side`/`target_side` in `east|west|north|south`; `source_fraction`/`target_fraction` in (0,1) for unbound body anchors (cannot replace a field/port endpoint, DDN-I030); `callout: [x,y]` label position; `policy: strict|repair`; `routing: orthogonal|straight|curved`; `curve: bezier|rounded`; `curve_tension` (0,1]; `curve_radius` (>0, ≤1000px). Route targets must be visible relations (DDN063). `route_policy: repair` (default) recomputes an unsafe `via` hint with info diagnostic DDN-LW02; `strict` rejects it (DDN073 non-orthogonal / DDN213 unsafe).
 
-**`frame`**: `scope:` (ref to the boundary element, optional), `members: [@…]` (refs), `at`, `size`, `label`, `dimension`, plus profile flags like `x_region: true`, `x_pool: true` (extension props on frames pass through).
+**`frame`**: `scope:` (ref to the boundary element, optional), `members: [@…]` (refs), `at`, `size`, `label`, `dimension`, plus profile flags like `x_region: true`, `x_pool: true` (extension props on frames pass through). Frame-vs-member geometry follows `layout.frame_overflow` (`expand` default, `confine`; RFC-118): under `expand` the frame rect grows to enclose members at the standard padding (a declared `at`/`size` rect that already fits is unchanged); under `confine` a declared `at`+`size` frame is fixed and unpinned members are clamped into its interior.
 
 **`subdiagram`**: `view:` (must resolve to a view, DDN064), `mode: reference|inline` (DDN900 otherwise), `at`, `size`, `label`, `binding`, `uid`. `reference` links; `inline` embeds the child's own selection/presentation — inline recursion or depth > 6 → DDN065.
 
@@ -209,6 +209,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   "grid_step",
   "optimize",
   "endpoint_ordering",
+  "frame_overflow",
   "direction",
   "routing",
   "curve",
@@ -383,6 +384,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   },
   "optimize": "crossings",
   "endpoint_ordering": "optimize",
+  "frame_overflow": "expand",
   "direction": "right",
   "routing": "orthogonal",
   "curve": "bezier",
@@ -542,6 +544,10 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   "endpoint_ordering": [
    "optimize",
    "preserve"
+  ],
+  "frame_overflow": [
+   "expand",
+   "confine"
   ],
   "direction": [
    "right",
