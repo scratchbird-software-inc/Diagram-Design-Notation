@@ -460,6 +460,46 @@
       smallest=Math.min(smallest,size);}
      if(skippedWords.length)diagnostics.push({code:'DDN-PJW04',severity:'warning',message:'Word cloud could not place '+skippedWords.length+' word(s) without overlap and omitted them: '+skippedWords.join(', ')+'. Nothing was resized to fit silently.'});
      body+=text(left,H-15*s,placed.length+' of '+words.length+' words placed · font size encodes weight (√ scale) · deterministic Archimedean-spiral placement, heaviest first; angle and position encode nothing.',11);
+    }else if(plan.mark==='arc'){
+     const net=plan.net,N=net.nodes.length,maxV=Math.max(...net.links.map(l=>l.value)),base=bottom-60*s;
+     const order=net.nodes.map((n,i)=>({n,i})).sort((a,b)=>(b.n.weight-a.n.weight)||(a.n.name<b.n.name?-1:a.n.name>b.n.name?1:a.i-b.i));
+     const px=new Map(order.map((o,j)=>[o.i,left+(j+.5)*plotW/N]));
+     net.links.forEach((l,li)=>{const x1=px.get(l.source),x2=px.get(l.target),r=Math.abs(x2-x1)/2,w=1+5*l.value/maxV;
+      body+=group(l.sourceIds[0],l.sourceIds,`<title>${esc(net.nodes[l.source].name+' → '+net.nodes[l.target].name+': '+fmtNumber(l.value)+' '+plan.unit)}</title><path class="ddn-arc-link" data-value="${l.value}" d="M${f(x1)} ${f(base)}A${f(r)} ${f(r)} 0 0 1 ${f(x2)} ${f(base)}" stroke="${colour(li)}" stroke-width="${f(w)}" fill="none" stroke-opacity=".6"/>`,{x:Math.min(x1,x2),y:base-2*r,w:Math.abs(x2-x1)||1,h:2*r,value:l.value},pr.y);});
+     order.forEach((o,j)=>{const x=px.get(o.i),r=4*s+10*s*Math.sqrt(o.n.weight/Math.max(...net.nodes.map(n=>n.weight)));
+      body+=group(o.n.sourceIds[0]||o.n.name,o.n.sourceIds,`<title>${esc(o.n.name+': total '+fmtNumber(o.n.weight)+' '+plan.unit)}</title><circle class="ddn-arc-node" data-weight="${o.n.weight}" cx="${f(x)}" cy="${f(base)}" r="${f(r)}" fill="${t.ink}"/>`+lines(wrap(o.n.name,plotW/N+40*s,11),x,base+r+16*s,11,400,'middle'),{x:x-r,y:base-r,w:2*r,h:2*r,weight:o.n.weight},pr.x);});
+     body+=line(left,base,right,base,t.ink,1.2);
+     body+=text(left,H-15*s,N+' nodes · '+net.links.length+' links · nodes ordered by total weight (desc) on one axis · arc thickness encodes value; arc height encodes distance only.',11);
+    }else if(plan.mark==='force'){
+     const net=plan.net,pos=net.positions,xs=pos.map(p=>p.x),ys=pos.map(p=>p.y),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),pad=70*s;
+     const fx=v=>left+pad+(v-x0)/((x1-x0)||1)*(plotW-2*pad),fy=v=>top+pad/2+(v-y0)/((y1-y0)||1)*(plotH-pad),maxV=Math.max(...net.links.map(l=>l.value)),maxW=Math.max(...net.nodes.map(n=>n.weight));
+     net.links.forEach((l,li)=>{body+=group(l.sourceIds[0],l.sourceIds,`<title>${esc(net.nodes[l.source].name+' → '+net.nodes[l.target].name+': '+fmtNumber(l.value)+' '+plan.unit)}</title><path class="ddn-force-link" data-value="${l.value}" d="M${f(fx(pos[l.source].x))} ${f(fy(pos[l.source].y))}L${f(fx(pos[l.target].x))} ${f(fy(pos[l.target].y))}" stroke="${t.rule}" stroke-width="${f(1+4*l.value/maxV)}" fill="none"/>`,{x:Math.min(fx(pos[l.source].x),fx(pos[l.target].x)),y:Math.min(fy(pos[l.source].y),fy(pos[l.target].y)),w:Math.abs(fx(pos[l.source].x)-fx(pos[l.target].x))||1,h:Math.abs(fy(pos[l.source].y)-fy(pos[l.target].y))||1,value:l.value},pr.y);});
+     net.nodes.forEach((n,i)=>{const x=fx(pos[i].x),y=fy(pos[i].y),r=5*s+12*s*Math.sqrt(n.weight/maxW);
+      body+=group(n.sourceIds[0]||n.name,n.sourceIds,`<title>${esc(n.name+': total '+fmtNumber(n.weight)+' '+plan.unit)}</title><circle class="ddn-force-node" data-weight="${n.weight}" cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${colour(i)}" fill-opacity=".85" stroke="${t.surface}" stroke-width="1.5"/>`+text(x,y+r+14*s,n.name,11,400,'middle'),{x:x-r,y:y-r,w:2*r,h:2*r,weight:n.weight},pr.x);});
+     body+=text(left,H-15*s,net.nodes.length+' nodes · '+net.links.length+' links · deterministic seeded force layout (fixed seed, 300 iterations; same seed pattern as placement:organic) · node radius encodes total weight; positions encode nothing else.',11);
+    }else if(plan.mark==='edgebundle'){
+     const roots=plan.net.roots,maxD=plan.net.maxDepth,cx=left+plotW/2,cy=top+plotH/2,RAD=Math.max(60*s,Math.min(plotW,plotH)/2-70*s);let slots=0;
+     const leafByPath=new Map();
+     const layout=(n,d,parent)=>{n.depth=d;n.parent=parent;if(n.leaf){n.lx=slots++;leafByPath.set(n.path,n);}else {n.children.forEach(c=>layout(c,d+1,n));n.lx=n.children.reduce((s,c)=>s+c.lx,0)/n.children.length;}};
+     roots.forEach(n=>layout(n,0,null));slots=Math.max(1,slots);
+     const pt=n=>{const a=-Math.PI/2+(n.lx+.5)/slots*2*Math.PI,r=maxD===1?0:(n.depth+1)/maxD*RAD;return [cx+Math.cos(a)*r,cy+Math.sin(a)*r];};
+     const chain=n=>{const out=[];for(let m=n;m;m=m.parent)out.push(m);return out;};
+     const smooth=pp=>{if(pp.length<3)return 'M'+pp.map(q=>f(q[0])+' '+f(q[1])).join('L');
+      let d=`M${f(pp[0][0])} ${f(pp[0][1])}`;
+      for(let i=1;i<pp.length-1;i++){const mx=(pp[i][0]+pp[i+1][0])/2,my=(pp[i][1]+pp[i+1][1])/2;d+=`Q${f(pp[i][0])} ${f(pp[i][1])} ${f(mx)} ${f(my)}`;}
+      return d+`L${f(pp.at(-1)[0])} ${f(pp.at(-1)[1])}`;};
+     const maxV=Math.max(...plan.net.links.map(l=>l.value));
+     plan.net.links.forEach((l,li)=>{
+      const a=leafByPath.get(l.sourcePath),b=leafByPath.get(l.targetPath),ca=chain(a),cb=chain(b);
+      let lca=null;for(const n of ca)if(cb.includes(n)){lca=n;break;}
+      const seq=lca?[...ca.slice(0,ca.indexOf(lca)+1),...cb.slice(0,cb.indexOf(lca)).reverse()]:[...ca,...cb.slice().reverse()],pp=seq.map(pt);
+      body+=group(l.sourceIds[0],l.sourceIds,`<title>${esc(l.sourcePath+' → '+l.targetPath+': '+fmtNumber(l.value)+' '+plan.unit)}</title><path class="ddn-bundle-link" data-value="${l.value}" d="${smooth(pp)}" stroke="${colour(li)}" stroke-width="${f(1+2.5*l.value/maxV)}" fill="none" stroke-opacity=".5"/>`,{x:cx-RAD,y:cy-RAD,w:2*RAD,h:2*RAD,value:l.value},pr.y);});
+     const draw=n=>{const[x,y]=pt(n);
+      if(n.leaf){const a=-Math.PI/2+(n.lx+.5)/slots*2*Math.PI,lx=cx+Math.cos(a)*(RAD+14*s),ly=cy+Math.sin(a)*(RAD+14*s);
+       body+=group(n.path,plan.net.links.filter(l=>l.sourcePath===n.path||l.targetPath===n.path).flatMap(l=>l.sourceIds),`<circle class="ddn-bundle-leaf" data-path="${esc(n.path)}" cx="${f(x)}" cy="${f(y)}" r="${f(3.5*s)}" fill="${t.ink}"/>`+text(lx,ly+3*s,String(n.name),10.7,400,lx<cx-2?'end':lx>cx+2?'start':'middle'),{x:x-4*s,y:y-4*s,w:8*s,h:8*s,path:n.path},pr.x);}
+      n.children.forEach(draw);};
+     roots.forEach(draw);
+     body+=text(left,H-15*s,'Hierarchical edge bundling · '+plan.net.links.length+' links routed through the least common ancestor of the dotted-path hierarchy (radial tidy layout) · shared ancestors share curve segments, bundling related links · thickness encodes value.',11);
     }else {
      const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
      if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;

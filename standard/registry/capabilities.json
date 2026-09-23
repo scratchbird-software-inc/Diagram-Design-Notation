@@ -3027,6 +3027,56 @@
         "semantic colouring",
         "rotation of words"
       ]
+    },
+    {
+      "id": "chart.arc@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Arc diagram"
+      ],
+      "scope": "Endpoints on one axis ordered by total weight (desc); semicircular arcs between linked endpoints; arc thickness encodes the link value.",
+      "validation": [
+        "distinct nonempty category endpoints (DDN-PJ032)",
+        "target is a property binding (DDN-PJ030)",
+        "positive finite link values (DDN-PJ108)",
+        "at most 200 nodes / 1000 links (DDN-PJ135)"
+      ],
+      "unsupported": [
+        "node ordering optimization",
+        "directed arrows"
+      ]
+    },
+    {
+      "id": "chart.force@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Force-directed network"
+      ],
+      "scope": "Deterministic seeded Fruchterman-Reingold layout (fixed seed 0xB1024, 300 cooling iterations, same seed pattern as placement:organic); node radius encodes total weight; positions encode nothing else.",
+      "validation": [
+        "as chart.arc@1"
+      ],
+      "unsupported": [
+        "interactive dragging",
+        "community detection"
+      ]
+    },
+    {
+      "id": "chart.edgebundle@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Hierarchical edge bundling"
+      ],
+      "scope": "Links between dotted-path endpoints routed through the least common ancestor of the hierarchy on a radial tidy layout; shared ancestors bundle related links; thickness encodes value.",
+      "validation": [
+        "endpoints are dotted paths of at most 3 levels (DDN-PJ030)",
+        "positive finite link values (DDN-PJ108)",
+        "at most 200 endpoints / 500 links (DDN-PJ135)"
+      ],
+      "unsupported": [
+        "spline-tension controls",
+        "directed bundles"
+      ]
     }
   ],
   "projectionProperties": {

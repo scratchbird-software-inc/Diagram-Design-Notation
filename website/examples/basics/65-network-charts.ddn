@@ -1,0 +1,45 @@
+ddn "0.5";
+module "ddn.examples.network-charts";
+
+// Synthetic service-mesh traffic: weighted calls between services, and the
+// same flows addressed by dotted deployment paths for hierarchical bundling.
+// All data is synthetic.
+data calls {
+    object e1 "web → api" { kind: record; x_record: {"from": "web", "to": "api", "n": 320, "unit": "req/min"}; }
+    object e2 "api → auth" { kind: record; x_record: {"from": "api", "to": "auth", "n": 180, "unit": "req/min"}; }
+    object e3 "api → store" { kind: record; x_record: {"from": "api", "to": "store", "n": 240, "unit": "req/min"}; }
+    object e4 "web → cdn" { kind: record; x_record: {"from": "web", "to": "cdn", "n": 90, "unit": "req/min"}; }
+    object e5 "worker → store" { kind: record; x_record: {"from": "worker", "to": "store", "n": 140, "unit": "req/min"}; }
+    object e6 "api → queue" { kind: record; x_record: {"from": "api", "to": "queue", "n": 110, "unit": "req/min"}; }
+    object e7 "queue → worker" { kind: record; x_record: {"from": "queue", "to": "worker", "n": 105, "unit": "req/min"}; }
+    object e8 "cdn → store" { kind: record; x_record: {"from": "cdn", "to": "store", "n": 60, "unit": "req/min"}; }
+}
+
+data routes {
+    object r1 "eu.web → eu.api" { kind: record; x_record: {"from": "eu.frontend.web", "to": "eu.backend.api", "n": 320, "unit": "req/min"}; }
+    object r2 "eu.api → eu.auth" { kind: record; x_record: {"from": "eu.backend.api", "to": "eu.backend.auth", "n": 180, "unit": "req/min"}; }
+    object r3 "eu.api → us.store" { kind: record; x_record: {"from": "eu.backend.api", "to": "us.backend.store", "n": 240, "unit": "req/min"}; }
+    object r4 "us.web → us.api" { kind: record; x_record: {"from": "us.frontend.web", "to": "us.backend.api", "n": 150, "unit": "req/min"}; }
+    object r5 "us.api → us.store" { kind: record; x_record: {"from": "us.backend.api", "to": "us.backend.store", "n": 210, "unit": "req/min"}; }
+    object r6 "us.worker → us.store" { kind: record; x_record: {"from": "us.backend.worker", "to": "us.backend.store", "n": 140, "unit": "req/min"}; }
+    object r7 "eu.api → eu.queue" { kind: record; x_record: {"from": "eu.backend.api", "to": "eu.backend.queue", "n": 110, "unit": "req/min"}; }
+    object r8 "eu.queue → us.worker" { kind: record; x_record: {"from": "eu.backend.queue", "to": "us.backend.worker", "n": 95, "unit": "req/min"}; }
+}
+
+view arc "Service calls / arc diagram" {
+    data: [@calls];
+    projection { kind:chart; profile:"chart.arc@1"; records:[@calls.e1, @calls.e2, @calls.e3, @calls.e4, @calls.e5, @calls.e6, @calls.e7, @calls.e8]; mark:arc; x:"x_record.from"; target:"x_record.to"; y:"x_record.n"; unit:"req/min"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view force "Service calls / force-directed" {
+    data: [@calls];
+    projection { kind:chart; profile:"chart.force@1"; records:[@calls.e1, @calls.e2, @calls.e3, @calls.e4, @calls.e5, @calls.e6, @calls.e7, @calls.e8]; mark:force; x:"x_record.from"; target:"x_record.to"; y:"x_record.n"; unit:"req/min"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view edgebundle "Deployment routes / edge bundling" {
+    data: [@routes];
+    projection { kind:chart; profile:"chart.edgebundle@1"; records:[@routes.r1, @routes.r2, @routes.r3, @routes.r4, @routes.r5, @routes.r6, @routes.r7, @routes.r8]; mark:edgebundle; x:"x_record.from"; target:"x_record.to"; y:"x_record.n"; unit:"req/min"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}

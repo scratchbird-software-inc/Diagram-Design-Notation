@@ -23,7 +23,7 @@ function plan(ir,ErrorClass=Error){
  const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
  if(kind==='fishbone')return Quality.fishbone(ir,ErrorClass,get);
  if(kind==='decision')return Quality.decision(ir,ErrorClass,get);
- if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble','heatmap','densityheatmap','calendar','parallelcoords','wordcloud'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
+ if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble','heatmap','densityheatmap','calendar','parallelcoords','wordcloud','arc','force','edgebundle'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
  if(kind==='graph'&&p.profile==='state.flat@1')return{kind,profile:p.profile,lifecycle:Quality.lifecycle(ir,ErrorClass,get)};
  if(kind==='graph'&&['inputs','analysis_budget','traces'].some(k=>p[k]!==undefined))fail('DDN-Q005','Lifecycle properties require state.flat@1');
  if(kind==='graph'&&p.profile==='pert.cpm@1')return{kind,profile:p.profile,cpm:Quality.cpm(ir,ErrorClass)};
@@ -129,8 +129,8 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),...(venn?{venn}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'],TREEMARKS=['tidytree','radialtree','circlepack','sunburst','packedbubble'],GRIDMARKS=['heatmap','densityheatmap','calendar','parallelcoords','wordcloud'];
-  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk',...TREEMARKS,...GRIDMARKS].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud');
+  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'],TREEMARKS=['tidytree','radialtree','circlepack','sunburst','packedbubble'],GRIDMARKS=['heatmap','densityheatmap','calendar','parallelcoords','wordcloud'],NETMARKS=['arc','force','edgebundle'];
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk',...TREEMARKS,...GRIDMARKS,...NETMARKS].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
@@ -184,6 +184,12 @@ function plan(ir,ErrorClass=Error){
   }
   if(p.mark==='wordcloud'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Word cloud words are categorical x values');
   if(p.mark==='wordcloud'&&p.series!==undefined)fail('DDN-PJ030','Word cloud sizes one word per record; do not set series');
+  if(NETMARKS.includes(p.mark)){
+   if((p.x_type||'category')!=='category')fail('DDN-PJ030',p.mark+' endpoints require categorical x');
+   if(p.series!==undefined)fail('DDN-PJ030',p.mark+' encodes links between endpoints; do not set series');
+   if(typeof p.target!=='string')fail('DDN-PJ030',p.mark+' target is a property binding, not a numeric reference');
+   if(p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031',p.mark+' links encode supplied values; aggregation is not available');
+  }
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
   if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):DIST1D.includes(p.mark)?false:typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
@@ -203,10 +209,10 @@ function plan(ir,ErrorClass=Error){
    const type=p.x_type||'category',rawX=x;if(type==='number'){if(typeof x!=='number'||!Number.isFinite(x))fail('DDN-PJ032','Numeric x required',n);}else if(type==='date'){x=date(x);if(!Number.isFinite(x))fail('DDN-PJ033','Date x must be a real ISO YYYY-MM-DD date',n);}else if(typeof x!=='string'&&typeof x!=='number')fail('DDN-PJ032','Category x must be text or number',n);
    if(p.unit&&n.properties.x_record?.unit!==p.unit)fail('DDN-PJ034','Every record must declare matching x_record.unit: '+p.unit,n);
    const size=p.size?get(n,p.size):1;if(typeof size!=='number'||!Number.isFinite(size)||size<0)fail('DDN-PJ035','Point size must be a finite nonnegative value',n);
-   if(p.mark==='sankey'){
+   if(p.mark==='sankey'||NETMARKS.includes(p.mark)){
     const tv=get(n,p.target);
-    if(typeof x!=='string'||!x.trim()||typeof tv!=='string'||!tv.trim()||x===tv)fail('DDN-PJ032','Sankey endpoints are category text',n);
-    if(y<=0)fail('DDN-PJ108','Sankey flows require positive values',n);
+    if(typeof x!=='string'||!x.trim()||typeof tv!=='string'||!tv.trim()||x===tv)fail('DDN-PJ032',(p.mark==='sankey'?'Sankey':'Network')+' endpoints are distinct nonempty category text',n);
+    if(y<=0)fail('DDN-PJ108','Network link values must be positive finite numbers');
     points.push({x,y,rawX,target:tv,size:1,sourceIds:[n.id]});continue;
    }
    if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else if(p.mark==='heatmap'||p.mark==='parallelcoords'){const ser=get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ137',(p.mark==='heatmap'?'Heatmap row':'Polyline')+' series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else points.push({x,y,rawX,size,sourceIds:[n.id]});
@@ -224,7 +230,7 @@ function plan(ir,ErrorClass=Error){
   }
   if(p.mark==='point'&&(p.x_type||'category')!=='number')fail('DDN-PJ030','Scatter/bubble requires x_type:number');
   if(['pie','donut','bar','radar','funnel'].includes(p.mark)&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Bars, arcs, radar spokes and funnel stages currently require categorical x');
-  const groups=new Map();if(!['point','radar','sankey',...DIST1D,...DIST2D,...GRIDMARKS].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
+  const groups=new Map();if(!['point','radar','sankey',...DIST1D,...DIST2D,...GRIDMARKS,...NETMARKS].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
   if([...groups.values()].some(a=>a.length>1)){
    if(!p.aggregate||p.aggregate==='none')fail('DDN-PJ036','Duplicate x/category: supply an explicit aggregate or distinct coordinates');
    points=[...groups.values()].map(v=>({x:v[0].x,rawX:v[0].rawX,size:1,y:p.aggregate==='count'?v.length:p.aggregate==='sum'?v.reduce((s,p)=>s+p.y,0):p.aggregate==='mean'?v.reduce((s,p)=>s+p.y,0)/v.length:p.aggregate==='min'?Math.min(...v.map(p=>p.y)):Math.max(...v.map(p=>p.y)),sourceIds:v.flatMap(p=>p.sourceIds)}));
@@ -351,6 +357,25 @@ function plan(ir,ErrorClass=Error){
    if(words.length>120)fail('DDN-PJ135','Word cloud places at most 120 words');
    grid={kind:'wordcloud',words,max:Math.max(...words.map(w=>w.weight))};
   }
+  let net=null;
+  if(p.mark==='arc'||p.mark==='force'){
+   const names=[],ix=new Map(),links=[];
+   for(const pt of points){
+    for(const nm of [String(pt.rawX),pt.target])if(!ix.has(nm)){ix.set(nm,names.length);names.push(nm);}
+    links.push({source:ix.get(String(pt.rawX)),target:ix.get(pt.target),value:pt.y,sourceIds:pt.sourceIds});
+   }
+   if(names.length>200)fail('DDN-PJ135',p.mark+' draws at most 200 nodes; got '+names.length);
+   if(links.length>1000)fail('DDN-PJ135',p.mark+' draws at most 1000 links; got '+links.length);
+   const weight=names.map((_,i)=>links.filter(l=>l.source===i||l.target===i).reduce((s,l)=>s+l.value,0));
+   net={kind:p.mark,nodes:names.map((name,i)=>({name,weight:weight[i],sourceIds:[...new Set(links.filter(l=>l.source===i||l.target===i).flatMap(l=>l.sourceIds))]})),links,positions:p.mark==='force'?forceLayout(names.length,links,0xB1024):null};
+  }
+  if(p.mark==='edgebundle'){
+   if(points.length>500)fail('DDN-PJ135','Edge bundling draws at most 500 links; got '+points.length);
+   const paths=[...new Set(points.flatMap(pt=>[String(pt.rawX),pt.target]))];
+   if(paths.length>200)fail('DDN-PJ135','Edge bundling draws at most 200 endpoint paths; got '+paths.length);
+   const roots=hierarchy(paths.map(p=>({rawX:p,y:0,sourceIds:[]})),fail,p.mark);
+   net={kind:'edgebundle',roots,maxDepth:Math.max(...roots.map(n=>depth(n))),links:points.map(pt=>({sourcePath:String(pt.rawX),targetPath:pt.target,value:pt.y,sourceIds:pt.sourceIds}))};
+  }
   if(['pie','donut'].includes(p.mark)&&(points.some(p=>p.y<0)||!Number.isFinite(points.reduce((s,p)=>s+p.y,0))||points.reduce((s,p)=>s+p.y,0)<=0))fail('DDN-PJ037','Arcs require nonnegative values and a positive total');
   if(!Number.isFinite(Math.max(0,...points.map(n=>n.y))-Math.min(0,...points.map(n=>n.y))))fail('DDN-PJ032','Quantitative axis range overflow');
   if((p.x_type==='number')&&!Number.isFinite(Math.max(...points.map(n=>n.x))-Math.min(...points.map(n=>n.x))))fail('DDN-PJ032','Quantitative x range overflow');
@@ -361,7 +386,7 @@ function plan(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return{kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(net?{net}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
@@ -408,6 +433,26 @@ function hierarchy(points,fail,mark){
  roots.forEach(sum);return roots;
 }
 function depth(n){return n.leaf?1:1+Math.max(...n.children.map(depth));}
+/* Fixed-seed PRNG (mulberry32) — same deterministic-seed pattern as the sketch/organic kernels. */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+/* Deterministic Fruchterman–Reingold for the force mark: fixed seed, fixed 300-iteration
+ * cooling schedule, O(n^2) repulsion (node cap 200). Mirrors the placement:organic kernel shape. */
+function forceLayout(n,links,seed){
+ const rnd=mulberry32(seed),pos=Array.from({length:n},()=>({x:rnd()*2-1,y:rnd()*2-1})),k=Math.sqrt(4/Math.max(1,n)),IT=300;
+ for(let it=0;it<IT;it++){
+  const t=1-it/IT,disp=pos.map(()=>({x:0,y:0}));
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+   let dx=pos[i].x-pos[j].x,dy=pos[i].y-pos[j].y,d=Math.hypot(dx,dy)||1e-6,force=k*k/d;
+   dx/=d;dy/=d;disp[i].x+=dx*force;disp[i].y+=dy*force;disp[j].x-=dx*force;disp[j].y-=dy*force;
+  }
+  for(const l of links){
+   let dx=pos[l.source].x-pos[l.target].x,dy=pos[l.source].y-pos[l.target].y,d=Math.hypot(dx,dy)||1e-6,force=d*d/k;
+   dx/=d;dy/=d;disp[l.source].x-=dx*force;disp[l.source].y-=dy*force;disp[l.target].x+=dx*force;disp[l.target].y+=dy*force;
+  }
+  pos.forEach((p,i)=>{const d=Math.hypot(disp[i].x,disp[i].y)||1e-6;p.x+=disp[i].x/d*Math.min(d,.1*t);p.y+=disp[i].y/d*Math.min(d,.1*t);});
+ }
+ return pos;
+}
 /* Sample quantile, linear interpolation (R type 7). Input must be sorted ascending. */
 function quantile(sorted,q){const n=sorted.length;if(!n)return NaN;const h=(n-1)*q,i=Math.floor(h),j=Math.min(n-1,i+1);return sorted[i]+(h-i)*(sorted[j]-sorted[i]);}
 /* Standard normal quantile function (Acklam's rational approximation, max |err| 1.15e-9). Deterministic. */
