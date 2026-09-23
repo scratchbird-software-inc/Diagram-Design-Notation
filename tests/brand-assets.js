@@ -47,7 +47,7 @@ test('website shell pages carry the logo, favicons, wordmark, and ScratchBird fo
   assert.ok(home.includes('assets/brand/scratchweaver.svg'), 'logo missing from home header');
   assert.ok(home.includes('assets/brand/favicon.svg') && home.includes('assets/brand/favicon-32.png'), 'favicons missing');
   assert.ok(home.includes('>ScratchWeaver<small>Diagram Design Notation</small>'), 'wordmark missing');
-  assert.ok(home.includes('A ScratchBird Software Inc. project · GPL-2.0-or-later'), 'footer provenance missing');
+  assert.ok(home.includes('>ScratchBird Software Inc.</a> project · GPL-2.0-or-later') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
   const download = fs.readFileSync(path.join(root, 'website/download/index.html'), 'utf8');
   assert.ok(download.includes('ScratchWeaver'), 'download page does not mention the product name');
 });
