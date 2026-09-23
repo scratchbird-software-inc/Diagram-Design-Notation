@@ -291,7 +291,9 @@ for (const j of mdJobs) {
 /* ------------------------------------------------------------------- pages */
 
 // Home: hero + live-render panel (runtime inlined, file://-safe) + feature grid.
-const runtime = readRepo('notation/dist/ddn.global.js');
+// Minified production runtime (same globals/guards as ddn.global.js; the
+// readable build stays in dist). sourceMappingURL is meaningless once inlined.
+const runtime = readRepo('notation/dist/ddn.global.min.js').replace(/\n\/\/# sourceMappingURL=\S+\n$/, '\n');
 if (runtime.includes('</script')) throw new Error('runtime contains </script; inlining would break the page');
 
 const demoSource = `
@@ -473,7 +475,7 @@ writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<h2>Clone the repository</h2>\n' +
   '<pre><code>git clone &lt;repo-url&gt; data-design-notation\ncd data-design-notation\nnpm test          # full verification suite, exit 0 expected</code></pre>\n' +
   '<h2>Runtime bundles</h2>\n' +
-  '<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>\n' +
+  '<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>\n' +
   '<table>\n<thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>\n' + distRows.join('\n') + '\n</tbody></table>\n' +
   '<h2>License</h2>\n<p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>'));
 

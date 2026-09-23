@@ -5,12 +5,12 @@
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
 <style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer}</style>
 <h1>Data refresh — <code>ws.replaceData(name, records)</code></h1>
-<p>B1-006 browser proof over <code>ddn-core.js</code> + <code>ddn-graph.js</code> + <code>ddn-projections.js</code> only.
+<p>B1-006 browser proof over the minified production builds <code>ddn-core.min.js</code> + <code>ddn-graph.min.js</code> + <code>ddn-projections.min.js</code> only.
 The button swaps the records of the <code>metrics</code> data block and re-renders in place — model, view and
 layout structure are untouched (source: an inlined copy of <code>examples/basics/59-data-refresh.ddn</code>).</p>
-<script src="../../dist/ddn-core.js"></script>
-<script src="../../dist/ddn-graph.js"></script>
-<script src="../../dist/ddn-projections.js"></script>
+<script src="../../dist/ddn-core.min.js"></script>
+<script src="../../dist/ddn-graph.min.js"></script>
+<script src="../../dist/ddn-projections.min.js"></script>
 <div id="status" class="status">running…</div>
 <button id="swap">Swap data</button>
 <div id="out"></div>

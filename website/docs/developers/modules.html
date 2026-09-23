@@ -51,6 +51,13 @@
 <ul><li><code>exportVegaLite</code> without <code>ddn-projections.js</code> throws <code>DDN-E010</code> naming</li></ul>
 <p>  <code>ddn-projections.js</code>.</p>
 <p>Working single-page proofs ship in <code>website/examples/embed/core-only-check.html</code> (core-only) and <code>website/examples/embed/core-graph.html</code> (core + graph).</p>
+<h2>Choosing a format</h2>
+<ul><li><strong>Production embeds:</strong> load the minified IIFEs (<code>.min.js</code>). They publish the</li></ul>
+<p>  same globals with the same guards and <code>DDN-E010</code> behavior as the readable   <code>.js</code> files at a fraction of the bytes — the <code>website/examples/embed/</code>   proof pages use them.</p>
+<ul><li><strong>Modern bundlers / module pages:</strong> import the <code>.mjs</code> builds (named</li></ul>
+<p>  exports for the live API and the internal namespaces; prerequisites load   automatically; tree-shakeable). Browsers refuse ES-module imports over   <code>file://</code> (CORS) — serve the page over any static server; see   <code>website/examples/embed/esm-module.html</code>.</p>
+<ul><li><strong>Debugging:</strong> the readable <code>.js</code> IIFEs stay in dist alongside the maps</li></ul>
+<p>  (<code>.min.js.map</code>) for the minified builds.</p>
 <h2>Choosing a bundle</h2>
 <ul><li>Validation tooling, editors, linters: <code>ddn-core.js</code> only.</li><li>Documentation sites rendering ERD/flow/UML graphs: core + graph.</li><li>Dashboards with charts/matrices: add <code>ddn-projections.js</code> (and</li></ul>
 <p>  <code>ddn-quality.js</code> for quality views).</p>

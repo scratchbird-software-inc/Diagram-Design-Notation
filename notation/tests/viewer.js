@@ -44,7 +44,7 @@ test('build:viewer is deterministic — three runs give byte-identical output ma
 
 test('generated viewer contains the inlined runtime and every control', () => {
   const html = fs.readFileSync(path.join(root, 'notation/viewer/ddn-viewer.html'), 'utf8');
-  assert.ok(html.includes('makeLiveAPI'), 'inlined runtime missing');
+  assert.ok(html.includes('Inlined from notation/dist/ddn.global.min.js') && html.includes('A different DDNLive runtime is already loaded'), 'inlined minified runtime missing');
   assert.ok(!html.includes('<script src='), 'external script reference defeats file:// single-file use');
   assert.ok(!html.includes('href="notation/') && !html.includes('src="notation/'), 'external resource reference found');
   for (const id of ['ddn-open', 'ddn-file', 'ddn-paste', 'ddn-load-paste', 'ddn-view-picker',

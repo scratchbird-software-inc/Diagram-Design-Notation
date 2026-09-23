@@ -32,7 +32,7 @@
 cd data-design-notation
 npm test          # full verification suite, exit 0 expected</code></pre>
 <h2>Runtime bundles</h2>
-<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>
+<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>
 <table>
 <thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>
 <tr><td><a href="../dist/ddn-core.d.mts"><code>ddn-core.d.mts</code></a></td><td>9645</td></tr>

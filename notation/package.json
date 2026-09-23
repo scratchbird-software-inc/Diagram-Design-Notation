@@ -106,6 +106,7 @@
     "test:endpoint-ordering": "node tests/endpoint-ordering.js",
     "build:sdk": "node ../tools/build-sdk.js",
     "build:viewer": "node ../tools/build-viewer.js",
+    "build:studio-portable": "node ../tools/build-portable-studio.js",
     "serve": "node ../tools/serve.js",
     "test:hierarchical-state": "node tests/hierarchical-state.js",
     "test:activity": "node tests/activity-diagram.js",

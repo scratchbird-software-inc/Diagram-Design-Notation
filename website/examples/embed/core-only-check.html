@@ -5,8 +5,8 @@
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
 <style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1200px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0}.pass{background:#e2f4e5;color:#1d5c2e}.fail{background:#f9e2e2;color:#8a2a2a}code{background:#fff;padding:1px 5px;border-radius:4px}</style>
 <h1>DDN core bundle only (check, no rendering)</h1>
-<p>B1-004 modular-bundle proof. Sources are inlined copies of <code>examples/basics/01-customer.ddn</code> (+ imports) so the page works over <code>file://</code>.</p>
-<script src="../../dist/ddn-core.js"></script>
+<p>B1-004 modular-bundle proof, now loading the minified production builds (<code>.min.js</code>). Sources are inlined copies of <code>examples/basics/01-customer.ddn</code> (+ imports) so the page works over <code>file://</code>.</p>
+<script src="../../dist/ddn-core.min.js"></script>
 <div id="status" class="status">running…</div>
 <div id="out"></div>
 <script>
@@ -22,7 +22,7 @@ let renderOutcome;
 try{ws.renderSync({entry:'01-customer.ddn',view:'overview'});renderOutcome='unexpected: rendered without ddn-graph.js';}
 catch(e){renderOutcome=e.code+': '+e.message;}
 const s=document.querySelector('#status');
-if(ir.elements.length>0 && renderOutcome.startsWith('DDN-E010')){s.textContent='pass-core: parsed+checked '+ir.elements.length+' elements with ddn-core.js only; render correctly refused — '+renderOutcome;s.classList.add('pass');}
+if(ir.elements.length>0 && renderOutcome.startsWith('DDN-E010')){s.textContent='pass-core: parsed+checked '+ir.elements.length+' elements with ddn-core.min.js only; render correctly refused — '+renderOutcome;s.classList.add('pass');}
 else{s.textContent='fail: '+renderOutcome;s.classList.add('fail');}
 
 </script></html>

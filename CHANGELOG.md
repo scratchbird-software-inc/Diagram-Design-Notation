@@ -6,6 +6,19 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Demos and tool pages now use the efficient dist builds (B1-019 follow-up).
+  The three `website/examples/embed/` proof pages load the minified modular
+  IIFEs (`.min.js`); a new `esm-module.html` proof page demonstrates the
+  `.mjs` browser path (with an accurate file:///CORS serving note). The
+  single-file tool pages inline the minified runtime: viewer
+  (`tools/build-viewer.js`), designer standalone
+  (`designer/prototype/build-standalone.mjs`), the website landing page
+  (`website/build-site.mjs`), and the portable Studio pages — which also get
+  a real generator at last (`tools/build-portable-studio.js`, wired as
+  `build:studio-portable` and freshness-gated in `test:dist-freshness`),
+  replacing their stale pre-ESM inlined runtime. Modules guide and download
+  page document "use `.min.js` for production embeds, `.mjs` for modern
+  bundlers".
 - Docs: new repo-root `AI-REFERENCE.md` — a single-file, AI-targeted DDN
   language reference (vocabulary tables, property contracts, diagnostics,
   CLI workflow, worked examples) designed to be handed to an AI so it can

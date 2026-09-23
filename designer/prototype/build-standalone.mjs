@@ -46,13 +46,18 @@ export function buildPages() {
   const indexBody = body.split(LOGO_SRC_PLACEHOLDER).join(LOGO_SRC);
   const index = head('ScratchWeaver Designer — interactive review prototype · DDN') + style + '</style></head><body>' + indexBody + '\n'
     + sourceScript
-    + '<script src="kind-ui-map.js"></script><script src="relation-ui-map.js"></script><script src="../../notation/dist/ddn.global.js"></script><script src="commands.js"></script><script src="app.js"></script></body></html>';
+    + '<script src="kind-ui-map.js"></script><script src="relation-ui-map.js"></script><script src="../../notation/dist/ddn.global.min.js"></script><script src="commands.js"></script><script src="app.js"></script></body></html>';
 
   const standaloneBody = body.split(LOGO_SRC_PLACEHOLDER).join(brandDataUri)
     .replace('<header class="projectbar">', '<header class="projectbar">' + STANDALONE_LINK);
   if (standaloneBody === body) throw new Error('body.html lost its <header class="projectbar">; standalone link not applied');
-  const runtime = read(join(repoRoot, 'notation', 'dist', 'ddn.global.js')).replace(/\n$/, '');
-  let inlines = inlineScript('../../notation/dist/ddn.global.js', runtime);
+  // Minified production runtime (B1-019 follow-up): same globals and guards
+  // as ddn.global.js, which stays in dist as the readable/debug build. The
+  // sourceMappingURL comment is meaningless once inlined and is stripped.
+  const runtime = read(join(repoRoot, 'notation', 'dist', 'ddn.global.min.js'))
+    .replace(/\n\/\/# sourceMappingURL=\S+\n$/, '\n')
+    .replace(/\n$/, '');
+  let inlines = inlineScript('../../notation/dist/ddn.global.min.js', runtime);
   for (const name of LOCAL_SCRIPTS) inlines += inlineScript(name, read(join(here, name)).replace(/\n$/, ''));
   const standalone = head('ScratchWeaver Designer — standalone prototype · DDN') + style + '</style></head><body>' + standaloneBody + '\n'
     + sourceScript + '\n' + inlines + '</body></html>';

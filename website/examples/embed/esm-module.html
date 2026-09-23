@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN ES modules (.mjs) in the browser</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1200px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0}.pass{background:#e2f4e5;color:#1d5c2e}.fail{background:#f9e2e2;color:#8a2a2a}code{background:#fff;padding:1px 5px;border-radius:4px}</style>
+<h1>DDN ES modules — <code>ddn-core.mjs</code> + <code>ddn-graph.mjs</code></h1>
+<p>B1-019 modern-path proof: the runtime loads as real ES modules (tree-shakeable, named exports) —
+no globals are required, though the IIFE-compatible globals (<code>DDNLive</code>…) are still published for pages that want them.</p>
+<p><strong> Serving note:</strong> browsers refuse ES-module imports over <code>file://</code> (CORS), so open this
+page through any static server — from the repository root: <code>node tools/serve.js</code>, then
+<code>http://127.0.0.1:8080/website/examples/embed/esm-module.html</code>. The <code>.min.js</code> IIFE proof pages
+(<a href="core-graph.html">core-graph</a>, <a href="core-only-check.html">core-only-check</a>,
+<a href="data-refresh.html">data-refresh</a>) work over <code>file://</code>. If the status below mentions a fetch
+failure, you are reading this over <code>file://</code> — the page itself is fine.</p>
+<div id="status" class="status">running…</div>
+<div id="out"></div>
+<script type="module">
+const s=document.getElementById('status');
+try{
+  // Static-server path: the graph module imports ddn-core automatically.
+  const [core,graph]=await Promise.all([import('../../dist/ddn-core.mjs'),import('../../dist/ddn-graph.mjs')]);
+  const api=graph.default;
+  if(api!==core.default)throw new Error('core and graph modules must share one DDNLive api object');
+  if(typeof core.DDN?.parse!=='function'||typeof graph.DDNRender?.render!=='function')throw new Error('named namespace exports missing');
+  const files={
+   "main.ddn": 'ddn "0.5";\nmodule "esm.proof";\ndata model {\n    object client "Client application" { kind: application; }\n    object service "Order service" { kind: application; }\n    relation request "Submit order" @client -> @service { kind: flow; }\n}\nview overview "ES module render proof" {\n    data: [@model];\n    layout { algorithm: auto; routing: orthogonal; }\n    publication { size: content; fit: none; }\n}\n'
+  };
+  const r=api.createWorkspace(files).renderSync({entry:'main.ddn',view:'overview'});
+  document.getElementById('out').innerHTML=r.svg;
+  s.textContent='pass-esm: ddn-core.mjs + ddn-graph.mjs rendered overview ('+r.svg.length+' SVG bytes); DDNLive '+api.VERSION+'; named exports DDN.parse + DDNRender.render present; registered kinds: '+core.DDNEngine.registeredKinds().join(', ');
+  s.classList.add('pass');
+}catch(e){
+  s.textContent=(location.protocol==='file:'
+    ?'ES-module imports are blocked over file:// (browser CORS policy) — serve the repository with `node tools/serve.js` and open this page over http://127.0.0.1:8080/website/examples/embed/esm-module.html. Underlying error: '
+    :'ES module proof failed: ')+e.message;
+  s.classList.add('fail');
+}
+</script></html>

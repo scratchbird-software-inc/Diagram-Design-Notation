@@ -67,6 +67,20 @@ load it. Verified behaviors (`notation/tests/modular-bundles.js`):
 Working single-page proofs ship in `website/examples/embed/core-only-check.html`
 (core-only) and `website/examples/embed/core-graph.html` (core + graph).
 
+## Choosing a format
+
+- **Production embeds:** load the minified IIFEs (`.min.js`). They publish the
+  same globals with the same guards and `DDN-E010` behavior as the readable
+  `.js` files at a fraction of the bytes — the `website/examples/embed/`
+  proof pages use them.
+- **Modern bundlers / module pages:** import the `.mjs` builds (named
+  exports for the live API and the internal namespaces; prerequisites load
+  automatically; tree-shakeable). Browsers refuse ES-module imports over
+  `file://` (CORS) — serve the page over any static server; see
+  `website/examples/embed/esm-module.html`.
+- **Debugging:** the readable `.js` IIFEs stay in dist alongside the maps
+  (`.min.js.map`) for the minified builds.
+
 ## Choosing a bundle
 
 - Validation tooling, editors, linters: `ddn-core.js` only.

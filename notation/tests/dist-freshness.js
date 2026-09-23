@@ -29,6 +29,14 @@ test('dist artifacts are byte-fresh (Rollup rebuild matches committed files)', (
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 
+test('portable studio pages carry the current minified runtime', () => {
+  const before = ['portable-editor.html', 'portable-gallery.html'].map(f => fs.readFileSync(path.join(root, 'studio', f), 'utf8'));
+  cp.execFileSync(process.execPath, [path.join(repo, 'tools/build-portable-studio.js')], { stdio: 'pipe' });
+  const after = ['portable-editor.html', 'portable-gallery.html'].map(f => fs.readFileSync(path.join(root, 'studio', f), 'utf8'));
+  assert.deepEqual(after, before, 'portable studio pages stale — run npm --prefix notation run build:studio-portable');
+  for (const html of after) assert.ok(html.includes('ddn.global.min.js'), 'portable page must inline the minified runtime');
+});
+
 const passed = results.filter(r => r.pass).length;
 console.log(`dist-freshness ${passed}/${results.length}`);
 if (passed !== results.length) process.exitCode = 1;
