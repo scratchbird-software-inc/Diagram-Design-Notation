@@ -1,0 +1,105 @@
+ddn "0.5";
+module "ddn.examples.grid-charts";
+
+// Synthetic telemetry: request counts by hour and endpoint, a latency scatter,
+// daily deploy counts, per-service metric vectors, and incident-tag weights.
+// All data is synthetic.
+data cells {
+    object h1 "api × morning" { kind: record; x_record: {"hour": "morning", "endpoint": "api", "n": 420, "unit": "req"}; }
+    object h2 "api × midday" { kind: record; x_record: {"hour": "midday", "endpoint": "api", "n": 610, "unit": "req"}; }
+    object h3 "api × evening" { kind: record; x_record: {"hour": "evening", "endpoint": "api", "n": 380, "unit": "req"}; }
+    object h4 "web × morning" { kind: record; x_record: {"hour": "morning", "endpoint": "web", "n": 250, "unit": "req"}; }
+    object h5 "web × midday" { kind: record; x_record: {"hour": "midday", "endpoint": "web", "n": 470, "unit": "req"}; }
+    object h6 "web × evening" { kind: record; x_record: {"hour": "evening", "endpoint": "web", "n": 520, "unit": "req"}; }
+    object h7 "batch × morning" { kind: record; x_record: {"hour": "morning", "endpoint": "batch", "n": 90, "unit": "req"}; }
+    object h8 "batch × midday" { kind: record; x_record: {"hour": "midday", "endpoint": "batch", "n": 140, "unit": "req"}; }
+    object h9 "batch × evening" { kind: record; x_record: {"hour": "evening", "endpoint": "batch", "n": 60, "unit": "req"}; }
+}
+
+data scatter {
+    object p1 "s1" { kind: record; x_record: {"size": 12, "ms": 44}; }
+    object p2 "s2" { kind: record; x_record: {"size": 18, "ms": 51}; }
+    object p3 "s3" { kind: record; x_record: {"size": 25, "ms": 63}; }
+    object p4 "s4" { kind: record; x_record: {"size": 31, "ms": 70}; }
+    object p5 "s5" { kind: record; x_record: {"size": 44, "ms": 95}; }
+    object p6 "s6" { kind: record; x_record: {"size": 52, "ms": 101}; }
+    object p7 "s7" { kind: record; x_record: {"size": 63, "ms": 130}; }
+    object p8 "s8" { kind: record; x_record: {"size": 70, "ms": 128}; }
+    object p9 "s9" { kind: record; x_record: {"size": 88, "ms": 170}; }
+    object p10 "s10" { kind: record; x_record: {"size": 95, "ms": 182}; }
+}
+
+data deploys {
+    object w1 "2026-03-02" { kind: record; x_record: {"day": "2026-03-02", "n": 3, "unit": "deploys"}; }
+    object w2 "2026-03-03" { kind: record; x_record: {"day": "2026-03-03", "n": 5, "unit": "deploys"}; }
+    object w3 "2026-03-04" { kind: record; x_record: {"day": "2026-03-04", "n": 2, "unit": "deploys"}; }
+    object w4 "2026-03-06" { kind: record; x_record: {"day": "2026-03-06", "n": 4, "unit": "deploys"}; }
+    object w5 "2026-03-09" { kind: record; x_record: {"day": "2026-03-09", "n": 6, "unit": "deploys"}; }
+    object w6 "2026-03-10" { kind: record; x_record: {"day": "2026-03-10", "n": 1, "unit": "deploys"}; }
+    object w7 "2026-03-12" { kind: record; x_record: {"day": "2026-03-12", "n": 4, "unit": "deploys"}; }
+    object w8 "2026-03-13" { kind: record; x_record: {"day": "2026-03-13", "n": 7, "unit": "deploys"}; }
+    object w9 "2026-03-16" { kind: record; x_record: {"day": "2026-03-16", "n": 2, "unit": "deploys"}; }
+    object w10 "2026-03-18" { kind: record; x_record: {"day": "2026-03-18", "n": 5, "unit": "deploys"}; }
+    object w11 "2026-03-20" { kind: record; x_record: {"day": "2026-03-20", "n": 3, "unit": "deploys"}; }
+    object w12 "2026-03-24" { kind: record; x_record: {"day": "2026-03-24", "n": 8, "unit": "deploys"}; }
+    object w13 "2026-03-27" { kind: record; x_record: {"day": "2026-03-27", "n": 2, "unit": "deploys"}; }
+    object w14 "2026-03-31" { kind: record; x_record: {"day": "2026-03-31", "n": 4, "unit": "deploys"}; }
+}
+
+data metrics {
+    object m1 "auth · cpu" { kind: record; x_record: {"service": "auth", "metric": "cpu", "v": 62}; }
+    object m2 "auth · mem" { kind: record; x_record: {"service": "auth", "metric": "mem", "v": 48}; }
+    object m3 "auth · p99" { kind: record; x_record: {"service": "auth", "metric": "p99", "v": 210}; }
+    object m4 "auth · rps" { kind: record; x_record: {"service": "auth", "metric": "rps", "v": 900}; }
+    object m5 "store · cpu" { kind: record; x_record: {"service": "store", "metric": "cpu", "v": 81}; }
+    object m6 "store · mem" { kind: record; x_record: {"service": "store", "metric": "mem", "v": 74}; }
+    object m7 "store · p99" { kind: record; x_record: {"service": "store", "metric": "p99", "v": 340}; }
+    object m8 "store · rps" { kind: record; x_record: {"service": "store", "metric": "rps", "v": 640}; }
+    object m9 "relay · cpu" { kind: record; x_record: {"service": "relay", "metric": "cpu", "v": 35}; }
+    object m10 "relay · mem" { kind: record; x_record: {"service": "relay", "metric": "mem", "v": 41}; }
+    object m11 "relay · p99" { kind: record; x_record: {"service": "relay", "metric": "p99", "v": 120}; }
+    object m12 "relay · rps" { kind: record; x_record: {"service": "relay", "metric": "rps", "v": 1250}; }
+}
+
+data tags {
+    object t1 "latency" { kind: record; x_record: {"tag": "latency", "n": 34}; }
+    object t2 "timeout" { kind: record; x_record: {"tag": "timeout", "n": 28}; }
+    object t3 "cache" { kind: record; x_record: {"tag": "cache", "n": 19}; }
+    object t4 "deploy" { kind: record; x_record: {"tag": "deploy", "n": 15}; }
+    object t5 "dns" { kind: record; x_record: {"tag": "dns", "n": 9}; }
+    object t6 "tls" { kind: record; x_record: {"tag": "tls", "n": 7}; }
+    object t7 "quota" { kind: record; x_record: {"tag": "quota", "n": 5}; }
+    object t8 "retry" { kind: record; x_record: {"tag": "retry", "n": 12}; }
+    object t9 "shard" { kind: record; x_record: {"tag": "shard", "n": 4}; }
+    object t10 "queue" { kind: record; x_record: {"tag": "queue", "n": 8}; }
+}
+
+view heatmap "Requests by hour and endpoint / heatmap" {
+    data: [@cells];
+    projection { kind:chart; profile:"chart.heatmap@1"; records:[@cells.h1, @cells.h2, @cells.h3, @cells.h4, @cells.h5, @cells.h6, @cells.h7, @cells.h8, @cells.h9]; mark:heatmap; x:"x_record.hour"; y:"x_record.n"; series:"x_record.endpoint"; unit:"req"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view densityheatmap "Latency vs payload / density heatmap" {
+    data: [@scatter];
+    projection { kind:chart; profile:"chart.densityheatmap@1"; records:[@scatter.p1, @scatter.p2, @scatter.p3, @scatter.p4, @scatter.p5, @scatter.p6, @scatter.p7, @scatter.p8, @scatter.p9, @scatter.p10]; mark:densityheatmap; x:"x_record.size"; x_type:number; y:"x_record.ms"; bin_count:5; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view calendar "Deploys per day / calendar" {
+    data: [@deploys];
+    projection { kind:chart; profile:"chart.calendar@1"; records:[@deploys.w1, @deploys.w2, @deploys.w3, @deploys.w4, @deploys.w5, @deploys.w6, @deploys.w7, @deploys.w8, @deploys.w9, @deploys.w10, @deploys.w11, @deploys.w12, @deploys.w13, @deploys.w14]; mark:calendar; x:"x_record.day"; x_type:date; y:"x_record.n"; unit:"deploys"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view parallelcoords "Service metric vectors / parallel coordinates" {
+    data: [@metrics];
+    projection { kind:chart; profile:"chart.parallelcoords@1"; records:[@metrics.m1, @metrics.m2, @metrics.m3, @metrics.m4, @metrics.m5, @metrics.m6, @metrics.m7, @metrics.m8, @metrics.m9, @metrics.m10, @metrics.m11, @metrics.m12]; mark:parallelcoords; x:"x_record.metric"; y:"x_record.v"; series:"x_record.service"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}
+
+view wordcloud "Incident tags / word cloud" {
+    data: [@tags];
+    projection { kind:chart; profile:"chart.wordcloud@1"; records:[@tags.t1, @tags.t2, @tags.t3, @tags.t4, @tags.t5, @tags.t6, @tags.t7, @tags.t8, @tags.t9, @tags.t10]; mark:wordcloud; x:"x_record.tag"; y:"x_record.n"; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}

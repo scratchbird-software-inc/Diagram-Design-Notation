@@ -3115,6 +3115,91 @@
         "force-relaxed bubble layouts",
         "collision animation"
       ]
+    },
+    {
+      "id": "chart.heatmap@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Heatmap"
+      ],
+      "scope": "Category x (columns) x series (rows) grid; colour intensity encodes the numeric value on a shared linear scale; absent (column,row) pairs are empty, not zero.",
+      "validation": [
+        "series binding required (DDN-PJ137)",
+        "unique value per (column,row) (DDN-PJ137)",
+        "at most 60x60 cells (DDN-PJ135)"
+      ],
+      "unsupported": [
+        "clustering/reordering",
+        "log intensity"
+      ]
+    },
+    {
+      "id": "chart.densityheatmap@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Density heatmap",
+        "2D histogram"
+      ],
+      "scope": "Numeric scatter binned into a bin_count x bin_count grid; intensity encodes bin counts.",
+      "validation": [
+        "x_type:number (DDN-PJ030)",
+        "zero-range field is UNKNOWN (DDN-PJ132)",
+        "bin_count integer 2..60 (DDN-PJ131)"
+      ],
+      "unsupported": [
+        "kernel smoothing",
+        "hexbin variant"
+      ]
+    },
+    {
+      "id": "chart.calendar@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Calendar view"
+      ],
+      "scope": "One cell per day on a Monday-first UTC week grid; intensity encodes the daily value; days without records are blank.",
+      "validation": [
+        "x_type:date (DDN-PJ030)",
+        "unique value per day (DDN-PJ137)"
+      ],
+      "unsupported": [
+        "multi-year spirals",
+        "timezone-aware day boundaries (UTC only)"
+      ]
+    },
+    {
+      "id": "chart.parallelcoords@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Parallel coordinates"
+      ],
+      "scope": "One polyline per series across categorical axes; each axis normalized independently; constant axes and missing values are UNKNOWN, drawn at mid-height with a DDN-PJW04 warning.",
+      "validation": [
+        "series binding required (DDN-PJ137)",
+        "at least 2 and at most 24 axes (DDN-PJ135)",
+        "unique value per (series,axis) (DDN-PJ137)"
+      ],
+      "unsupported": [
+        "shared global scale",
+        "axis reordering/brushing"
+      ]
+    },
+    {
+      "id": "chart.wordcloud@1",
+      "projection": "chart",
+      "diagramFamilies": [
+        "Word cloud"
+      ],
+      "scope": "Font size encodes weight (square-root scale); deterministic Archimedean-spiral greedy placement using the shared text measurer; unplaceable words are omitted with a DDN-PJ137-free DDN-PJW04 warning.",
+      "validation": [
+        "distinct words (DDN-PJ137)",
+        "positive finite weights (DDN-PJ138)",
+        "at most 120 words (DDN-PJ135)"
+      ],
+      "unsupported": [
+        "semantic colouring",
+        "rotation of words"
+      ]
     }
   ],
   "shapes": [

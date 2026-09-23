@@ -403,6 +403,63 @@
        body+=group(l.sourceIds[0],l.sourceIds,content,{x:x-r,y:y-r,w:2*r,h:2*r,path:l.path,value:l.value},pr.y);});
       body+=text(gx,cy+(g.r*k)+22*s,String(g.name)+' · '+fmtNumber(g.value)+' '+plan.unit,11,650,'middle');});
      body+=text(left,H-15*s,'Packed bubbles · bubble area encodes value · bubbles grouped by first path segment in deterministic ring packing · group position encodes nothing.',11);
+    }else if(plan.mark==='heatmap'){
+     const g=plan.grid,labelW=Math.max(90*s,Math.max(...g.rows.map(r=>Text.measure(r,11*s,p.style.font,400).width))+24*s),cellW=(right-labelW)/g.xs.length,cellH=(bottom-top)/g.rows.length,span=g.max-g.min||1;
+     for(const c of g.cells){const x=labelW+c.col*cellW,y=top+c.row*cellH,it=(c.value-g.min)/span;
+      body+=group(c.sourceIds[0],c.sourceIds,`<title>${esc(String(g.xs[c.col])+' × '+g.rows[c.row]+': '+fmtNumber(c.value)+' '+plan.unit)}</title><rect class="ddn-heatmap-cell" data-value="${c.value}" x="${f(x)}" y="${f(y)}" width="${f(Math.max(.5,cellW-2))}" height="${f(Math.max(.5,cellH-2))}" fill="${colour(0)}" fill-opacity="${f(.12+.83*it)}"/>`+(cellW>44*s&&cellH>20*s?text(x+cellW/2,y+cellH/2+4*s,fmtNumber(c.value),11,it>.55?700:400,'middle'):''),{x,y,w:cellW,h:cellH,value:c.value},pr.y);}
+     g.xs.forEach((c,i)=>body+=lines(wrap(String(c),cellW-6*s,11),labelW+(i+.5)*cellW,bottom+22*s,11,400,'middle'));
+     g.rows.forEach((r,i)=>body+=lines(wrap(r,labelW-16*s,11),labelW-10*s,top+(i+.5)*cellH+4*s,11,400,'end'));
+     body+=rect(labelW,top,cellW*g.xs.length,cellH*g.rows.length,'transparent',t.rule)+text(left,top-14*s,g.min===g.max?'constant '+fmtNumber(g.min)+' '+plan.unit:'intensity '+fmtNumber(g.min)+' → '+fmtNumber(g.max)+' '+plan.unit,12,650);
+     body+=text(left,H-15*s,g.xs.length+' × '+g.rows.length+' heatmap · colour intensity encodes the value on a shared linear scale · empty (column, row) pairs are absent records, not zeros.',11);
+    }else if(plan.mark==='densityheatmap'){
+     const g=plan.grid,cw=plotW/g.b,ch=plotH/g.b,fx=v=>left+(v-g.x0)/(g.x1-g.x0)*plotW,fy=v=>bottom-(v-g.y0)/(g.y1-g.y0)*plotH;
+     g.cells.forEach((c,i)=>{if(!c.count)return;const x=left+(i%g.b)*cw,y=bottom-(Math.floor(i/g.b)+1)*ch,it=c.count/g.max;
+      body+=group(c.sourceIds[0],c.sourceIds,`<title>${esc(fmtNumber(g.x0+(i%g.b)/g.b*(g.x1-g.x0))+'…: '+c.count+' records')}</title><rect class="ddn-density-cell" data-count="${c.count}" x="${f(x)}" y="${f(y)}" width="${f(Math.max(.5,cw-1))}" height="${f(Math.max(.5,ch-1))}" fill="${colour(0)}" fill-opacity="${f(.08+.87*it)}"/>`,{x,y,w:cw,h:ch,value:c.count},pr.y);});
+     body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4);
+     for(let j=0;j<=4;j++){const v=g.x0+(g.x1-g.x0)*j/4;body+=text(fx(v),bottom+25*s,fmtNumber(v),11,400,'middle');const w=g.y0+(g.y1-g.y0)*j/4;body+=text(left-12*s,fy(w)+4*s,fmtNumber(w),11,400,'end');}
+     body+=text(left,top-14*s,'count per '+g.b+'×'+g.b+' bin',12,650);
+     body+=text(left,H-15*s,pts.length+' records binned into a '+g.b+'×'+g.b+' grid · intensity encodes bin count · empty bins are empty, not zero-valued records.',11);
+    }else if(plan.mark==='calendar'){
+     const g=plan.grid,cs=Math.max(16*s,Math.min(34*s,(right-left)/g.weeks-4*s,(bottom-top)/7-3*s)),span=g.max-g.min||1;
+     W=Math.max(W,left+g.weeks*(cs+3*s)+40*s);
+     const months=new Map();
+     for(const d of g.days){const x=left+d.week*(cs+3*s),y=top+d.weekday*(cs+3*s),it=(d.value-g.min)/span,mk=d.date.slice(0,7);
+      if(!months.has(mk))months.set(mk,d.week);
+      body+=group(d.sourceIds[0],d.sourceIds,`<title>${esc(d.date+': '+fmtNumber(d.value)+' '+plan.unit)}</title><rect class="ddn-calendar-cell" data-date="${d.date}" data-value="${d.value}" x="${f(x)}" y="${f(y)}" width="${f(cs)}" height="${f(cs)}" rx="3" fill="${colour(0)}" fill-opacity="${f(.1+.85*it)}"/>`,{x,y,w:cs,h:cs,value:d.value},pr.y);}
+     for(const [mk,w] of [...months.entries()].sort((a,b)=>a[1]-b[1]))body+=text(left+w*(cs+3*s),top-10*s,mk,11,600);
+     ['Mon','Wed','Fri'].forEach((d,i)=>body+=text(left-8*s,top+([0,2,4][i]+.5)*(cs+3*s)+3*s,d,10.7,400,'end'));
+     H=Math.max(H,top+7*(cs+3*s)+90*s);
+     body+=text(left,H-15*s,g.days.length+' days over '+g.weeks+' weeks (UTC, Monday first) · intensity '+fmtNumber(g.min)+' → '+fmtNumber(g.max)+' '+plan.unit+' · days without a record are blank cells, not zeros.',11);
+    }else if(plan.mark==='parallelcoords'){
+     const g=plan.grid,A=g.axes.length,fx=i=>left+i*(plotW/Math.max(1,A-1)),py=norm=>norm===null?top+plotH/2:top+(1-norm)*plotH;
+     g.axes.forEach((a,i)=>{const x=fx(i),constant=g.constantAxes.includes(a);
+      body+=`<path class="ddn-pc-axis" d="M${f(x)} ${f(top)}L${f(x)} ${f(bottom)}" stroke="${t.ink}" stroke-width="1.2"${constant?' stroke-dasharray="4 4"':''}/>`;
+      body+=lines(wrap(String(a),plotW/A+30*s,11,650),x,bottom+24*s,11,650,'middle');
+      if(!constant){body+=text(x+6*s,top+12*s,fmtNumber(g.stats[i].max),10.7)+text(x+6*s,bottom-4*s,fmtNumber(g.stats[i].min),10.7);}
+      else body+=text(x+6*s,top+12*s,'constant',10.7);});
+     g.lines.forEach((l,li)=>{const col=colour(li),d=l.points.map((pt,i)=>(i?'L':'M')+f(fx(i))+' '+f(py(pt.norm))).join('');
+      let content=`<title>${esc(l.series+': '+l.points.map(pt=>pt.norm===null?'UNKNOWN':fmtNumber(pt.value)).join(', '))}</title><path class="ddn-pc-line" data-series="${esc(l.series)}" d="${d}" stroke="${col}" stroke-width="1.8" fill="none" stroke-opacity=".75"/>`;
+      l.points.forEach((pt,i)=>{if(pt.norm===null)return;content+=`<circle cx="${f(fx(i))}" cy="${f(py(pt.norm))}" r="${f(3*s)}" fill="${col}"/>`;});
+      body+=group(l.sourceIds[0]||l.series,l.sourceIds,content,{x:left,y:top,w:plotW,h:plotH,series:l.series},pr.y);});
+     if(g.constantAxes.length)diagnostics.push({code:'DDN-PJW04',severity:'warning',message:'Parallel-coordinates axes '+g.constantAxes.map(a=>JSON.stringify(a)).join(', ')+' are constant: their scale is UNKNOWN and values are drawn at mid-height (dashed axis), not at zero.'});
+     if(g.missing)diagnostics.push({code:'DDN-PJW04',severity:'warning',message:'Some series lack values on some axes; those segments pass through mid-height as UNKNOWN, not as zero.'});
+     let lx=left,ly=26*s;g.lines.forEach((l,i)=>{const w=Math.min(plotW,Math.max(100*s,l.series.length*7.5*s+42*s));if(lx+w>right){lx=left;ly+=22*s;}body+=line(lx,ly,lx+20*s,ly,colour(i),2.5)+text(lx+26*s,ly+4*s,l.series,11);lx+=w;});
+     body+=text(left,H-15*s,g.lines.length+' polylines over '+A+' axes · each axis normalized independently to its own min…max · dashed mid segments are UNKNOWN (constant axis or missing value), never zeros.',11);
+    }else if(plan.mark==='wordcloud'){
+     const g=plan.grid,words=g.words.map((w,i)=>({w,i})).sort((a,b)=>(b.w.weight-a.w.weight)||(a.w.text<b.w.text?-1:a.w.text>b.w.text?1:a.i-b.i)).map(o=>o.w);
+     const cx=left+plotW/2,cy=top+plotH/2,minS=15*s,maxS=Math.max(30*s,Math.min(58*s,plotW/9)),placed=[],skippedWords=[];
+     for(const w of words){
+      const size=minS+(maxS-minS)*Math.sqrt(w.weight/g.max),mw=Text.measure(w.text,size,p.style.font,700).width,bw=mw+10*s,bh=size*1.3;
+      let spot=null;
+      for(let th=0;th<90;th+=0.22){const r=5*s*th,x=cx+r*Math.cos(th),y=cy+r*Math.sin(th)*.72,box={x:x-bw/2,y:y-bh/2,w:bw,h:bh};
+       if(box.x<left-60*s||box.x+bw>right+60*s||box.y<top||box.y+bh>bottom+20*s)continue;
+       if(placed.every(q=>box.x+box.w<q.x||q.x+q.w<box.x||box.y+box.h<q.y||q.y+q.h<box.y)){spot={x,y,box};break;}}
+      if(!spot){skippedWords.push(w.text);continue;}
+      placed.push(spot.box);
+      body+=group(w.sourceIds[0],w.sourceIds,`<title>${esc(w.text+': '+fmtNumber(w.weight)+' '+plan.unit)}</title><text class="ddn-wordcloud-word" data-weight="${w.weight}" x="${f(spot.x)}" y="${f(spot.y)}" font-size="${f(size)}" fill="${colour(words.indexOf(w))}" font-weight="700" text-anchor="middle">${esc(w.text)}</text>`,{...spot.box,value:w.weight},pr.y);
+      smallest=Math.min(smallest,size);}
+     if(skippedWords.length)diagnostics.push({code:'DDN-PJW04',severity:'warning',message:'Word cloud could not place '+skippedWords.length+' word(s) without overlap and omitted them: '+skippedWords.join(', ')+'. Nothing was resized to fit silently.'});
+     body+=text(left,H-15*s,placed.length+' of '+words.length+' words placed · font size encodes weight (√ scale) · deterministic Archimedean-spiral placement, heaviest first; angle and position encode nothing.',11);
     }else {
      const ys=pts.map(p=>p.y),lo=Math.min(0,...ys),hi0=Math.max(0,...ys),hi=hi0===lo?lo+1:hi0,fy=n=>bottom-(n-lo)/(hi-lo)*plotH;let fx;
      if(plan.xType==='category')fx=(n,i)=>left+(i+.5)*plotW/pts.length;

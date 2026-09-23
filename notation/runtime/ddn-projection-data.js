@@ -23,7 +23,7 @@ function plan(ir,ErrorClass=Error){
  const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
  if(kind==='fishbone')return Quality.fishbone(ir,ErrorClass,get);
  if(kind==='decision')return Quality.decision(ir,ErrorClass,get);
- if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
+ if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble','heatmap','densityheatmap','calendar','parallelcoords','wordcloud'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
  if(kind==='graph'&&p.profile==='state.flat@1')return{kind,profile:p.profile,lifecycle:Quality.lifecycle(ir,ErrorClass,get)};
  if(kind==='graph'&&['inputs','analysis_budget','traces'].some(k=>p[k]!==undefined))fail('DDN-Q005','Lifecycle properties require state.flat@1');
  if(kind==='graph'&&p.profile==='pert.cpm@1')return{kind,profile:p.profile,cpm:Quality.cpm(ir,ErrorClass)};
@@ -129,8 +129,8 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,columns:p.columns,panels,...(journeyPhases?{phases:journeyPhases}:{}),...(venn?{venn}:{}),sourceIds:panels.flatMap(p=>p.child?[...p.child.elements,...p.child.relations].map(n=>n.id):p.items.map(i=>i.node.id))};
  }
  if(kind==='chart'){
-  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'],TREEMARKS=['tidytree','radialtree','circlepack','sunburst','packedbubble'];
-  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk',...TREEMARKS].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble');
+  const DIST1D=['histogram','density','qq','quantiledot'],DIST2D=['dotplot','boxplot','violin','beeswarm'],TREEMARKS=['tidytree','radialtree','circlepack','sunburst','packedbubble'],GRIDMARKS=['heatmap','densityheatmap','calendar','parallelcoords','wordcloud'];
+  if(!['bar','line','area','point','pie','donut','radar','funnel','gauge','candlestick','treemap','sankey',...DIST1D,...DIST2D,'topk',...TREEMARKS,...GRIDMARKS].includes(p.mark))fail('DDN-PJ030','Supported marks: bar, line, area, point, pie, donut, radar, funnel, gauge, candlestick, treemap, sankey, histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud');
   if(p.mark==='radar'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Radar spokes require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Funnel stages require categorical x (x_type must be category)');
   if(p.mark==='funnel'&&p.series!==undefined)fail('DDN-PJ030','Funnel shows one stage per record; do not set series');
@@ -165,6 +165,25 @@ function plan(ir,ErrorClass=Error){
    if(p.k!==undefined&&(!Number.isInteger(p.k)||p.k<1||p.k>100))fail('DDN-PJ133','Top-K k is an integer 1..100');
    if(p.others!==undefined&&typeof p.others!=='boolean')fail('DDN-PJ133','Top-K others is true or false');
   }
+  if(p.mark==='heatmap'){
+   if((p.x_type||'category')!=='category')fail('DDN-PJ030','Heatmap columns require categorical x');
+   if(typeof p.series!=='string')fail('DDN-PJ137','Heatmap rows require a series binding (category text)');
+  }
+  if(p.mark==='densityheatmap'){
+   if((p.x_type||'category')!=='number')fail('DDN-PJ030','Density heatmap bins two numeric fields; set x_type:number');
+   if(p.series!==undefined)fail('DDN-PJ030','Density heatmap pools one scatter; do not set series');
+   if(p.bin_count!==undefined&&(!Number.isInteger(p.bin_count)||p.bin_count<2||p.bin_count>60))fail('DDN-PJ131','Density heatmap bin_count is an integer 2..60');
+  }
+  if(p.mark==='calendar'){
+   if((p.x_type||'category')!=='date')fail('DDN-PJ030','Calendar cells require date x (x_type must be date)');
+   if(p.series!==undefined)fail('DDN-PJ030','Calendar shows one value per day; do not set series');
+  }
+  if(p.mark==='parallelcoords'){
+   if((p.x_type||'category')!=='category')fail('DDN-PJ030','Parallel-coordinates axes are categorical x values');
+   if(typeof p.series!=='string')fail('DDN-PJ137','Parallel coordinates require a series binding identifying each polyline');
+  }
+  if(p.mark==='wordcloud'&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Word cloud words are categorical x values');
+  if(p.mark==='wordcloud'&&p.series!==undefined)fail('DDN-PJ030','Word cloud sizes one word per record; do not set series');
   if(!['category','number','date'].includes(p.x_type||'category'))fail('DDN-PJ030','x_type is category, number or date');
   if(typeof p.x!=='string'||(p.mark==='candlestick'?[p.open,p.high,p.low,p.close].some(v=>typeof v!=='string'):DIST1D.includes(p.mark)?false:typeof p.y!=='string'))fail('DDN-PJ030','Chart needs explicit x and y bindings');
   if(p.aggregate!==undefined&&!['none','sum','count','min','max','mean'].includes(p.aggregate))fail('DDN-PJ031','Unknown aggregate');
@@ -190,7 +209,7 @@ function plan(ir,ErrorClass=Error){
     if(y<=0)fail('DDN-PJ108','Sankey flows require positive values',n);
     points.push({x,y,rawX,target:tv,size:1,sourceIds:[n.id]});continue;
    }
-   if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else points.push({x,y,rawX,size,sourceIds:[n.id]});
+   if(p.mark==='radar'){const ser=p.series===undefined?'Value':get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ030','Radar series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else if(p.mark==='candlestick')points.push({x,rawX,y,open:ohlc.o,high:ohlc.h,low:ohlc.l,close:ohlc.c,size:1,sourceIds:[n.id]});else if(p.mark==='heatmap'||p.mark==='parallelcoords'){const ser=get(n,p.series);if(typeof ser!=='string'||!ser.trim()||ser.length>80)fail('DDN-PJ137',(p.mark==='heatmap'?'Heatmap row':'Polyline')+' series must be a nonempty text key of at most 80 characters',n);points.push({x,y,rawX,size,series:ser,sourceIds:[n.id]});}else points.push({x,y,rawX,size,sourceIds:[n.id]});
   }
   if(!points.length)fail('DDN-PJ012','No chart points remain');
   if(p.mark==='treemap'&&points.some(pt=>pt.y<0))fail('DDN-PJ078','Treemap tile values must be nonnegative numbers; filter out or explicitly skip negative records');
@@ -205,7 +224,7 @@ function plan(ir,ErrorClass=Error){
   }
   if(p.mark==='point'&&(p.x_type||'category')!=='number')fail('DDN-PJ030','Scatter/bubble requires x_type:number');
   if(['pie','donut','bar','radar','funnel'].includes(p.mark)&&(p.x_type||'category')!=='category')fail('DDN-PJ030','Bars, arcs, radar spokes and funnel stages currently require categorical x');
-  const groups=new Map();if(!['point','radar','sankey',...DIST1D,...DIST2D].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
+  const groups=new Map();if(!['point','radar','sankey',...DIST1D,...DIST2D,...GRIDMARKS].includes(p.mark))for(const point of points){const key=JSON.stringify(point.x);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(point);}
   if([...groups.values()].some(a=>a.length>1)){
    if(!p.aggregate||p.aggregate==='none')fail('DDN-PJ036','Duplicate x/category: supply an explicit aggregate or distinct coordinates');
    points=[...groups.values()].map(v=>({x:v[0].x,rawX:v[0].rawX,size:1,y:p.aggregate==='count'?v.length:p.aggregate==='sum'?v.reduce((s,p)=>s+p.y,0):p.aggregate==='mean'?v.reduce((s,p)=>s+p.y,0)/v.length:p.aggregate==='min'?Math.min(...v.map(p=>p.y)):Math.max(...v.map(p=>p.y)),sourceIds:v.flatMap(p=>p.sourceIds)}));
@@ -274,12 +293,63 @@ function plan(ir,ErrorClass=Error){
    dist={kind:p.mark,groups:groupsOut};
   }
   if(p.mark==='topk'){
-   const k=p.k??10,ranked=points.map((pt,i)=>({pt,i})).sort((a,b)=>b.pt.y-a.pt.y||String(a.pt.rawX)<String(b.pt.rawX)?-1:String(a.pt.rawX)>String(b.pt.rawX)?1:a.i-b.i).map(o=>o.pt);
+   const k=p.k??10,ranked=points.map((pt,i)=>({pt,i})).sort((a,b)=>(b.pt.y-a.pt.y)||(String(a.pt.rawX)<String(b.pt.rawX)?-1:String(a.pt.rawX)>String(b.pt.rawX)?1:a.i-b.i)).map(o=>o.pt);
    const top=ranked.slice(0,k),rest=ranked.slice(k),withOthers=p.others??true;
    let othersPoint=null;
    if(rest.length&&withOthers)othersPoint={x:'Others',rawX:'Others',y:rest.reduce((s,pt)=>s+pt.y,0),size:1,sourceIds:rest.flatMap(pt=>pt.sourceIds),others:true};
    topkInfo={kept:top.length,total:ranked.length,merged:withOthers?rest.length:0,dropped:withOthers?0:rest.length,droppedIds:withOthers?[]:rest.flatMap(pt=>pt.sourceIds)};
    points=othersPoint?[...top,othersPoint]:top;
+  }
+  let grid=null;
+  if(p.mark==='heatmap'){
+   const xs=[],rows=[];
+   for(const pt of points){const k=JSON.stringify(pt.rawX);if(!xs.some(v=>JSON.stringify(v)===k))xs.push(pt.rawX);if(!rows.includes(pt.series))rows.push(pt.series);}
+   if(xs.length>60||rows.length>60)fail('DDN-PJ135','Heatmap draws at most 60 columns and 60 rows');
+   const seen=new Set(),cells=[];
+   for(const pt of points){const key=JSON.stringify(pt.rawX)+' '+pt.series;
+    if(seen.has(key))fail('DDN-PJ137','Heatmap has more than one value for column '+JSON.stringify(pt.rawX)+', row "'+pt.series+'"; aggregate upstream or filter');seen.add(key);
+    cells.push({col:xs.findIndex(v=>JSON.stringify(v)===JSON.stringify(pt.rawX)),row:rows.indexOf(pt.series),value:pt.y,sourceIds:pt.sourceIds});}
+   grid={kind:'heatmap',xs,rows,cells,min:Math.min(...points.map(pt=>pt.y)),max:Math.max(...points.map(pt=>pt.y))};
+  }
+  if(p.mark==='densityheatmap'){
+   const b=p.bin_count??20,xs=points.map(pt=>pt.x),ys=points.map(pt=>pt.y),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+   if(x0===x1||y0===y1)fail('DDN-PJ132','Density heatmap of a zero-range field is UNKNOWN; both axes need spread');
+   const cells=Array.from({length:b*b},()=>({count:0,sourceIds:[]}));
+   for(const pt of points){const i=Math.min(b-1,Math.floor((pt.x-x0)/(x1-x0)*b)),j=Math.min(b-1,Math.floor((pt.y-y0)/(y1-y0)*b)),c=cells[j*b+i];c.count++;c.sourceIds.push(...pt.sourceIds);}
+   grid={kind:'densityheatmap',b,x0,x1,y0,y1,cells,max:Math.max(...cells.map(c=>c.count))};
+  }
+  if(p.mark==='calendar'){
+   const seen=new Set(),days=[],dow=a=>(new Date(a).getUTCDay()+6)%7;
+   for(const pt of points){const d=new Date(pt.x).toISOString().slice(0,10);
+    if(seen.has(d))fail('DDN-PJ137','Calendar has more than one value for day '+d+'; aggregate upstream or filter');seen.add(d);
+    days.push({date:d,at:pt.x,value:pt.y,sourceIds:pt.sourceIds});}
+   days.sort((a,b)=>a.at-b.at);
+   const monday0=days[0].at-dow(days[0].at)*86400000;
+   for(const d of days){d.week=Math.floor((d.at-monday0)/604800000);d.weekday=dow(d.at);}
+   grid={kind:'calendar',days,weeks:Math.max(...days.map(d=>d.week))+1,min:Math.min(...days.map(d=>d.value)),max:Math.max(...days.map(d=>d.value))};
+  }
+  if(p.mark==='parallelcoords'){
+   const axes=[],series=[];
+   for(const pt of points){const k=JSON.stringify(pt.rawX);if(!axes.some(v=>JSON.stringify(v)===k))axes.push(pt.rawX);if(!series.includes(pt.series))series.push(pt.series);}
+   if(axes.length<2)fail('DDN-PJ135','Parallel coordinates need at least 2 axes (distinct x categories); got '+axes.length);
+   if(axes.length>24)fail('DDN-PJ135','Parallel coordinates draw at most 24 axes');
+   const seen=new Set();
+   for(const pt of points){const key=pt.series+' '+JSON.stringify(pt.rawX);if(seen.has(key))fail('DDN-PJ137','Parallel coordinates has more than one value for series "'+pt.series+'" on axis '+JSON.stringify(pt.rawX));seen.add(key);}
+   const stats=axes.map(a=>{const vs=points.filter(pt=>JSON.stringify(pt.rawX)===JSON.stringify(a)).map(pt=>pt.y);return{min:Math.min(...vs),max:Math.max(...vs)};});
+   const constantAxes=axes.filter((a,i)=>stats[i].min===stats[i].max);
+   const lines=series.map(sr=>({series:sr,points:axes.map((a,i)=>{const pt=points.find(q=>q.series===sr&&JSON.stringify(q.rawX)===JSON.stringify(a));
+    if(!pt)return{axis:a,norm:null,sourceIds:[]};const st=stats[i];
+    return{axis:a,value:pt.y,norm:st.max===st.min?null:(pt.y-st.min)/(st.max-st.min),sourceIds:pt.sourceIds};}),sourceIds:[...new Set(points.filter(q=>q.series===sr).flatMap(q=>q.sourceIds))]}));
+   grid={kind:'parallelcoords',axes,lines,stats,constantAxes,missing:lines.some(l=>l.points.some(pt=>pt.norm===null&&!constantAxes.includes(pt.axis)))};
+  }
+  if(p.mark==='wordcloud'){
+   const seen=new Set(),words=[];
+   for(const pt of points){const w=String(pt.rawX);
+    if(seen.has(w))fail('DDN-PJ137','Word cloud has a duplicate word '+JSON.stringify(w)+'; supply distinct words');seen.add(w);
+    if(pt.y<=0)fail('DDN-PJ138','Word cloud weights must be positive finite numbers');
+    words.push({text:w,weight:pt.y,sourceIds:pt.sourceIds});}
+   if(words.length>120)fail('DDN-PJ135','Word cloud places at most 120 words');
+   grid={kind:'wordcloud',words,max:Math.max(...words.map(w=>w.weight))};
   }
   if(['pie','donut'].includes(p.mark)&&(points.some(p=>p.y<0)||!Number.isFinite(points.reduce((s,p)=>s+p.y,0))||points.reduce((s,p)=>s+p.y,0)<=0))fail('DDN-PJ037','Arcs require nonnegative values and a positive total');
   if(!Number.isFinite(Math.max(0,...points.map(n=>n.y))-Math.min(0,...points.map(n=>n.y))))fail('DDN-PJ032','Quantitative axis range overflow');
@@ -291,7 +361,7 @@ function plan(ir,ErrorClass=Error){
    if(categories.length<3)fail('DDN-PJ071','Radar needs at least 3 distinct x categories (got '+categories.length+'); supply more records or use another mark');
    return{kind,profile:p.profile,mark:p.mark,points,skipped,categories,series,sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
   }
-  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
+  return{kind,profile:p.profile,mark:p.mark,points,skipped,...(dist?{dist}:{}),...(topkInfo?{topk:topkInfo}:{}),...(funnelCategories?{categories:funnelCategories}:{}),...(treemapTiles?{categories:treemapTiles.map(n=>n.path),tiles:treemapTiles}:{}),...(hierTree?{tree:hierTree}:{}),...(grid?{grid}:{}),...(sankeyFlow?{flow:sankeyFlow}:{}),...(p.mark==='gauge'?{target:p.target}:{}),sourceIds:points.flatMap(p=>p.sourceIds),xType:p.x_type||'category',unit:p.aggregate==='count'?'count':p.unit||'',quantitative:true};
  }
  if(kind==='timeline'){
   const records=filtered(),items=records.map(n=>{const start=get(n,p.start),end=get(n,p.end),a=date(start),b=date(end);if(!Number.isFinite(a)||!Number.isFinite(b)||b<a)fail('DDN-PJ040','Timeline needs real ISO date-only start/end with end >= start',n);return{id:n.id,node:n,label:String(p.label?textValue(n,p.label):n.name),start,end,a,b};});
