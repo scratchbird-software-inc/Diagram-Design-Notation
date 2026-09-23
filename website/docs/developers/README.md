@@ -14,7 +14,8 @@ library and embedding rendered diagrams; they are verified against
 | [modules.md](modules.md) | You want to load only part of the runtime (core/graph/projections/quality bundles, sizes, load order). |
 | [api-reference.md](api-reference.md) | You need the workspace object: parse, check, render, mount, snapshots, data replacement, authoring, io. |
 | [embedding.md](embedding.md) | You are embedding diagrams in a page or framework and need CSP / `file://` guidance. |
-| [viewer.md](viewer.md) | You want the single-file end-user viewer (`ddn-viewer.html`): fit modes, overrides, export. |
+| [tool.md](tool.md) | You want the unified diagram tool (`ddn-tool.html`, served as `tools/index.html`): drawers, modes, deep links, export. |
+| [viewer.md](viewer.md) | Historical: the retired single-file viewer (`ddn-viewer.html`), replaced by the unified tool in B1-027. |
 | [styling.md](styling.md) | You want to restyle rendered SVG with CSS: class hooks, cascade rules, `ddn.css`. |
 | [data-refresh.md](data-refresh.md) | You are building a dashboard that swaps data-block records without touching the model. |
 | [authoring-sources.md](authoring-sources.md) | You are writing `.ddn` source by hand: language tour with links into the spec chapters. |

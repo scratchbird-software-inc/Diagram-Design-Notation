@@ -72,6 +72,9 @@ about *your sources*:
   `website/examples/embed/` do.
 - The gallery page (`website/examples/gallery/index.html`) links pre-rendered SVG
   files with plain `<img src>` precisely so it needs no runtime at all.
-- The single-file viewer (`ddn-viewer.html`, see [viewer.md](viewer.md))
-  inlines the runtime and loads sources through pickers/drag-drop/paste, so
-  it works fully from `file://` in current Chrome and Firefox.
+- The unified diagram tool (`ddn-tool.html`, served as `tools/index.html`,
+  see [tool.md](tool.md)) inlines the runtime and loads sources through
+  pickers/drag-drop/paste and the bundled catalogue, so it works fully from
+  `file://` in current Chrome and Firefox; its `?src=` deep links need HTTP.
+  It replaced the single-file viewer (`ddn-viewer.html`, see
+  [viewer.md](viewer.md)) in B1-027.

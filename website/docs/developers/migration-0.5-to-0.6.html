@@ -50,7 +50,7 @@ DDNLive.defaults.forKind(&quot;table&quot;);   // deep copy of the registry defa
 <h2>Data refresh API (B1-006)</h2>
 <p><strong>Before:</strong> live data meant regenerating source text and re-parsing. <strong>After:</strong> <code>ws.replaceData(name, records)</code> swaps a data block's records in place; record keys must match the block's first record or <code>DDN-E011</code>. Recipe: <a href="data-refresh.html">data-refresh.md</a>.</p>
 <h2>End-user viewer (B1-007)</h2>
-<p><strong>New, nothing to migrate:</strong> <code>notation/viewer/ddn-viewer.html</code> — single-file <code>file://</code> viewer with fit modes, font/colour overrides, SVG/PNG export. See <a href="viewer.html">viewer.md</a>.</p>
+<p><strong>New, nothing to migrate:</strong> <code>notation/tool/ddn-tool.html</code> — single-file unified diagram tool (B1-027) with pop-in drawers, fit modes, font/colour overrides, guided edits and SVG/PNG/WebP export; it replaced the B1-007 viewer (see <a href="tool.html">tool.md</a>, <a href="viewer.html">viewer.md</a>).</p>
 <h2>Spacing hints (B1-008)</h2>
 <p><strong>Before:</strong> inter-node gaps were only the format's <code>gap</code>/<code>row_gap</code> numbers. <strong>After:</strong> optional additive <code>spacing: tight|normal|loose|expanded</code> on views and format bundles (view wins; absent = <code>normal</code> = byte-identical to before; unknown value rejected as <code>DDN033</code>). Factors 0.75/1.0/1.4/2.0 scale graph gaps and route-label margins only — node bodies and fonts never scale.</p>
 <pre><code>view workshop &quot;Orders / wide&quot; { data: [@model]; format: @f.common; spacing: loose; }</code></pre>

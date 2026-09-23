@@ -61,8 +61,8 @@ test('every HTML page under website/ has a favicon link', () => {
 });
 
 test('standalone tool pages carry the ScratchWeaver brand and a favicon', () => {
-  for (const rel of ['tools/viewer/index.html', 'tools/designer/index.html',
-    'tools/studio/index.html', 'tools/studio/editor.html']) {
+  for (const rel of ['tools/index.html', 'tools/designer/index.html',
+    'tools/viewer/index.html', 'tools/studio/index.html', 'tools/studio/editor.html']) {
     const html = fs.readFileSync(path.join(root, 'website', rel), 'utf8');
     assert.ok(html.includes('ScratchWeaver'), rel + ' missing the product name');
     assert.ok(html.includes('rel="icon"'), rel + ' missing a favicon');

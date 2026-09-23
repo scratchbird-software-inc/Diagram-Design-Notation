@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viewer — DDN</title>
+<title>Viewer (retired) — DDN</title>
 <link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
@@ -26,31 +26,9 @@
 </div></header>
 <main class="site-main">
 <article class="md-body">
-<h1>Viewer</h1>
-<p><code>notation/viewer/ddn-viewer.html</code> is the single-file, non-designer viewer (B1-007): the full runtime is inlined into one HTML file, so it runs from <code>file://</code> with no server, install, or network. It has no editing features — presentation overrides only.</p>
-<h2>Getting and rebuilding</h2>
-<p>The file is committed and regenerated deterministically from <code>notation/viewer/src/{template.html,viewer.css,viewer.js}</code> by <code>npm --prefix notation run build:viewer</code> (run after <code>build:sdk</code>). Do not edit the built file.</p>
-<h2>Loading sources</h2>
-<p>Four client-side ways: <strong>Open .ddn…</strong> (file picker; multiple files allowed — the first is the entry, the rest satisfy <code>import</code>), <strong>drag-drop</strong> anywhere on the page, <strong>paste</strong> source text into the sidebar and press <em>Load pasted source</em>, or a <strong><code>?src=</code> deep link</strong> (B1-023): open <code>ddn-viewer.html?src=&lt;relative .ddn path&gt;</code> and the viewer fetches that source relative to the page, loads it as a single-file workspace, and selects its first view. The website examples browser emits one such link per example. The path must be strictly relative — any scheme (<code>javascript:</code>, <code>data:</code>, even <code>https:</code>), host, or absolute path is rejected inline; the fetched text is size-capped at 50 MB like a dropped file, and parse errors show via the normal status-line error path. Over <code>file://</code> browsers block page fetches, so a deep link there answers a clear &quot;serve over HTTP (<code>npm run serve</code>) or use Open file&quot; message instead of failing silently. The designer standalone page (<code>tools/designer/index.html?src=…</code>) accepts the same contract, loading the file as a new single-file document.</p>
-<h2>Controls</h2>
-<ul><li><strong>View picker</strong> — every view declared in the loaded files (<code>file · view</code>).</li><li><strong>Zoom / fit modes</strong> — <em>Fit page</em>, <em>Fit width</em>, <em>Fit height</em>, <em>100%</em>, and</li></ul>
-<p>  <code>−</code> / <code>+</code> buttons; the current percentage is shown. Fits recompute on   window resize; pressing <code>−</code>/<code>+</code> switches to an explicit scale.</p>
-<ul><li><strong>Font family / size dropdowns</strong> (top bar) — the four runtime font stacks</li></ul>
-<p>  (<code>sans</code>, <code>serif</code>, <code>mono</code>, <code>handwriting</code>, shown with their real rendered   names) and sizes 8–24 px, or <em>source default</em>. Applied through the render   override channel (<code>font</code> / <code>fontSize</code>) — the diagram is re-laid out, so the   size dropdown is the reflow-safe control.</p>
-<ul><li><strong>Typography per kind</strong> — a sidebar row (family + size dropdowns) for every</li></ul>
-<p>  object kind present in the view. These are CSS rules on   <code>.ddn-kind-&lt;code&gt; text</code> in the viewer stylesheet: they do <strong>not</strong> re-run   layout (a larger size can overflow a shape) — see   <a href="styling.html#per-kind-typography-css">styling.md</a>.</p>
-<ul><li><strong>Colour overrides</strong> — the sidebar lists every object kind and relation</li></ul>
-<p>  class present in the current view, each with a colour picker. Clicking an   object in the diagram overrides that one object only. Overrides are CSS   rules on the B1-003 class hooks (<code>.ddn-kind-&lt;code&gt;</code>, <code>.ddn-verb-&lt;verb&gt;</code>,   <code>[data-ddn-id=&quot;&lt;element id&gt;&quot;]</code>) — see <a href="styling.html">styling.md</a>.</p>
-<ul><li><strong>Relations editor</strong> — master row for all relation types (routing</li></ul>
-<p>  <code>orthogonal</code>/<code>straight</code>/<code>curved</code>/<code>rounded</code>, curve tension 0–1, curve radius   px, crossings <code>gap</code>/<code>bridge</code>/<code>square bridge</code>, endpoint ordering   <code>optimize</code>/<code>preserve</code>), one routing dropdown per verb in the view, and a   click-an-edge panel that binds routing to a single relation id. All of it   rides the render override channel (<code>routing</code>, <code>crossings</code>,   <code>endpointOrdering</code>, <code>curveTension</code>, <code>curveRadius</code>, <code>relationRouting</code> — see   <a href="api-reference.html">api-reference.md</a>); id keys win over verb keys, verb   keys win over the master row. Crossings and endpoint ordering are   master-level only (pairwise canvas postprocessing). There is no junctions   control by design: the runtime only permits explicit junction semantics   (<code>DDN046</code>), so junctions are not routing geometry.</p>
-<ul><li><strong>Reset typography / Reset relations / Reset overrides</strong> — each section</li></ul>
-<p>  resets independently; <em>Reset overrides</em> clears everything.</p>
-<ul><li><strong>Export SVG / Export PNG</strong> — downloads the diagram as currently</li></ul>
-<p>  presented, overrides included; PNG is rasterised on a 2× canvas.</p>
-<h2>Override model</h2>
-<p>The viewer keeps a single <code>presentation</code> state object (global font, per-kind typography, colour overrides, relation options). Render-channel entries are merged into <code>renderSync({ overrides })</code> — a temporary view overlay; CSS entries live in a <code>&lt;style&gt;</code> element in the viewer page. The loaded <code>.ddn</code> source text is never modified — the status bar says so at all times (&quot;presentation overrides; source unchanged&quot;). Because overrides ride on the renderer class hooks and the override channel, they survive re-renders and apply across views of the same model.</p>
-<h2>Browser support</h2>
-<p><code>file://</code> in current Chrome and Firefox. Only standard web APIs are used (file input/<code>File.text()</code>, drag-drop, <code>&lt;canvas&gt;</code> 2D + <code>toDataURL</code>, Blob downloads) — no Chrome-only APIs such as <code>showDirectoryPicker</code> or <code>OffscreenCanvas</code>.</p>
+<h1>Viewer (retired)</h1>
+<p>The single-file end-user viewer (<code>notation/viewer/ddn-viewer.html</code>, B1-007) was retired in B1-027: its features — fit modes, per-kind/verb/object colour and typography overrides, click-to-select panels, <code>?src=</code> deep links, PNG export — live on in the <strong>unified diagram tool</strong>, served as <code>tools/index.html</code> (see <a href="tool.html">tool.md</a>). The old URL <code>tools/viewer/index.html</code> is a redirect stub that forwards <code>?src=</code> (and <code>entry</code>/<code>view</code>/<code>mode</code>/<code>drawers</code>) to the unified tool.</p>
+<p>The viewer sources (<code>notation/viewer/src/</code>) and <code>tools/build-viewer.js</code> are kept, deprecated, and still covered by their test suite; they are no longer served by the website.</p>
 </article>
 <p><small>Rendered from <a href="viewer.md">viewer.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>

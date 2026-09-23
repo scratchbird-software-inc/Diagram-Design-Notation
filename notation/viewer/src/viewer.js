@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-007/B1-011 end-user viewer logic.
+/* Deprecated (B1-027): superseded by the unified tool (notation/tool/). Sources kept for the test suite; no longer served by the website. */
  * Pure functions (computeFitScale, overrideRuleFor, typographyRuleFor,
  * relationOverrideState, viewerOverrides, viewListFrom, isPlausibleSourceFile,
  * rasterCanvasSize) are exported for node

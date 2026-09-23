@@ -4,15 +4,37 @@
  * the unified tool (/tools/index.html) preserving the parameters each old
  * page understood: src (viewer deep link), entry/view (gallery + editor boot),
  * plus mode/drawers when present. Malformed values are dropped, never fatal.
+ *
+ * ?src= values are paths relative to the OLD page, which sat one directory
+ * deeper than the tool: when given the stub's own URL and the tool URL, the
+ * mapper re-relativizes same-origin paths so old bookmarks keep working.
  * UMD: inlined into the stubs by website/build-site.mjs and required by tests. */
 (function (host) {
 'use strict';
-function mapLegacyParams(search) {
+/* Path of `target` relative to the directory of `from` (same-origin absolute
+ * URLs), or null when the origins differ. */
+function relativize(from, target) {
+  if (from.origin !== target.origin || from.origin === 'null') return null;
+  const a = from.pathname.split('/').slice(1, -1), b = target.pathname.split('/').slice(1);
+  while (a.length && b.length && a[0] === b[0]) { a.shift(); b.shift(); }
+  return a.map(() => '..').concat(b).join('/');
+}
+function mapLegacyParams(search, stubHref, toolHref) {
   const params = new URLSearchParams(String(search || '').replace(/^\?/, ''));
   const out = new URLSearchParams();
-  const src = params.get('src');
-  if (src && !/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(src.trim()) && !src.trim().startsWith('/') && /\.ddn($|[?#])/i.test(src.trim()))
-    out.set('src', src.trim());
+  let src = params.get('src');
+  if (src) {
+    src = src.trim();
+    if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(src) && !src.startsWith('/') && /\.ddn($|[?#])/i.test(src)) {
+      if (stubHref && toolHref) {
+        try {
+          const rel = relativize(new URL(toolHref, stubHref), new URL(src, stubHref));
+          if (rel) src = rel;
+        } catch { /* keep verbatim */ }
+      }
+      out.set('src', src);
+    }
+  }
   const entry = params.get('entry');
   if (entry && !/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(entry.trim())) out.set('entry', entry.trim());
   const view = params.get('view');
@@ -24,7 +46,7 @@ function mapLegacyParams(search) {
   const q = out.toString();
   return q ? '?' + q : '';
 }
-const api = { mapLegacyParams };
+const api = { mapLegacyParams, relativize };
 if (typeof module === 'object' && module.exports) module.exports = api;
 host.DDNRedirect = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

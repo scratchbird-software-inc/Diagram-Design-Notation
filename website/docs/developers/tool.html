@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unified diagram tool — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Unified diagram tool</h1>
+<p><code>notation/tool/ddn-tool.html</code> — served on the website as <code>tools/index.html</code> — is the single-file unified diagram tool (B1-027). It replaces the three retired pages (<code>tools/viewer/index.html</code>, <code>tools/studio/index.html</code>, <code>tools/studio/editor.html</code>), which are now redirect stubs forwarding their parameters. The full runtime and the example corpus are inlined into one HTML file, so it runs from <code>file://</code> with no server, install, or network (deep links that fetch need HTTP — see below).</p>
+<h2>Getting and rebuilding</h2>
+<p>The file is committed and regenerated deterministically from <code>notation/tool/src/{template.html,tool.css,tool.js}</code> by <code>node tools/build-tool.js</code> (run after <code>build:sdk</code>). Do not edit the built file.</p>
+<h2>Layout and drawers</h2>
+<p>The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit page/width/height/100%) with a slim icon toolbar and four pop-in drawers: <strong>appearance</strong> (top), <strong>source</strong> (bottom), <strong>files</strong> (left), <strong>export</strong> (right). Drawers overlay the stage, animate open/closed, and close independently.</p>
+<p>Each drawer has three states — <code>open</code>, <code>closed</code>, <code>none</code> (icon hidden) — configured by, in ascending precedence:</p>
+<ol><li>the <code>?mode=</code> preset: <code>diagram</code> (bare stage, no toolbar — for embeds),</li></ol>
+<p>   <code>view</code> (stage + viewport controls only), <code>explore</code> (default; toolbar, all    drawers closed), <code>edit</code> (toolbar, source drawer open);</p>
+<ol><li>the saved settings in <code>localStorage</code> key <code>ddn-tool-drawers</code> (gear popup);</li><li>the URL parameter, e.g.</li></ol>
+<p>   <code>?drawers=appearance:closed,source:none,files:closed,export:closed</code>    (malformed pairs are ignored).</p>
+<h2>Loading sources</h2>
+<ul><li><strong>Files drawer</strong>: open files / a folder / a workspace <code>.zip</code> or <code>.json</code></li></ul>
+<p>  (with merge-into-current), drag-drop anywhere on the page, paste source   text, or pick from the bundled example catalogue.</p>
+<ul><li><strong><code>?src=&lt;relative .ddn path&gt;</code></strong> deep link: fetches the source relative to</li></ul>
+<p>  the page together with its whole import closure (multi-file examples   render), size-capped like a dropped file. Strictly relative — any scheme,   host, or absolute path is rejected inline.</p>
+<ul><li><strong><code>?entry=&lt;catalogue entry or relative .ddn path&gt;&amp;view=&lt;view id&gt;</code></strong>: if the</li></ul>
+<p>  entry is in the bundled catalogue it boots from there; otherwise the path   is fetched with the same import closure. <code>history.replaceState</code> keeps the   URL shareable when switching examples/views.</p>
+<h2>Feature map (from the retired tools)</h2>
+<ul><li>Viewer: fit modes, per-kind/verb/object colour overrides, per-kind</li></ul>
+<p>  typography, click-to-select panels, PNG export — appearance drawer.</p>
+<ul><li>Studio gallery: example catalogue, appearance + advanced layout/page/pen</li></ul>
+<p>  controls, capability-driven control disabling — files + appearance drawers.</p>
+<ul><li>Studio editor: per-file source editing with apply/discard and live apply,</li></ul>
+<p>  undo/redo, find/replace/go-to-line, guided inspector edits (label, kind,   pin/unpin, hide, add field, delete, go-to-source, add element/relation),   drag-to-pin on the stage, workspace new/rename/delete and zip/json I/O,   dirty guard on unload — source + files drawers.</p>
+<ul><li>Export drawer: SVG, PNG (2×), WebP (2×), example snapshot (workspace JSON).</li></ul>
+<p>Rendering reuses the shared <code>&lt;ddn-example&gt;</code> component (<code>DDNLive.mount</code>); its internal chrome is hidden and every feature is driven through its public surface plus <code>DDNLive.authoring</code> / <code>DDNLive.io</code>. Presentation overrides are a temporary view overlay — the loaded source is only changed by explicit source or inspector edits.</p>
+<h2>Test hooks</h2>
+<p><code>window.DDNTool</code> mirrors the old <code>DDNViewer</code> surface (pure functions plus <code>loadFiles</code>, <code>setFit</code>, <code>exportSvgString</code>, <code>setDrawer</code>, <code>getDrawerConfig</code>, <code>state</code>, …) for tests and integrations; <code>window.DDNRedirect.mapLegacyParams</code> is the old-URL parameter mapper used by the redirect stubs.</p>
+</article>
+<p><small>Rendered from <a href="tool.md">tool.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

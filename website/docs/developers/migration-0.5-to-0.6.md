@@ -72,9 +72,10 @@ Recipe: [data-refresh.md](data-refresh.md).
 
 ## End-user viewer (B1-007)
 
-**New, nothing to migrate:** `notation/viewer/ddn-viewer.html` — single-file
-`file://` viewer with fit modes, font/colour overrides, SVG/PNG export. See
-[viewer.md](viewer.md).
+**New, nothing to migrate:** `notation/tool/ddn-tool.html` — single-file
+unified diagram tool (B1-027) with pop-in drawers, fit modes, font/colour
+overrides, guided edits and SVG/PNG/WebP export; it replaced the B1-007
+viewer (see [tool.md](tool.md), [viewer.md](viewer.md)).
 
 ## Spacing hints (B1-008)
 

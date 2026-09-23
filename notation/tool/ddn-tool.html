@@ -568,7 +568,7 @@ function srcImportClosure(src, pageHref, fetchFn, parseImports, resolvePath) {
 function exportSvgWithOverrides(svgText, css) {
   if (!svgText) throw new Error('nothing rendered yet');
   if (!css) return svgText;
-  return svgText.replace(/<svg /, () => '<svg data-ddn-tool-export="presentation-overrides" ').replace(/(<svg[^>]*>)/, () => '$1<style>' + css + '</style>');
+  return svgText.replace(/<svg /, () => '<svg data-ddn-tool-export="presentation-overrides" ').replace(/(<svg[^>]*>)/, m => m + '<style>' + css + '</style>');
 }
 
 const pure = {
@@ -720,9 +720,13 @@ function mount() {
   state.overrideStyle = document.createElement('style');
   state.overrideStyle.id = 'ddn-tool-overrides';
   diagram.shadowRoot.append(state.overrideStyle);
-  diagram.addEventListener('ddn-render', () => {
+  diagram.addEventListener('ddn-render', e => {
     els.hint.style.display = 'none';
     els.sourceError.textContent = '';
+    // Light-DOM render marker: shadow DOM is invisible to --dump-dom and to
+    // host-page integration checks, so successful renders are announced here.
+    els.diagramHost.setAttribute('data-ddn-rendered', e.detail.fingerprint || 'ok');
+    els.diagramHost.setAttribute('data-ddn-render-ms', String(Math.round(e.detail.milliseconds || 0)));
     repopulateOverridePanels();
     applyOverrideCss();
     applyFit();
@@ -730,6 +734,7 @@ function mount() {
     status();
   });
   diagram.addEventListener('ddn-error', e => {
+    els.diagramHost.removeAttribute('data-ddn-rendered');
     els.sourceError.textContent = e.detail.code + ': ' + e.detail.message;
     fail(e.detail.code + ': ' + e.detail.message);
   });

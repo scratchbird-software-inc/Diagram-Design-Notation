@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* Deprecated (B1-027): the unified tool (tools/build-tool.js) replaced the portable studio pages on the website. Kept; its freshness gate still runs. */
 /* SPDX-License-Identifier: GPL-2.0-or-later. Refresh the inlined DDN runtime in
  * the portable Studio pages (notation/studio/portable-{editor,gallery}.html)
  * with the current minified production build (notation/dist/ddn.global.min.js).

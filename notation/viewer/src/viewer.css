@@ -1,4 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. B1-007 end-user viewer chrome. */
+/* Deprecated (B1-027): superseded by notation/tool/. Kept for the test suite; no longer served. */
 :root {
   color-scheme: light;
   --ink: #17263d; --muted: #607084; --line: #dde5ed; --surface: #fff;

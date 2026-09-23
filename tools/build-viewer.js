@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* Deprecated (B1-027): the unified tool (tools/build-tool.js) replaced the viewer on the website. Kept; its tests still run. */
 /* SPDX-License-Identifier: GPL-2.0-or-later. Build the single-file end-user viewer (B1-007).
  * Inlines notation/dist/ddn.global.min.js + notation/viewer/src/{viewer.css,viewer.js}
  * into notation/viewer/src/template.html and writes notation/viewer/ddn-viewer.html.

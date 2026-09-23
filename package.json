@@ -21,7 +21,8 @@
     "build:sdk": "npm --prefix notation run build:sdk",
     "build:gallery": "node tools/build-gallery.js",
     "build:site": "node website/build-site.mjs",
-    "serve": "node tools/serve.js"
+    "serve": "node tools/serve.js",
+    "build:tool": "node tools/build-tool.js"
   },
   "engines": {
     "node": ">=22"

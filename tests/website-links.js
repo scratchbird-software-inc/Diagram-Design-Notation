@@ -63,10 +63,11 @@ test('no link escapes above website/ and no absolute local paths in website/', (
   assert.deepEqual(escapes, [], escapes.slice(0, 40).join('\n'));
 });
 
-/* B1-023 (D2/D5): every examples-page row links the viewer with a ?src= deep
- * link whose target exists; single-file rows (no `import "..."` lines) also
- * link the designer, import-bearing rows are viewer-only with the note. */
-test('examples page: per-row viewer/designer ?src= links match the D2 rule and resolve on disk', () => {
+/* B1-023 (D2/D5) + B1-027 (D8): every examples-page row links the unified tool
+ * with a ?src= deep link whose target exists; single-file rows (no
+ * `import "..."` lines) also link the designer, import-bearing rows are
+ * tool-only with the note. */
+test('examples page: per-row tool/designer ?src= links match the D2 rule and resolve on disk', () => {
   const pagePath = path.join(site, 'examples/index.html');
   const html = fs.readFileSync(pagePath, 'utf8');
   const examplesRoot = path.join(site, 'examples');
@@ -75,20 +76,20 @@ test('examples page: per-row viewer/designer ?src= links match the D2 rule and r
   const errors = [];
   for (const f of ddnFiles) {
     const enc = f.split('/').map(encodeURIComponent).join('/');
-    const viewer = '../tools/viewer/index.html?src=../../examples/' + enc;
+    const tool = '../tools/index.html?src=../examples/' + enc + '&amp;mode=explore';
     const designer = '../tools/designer/index.html?src=../../examples/' + enc;
-    if (!html.includes('href="' + viewer + '"')) errors.push(f + ': viewer link missing');
+    if (!html.includes('href="' + tool + '"')) errors.push(f + ': tool link missing');
     const imports = /^[ \t]*import[ \t]+"/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
     const hasDesigner = html.includes('href="' + designer + '"');
-    if (imports && hasDesigner) errors.push(f + ': import-bearing example must be viewer-only');
+    if (imports && hasDesigner) errors.push(f + ': import-bearing example must be tool-only');
     if (!imports && !hasDesigner) errors.push(f + ': single-file example must link the designer');
-    const abs = path.resolve(path.dirname(pagePath), viewer.split('?')[0]);
-    if (!fs.existsSync(abs)) errors.push(f + ': viewer page missing at ' + abs);
+    const abs = path.resolve(path.dirname(pagePath), tool.split('?')[0]);
+    if (!fs.existsSync(abs)) errors.push(f + ': tool page missing at ' + abs);
   }
-  const viewerLinks = (html.match(/href="\.\.\/tools\/viewer\/index\.html\?src=/g) || []).length;
+  const toolLinks = (html.match(/href="\.\.\/tools\/index\.html\?src=/g) || []).length;
   const designerLinks = (html.match(/href="\.\.\/tools\/designer\/index\.html\?src=/g) || []).length;
-  assert.strictEqual(viewerLinks, ddnFiles.length, 'one viewer link per example');
-  console.log('  examples: ' + ddnFiles.length + ' files · ' + viewerLinks + ' viewer links · ' + designerLinks + ' designer links · ' + (ddnFiles.length - designerLinks) + ' viewer-only (multi-file)');
+  assert.strictEqual(toolLinks, ddnFiles.length, 'one tool link per example');
+  console.log('  examples: ' + ddnFiles.length + ' files · ' + toolLinks + ' tool links · ' + designerLinks + ' designer links · ' + (ddnFiles.length - designerLinks) + ' tool-only (multi-file)');
   assert.deepEqual(errors, [], errors.slice(0, 20).join('\n'));
 });
 
