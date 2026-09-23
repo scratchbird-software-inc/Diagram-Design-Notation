@@ -11,8 +11,17 @@ const repoRoot = join(here, '..', '..');
 
 const STANDALONE_LINK = '<a href="../../README.md" style="color:inherit;text-decoration:none;border-bottom:1px dotted">Diagram-Design-Notation ↗</a>';
 const LOCAL_SCRIPTS = ['kind-ui-map.js', 'relation-ui-map.js', 'commands.js', 'app.js'];
+const LOGO_SRC = '../../assets/brand/scratchweaver.svg';
+const LOGO_SRC_PLACEHOLDER = '{{SCRATCHWEAVER_LOGO}}';
 
 function read(p) { return readFileSync(p, 'utf8'); }
+
+// ScratchWeaver brand (B1-020): the standalone file inlines the logo as a data
+// URI; index.html references the repo copy. Favicon is the data-URI logo.
+const brandSvg = read(join(repoRoot, 'assets', 'brand', 'scratchweaver.svg'))
+  .replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
+const brandDataUri = 'data:image/svg+xml;base64,' + Buffer.from(brandSvg).toString('base64');
+const FAVICON = '<link rel="icon" type="image/svg+xml" href="' + brandDataUri + '">';
 
 function escapedJson(files) {
   const json = JSON.stringify(files);
@@ -30,19 +39,22 @@ export function buildPages() {
   const body = read(join(here, 'body.html')).replace(/\n$/, '');
   const files = JSON.parse(read(join(here, 'workspace.json')));
   const json = escapedJson(files);
-  const head = title => '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title + '</title><style>';
+  if (!body.includes(LOGO_SRC_PLACEHOLDER)) throw new Error('body.html lost its ' + LOGO_SRC_PLACEHOLDER + ' logo placeholder');
+  const head = title => '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title + '</title>' + FAVICON + '<style>';
   const sourceScript = '<script type="application/json" id="sourceFiles">' + json + '</script>';
 
-  const index = head('DDN Designer — interactive review prototype') + style + '</style></head><body>' + body + '\n'
+  const indexBody = body.split(LOGO_SRC_PLACEHOLDER).join(LOGO_SRC);
+  const index = head('ScratchWeaver Designer — interactive review prototype · DDN') + style + '</style></head><body>' + indexBody + '\n'
     + sourceScript
     + '<script src="kind-ui-map.js"></script><script src="relation-ui-map.js"></script><script src="../../notation/dist/ddn.global.js"></script><script src="commands.js"></script><script src="app.js"></script></body></html>';
 
-  const standaloneBody = body.replace('<header class="projectbar">', '<header class="projectbar">' + STANDALONE_LINK);
+  const standaloneBody = body.split(LOGO_SRC_PLACEHOLDER).join(brandDataUri)
+    .replace('<header class="projectbar">', '<header class="projectbar">' + STANDALONE_LINK);
   if (standaloneBody === body) throw new Error('body.html lost its <header class="projectbar">; standalone link not applied');
   const runtime = read(join(repoRoot, 'notation', 'dist', 'ddn.global.js')).replace(/\n$/, '');
   let inlines = inlineScript('../../notation/dist/ddn.global.js', runtime);
   for (const name of LOCAL_SCRIPTS) inlines += inlineScript(name, read(join(here, name)).replace(/\n$/, ''));
-  const standalone = head('DDN Designer — standalone prototype') + style + '</style></head><body>' + standaloneBody + '\n'
+  const standalone = head('ScratchWeaver Designer — standalone prototype · DDN') + style + '</style></head><body>' + standaloneBody + '\n'
     + sourceScript + '\n' + inlines + '</body></html>';
 
   return { 'index.html': index, 'standalone.html': standalone };

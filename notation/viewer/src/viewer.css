@@ -2,7 +2,7 @@
 :root {
   color-scheme: light;
   --ink: #17263d; --muted: #607084; --line: #dde5ed; --surface: #fff;
-  --chrome: #f3f6fa; --accent: #146b7c;
+  --chrome: #f3f6fa; --accent: #0c75bd;
   font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--ink); background: #eef2f7;
 }
@@ -17,7 +17,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 input, select, textarea { min-height: 32px; padding: 6px 9px; border: 1px solid #bdcbd8; border-radius: 6px; background: #fff; color: var(--ink); }
 input[type="color"] { padding: 2px; width: 44px; min-height: 28px; }
 textarea { resize: vertical; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
-h1 { font-size: 16px; margin: 0; }
+h1 { font-size: 16px; margin: 0; display: flex; align-items: center; gap: 8px; }
+h1 svg { height: 28px; width: auto; display: block; }
+h1 span { display: flex; flex-direction: column; line-height: 1.15; }
+h1 small { font-size: 11px; font-weight: 500; color: var(--muted); }
 h3 { font-size: 12px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
 p { margin: 0; }
 

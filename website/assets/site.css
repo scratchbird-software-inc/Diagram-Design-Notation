@@ -3,8 +3,8 @@
   --ink:#1b2a3a;
   --muted:#5b6b7c;
   --line:#dfe6ee;
-  --accent:#146b7c;
-  --accent-dark:#0e5260;
+  --accent:#0c75bd;
+  --accent-dark:#0a5a92;
   --bg:#f7f9fb;
   --panel:#ffffff;
   --radius:10px;
@@ -23,8 +23,10 @@ img,svg{max-width:100%}
 /* header */
 .site-header{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
 .site-header .bar{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:1rem;padding:.8rem 1.25rem;flex-wrap:wrap}
-.wordmark{display:flex;align-items:baseline;gap:.55rem;text-decoration:none;color:var(--ink);font-weight:650;font-size:1.05rem}
-.wordmark .badge{background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:.18rem .45rem;border-radius:5px}
+.wordmark{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:var(--ink);font-weight:650;font-size:1.05rem}
+.wordmark img.logo{height:36px;width:auto;display:block}
+.wordmark .name{display:flex;flex-direction:column;line-height:1.08}
+.wordmark .name small{font-size:.66rem;font-weight:500;color:var(--muted);letter-spacing:.03em}
 .nav-toggle{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:6px;padding:.35rem .6rem;font-size:.95rem;color:var(--ink);cursor:pointer}
 .site-nav{display:flex;gap:.25rem;margin-left:auto;flex-wrap:wrap}
 .site-nav a{text-decoration:none;color:var(--muted);font-size:.92rem;padding:.35rem .6rem;border-radius:6px;white-space:nowrap}

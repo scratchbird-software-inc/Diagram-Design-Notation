@@ -2,7 +2,7 @@
   "name": "diagram-design-notation",
   "version": "0.6.0-beta.1",
   "private": true,
-  "description": "Diagram Design Notation (DDN): a model-first diagram language, reference runtime, visual designer proposal, and open standard draft.",
+  "description": "ScratchWeaver, the Diagram Design Notation (DDN) toolkit from ScratchBird Software Inc.: a model-first diagram language, reference runtime, visual designer proposal, and open standard draft.",
   "license": "GPL-2.0-or-later",
   "homepage": "website/index.html",
   "workspaces": [
@@ -10,9 +10,11 @@
     "designer"
   ],
   "scripts": {
-    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site",
+    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site && npm run test:brand",
     "test:packaging": "node tools/tests/packaging.js",
     "test:site": "node tests/website-links.js",
+    "test:brand": "node tests/brand-assets.js",
+    "build:brand": "node tools/build-brand.mjs",
     "test:core": "npm --prefix notation run test:core",
     "build:sdk": "npm --prefix notation run build:sdk",
     "build:gallery": "node tools/build-gallery.js",

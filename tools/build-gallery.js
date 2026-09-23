@@ -170,6 +170,9 @@ function page(cov) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DDN example gallery — full notation coverage</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
 <style>
 body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;color:#203047;background:#f7f8fa}
 header{padding:1.5rem 2rem;background:#203047;color:#fff}

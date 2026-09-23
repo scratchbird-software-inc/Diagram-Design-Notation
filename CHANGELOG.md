@@ -6,6 +6,23 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- B1-020: ScratchWeaver branding (look & feel). The product is now
+  **ScratchWeaver**, from ScratchBird Software Inc.; the language keeps its
+  name, Diagram Design Notation (DDN). New `assets/brand/` pipeline
+  (`tools/build-brand.mjs`, zero-dependency, freshness-gated) extracts the
+  ScratchWeaver logo from the ScratchBird brand sheet into a standalone SVG
+  (viewBox synthesized from path extents), copies the product PNG, and
+  rasterizes favicons. The website header shows the logo + ScratchWeaver
+  wordmark with a "Diagram Design Notation" subtitle, every page carries
+  favicon links (mirrored standalone pages get them injected by
+  `website/build-site.mjs`; viewer/designer/studio pages embed data-URI
+  icons via their own builders), the footer declares the ScratchBird
+  Software Inc. provenance, and the site accent colour moved from teal
+  (#146b7c) to the logo blue (#0c75bd). README, NOTICE, and package
+  descriptions gained the product line. No DDN identifiers, filenames,
+  error codes, or CSS class names were renamed; npm and GitHub repo renames
+  remain out of scope.
+
 - B1-019: ESM migration + Rollup build (RC1 preparation). Every
   `notation/runtime/*.js` and the Studio library sources
   (`notation/studio/src/{api,io,authoring,component}.js`) are now real ES

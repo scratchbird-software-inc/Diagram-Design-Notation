@@ -1,4 +1,8 @@
-## Diagram Design Notation (DDN)
+<p><img src="assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" width="120"></p>
+
+## ScratchWeaver — the Diagram Design Notation (DDN) toolkit
+
+**ScratchWeaver** is the product name of this toolkit, from **ScratchBird Software Inc.** The language it implements keeps its name: Diagram Design Notation (DDN).
 
 A simple script language that allows complex diagrams to be created with just a few lines of text.  
 

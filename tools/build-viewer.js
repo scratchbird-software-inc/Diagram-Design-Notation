@@ -12,12 +12,17 @@ const runtime = read('notation/dist/ddn.global.js');
 const css = read('notation/viewer/src/viewer.css');
 const js = read('notation/viewer/src/viewer.js');
 const template = read('notation/viewer/src/template.html');
+// ScratchWeaver brand (B1-020): inline logo + data-URI favicon keep the single file self-contained.
+const brandSvg = read('assets/brand/scratchweaver.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
+const brandFavicon = 'data:image/svg+xml;base64,' + Buffer.from(brandSvg).toString('base64');
 
 for (const [name, src] of [['runtime', runtime], ['viewer.js', js]]) {
   if (src.includes('</script')) throw new Error(name + ' contains </script; inlining would break the page');
 }
 const out = template
   .replace('{{VIEWER_CSS}}', () => css.trimEnd())
+  .replace('{{BRAND_FAVICON}}', () => brandFavicon)
+  .replace('{{BRAND_LOGO}}', () => brandSvg)
   .replace('{{DDN_RUNTIME}}', () => runtime.trimEnd())
   .replace('{{VIEWER_JS}}', () => js.trimEnd());
 if (out.includes('{{')) throw new Error('template placeholder left unsubstituted');

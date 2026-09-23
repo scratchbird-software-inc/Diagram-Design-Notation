@@ -145,6 +145,12 @@ const NAV = [
   ['Download', 'download/index.html', 'download'],
 ];
 
+function favicons(base) {
+  return '<link rel="icon" type="image/svg+xml" href="' + base + 'assets/brand/favicon.svg">\n' +
+    '<link rel="icon" type="image/png" sizes="32x32" href="' + base + 'assets/brand/favicon-32.png">\n' +
+    '<link rel="icon" type="image/png" sizes="64x64" href="' + base + 'assets/brand/favicon-64.png">\n';
+}
+
 function shell({ base, title, active, body, description }) {
   const nav = NAV.map(([label, href, key]) =>
     '<a href="' + base + href + '"' + (key === active ? ' class="active"' : '') + '>' + label + '</a>').join('\n      ');
@@ -152,14 +158,17 @@ function shell({ base, title, active, body, description }) {
     '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
     '<title>' + esc(title) + '</title>\n' +
     (description ? '<meta name="description" content="' + esc(description) + '">\n' : '') +
+    favicons(base) +
     '<link rel="stylesheet" href="' + base + 'assets/site.css">\n</head>\n<body>\n' +
     '<header class="site-header"><div class="bar">\n' +
-    '  <a class="wordmark" href="' + base + 'index.html"><span class="badge">DDN</span> Diagram Design Notation</a>\n' +
+    '  <a class="wordmark" href="' + base + 'index.html"><img class="logo" src="' + base + 'assets/brand/scratchweaver.svg" alt="ScratchWeaver logo">' +
+    '<span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>\n' +
     '  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>\n' +
     '  <nav class="site-nav">\n      ' + nav + '\n  </nav>\n</div></header>\n' +
     body + '\n' +
     '<footer class="site-footer"><div class="inner">\n' +
-    '  <span>DDN ' + VERSION + ' · proposed standard, pre-1.0</span>\n' +
+    '  <span>ScratchWeaver ' + VERSION + ' — the DDN toolkit · proposed standard, pre-1.0</span>\n' +
+    '  <span>A ScratchBird Software Inc. project · GPL-2.0-or-later</span>\n' +
     '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
@@ -176,23 +185,45 @@ function page(base, active, title, inner, description) {
 
 /* ------------------------------------------------------------ asset copies */
 
+// ScratchWeaver brand assets (B1-020): logo, favicons.
+for (const f of fs.readdirSync(path.join(REPO, 'assets/brand')).sort()) {
+  copyOut('assets/brand/' + f, path.join(REPO, 'assets/brand', f));
+}
+
 // Runtime bundles: served for the embed examples and the download page.
 for (const f of fs.readdirSync(path.join(REPO, 'notation/dist')).sort()) {
   if (/\.(js|mjs|css|d\.ts|d\.mts|map)$/.test(f)) copyOut('dist/' + f, path.join(REPO, 'notation/dist', f));
 }
 
 // Gallery (pre-rendered SVGs, page, coverage map) — mirrored from the moved corpus.
+// Mirrored HTML pages that carry no favicon of their own get the site favicons
+// injected (standalone tool pages bring their own data-URI icons and are skipped).
+function withFavicons(html, outRel) {
+  if (!html.includes('</head>') || html.includes('rel="icon"')) return html;
+  const depth = outRel.split('/').length - 1;
+  const base = depth > 0 ? Array(depth).fill('..').join('/') + '/' : '';
+  return html.replace('</head>', favicons(base) + '</head>');
+}
 const gallerySrc = path.join(REPO, 'website/examples/gallery');
-for (const p of walk(gallerySrc)) copyOut(path.posix.join('gallery', path.relative(gallerySrc, p).split(path.sep).join('/')), p);
+for (const p of walk(gallerySrc)) {
+  const rel = path.posix.join('gallery', path.relative(gallerySrc, p).split(path.sep).join('/'));
+  if (p.endsWith('.html')) {
+    // The gallery source lives two levels deeper than the mirror; retarget its
+    // favicon hrefs to the mirror's depth, then inject favicons if it has none.
+    const html = fs.readFileSync(p, 'utf8').split('href="../../assets/brand/').join('href="../assets/brand/');
+    writeOut(rel, withFavicons(html, rel));
+  }
+  else copyOut(rel, p);
+}
 
 // Notation plates browser (already a single self-contained page with inlined SVGs).
 // Its template links are repo-relative; retarget them to site pages for the mirror.
 writeOut('plates/index.html',
-  readRepo('standard/plates/index.html')
+  withFavicons(readRepo('standard/plates/index.html')
     .split('href="../../index.html"').join('href="../index.html"')
     .split('href="../../website/index.html"').join('href="../index.html"')
     .split('href="../registry/catalogue.json"').join('href="../standard/index.html"')
-    .split('href="../specification/04-notation-and-looks.md"').join('href="../standard/specification/04-notation-and-looks.html"'));
+    .split('href="../specification/04-notation-and-looks.md"').join('href="../standard/specification/04-notation-and-looks.html"'), 'plates/index.html'));
 
 // License texts.
 copyOut('license/LICENSE', path.join(REPO, 'LICENSE'));
@@ -319,12 +350,13 @@ const homeCards = [
 
 writeOut('index.html', shell({
   base: '', active: 'home',
-  title: 'Diagram Design Notation — a model-first diagram language and open standard',
+  title: 'ScratchWeaver — the Diagram Design Notation toolkit from ScratchBird Software Inc.',
   description: 'DDN: author data, format, and view declarations separately in plain-text .ddn files; one semantic model projects into ERDs, flowcharts, charts, timelines, matrices, and 70+ more diagram types. Zero-dependency JavaScript, deterministic SVG, GPL-2.0-or-later.',
   body:
     '<section class="hero"><div class="inner">\n' +
     '  <h1>One semantic model. Every diagram you need.</h1>\n' +
-    '  <p class="pitch">Diagram Design Notation (DDN) is a model-first diagram language and open standard proposal: ' +
+    '  <p class="pitch"><strong>ScratchWeaver</strong> is the Diagram Design Notation (DDN) toolkit from ScratchBird Software Inc. ' +
+    'DDN is a model-first diagram language and open standard proposal: ' +
     'declare data, format, and views separately in plain-text <code>.ddn</code> files, and project one model into ERDs, DFDs, ' +
     'flowcharts, C4 views, matrices, charts, timelines, fishbones, decision tables, wireframes, and dozens more — ' +
     'with a zero-dependency JavaScript runtime and deterministic SVG output.</p>\n' +
@@ -435,7 +467,7 @@ const distRows = fs.readdirSync(path.join(REPO, 'notation/dist')).sort()
   .map(f => '<tr><td><a href="../dist/' + f + '"><code>' + f + '</code></a></td><td>' + fs.statSync(path.join(REPO, 'notation/dist', f)).size + '</td></tr>');
 writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<h1 class="page-title">Download</h1>\n' +
-  '<p class="lede">DDN ' + VERSION + ' is pre-1.0 and <code>private: true</code> — it is not yet published to npm. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site.</p>\n' +
+  '<p class="lede">ScratchWeaver ' + VERSION + ' — the product name of this Diagram Design Notation (DDN) toolkit from ScratchBird Software Inc. — is pre-1.0 and <code>private: true</code> — it is not yet published to npm. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site.</p>\n' +
   '<h2>Clone the repository</h2>\n' +
   '<pre><code>git clone &lt;repo-url&gt; data-design-notation\ncd data-design-notation\nnpm test          # full verification suite, exit 0 expected</code></pre>\n' +
   '<h2>Runtime bundles</h2>\n' +
