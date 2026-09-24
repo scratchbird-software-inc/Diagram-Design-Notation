@@ -10,7 +10,7 @@ import         = "import", string, "as", identifier, ";" ;
 top            = data | format | view ;
 data           = "data", identifier, [ string ], block ;
 format         = "format", identifier, [ string ], block ;
-view           = "view", identifier, [ string ], block ;
+view           = "view", identifier, [ string ], ( block | viewHeader ) ;
 block          = "{", { member }, "}", [ ";" ] ;
 member         = property | declaration | typedDeclaration | compactRelation | relationBatch | contextualMember | targetDeclaration | flowDeclaration | group ;
 property       = identifier, ":", value, ";" ;
@@ -55,6 +55,20 @@ relationBatch  = "relations", verbKeyword, "{", { property | batchEntry }, "}", 
 batchEntry     = identifier, [ string ], reference, [ mark ], "->", reference, [ mark ], ( block | ";" ) ;
 verbKeyword    = identifier ; (* any registry relationship keyword or alias matching identifier *)
 mark           = "[", identifier, "]" ; (* desugars to source_mark / target_mark *)
+(* B1-039 compact authoring, phase 3 (same desugar rule as phases 1–2):
+   one-line view headers. `view erd: @sales as "erd.crowfoot@1";` ≡
+   `view erd { data: [@sales]; projection { kind: graph; profile: "erd.crowfoot@1"; } }`.
+   The datasource is a single reference or an explicit list; the label keeps
+   its existing position after the id. The header supplies data (+ projection
+   when `as` is present) only; an optional body merges exactly like canonical
+   properties/groups. The versioned profile string uniquely identifies the
+   projection kind (verified against registry/profiles/catalogue.json); an
+   unknown or ambiguous profile string is a coded parse error (DDN-E015), and
+   a body projection block/property after `as` conflicts with the header
+   (DDN-E015). Omitting `as` mirrors a view without a projection block
+   exactly (defaults apply at build). *)
+viewHeader     = ":", viewData, [ "as", string ], ( block | ";" ) ;
+viewData       = reference | "[", [ reference, { ",", reference } ], "]" ;
 targetDeclaration = ( "place" | "route" ), reference, block ;
 flowDeclaration = "flow", identifier, [ string ], block ;
 steps          = "steps", ":", reference, { "->", reference }, ";" ;

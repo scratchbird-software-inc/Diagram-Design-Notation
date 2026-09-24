@@ -6,6 +6,45 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Compact authoring, phase 3 (B1-039): one-line view headers, desugared in
+  the parser to the identical canonical view AST (same equivalence gate as
+  phases 1–2: equal `DDN.semanticJSON`, byte-identical SVG, identical
+  validation outcomes) — no IR, renderer or runtime changes beyond the parse
+  path; the use-cases golden renders stay byte-identical.
+  - Header form (D1): `view <id> ["label"] ":" <datasource> ("as" <profile>)?
+    (";" | "{" body "}")` — `view erd: @sales as "erd.crowfoot@1";` ≡
+    `view erd { data: [@sales]; projection { kind: graph;
+    profile: "erd.crowfoot@1"; } }`. The datasource is `@name` or an explicit
+    list `[@a, @b]`; the label keeps its existing position after the id. An
+    optional body merges exactly like canonical properties and groups; the
+    header supplies data + projection only.
+  - Profile implies kind (D2): verified against
+    `standard/registry/profiles/catalogue.json` — 98 profiles, no duplicate
+    ids, every versioned profile string maps to exactly one projection kind
+    (shared stems like `uml.usecase@1`/`uml.usecase@2` stay unambiguous). The
+    expansion sets `projection.kind` from the registered kind; an unknown or
+    ambiguous profile string in a header is a coded parse error (DDN-E015),
+    never a guess.
+  - Default behaviour (D3): omitting `as` mirrors a view without a projection
+    block exactly — defaults apply at build, unchanged.
+  - Conflicts (D4): a body `projection {…}` block or `projection:` property
+    after a header `as` is a coded parse error (DDN-E015, new ceiling; prior
+    ceilings DDN-E014/W016/ISO152/ISOW02 confirmed by grep); a body `data:`
+    property stays a plain duplicate (DDN011).
+  - Normalization (D5): `tools/normalize-ddn.mjs` unchanged — it never
+    rewrites verbose↔compact headers; `tests/normalize-ddn.js` proves header
+    preservation with pin stripping intact.
+  - Equivalence gate (`notation/tests/compact-authoring.js`, now 54 tests):
+    single/multiple data sources, with/without profile, label position,
+    header+body merge, conflict and unknown-profile errors, a registry-
+    generated test covering EVERY registered profile's kind mapping, and an
+    authoring label-edit round-trip on the header form. The paired
+    compact/verbose fixtures and the `12-nested-fields.ddn` teaching example
+    each gained a header-form view.
+  - Docs: `view`/`viewHeader` productions in `standard/grammar/ddn.ebnf`, a
+    "Compact authoring (phase 3)" section in spec chapter 01, the
+    AI-REFERENCE authoring guide, and this entry.
+
 - Compact authoring, phase 2 (B1-038): verb-keyword relations and named
   relation batches, desugared in the parser to the identical canonical
   relation AST (same equivalence gate as phase 1: equal `DDN.semanticJSON`,

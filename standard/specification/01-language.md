@@ -114,6 +114,27 @@ relations depends {
 
 expands to one canonical `relation` per entry with the kind taken from the batch header. Batch-shared properties merge UNDER per-entry properties — per-entry wins on conflict, the same precedence idiom as format overrides. Every entry carries its own id, label and endpoints (bracket marks allowed), so identity is never positional and legend keys, routes and references address entries by their own ids. The header fixes the kind, so `kind:` in a shared or entry position is a duplicate property (DDN011). The header word must be a relationship keyword or declared alias; `relations` followed by anything else is not a batch, and a `relations:` property inside a data block keeps its property meaning. Anonymous arrow chains are deliberately NOT part of this form.
 
+## Compact authoring (phase 3)
+
+One-line view headers follow the same desugar contract: the parser expands the header to the identical canonical view declaration, so `DDN.semanticJSON`, rendered SVG and validation outcomes are indistinguishable from the verbose form.
+
+```ddn
+view erd: @sales as "erd.crowfoot@1";
+```
+
+is exactly `view erd { data: [@sales]; projection { kind: graph; profile: "erd.crowfoot@1"; } }`. The datasource is a single reference or an explicit list (`view both: [@orders, @customers] as "ddn@1";`), and the optional label keeps its existing position after the id (`view erd "Sales ERD": @sales as "erd.crowfoot@1";`). The header supplies `data` — and `projection` when `as` is present — only; an optional body still merges exactly like canonical properties and groups:
+
+```ddn
+view erd: @sales as "erd.crowfoot@1" {
+ format: @styles.technical;
+ layout { algorithm: layered; }
+}
+```
+
+Profile implies kind. The versioned profile string uniquely identifies the projection kind — verified against `registry/profiles/catalogue.json`: every registered profile id maps to exactly one projection (`erd.crowfoot@1` → `graph`), including profiles that share a stem (`uml.usecase@1`, `uml.usecase@2`). The expansion sets `projection.kind` from the profile's registered kind; an unknown or ambiguous profile string in a header is a coded parse error (DDN-E015), never a guess — write the canonical `projection` block for unregistered profiles. Omitting `as` mirrors the default-profile behaviour exactly: no projection block is created and the documented defaults apply at build.
+
+Conflicts. The header owns the projection when `as` is present, so a body `projection {…}` block or `projection:` property is a coded parse error (DDN-E015) — write either the header form or the canonical projection, not both. A body `data:` property after a header datasource stays a plain duplicate property (DDN011). As with phases 1–2, the normalizer never rewrites verbose↔compact headers; authoring edits stay token-precise on the header form.
+
 
 ## Recursive members
 

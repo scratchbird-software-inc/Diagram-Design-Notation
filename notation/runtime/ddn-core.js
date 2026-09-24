@@ -102,6 +102,38 @@ import RegistryCatalogue from './assets/catalogue.js';
     }
     return map;
   }
+  /* B1-039 compact authoring, phase 3 (D1–D5). One-line view headers desugar
+   * in the parser to the IDENTICAL canonical view AST; no IR, runtime or
+   * renderer changes.
+   * D1: `view <id> ["label"] ":" <datasource> ("as" <profile>)? (";"|"{…}")`
+   *   view erd: @sales as "erd.crowfoot@1";
+   *   ≡ view erd { data: [@sales]; projection { kind: graph; profile: "erd.crowfoot@1"; } }
+   * The datasource is `@name` or an explicit list `[@a, @b]`; the label keeps
+   * its existing position after the id. The header supplies data (+projection
+   * when `as` is given) only; an optional body merges exactly like canonical
+   * properties/groups.
+   * D2: the versioned profile string uniquely identifies the projection kind
+   * (verified against standard/registry/profiles/catalogue.json: 98 profiles,
+   * no duplicate ids, every id maps to exactly one projection). An unknown or
+   * ambiguous profile string in a header is a coded parse error (DDN-E015) —
+   * never a guess, because the canonical form derives kind from the registry.
+   * D3: omitting `as` mirrors a view without a projection block exactly — the
+   * default profile applies at build (DEFAULTS.projection), unchanged.
+   * D4: a body `projection` block or `projection:` property after a header
+   * `as` conflicts with the header — coded parse error DDN-E015; a body
+   * `data:` property stays a plain duplicate (DDN011).
+   * D5: normalize tool unchanged (canonical-verbose output; compact input
+   * preserved). */
+  let defaultProfileKinds=null;
+  function projectionProfileKinds(){
+    if(defaultProfileKinds)return defaultProfileKinds;
+    const map=new Map();
+    for(const p of Profiles.catalogue.profiles){
+      if(map.has(p.id)){if(map.get(p.id)!==p.projection)map.set(p.id,null);}
+      else map.set(p.id,p.projection);
+    }
+    return defaultProfileKinds=map;
+  }
   function parse(text, source='input.ddn', kindWords=null, relWords=null) {
     const tokens=lex(text,source);let pos=0,depth=0;
     const typedKinds=kindWords||(defaultTypedKinds||(defaultTypedKinds=typedKindWords(null)));
@@ -119,7 +151,7 @@ import RegistryCatalogue from './assets/catalogue.js';
       while(peek().type!=='}'){
         if(peek().type==='eof')fail('DDN010','Missing closing brace',peek(),source);
         const t=expect('id');
-        if(peek().type===':'){take();if(Object.hasOwn(node.props,t.value))fail('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail('DDN008','Reserved key',t,source);node.props[t.value]=value();
+        if(peek().type===':'){take();if(t.value==='projection'&&node.headerProjection)fail('DDN-E015','Body projection property conflicts with the `as` profile in the view header; write either the header form or the canonical projection, not both',t,source);if(Object.hasOwn(node.props,t.value))fail('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail('DDN008','Reserved key',t,source);node.props[t.value]=value();
           // B1-033: a flow block's steps chain reads `@a -> @b -> @c` as one ordered step list.
           if(t.value==='steps'){while(peek().type==='->'){take();node.props.steps=[...(Array.isArray(node.props.steps)?node.props.steps:[node.props.steps]),value()];}}
           expect(';');}
@@ -129,6 +161,8 @@ import RegistryCatalogue from './assets/catalogue.js';
           relationBatch(node);
         else if(!node.group&&node.type==='data'&&peek().type==='id'&&(typedKinds.has(t.value)||relationKinds.has(t.value)))
           node.children.push(compactDataDeclaration(t));
+        else if(node.headerProjection&&peek().type==='{'&&t.value==='projection')
+          fail('DDN-E015','Body projection block conflicts with the `as` profile in the view header; write either the header form or the canonical projection, not both',t,source);
         else node.children.push(declaration(t));
       }
       node.bodyEnd=peek().start;node.end=take().end;depth--;if(peek().type===';')node.end=take().end;return node;
@@ -198,10 +232,31 @@ import RegistryCatalogue from './assets/catalogue.js';
       if(peek().type==='{'){n.group=true;n.id=n.type;return body(n);}
       n.id=expect('id').value;
       if(peek().type==='string')n.label=take().value;
+      if(n.type==='view'&&peek().type===':')return viewHeader(n);
       if(peek().type==='@'){n.from=ref();expect('->');n.to=ref();}
       if(peek().type===';'){n.end=take().end;return n;}
       return body(n);
     }
+    // B1-039 D1/D2: compact view header. Sets props.data (a single reference
+    // or an explicit list) and, when `as` is present, a projection group child
+    // identical to the canonical `projection { kind: …; profile: …; }` block.
+    function viewHeader(n){
+      take();
+      if(peek().type==='['){const t=peek();const a=[];if(++depth>80)fail('DDN007','Maximum nesting exceeded',t,source);
+        take();while(peek().type!==']'){a.push(headerRef());if(peek().type!==',')break;take();}expect(']');depth--;n.props.data=a;}
+      else n.props.data=[headerRef()];
+      if(peek().type==='id'&&peek().value==='as'){
+        take();const t2=expect('string'),profile=t2.value,kind=projectionProfileKinds().get(profile);
+        if(kind===undefined)fail('DDN-E015',`Unknown diagram profile ${JSON.stringify(profile)} in view header; the header form derives projection.kind from the registry, so the profile must be registered (or write the canonical projection block)`,t2,source);
+        if(kind===null)fail('DDN-E015',`Ambiguous diagram profile ${JSON.stringify(profile)} in view header; the registry maps it to more than one projection kind — write the canonical projection block instead`,t2,source);
+        const g={type:'projection',group:true,id:'projection',label:null,props:Object.create(null),children:[],start:t2.start,source};
+        g.props.kind=kind;g.props.profile=profile;n.children.push(g);n.headerProjection=true;
+      }
+      if(peek().type===';'){n.end=take().end;return n;}
+      if(peek().type==='{')return body(n);
+      fail('DDN010',`Expected ; or block after view header`,peek(),source);
+    }
+    function headerRef(){if(peek().type!=='@')fail('DDN010','Expected a @data reference in the view header',peek(),source);return ref();}
     expect('id','ddn');let version=expect('string').value;expect(';');
     if(!SOURCE_VERSIONS.includes(version))fail('DDN012',`Unsupported language version ${version}; expected ${SOURCE_VERSIONS.join(', ')}`,tokens[1],source);
     const imports=[],sections=[],declarations=[];
@@ -600,6 +655,6 @@ import RegistryCatalogue from './assets/catalogue.js';
     return {ir,workspace:ws,viewNode:view};
   }
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
   publishNamespace('DDN',api);
   export default api;

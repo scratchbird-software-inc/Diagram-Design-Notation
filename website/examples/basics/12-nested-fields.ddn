@@ -1,11 +1,12 @@
 ddn "0.5";
 module "ddn.examples.nested";
 import "shared.ddn" as shared;
-// Teaching example for compact authoring (phases 1–2): kind keywords act as
+// Teaching example for compact authoring (phases 1–3): kind keywords act as
 // declaration keywords, field/port keywords may be omitted inside
 // fields {}/ports {} blocks, relationship keywords act as relation verbs with
-// optional [mark] brackets, and `relations <kind> { … }` batches expand to one
-// relation per entry. All forms desugar to the identical canonical
+// optional [mark] brackets, `relations <kind> { … }` batches expand to one
+// relation per entry, and one-line view headers expand to canonical
+// data + projection. All forms desugar to the identical canonical
 // declarations — the verbose equivalents are shown in comments.
 data model {
  domain identifier "Customer identifier" { meaning: "Opaque identifier within the customer registry"; }
@@ -54,5 +55,12 @@ view collapsed "Hidden nested rows / preserved endpoint identities" {
  data: [@model]; format: @shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
  display {depth: 0;fields: names;}
  layout {algorithm: layered;}
+ publication {size: content;fit: none;overflow: error;}
+}
+// verbose: view header "One-line header / compact view declaration" {
+//   data: [@model]; projection { kind: graph; profile: "ddn@1"; }
+//   select: [@model.order,@model.customer]; … }
+view header "One-line header / compact view declaration": @model as "ddn@1" {
+ format: @shared.styles.technical; select: [@model.order,@model.customer];
  publication {size: content;fit: none;overflow: error;}
 }

@@ -41,3 +41,9 @@ view subset "Subset" {
  data: [@model];
  select: [@model.customer, @model.inbound, @model.events];
 }
+view header "Header form" {
+ data: [@model];
+ projection { kind: graph; profile: "ddn@1"; }
+ select: [@model.customer];
+ publication { size: content; fit: none; }
+}

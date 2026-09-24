@@ -69,3 +69,29 @@ view v { data: [@m]; layout { frame_overflow: expand; } }
   }
   console.log('PASS normalize preserves compact authoring syntax (strips pins only)');
 }
+/* B1-039 D5: one-line view headers are an author choice too. The normalizer
+ * strips default-equal pins in a header view's body but never expands the
+ * header to the canonical data + projection form. */
+{
+  const fs = require('node:fs'), os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ddn-norm-viewhdr-'));
+  const file = path.join(dir, 'fixture.ddn');
+  const compact = `ddn "0.5";
+module "tests.norm.viewhdr";
+data m { table customer "Customer" { fields { id; } } }
+view erd "ERD": @m as "erd.crowfoot@1" { layout { frame_overflow: expand; } }
+view plain: @m;
+`;
+  fs.writeFileSync(file, compact);
+  const run = cp.spawnSync(process.execPath, [path.join(root, 'tools/normalize-ddn.mjs'), file], { encoding: 'utf8' });
+  if (run.status !== 0) { console.error('FAIL normalize view-header preservation:', run.stderr.trim() || run.stdout.trim()); process.exit(1); }
+  const out = fs.readFileSync(file, 'utf8');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const headerKept = out.includes('view erd "ERD": @m as "erd.crowfoot@1"') && out.includes('view plain: @m;');
+  const notRewritten = !out.includes('data: [@m]') && !out.includes('projection');
+  const pinStripped = !out.includes('frame_overflow');
+  if (!headerKept || !notRewritten || !pinStripped) {
+    console.error('FAIL normalize view-header preservation:', JSON.stringify({ headerKept, notRewritten, pinStripped }), '\n' + out); process.exit(1);
+  }
+  console.log('PASS normalize preserves compact view headers (strips pins only)');
+}

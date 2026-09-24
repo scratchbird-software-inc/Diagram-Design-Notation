@@ -52,7 +52,7 @@ test('typed declaration without body desugars like verbose semicolon form', () =
 const fx = path.join(__dirname, 'fixtures', 'compact');
 const compact = fs.readFileSync(path.join(fx, 'model-compact.ddn'), 'utf8');
 const verbose = fs.readFileSync(path.join(fx, 'model-verbose.ddn'), 'utf8');
-for (const view of ['main', 'subset'])
+for (const view of ['main', 'subset', 'header'])
   test('equivalence gate: paired fixture corpus, view ' + view, () => {
     const a = DDN.build({ 'verbose.ddn': verbose }, 'verbose.ddn', view, reg);
     const b = DDN.build({ 'compact.ddn': compact }, 'compact.ddn', view, reg);
@@ -117,9 +117,10 @@ test('basics 12-nested-fields compact example equals verbose expansion', () => {
   const files = {}; for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.ddn'))) files[f] = fs.readFileSync(path.join(dir, f), 'utf8');
   const twin = files['12-nested-fields.ddn']
     .replace('collection customer "Customer profile / nested structure" {', 'object customer "Customer profile / nested structure" { kind: collection;')
-    .replace('table order "Order" {fields {order_id; customer_id', 'object order "Order" {kind: table; fields {field order_id; field customer_id');
+    .replace('table order "Order" {fields {order_id; customer_id', 'object order "Order" {kind: table; fields {field order_id; field customer_id')
+    .replace('view header "One-line header / compact view declaration": @model as "ddn@1" {', 'view header "One-line header / compact view declaration" { data: [@model]; projection { kind: graph; profile: "ddn@1"; }');
   assert.notEqual(twin, files['12-nested-fields.ddn'], 'twin mutation targets missing');
-  for (const view of ['detailed', 'large', 'collapsed']) {
+  for (const view of ['detailed', 'large', 'collapsed', 'header']) {
     const a = DDN.build({ ...files, 'twin.ddn': twin }, 'twin.ddn', view, reg);
     const b = DDN.build(files, '12-nested-fields.ddn', view, reg);
     assert.deepEqual(DDN.semanticJSON(b.ir), DDN.semanticJSON(a.ir));
@@ -299,6 +300,121 @@ test('authoring addField emits canonical-verbose member into a compact block (le
   assert.ok(text.includes('field loyalty "Loyalty";'), text.slice(0, 600));
   const ir = w.resolve('main.ddn', 'main');
   assert.ok(ir.elements.find(n => n.ref === 'model.customer').fields.some(f => f.local === 'loyalty'));
+});
+
+/* ---- B1-039 phase 3: compact view headers (D1–D5) ---- */
+
+/* D2 verification, generated from the registry: EVERY registered profile id
+ * maps to exactly one projection kind, and the header desugar sets
+ * projection.kind from that mapping. */
+test('every registered profile maps to exactly one projection kind (D2, generated from the catalogue)', () => {
+  const cat = JSON.parse(fs.readFileSync(path.join(root, '../standard/registry/profiles/catalogue.json'), 'utf8'));
+  assert.equal(new Set(cat.profiles.map(p => p.id)).size, cat.profiles.length, 'duplicate profile ids in the registry');
+  const kinds = DDN.projectionProfileKinds();
+  assert.equal(kinds.size, cat.profiles.length, 'runtime profile map disagrees with the registry');
+  for (const p of cat.profiles) {
+    const doc = DDN.parse(`ddn "0.5"; module "t"; data m {} view v: @m as ${JSON.stringify(p.id)};`);
+    const g = doc.declarations.find(n => n.type === 'view').children.find(c => c.group && c.type === 'projection');
+    assert.ok(g, p.id + ': header did not desugar to a projection group');
+    assert.equal(g.props.kind, p.projection, p.id + ': kind mapping drift');
+    assert.equal(g.props.profile, p.id);
+  }
+});
+
+/* Equivalence gate: the example from the proposal — single source + profile. */
+test('equivalence gate: header with profile ≡ canonical data + projection', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { table customer { fields { id; } } table order { fields { oid; cid; } } ref owner @order.cid [one] -> @customer.id [zeromany] {} } view erd: @m as "erd.crowfoot@1";',
+    'ddn "0.5"; module "t"; data m { table customer { fields { id; } } table order { fields { oid; cid; } } ref owner @order.cid [one] -> @customer.id [zeromany] {} } view erd { data: [@m]; projection { kind: graph; profile: "erd.crowfoot@1"; } }',
+    'erd', 'header single source with profile');
+});
+
+/* Equivalence gate: multiple data sources in the explicit list form. */
+test('equivalence gate: header with an explicit data-source list', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data a { table x {} } data b { table y {} } view both: [@a, @b] as "ddn@1";',
+    'ddn "0.5"; module "t"; data a { table x {} } data b { table y {} } view both { data: [@a, @b]; projection { kind: graph; profile: "ddn@1"; } }',
+    'both', 'header list form');
+});
+
+/* D3: omitting `as` mirrors the default-profile behaviour exactly — no
+ * projection block at all, defaults apply at build. */
+test('equivalence gate: header without `as` ≡ view without projection (D3)', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { table t1 { fields { id; } } } view v: @m;',
+    'ddn "0.5"; module "t"; data m { table t1 { fields { id; } } } view v { data: [@m]; }',
+    'v', 'header without profile');
+  const ir = build('ddn "0.5"; module "t"; data m { table t1 {} } view v: @m;').ir;
+  assert.deepEqual(ir.view.profiles.projection, { kind: 'graph', profile: 'ddn@1' });
+});
+
+/* D1: the label keeps its existing position after the id. */
+test('equivalence gate: header with label, datasource and profile', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { table t1 {} } view v "Label": @m as "ddn@1";',
+    'ddn "0.5"; module "t"; data m { table t1 {} } view v "Label" { data: [@m]; projection { kind: graph; profile: "ddn@1"; } }',
+    'v', 'header with label');
+});
+
+/* D4: an optional body merges exactly like canonical properties/groups; the
+ * header supplies data + projection only. */
+test('equivalence gate: header + body merge (D4)', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { table customer { fields { id; } } table order { fields { oid; } } } view v: @m as "ddn@1" { select: [@m.customer]; layout { algorithm: layered; } publication { size: content; fit: none; } }',
+    'ddn "0.5"; module "t"; data m { table customer { fields { id; } } table order { fields { oid; } } } view v { data: [@m]; projection { kind: graph; profile: "ddn@1"; } select: [@m.customer]; layout { algorithm: layered; } publication { size: content; fit: none; } }',
+    'v', 'header with body merge');
+});
+
+/* D4 conflicts: the header owns the projection when `as` is present, so a body
+ * projection block or property is a coded parse error (DDN-E015) — never a
+ * silent override; a body data: property stays a plain duplicate (DDN011). */
+test('header + body projection conflict is a coded parse error (DDN-E015)', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m as "ddn@1" { projection { kind: graph; } }'), e => e.code === 'DDN-E015');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m as "ddn@1" { projection: @fmt.projection; }'), e => e.code === 'DDN-E015');
+});
+test('unknown profile in a header is a coded parse error, never a guess (D2)', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m as "nope@9";'), e => e.code === 'DDN-E015');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m as "erd.crowfoot";'), e => e.code === 'DDN-E015');
+});
+test('header desugared projection group never carries an ambiguous kind (D2)', () => {
+  for (const [id, kind] of DDN.projectionProfileKinds()) assert.ok(kind !== null, id + ' is ambiguous in the registry');
+});
+test('body data: after a header datasource is a duplicate property (DDN011)', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m { data: [@m]; }'), e => e.code === 'DDN011');
+});
+test('header requires a datasource and a terminator (DDN010)', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: ;'), e => e.code === 'DDN010');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m'), e => e.code === 'DDN010');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m as;'), e => e.code === 'DDN010');
+});
+
+/* Header form works for a non-default kind mapping too (uml.usecase@1 and
+ * uml.usecase@2 share a stem but versioned ids stay unambiguous). */
+test('versioned profile strings disambiguate shared stems (uml.usecase@1/@2)', () => {
+  const kinds = DDN.projectionProfileKinds();
+  assert.equal(kinds.get('uml.usecase@1'), 'graph');
+  assert.equal(kinds.get('uml.usecase@2'), 'graph');
+  const doc = DDN.parse('ddn "0.5"; module "t"; data m {} view v: @m as "uml.usecase@2";');
+  assert.equal(doc.declarations.find(n => n.type === 'view').children[0].props.profile, 'uml.usecase@2');
+});
+
+/* A header-form view that renders a real non-default profile end to end. */
+test('equivalence gate: crowfoot header renders byte-identically', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { table a { fields { id; } } table b { fields { id; aid; } } assoc link @b.aid [zeromany] -> @a.id [one] {} } view erd: @m as "erd.crowfoot@1" { publication { size: content; fit: none; } }',
+    'ddn "0.5"; module "t"; data m { table a { fields { id; } } table b { fields { id; aid; } } assoc link @b.aid [zeromany] -> @a.id [one] {} } view erd { data: [@m]; projection { kind: graph; profile: "erd.crowfoot@1"; } publication { size: content; fit: none; } }',
+    'erd', 'crowfoot header with body');
+});
+
+/* Authoring edits stay token-precise on the header form. */
+test('authoring label edit preserves the compact view header syntax', () => {
+  const w = A.createWorkspace({ 'main.ddn': 'ddn "0.5"; module "t"; data m { table t1 {} } view v: @m as "ddn@1";\nview w2 "W" { data: [@m]; }' });
+  const b = DDN.build(w.getFiles(), 'main.ddn', 'v', reg);
+  A.authoring.setLabel(w, 'main.ddn', 'v', 't::v', 'Header view');
+  const text = w.getFiles()['main.ddn'];
+  assert.ok(text.includes('view v "Header view": @m as "ddn@1";'), 'header corrupted: ' + text);
+  const r = w.renderSync({ entry: 'main.ddn', view: 'v' });
+  assert.ok(r.svg.startsWith('<?xml'));
 });
 
 const failed = results.filter(x => x.status === 'fail');

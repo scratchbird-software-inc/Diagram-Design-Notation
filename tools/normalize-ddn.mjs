@@ -227,7 +227,7 @@ function normalizeFile(abs) {
           bump(node.type, p.key);
         }
       }
-      if (node.type === 'view') {
+      if (node.type === 'view' && node.bodyStart !== undefined) {
         for (const p of propEntries(text, tokens, node)) {
           if (p.key !== 'spacing' || p.value !== 'normal') continue;
           const keep = keepReason(abs, node, 'spacing');
