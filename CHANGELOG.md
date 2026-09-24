@@ -6,6 +6,32 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Keyed transactional data refresh (B1-029): `ws.replaceData(name, records)`
+  is now keyed and transactional, fixing five externally reported refresh
+  bugs. (D1) Records match by an optional refresh-level `key` field naming
+  the declaration id, so reordered payloads no longer reassign values to the
+  wrong identities; the no-keys fallback remains positional and is documented
+  as order-sensitive. (D2) Membership is re-resolved after refresh:
+  selector-membership views (`data: [@metrics]`) pick up added records while
+  explicit-membership views keep exactly their bound records — by design, now
+  reported via a `DDN-W015` warning carrying `addedRecordsNotVisible`. (D3)
+  Commit is transactional: incoming field values are checked against the
+  block's inferred field types and every affected view is validated on the
+  candidate source before commit; on failure nothing commits and the result
+  carries structured `DDN-E012` diagnostics naming the view, record key,
+  field and failure. (D4) Removing a record a view still references is
+  rejected transactionally (`removed-record-referenced`) instead of breaking
+  the next render. (D5) A block may be refreshed to empty; selector views
+  render an empty canvas, and charts/tables authored with an intentionally
+  empty `records: []` render an empty plot with axes (bar/line/area/point) or
+  a header-only table — filter-to-empty still fails `DDN-PJ012`. (D6) The
+  result object is now `{ committed, revision, added, removed, updated,
+  diagnostics }`, a strict superset of the previous `{revision, diagnostics}`
+  (backward compatible). New codes `DDN-E012`, `DDN-W015`. See
+  `standard/specification/20-projection-sdk-and-editing.md` (data refresh),
+  `website/docs/developers/data-refresh.md`, the extended
+  `website/examples/embed/data-refresh.html`, and the regression suite
+  `notation/tests/data-refresh.js`.
 - Fixed fresh-checkout CI (B1-028): the use-case golden fixtures under
   `website/examples/use-cases/rendered/` are now committed — the bare
   `rendered/` gitignore rule that excluded them was removed and the

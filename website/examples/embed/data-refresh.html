@@ -3,36 +3,53 @@
 <link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
-<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer}</style>
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e;white-space:pre-wrap}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer;margin:0 6px 6px 0}</style>
 <h1>Data refresh — <code>ws.replaceData(name, records)</code></h1>
-<p>B1-006 browser proof over the minified production builds <code>ddn-core.min.js</code> + <code>ddn-graph.min.js</code> + <code>ddn-projections.min.js</code> only.
-The button swaps the records of the <code>metrics</code> data block and re-renders in place — model, view and
-layout structure are untouched (source: an inlined copy of <code>examples/basics/59-data-refresh.ddn</code>).</p>
+<p>Browser proof over the minified production builds <code>ddn-core.min.js</code> + <code>ddn-graph.min.js</code> + <code>ddn-projections.min.js</code> only.
+The buttons exercise the keyed transactional refresh contract (B1-029) on the <code>metrics</code> data block and re-render in place —
+model, view and layout structure are untouched (source: an inlined copy of <code>examples/basics/59-data-refresh.ddn</code>).
+Records match by their <code>key</code> field, so the reorder button proves identity preservation; the chart binds records
+explicitly, so added records are reported (<code>DDN-W015 addedRecordsNotVisible</code>) and removing a bound record is rejected
+(<code>DDN-E012</code>) with the source untouched.</p>
 <script src="../../dist/ddn-core.min.js"></script>
 <script src="../../dist/ddn-graph.min.js"></script>
 <script src="../../dist/ddn-projections.min.js"></script>
 <div id="status" class="status">running…</div>
-<button id="swap">Swap data</button>
+<button id="swap">Swap values (keyed)</button>
+<button id="reorder">Reorder (keyed)</button>
+<button id="add">Add Delta</button>
+<button id="removeBound">Remove bound record (rejected)</button>
+<button id="empty">Empty refresh (rejected here)</button>
 <div id="out"></div>
 <script>
 const files={
   "59-data-refresh.ddn": "ddn \"0.5\";\nmodule \"ddn.examples.data-refresh\";\n\ndata metrics {\n    object m1 \"Alpha\" { kind: record; x_record: { label: \"Alpha\", value: 10, unit: \"ms\" }; }\n    object m2 \"Beta\" { kind: record; x_record: { label: \"Beta\", value: 20, unit: \"ms\" }; }\n    object m3 \"Gamma\" { kind: record; x_record: { label: \"Gamma\", value: 15, unit: \"ms\" }; }\n    relation trend \"Alpha drives Beta\" @m1 -> @m2 { kind: flow; }\n    relation feed \"Beta feeds Gamma\" @m2 -> @m3 { kind: flow; }\n}\n\nview latency_chart \"Latency / chart\" {\n    data: [@metrics];\n    projection { kind: chart; profile: \"chart.basic@1\"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: \"x_record.label\"; y: \"x_record.value\"; unit: \"ms\"; width: 900px; height: 560px; }\n    publication { size: content; fit: none; }\n}\n"
 };
 const ws=DDNLive.createWorkspace(files),out=document.querySelector('#out'),status=document.querySelector('#status');
-const datasets=[
-  [{label:'Alpha',value:10,unit:'ms'},{label:'Beta',value:20,unit:'ms'},{label:'Gamma',value:15,unit:'ms'}],
-  [{label:'Alpha',value:16,unit:'ms'},{label:'Beta',value:8,unit:'ms'},{label:'Gamma',value:20,unit:'ms'}]
+const base=[
+  {key:'m1',label:'Alpha',value:10,unit:'ms'},
+  {key:'m2',label:'Beta',value:20,unit:'ms'},
+  {key:'m3',label:'Gamma',value:15,unit:'ms'}
+];
+const swapped=[
+  {key:'m1',label:'Alpha',value:16,unit:'ms'},
+  {key:'m2',label:'Beta',value:8,unit:'ms'},
+  {key:'m3',label:'Gamma',value:20,unit:'ms'}
 ];
 let current=0;
-function draw(){
+function draw(note){
   const r=ws.renderSync({entry:'59-data-refresh.ddn',view:'latency_chart'});
   out.innerHTML=r.svg;
-  status.textContent='revision '+ws.revision+' · dataset '+current+' · '+r.svg.length+' SVG bytes · DDNLive '+DDNLive.VERSION;
+  status.textContent='revision '+ws.revision+' · '+note+' · DDNLive '+DDNLive.VERSION;
 }
-document.querySelector('#swap').addEventListener('click',()=>{
-  current=1-current;
-  ws.replaceData('metrics',datasets[current]);
-  draw();
-});
-draw();
+function refresh(rows,label){
+  const result=ws.replaceData('metrics',rows);
+  draw(label+' → '+JSON.stringify(result));
+}
+document.querySelector('#swap').addEventListener('click',()=>{current=1-current;refresh(current?swapped:base,'swap values');});
+document.querySelector('#reorder').addEventListener('click',()=>refresh([base[2],base[0],base[1]],'reorder (identity preserved)'));
+document.querySelector('#add').addEventListener('click',()=>refresh([...base,{key:'m4',label:'Delta',value:12,unit:'ms'}],'add Delta (DDN-W015 expected)'));
+document.querySelector('#removeBound').addEventListener('click',()=>refresh([base[0],base[2]],'remove m2 (rejected, nothing commits)'));
+document.querySelector('#empty').addEventListener('click',()=>refresh([],'empty refresh (rejected: chart binds m1..m3)'));
+draw('initial render');
 </script></html>

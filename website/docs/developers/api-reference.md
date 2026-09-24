@@ -170,16 +170,24 @@ const off = ws.subscribe(({ revision, changedFiles }) => {
 
 ### `replaceData(name, records)`
 
-`ws.replaceData(name, records): { revision, diagnostics }` — replace the
-records of a named `data` block, leaving every other byte of the source
-untouched (B1-006). Records must carry the same keys as the block's existing
-first record, or the call throws `DDN-E011`. See
-[data-refresh.md](data-refresh.md) for the dashboard recipe.
+`ws.replaceData(name, records): { committed, revision, added, removed, updated, diagnostics }`
+— replace the records of a named `data` block, leaving every other byte of
+the source untouched (B1-006; keyed transactional contract since B1-029).
+Records must carry the same field keys as the block's existing first record,
+or the call throws `DDN-E011`. An optional per-record `key` field matches
+records to declaration ids, so reordering never reassigns values to the wrong
+identity; without keys, matching is positional and order-sensitive. The
+refresh is transactional: on any validation failure `committed` is `false`,
+the source is byte-untouched, and `diagnostics` names the view, record key
+and failure (`DDN-E012`); added records invisible to explicit-membership
+views are reported via `DDN-W015`. See
+[data-refresh.md](data-refresh.md) for the full contract and the dashboard
+recipe.
 
 ```js
 ws.replaceData("metrics", [
-  { label: "Alpha", value: 16, unit: "ms" },
-  { label: "Beta",  value: 8,  unit: "ms" }
+  { key: "m1", label: "Alpha", value: 16, unit: "ms" },
+  { key: "m2", label: "Beta",  value: 8,  unit: "ms" }
 ]);
 ```
 

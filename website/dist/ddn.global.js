@@ -257,7 +257,7 @@
    const resolve=(x,type='element')=>{const n=(type==='relation'?byRel:byId).get(ref$1(x));if(!n)fail('DDN-PJ007','Projection reference is outside its data scope: '+ref$1(x));if(type==='element'&&!shown.has(n.id))fail('DDN-PJ008','Projection binds an excluded/not-selected element: '+n.id);return n;};
    const list=(a,name)=>{if(!Array.isArray(a)||!a.length||a.length>500)fail('DDN-PJ009',name+' needs 1..500 explicit references');const ns=a.map(x=>resolve(x));if(new Set(ns.map(n=>n.id)).size!==ns.length)fail('DDN-PJ009','Duplicate '+name+' identity');return ns;};
    const textValue=(n,key,defaultValue)=>{const v=get$1(n,key);if(v===undefined&&defaultValue!==undefined)return defaultValue;if(typeof v!=='string'&&typeof v!=='number'&&typeof v!=='boolean')fail('DDN-PJ010',key+' must supply a scalar value',n);return v;};
-   const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get$1(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
+   const filtered=()=>{const declaredEmpty=Array.isArray(p.records)&&p.records.length===0&&(kind==='chart'||kind==='table');let ns=declaredEmpty?[]:list(p.records,'records');if(p.filter){if(declaredEmpty)fail('DDN-PJ011','A filter cannot apply to an intentionally empty records declaration');const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get$1(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(declaredEmpty)fail('DDN-PJ011','An order cannot apply to an intentionally empty records declaration');if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length&&!declaredEmpty)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
    if(kind==='fishbone')return api$j.fishbone(ir,ErrorClass,get$1);
    if(kind==='decision')return api$j.decision(ir,ErrorClass,get$1);
    if(kind==='chart'&&api$j.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble','heatmap','densityheatmap','calendar','parallelcoords','wordcloud','arc','force','edgebundle'].includes(p.mark))return api$j.chart(ir,ErrorClass,get$1);
@@ -445,7 +445,15 @@
     if(DIST1D.includes(p.mark)&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Distribution marks measure raw records; aggregation is not available');
     if(p.missing!==undefined&&!['error','skip'].includes(p.missing))fail('DDN-PJ019','Chart missing policy is error or skip');
     if(p.inner_radius!==undefined&&(!Number.isFinite(p.inner_radius)||p.inner_radius<0||p.inner_radius>=.9))fail('DDN-PJ030','inner_radius is a radius fraction 0..0.9 exclusive');
-    let points=[],skipped=[];for(const n of filtered()){
+    const chartRecords=filtered();
+    if(!chartRecords.length){
+     // D5 empty state: an intentionally empty records declaration renders an empty plot
+     // with axes (UNKNOWN-not-zero; no marks are fabricated) for cartesian marks only.
+     if(!['bar','line','area','point'].includes(p.mark))fail('DDN-PJ009','An intentionally empty records declaration is supported for bar/line/area/point charts and tables only; '+p.mark+' needs 1..500 explicit references');
+     if(p.mark==='point'&&(p.x_type||'category')!=='number')fail('DDN-PJ030','Scatter/bubble requires x_type:number');
+     return {kind,profile:p.profile,mark:p.mark,points:[],skipped:[],empty:true,sourceIds:[],xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
+    }
+    let points=[],skipped=[];for(const n of chartRecords){
      let x=get$1(n,p.x),y=DIST1D.includes(p.mark)?1:(p.mark==='candlestick'?undefined:get$1(n,p.y)),ohlc=null;
      if(p.mark==='candlestick'){const o=get$1(n,p.open),h=get$1(n,p.high),l=get$1(n,p.low),c=get$1(n,p.close);ohlc={o,h,l,c};y=c;}
      if((x===undefined||x===null||y===undefined||y===null)&&p.missing==='skip'){skipped.push(n.id);continue;}
@@ -3688,7 +3696,11 @@
    const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
    if(plan.kind==='chart'&&!qualityBody){
     H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s,right=W-55*s,plotH=bottom-top,plotW=right-left;
-    if(['pie','donut'].includes(plan.mark)){
+    if(plan.empty){
+     body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+     body+=text(left+plotW/2,top+plotH/2,'0 records · intentionally empty data set',12,400,'middle');
+     body+=text(left,H-15*s,'Source-bound '+plan.mark+' · 0 marks · the records declaration is intentionally empty — axes are drawn, no marks are fabricated.',11);
+    }else if(['pie','donut'].includes(plan.mark)){
      const radius=Math.min((H-85*s)/2,W*.24),cx=radius+50*s,cy=radius+35*s,inner=plan.mark==='donut'?radius*(pr.inner_radius??.56):0,total=pts.reduce((s,p)=>s+p.y,0);let angle=-Math.PI/2,ly=50*s;
      for(let i=0;i<pts.length;i++){const pt=pts[i],span=pt.y/total*2*Math.PI,end=angle+span,col=colour(i);let d='';const xy=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
       if(span>0){const slices=span>=Math.PI*2-.000001?2:1,step=span/slices;let start=xy(angle,radius);d=`M${f(start[0])} ${f(start[1])}`;for(let z=1;z<=slices;z++){const b=xy(angle+step*z,radius);d+=`A${radius} ${radius} 0 ${step>Math.PI?1:0} 1 ${f(b[0])} ${f(b[1])}`;}
@@ -4485,18 +4497,75 @@
     if(!blocks.length)fail('DDN-E002','Data block not found: '+name);
     if(blocks.length>1)fail('DDN-E002','Data block name is ambiguous across the workspace: '+name+' ('+blocks.length+' blocks)');
     const block=blocks[0],text=files[block.source],recs=block.children.filter(n=>n.props.x_record&&typeof n.props.x_record==='object');
-    if(!recs.length){if(records.length)fail('DDN-E011','Data block '+name+' declares no records; its field shape cannot be inferred.');}
-    else {
-     if(!records.length)fail('DDN-E011','Data block '+name+' declares '+recs.length+' record(s); an empty replacement would erase its declared field shape.');
-     const shape=Object.keys(recs[0].props.x_record).sort().join(' ');
-     for(const r of records)if(Object.keys(r).sort().join(' ')!==shape)fail('DDN-E011','Every record must carry the same keys as the first existing record of '+name+': '+shape);
+    const result=over=>({committed:false,revision:ws.revision,added:[],removed:[],updated:[],diagnostics:[],...over});
+    if(!recs.length){
+     if(records.length)fail('DDN-E011','Data block '+name+' declares no records; its field shape cannot be inferred.');
+     return result({committed:true});
     }
-    const edits=[],keep=Math.min(recs.length,records.length);
-    for(let i=0;i<keep;i++)edits.push(property(text,recs[i],'x_record',{...records[i]}));
-    for(let i=keep;i<recs.length;i++){let start=recs[i].start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=recs[i].end;if(text[end]==='\r'&&text[end+1]==='\n')end+=2;else if(text[end]==='\n')end++;edits.push({file:block.source,start,end,text:''});}
-    if(records.length>recs.length){const taken=new Set(block.children.map(n=>n.id)),added=[];for(let i=recs.length;i<records.length;i++){const base=name+'_r'+(i+1);let id=base,n=2;while(taken.has(id))id=base+'_'+(n++);taken.add(id);added.push('    object '+id+' '+JSON.stringify(id)+' { kind: record; x_record: '+value(records[i])+'; }');}edits.push({file:block.source,start:block.bodyEnd,end:block.bodyEnd,text:'\n'+added.join('\n')+'\n'});}
+    const shape=Object.keys(recs[0].props.x_record).sort().join(' ');
+    // D1 stable record keys: an optional refresh-level `key` names the target declaration id.
+    // Positional fallback applies only when no keys are declared and is order-sensitive.
+    const keyed=records.length>0&&Object.hasOwn(records[0],'key')&&!shape.split(' ').includes('key');
+    if(keyed){
+     if(records.some(r=>!Object.hasOwn(r,'key')))fail('DDN-E011','Record keys are all-or-nothing: either every record carries key, or none does (order-sensitive positional refresh).');
+     const seen=new Set();for(const r of records){if(typeof r.key!=='string'||!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(r.key)||['__proto__','constructor','prototype'].includes(r.key))fail('DDN-E011','Record key must be a valid, nonreserved DDN identifier.');if(seen.has(r.key))fail('DDN-E011','Duplicate record key: '+r.key);seen.add(r.key);}
+    }
+    const payload=r=>{if(!keyed)return r;const out={};for(const [k,v]of Object.entries(r))if(k!=='key')out[k]=v;return out;};
+    for(const r of records)if(Object.keys(payload(r)).sort().join(' ')!==shape)fail('DDN-E011','Every record must carry the same keys as the first existing record of '+name+': '+shape);
+    let pairs=[],added=[],removed=[],keep=0;
+    if(keyed){
+     const byId=new Map(recs.map(n=>[n.id,n])),seen=new Set();
+     for(const r of records){seen.add(r.key);const t=byId.get(r.key);if(t)pairs.push([t,payload(r)]);else added.push(r);}
+     for(const r of added)if(block.children.some(n=>n.id===r.key))fail('DDN-E011','Record key '+r.key+' collides with a non-record declaration in '+name+'.');
+     removed=recs.filter(n=>!seen.has(n.id));
+    }else {
+     keep=Math.min(recs.length,records.length);
+     for(let i=0;i<keep;i++)pairs.push([recs[i],{...records[i]}]);
+     for(let i=keep;i<records.length;i++)added.push(records[i]);
+     removed=recs.slice(keep);
+    }
+    // D3 value-type validation: field tags are inferred from the block's existing records
+    // (null means UNKNOWN and accepts any later tag; incoming null is always legal).
+    const tag=v=>v===null?'null':Array.isArray(v)?'array':typeof v;
+    const types=new Map();for(const n of recs)for(const [k,v]of Object.entries(n.props.x_record)){if(!types.has(k))types.set(k,new Set());types.get(k).add(tag(v));}
+    const typeFailure=(rec,field,t,ts)=>({severity:'error',code:'DDN-E012',record:rec,field,failure:'type-mismatch',message:'Record '+rec+' field '+field+' must remain '+[...ts].join('|')+'; got '+t+'. Refresh commits nothing.'});
+    let diagnostics=[];
+    for(const [n,r]of pairs)for(const [k,v]of Object.entries(r)){const ts=types.get(k),t=tag(v);if(t!=='null'&&ts&&!ts.has('null')&&!ts.has(t))diagnostics.push(typeFailure(n.id,k,t,ts));}
+    for(const r of added)for(const [k,v]of Object.entries(payload(r))){const ts=types.get(k),t=tag(v);if(t!=='null'&&ts&&!ts.has('null')&&!ts.has(t))diagnostics.push(typeFailure(keyed?r.key:null,k,t,ts));}
+    if(diagnostics.length)return result({diagnostics});
+    const entries=ws.entries(),builds=[];
+    for(const e of entries)for(const v of e.views){let built=null,error=null;try{built=build(ws,e.file,v.id);}catch(err){error=err;}builds.push({entry:e.file,view:v.id,built,error});}
+    const blockPath=builds.find(b=>b.built)?.built && [...builds.find(b=>b.built).built.workspace.symbols.values()].find(n=>n.type==='data'&&n.id===name&&n.source===block.source)?.path;
+    const walk=(x,out)=>{if(Array.isArray(x))for(const v of x)walk(v,out);else if(x&&typeof x==='object'){if(typeof x.$ref==='string')out.push(x.$ref);for(const v of Object.values(x))walk(v,out);}return out;};
+    const refsOf=(n,out)=>{if(!n||typeof n!=='object')return out;walk(n.props,out);walk(n.target,out);for(const c of n.children||[])refsOf(c,out);return out;};
+    // D4 removal semantics: removing a record a view still references is rejected transactionally.
+    if(removed.length){
+     const gone=n=>removed.some(r=>r.source===n.source&&r.start===n.start);
+     for(const b of builds){if(!b.built)continue;
+      for(const r of refsOf(b.built.viewNode,[])){let t=null;try{t=b.built.workspace.resolve({$ref:r},b.built.viewNode);}catch{continue;}
+       if(t&&gone(t)&&!diagnostics.some(d=>d.failure==='removed-record-referenced'&&d.view===b.view&&d.record===t.id))diagnostics.push({severity:'error',code:'DDN-E012',view:b.view,entry:b.entry,record:t.id,failure:'removed-record-referenced',message:'View '+b.view+' still references record '+t.id+'; its removal is rejected transactionally. Refresh commits nothing.'});}}
+     if(diagnostics.length)return result({diagnostics});
+    }
+    const edits=[],addedIds=[];
+    for(const [n,r]of pairs)edits.push(property(text,n,'x_record',r));
+    for(const n of removed){let start=n.start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=n.end;if(text[end]==='\r'&&text[end+1]==='\n')end+=2;else if(text[end]==='\n')end++;edits.push({file:block.source,start,end,text:''});}
+    if(added.length){const taken=new Set(block.children.map(n=>n.id)),code=[];added.forEach((r,j)=>{let id;if(keyed)id=r.key;else {const base=name+'_r'+(keep+j+1);id=base;let n2=2;while(taken.has(id))id=base+'_'+(n2++);}taken.add(id);addedIds.push(id);code.push('    object '+id+' '+JSON.stringify(id)+' { kind: record; x_record: '+value(payload(r))+'; }');});edits.push({file:block.source,start:block.bodyEnd,end:block.bodyEnd,text:'\n'+code.join('\n')+'\n'});}
+    // D3 transactional validation: every workspace view that builds today must still build
+    // on the candidate source; any new failure aborts the refresh before anything commits.
+    const nextFiles={...files},byFile=new Map();
+    for(const e of edits){if(!byFile.has(e.file))byFile.set(e.file,[]);byFile.get(e.file).push(e);}
+    for(const [f,list]of byFile){let t=nextFiles[f];for(const e of [...list].sort((a,b)=>b.start-a.start))t=t.slice(0,e.start)+e.text+t.slice(e.end);nextFiles[f]=t;}
+    for(const f of byFile.keys())try{D.parse(nextFiles[f],f);}catch(err){diagnostics.push({severity:'error',code:err&&err.code||'DDN-E012',entry:f,failure:'source-validation',message:'Refresh would produce unparseable source in '+f+': '+(err&&err.message||err)+' Refresh commits nothing.'});}
+    if(!diagnostics.length)for(const b of builds){if(b.error)continue;try{D.build(nextFiles,b.entry,b.view,assets.registry);}catch(err){diagnostics.push({severity:'error',code:err&&err.code||'DDN-E012',view:b.view,entry:b.entry,failure:'view-validation',message:'Refresh would break view '+b.view+': '+(err&&err.message||err)+' Refresh commits nothing.'});}}
+    if(diagnostics.length)return result({diagnostics});
     const revision=ws.applyEdits(edits,{expectedRevision:ws.revision});
-    return {revision,diagnostics:[]};
+    // D2 membership reporting: views binding records explicitly keep exactly those;
+    // added records invisible in such views are reported, never silently dropped.
+    if(addedIds.length&&blockPath!==undefined)for(const b of builds){if(b.error)continue;let built;try{built=build(ws,b.entry,b.view);}catch{continue;}
+     const explicit=new Set();for(const r of refsOf(built.viewNode,[])){let t;try{t=built.workspace.resolve({$ref:r},built.viewNode);}catch{continue;}if(t&&t.path&&t.path.startsWith(blockPath+'.')&&t.props&&t.props.x_record)explicit.add(t.id);}
+     const invisible=addedIds.filter(id=>!explicit.has(id));
+     if(explicit.size&&invisible.length)diagnostics.push({severity:'warning',code:'DDN-W015',view:b.view,entry:b.entry,addedRecordsNotVisible:invisible,message:'View '+b.view+' binds records explicitly; added record(s) '+invisible.join(', ')+' are not displayed until the view binding lists them. Selector-membership views pick them up automatically.'});}
+    return result({committed:true,revision,added:addedIds,removed:removed.map(n=>n.id),updated:pairs.map(([n])=>n.id),diagnostics});
    },
    setAssignment(ws,entry,view,id,code){const b=build(ws,entry,view),n=find(b,id);if(n.type!=='relation'||!n.props.x_assignment)fail('DDN-E006','Not an assignment relationship');return apply(ws,b,[property(ws.getFiles()[n.source],n,'x_assignment',{code})],entry,view);},
    value,

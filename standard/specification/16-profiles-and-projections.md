@@ -83,7 +83,7 @@ The graph projection also carries `epc.basic@1`: an Event-driven Process Chain �
 
 ## 16.4 Explicit source collections and bindings
 
-This increment uses explicit arrays of model references for rows, columns, records and panel items. They are not arbitrary SQL-like queries or named collection-expression syntax. Each array has 1–500 unique references. Every bound element must be present in the view selection. A missing or excluded record is an error, never an empty invented row.
+This increment uses explicit arrays of model references for rows, columns, records and panel items. They are not arbitrary SQL-like queries or named collection-expression syntax. Each array has 1–500 unique references, with one exception: chart and table `records` may be an intentionally empty array (`records: []`) declaring an honest empty state — a bar/line/area/point chart renders an empty plot with axes, a table renders its header only (see §20 data refresh, D5). Every bound element must be present in the view selection. A missing or excluded record is an error, never an empty invented row.
 
 Binding strings are dot-separated safe property paths such as `x_record.value`, or the special element properties `name`, `id`, `kind`. Reserved object-prototype names and expression characters are rejected. The binding obtains an own property value; it does not run getters or arbitrary code from source.
 

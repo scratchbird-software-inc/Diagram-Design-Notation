@@ -27,14 +27,24 @@
 <main class="site-main">
 <article class="md-body">
 <h1>Data refresh (live dashboards)</h1>
-<p>B1-006 added <code>ws.replaceData(name, records)</code>: swap the records of a named <code>data</code> block while leaving every other byte of the source untouched. It is the supported way to drive a live diagram from changing data — the model, views, layout structure, pins, and format bundles all survive; only the record payload changes.</p>
+<p>B1-006 added <code>ws.replaceData(name, records)</code>: swap the records of a named <code>data</code> block while leaving every other byte of the source untouched. B1-029 made the refresh <strong>keyed and transactional</strong>. It is the supported way to drive a live diagram from changing data — the model, views, layout structure, pins, and format bundles all survive; only the record payload changes.</p>
 <h2>The contract</h2>
 <ul><li><code>name</code> is the data block's declared name (e.g. <code>data metrics { … }</code> →</li></ul>
 <p>  <code>&quot;metrics&quot;</code>).</p>
-<ul><li>Each record is a plain object. Records must carry the **same keys as the</li></ul>
-<p>  block's existing first record** — a missing or extra key throws <code>DDN-E011</code>   (verified in <code>notation/tests/data-refresh.js</code>). No silent shape drift.</p>
-<ul><li>The call returns <code>{ revision, diagnostics }</code> and bumps the workspace</li></ul>
-<p>  revision, so <code>subscribe</code> listeners and mounted elements re-render   automatically.</p>
+<ul><li>Each record is a plain object. Records must carry the **same field keys as</li></ul>
+<p>  the block's existing first record** — a missing or extra key throws   <code>DDN-E011</code> (verified in <code>notation/tests/data-refresh.js</code>). No silent shape   drift.</p>
+<ul><li><strong>Stable record keys.</strong> An incoming record may carry a refresh-level <code>key</code></li></ul>
+<p>  field naming the declaration id it updates (<code>key: &quot;m2&quot;</code> → <code>object m2 …</code>).   Keys are all-or-nothing per call, must be valid unique DDN identifiers, and   are stripped from the written payload. A matching key updates in place; an   unknown key appends a new declaration with that id; an existing record no   key matches is removed. Reordered payloads therefore <strong>cannot corrupt   identities</strong>. Without keys, matching is positional and <em>order-sensitive</em>.</p>
+<ul><li><strong>Transactional commit.</strong> Before anything commits, the refresh checks each</li></ul>
+<p>  incoming field value against the field types inferred from the block's   existing records (<code>null</code> is UNKNOWN — always accepted, and a <code>null</code>-observed   field accepts any later type) and validates every workspace view against the   candidate source. On failure <strong>nothing is committed</strong> and the result carries   structured <code>DDN-E012</code> diagnostics naming the view, the record key, the field   and the failure (<code>type-mismatch</code>, <code>removed-record-referenced</code>,   <code>view-validation</code>, <code>source-validation</code>).</p>
+<ul><li><strong>Removal semantics.</strong> Removing a record a view still references is</li></ul>
+<p>  <em>rejected</em> transactionally — there is no committed-then-<code>DDN031</code> state.</p>
+<ul><li><strong>Membership rules.</strong> Views that select the block (<code>data: [@metrics]</code>) have</li></ul>
+<p>  <em>selector membership</em> and pick up added records automatically. Views that   bind records explicitly (<code>records: [@metrics.m1, …]</code>, matrix rows/columns)   keep exactly their bound records — by design — and the result reports it   with a <code>DDN-W015</code> warning carrying <code>addedRecordsNotVisible</code>.</p>
+<ul><li><strong>Empty result sets.</strong> A block MAY be refreshed to empty (subject to the</li></ul>
+<p>  removal rule). Selector views render an empty canvas; charts/tables authored   with an intentionally empty <code>records: []</code> render an empty plot with axes   (bar/line/area/point) or a header-only table. Filtering a non-empty set to   zero still fails <code>DDN-PJ012</code> — an empty declaration is honest, an empty   filter result is misleading.</p>
+<ul><li>The call returns</li></ul>
+<p>  <code>{ committed, revision, added, removed, updated, diagnostics }</code>   (a strict superset of the pre-B1-029 <code>{ revision, diagnostics }</code>) and bumps   the workspace revision when it commits, so <code>subscribe</code> listeners and   mounted elements re-render automatically. When <code>committed</code> is <code>false</code>, the   source and revision are byte-untouched.</p>
 <ul><li>Both object records (<code>x_record</code> on <code>object</code>) and relation records are</li></ul>
 <p>  supported.</p>
 <h2>Dashboard recipe</h2>
@@ -48,7 +58,8 @@
 
   async function poll() {
     const rows = await fetch(&quot;/api/latency&quot;).then(r =&gt; r.json());
-    ws.replaceData(&quot;metrics&quot;, rows.map(d =&gt; ({ label: d.route, value: d.p95, unit: &quot;ms&quot; })));
+    const result = ws.replaceData(&quot;metrics&quot;, rows.map(d =&gt; ({ key: d.id, label: d.route, value: d.p95, unit: &quot;ms&quot; })));
+    if (!result.committed) console.warn(&quot;refresh rejected&quot;, result.diagnostics);
     // mounted diagram re-renders on its own; nothing else to call
   }
   setInterval(poll, 5000);
@@ -60,11 +71,11 @@ const after = ws.renderSync({ entry: &quot;dash.ddn&quot;, view: &quot;latency_c
 console.assert(before === after.modelFingerprint, &quot;data-only change&quot;);</code></pre>
 <h2>Complete working examples</h2>
 <ul><li><code>website/examples/embed/data-refresh.html</code> — a browser proof over</li></ul>
-<p>  <code>ddn-core.js</code> + <code>ddn-graph.js</code> + <code>ddn-projections.js</code>: a button swaps the   <code>metrics</code> records of an inlined copy of <code>website/examples/basics/59-data-refresh.ddn</code>   and re-renders in place.</p>
-<ul><li><code>website/examples/basics/59-data-refresh.ddn</code> — the two-view source (a bar chart</li></ul>
-<p>  and a dependency graph over the same data block).</p>
+<p>  <code>ddn-core.js</code> + <code>ddn-graph.js</code> + <code>ddn-projections.js</code>: buttons swap,   reorder (keyed), add/remove, and empty the <code>metrics</code> records of an inlined   copy of <code>website/examples/basics/59-data-refresh.ddn</code> and re-render in   place, printing the result object each time.</p>
+<ul><li><code>website/examples/basics/59-data-refresh.ddn</code> — the two-view source (a bar</li></ul>
+<p>  chart and a dependency graph over the same data block).</p>
 <ul><li><code>notation/tests/data-refresh.js</code> — the contract tests, including the</li></ul>
-<p>  <code>DDN-E011</code> shape-mismatch rejections.</p>
+<p>  <code>DDN-E011</code> shape-mismatch rejections, keyed-reorder identity preservation,   transactional type/reference rejection, membership reporting, and the   empty-state proofs.</p>
 <h2>When not to use it</h2>
 <p><code>replaceData</code> replaces <em>records</em>, not structure. New objects, new relations, renamed fields, or view changes are authoring operations — use <code>applyEdits</code>/<code>updateFiles</code> or the <code>authoring</code> façade (see <a href="api-reference.html">api-reference.md</a>).</p>
 </article>

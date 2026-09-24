@@ -20,7 +20,7 @@ projection {
 
 Records are distinct selected object references; maximum 1,000. `x` and `y` use the safe property-binding grammar from chapter 16, not arbitrary code. `y` must be a finite number. A present `unit` requires every input record's `x_record.unit` to match exactly. Missing/null values fail unless `missing: skip` explicitly excludes them. Excluded/skipped IDs remain in the plan. Numeric strings are not coerced. The runtime limits visible nodes/relationships and source size still apply before projection planning.
 
-The optional filter supports explicit equality or set membership; order specifies a scalar binding and ascending/descending direction. Source ordering and stable identities break ties. A filter that removes all records fails rather than yielding a misleading successful empty picture.
+The optional filter supports explicit equality or set membership; order specifies a scalar binding and ascending/descending direction. Source ordering and stable identities break ties. A filter that removes all records fails rather than yielding a misleading successful empty picture. (An intentionally empty `records: []` declaration is different — it renders the declared empty state; see §16 and §20 D5.)
 
 ## 22.2 Series and layers
 

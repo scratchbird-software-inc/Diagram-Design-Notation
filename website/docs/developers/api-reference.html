@@ -86,10 +86,10 @@ document.querySelector(&quot;#out&quot;).innerHTML = r.svg;</code></pre>
 });</code></pre>
 <h2>Live data</h2>
 <h3><code>replaceData(name, records)</code></h3>
-<p><code>ws.replaceData(name, records): { revision, diagnostics }</code> — replace the records of a named <code>data</code> block, leaving every other byte of the source untouched (B1-006). Records must carry the same keys as the block's existing first record, or the call throws <code>DDN-E011</code>. See <a href="data-refresh.html">data-refresh.md</a> for the dashboard recipe.</p>
+<p><code>ws.replaceData(name, records): { committed, revision, added, removed, updated, diagnostics }</code> — replace the records of a named <code>data</code> block, leaving every other byte of the source untouched (B1-006; keyed transactional contract since B1-029). Records must carry the same field keys as the block's existing first record, or the call throws <code>DDN-E011</code>. An optional per-record <code>key</code> field matches records to declaration ids, so reordering never reassigns values to the wrong identity; without keys, matching is positional and order-sensitive. The refresh is transactional: on any validation failure <code>committed</code> is <code>false</code>, the source is byte-untouched, and <code>diagnostics</code> names the view, record key and failure (<code>DDN-E012</code>); added records invisible to explicit-membership views are reported via <code>DDN-W015</code>. See <a href="data-refresh.html">data-refresh.md</a> for the full contract and the dashboard recipe.</p>
 <pre><code>ws.replaceData(&quot;metrics&quot;, [
-  { label: &quot;Alpha&quot;, value: 16, unit: &quot;ms&quot; },
-  { label: &quot;Beta&quot;,  value: 8,  unit: &quot;ms&quot; }
+  { key: &quot;m1&quot;, label: &quot;Alpha&quot;, value: 16, unit: &quot;ms&quot; },
+  { key: &quot;m2&quot;, label: &quot;Beta&quot;,  value: 8,  unit: &quot;ms&quot; }
 ]);</code></pre>
 <h2>Mounting and snapshots</h2>
 <h3><code>mount(element, options)</code></h3>

@@ -1,15 +1,22 @@
 ddn "0.5";
 module "ddn.examples.data-refresh";
 
-// Data refresh (B1-006): a host page swaps the records of the `metrics`
-// data block with ws.replaceData("metrics", [...]) and re-renders — the
-// model, views and layout structure stay untouched. Replacing with the
-// same values re-renders every view byte-identical; replacing with new
-// values moves only the chart marks. See examples/embed/data-refresh.html.
+// Data refresh (B1-006, keyed transactional contract B1-029): a host page
+// swaps the records of the `metrics` data block with
+// ws.replaceData("metrics", [...]) and re-renders — the model, views and
+// layout structure stay untouched. Records match by their `key` field (the
+// declaration id), so reordered payloads never corrupt identities. Replacing
+// with the same values re-renders every view byte-identical; replacing with
+// new values moves only the chart marks. The chart below binds records
+// explicitly (explicit membership), so added records are reported via
+// DDN-W015 addedRecordsNotVisible instead of appearing silently, and removing
+// a bound record is rejected transactionally; the dependency graph selects
+// the whole block (selector membership) and picks up additions automatically.
+// See examples/embed/data-refresh.html.
 //
-//   ws.replaceData("metrics", rows);            // rows: plain objects,
-//   const r = ws.renderSync({entry, view: "latency_chart"});  // same keys
-//   host.innerHTML = r.svg;                     // as the first record
+//   ws.replaceData("metrics", rows);   // rows: plain objects, optional key,
+//   const r = ws.renderSync({entry, view: "latency_chart"});  // same fields
+//   host.innerHTML = r.svg;            // as the first record
 
 data metrics {
     object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
