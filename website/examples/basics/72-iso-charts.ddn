@@ -24,6 +24,12 @@ view iso_bar "Synthetic tier throughput / iso bar" {
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
 }
 
+view iso_pie "Synthetic tier share / iso pie" {
+    data: [@capacity]; format: @shared.styles.technical;
+    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:pie; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:22px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
 view iso_donut "Synthetic tier share / iso donut" {
     data: [@capacity]; format: @shared.styles.technical;
     projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:donut; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:22px; width:1120px; height:640px; }

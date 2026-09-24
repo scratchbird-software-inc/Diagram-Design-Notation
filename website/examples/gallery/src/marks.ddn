@@ -223,3 +223,30 @@ view mark_edgebundle "Chart marks / edgebundle" {
     format: @gallery.common; data: [@routes];
     projection { kind: chart; profile: "chart.edgebundle@1"; records: [@routes.g1, @routes.g2, @routes.g3, @routes.g4, @routes.g5]; mark: edgebundle; x: "x_record.from"; target: "x_record.to"; y: "x_record.n"; unit: "req/min"; width: 1050px; height: 640px; }
 }
+
+// Isometric variants of the extrudable marks (B1-034/B1-035): the optional
+// ddn-iso module extrudes bar, pie, donut, area and treemap. Rendered here
+// through the CLI, which wires ddn-iso; a host without it degrades these to a
+// flat placeholder plus DDN-E010. These plates use one series per view: the
+// engine's multi-series chart path renders through the quality renderer, which
+// does not extrude.
+view mark_iso_bar "Chart marks / iso bar" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4]; mark: bar; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; iso: true; depth: 18px; width: 1050px; height: 640px; }
+}
+view mark_iso_pie "Chart marks / iso pie" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4]; mark: pie; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; iso: true; depth: 22px; width: 1050px; height: 640px; }
+}
+view mark_iso_donut "Chart marks / iso donut" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4]; mark: donut; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; iso: true; depth: 22px; width: 1050px; height: 640px; }
+}
+view mark_iso_area "Chart marks / iso area" {
+    format: @gallery.common; data: [@quarterly];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@quarterly.q1, @quarterly.q2, @quarterly.q3, @quarterly.q4]; mark: area; x: "x_record.quarter"; y: "x_record.mwh"; unit: "MWh"; iso: true; depth: 16px; width: 1050px; height: 640px; }
+}
+view mark_iso_treemap "Chart marks / iso treemap" {
+    format: @gallery.common; data: [@storage];
+    projection { kind: chart; profile: "chart.treemap@1"; records: [@storage.t1, @storage.t2, @storage.t3, @storage.t4, @storage.t5, @storage.t6]; mark: treemap; x: "x_record.path"; y: "x_record.gb"; unit: "GB"; iso: true; depth: 20px; width: 1050px; height: 640px; }
+}

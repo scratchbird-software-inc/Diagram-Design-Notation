@@ -28,6 +28,12 @@ const CLI = path.join(ROOT, 'notation/cli/cli.js');
 const OUT = path.join(ROOT, 'website/examples/gallery');
 const SRC = path.join(OUT, 'src');
 const A = require(path.join(ROOT, 'notation/dist/ddn.global.js'));
+/* B1-035 (D1): mirror the CLI's optional-module wiring so the build host matches
+ * the render host. The geo plates already render (the CLI registers ddn-geo and
+ * every render below goes through the CLI); ddn-iso was never loaded anywhere in
+ * the gallery path, which is why no iso plates existed. Loading it publishes the
+ * DDNIso namespace the engine consults for iso/depth views. */
+require(path.join(ROOT, 'notation/runtime/ddn-iso.js'));
 
 const pkg = require(path.join(ROOT, 'package.json'));
 const catalogue = require(path.join(ROOT, 'standard/registry/profiles/catalogue.json'));
@@ -38,7 +44,11 @@ const SHEETS = [
   { id: 'looks', title: 'Looks × palettes', file: 'looks.ddn', blurb: 'Every look (classic, handDrawn, neo) crossed with every palette theme (default, neutral, dark, night, forest, base).' },
   { id: 'routing', title: 'Routing × look', file: 'routing.ddn', blurb: 'Every routing mode (orthogonal, straight, curved bezier, curved rounded) crossed with every look.' },
   { id: 'layouts', title: 'Layout algorithms', file: 'layouts.ddn', blurb: 'Every placement algorithm: native grid, manual (pinned), layered, tree, mindmap, grouped, and the pattern-based fit_grid, circular, radial, spanning_tree, organic.' },
-  { id: 'spacing', title: 'Spacing levels', file: 'spacing.ddn', blurb: 'The four spacing hints (tight, normal, loose, expanded) on one graph (B1-008).' }
+  { id: 'spacing', title: 'Spacing levels', file: 'spacing.ddn', blurb: 'The four spacing hints (tight, normal, loose, expanded) on one graph (B1-008).' },
+  /* B1-035: iso sheets source their views straight from the basics examples
+   * (entry overrides the default gallery/src/<file>). */
+  { id: 'iso', title: 'Isometric charts', entry: 'website/examples/basics/72-iso-charts.ddn', blurb: 'Every extrudable chart mark (bar, pie, donut, area, treemap) with iso depth, from examples/basics/72-iso-charts.ddn (B1-034).' },
+  { id: 'isograph', title: 'Isometric graph', entry: 'website/examples/basics/73-iso-architecture.ddn', blurb: 'Graph nodes as extruded prisms on an isometric ground plane, from examples/basics/73-iso-architecture.ddn (B1-034).' }
 ];
 
 const slug = id => id.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
@@ -106,8 +116,12 @@ function buildCoverageMap() {
   return remaining;
 }
 
-function sheetViews(file) {
-  const entry = path.join('website/examples/gallery/src', file);
+function sheetEntry(sheet) {
+  return sheet.entry || path.join('website/examples/gallery/src', sheet.file);
+}
+
+function sheetViews(sheet) {
+  const entry = sheetEntry(sheet);
   const ws = A.createWorkspace(filesFor(entry));
   const views = ws.views(entry).map(v => ({ id: v.id, title: v.name }));
   ws.destroy();
@@ -124,13 +138,14 @@ function main() {
     jobs.push({ section: 'profiles', profile, entry: c.entry, view: c.view, title: c.title, relSvg });
   }
   for (const sheet of SHEETS) {
-    for (const v of sheetViews(sheet.file)) {
-      jobs.push({ section: sheet.id, entry: path.join('website/examples/gallery/src', sheet.file), view: v.id, title: v.title, relSvg: sheet.id + '/' + v.id.replace(/^mark_/, '') + '.svg' });
+    for (const v of sheetViews(sheet)) {
+      jobs.push({ section: sheet.id, entry: sheetEntry(sheet), view: v.id, title: v.title, relSvg: sheet.id + '/' + v.id.replace(/^mark_/, '') + '.svg' });
     }
   }
 
   for (const job of jobs) {
     render(job.entry, job.view, path.join(OUT, job.relSvg));
+    job.iso = fs.readFileSync(path.join(OUT, job.relSvg), 'utf8').includes('ddn-iso');
     process.stdout.write('rendered ' + job.relSvg + '\n');
   }
 
@@ -138,7 +153,11 @@ function main() {
     version: pkg.version,
     generatedBy: 'tools/build-gallery.js (every SVG via notation/cli/cli.js render)',
     profiles: Object.fromEntries([...coverage.entries()].sort().map(([id, c]) => [id, { entry: c.entry, view: c.view, title: c.title, svg: 'profiles/' + slug(id) + '.svg' }])),
-    sheets: Object.fromEntries(SHEETS.map(s => [s.id, { title: s.title, source: 'website/examples/gallery/src/' + s.file, views: sheetViews(s.file).map(v => ({ view: v.id, title: v.title, svg: s.id + '/' + v.id.replace(/^mark_/, '') + '.svg' })) }]))
+    sheets: Object.fromEntries(SHEETS.map(s => [s.id, { title: s.title, source: sheetEntry(s), views: sheetViews(s).map(v => {
+      const svg = s.id + '/' + v.id.replace(/^mark_/, '') + '.svg';
+      const job = jobs.find(j => j.section === s.id && j.relSvg === svg);
+      return { view: v.id, title: v.title, svg, ...(job && job.iso ? { iso: true } : {}) };
+    }) }]))
   };
   fs.writeFileSync(path.join(OUT, 'coverage.json'), JSON.stringify(coverageJson, null, 2) + '\n');
   fs.writeFileSync(path.join(OUT, 'index.html'), page(coverageJson));
@@ -158,7 +177,7 @@ function page(cov) {
     `\n</div>\n</section>`).join('\n');
   const sheetSections = Object.entries(cov.sheets).map(([id, s]) =>
     `<section class="sheet" id="sheet-${esc(id)}">\n<h3>${esc(s.title)}</h3>\n<p>${esc(SHEETS.find(x => x.id === id).blurb)}</p>\n<div class="grid">\n` +
-    s.views.map(v => `<figure><a href="${esc(v.svg)}"><img src="${esc(v.svg)}" alt="${esc(v.title)}" loading="lazy"></a><figcaption>${esc(v.title)}</figcaption></figure>`).join('\n') +
+    s.views.map(v => `<figure><a href="${esc(v.svg)}"><img src="${esc(v.svg)}" alt="${esc(v.title)}" loading="lazy"></a><figcaption>${esc(v.title)}${v.iso ? '<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small>' : ''}</figcaption></figure>`).join('\n') +
     `\n</div>\n</section>`).join('\n');
   const tableRows = Object.entries(cov.profiles).map(([id, c]) =>
     `<tr><td><code>${esc(id)}</code></td><td><a href="#profile-${esc(slug(id))}">${esc(c.title)}</a></td><td><code>${esc(c.entry)}</code></td><td><a href="${esc(c.svg)}">SVG</a></td></tr>`).join('\n');
