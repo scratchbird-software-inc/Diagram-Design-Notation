@@ -765,6 +765,36 @@
           "view": "mark_edgebundle",
           "title": "Chart marks / edgebundle",
           "svg": "marks/edgebundle.svg"
+        },
+        {
+          "view": "mark_iso_bar",
+          "title": "Chart marks / iso bar",
+          "svg": "marks/iso_bar.svg",
+          "iso": true
+        },
+        {
+          "view": "mark_iso_pie",
+          "title": "Chart marks / iso pie",
+          "svg": "marks/iso_pie.svg",
+          "iso": true
+        },
+        {
+          "view": "mark_iso_donut",
+          "title": "Chart marks / iso donut",
+          "svg": "marks/iso_donut.svg",
+          "iso": true
+        },
+        {
+          "view": "mark_iso_area",
+          "title": "Chart marks / iso area",
+          "svg": "marks/iso_area.svg",
+          "iso": true
+        },
+        {
+          "view": "mark_iso_treemap",
+          "title": "Chart marks / iso treemap",
+          "svg": "marks/iso_treemap.svg",
+          "iso": true
         }
       ]
     },
@@ -1014,6 +1044,54 @@
           "view": "expanded",
           "title": "Spacing / expanded",
           "svg": "spacing/expanded.svg"
+        }
+      ]
+    },
+    "iso": {
+      "title": "Isometric charts",
+      "source": "website/examples/basics/72-iso-charts.ddn",
+      "views": [
+        {
+          "view": "iso_bar",
+          "title": "Synthetic tier throughput / iso bar",
+          "svg": "iso/iso_bar.svg",
+          "iso": true
+        },
+        {
+          "view": "iso_pie",
+          "title": "Synthetic tier share / iso pie",
+          "svg": "iso/iso_pie.svg",
+          "iso": true
+        },
+        {
+          "view": "iso_donut",
+          "title": "Synthetic tier share / iso donut",
+          "svg": "iso/iso_donut.svg",
+          "iso": true
+        },
+        {
+          "view": "iso_area",
+          "title": "Synthetic tier throughput / iso area ribbon",
+          "svg": "iso/iso_area.svg",
+          "iso": true
+        },
+        {
+          "view": "iso_treemap",
+          "title": "Synthetic tier throughput / iso treemap blocks",
+          "svg": "iso/iso_treemap.svg",
+          "iso": true
+        }
+      ]
+    },
+    "isograph": {
+      "title": "Isometric graph",
+      "source": "website/examples/basics/73-iso-architecture.ddn",
+      "views": [
+        {
+          "view": "iso_map",
+          "title": "Synthetic platform tiers / isometric",
+          "svg": "isograph/iso_map.svg",
+          "iso": true
         }
       ]
     }

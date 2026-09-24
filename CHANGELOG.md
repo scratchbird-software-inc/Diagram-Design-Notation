@@ -6,6 +6,21 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Static gallery shows the isometric diagram types (B1-035):
+  `tools/build-gallery.js` now loads `notation/runtime/ddn-iso.js` (mirroring
+  the CLI's optional-module wiring — the gap that left the gallery with zero
+  iso plates; geo plates were already covered via the CLI render path). The
+  marks sheet gains iso variants of every extrudable mark (bar, pie, donut,
+  area, treemap), and two new sheets — "Isometric charts" and "Isometric
+  graph" — render their plates straight from
+  `examples/basics/72-iso-charts.ddn` (which gains an `iso_pie` view) and
+  `73-iso-architecture.ddn`. Every iso plate captions that live rendering
+  requires the optional `ddn-iso.js` module. Iso plates are presentation
+  variants of existing profiles, so the profile coverage gates are unchanged;
+  `notation/tests/gallery-coverage.js` gains a permanent iso-plate test (11
+  plates, each extruded and present). Gallery is 188 deterministic CLI renders
+  (regenerator run twice, byte-identical).
+
 - Isometric depth via the optional `ddn-iso` module (B1-034): axonometric
   ("2.5D") rendering in pure SVG. (D1) New optional seventh bundle
   `dist/ddn-iso.js` (all formats; npm subpath `@ddn/notation/iso`), never in

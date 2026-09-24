@@ -32,7 +32,7 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <body>
 <header>
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation 0.6.0-beta.1: 98 installed profiles plus 79 variation renders — 177 SVGs, each produced by the reference CLI render path.</p>
+<p>Full notation coverage for Diagram Design Notation 0.6.0-beta.1: 98 installed profiles plus 90 variation renders — 188 SVGs, each produced by the reference CLI render path.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>.</p>
 </header>
 <nav>
@@ -43,6 +43,8 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <a href="#sheet-routing">Routing × look</a>
 <a href="#sheet-layouts">Layout algorithms</a>
 <a href="#sheet-spacing">Spacing levels</a>
+<a href="#sheet-iso">Isometric charts</a>
+<a href="#sheet-isograph">Isometric graph</a>
 <a href="#coverage">Coverage table</a>
 </nav>
 <main>
@@ -314,7 +316,7 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <h2 id="sheets">Variation sheets</h2>
 <section class="sheet" id="sheet-marks">
 <h3>Chart marks</h3>
-<p>Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1); radar, funnel, gauge, candlestick, treemap, sankey (their own profiles); and the Category-2 pack (B1-024): histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle.</p>
+<p>Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1); radar, funnel, gauge, candlestick, treemap, sankey (their own profiles); and the Category-2 pack (B1-024): histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle; and the isometric variants of the extrudable marks (B1-035): iso bar, pie, donut, area, treemap.</p>
 <div class="grid">
 <figure><a href="marks/bar.svg"><img src="marks/bar.svg" alt="Chart marks / bar" loading="lazy"></a><figcaption>Chart marks / bar</figcaption></figure>
 <figure><a href="marks/line.svg"><img src="marks/line.svg" alt="Chart marks / line" loading="lazy"></a><figcaption>Chart marks / line</figcaption></figure>
@@ -350,6 +352,11 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <figure><a href="marks/arc.svg"><img src="marks/arc.svg" alt="Chart marks / arc" loading="lazy"></a><figcaption>Chart marks / arc</figcaption></figure>
 <figure><a href="marks/force.svg"><img src="marks/force.svg" alt="Chart marks / force" loading="lazy"></a><figcaption>Chart marks / force</figcaption></figure>
 <figure><a href="marks/edgebundle.svg"><img src="marks/edgebundle.svg" alt="Chart marks / edgebundle" loading="lazy"></a><figcaption>Chart marks / edgebundle</figcaption></figure>
+<figure><a href="marks/iso_bar.svg"><img src="marks/iso_bar.svg" alt="Chart marks / iso bar" loading="lazy"></a><figcaption>Chart marks / iso bar<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="marks/iso_pie.svg"><img src="marks/iso_pie.svg" alt="Chart marks / iso pie" loading="lazy"></a><figcaption>Chart marks / iso pie<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="marks/iso_donut.svg"><img src="marks/iso_donut.svg" alt="Chart marks / iso donut" loading="lazy"></a><figcaption>Chart marks / iso donut<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="marks/iso_area.svg"><img src="marks/iso_area.svg" alt="Chart marks / iso area" loading="lazy"></a><figcaption>Chart marks / iso area<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="marks/iso_treemap.svg"><img src="marks/iso_treemap.svg" alt="Chart marks / iso treemap" loading="lazy"></a><figcaption>Chart marks / iso treemap<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
 </div>
 </section>
 <section class="sheet" id="sheet-looks">
@@ -419,6 +426,24 @@ footer{padding:1.5rem 2rem;font-size:.8rem;color:#667}
 <figure><a href="spacing/normal.svg"><img src="spacing/normal.svg" alt="Spacing / normal" loading="lazy"></a><figcaption>Spacing / normal</figcaption></figure>
 <figure><a href="spacing/loose.svg"><img src="spacing/loose.svg" alt="Spacing / loose" loading="lazy"></a><figcaption>Spacing / loose</figcaption></figure>
 <figure><a href="spacing/expanded.svg"><img src="spacing/expanded.svg" alt="Spacing / expanded" loading="lazy"></a><figcaption>Spacing / expanded</figcaption></figure>
+</div>
+</section>
+<section class="sheet" id="sheet-iso">
+<h3>Isometric charts</h3>
+<p>Every extrudable chart mark (bar, pie, donut, area, treemap) with iso depth, from examples/basics/72-iso-charts.ddn (B1-034).</p>
+<div class="grid">
+<figure><a href="iso/iso_bar.svg"><img src="iso/iso_bar.svg" alt="Synthetic tier throughput / iso bar" loading="lazy"></a><figcaption>Synthetic tier throughput / iso bar<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="iso/iso_pie.svg"><img src="iso/iso_pie.svg" alt="Synthetic tier share / iso pie" loading="lazy"></a><figcaption>Synthetic tier share / iso pie<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="iso/iso_donut.svg"><img src="iso/iso_donut.svg" alt="Synthetic tier share / iso donut" loading="lazy"></a><figcaption>Synthetic tier share / iso donut<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="iso/iso_area.svg"><img src="iso/iso_area.svg" alt="Synthetic tier throughput / iso area ribbon" loading="lazy"></a><figcaption>Synthetic tier throughput / iso area ribbon<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+<figure><a href="iso/iso_treemap.svg"><img src="iso/iso_treemap.svg" alt="Synthetic tier throughput / iso treemap blocks" loading="lazy"></a><figcaption>Synthetic tier throughput / iso treemap blocks<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
+</div>
+</section>
+<section class="sheet" id="sheet-isograph">
+<h3>Isometric graph</h3>
+<p>Graph nodes as extruded prisms on an isometric ground plane, from examples/basics/73-iso-architecture.ddn (B1-034).</p>
+<div class="grid">
+<figure><a href="isograph/iso_map.svg"><img src="isograph/iso_map.svg" alt="Synthetic platform tiers / isometric" loading="lazy"></a><figcaption>Synthetic platform tiers / isometric<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small></figcaption></figure>
 </div>
 </section>
 <h2 id="coverage">Coverage table</h2>

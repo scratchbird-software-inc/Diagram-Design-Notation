@@ -55,13 +55,15 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,
   `details.ddn`, `formats.ddn`, `views.ddn`, `fixture.json`, `catalogue.json`).
 - `gallery/` — generated full-coverage gallery (B1-010): one pre-rendered SVG
-  per installed profile (all 73) plus variation sheets (chart marks, looks ×
-  palettes, routing × look, layout algorithms, spacing levels) — 130 SVGs via
+  per installed profile (all 98) plus variation sheets (chart marks — flat and
+  isometric — looks × palettes, routing × look, layout algorithms, spacing
+  levels, and the B1-035 isometric chart/graph plates) — 188 SVGs via
   the real CLI render path, a static `index.html` (no inlined runtime,
   `file://`-safe), and `coverage.json`, the machine-readable coverage map the
   permanent gate `notation/tests/gallery-coverage.js` enforces. Sources for
-  the variation sheets live in `gallery/src/`. Regenerate with
-  `npm run build:gallery` (committed outputs per D5).
+  the variation sheets live in `gallery/src/`; the iso sheets source their
+  views straight from `basics/72-iso-charts.ddn` / `basics/73-iso-architecture.ddn`.
+  Regenerate with `npm run build:gallery` (committed outputs per D5).
 - `embed/` — browser proofs and minimal quickstart pages for the runtime
   bundles: `script-tag-global.html` (B1-031 — the one-tag minimal embed),
   `esm-module.html` (B1-019 — real ES-module imports; needs a static server,
