@@ -28,6 +28,10 @@ const BASELINE = path.join(REPO, 'standard/registry/performance-baseline.json');
 const SMOKE = process.argv.includes('--smoke');
 const ITERATIONS = SMOKE ? 1 : 3;
 const CEILING_FACTOR = 10;
+/* Absolute floor per timing ceiling: on a millisecond-scale case, 10x is still
+ * tens of ms and cold-process JIT/module-load noise after a long test suite can
+ * exceed it. The gate exists to catch egregious regressions, not machine load. */
+const CEILING_FLOOR_MS = 250;
 
 const DDN = (await import(pathToFileURL(path.join(REPO, 'notation/dist/ddn.global.js')))).default;
 
@@ -159,19 +163,19 @@ if (SMOKE) {
     if (!b) { failures.push(r.id + ': missing from baseline'); continue; }
     for (const k of ['coldMs', 'warmMs', 'refreshMs']) {
       if (r[k] == null) continue;
-      const ceiling = Math.max(b[k] * CEILING_FACTOR, 1);
+      const ceiling = Math.max(b[k] * CEILING_FACTOR, CEILING_FLOOR_MS);
       if (r[k] > ceiling) failures.push(r.id + ' ' + k + ' ' + r[k] + 'ms > ' + CEILING_FACTOR + 'x baseline ceiling ' + ceiling + 'ms');
     }
   }
   for (const r of results) console.log('smoke', r.id, 'cold ' + r.coldMs + 'ms warm ' + r.warmMs + 'ms' + (r.refreshMs != null ? ' refresh ' + r.refreshMs + 'ms' : ''));
   if (failures.length) { console.error('benchmark smoke FAILED:\n' + failures.join('\n')); process.exit(1); }
-  console.log('benchmark smoke: all ' + results.length + ' cases within ' + CEILING_FACTOR + 'x baseline');
+  console.log('benchmark smoke: all ' + results.length + ' cases within ceilings (' + CEILING_FACTOR + 'x baseline, ' + CEILING_FLOOR_MS + 'ms floor)');
   process.exit(0);
 }
 
 const baseline = {
   $schema: 'https://scratchbird.ca/ddn/performance-baseline.schema.json',
-  description: 'B1-031 measured performance baseline for the DDN reference runtime. Median of ' + ITERATIONS + ' iterations per case; regenerate with `npm run benchmark`. Timings are machine-dependent — the committed values are a reference point, and the smoke gate only trips beyond ' + CEILING_FACTOR + 'x.',
+  description: 'B1-031 measured performance baseline for the DDN reference runtime. Median of ' + ITERATIONS + ' iterations per case; regenerate with `npm run benchmark`. Timings are machine-dependent — the committed values are a reference point, and the smoke gate only trips beyond ' + CEILING_FACTOR + 'x (with a ' + CEILING_FLOOR_MS + ' ms absolute floor against cold-process noise).',
   runtime: DDN.VERSION,
   measuredOn: new Date().toISOString().slice(0, 10),
   environment: { node: process.version, platform: process.platform, arch: process.arch },

@@ -12,7 +12,7 @@ Component-level history predating the monorepo import lives in
   `replaceData` data-only refresh, serialized-IR/SVG sizes and peak RSS over a
   fixed small/medium/large corpus; the measured baseline is committed at
   `standard/registry/performance-baseline.json`, and a smoke version (10×
-  ceilings, regression-only) runs in root `npm test`. Headline finding:
+  ceilings with a 250 ms noise floor, regression-only) runs in root `npm test`. Headline finding:
   charts, dashboards and data refresh complete in single-digit-to-tens of
   milliseconds, while free-form routed graph cost grows steeply with relation
   count (a 127-node tree approaches the 128-element live-view cap in
