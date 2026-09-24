@@ -157,6 +157,10 @@
     "build:tool": "node ../tools/build-tool.js"
   },
   "prepublishOnly": "npm run build:sdk",
+  "devDependencies": {
+    "@rollup/plugin-terser": "0.4.4",
+    "rollup": "4.63.4"
+  },
   "engines": {
     "node": ">=22"
   }
