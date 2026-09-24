@@ -95,16 +95,6 @@ test('Extra or missing record keys rejected DDN-E011; source untouched',()=>{
  fail(()=>ws.replaceData('cells',[{score:1,other:2}]),'DDN-E011');
  assert.deepEqual(ws.getFiles(),before);assert.equal(ws.revision,0);
 });
-test('Empty replacement is legal only for a record-less block',()=>{
- const ws=fresh(),before=ws.getFiles();
- fail(()=>ws.replaceData('metrics',[]),'DDN-E011');
- assert.deepEqual(ws.getFiles(),before);
- const r=ws.replaceData('empty',[]);
- assert.deepEqual(ws.getFiles(),before,'empty-on-empty is a no-op');
- assert.equal(r.revision,0);
- fail(()=>ws.replaceData('empty',[{a:1}]),'DDN-E011');
- assert.deepEqual(ws.getFiles(),before);
-});
 test('Unknown block name rejected DDN-E002; source untouched',()=>{
  const ws=fresh(),before=ws.getFiles();
  fail(()=>ws.replaceData('nope',[]),'DDN-E002');
@@ -154,6 +144,142 @@ test('Record count can shrink: trailing record lines removed, workspace still va
  assert.deepEqual(cellScores(ws),[8,7]);
  const r=ws.renderSync({entry:'fixture.ddn',view:'matrix_view'});
  assert.match(r.svg,/<svg/);
+});
+
+// B1-029 D1–D6: keyed matching, membership reporting, transactional validation,
+// removal rejection, empty result sets and the refresh result object.
+const graphOnly=`ddn "0.5";
+module "tests.refresh.graphonly";
+
+data metrics {
+    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
+}
+
+view graph_view "Refresh / graph only" {
+    data: [@metrics];
+    publication { size: content; fit: none; }
+}
+`;
+const emptyStates=`ddn "0.5";
+module "tests.refresh.empty";
+
+data metrics {
+}
+
+data other {
+    object o1 "One" { kind: record; x_record: { label: "One", value: 5, unit: "ms" }; }
+}
+
+view chart_view "Empty / chart" {
+    data: [@metrics];
+    projection { kind: chart; profile: "chart.basic@1"; records: []; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; }
+    publication { size: content; fit: none; }
+}
+
+view table_view "Empty / table" {
+    data: [@metrics];
+    projection { kind: table; profile: "table.records@1"; records: []; columns: [{ key: "x_record.label", label: "Route" }, { key: "x_record.value", label: "p95" }]; }
+    publication { size: content; fit: none; }
+}
+
+view graph_view "Empty / graph" {
+    data: [@metrics];
+    publication { size: content; fit: none; }
+}
+
+view chart_filtered "Empty / filtered" {
+    data: [@other];
+    projection { kind: chart; profile: "chart.basic@1"; records: [@other.o1]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; filter: { key: "x_record.label", op: "eq", value: "Nope" }; }
+    publication { size: content; fit: none; }
+}
+`;
+
+// Bug 3 (identity corruption on reorder): keyed refresh matches by key, never by position.
+test('Keyed reorder preserves declaration identity (D1)',()=>{
+ const ws=fresh();
+ const r=ws.replaceData('metrics',[{key:'m3',label:'Gamma',value:99,unit:'ms'},{key:'m1',label:'Alpha',value:11,unit:'ms'},{key:'m2',label:'Beta',value:22,unit:'ms'}]);
+ assert.equal(r.committed,true);assert.deepEqual([...r.updated].sort(),['m1','m2','m3']);assert.deepEqual(r.added,[]);assert.deepEqual(r.removed,[]);
+ assert.deepEqual(metrics(ws),[{label:'Alpha',value:11,unit:'ms'},{label:'Beta',value:22,unit:'ms'},{label:'Gamma',value:99,unit:'ms'}],'values must stay with their declaration identities');
+});
+test('Keyed refresh adds and removes by declared id (D1)',()=>{
+ const ws=A.createWorkspace({'fixture.ddn':graphOnly});
+ const r=ws.replaceData('metrics',[{key:'m2',label:'Beta',value:8,unit:'ms'},{key:'delta',label:'Delta',value:4,unit:'ms'}]);
+ assert.equal(r.committed,true);assert.deepEqual(r.added,['delta']);assert.deepEqual([...r.removed].sort(),['m1','m3']);assert.deepEqual(r.updated,['m2']);
+ const text=ws.getFiles()['fixture.ddn'];
+ assert.match(text,/object delta "delta"/);assert.doesNotMatch(text,/object m1 /);
+ assert.equal(ws.resolve('fixture.ddn','graph_view').elements.length,2);
+});
+test('Record keys are all-or-nothing, valid identifiers and unique; source untouched',()=>{
+ const ws=fresh(),before=ws.getFiles();
+ fail(()=>ws.replaceData('metrics',[{key:'m1',label:'A',value:1,unit:'ms'},{label:'B',value:2,unit:'ms'},{key:'m3',label:'C',value:3,unit:'ms'}]),'DDN-E011');
+ fail(()=>ws.replaceData('metrics',[{key:'m1',label:'A',value:1,unit:'ms'},{key:'m1',label:'B',value:2,unit:'ms'},{key:'m3',label:'C',value:3,unit:'ms'}]),'DDN-E011');
+ fail(()=>ws.replaceData('metrics',[{key:'bad key!',label:'A',value:1,unit:'ms'},{key:'m2',label:'B',value:2,unit:'ms'},{key:'m3',label:'C',value:3,unit:'ms'}]),'DDN-E011');
+ fail(()=>ws.replaceData('metrics',[{key:'m1',label:'A',value:1,unit:'ms',extra:1},{key:'m2',label:'B',value:2,unit:'ms'},{key:'m3',label:'C',value:3,unit:'ms'}]),'DDN-E011');
+ assert.deepEqual(ws.getFiles(),before);assert.equal(ws.revision,0);
+});
+
+// Bug 4 (type mismatch committed): field types are validated against the block's
+// declared/coerced field types before commit, in keyed and positional mode.
+test('Type mismatch rejected at commit DDN-E012; transaction leaves source untouched (D3)',()=>{
+ const ws=fresh(),before=ws.getFiles();
+ const r=ws.replaceData('metrics',[{key:'m1',label:'Alpha',value:'fast',unit:'ms'},{key:'m2',label:'Beta',value:20,unit:'ms'},{key:'m3',label:'Gamma',value:15,unit:'ms'}]);
+ assert.equal(r.committed,false);assert.equal(ws.revision,0);assert.deepEqual(ws.getFiles(),before);
+ const d=r.diagnostics[0];assert.equal(d.code,'DDN-E012');assert.equal(d.failure,'type-mismatch');assert.equal(d.record,'m1');assert.equal(d.field,'value');
+ const r2=ws.replaceData('metrics',[{label:'Alpha',value:1,unit:'ms'},{label:'Beta',value:'x',unit:'ms'},{label:'Gamma',value:3,unit:'ms'}]);
+ assert.equal(r2.committed,false);assert.equal(r2.diagnostics[0].record,'m2');assert.deepEqual(ws.getFiles(),before);
+ for(const v of views)assert.match(ws.renderSync({entry:'fixture.ddn',view:v}).svg,/<svg/);
+});
+
+// Bug 2 (removal breaks next render): removal of a view-referenced record is rejected
+// transactionally (D4, option a) — never committed-then-failing.
+test('Removing a view-referenced record is rejected transactionally (D4)',()=>{
+ const ws=fresh(),before=ws.getFiles();
+ const r=ws.replaceData('metrics',[{key:'m1',label:'Alpha',value:1,unit:'ms'},{key:'m3',label:'Gamma',value:3,unit:'ms'}]);
+ assert.equal(r.committed,false);assert.equal(ws.revision,0);assert.deepEqual(ws.getFiles(),before);
+ const d=r.diagnostics.find(x=>x.failure==='removed-record-referenced');
+ assert.ok(d,'expected a removed-record-referenced diagnostic');assert.equal(d.code,'DDN-E012');assert.equal(d.view,'chart_view');assert.equal(d.record,'m2');
+ for(const v of views)assert.match(ws.renderSync({entry:'fixture.ddn',view:v}).svg,/<svg/);
+});
+
+// Bug 1 (membership not re-evaluated): selector-membership views re-resolve after
+// refresh; explicit-membership views keep exactly their bound records and the result
+// REPORTS the added records they do not display (D2).
+test('Added records: selector views re-resolve; explicit views reported DDN-W015 (D2)',()=>{
+ const ws=fresh();
+ const r=ws.replaceData('metrics',[{key:'m1',label:'Alpha',value:1,unit:'ms'},{key:'m2',label:'Beta',value:2,unit:'ms'},{key:'m3',label:'Gamma',value:3,unit:'ms'},{key:'m4',label:'Delta',value:4,unit:'ms'}]);
+ assert.equal(r.committed,true);assert.deepEqual(r.added,['m4']);
+ assert.equal(ws.resolve('fixture.ddn','graph_view').elements.length,4,'selector-membership view picks up the added record');
+ const chart=ws.renderSync({entry:'fixture.ddn',view:'chart_view'});
+ assert.equal(chart.scene.marks.length,3,'explicit-membership view keeps exactly its bound records');
+ const w=r.diagnostics.find(d=>d.code==='DDN-W015');
+ assert.ok(w,'expected a DDN-W015 membership diagnostic');assert.equal(w.view,'chart_view');assert.deepEqual(w.addedRecordsNotVisible,['m4']);
+});
+
+// Bug 5 (empty result set fails): a block MAY be refreshed to empty when no view binds
+// its records explicitly; declared-empty records render empty states, never fabricated data.
+test('Empty refresh: rejected under explicit bindings; legal for selector-only blocks (D5)',()=>{
+ const ws=fresh(),before=ws.getFiles();
+ const r=ws.replaceData('metrics',[]);
+ assert.equal(r.committed,false,'chart_view explicitly references m1..m3');assert.equal(ws.revision,0);assert.deepEqual(ws.getFiles(),before);
+ assert.ok(r.diagnostics.some(d=>d.failure==='removed-record-referenced'&&d.record==='m1'));
+ const ws2=A.createWorkspace({'fixture.ddn':graphOnly});
+ const r2=ws2.replaceData('metrics',[]);
+ assert.equal(r2.committed,true);assert.deepEqual([...r2.removed].sort(),['m1','m2','m3']);
+ assert.match(ws2.renderSync({entry:'fixture.ddn',view:'graph_view'}).svg,/<svg/,'graph renders its empty canvas with title');
+ const r3=ws.replaceData('empty',[]);
+ assert.equal(r3.committed,true);assert.equal(r3.revision,0);assert.deepEqual(ws.getFiles(),before,'empty-on-empty is a no-op');
+ fail(()=>ws.replaceData('empty',[{a:1}]),'DDN-E011');
+});
+test('Declared-empty records render empty states: chart axes, table header, graph canvas (D5)',()=>{
+ const ws=A.createWorkspace({'fixture.ddn':emptyStates});
+ const chart=ws.renderSync({entry:'fixture.ddn',view:'chart_view'});
+ assert.match(chart.svg,/<svg/);assert.equal(chart.scene.marks.length,0);assert.match(chart.svg,/intentionally empty data set/);
+ const table=ws.renderSync({entry:'fixture.ddn',view:'table_view'});
+ assert.match(table.svg,/<svg/);assert.equal(table.scene.marks.length,0);assert.match(table.svg,/Route/,'table renders its header row');
+ assert.match(ws.renderSync({entry:'fixture.ddn',view:'graph_view'}).svg,/<svg/);
+ fail(()=>ws.renderSync({entry:'fixture.ddn',view:'chart_filtered'}),'DDN-PJ012');
 });
 
 // check() after refresh: CLI validation passes on the rewritten source.

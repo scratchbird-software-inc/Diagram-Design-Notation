@@ -92,7 +92,11 @@ test('Projection concern can be declared once and referenced from a view',()=>{
  const r=run('chart_bar',{'views.ddn':changed});assert.equal(r.scene.marks.length,6);assert.equal(r.modelFingerprint,run('chart_bar').modelFingerprint);
 });
 test('Projection manifest is unique and all output hashes match bytes',()=>{const mf=path.resolve(dir,'../../projections/manifest.json');if(!fs.existsSync(mf)){console.log('SKIP projections-lab manifest not imported (lean scope; see tools/README)');return;}const m=JSON.parse(fs.readFileSync(mf,'utf8'));assert.equal(m.views.length,27);assert.equal(new Set(m.views.map(v=>v.view)).size,27);for(const v of m.views){assert.ok(v.view);for(const o of v.outputs)assert.equal(sha(fs.readFileSync(path.resolve(dir,'../..',o.path))),o.sha256);}});
-test('Bindings reject empty collections rather than a blank success',()=>throws(()=>run('chart_bar',editView('chart_bar','records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6]','records:[]')),'DDN-PJ009'));
+test('Empty bindings: declared-empty bar chart renders an empty plot, non-cartesian marks still reject',()=>{
+ const empty=editView('chart_bar','records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6]','records:[]');
+ const r=run('chart_bar',empty);assert.equal(r.scene.marks.length,0);assert.match(r.svg,/intentionally empty data set/);assert.match(r.svg,/<svg/);
+ throws(()=>run('chart_bar',{'views.ddn':empty['views.ddn'].replace('mark:bar','mark:pie')}),'DDN-PJ009');
+});
 test('Invalid projection measurement rejected',()=>throws(()=>run('chart_bar',editView('chart_bar','width:1120px','width:0px')),'DDN-PJ006'));
 test('Panel span titles are measured and wrapped',()=>{const c=editView('swot','title:"STRENGTHS"','title:"THIS IS A LONG PANEL HEADING THAT MUST WRAP BEFORE ITS CONTENT IS PLACED"');const r=run('swot',c);assert.match(r.svg,/THIS IS A LONG/);assert.ok(r.scene.height>=run('swot').scene.height);});
 test('Unknown RACI duplicate policy rejected',()=>throws(()=>run('raci',editView('raci','value:"x_assignment.code";','value:"x_assignment.code";duplicates:ignore;')),'DDN-PJ014'));

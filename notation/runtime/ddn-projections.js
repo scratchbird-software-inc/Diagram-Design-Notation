@@ -129,7 +129,11 @@ function render(ir,reg,glyphs='',options={}){
  const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
  if(plan.kind==='chart'&&!qualityBody){
   H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s,right=W-55*s,plotH=bottom-top,plotW=right-left;
-  if(['pie','donut'].includes(plan.mark)){
+  if(plan.empty){
+   body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
+   body+=text(left+plotW/2,top+plotH/2,'0 records · intentionally empty data set',12,400,'middle');
+   body+=text(left,H-15*s,'Source-bound '+plan.mark+' · 0 marks · the records declaration is intentionally empty — axes are drawn, no marks are fabricated.',11);
+  }else if(['pie','donut'].includes(plan.mark)){
    const radius=Math.min((H-85*s)/2,W*.24),cx=radius+50*s,cy=radius+35*s,inner=plan.mark==='donut'?radius*(pr.inner_radius??.56):0,total=pts.reduce((s,p)=>s+p.y,0);let angle=-Math.PI/2,ly=50*s;
    for(let i=0;i<pts.length;i++){const pt=pts[i],span=pt.y/total*2*Math.PI,end=angle+span,col=colour(i);let d='';const xy=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
     if(span>0){const slices=span>=Math.PI*2-.000001?2:1,step=span/slices;let start=xy(angle,radius);d=`M${f(start[0])} ${f(start[1])}`;for(let z=1;z<=slices;z++){const b=xy(angle+step*z,radius);d+=`A${radius} ${radius} 0 ${step>Math.PI?1:0} 1 ${f(b[0])} ${f(b[1])}`;}

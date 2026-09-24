@@ -20,7 +20,7 @@ function plan(ir,ErrorClass=Error){
  const resolve=(x,type='element')=>{const n=(type==='relation'?byRel:byId).get(ref(x));if(!n)fail('DDN-PJ007','Projection reference is outside its data scope: '+ref(x));if(type==='element'&&!shown.has(n.id))fail('DDN-PJ008','Projection binds an excluded/not-selected element: '+n.id);return n;};
  const list=(a,name)=>{if(!Array.isArray(a)||!a.length||a.length>500)fail('DDN-PJ009',name+' needs 1..500 explicit references');const ns=a.map(x=>resolve(x));if(new Set(ns.map(n=>n.id)).size!==ns.length)fail('DDN-PJ009','Duplicate '+name+' identity');return ns;};
  const textValue=(n,key,defaultValue)=>{const v=get(n,key);if(v===undefined&&defaultValue!==undefined)return defaultValue;if(typeof v!=='string'&&typeof v!=='number'&&typeof v!=='boolean')fail('DDN-PJ010',key+' must supply a scalar value',n);return v;};
- const filtered=()=>{let ns=list(p.records,'records');if(p.filter){const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
+ const filtered=()=>{const declaredEmpty=Array.isArray(p.records)&&p.records.length===0&&(kind==='chart'||kind==='table');let ns=declaredEmpty?[]:list(p.records,'records');if(p.filter){if(declaredEmpty)fail('DDN-PJ011','A filter cannot apply to an intentionally empty records declaration');const{key,op,value}=p.filter;if(Object.keys(p.filter).some(k=>!['key','op','value'].includes(k))||!['eq','in'].includes(op)||op==='in'&&!Array.isArray(value))fail('DDN-PJ011','Filter supports explicit eq or in only');ns=ns.filter(n=>{const v=get(n,key);return op==='eq'?v===value:value.includes(v);});}if(p.order){if(declaredEmpty)fail('DDN-PJ011','An order cannot apply to an intentionally empty records declaration');if(!['asc','desc'].includes(p.order.direction)||Object.keys(p.order).some(k=>!['key','direction'].includes(k)))fail('DDN-PJ011','Order needs key and asc/desc');ns=ns.map((n,i)=>({n,i,v:textValue(n,p.order.key)})).sort((a,b)=>(p.order.direction==='desc'?-1:1)*(a.v<b.v?-1:a.v>b.v?1:0)||a.i-b.i).map(o=>o.n);}if(!ns.length&&!declaredEmpty)fail('DDN-PJ012','Projection selection is empty after filtering');return ns;};
  if(kind==='fishbone')return Quality.fishbone(ir,ErrorClass,get);
  if(kind==='decision')return Quality.decision(ir,ErrorClass,get);
  if(kind==='chart'&&Quality.chartRequested(p)&&!['radar','funnel','candlestick','treemap','histogram','density','qq','quantiledot','dotplot','boxplot','violin','beeswarm','topk','tidytree','radialtree','circlepack','sunburst','packedbubble','heatmap','densityheatmap','calendar','parallelcoords','wordcloud','arc','force','edgebundle'].includes(p.mark))return Quality.chart(ir,ErrorClass,get);
@@ -208,7 +208,15 @@ function plan(ir,ErrorClass=Error){
   if(DIST1D.includes(p.mark)&&p.aggregate!==undefined&&p.aggregate!=='none')fail('DDN-PJ031','Distribution marks measure raw records; aggregation is not available');
   if(p.missing!==undefined&&!['error','skip'].includes(p.missing))fail('DDN-PJ019','Chart missing policy is error or skip');
   if(p.inner_radius!==undefined&&(!Number.isFinite(p.inner_radius)||p.inner_radius<0||p.inner_radius>=.9))fail('DDN-PJ030','inner_radius is a radius fraction 0..0.9 exclusive');
-  let points=[],skipped=[];for(const n of filtered()){
+  const chartRecords=filtered();
+  if(!chartRecords.length){
+   // D5 empty state: an intentionally empty records declaration renders an empty plot
+   // with axes (UNKNOWN-not-zero; no marks are fabricated) for cartesian marks only.
+   if(!['bar','line','area','point'].includes(p.mark))fail('DDN-PJ009','An intentionally empty records declaration is supported for bar/line/area/point charts and tables only; '+p.mark+' needs 1..500 explicit references');
+   if(p.mark==='point'&&(p.x_type||'category')!=='number')fail('DDN-PJ030','Scatter/bubble requires x_type:number');
+   return{kind,profile:p.profile,mark:p.mark,points:[],skipped:[],empty:true,sourceIds:[],xType:p.x_type||'category',unit:p.unit||'',quantitative:true};
+  }
+  let points=[],skipped=[];for(const n of chartRecords){
    let x=get(n,p.x),y=DIST1D.includes(p.mark)?1:(p.mark==='candlestick'?undefined:get(n,p.y)),ohlc=null;
    if(p.mark==='candlestick'){const o=get(n,p.open),h=get(n,p.high),l=get(n,p.low),c=get(n,p.close);ohlc={o,h,l,c};y=c;}
    if((x===undefined||x===null||y===undefined||y===null)&&p.missing==='skip'){skipped.push(n.id);continue;}
