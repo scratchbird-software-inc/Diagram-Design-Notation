@@ -53,10 +53,18 @@ redaction. History before the monorepo import is in `CHANGELOG.md`.
 
 This directory packs as the npm package `@ddn/notation` (see `package.json`:
 `main`/`module`/`types`, an `exports` map with subpaths `.`, `./core`,
-`./graph`, `./projections`, `./quality` and `./package.json`, and a `files`
-allowlist of `dist/` + `README.md`). `npm pack` here produces a tarball with
-exactly those files; consumers install the tarball directly — nothing is
-published to a registry. The package is licensed GPL-2.0-or-later (the
-`license` field is authoritative; there is no `LICENSE` file in this
-directory — the repository-root `LICENSE` applies).
+`./graph`, `./projections`, `./quality`, `./geo` and `./package.json`, a
+`files` allowlist of `dist/` + `README.md`, `publishConfig.access: public`,
+and repository/keyword metadata). `npm pack` here produces a tarball with
+exactly those files; consumers can install the tarball directly. **Registry
+state:** not yet published to npm — the publish *path* is ready:
+`.github/workflows/publish.yml` runs the packaging gate plus
+`npm publish --dry-run` on every push, and publishes for real only on `v*`
+version tags, gated on the `NPM_TOKEN` repository secret (not yet configured;
+the workflow skips gracefully with a notice until it is). `private: true`
+stays committed in this `package.json` as an accident guard — the tag-gated
+job verifies the tag matches `version`, then strips the guard in the
+checked-out copy (`npm pkg delete private`) before `npm publish`. The package
+is licensed GPL-2.0-or-later (the `license` field is authoritative; there is
+no `LICENSE` file in this directory — the repository-root `LICENSE` applies).
 

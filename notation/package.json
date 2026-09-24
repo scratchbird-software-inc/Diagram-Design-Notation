@@ -4,6 +4,24 @@
   "private": true,
   "description": "DDN reference runtime: parser, validation, layout/routing, deterministic SVG rendering, CLI, and Studio. Implements the standard in ../standard/.",
   "license": "GPL-2.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scratchbird/data-design-notation.git",
+    "directory": "notation"
+  },
+  "keywords": [
+    "ddn",
+    "diagram-design-notation",
+    "diagrams",
+    "svg",
+    "erd",
+    "flowchart",
+    "charts",
+    "deterministic-rendering"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/ddn.global.js",
   "module": "dist/ddn.mjs",
   "types": "dist/ddn.d.ts",

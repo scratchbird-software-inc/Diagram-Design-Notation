@@ -6,6 +6,41 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Measured performance, documented limits, embedding quickstart, npm publish
+  path (B1-031): (D1) new zero-dependency benchmark `tools/benchmark.mjs`
+  (`npm run benchmark`) measuring cold build+render, warm re-render,
+  `replaceData` data-only refresh, serialized-IR/SVG sizes and peak RSS over a
+  fixed small/medium/large corpus; the measured baseline is committed at
+  `standard/registry/performance-baseline.json`, and a smoke version (10×
+  ceilings, regression-only) runs in root `npm test`. Headline finding:
+  charts, dashboards and data refresh complete in single-digit-to-tens of
+  milliseconds, while free-form routed graph cost grows steeply with relation
+  count (a 127-node tree approaches the 128-element live-view cap in
+  ~18 s on the reference machine) — size views accordingly. (D2) New "Limits &
+  capabilities" section in the root README and
+  `website/docs/developers/limits.md` enumerate every enforced cap with the
+  enforcing code path (128 elements/384 relations per view `LIVE013`,
+  one-level/≤12-child dashboards `DDN-QP002/QP003`, 1–80 panels `DDN-PJ020`,
+  1–1000 references `DDN-Q003`, 64–100000 px pages `DDN046`, 50 MB source and
+  16384 px raster caps in the browser tools, 60-entry/16 MB undo, 4-view IR
+  cache) plus guidance patterns (filtering, drill-down, linked diagrams).
+  (D3) `designer/specification/16-performance.md` figures are annotated
+  TARGET vs MEASURED with a link to the baseline. (D4) Embedding quickstart
+  at the top of `website/docs/developers/embedding.md` plus three new
+  runnable minimal pages (`script-tag-global.html`, `projections-only.html`,
+  `geo-optional.html`) alongside the existing ESM and data-refresh proofs;
+  linked from the homepage CTA row and the download page. (D5) npm publish
+  readiness: `notation/package.json` gains `publishConfig.access: public`,
+  repository and keyword metadata; `.github/workflows/publish.yml` runs the
+  packaging gate + `npm publish --dry-run` on every push and publishes only
+  on `v*` tags when the `NPM_TOKEN` secret is configured (not yet set — the
+  workflow skips gracefully; the committed `private: true` guard is stripped
+  only by that tag-gated job); packaging tests extended to pin the workflow
+  contract; download/packaging docs updated to the actual state. (D6) Docs
+  now state plainly that rendering is synchronous and single-threaded
+  (`render()` wraps `renderSync`); off-thread rendering is a roadmap item
+  only.
+
 - Keyed transactional data refresh (B1-029): `ws.replaceData(name, records)`
   is now keyed and transactional, fixing five externally reported refresh
   bugs. (D1) Records match by an optional refresh-level `key` field naming

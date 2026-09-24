@@ -18,6 +18,7 @@ library and embedding rendered diagrams; they are verified against
 | [viewer.md](viewer.md) | Historical: the retired single-file viewer (`ddn-viewer.html`), replaced by the unified tool in B1-027. |
 | [styling.md](styling.md) | You want to restyle rendered SVG with CSS: class hooks, cascade rules, `ddn.css`. |
 | [data-refresh.md](data-refresh.md) | You are building a dashboard that swaps data-block records without touching the model. |
+| [limits.md](limits.md) | You need the enforced caps (128/384 per view, dashboard depth, file sizes) with the code that raises them, plus the measured performance baseline. |
 | [authoring-sources.md](authoring-sources.md) | You are writing `.ddn` source by hand: language tour with links into the spec chapters. |
 | [migration-0.5-to-0.6.md](migration-0.5-to-0.6.md) | You have 0.5.x content or integrations and need the Beta-1 changes with before/after. |
 

@@ -99,6 +99,34 @@ test('geo subpath registers the optional geo kind; missing module yields placeho
 test('no dependencies added to the shipped package',()=>{
  assert.ok(!pj.dependencies&&!pj.peerDependencies,'shipped package must stay dependency-free');
 });
+/* B1-031 (D5): npm publish readiness — metadata, the publish workflow contract,
+ * and a real dry-run. `private: true` stays committed as an accident guard; the
+ * tag-gated workflow job removes it in the checked-out copy before publishing. */
+test('publish metadata: private guard + publishConfig.access public + repository/keywords',()=>{
+ assert.equal(pj.private,true,'committed package.json keeps the private accident guard (the publish workflow strips it at tag time)');
+ assert.deepEqual(pj.publishConfig,{access:'public'},'scoped package needs publishConfig.access public to publish at all');
+ assert.equal(pj.repository?.directory,'notation');
+ assert.ok(Array.isArray(pj.keywords)&&pj.keywords.includes('ddn'),'keywords for registry discovery');
+});
+test('publish workflow: dry-run on every push; real publish only on v* tags gated on NPM_TOKEN',()=>{
+ const wf=fs.readFileSync(path.join(root,'.github/workflows/publish.yml'),'utf8');
+ assert.match(wf,/npm publish --dry-run/,'dry-run job missing');
+ assert.match(wf,/tags:\s*\['v\*'\]/,'workflow must trigger on v* tags');
+ assert.match(wf,/if:\s*startsWith\(github\.ref, 'refs\/tags\/v'\)/,'real publish must be tag-gated');
+ assert.match(wf,/secrets\.NPM_TOKEN/,'publish must authenticate via the NPM_TOKEN secret');
+ assert.match(wf,/if:\s*env\.NPM_TOKEN == ''/,'workflow must skip gracefully when NPM_TOKEN is unset (secret not yet configured)');
+ assert.match(wf,/npm pkg delete private/,'the tag-gated job must strip the private guard before publishing');
+ assert.match(wf,/GITHUB_REF_NAME/,'tag must be verified against the package version');
+});
+test('npm publish --dry-run succeeds against the real package (skips only on network-less sandboxes)',()=>{
+ try{
+  cp.execFileSync('npm',['publish','--dry-run','--ignore-scripts','--tag','beta'],{cwd:path.join(root,'notation'),stdio:'pipe'});
+ }catch(e){
+  const out=String(e.stderr||'')+String(e.stdout||'');
+  if(/EAI_AGAIN|ENOTFOUND|ECONNREFUSED|ETIMEDOUT|network/i.test(out)){console.log('SKIP dry-run: no registry network in this sandbox');return;}
+  throw e;
+ }
+});
 fs.rmSync(tmp,{recursive:true,force:true});fs.rmSync(consumer,{recursive:true,force:true});
 const passed=results.filter(r=>r.pass).length;console.log(`packaging ${passed}/${results.length}`);
 if(passed!==results.length)process.exitCode=1;

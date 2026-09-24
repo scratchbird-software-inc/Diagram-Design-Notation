@@ -54,14 +54,17 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
   permanent gate `notation/tests/gallery-coverage.js` enforces. Sources for
   the variation sheets live in `gallery/src/`. Regenerate with
   `npm run build:gallery` (committed outputs per D5).
-- `embed/` — browser proofs for the modular runtime bundles (B1-004):
-  `core-graph.html` loads only `ddn-core.js` + `ddn-graph.js` and renders the
-  `basics/01-customer.ddn` overview; `core-only-check.html` loads only
-  `ddn-core.js`, checks the same source and shows the coded `DDN-E010` refusal
-  when a render is attempted without a renderer bundle; `data-refresh.html`
-  (B1-006) loads `ddn-core.js` + `ddn-graph.js` + `ddn-projections.js` and
-  swaps a chart's data-block records with `ws.replaceData` on a button click,
-  re-rendering in place.
+- `embed/` — browser proofs and minimal quickstart pages for the runtime
+  bundles: `script-tag-global.html` (B1-031 — the one-tag minimal embed),
+  `esm-module.html` (B1-019 — real ES-module imports; needs a static server,
+  no `file://`), `projections-only.html` (B1-031 — chart page on
+  core+graph+projections only), `geo-optional.html` (B1-031 — a geo view
+  without `ddn-geo` renders the inline placeholder + `DDN-E010` diagnostic),
+  `data-refresh.html` (B1-006/B1-029 — `ws.replaceData` live dashboard),
+  `core-graph.html` (B1-004 — only `ddn-core.js` + `ddn-graph.js` rendering
+  the `basics/01-customer.ddn` overview), and `core-only-check.html`
+  (B1-004 — the coded `DDN-E010` refusal when a render is attempted without a
+  renderer bundle).
 - `use-cases/` — 22 scenarios (whiteboard, ERD, relational, SQL dependencies,
   documents, graph schema, streaming, lineage, governance, security,
   recovery, migration, …) with shared `data/` modules and `formats.ddn`.

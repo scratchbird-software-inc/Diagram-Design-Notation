@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN quickstart — geo optional module placeholder</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0}.pass{background:#e2f4e5;color:#1d5c2e}.fail{background:#f9e2e2;color:#8a2a2a}code{background:#fff;padding:1px 5px;border-radius:4px}</style>
+<h1>Quickstart — geo is optional, and degrades visibly</h1>
+<p>This page deliberately loads only <code>ddn-core.min.js</code> + <code>ddn-graph.min.js</code> and renders a
+<code>kind:geo</code> view. Because <code>geo</code> is the runtime's one owner-directed <em>optional</em> kind, a missing
+<code>ddn-geo</code> never throws mid-page: the render succeeds with an inline placeholder box ("Map view requires
+ddn-geo.js") and a coded <code>DDN-E010</code> entry on <code>result.diagnostics</code> — your page stays up and the gap is
+visible. Add <code>&lt;script src=&quot;ddn-geo.min.js&quot;&gt;&lt;/script&gt;</code> after the graph bundle and the same source renders the
+real map. Works over <code>file://</code>.</p>
+<script src="../../dist/ddn-core.min.js"></script>
+<script src="../../dist/ddn-graph.min.js"></script>
+<div id="status" class="status">running…</div>
+<div id="out"></div>
+<script>
+const s=document.getElementById('status');
+try{
+  const source='ddn "0.5";\nmodule "quickstart.geo-optional";\ndata quakes {\n    object q1 "Honshu M7.1" { kind: record; x_record: { lon: 141.3, lat: 38.3, mag: 7.1, unit: "Mw" }; }\n    object q2 "Chile M6.8" { kind: record; x_record: { lon: -70.7, lat: -33.4, mag: 6.8, unit: "Mw" }; }\n    object q3 "Iceland M5.1" { kind: record; x_record: { lon: -18.9, lat: 64.8, mag: 5.1, unit: "Mw" }; }\n}\nview map "Synthetic seismic catalog / placeholder demo" {\n    data: [@quakes];\n    projection { kind: geo; profile: "geo.symbols@1"; records: [@quakes.q1, @quakes.q2, @quakes.q3]; mark: symbol; method: mercator; x: "x_record.lon"; y: "x_record.lat"; size: "x_record.mag"; unit: "Mw"; width: 960px; height: 540px; }\n    publication { size: content; fit: none; }\n}\n';
+  const ws=DDNLive.createWorkspace({'main.ddn':source});
+  const r=ws.renderSync({entry:'main.ddn',view:'map'});
+  document.getElementById('out').innerHTML=r.svg;
+  const diag=r.diagnostics.find(d=>d.code==='DDN-E010');
+  if(!r.svg.includes('ddn-missing-module')||!diag)throw new Error('expected the inline placeholder plus a DDN-E010 diagnostic');
+  s.textContent='pass-geo-optional: render succeeded without ddn-geo — inline placeholder rendered, diagnostic: '+diag.code+' '+diag.message;
+  s.classList.add('pass');
+}catch(e){s.textContent='geo-optional quickstart failed: '+(e.code?e.code+' ':'')+e.message;s.classList.add('fail');}
+</script></html>

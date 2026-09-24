@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN quickstart — script tag (global build)</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0}.pass{background:#e2f4e5;color:#1d5c2e}.fail{background:#f9e2e2;color:#8a2a2a}code{background:#fff;padding:1px 5px;border-radius:4px}</style>
+<h1>Quickstart — one script tag, global build</h1>
+<p>The minimal embed: load <code>ddn.global.min.js</code> (the all-in-one IIFE — everything except the optional
+geo module), hand <code>DDNLive.createWorkspace</code> your sources as text, render, and place the SVG.
+This page works over <code>file://</code> — IIFE script tags need no server. The ten lines that matter:</p>
+<pre><code>&lt;script src=&quot;ddn.global.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  const ws = DDNLive.createWorkspace({ "model.ddn": sourceText });
+  const r = ws.renderSync({ entry: "model.ddn", view: "overview" });
+  document.getElementById("out").innerHTML = r.svg;
+&lt;/script&gt;</code></pre>
+<script src="../../dist/ddn.global.min.js"></script>
+<div id="status" class="status">running…</div>
+<div id="out"></div>
+<script>
+const s=document.getElementById('status');
+try{
+  const source='ddn "0.5";\nmodule "quickstart.global";\ndata model {\n    object client "Client application" { kind: application; }\n    object service "Order service" { kind: application; }\n    relation request "Submit order" @client -> @service { kind: flow; }\n}\nview overview "Quickstart / script tag" {\n    data: [@model];\n    layout { algorithm: auto; routing: orthogonal; }\n    publication { size: content; fit: none; }\n}\n';
+  const ws=DDNLive.createWorkspace({'model.ddn':source});
+  const r=ws.renderSync({entry:'model.ddn',view:'overview'});
+  document.getElementById('out').innerHTML=r.svg;
+  s.textContent='pass-global: DDNLive '+DDNLive.VERSION+' rendered overview in '+r.milliseconds.toFixed(1)+' ms ('+r.svg.length+' SVG bytes)';
+  s.classList.add('pass');
+}catch(e){s.textContent='script-tag quickstart failed: '+e.message;s.classList.add('fail');}
+</script></html>

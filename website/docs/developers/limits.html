@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limits &amp; capabilities — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Limits &amp; capabilities</h1>
+<p>Every cap below is enforced by code — hitting one raises a coded error, never silent truncation. The measured performance baseline against these boundaries is committed at <code>standard/registry/performance-baseline.json</code> (regenerate with <code>npm run benchmark</code> from the repository root; the smoke version runs in <code>npm test</code>).</p>
+<table><thead><tr><th>Cap</th><th>Value</th><th>Raised as</th><th>Enforcing code</th></tr></thead><tbody><tr><td>Elements selected into one live view</td><td>128</td><td><code>LIVE013</code></td><td><code>notation/studio/src/api.js</code> (<code>compiled()</code>)</td></tr><tr><td>Relations visible in one live view</td><td>384</td><td><code>LIVE013</code></td><td><code>notation/studio/src/api.js</code> (<code>compiled()</code>)</td></tr><tr><td>Child view of a composed dashboard</td><td>128 elements / 384 relations</td><td><code>DDN-QP003</code></td><td><code>notation/runtime/ddn-core.js</code> (<code>build()</code>, panels branch)</td></tr><tr><td>Dashboard nesting</td><td>one child-view level — no recursive dashboards</td><td><code>DDN-QP002</code></td><td><code>notation/runtime/ddn-core.js</code> (<code>build()</code>, panels branch)</td></tr><tr><td>Embedded child views per dashboard</td><td>12</td><td><code>DDN-QP003</code></td><td><code>notation/runtime/ddn-core.js</code> (<code>build()</code>, panels branch)</td></tr><tr><td>Panels in a <code>kind:panels</code> projection</td><td>1–80 panels on a 1–12 column grid</td><td><code>DDN-PJ020</code></td><td><code>notation/runtime/ddn-projection-data.js</code></td></tr><tr><td>Quality/chart reference list</td><td>1–1000 references, unique identity</td><td><code>DDN-Q003</code></td><td><code>notation/runtime/ddn-quality-data.js</code></td></tr><tr><td>Publication page width/height</td><td>64–100000 px, finite</td><td><code>DDN046</code></td><td><code>notation/runtime/ddn-core.js</code></td></tr><tr><td>Source file size (viewer / unified tool)</td><td>50 MB per source</td><td>plain <code>Error</code></td><td><code>MAX_FILE_BYTES</code> in <code>notation/tool/src/tool.js</code>, <code>notation/viewer/src/viewer.js</code></td></tr><tr><td>Raster (PNG) export side</td><td>16384 px</td><td>plain <code>Error</code></td><td><code>MAX_RASTER_PX</code> in <code>notation/viewer/src/viewer.js</code>, <code>notation/tool/src/tool.js</code></td></tr><tr><td>Workspace undo history</td><td>60 entries / 16 MB of patches</td><td>(oldest entry dropped)</td><td><code>notation/studio/src/api.js</code> (<code>commit()</code>)</td></tr><tr><td>Compiled-IR cache per workspace</td><td>4 views (LRU)</td><td>(recompiles on eviction)</td><td><code>notation/studio/src/api.js</code> (<code>compiled()</code>)</td></tr></tbody></table>
+<p>The library API (<code>createWorkspace</code>/<code>renderSync</code>) imposes no source-size cap of its own — you hand it text you already hold — so the 50 MB cap is a guard of the browser surfaces (see <a href="viewer.html">viewer.md</a>, <a href="tool.html">tool.md</a>), not of the language.</p>
+<h2>Rendering model (honest)</h2>
+<p>Rendering is <strong>synchronous and single-threaded</strong>. <code>render()</code> is an async wrapper over the synchronous renderer — same thread, same tick (see <code>renderSync</code>/<code>render</code> in <code>notation/studio/src/api.js</code>). There is no worker/off-thread rendering today; it is a roadmap item only. The designer specification's responsiveness figures are annotated TARGET vs MEASURED in <code>designer/specification/16-performance.md</code>; the MEASURED numbers come from the committed baseline file above.</p>
+<h2>Working within the limits</h2>
+<ul><li><strong>Filter, don't shrink the model.</strong> Views select a subset of one model;</li></ul>
+<p>  keep the model whole and declare narrow views (<code>data:</code> subsets, projection   <code>filter</code>).</p>
+<ul><li><strong>Drill down with subdiagrams.</strong> A node can expose a detail view</li></ul>
+<p>  (<code>subdiagram … { view: @detail; mode: reference }</code>); embedded pages receive   a <code>ddn-navigate</code> event (see <a href="embedding.html">embedding.md</a>) and swap the   rendered view — each level stays under 128/384 independently.</p>
+<ul><li><strong>Compose dashboards.</strong> <code>panels.composed@1</code> embeds up to 12 child views,</li></ul>
+<p>  each with its own 128/384 budget, exactly one level deep — see the dashboard   case in the performance baseline and the live-swap pattern in   <a href="data-refresh.html">data-refresh.md</a>.</p>
+<ul><li><strong>Link diagrams.</strong> Split a large domain into linked views and files</li></ul>
+<p>  (imports) rather than one giant view; the CLI, Studio and the unified tool   navigate between them.</p>
+</article>
+<p><small>Rendered from <a href="limits.md">limits.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

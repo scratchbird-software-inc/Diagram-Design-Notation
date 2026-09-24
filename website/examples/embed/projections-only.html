@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN quickstart — projections bundle only (charts)</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0}.pass{background:#e2f4e5;color:#1d5c2e}.fail{background:#f9e2e2;color:#8a2a2a}code{background:#fff;padding:1px 5px;border-radius:4px}</style>
+<h1>Quickstart — projections-only page (chart, smallest render path)</h1>
+<p>A chart page does not need the all-in-one build: load <code>ddn-core.min.js</code> +
+<code>ddn-graph.min.js</code> (the renderer core requires the graph bundle even for charts) +
+<code>ddn-projections.min.js</code>. Skip <code>ddn-quality</code> and <code>ddn-geo</code> and the Studio
+component — roughly 740 KB of minified runtime instead of 805 KB for <code>ddn.global.min.js</code>
+(exact byte table on the <a href="../../download/index.html">download page</a>). IIFE tags work over
+<code>file://</code>. Rendering a kind whose bundle is missing throws the coded <code>DDN-E010</code>
+naming the bundle to add.</p>
+<script src="../../dist/ddn-core.min.js"></script>
+<script src="../../dist/ddn-graph.min.js"></script>
+<script src="../../dist/ddn-projections.min.js"></script>
+<div id="status" class="status">running…</div>
+<div id="out"></div>
+<script>
+const s=document.getElementById('status');
+try{
+  const source='ddn "0.5";\nmodule "quickstart.projections";\ndata metrics {\n    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }\n    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }\n    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }\n}\nview latency "Latency / projections-only" {\n    data: [@metrics];\n    projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }\n    publication { size: content; fit: none; }\n}\n';
+  const ws=DDNLive.createWorkspace({'main.ddn':source});
+  const r=ws.renderSync({entry:'main.ddn',view:'latency'});
+  document.getElementById('out').innerHTML=r.svg;
+  s.textContent='pass-projections: ddn-core + ddn-graph + ddn-projections rendered the chart in '+r.milliseconds.toFixed(1)+' ms; quality/geo/Studio bundles not loaded';
+  s.classList.add('pass');
+}catch(e){s.textContent='projections-only quickstart failed: '+(e.code?e.code+' ':'')+e.message;s.classList.add('fail');}
+</script></html>

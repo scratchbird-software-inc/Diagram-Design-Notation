@@ -10,7 +10,9 @@
     "designer"
   ],
   "scripts": {
-    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site && npm run test:brand && npm run test:ai-reference && npm run test:normalize",
+    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site && npm run test:brand && npm run test:ai-reference && npm run test:normalize && npm run test:benchmark",
+    "test:benchmark": "node --expose-gc tools/benchmark.mjs --smoke",
+    "benchmark": "node --expose-gc tools/benchmark.mjs",
     "test:normalize": "node tests/normalize-ddn.js",
     "test:packaging": "node tools/tests/packaging.js",
     "test:ai-reference": "node tests/ai-reference.js",

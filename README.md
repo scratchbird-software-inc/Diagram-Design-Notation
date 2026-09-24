@@ -76,9 +76,16 @@ The runtime is pack-able as `@ddn/notation` (`notation/`; version
 Rollup build toolchain is a pinned devDependency and never ships in the
 package). `npm pack` in
 `notation/` produces a tarball limited to `dist/`, `README.md`, and
-`package.json`; there is no registry publishing — install the tarball
-directly (`npm i ./ddn-notation-0.6.0-beta.1.tgz`, later `npm i @ddn/notation`
-once published). Subpaths resolve in both CommonJS and ESM:
+`package.json`. **Not yet published to the npm registry** — install the
+tarball directly (`npm i ./ddn-notation-0.6.0-beta.1.tgz`); `npm i
+@ddn/notation` becomes available once the first `v*` tag is published. The
+publish path itself is ready and continuously validated:
+`.github/workflows/publish.yml` runs the packaging gate and
+`npm publish --dry-run` on every push, and would publish on `v*` version tags
+once the `NPM_TOKEN` repository secret is configured (it skips gracefully
+until then; the committed `private: true` in `notation/package.json` is a
+deliberate accident guard the tag-gated job strips at publish time).
+Subpaths resolve in both CommonJS and ESM:
 
 | Import                      | Resolves to                           | Notes                                                                                     |
 | --------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -100,6 +107,55 @@ bundlers.
 The package's license is GPL-2.0-or-later (the `license` field is
 authoritative; the tarball carries no `LICENSE` file because `notation/` has
 none — see the repository root).
+
+## Limits & capabilities
+
+Every cap below is enforced by code, not convention — hitting one raises a
+coded error, never silent truncation. Measured performance against these
+boundaries is in
+[`standard/registry/performance-baseline.json`](standard/registry/performance-baseline.json)
+(regenerate with `npm run benchmark`); the designer responsiveness numbers in
+`designer/specification/16-performance.md` are annotated TARGET vs MEASURED.
+
+| Cap | Value | Raised as | Enforcing code |
+| --- | ----- | --------- | -------------- |
+| Elements selected into one live view | 128 | `LIVE013` | `notation/studio/src/api.js` (`compiled()`) |
+| Relations visible in one live view | 384 | `LIVE013` | `notation/studio/src/api.js` (`compiled()`) |
+| Child view of a composed dashboard | 128 elements / 384 relations | `DDN-QP003` | `notation/runtime/ddn-core.js` (`build()`, panels branch) |
+| Dashboard nesting | one child-view level — no recursive dashboards | `DDN-QP002` | `notation/runtime/ddn-core.js` (`build()`, panels branch) |
+| Embedded child views per dashboard | 12 | `DDN-QP003` | `notation/runtime/ddn-core.js` (`build()`, panels branch) |
+| Panels in a `kind:panels` projection | 1–80 panels on a 1–12 column grid | `DDN-PJ020` | `notation/runtime/ddn-projection-data.js` |
+| Quality/chart reference list | 1–1000 references, unique identity | `DDN-Q003` | `notation/runtime/ddn-quality-data.js` |
+| Publication page width/height | 64–100000 px, finite | `DDN046` | `notation/runtime/ddn-core.js` |
+| Source file size (viewer / unified tool) | 50 MB per source | plain `Error` | `MAX_FILE_BYTES` in `notation/tool/src/tool.js`, `notation/viewer/src/viewer.js` |
+| Raster (PNG) export side | 16384 px | plain `Error` | `MAX_RASTER_PX` in `notation/viewer/src/viewer.js`, `notation/tool/src/tool.js` |
+| Workspace undo history | 60 entries / 16 MB of patches | (oldest entry dropped) | `notation/studio/src/api.js` (`commit()`) |
+| Compiled-IR cache per workspace | 4 views (LRU) | (recompiles on eviction) | `notation/studio/src/api.js` (`compiled()`) |
+
+The library API (`createWorkspace`/`renderSync`) imposes no source-size cap of
+its own — you hand it text you already hold — so the 50 MB cap is a guard of
+the browser surfaces, not of the language.
+
+**Rendering is synchronous and single-threaded.** `render()` is an async
+wrapper over the synchronous renderer (same thread, same tick — see
+`renderSync`/`render` in `notation/studio/src/api.js`); no worker offload
+exists today. Off-thread rendering is a roadmap item, not a current
+capability, so size views to the limits above instead of expecting the UI to
+stay responsive through an oversized render.
+
+**Working within the limits — guidance patterns:**
+
+- *Filter, don't shrink the model.* Views select a subset of one model; keep
+  the model whole and declare narrow views (`data:` subsets, projection
+  `filter`).
+- *Drill down with subdiagrams.* A node can expose a detail view
+  (`subdiagram … { view: @detail; mode: reference }`); hosts get a
+  `ddn-navigate` event and swap the rendered view — each level stays under
+  128/384 independently.
+- *Compose dashboards.* `panels.composed@1` embeds up to 12 child views, each
+  with its own 128/384 budget, exactly one level deep.
+- *Link diagrams.* Split a large domain into linked views/files (imports)
+  rather than one giant view; the CLI and Studio navigate between them.
 
 ## Licensing
 

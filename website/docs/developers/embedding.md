@@ -1,5 +1,34 @@
 # Embedding
 
+## Quickstart
+
+Five runnable minimal pages under `website/examples/embed/` cover the common
+embedding shapes — open the one that matches yours and copy it:
+
+| Example | Shows | `file://` safe? |
+| --- | --- | --- |
+| [script-tag-global.html](../../examples/embed/script-tag-global.html) | One `<script src="ddn.global.min.js">` tag → `DDNLive.createWorkspace` → `renderSync` → `innerHTML` | yes |
+| [esm-module.html](../../examples/embed/esm-module.html) | ES-module imports of `ddn-core.mjs` + `ddn-graph.mjs` (tree-shakeable, named exports) | no — module imports need any static server (`node tools/serve.js`) |
+| [projections-only.html](../../examples/embed/projections-only.html) | Chart page loading only core + graph + projections bundles (skip quality/geo/Studio) | yes |
+| [geo-optional.html](../../examples/embed/geo-optional.html) | A `kind:geo` view rendered *without* `ddn-geo`: inline placeholder + coded `DDN-E010` diagnostic, never a silent gap | yes |
+| [data-refresh.html](../../examples/embed/data-refresh.html) | Live dashboard: `ws.replaceData(name, records)` swaps data-block records and re-renders in place | yes |
+
+The smallest useful snippet (global build, works from `file://`):
+
+```html
+<script src="ddn.global.min.js"></script>
+<script>
+  const ws = DDNLive.createWorkspace({ "model.ddn": sourceText });
+  const r = ws.renderSync({ entry: "model.ddn", view: "overview" });
+  document.getElementById("out").innerHTML = r.svg;
+</script>
+```
+
+`render()` is also available and returns a Promise, but it resolves on the
+same thread in the same tick — rendering is synchronous; there is no worker
+offload today (roadmap only). Keep views inside the
+[limits](limits.md) so a synchronous render stays interactive.
+
 ## The web component
 
 `DDNLive.mount` upgrades a host element into a live diagram

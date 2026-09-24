@@ -374,6 +374,7 @@ writeOut('index.html', shell({
     'with a zero-dependency JavaScript runtime and deterministic SVG output.</p>\n' +
     '  <div class="cta-row">\n' +
     '    <a class="cta primary" href="tools/designer/index.html">Open the designer</a>\n' +
+    '    <a class="cta secondary" href="docs/developers/embedding.html">Embed the runtime</a>\n' +
     '    <a class="cta secondary" href="standard/index.html">Read the standard</a>\n' +
     '  </div>\n</div></section>\n' +
     '<main class="site-main">\n' +
@@ -484,11 +485,11 @@ const distRows = fs.readdirSync(path.join(REPO, 'notation/dist')).sort()
   .map(f => '<tr><td><a href="../dist/' + f + '"><code>' + f + '</code></a></td><td>' + fs.statSync(path.join(REPO, 'notation/dist', f)).size + '</td></tr>');
 writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<h1 class="page-title">Download</h1>\n' +
-  '<p class="lede">ScratchWeaver ' + VERSION + ' — the product name of this Diagram Design Notation (DDN) toolkit from ScratchBird Software Inc. — is pre-1.0 and <code>private: true</code> — it is not yet published to npm. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site.</p>\n' +
+  '<p class="lede">ScratchWeaver ' + VERSION + ' — the product name of this Diagram Design Notation (DDN) toolkit from ScratchBird Software Inc. — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>\n' +
   '<h2>Clone the repository</h2>\n' +
   '<pre><code>git clone &lt;repo-url&gt; data-design-notation\ncd data-design-notation\nnpm test          # full verification suite, exit 0 expected</code></pre>\n' +
   '<h2>Runtime bundles</h2>\n' +
-  '<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>, plus the optional <code>ddn-geo</code> for map views). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a> and the <a href="../examples/embed/core-graph.html">embed proof pages</a>.</p>\n' +
+  '<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>, plus the optional <code>ddn-geo</code> for map views). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a>, the <a href="../docs/developers/embedding.html">embedding quickstart</a> and the <a href="../examples/embed/script-tag-global.html">embed example pages</a>.</p>\n' +
   '<table>\n<thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>\n' + distRows.join('\n') + '\n</tbody></table>\n' +
   '<h2>License</h2>\n<p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>'));
 
