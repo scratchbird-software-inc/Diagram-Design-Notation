@@ -52,6 +52,25 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-stage { position: relative; flex: 1; min-height: 0; }
 #ddn-diagram { position: absolute; inset: 0; }
 #ddn-diagram ddn-example { height: 100%; }
+/* B1-043 (D7): while a (worker) render is in flight the previous picture dims
+ * — the same stale idiom the component uses for failed renders (.canvas.stale
+ * is opacity .38) — and a spinner sits in the corner. Non-blocking: the stage
+ * stays interactive because the computation runs off the main thread. */
+#ddn-diagram.ddn-rendering { opacity: .38; }
+#ddn-busy {
+  position: absolute; top: 10px; right: 12px; z-index: 3;
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 11px; border: 1px solid #cbd5e3; border-radius: 30px;
+  background: #ffffffee; color: #40536b; font-size: 12px;
+}
+#ddn-busy[hidden] { display: none; }
+.ddn-spinner {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid #cbd5e3; border-top-color: #245ac8;
+  animation: ddn-spin .8s linear infinite;
+}
+@keyframes ddn-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .ddn-spinner { animation: none; } }
 #ddn-hint {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   color: #586b83; text-align: center; pointer-events: none;

@@ -91,9 +91,16 @@ presentation attributes, not `<style>` blocks (see
 [styling.md](styling.md) — no `!important` anywhere, page CSS fills gaps the
 script left unset).
 
+The unified tool's render worker (B1-043) is created from a Blob URL, so a
+page hosting the *tool* (or any `setRenderBridge` consumer) also needs
+`worker-src blob:` (or `child-src blob:` on older engines). Pages embedding
+only the runtime do not load any worker.
+
 ## `file://` caveats
 
-The runtime itself is `file://`-safe (no fetch, no workers). The caveats are
+The runtime itself is `file://`-safe (no fetch; no workers unless a host
+installs a render bridge — only the unified tool does, and it uses a Blob-URL
+worker, which Chromium runs from `file://` pages too). The caveats are
 about *your sources*:
 
 - `createWorkspace` takes source text, not URLs — reading `.ddn` files from

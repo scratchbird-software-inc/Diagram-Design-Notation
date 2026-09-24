@@ -198,6 +198,8 @@ test('mapLegacyParams: src/entry/view/mode/drawers preserved, junk dropped', () 
   assert.equal(R.mapLegacyParams('?src=x.txt'), '', 'non-ddn src dropped');
   assert.equal(R.mapLegacyParams('?mode=bogus&drawers=x:y'), '', 'invalid mode/drawers dropped');
   assert.equal(R.mapLegacyParams('?mode=edit&drawers=source:open,files:none'), '?mode=edit&drawers=source%3Aopen%2Cfiles%3Anone');
+  assert.equal(R.mapLegacyParams('?worker=off'), '?worker=off', 'explicit sync fallback survives the redirect (B1-043)');
+  assert.equal(R.mapLegacyParams('?worker=bogus'), '', 'non-off worker values dropped');
   assert.equal(R.mapLegacyParams(''), '');
   // Old pages sat one directory deeper: same-origin ?src= paths are
   // re-relativized so legacy bookmarks keep resolving (D6).

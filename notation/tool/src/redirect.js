@@ -41,6 +41,8 @@ function mapLegacyParams(search, stubHref, toolHref) {
   if (view) out.set('view', view.trim());
   const mode = params.get('mode');
   if (['diagram', 'view', 'explore', 'edit'].includes(mode)) out.set('mode', mode);
+  /* B1-043: the explicit sync-fallback switch survives legacy redirects. */
+  if (params.get('worker') === 'off') out.set('worker', 'off');
   const drawers = params.get('drawers');
   if (drawers && /^[A-Za-z]+:(open|closed|none)(,[A-Za-z]+:(open|closed|none))*$/.test(drawers)) out.set('drawers', drawers);
   const q = out.toString();

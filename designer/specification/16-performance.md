@@ -16,10 +16,27 @@ case. The 2026-09-24 baseline reflects the B1-042 pure-JS routing
 optimization round (profile-guided segment caching, dependency-free spatial
 narrowing, typed-array edge costs, and render-level geometry memoization);
 the medium-graph cold render improved ~11x versus the 2026-09-23 baseline on
-the same machine, with byte-identical golden renders. Rendering is synchronous and single-threaded (`render()` wraps
-`renderSync`; no worker offload — roadmap only), so an editor hitting the
-250ms target must keep views small enough that the measured synchronous render
-fits, and show the busy state otherwise.
+the same machine, with byte-identical golden renders.
+
+**Worker rendering is real and measured (B1-043, 2026-09-24).** The unified
+tool (`notation/tool/`) runs the engine computation — layout, routing, SVG
+generation — in a persistent Blob-URL Web Worker behind the coarse boundary
+of `Engine.render`: the main thread compiles the view, applies overrides,
+measures text and applies results; the worker receives the applied view model
+plus a packed pre-measured metrics table and returns one batched response
+(svg + scene + diagnostics + measured tuples). Every worker-reported text
+measurement is verified against the main-thread canvas before display, so the
+shown SVG is always byte-identical to a synchronous render (full-corpus
+equality is tested in node and in headless Chromium, HTTP and `file://`).
+`?worker=off` forces the synchronous path; a metric mismatch or worker
+failure degrades to it permanently for the session. On the medium-graph
+benchmark case (32 nodes / 31 relations, this machine,
+`tools/benchmark-worker.mjs`, median of 9): request-to-display latency is
+parity (sync 1481.5 ms vs worker 1471.8 ms), but main-thread busy time drops
+from 1481.5 ms to 5.0 ms and the 1 ms timer-probe worst delay from
+1481.4 ms to 1.9 ms — the UI stays interactive throughout the render. The
+editor guidance stands: worker offload buys responsiveness, not speed; the
+250 ms/1 s budgets still bound what the engine itself must do.
 
 Maintain separate timings for input handling, draft-command planning, source commit, validation, measurement, layout/routing, SVG generation, DOM installation and accessibility-tree update. A fast SVG string build can still block due to DOM size; measure both. Report cold/warm cache performance and representative failure paths.
 

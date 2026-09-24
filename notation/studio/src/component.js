@@ -120,6 +120,10 @@ class DDNExample extends HTMLElement{
  setOptions(changes){api.checkOptions(changes);this.options={...this.options,...changes};this.syncUI();clearTimeout(this._timer);this._settleScheduled?.({superseded:true});this.ready=new Promise((resolve,reject)=>{this._settleScheduled=resolve;this._timer=setTimeout(()=>{this._settleScheduled=null;this.redraw().then(resolve,reject);},100);});this.ready.catch(()=>{});return this.ready;}
  async redraw(){
   if(!this.ws)return;const token=++this.pending;this.$('.metrics').textContent='Rendering DDN…';this.$('.error').textContent='';this.$('[data-action=svg]').disabled=true;this.$('[data-action=snapshot]').disabled=true;
+  /* B1-043 (D7): hosts show a non-blocking busy affordance between this event
+   * and the matching ddn-render/ddn-error; the component itself stays dimmed
+   * only on failure (the stale idiom). */
+  this.dispatchEvent(new CustomEvent('ddn-render-start',{detail:{entry:this.entry,view:this.view},bubbles:true,composed:true}));
   await new Promise(r=>setTimeout(r,0));if(token!==this.pending||this.destroyed)return;
   try{
    const r=await this.ws.render({entry:this.entry,view:this.view,overrides:this.options,layoutState:this._layoutState?.view===this.entry+'#'+this.view?this._layoutState:null});if(token!==this.pending||this.destroyed)return;

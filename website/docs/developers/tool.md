@@ -11,9 +11,34 @@ install, or network (deep links that fetch need HTTP — see below).
 ## Getting and rebuilding
 
 The file is committed and regenerated deterministically from
-`notation/tool/src/{template.html,tool.css,tool.js}` by
+`notation/tool/src/{template.html,tool.css,tool.js,worker.js}` by
 `node tools/build-tool.js` (run after `build:sdk`). Do not edit the built
 file.
+
+## Rendering: worker by default (B1-043)
+
+Rendering runs in a **persistent Web Worker** by default. The main thread
+compiles the view, applies presentation overrides, measures text and applies
+results; the worker runs the engine computation (layout, routing, SVG
+generation) so the page stays responsive on large views. Details:
+
+- The worker is created from a Blob URL whose source the build embeds as a
+  string in the single file (no external script, so `file://` and strict
+  contexts work; verified from both `file://` and HTTP in Chromium).
+- One request, one batched response per render: the applied view model plus a
+  packed pre-measured text table (string/role tables + `Float64Array`s) go in;
+  SVG, scene, diagnostics and the measured-tuple table come back.
+- **Determinism guard:** every text measurement the worker reports is
+  verified against the main thread's canvas measurement before the picture is
+  shown. Any mismatch — or a worker failure — permanently degrades the page
+  to synchronous rendering (never a wrong or divergent picture).
+- A new render supersedes an in-flight one (revision counter; late results
+  are discarded).
+- During a render the previous picture dims and a spinner shows; the stage
+  stays interactive.
+
+`?worker=off` forces the synchronous path (debugging, tests, exotic hosts).
+The status bar announces the synchronous fallback when it is active.
 
 ## Layout and drawers
 

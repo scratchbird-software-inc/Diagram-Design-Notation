@@ -2641,8 +2641,12 @@ function createWorkspace(input){
   undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
   redo(){const t=redo.pop();if(!t)return false;const n={...files};for(const p of t.patch)if(p.after===undefined)delete n[p.file];else n[p.file]=p.after;commit(n,t.label,false);undo.push(t);historyBytes+=t.bytes;return true;},
   subscribe(fn){if(typeof fn!=='function')throw new TypeError('Listener must be a function.');listeners.add(fn);return ()=>listeners.delete(fn);},
-  renderSync({entry,view,overrides={},layoutState=null,noMotion=false,isoFrom=null}){
-   const start=performance.now(),base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
+  /* B1-043 (D3): the coarse worker boundary sits at Engine.render. Prepare
+   * (compile, override application, geometry-cache lookup) and finalize
+   * (source map, fingerprints, capabilities, cache fill) stay on the caller's
+   * thread; only the layout/routing/SVG computation crosses the boundary. */
+  prepareRender({entry,view,overrides={},layoutState=null,noMotion=false,isoFrom=null}){
+   const base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
    /* B1-042 (D2.4): completed-geometry memoization. The cache lives beside the
     * compiled-IR cache and is cleared with it on every source change, so
     * entry#view plus the exact render inputs identifies an unchanged view.
@@ -2650,12 +2654,13 @@ function createWorkspace(input){
     * the cache stays pristine, and every render returns a fresh object. */
    const geometryKey=entry+'#'+view+'|'+JSON.stringify([overrides,layoutState,noMotion===true,isoFrom]);
    const hit=geometryCache.get(geometryKey);
-   if(hit)return {...deepClone(hit),milliseconds:performance.now()-start};
-   /* B1-034 (D6): isoFrom carries the host's previous committed depths
-    * ({depths: {elementId: px}}) so ddn-iso emits a short declarative SMIL
-    * transition (<=300 ms) on refresh-driven height changes. */
-   const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true,...(isoFrom?{isoFrom}:{})});
-   const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);redacted?[]:v.ir.elements.flatMap(n=>n.fields||[]);
+   if(hit)return {hit};
+   return {hit:null,base,v,p,entry,view,geometryKey,
+    engineOpts:{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true,...(isoFrom?{isoFrom}:{})}};
+  },
+  finalizeRender(prep,result,start){
+   const {base,v,p,entry,view,geometryKey}=prep;
+   const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);
    const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);
    const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));
    for(const m of result.scene.projection?.mapping||[])if(sourceMap[m.source])sourceMap[m.occurrence]={...sourceMap[m.source],sourceId:m.source};
@@ -2664,7 +2669,30 @@ function createWorkspace(input){
    geometryCache.set(geometryKey,deepClone(out));while(geometryCache.size>4)geometryCache.delete(geometryCache.keys().next().value);
    return out;
   },
-  async render(options){return this.renderSync(options);},
+  renderSync(options){
+   const start=performance.now(),prep=this.prepareRender(options);
+   if(prep.hit)return {...deepClone(prep.hit),milliseconds:performance.now()-start};
+   /* B1-034 (D6): isoFrom carries the host's previous committed depths
+    * ({depths: {elementId: px}}) so ddn-iso emits a short declarative SMIL
+    * transition (<=300 ms) on refresh-driven height changes. */
+   return this.finalizeRender(prep,backend.Engine.render(prep.v.ir,assets.registry,assets.glyphs,prep.engineOpts),start);
+  },
+  /* B1-043 (D1): with a render bridge installed (api.setRenderBridge), the
+   * engine computation runs off-thread; errors marked workerFallback degrade
+   * to the synchronous path (metric mismatch, worker loss) — everything else
+   * is a genuine render error and propagates. */
+  async render(options){
+   if(!renderBridge||renderBridge.degraded)return this.renderSync(options);
+   const start=performance.now(),prep=this.prepareRender(options);
+   if(prep.hit)return {...deepClone(prep.hit),milliseconds:performance.now()-start};
+   try{
+    const result=await renderBridge.render(prep.v.ir,prep.engineOpts,{redacted:prep.p.export.mode==='redacted'});
+    return this.finalizeRender(prep,result,start);
+   }catch(e){
+    if(e&&e.workerFallback)return this.renderSync(options);
+    throw e;
+   }
+  },
   exportVegaLite({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(!backend.Projections)fail('DDN-E010','Vega-Lite export is provided by ddn-projections.js; load it after ddn-core.js and ddn-graph.js.');return backend.Projections.vegaLite(v.ir);},
   evaluateDecision(entry,view,input){return clone(backend.ProjectionData.quality.evaluateDecision(backend.ProjectionData.plan(compiled(entry,view).ir,D.DDNError),input));},
   simulateLifecycle(entry,view,events,expected){return clone(backend.ProjectionData.quality.simulate(backend.ProjectionData.plan(compiled(entry,view).ir,D.DDNError).lifecycle,events,expected));},
@@ -2675,9 +2703,16 @@ function createWorkspace(input){
  };return ws;
 }
 const workspaces=new Map();
+/* B1-043 (D1/D2): an installed render bridge receives the applied IR plus
+ * engine options and resolves {svg, scene, diagnostics, _ir?} — the coarse
+ * Engine.render boundary off the UI thread. One bridge per page (the unified
+ * tool installs a persistent Blob-URL worker); null restores synchronous
+ * rendering. */
+let renderBridge=null;
+function setRenderBridge(bridge){if(bridge!=null&&(typeof bridge!=='object'||typeof bridge.render!=='function'))fail('LIVE040','Render bridge must expose render(ir, engineOpts, flags).');renderBridge=bridge||null;}
 function registerWorkspace(id,files){if(typeof id!=='string'||!id)fail('LIVE014','Workspace name is required.');const ws=files&&typeof files.renderSync==='function'?files:createWorkspace(files);workspaces.set(id,ws);if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('ddn-workspace-ready',{detail:{id}}));return ws;}
 function fromSnapshot(s){if(!['ddn-workspace@1','ddn-live-snapshot@0.1'].includes(s?.format)||typeof s.entry!=='string'||typeof s.view!=='string')fail('LIVE015','Unknown saved workspace format.');checkOptions(s.overrides||{});pathChecked(s.entry);return {workspace:createWorkspace(s.files),entry:s.entry,view:s.view,overrides:clone(s.overrides||{}),...(s.layoutState?{layoutState:clone(s.layoutState)}:{})};}
-const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,glyphs:{forKind:glyphForKind}};
+const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,setRenderBridge,engineAssets:{registry:assets.registry,glyphs:assets.glyphs},defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,glyphs:{forKind:glyphForKind}};
 return api;
 }
 

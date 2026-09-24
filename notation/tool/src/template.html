@@ -96,6 +96,7 @@
     </aside>
     <section id="ddn-stage" aria-label="Diagram stage">
       <div id="ddn-diagram"></div>
+      <div id="ddn-busy" hidden><span class="ddn-spinner" aria-hidden="true"></span>Rendering…</div>
       <div id="ddn-hint"><p>Open a .ddn file, pick an example,<br>drop files anywhere, or paste a source.</p></div>
     </section>
     <aside id="ddn-drawer-source" class="ddn-drawer ddn-bottom" data-state="closed" aria-label="Source drawer">
@@ -193,6 +194,9 @@
 </footer>
 <script>
 {{DDN_RUNTIME}}
+</script>
+<script>
+{{DDN_WORKER_SOURCE}}
 </script>
 <script>
 {{DDN_DATA}}

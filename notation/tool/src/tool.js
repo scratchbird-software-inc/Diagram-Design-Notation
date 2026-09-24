@@ -260,12 +260,144 @@ function scaledDuration(baseDur, multiplier) {
   return baseDur / multiplier;
 }
 
+/* ------------------------------------------------ B1-043 render worker bridge
+ * Coarse boundary (review/D3): the main thread keeps compile, override
+ * application, geometry caching and result bookkeeping; only Engine.render
+ * (layout + routing + SVG build) crosses into a persistent worker. The
+ * request carries the applied IR (measured-dimension inputs, pins, ports,
+ * constraints and existing geometry all live there), the engine options and
+ * a packed pre-measured text table; one batched response returns svg + scene
+ * + diagnostics + the exact set of measured tuples (D4: no chatter).
+ * Determinism (D5): every measured tuple the worker reports is verified
+ * against the main-thread measurement service; a mismatch discards the
+ * worker result and permanently degrades to the synchronous path, so the
+ * displayed SVG is always byte-identical to a sync render. */
+
+/* `?worker=off` (D1): explicit sync fallback. Any other value (or absence)
+ * leaves the default auto behaviour. */
+function parseWorkerParam(v) { return v == null || v === '' ? 'auto' : (String(v).toLowerCase() === 'off' ? 'off' : 'auto'); }
+
+/* Why the worker cannot run here, or null when it can. Blob-URL workers are
+ * verified to run from both http:// and file:// pages in Chromium (B1-043
+ * spike, chrome-headless-shell-1234), so file:// keeps the worker too; a
+ * browser that rejects them trips the bridge's onerror degrade path and the
+ * tool continues synchronously — same end state as ?worker=off. */
+function workerDisabledReason({ param, hasWorker, hasSource }) {
+  if (parseWorkerParam(param) === 'off') return '?worker=off';
+  if (!hasSource) return 'no embedded worker source';
+  if (!hasWorker) return 'Worker API unavailable';
+  return null;
+}
+
+/* Packed metrics table (D4): string + role tables, Float64Array triples. */
+function packMetrics(entries) {
+  if (!Array.isArray(entries)) throw new Error('metric entries array required');
+  const texts = [], roles = [], meta = new Float64Array(entries.length * 3), vals = new Float64Array(entries.length * 3);
+  entries.forEach((e, i) => {
+    let ri = roles.indexOf(e.role);
+    if (ri < 0) { roles.push(e.role); ri = roles.length - 1; }
+    texts.push(String(e.text));
+    meta[i * 3] = e.size; meta[i * 3 + 1] = ri; meta[i * 3 + 2] = e.weight;
+    vals[i * 3] = e.width; vals[i * 3 + 1] = e.ascent; vals[i * 3 + 2] = e.descent;
+  });
+  return { texts, roles, meta, vals };
+}
+function unpackMetrics(p) {
+  const out = [], texts = (p && p.texts) || [], roles = (p && p.roles) || [], meta = (p && p.meta) || [], vals = (p && p.vals) || [];
+  for (let i = 0; i < texts.length; i++)
+    out.push({ text: texts[i], size: meta[i * 3], role: roles[meta[i * 3 + 1]], weight: meta[i * 3 + 2], width: vals[i * 3], ascent: vals[i * 3 + 1], descent: vals[i * 3 + 2] });
+  return out;
+}
+
+function workerBridgeError(code, message, fallback) {
+  const e = new Error(message);
+  e.code = code;
+  if (fallback) e.workerFallback = true;
+  return e;
+}
+
+/* Host-agnostic bridge factory: `worker` is any Worker-like port
+ * (postMessage(msg, transfer), onmessage/onerror setters, terminate());
+ * `measure(text, size, role, weight)` is the main-thread reference
+ * measurement used to verify every tuple the worker reports (D5). */
+function createRenderBridge({ worker, measure, onDegraded, onTiming, seedLimit = 8192 }) {
+  if (!worker || typeof worker.postMessage !== 'function') throw new Error('worker port required');
+  if (typeof measure !== 'function') throw new Error('reference measure function required');
+  let latest = 0, degraded = false;
+  const pending = new Map(), verified = new Map();
+  const key = e => JSON.stringify([e.text, e.size, e.role, e.weight]);
+  function degrade(err) {
+    if (degraded) return;
+    degraded = true;
+    const list = [...pending.values()]; pending.clear();
+    for (const p of list) p.reject(err);
+    if (onDegraded) try { onDegraded(err); } catch { /* host hook */ }
+  }
+  worker.onmessage = ev => {
+    const m = (ev && ev.data !== undefined ? ev.data : ev) || {};
+    if (m.type === 'ready') return;
+    if (m.type !== 'rendered') return;
+    const p = pending.get(m.rev);
+    pending.delete(m.rev);
+    if (!p) return; // superseded request whose response arrived late (D8)
+    if (!m.ok) { p.reject(workerBridgeError(m.code || 'ERROR', m.message || 'worker render failed')); return; }
+    /* Verify every measured tuple against the main-thread reference before
+     * the result is allowed on screen (D5). */
+    let t0 = 0;
+    if (onTiming) t0 = nowMs();
+    for (const e of unpackMetrics(m.used)) {
+      const k = key(e);
+      if (verified.has(k)) continue;
+      const ref = measure(e.text, e.size, e.role, e.weight);
+      if (!ref || ref.width !== e.width || ref.ascent !== e.ascent || ref.descent !== e.descent) {
+        const err = workerBridgeError('DDN-W950', 'worker text metric mismatch for ' + JSON.stringify(e.text).slice(0, 40) + ' — degraded to synchronous rendering', true);
+        degrade(err);
+        p.reject(err);
+        return;
+      }
+      verified.set(k, e);
+      if (verified.size > seedLimit) verified.delete(verified.keys().next().value);
+    }
+    if (onTiming) onTiming({ rev: m.rev, verifyMs: nowMs() - t0, workerBusyMs: m.busyMs });
+    p.resolve({ svg: m.svg, scene: m.scene, diagnostics: m.diagnostics || [], _ir: m.ir });
+  };
+  worker.onerror = ev => {
+    degrade(workerBridgeError('DDN-W951', 'render worker failed: ' + ((ev && ev.message) || 'unknown') + ' — synchronous rendering from here', true));
+  };
+  function nowMs() { return (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now()); }
+  return {
+    get degraded() { return degraded; },
+    get verifiedMetrics() { return verified.size; },
+    render(ir, engineOpts, { redacted = false } = {}) {
+      if (degraded) return Promise.reject(workerBridgeError('DDN-W951', 'render worker degraded', true));
+      /* D8: a new request supersedes every in-flight one; late responses for
+       * superseded revisions are dropped on receipt above. */
+      for (const [rev, p] of pending) { p.reject(workerBridgeError('DDN-W952', 'render superseded by a newer request')); pending.delete(rev); }
+      const rev = ++latest;
+      const packed = packMetrics([...verified.values()]);
+      return new Promise((resolve, reject) => {
+        pending.set(rev, { resolve, reject });
+        try {
+          worker.postMessage({ type: 'render', rev, ir, opts: engineOpts, needIR: redacted === true, metrics: packed }, [packed.meta.buffer, packed.vals.buffer]);
+        } catch (e) {
+          pending.delete(rev);
+          const err = workerBridgeError('DDN-W951', 'render worker post failed: ' + (e && e.message), true);
+          degrade(err);
+          reject(err);
+        }
+      });
+    },
+    terminate() { degraded = true; try { worker.terminate && worker.terminate(); } catch { /* gone */ } }
+  };
+}
+
 const pure = {
   DRAWERS, DRAWER_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig,
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
   isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
-  hopWindowsFromMarkers, nextHopTime, scaledDuration
+  hopWindowsFromMarkers, nextHopTime, scaledDuration,
+  parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, createRenderBridge
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; return; }
@@ -279,6 +411,7 @@ const freshSource = `ddn "0.5";\nmodule "my.design";\n\n// Definitions are share
 
 const els = {
   toolbar: $('ddn-toolbar'), picker: $('ddn-view-picker'),
+  busy: $('ddn-busy'),
   fitPage: $('ddn-fit-page'), fitWidth: $('ddn-fit-width'), fitHeight: $('ddn-fit-height'), fit100: $('ddn-fit-100'),
   zoomOut: $('ddn-zoom-out'), zoomIn: $('ddn-zoom-in'), zoom: $('ddn-zoom'), zoomPct: $('ddn-zoom-pct'),
   dragMode: $('ddn-drag-mode'), settings: $('ddn-settings'), settingsPopup: $('ddn-settings-popup'),
@@ -320,6 +453,54 @@ const state = {
   catalogueIndex: -1, overrideStyle: null, panning: false
 };
 let timer = null, unsubscribe = null;
+
+/* ------------------------------------------------ render worker (B1-043, D1/D2)
+ * One persistent Blob-URL worker per page, created from the source string the
+ * build embeds as globalThis.DDN_WORKER_SOURCE (D6 — the tool stays a single
+ * self-contained file; nothing external is fetched). `?worker=off`, a missing
+ * Worker API, and file:// pages keep the synchronous path; a metric mismatch
+ * or worker failure degrades permanently to sync (never a wrong picture). */
+const workerState = { bridge: null, reason: null };
+function renderMode() { return workerState.bridge && !workerState.bridge.degraded ? 'worker' : 'sync'; }
+let measureCanvas = null;
+function referenceMeasure(text, size, role, weight) {
+  const stack = FONT_STACKS[role] || role;
+  try {
+    if (measureCanvas === null) measureCanvas = document.createElement('canvas').getContext('2d') || false;
+    if (!measureCanvas) return null;
+    measureCanvas.font = weight + ' ' + size + 'px ' + stack;
+    const m = measureCanvas.measureText(String(text));
+    return { width: m.width, ascent: m.actualBoundingBoxAscent || size * .85, descent: m.actualBoundingBoxDescent || size * .25 };
+  } catch { return null; }
+}
+function installRenderWorker() {
+  const reason = workerDisabledReason({
+    protocol: host.location && host.location.protocol,
+    param: new URLSearchParams(location.search).get('worker'),
+    hasWorker: typeof host.Worker === 'function',
+    hasSource: typeof host.DDN_WORKER_SOURCE === 'string' && host.DDN_WORKER_SOURCE.length > 0
+  });
+  workerState.reason = reason;
+  if (reason) return;
+  try {
+    const url = URL.createObjectURL(new Blob([host.DDN_WORKER_SOURCE], { type: 'text/javascript' }));
+    const w = new Worker(url);
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    workerState.bridge = createRenderBridge({
+      worker: w,
+      measure: referenceMeasure,
+      onDegraded: e => {
+        els.diagramHost.setAttribute('data-ddn-render-mode', 'sync');
+        status('render worker disabled (' + (e && e.message || e) + ') — synchronous rendering');
+      }
+    });
+    w.postMessage({ type: 'init', registry: A.engineAssets.registry, glyphs: A.engineAssets.glyphs });
+    A.setRenderBridge(workerState.bridge);
+  } catch (e) {
+    workerState.reason = (e && e.message) || 'worker creation failed';
+    workerState.bridge = null;
+  }
+}
 
 function status(msg) {
   const base = state.entry ? state.entry + ' · view "' + state.view + '"' : 'no source loaded';
@@ -417,7 +598,17 @@ function mount() {
   state.overrideStyle = document.createElement('style');
   state.overrideStyle.id = 'ddn-tool-overrides';
   diagram.shadowRoot.append(state.overrideStyle);
+  diagram.addEventListener('ddn-render-start', () => {
+    /* D7: non-blocking busy affordance — the previous picture dims (the
+     * component's stale idiom) and the stage spinner shows until the
+     * matching ddn-render/ddn-error. */
+    els.diagramHost.classList.add('ddn-rendering');
+    if (els.busy) els.busy.hidden = false;
+  });
   diagram.addEventListener('ddn-render', e => {
+    els.diagramHost.classList.remove('ddn-rendering');
+    if (els.busy) els.busy.hidden = true;
+    els.diagramHost.setAttribute('data-ddn-render-mode', renderMode());
     els.hint.style.display = 'none';
     els.sourceError.textContent = '';
     // Light-DOM render marker: shadow DOM is invisible to --dump-dom and to
@@ -432,6 +623,8 @@ function mount() {
     status();
   });
   diagram.addEventListener('ddn-error', e => {
+    els.diagramHost.classList.remove('ddn-rendering');
+    if (els.busy) els.busy.hidden = true;
     els.diagramHost.removeAttribute('data-ddn-rendered');
     els.sourceError.textContent = e.detail.code + ': ' + e.detail.message;
     fail(e.detail.code + ': ' + e.detail.message);
@@ -1430,7 +1623,8 @@ function loadFromSrc(src) {
 
 function boot() {
   const params = new URLSearchParams(location.search);
-  state.config = resolveDrawerConfig(params.get('mode'), loadStoredDrawers(), params.get('drawers'));
+  installRenderWorker();
+  if (workerState.reason) status('synchronous rendering: ' + workerState.reason);  state.config = resolveDrawerConfig(params.get('mode'), loadStoredDrawers(), params.get('drawers'));
   // D8: prefers-reduced-motion auto-pauses; the user can still press Play
   // (that session choice then wins until the page reloads).
   if (reducedMotion()) anim.playing = false;
@@ -1487,9 +1681,14 @@ host.DDNTool = Object.assign({}, pure, {
   selectFlow: id => { anim.selectedFlow = id; els.animFlow.value = id; },
   getAnimationState: () => ({ playing: anim.playing, speed: anim.speed, flows: anim.flows.map(f => ({ ...f })), selectedFlow: anim.selectedFlow }),
   showSource, flush, snapshot, openFiles,
-  get workspace() { return state.ws; },
-  get diagram() { return state.diagram; },
+  renderMode, getRenderWorkerState: () => ({ mode: renderMode(), disabledReason: workerState.reason, degraded: !!(workerState.bridge && workerState.bridge.degraded), verifiedMetrics: workerState.bridge ? workerState.bridge.verifiedMetrics : 0 }),
   state
+});
+/* Object.assign evaluates getters at copy time, so the live handles must be
+ * defined afterwards to stay live. */
+Object.defineProperties(host.DDNTool, {
+  workspace: { enumerable: true, get: () => state.ws },
+  diagram: { enumerable: true, get: () => state.diagram }
 });
 try { boot(); } catch (e) { els.status.textContent = 'Boot error: ' + (e && e.message) + ' @ ' + (e && e.stack || '').split('\n')[1]; }
 })(typeof globalThis !== 'undefined' ? globalThis : this);

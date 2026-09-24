@@ -29,7 +29,20 @@
 <h1>Unified diagram tool</h1>
 <p><code>notation/tool/ddn-tool.html</code> — served on the website as <code>tools/index.html</code> — is the single-file unified diagram tool (B1-027). It replaces the three retired pages (<code>tools/viewer/index.html</code>, <code>tools/studio/index.html</code>, <code>tools/studio/editor.html</code>), which are now redirect stubs forwarding their parameters. The full runtime and the example corpus are inlined into one HTML file, so it runs from <code>file://</code> with no server, install, or network (deep links that fetch need HTTP — see below).</p>
 <h2>Getting and rebuilding</h2>
-<p>The file is committed and regenerated deterministically from <code>notation/tool/src/{template.html,tool.css,tool.js}</code> by <code>node tools/build-tool.js</code> (run after <code>build:sdk</code>). Do not edit the built file.</p>
+<p>The file is committed and regenerated deterministically from <code>notation/tool/src/{template.html,tool.css,tool.js,worker.js}</code> by <code>node tools/build-tool.js</code> (run after <code>build:sdk</code>). Do not edit the built file.</p>
+<h2>Rendering: worker by default (B1-043)</h2>
+<p>Rendering runs in a <strong>persistent Web Worker</strong> by default. The main thread compiles the view, applies presentation overrides, measures text and applies results; the worker runs the engine computation (layout, routing, SVG generation) so the page stays responsive on large views. Details:</p>
+<ul><li>The worker is created from a Blob URL whose source the build embeds as a</li></ul>
+<p>  string in the single file (no external script, so <code>file://</code> and strict   contexts work; verified from both <code>file://</code> and HTTP in Chromium).</p>
+<ul><li>One request, one batched response per render: the applied view model plus a</li></ul>
+<p>  packed pre-measured text table (string/role tables + <code>Float64Array</code>s) go in;   SVG, scene, diagnostics and the measured-tuple table come back.</p>
+<ul><li><strong>Determinism guard:</strong> every text measurement the worker reports is</li></ul>
+<p>  verified against the main thread's canvas measurement before the picture is   shown. Any mismatch — or a worker failure — permanently degrades the page   to synchronous rendering (never a wrong or divergent picture).</p>
+<ul><li>A new render supersedes an in-flight one (revision counter; late results</li></ul>
+<p>  are discarded).</p>
+<ul><li>During a render the previous picture dims and a spinner shows; the stage</li></ul>
+<p>  stays interactive.</p>
+<p><code>?worker=off</code> forces the synchronous path (debugging, tests, exotic hosts). The status bar announces the synchronous fallback when it is active.</p>
 <h2>Layout and drawers</h2>
 <p>The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit page/width/height/100%) with a slim icon toolbar and four pop-in drawers: <strong>appearance</strong> (top), <strong>source</strong> (bottom), <strong>files</strong> (left), <strong>export</strong> (right). Drawers overlay the stage, animate open/closed, and close independently.</p>
 <p>Each drawer has three states — <code>open</code>, <code>closed</code>, <code>none</code> (icon hidden) — configured by, in ascending precedence:</p>

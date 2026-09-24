@@ -6,6 +6,30 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Worker-based rendering in the unified tool (B1-043): `render()` no longer
+  blocks the UI thread. The coarse boundary sits at `Engine.render` — the
+  main thread compiles the view, applies overrides, measures text and
+  finalizes; a persistent Blob-URL worker (source embedded in the single-file
+  tool by the build; verified from `file://` and HTTP, CSP note in
+  `embedding.md`) computes layout/routing/SVG. One request, one batched
+  response per render: applied view model + packed pre-measured metrics
+  tables (`Float64Array` triples + string/role index tables) in, svg/scene/
+  diagnostics + measured tuples out. Determinism guard: every worker-measured
+  tuple is verified against the main-thread canvas before display; any
+  mismatch or worker failure degrades permanently to synchronous rendering.
+  New renders supersede in-flight ones (revision counter, late results
+  dropped). `?worker=off` forces the sync path. The component gains a
+  `ddn-render-start` event; the tool dims the previous picture and shows a
+  spinner during renders. `DDNLive.setRenderBridge` + `engineAssets` are the
+  new host API surface; `DDNTool.getRenderWorkerState()` reports the mode.
+  Tests: node full-corpus byte-equality (`notation/tests/tool-worker.js`,
+  391 views over node:worker_threads), headless-Chromium HTTP + `file://`
+  byte-equality and fallback (`tests/tool-worker-http.js`). Measured on the
+  medium-graph benchmark: latency parity (1471.8 ms worker vs 1481.5 ms
+  sync), main-thread busy 5.0 ms vs 1481.5 ms (`tools/benchmark-worker.mjs`).
+  Also fixed: `DDNTool`'s `workspace`/`diagram` getters were frozen at boot
+  (`Object.assign` evaluates getters); they are live now.
+
 - Routing performance, pre-WASM pure-JS round (B1-042): profile-guided
   optimization of the orthogonal router (`notation/runtime/ddn-layout.js`)
   and the workspace render path (`notation/studio/src/api.js`). Output is

@@ -65,8 +65,9 @@
 <p>Rendered output is inline SVG text assigned via <code>innerHTML</code>; the runtime executes no <code>eval</code> and loads nothing at runtime. A working policy for a page embedding the full bundle:</p>
 <pre><code>default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:</code></pre>
 <p><code>style-src 'unsafe-inline'</code> is required only if you use <code>ddn.css</code> custom property overrides inline or the viewer; the renderer itself writes SVG presentation attributes, not <code>&lt;style&gt;</code> blocks (see <a href="styling.html">styling.md</a> — no <code>!important</code> anywhere, page CSS fills gaps the script left unset).</p>
+<p>The unified tool's render worker (B1-043) is created from a Blob URL, so a page hosting the <em>tool</em> (or any <code>setRenderBridge</code> consumer) also needs <code>worker-src blob:</code> (or <code>child-src blob:</code> on older engines). Pages embedding only the runtime do not load any worker.</p>
 <h2><code>file://</code> caveats</h2>
-<p>The runtime itself is <code>file://</code>-safe (no fetch, no workers). The caveats are about <em>your sources</em>:</p>
+<p>The runtime itself is <code>file://</code>-safe (no fetch; no workers unless a host installs a render bridge — only the unified tool does, and it uses a Blob-URL worker, which Chromium runs from <code>file://</code> pages too). The caveats are about <em>your sources</em>:</p>
 <ul><li><code>createWorkspace</code> takes source text, not URLs — reading <code>.ddn</code> files from</li></ul>
 <p>  disk is your job. Over <code>file://</code>, use a file picker (<code>DDNLive.io.open</code>),   drag-drop, paste, or inline the sources as the examples under   <code>website/examples/embed/</code> do.</p>
 <ul><li>The gallery page (<code>website/examples/gallery/index.html</code>) links pre-rendered SVG</li></ul>
