@@ -32,6 +32,22 @@ Component-level history predating the monorepo import lives in
   `website/docs/developers/data-refresh.md`, the extended
   `website/examples/embed/data-refresh.html`, and the regression suite
   `notation/tests/data-refresh.js`.
+- Generated AI authoring reference (B1-030, tooling): the internal
+  `DDN-AI-REFERENCE.md` is now produced by `tools/build-ai-reference.mjs`
+  from `standard/registry/*.json` + the runtime sources — vocabulary counts,
+  the full `DDN.PROPERTIES`/`DDN.CHOICES`/`DDN.DEFAULTS` whitelists (read
+  straight from `notation/runtime/ddn-core.js`), projection kinds and
+  per-kind supported keys, the complete vocabulary tables, the
+  diagnostic-code table, and the grammar appendix are generated, fixing the
+  drifted summary sections (73→98 profiles, 11→12 projection kinds, 8
+  missing projection properties). Hand-authored prose lives in
+  `tools/ai-reference-core.md`; every embedded ```ddn worked example must
+  pass `cli.js check` AND `cli.js render` or the build fails. Output path is
+  a CLI arg (default `../kimi-DDN-workarea/DDN-AI-REFERENCE.md`).
+  `tests/ai-reference.js` is now a drift guard: it still skips gracefully
+  when no internal copy exists, and when the workarea file is present it
+  re-validates every example and fails unless all
+  `<!-- generated: do not edit -->` regions match a fresh generation.
 - Fixed fresh-checkout CI (B1-028): the use-case golden fixtures under
   `website/examples/use-cases/rendered/` are now committed — the bare
   `rendered/` gitignore rule that excluded them was removed and the
