@@ -1274,6 +1274,62 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    diagram+=`<path data-crossing-jump="true" d="${api$4.pathData(commands)}" stroke="${esc$1(col)}" stroke-width="2" fill="none"/>`;
   }else {const[x,y]=c.point,r=7,orientation=c.overHorizontal?0:90;diagram+=`<g transform="translate(${x} ${y}) rotate(${orientation})"><path d="${p.layout.crossings==='bridge'?`M-${r} 0 C-${r} -${r*1.5} ${r} -${r*1.5} ${r} 0`:`M-${r} 0V-${r}H${r}V0`}" stroke="${esc$1(col)}" stroke-width="2" fill="none"/></g>`;}
  }
+ // B1-033 (D1/D4): declarative SMIL motion — <animateMotion> markers travelling
+ // the existing route paths and <animate> colour/opacity pulses. Deterministic:
+ // same DDN, same animated SVG; diagrams without motion properties are
+ // byte-identical to before. options.noMotion strips animation for print/static
+ // targets (a render option, not text munging). Markers get stable
+ // ids/classes/data-hop attributes so the tool controller can drive them.
+ const motionScene=[],flowScene=[];
+ if(!options.noMotion){
+  const routeById=new Map(routes.map(a=>[a.id,a]));
+  const pathLength=points=>segments(points).reduce((n,s)=>n+Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]),0);
+  const routeD=a=>a.commands?api$4.pathData(a.commands):pathD(a.points);
+  const RATE_MAX=32,motionRate=v=>Math.min(RATE_MAX,Math.max(1,Number.isSafeInteger(v)?v:1));
+  const markerShape=(kind,size,color,anim)=>kind==='square'?`<rect x="${fmt(-size/2)}" y="${fmt(-size/2)}" width="${fmt(size)}" height="${fmt(size)}" fill="${esc$1(color)}">${anim}</rect>`:kind==='rect'?`<rect x="${fmt(-size*.75)}" y="${fmt(-size/2)}" width="${fmt(size*1.5)}" height="${fmt(size)}" fill="${esc$1(color)}">${anim}</rect>`:`<circle r="${fmt(size/2)}" fill="${esc$1(color)}">${anim}</circle>`;
+  for(const a of routes){
+   const props=a.r.properties||{};if(props.motion!=='flow'&&props.motion!=='pulse')continue;
+   const len=pathLength(a.points);if(!(len>0))continue;
+   const speed=q$1(props.speed,60),dur=fmt(len/speed);
+   if(props.motion==='pulse'){
+    const pulse=props.pulse_color||t.accent;
+    diagram+=`<g class="ddn-motion ddn-pulse" data-relation="${esc$1(a.id)}" data-hop="0" data-hop-start="0" data-hop-end="${dur}" data-dur="${dur}"><path d="${esc$1(routeD(a))}" fill="none" stroke="${esc$1(routeColours[a.id])}" stroke-width="${a.reg.width}" opacity=".9"><animate attributeName="stroke" values="${esc$1(routeColours[a.id])};${esc$1(pulse)};${esc$1(routeColours[a.id])}" dur="${dur}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".25;1;.25" dur="${dur}s" repeatCount="indefinite"/></path></g>`;
+    motionScene.push({relation:a.id,kind:'pulse',duration:len/speed,rate:1});
+    continue;
+   }
+   const rate=motionRate(props.rate),size=q$1(props.marker_size,8),colour=props.marker_color||routeColours[a.id];
+   let g=`<g class="ddn-motion" data-relation="${esc$1(a.id)}" data-hop="0" data-hop-start="0" data-hop-end="${dur}" data-dur="${dur}">`;
+   for(let i=0;i<rate;i++)g+=markerShape(props.marker||'circle',size,colour,`<animateMotion dur="${dur}s" begin="${fmt(-i*(len/speed)/rate)}s" repeatCount="indefinite" rotate="auto" path="${esc$1(routeD(a))}"/>`);
+   diagram+=g+'</g>';
+   motionScene.push({relation:a.id,kind:'flow',duration:len/speed,rate});
+  }
+  for(const f of ir.view.flows||[]){
+   const props=f.properties||{};
+   const speed=q$1(props.speed,60),size=q$1(props.marker_size,8),rate=motionRate(props.rate),colour=props.marker_color||t.accent;
+   const hops=f.hops.map(id=>routeById.get(id));
+   if(hops.some(a=>!a))continue;
+   const lens=hops.map(a=>pathLength(a.points)),total=lens.reduce((x,y)=>x+y,0);
+   if(!(total>0))continue;
+   const durT=total/speed;let acc=0;const hopScene=[];
+   let g=`<g class="ddn-flow ddn-flow-${slug(f.local||f.id)}" data-flow="${esc$1(f.id)}" data-dur="${fmt(durT)}"><title>${esc$1(f.name)}</title>`;
+   hops.forEach((a,i)=>{
+    const hopDur=lens[i]/speed,start=acc,end=acc+hopDur;acc=end;
+    hopScene.push({relation:a.id,start,end});
+    const sF=fmt(start/durT),eF=fmt(end/durT);
+    // Each hop marker owns its hop's route path but shares the flow cycle:
+    // keyTimes confine travel to [start,end] and a discrete opacity hides it
+    // outside its window, so the chain reads as one marker hopping the route.
+    const keyTimes=i===0?`0;${eF};1`:`0;${sF};${eF};1`,keyPoints=i===0?`0;1;1`:`0;0;1;1`;
+    const opValues=i===0?'1;0':'0;1;0',opTimes=i===0?`0;${eF}`:`0;${sF};${eF}`;
+    g+=`<g class="ddn-flow-hop" data-hop="${i}" data-hop-start="${fmt(start)}" data-hop-end="${fmt(end)}">`;
+    for(let j=0;j<rate;j++){const begin=fmt(-j*durT/rate);
+     g+=markerShape(props.marker||'circle',size,colour,`<animateMotion dur="${fmt(durT)}s" begin="${begin}s" repeatCount="indefinite" rotate="auto" calcMode="linear" keyPoints="${keyPoints}" keyTimes="${keyTimes}" path="${esc$1(routeD(a))}"/><animate attributeName="opacity" values="${opValues}" keyTimes="${opTimes}" calcMode="discrete" dur="${fmt(durT)}s" begin="${begin}s" repeatCount="indefinite"/>`);}
+    g+='</g>';
+   });
+   diagram+=g+'</g>';
+   flowScene.push({id:f.id,name:f.name,duration:durT,hops:hopScene});
+  }
+ }
  geoms.forEach(g=>diagram+=renderNode(g,p,t));
  for(const d of subs){
   if(d.mode==='inline'&&d.child){const child=render$1(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc$1(d.target)}">`+inner+'</g>';}
@@ -1283,7 +1339,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$1(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
   else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$1(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
  }
- const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$4.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
+ const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$4.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
  const fontClass='ddn-font-'+hash(font);
  const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);

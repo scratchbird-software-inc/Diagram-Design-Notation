@@ -6,6 +6,28 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Flow animation (B1-033): declarative SMIL motion for graph relations and
+  multi-hop flow blocks. (D1) The renderer emits `<animateMotion>`/`<animate>`
+  (no script, deterministic, file://-safe; exported SVG animates autonomously).
+  (D2) New relation properties `motion` (`flow`/`pulse`/`none`), `marker`
+  (`circle`/`square`/`rect`), `marker_size`, `marker_color`, `rate` (staggered
+  particle stream, cap 32 → `DDN-W016`), `speed`, `pulse_color`, registered in
+  `standard/registry/data-properties.json`; invalid values raise `DDN-E014`.
+  (D3) View-level `flow` blocks (`steps: @a -> @b -> @c`) resolve each hop to
+  the existing visible relation (missing hop → `DDN-E013`) and render one
+  marker hopping the concatenated route paths with per-hop `data-hop` time
+  boundaries. (D4) Markers carry stable `ddn-motion`/`ddn-flow-<id>` classes
+  and `data-*` hooks; `--no-motion` CLI flag, tool "Include animation" export
+  toggle and the `noMotion` render option strip animation for print/static
+  targets. (D5) New Animation drawer in the unified tool (drawers config +
+  mode presets, icon hidden when no motion): start/stop (SMIL
+  pause/unpause, default playing, session-only), step one hop
+  (`setCurrentTime` on route-length-derived hop boundaries), 0.5×–4× speed via
+  `dur` re-timing, and a flow selector. (D6) Scale honesty documented: dozens
+  of concurrent markers, `rate` capped at 32. (D8) `prefers-reduced-motion`
+  auto-pauses in the tool. Spec chapter 27, grammar (`steps` production),
+  examples 70/71, and full test coverage in `notation/tests/flow-animation.js`.
+
 - Measured performance, documented limits, embedding quickstart, npm publish
   path (B1-031): (D1) new zero-dependency benchmark `tools/benchmark.mjs`
   (`npm run benchmark`) measuring cold build+render, warm re-render,

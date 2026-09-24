@@ -6,12 +6,12 @@ terser) is a pinned devDependency and never ships inside these bundles.
 
 | Bundle | Contains | Requires loaded first | .js bytes | .mjs bytes | .min.js bytes | .min.js gzip |
 |---|---|---|---|---|---|
-| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 687708 | 682824 | 591941 | 132186 |
-| `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 146951 | 144196 | 105209 | 39045 |
+| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 691820 | 686862 | 594553 | 133051 |
+| `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 151781 | 148914 | 108180 | 40007 |
 | `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 20469 | 20005 | 15633 | 7022 |
 | `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 90082 | 88644 | 74314 | 27348 |
 | `ddn-geo.js` / `.mjs` / `.min.js` | Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23771 | 23139 | 16201 | 6841 |
-| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 966108 | 956992 | 810714 | 209958 |
+| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 975198 | 965892 | 816239 | 211869 |
 
 Every bundle ships three formats: a readable browser IIFE (`.js`, publishes
 the documented globals `DDNLive`, `DDNRender`, `DDNProjections`,

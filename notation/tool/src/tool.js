@@ -17,7 +17,7 @@
 
 /* --- pure functions (unit tested in node) --- */
 
-const DRAWERS = ['appearance', 'source', 'files', 'export'];
+const DRAWERS = ['appearance', 'source', 'files', 'export', 'animation'];
 const DRAWER_STATES = ['open', 'closed', 'none'];
 const STORAGE_KEY = 'ddn-tool-drawers';
 
@@ -25,10 +25,10 @@ const STORAGE_KEY = 'ddn-tool-drawers';
  * icons=false shows only the viewport controls. Explicit ?drawers= pairs and
  * saved localStorage settings override the preset drawer states. */
 const MODES = {
-  diagram: { toolbar: false, icons: false, drawers: { appearance: 'none', source: 'none', files: 'none', export: 'none' } },
-  view: { toolbar: true, icons: false, drawers: { appearance: 'none', source: 'none', files: 'none', export: 'none' } },
-  explore: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'closed', files: 'closed', export: 'closed' } },
-  edit: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'open', files: 'closed', export: 'closed' } }
+  diagram: { toolbar: false, icons: false, drawers: { appearance: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
+  view: { toolbar: true, icons: false, drawers: { appearance: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
+  explore: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'closed', files: 'closed', export: 'closed', animation: 'closed' } },
+  edit: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } }
 };
 const DEFAULT_MODE = 'explore';
 
@@ -228,11 +228,44 @@ function exportSvgWithOverrides(svgText, css) {
   return svgText.replace(/<svg /, () => '<svg data-ddn-tool-export="presentation-overrides" ').replace(/(<svg[^>]*>)/, m => m + '<style>' + css + '</style>');
 }
 
+/* B1-033 (D5): animation controller pure parts.
+ * hopWindowsFromMarkers reads the renderer's data-hop attributes
+ * ([{hop, start, end}]) into sorted per-hop time windows — hop boundaries are
+ * route-length/speed derived by the renderer and exposed on the markers. */
+function hopWindowsFromMarkers(markers) {
+  if (!Array.isArray(markers)) throw new Error('markers array required');
+  const seen = new Map();
+  for (const m of markers) {
+    if (!m || !Number.isFinite(m.start) || !Number.isFinite(m.end) || !(m.end > m.start))
+      throw new Error('invalid hop window: ' + JSON.stringify(m));
+    if (!seen.has(m.hop)) seen.set(m.hop, { hop: m.hop, start: m.start, end: m.end });
+  }
+  return [...seen.values()].sort((a, b) => a.start - b.start || a.end - b.end);
+}
+/* nextHopTime: pausing mid-hop i advances to the END of hop i (the marker
+ * arrives at the next element); exactly on a boundary advances one full hop;
+ * past the last boundary wraps to the first. */
+function nextHopTime(current, windows) {
+  if (!windows.length) throw new Error('no hops to step through');
+  const eps = 1e-6;
+  for (const w of windows) if (w.end > current + eps) return w.end;
+  return windows[0].end;
+}
+/* Speed multiplier re-times a base SMIL duration (documented D5 approach:
+ * re-setting dur beats setCurrentTime scaling because it survives re-renders
+ * and needs no per-frame controller loop). */
+function scaledDuration(baseDur, multiplier) {
+  if (!(baseDur > 0)) throw new Error('base duration must be positive');
+  if (![0.5, 1, 2, 4].includes(multiplier)) throw new Error('speed multiplier must be 0.5, 1, 2 or 4');
+  return baseDur / multiplier;
+}
+
 const pure = {
   DRAWERS, DRAWER_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig,
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
   isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
-  exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES
+  exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
+  hopWindowsFromMarkers, nextHopTime, scaledDuration
 };
 if (typeof module === 'object' && module.exports) module.exports = pure;
 if (typeof document === 'undefined' || !host.DDNLive) { host.DDNTool = pure; return; }
@@ -267,10 +300,14 @@ const els = {
   posX: $('ddn-pos-x'), posY: $('ddn-pos-y'), pin: $('ddn-pin'), unpin: $('ddn-unpin'), hide: $('ddn-hide'),
   addField: $('ddn-add-field'), goSource: $('ddn-go-source'), deleteDef: $('ddn-delete-def'),
   addElement: $('ddn-add-element'), addRelation: $('ddn-add-relation'),
-  exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example')
+  exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example'),
+  exportMotion: $('ddn-export-motion'),
+  animEmpty: $('ddn-anim-empty'), animControls: $('ddn-anim-controls'), animToggle: $('ddn-anim-toggle'),
+  animStep: $('ddn-anim-step'), animSpeed: $('ddn-anim-speed'), animFlow: $('ddn-anim-flow'),
+  animFlowField: $('ddn-anim-flow-field'), animStatus: $('ddn-anim-status')
 };
-const drawerEls = { files: $('ddn-drawer-files'), appearance: $('ddn-drawer-appearance'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export') };
-const iconEls = { files: $('ddn-icon-files'), appearance: $('ddn-icon-appearance'), source: $('ddn-icon-source'), export: $('ddn-icon-export') };
+const drawerEls = { files: $('ddn-drawer-files'), appearance: $('ddn-drawer-appearance'), source: $('ddn-drawer-source'), export: $('ddn-drawer-export'), animation: $('ddn-drawer-animation') };
+const iconEls = { files: $('ddn-icon-files'), appearance: $('ddn-icon-appearance'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
 
 function emptyPresentation() {
   return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {} };
@@ -312,6 +349,9 @@ function applyDrawerConfig() {
     iconEls[name].hidden = !c.icons || st === 'none';
     iconEls[name].classList.toggle('active', c.icons && st === 'open');
   }
+  // B1-033: the animation icon exists only when the render contains motion.
+  const animSvg = svgEl();
+  if (!(animSvg && animSvg.querySelector('.ddn-motion, .ddn-flow'))) iconEls.animation.hidden = true;
   // Drawer open/close resizes the stage; re-fit once the transition settles.
   clearTimeout(state._fitTimer);
   state._fitTimer = setTimeout(() => applyFit(), 220);
@@ -388,6 +428,7 @@ function mount() {
     applyOverrideCss();
     applyFit();
     attachDrag();
+    refreshAnimation();
     status();
   });
   diagram.addEventListener('ddn-error', e => {
@@ -884,6 +925,112 @@ els.dragMode.addEventListener('change', () => {
   }
 });
 
+/* ------------------------------------------------ animation drawer (B1-033, D5)
+ * SMIL playback controls over the rendered SVG. Default state is playing;
+ * the pause choice is kept in memory for this session only (never persisted).
+ * prefers-reduced-motion auto-pauses. The drawer body reports "No animation
+ * in this view" — and the toolbar icon hides — when the render has no
+ * .ddn-motion/.ddn-flow groups. */
+const anim = { playing: true, userChoice: false, speed: 1, baseDurs: new WeakMap(), flows: [], selectedFlow: '' };
+
+function reducedMotion() {
+  try { return host.matchMedia && host.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }
+}
+
+/* Re-derive controller state from the freshly rendered SVG: base durations,
+ * flow list, icon visibility. Re-applies the session pause/speed choice. */
+function refreshAnimation() {
+  const svg = svgEl();
+  const motionEls = svg ? [...svg.querySelectorAll('.ddn-motion, .ddn-flow')] : [];
+  const hasMotion = motionEls.length > 0;
+  els.animEmpty.hidden = hasMotion;
+  els.animControls.hidden = !hasMotion;
+  // The icon is hidden when there is no animation to drive; a configured
+  // 'open' state still applies once motion appears.
+  iconEls.animation.hidden = !state.config.icons || state.config.drawers.animation === 'none' || !hasMotion;
+  if (!hasMotion) { anim.flows = []; anim.selectedFlow = ''; return; }
+  for (const el of svg.querySelectorAll('animateMotion, animate')) {
+    if (!anim.baseDurs.has(el)) {
+      const m = /^([0-9.]+)s$/.exec(el.getAttribute('dur') || '');
+      if (m) anim.baseDurs.set(el, Number(m[1]));
+    }
+  }
+  anim.flows = [...svg.querySelectorAll('.ddn-flow[data-flow]')].map(g => ({
+    id: g.getAttribute('data-flow'),
+    name: (g.querySelector('title') && g.querySelector('title').textContent) || g.getAttribute('data-flow'),
+    dur: Number(g.getAttribute('data-dur')) || 0
+  }));
+  if (!anim.flows.some(f => f.id === anim.selectedFlow)) anim.selectedFlow = anim.flows.length ? anim.flows[0].id : '';
+  els.animFlow.replaceChildren(...anim.flows.map(f => new Option(f.name + ' (' + f.dur.toFixed(2) + ' s cycle)', f.id)));
+  els.animFlow.value = anim.selectedFlow;
+  els.animFlowField.hidden = anim.flows.length < 2;
+  applyAnimSpeed();
+  applyAnimPlaying();
+  animStatus();
+}
+function animStatus(note) {
+  const parts = [];
+  if (anim.flows.length) parts.push(anim.flows.length + ' flow' + (anim.flows.length > 1 ? 's' : ''));
+  parts.push(anim.playing ? 'playing at ' + anim.speed + '×' : 'paused');
+  els.animStatus.textContent = (note ? note + ' — ' : '') + parts.join(' · ');
+}
+function applyAnimPlaying() {
+  const svg = svgEl();
+  if (!svg) return;
+  if (anim.playing) { if (svg.unpauseAnimations) svg.unpauseAnimations(); }
+  else if (svg.pauseAnimations) svg.pauseAnimations();
+  els.animToggle.textContent = anim.playing ? 'Pause' : 'Play';
+}
+function applyAnimSpeed() {
+  const svg = svgEl();
+  if (!svg) return;
+  for (const el of svg.querySelectorAll('animateMotion, animate')) {
+    const base = anim.baseDurs.get(el);
+    if (base) el.setAttribute('dur', scaledDuration(base, anim.speed) + 's');
+  }
+}
+els.animToggle.addEventListener('click', () => guard(() => {
+  anim.playing = !anim.playing;
+  anim.userChoice = true; // session-only, never persisted (D5)
+  applyAnimPlaying();
+  animStatus();
+}));
+els.animSpeed.addEventListener('change', () => guard(() => {
+  anim.speed = Number(els.animSpeed.value);
+  applyAnimSpeed();
+  animStatus();
+}));
+els.animFlow.addEventListener('change', () => { anim.selectedFlow = els.animFlow.value; animStatus(); });
+/* Step: pauses playback and seeks (setCurrentTime) exactly one hop forward.
+ * With a selected flow the hop boundaries come from its data-hop markers;
+ * without flows, one step is one full traversal of the longest motion route. */
+els.animStep.addEventListener('click', () => guard(() => {
+  const svg = svgEl();
+  if (!svg || !svg.setCurrentTime) return;
+  anim.playing = false;
+  applyAnimPlaying();
+  const now = svg.getCurrentTime();
+  if (anim.selectedFlow) {
+    const group = svg.querySelector('.ddn-flow[data-flow="' + cssString(anim.selectedFlow) + '"]');
+    const flow = anim.flows.find(f => f.id === anim.selectedFlow);
+    const windows = hopWindowsFromMarkers([...group.querySelectorAll('[data-hop-start]')].map(el => ({
+      hop: Number(el.getAttribute('data-hop')),
+      start: Number(el.getAttribute('data-hop-start')),
+      end: Number(el.getAttribute('data-hop-end'))
+    })));
+    const cycle = now % flow.dur;
+    const target = nextHopTime(cycle, windows);
+    svg.setCurrentTime(now - cycle + target + (target <= cycle ? flow.dur : 0));
+    animStatus('stepped to hop boundary ' + target.toFixed(2) + ' s of ' + flow.name);
+  } else {
+    const durs = [...svg.querySelectorAll('.ddn-motion[data-dur]')].map(el => Number(el.getAttribute('data-dur'))).filter(d => d > 0);
+    if (!durs.length) return;
+    const longest = Math.max(...durs);
+    svg.setCurrentTime(now - (now % longest) + longest);
+    animStatus('stepped one full traversal of the longest route (' + longest.toFixed(2) + ' s)');
+  }
+}));
+
 /* ------------------------------------------------ loading / workspace */
 
 function catalogueClosure(file) {
@@ -1208,6 +1355,12 @@ host.addEventListener('beforeunload', e => { if (dirty()) { e.preventDefault(); 
 
 function exportSvgString() {
   if (!state.diagram || !state.diagram.result) throw new Error('nothing rendered yet');
+  // Print/static targets: re-render through the noMotion render option (D4 —
+  // a renderer switch, never string munging of the animated SVG).
+  if (els.exportMotion && !els.exportMotion.checked) {
+    const r = state.ws.renderSync({ entry: state.entry, view: state.view, overrides: toolOverrides(state.presentation), noMotion: true });
+    return exportSvgWithOverrides(r.svg, overrideCss(state.presentation, null));
+  }
   return '<?xml version="1.0" encoding="UTF-8"?>\n' +
     exportSvgWithOverrides(state.diagram.exportSVG(), overrideCss(state.presentation, null));
 }
@@ -1278,6 +1431,9 @@ function loadFromSrc(src) {
 function boot() {
   const params = new URLSearchParams(location.search);
   state.config = resolveDrawerConfig(params.get('mode'), loadStoredDrawers(), params.get('drawers'));
+  // D8: prefers-reduced-motion auto-pauses; the user can still press Play
+  // (that session choice then wins until the page reloads).
+  if (reducedMotion()) anim.playing = false;
   applyDrawerConfig();
   catalogueUI();
   let booted = false;
@@ -1324,6 +1480,12 @@ host.DDNTool = Object.assign({}, pure, {
   selectRelation: id => { state.selectedRelation = id; state.selected = null; updateSelectedPanel(); applyOverrideCss(); },
   setVerbRouting: (verb, v) => { state.presentation.verbRouting[verb] = v; repopulateOverridePanels(); rerender(); },
   setRelationRouting: (id, v) => { state.presentation.relationRouting[id] = v; rerender(); },
+  refreshAnimation,
+  animationToggle: () => els.animToggle.click(),
+  animationStep: () => els.animStep.click(),
+  setAnimationSpeed: v => { els.animSpeed.value = String(v); els.animSpeed.dispatchEvent(new Event('change')); },
+  selectFlow: id => { anim.selectedFlow = id; els.animFlow.value = id; },
+  getAnimationState: () => ({ playing: anim.playing, speed: anim.speed, flows: anim.flows.map(f => ({ ...f })), selectedFlow: anim.selectedFlow }),
   showSource, flush, snapshot, openFiles,
   get workspace() { return state.ws; },
   get diagram() { return state.diagram; },

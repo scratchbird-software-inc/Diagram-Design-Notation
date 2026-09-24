@@ -7,7 +7,7 @@ node ../../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tm
 node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 69 numbered examples (01-customer … 69-geo-projections)
+- `basics/` — 71 numbered examples (01-customer … 71-flow-traces)
   plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
   `manifest.json` was removed in B1-010: it covered only examples 01–18,
   pointed at nonexistent `website/examples/rendered/` paths, was stamped
@@ -41,7 +41,11 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
   overlays), and geographic maps via the optional ddn-geo module
   (`67-geo-choropleth.ddn`, `68-geo-symbols.ddn`, `69-geo-projections.ddn` —
   CLI-rendered through `assets/geo/world-110m.json`; hosts without ddn-geo.js
-  render the visible "Map view requires ddn-geo.js" placeholder).
+  render the visible "Map view requires ddn-geo.js" placeholder), and flow
+  animation (B1-033): motion markers, a staggered particle stream and a pulse
+  edge on relations (`70-motion-relations.ddn`) plus step-traceable multi-hop
+  `flow` blocks (`71-flow-traces.ddn` — declarative SMIL; exported SVG animates
+  autonomously, `--no-motion` renders static for print).
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

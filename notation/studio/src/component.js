@@ -19,7 +19,9 @@ const download=(name,text,type)=>{const url=URL.createObjectURL(new Blob([text],
 function safeSVG(svg,prefix){
  const doc=new DOMParser().parseFromString(svg,'image/svg+xml');if(doc.querySelector('parsererror')||doc.documentElement.localName!=='svg')throw new Error('Renderer returned malformed SVG');
  for(const el of [...doc.querySelectorAll('*')]){
-  if(['script','foreignObject','iframe','object','embed','animate','animateMotion','animateTransform','set'].includes(el.localName)){el.remove();continue;}
+  // B1-033: declarative SMIL (animate/animateMotion/…) is renderer-emitted,
+  // carries no script and animates autonomously in exported SVG — keep it.
+  if(['script','foreignObject','iframe','object','embed'].includes(el.localName)){el.remove();continue;}
   for(const at of [...el.attributes]){
    if(/^on/i.test(at.localName))el.removeAttributeNode(at);
    else if(['href','src'].includes(at.localName)&&!at.value.startsWith('#')){

@@ -1361,7 +1361,10 @@
         while(peek().type!=='}'){
           if(peek().type==='eof')fail$2('DDN010','Missing closing brace',peek(),source);
           const t=expect('id');
-          if(peek().type===':'){take();if(Object.hasOwn(node.props,t.value))fail$2('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail$2('DDN008','Reserved key',t,source);node.props[t.value]=value();expect(';');}
+          if(peek().type===':'){take();if(Object.hasOwn(node.props,t.value))fail$2('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail$2('DDN008','Reserved key',t,source);node.props[t.value]=value();
+            // B1-033: a flow block's steps chain reads `@a -> @b -> @c` as one ordered step list.
+            if(t.value==='steps'){while(peek().type==='->'){take();node.props.steps=[...(Array.isArray(node.props.steps)?node.props.steps:[node.props.steps]),value()];}}
+            expect(';');}
           else node.children.push(declaration(t));
         }
         node.bodyEnd=peek().start;node.end=take().end;depth--;if(peek().type===';')node.end=take().end;return node;
@@ -1593,6 +1596,7 @@
       frame:['scope','members','at','size','label','dimension'],
       junction:['at','relations','network'],
       keyset:['keys','scope'],
+      flow:['label','steps','marker','marker_color','marker_size','speed','rate','uid'],
     };
     function validateKnown(n,allowed){for(const key of Object.keys(n.props))if(!allowed.includes(key)&&!key.startsWith('x_'))throw new DDNError('DDN033',`Unknown ${n.type} property ${key}`,n.source,n.start);}
     function build(files,entry,viewName,registry,stack=[]){
@@ -1675,6 +1679,22 @@
       const elementIds=new Set(elements.map(n=>n.id));
       function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
       const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties:resolveValue(n.props,n),source:{file:n.source,start:n.start,end:n.end}};});
+      // B1-033: declarative motion vocabulary (D2). Values are validated here;
+      // emission is the renderer's job. rate beyond the DOM-honest cap is a
+      // warning (DDN-W016) and clamps at render time.
+      const motionDiagnostics=[];
+      const MOTION_RATE_MAX=32;
+      function validateMotionProps(props,source,offset){
+        if(props.motion!==undefined&&!['flow','pulse','none'].includes(props.motion))throw new DDNError('DDN-E014','Unknown motion value '+JSON.stringify(props.motion)+'; expected flow, pulse or none',source,offset);
+        if(props.marker!==undefined&&!['circle','square','rect'].includes(props.marker))throw new DDNError('DDN-E014','Unknown marker shape '+JSON.stringify(props.marker)+'; expected circle, square or rect',source,offset);
+        if(props.marker_size!==undefined&&!(quantity(props.marker_size,NaN)>0&&quantity(props.marker_size,NaN)<=128))throw new DDNError('DDN-E014','marker_size must be a length from >0 to 128px',source,offset);
+        if(props.speed!==undefined&&!(quantity(props.speed,NaN)>0&&quantity(props.speed,NaN)<=10000))throw new DDNError('DDN-E014','speed must be a positive length (px/s) up to 10000',source,offset);
+        if(props.rate!==undefined&&(!Number.isSafeInteger(props.rate)||props.rate<1))throw new DDNError('DDN-E014','rate must be a positive integer (markers in flight)',source,offset);
+        if(props.rate>MOTION_RATE_MAX)motionDiagnostics.push({code:'DDN-W016',severity:'warning',message:'rate '+props.rate+' exceeds the '+MOTION_RATE_MAX+'-marker DOM-honest cap and is clamped to '+MOTION_RATE_MAX+' at render time.',source});
+        for(const key of ['marker_color','pulse_color'])if(props[key]!==undefined&&typeof props[key]!=='string')throw new DDNError('DDN-E014',key+' must be a colour string',source,offset);
+      }
+      const MOTION_KEYS=['motion','marker','rate','speed','marker_size','marker_color','pulse_color'];
+      for(const r of relations)if(MOTION_KEYS.some(k=>r.properties[k]!==undefined))validateMotionProps(r.properties,r.source.file,r.source.start);
       let selected=view.props.select==='all'||view.props.select===undefined?elements.map(n=>n.id):view.props.select.map(r=>ws.resolve(r,view).uid);
       if(!Array.isArray(selected)||selected.some(id=>!elementIds.has(id)))throw new DDNError('DDN057','View selection contains a non-element or out-of-scope element',view.source,view.start);
       const excluded=(view.props.exclude||[]).map(r=>ws.resolve(r,view).uid);selected=[...new Set(selected)].filter(id=>!excluded.includes(id));
@@ -1688,17 +1708,34 @@
         if(seen.has(num)&&seen.get(num)!==target.id)throw new DDNError('DDN060','Duplicate callout number '+num,view.source,view.start);seen.set(num,target.id);keys[target.id]=num;
       }
       if(p.legend.mode==='numbers')for(const r of visibleRelations)if(!keys[r.id])throw new DDNError('DDN061','Missing explicit callout number for '+r.ref,view.source,view.start);
-      const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[];
+      const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[],flows=[];
       for(const n of view.children.filter(n=>!n.group)){
         if(n.type==='place'){const target=ws.resolve(n.target,view);if(!shown.has(target.uid))throw new DDNError('DDN062','Placement target is not selected',n.source,n.start);placements[target.uid]=clean(n.props);}
         else if(n.type==='route'){validateCurvePolicy(n.props,n.source,n.start);const target=ws.resolve(n.target,view);if(!visibleRelations.some(r=>r.id===target.uid))throw new DDNError('DDN063','Route target is not visible',n.source,n.start);routes[target.uid]=clean(n.props);}
         else if(n.type==='subdiagram'){const target=ws.resolve(n.props.view,n);if(target.type!=='view')throw new DDNError('DDN064','Subdiagram target must be a view',n.source,n.start);if(!['reference','inline'].includes(n.props.mode))throw new DDNError('DDN900','Reference renderer supports reference and inline modes; balanced collapsed interfaces are specified separately',n.source,n.start);const child=n.props.mode==='inline'?build(files,target.source,target.uid,registry,[...stack,view.uid]).ir:null;subdiagrams.push({id:n.uid,target:target.uid,targetName:target.label||target.id,targetLocal:target.id,name:n.props.label||n.label||target.label||target.id,...clean(n.props),child});}
         else if(n.type==='frame'){frames.push({id:n.uid,name:n.label||n.props.label||n.id,scope:n.props.scope?ws.resolve(n.props.scope,n).uid:null,members:(n.props.members||[]).map(r=>ws.resolve(r,n).uid),...Object.fromEntries(Object.entries(clean(n.props)).filter(([k])=>!['scope','members'].includes(k)))});}
+        // B1-033 (D3): a flow block is a step-traceable multi-hop sequence. Each
+        // hop resolves to the existing visible relation between consecutive
+        // elements (steps follow relation direction); a hop without one is DDN-E013.
+        else if(n.type==='flow'){
+          validateKnown(n,PROPERTIES.flow);
+          if(!Array.isArray(n.props.steps)||n.props.steps.length<2)throw new DDNError('DDN-E013','Flow '+n.id+' needs at least two steps: @a -> @b -> …',n.source,n.start);
+          const steps=n.props.steps.map(r=>{const t=ws.resolve(r,n);if(!elementIds.has(t.uid))throw new DDNError('DDN-E013','Flow step is not a data element in scope: @'+r.$ref,n.source,r.$offset||n.start);if(!shown.has(t.uid))throw new DDNError('DDN-E013','Flow step is not selected in this view: @'+r.$ref,n.source,r.$offset||n.start);return t.uid;});
+          const hops=[];
+          for(let i=0;i<steps.length-1;i++){
+            const match=visibleRelations.find(r=>r.from.element===steps[i]&&r.to.element===steps[i+1]);
+            if(!match)throw new DDNError('DDN-E013','Flow '+n.id+' hop '+(i+1)+' has no visible relation from '+steps[i].split('::').at(-1)+' to '+steps[i+1].split('::').at(-1)+'; steps must follow existing relations in their declared direction',n.source,n.start);
+            hops.push(match.id);
+          }
+          const fprops=resolveValue(n.props,n);
+          validateMotionProps(fprops,n.source,n.start);
+          flows.push({id:n.uid,local:n.id,name:n.label||fprops.label||n.id,steps,hops,properties:fprops,source:{file:n.source,start:n.start,end:n.end}});
+        }
         else throw new DDNError('DDN900','Reference renderer does not implement view declaration '+n.type,n.source,n.start);
       }
-      const diagnostics=[];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
+      const diagnostics=[...motionDiagnostics];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
       const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
-      const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
+      const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
       if(p.projection.kind==='panels' && Array.isArray(p.projection.panels)){
         ir.view.children=[];
         for(const panel of p.projection.panels){if(!panel.view)continue;
@@ -3324,6 +3361,62 @@
      diagram+=`<path data-crossing-jump="true" d="${api$6.pathData(commands)}" stroke="${esc$3(col)}" stroke-width="2" fill="none"/>`;
     }else {const[x,y]=c.point,r=7,orientation=c.overHorizontal?0:90;diagram+=`<g transform="translate(${x} ${y}) rotate(${orientation})"><path d="${p.layout.crossings==='bridge'?`M-${r} 0 C-${r} -${r*1.5} ${r} -${r*1.5} ${r} 0`:`M-${r} 0V-${r}H${r}V0`}" stroke="${esc$3(col)}" stroke-width="2" fill="none"/></g>`;}
    }
+   // B1-033 (D1/D4): declarative SMIL motion — <animateMotion> markers travelling
+   // the existing route paths and <animate> colour/opacity pulses. Deterministic:
+   // same DDN, same animated SVG; diagrams without motion properties are
+   // byte-identical to before. options.noMotion strips animation for print/static
+   // targets (a render option, not text munging). Markers get stable
+   // ids/classes/data-hop attributes so the tool controller can drive them.
+   const motionScene=[],flowScene=[];
+   if(!options.noMotion){
+    const routeById=new Map(routes.map(a=>[a.id,a]));
+    const pathLength=points=>segments(points).reduce((n,s)=>n+Math.hypot(s.b[0]-s.a[0],s.b[1]-s.a[1]),0);
+    const routeD=a=>a.commands?api$6.pathData(a.commands):pathD(a.points);
+    const RATE_MAX=32,motionRate=v=>Math.min(RATE_MAX,Math.max(1,Number.isSafeInteger(v)?v:1));
+    const markerShape=(kind,size,color,anim)=>kind==='square'?`<rect x="${fmt$1(-size/2)}" y="${fmt$1(-size/2)}" width="${fmt$1(size)}" height="${fmt$1(size)}" fill="${esc$3(color)}">${anim}</rect>`:kind==='rect'?`<rect x="${fmt$1(-size*.75)}" y="${fmt$1(-size/2)}" width="${fmt$1(size*1.5)}" height="${fmt$1(size)}" fill="${esc$3(color)}">${anim}</rect>`:`<circle r="${fmt$1(size/2)}" fill="${esc$3(color)}">${anim}</circle>`;
+    for(const a of routes){
+     const props=a.r.properties||{};if(props.motion!=='flow'&&props.motion!=='pulse')continue;
+     const len=pathLength(a.points);if(!(len>0))continue;
+     const speed=q$2(props.speed,60),dur=fmt$1(len/speed);
+     if(props.motion==='pulse'){
+      const pulse=props.pulse_color||t.accent;
+      diagram+=`<g class="ddn-motion ddn-pulse" data-relation="${esc$3(a.id)}" data-hop="0" data-hop-start="0" data-hop-end="${dur}" data-dur="${dur}"><path d="${esc$3(routeD(a))}" fill="none" stroke="${esc$3(routeColours[a.id])}" stroke-width="${a.reg.width}" opacity=".9"><animate attributeName="stroke" values="${esc$3(routeColours[a.id])};${esc$3(pulse)};${esc$3(routeColours[a.id])}" dur="${dur}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".25;1;.25" dur="${dur}s" repeatCount="indefinite"/></path></g>`;
+      motionScene.push({relation:a.id,kind:'pulse',duration:len/speed,rate:1});
+      continue;
+     }
+     const rate=motionRate(props.rate),size=q$2(props.marker_size,8),colour=props.marker_color||routeColours[a.id];
+     let g=`<g class="ddn-motion" data-relation="${esc$3(a.id)}" data-hop="0" data-hop-start="0" data-hop-end="${dur}" data-dur="${dur}">`;
+     for(let i=0;i<rate;i++)g+=markerShape(props.marker||'circle',size,colour,`<animateMotion dur="${dur}s" begin="${fmt$1(-i*(len/speed)/rate)}s" repeatCount="indefinite" rotate="auto" path="${esc$3(routeD(a))}"/>`);
+     diagram+=g+'</g>';
+     motionScene.push({relation:a.id,kind:'flow',duration:len/speed,rate});
+    }
+    for(const f of ir.view.flows||[]){
+     const props=f.properties||{};
+     const speed=q$2(props.speed,60),size=q$2(props.marker_size,8),rate=motionRate(props.rate),colour=props.marker_color||t.accent;
+     const hops=f.hops.map(id=>routeById.get(id));
+     if(hops.some(a=>!a))continue;
+     const lens=hops.map(a=>pathLength(a.points)),total=lens.reduce((x,y)=>x+y,0);
+     if(!(total>0))continue;
+     const durT=total/speed;let acc=0;const hopScene=[];
+     let g=`<g class="ddn-flow ddn-flow-${slug(f.local||f.id)}" data-flow="${esc$3(f.id)}" data-dur="${fmt$1(durT)}"><title>${esc$3(f.name)}</title>`;
+     hops.forEach((a,i)=>{
+      const hopDur=lens[i]/speed,start=acc,end=acc+hopDur;acc=end;
+      hopScene.push({relation:a.id,start,end});
+      const sF=fmt$1(start/durT),eF=fmt$1(end/durT);
+      // Each hop marker owns its hop's route path but shares the flow cycle:
+      // keyTimes confine travel to [start,end] and a discrete opacity hides it
+      // outside its window, so the chain reads as one marker hopping the route.
+      const keyTimes=i===0?`0;${eF};1`:`0;${sF};${eF};1`,keyPoints=i===0?`0;1;1`:`0;0;1;1`;
+      const opValues=i===0?'1;0':'0;1;0',opTimes=i===0?`0;${eF}`:`0;${sF};${eF}`;
+      g+=`<g class="ddn-flow-hop" data-hop="${i}" data-hop-start="${fmt$1(start)}" data-hop-end="${fmt$1(end)}">`;
+      for(let j=0;j<rate;j++){const begin=fmt$1(-j*durT/rate);
+       g+=markerShape(props.marker||'circle',size,colour,`<animateMotion dur="${fmt$1(durT)}s" begin="${begin}s" repeatCount="indefinite" rotate="auto" calcMode="linear" keyPoints="${keyPoints}" keyTimes="${keyTimes}" path="${esc$3(routeD(a))}"/><animate attributeName="opacity" values="${opValues}" keyTimes="${opTimes}" calcMode="discrete" dur="${fmt$1(durT)}s" begin="${begin}s" repeatCount="indefinite"/>`);}
+      g+='</g>';
+     });
+     diagram+=g+'</g>';
+     flowScene.push({id:f.id,name:f.name,duration:durT,hops:hopScene});
+    }
+   }
    geoms.forEach(g=>diagram+=renderNode(g,p,t));
    for(const d of subs){
     if(d.mode==='inline'&&d.child){const child=render$2(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc$3(d.target)}">`+inner+'</g>';}
@@ -3333,7 +3426,7 @@
     if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$3(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
     else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$3(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
    }
-   const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$6.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
+   const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$6.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
    const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
    const fontClass='ddn-font-'+hash(font);
    const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
@@ -4338,9 +4431,9 @@
     undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
     redo(){const t=redo.pop();if(!t)return false;const n={...files};for(const p of t.patch)if(p.after===undefined)delete n[p.file];else n[p.file]=p.after;commit(n,t.label,false);undo.push(t);historyBytes+=t.bytes;return true;},
     subscribe(fn){if(typeof fn!=='function')throw new TypeError('Listener must be a function.');listeners.add(fn);return ()=>listeners.delete(fn);},
-    renderSync({entry,view,overrides={},layoutState=null}){
+    renderSync({entry,view,overrides={},layoutState=null,noMotion=false}){
      const start=performance.now(),base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
-     const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState});
+     const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true});
      const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);redacted?[]:v.ir.elements.flatMap(n=>n.fields||[]);
      const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);
      const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));
@@ -4608,7 +4701,9 @@
   function safeSVG(svg,prefix){
    const doc=new DOMParser().parseFromString(svg,'image/svg+xml');if(doc.querySelector('parsererror')||doc.documentElement.localName!=='svg')throw new Error('Renderer returned malformed SVG');
    for(const el of [...doc.querySelectorAll('*')]){
-    if(['script','foreignObject','iframe','object','embed','animate','animateMotion','animateTransform','set'].includes(el.localName)){el.remove();continue;}
+    // B1-033: declarative SMIL (animate/animateMotion/…) is renderer-emitted,
+    // carries no script and animates autonomously in exported SVG — keep it.
+    if(['script','foreignObject','iframe','object','embed'].includes(el.localName)){el.remove();continue;}
     for(const at of [...el.attributes]){
      if(/^on/i.test(at.localName))el.removeAttributeNode(at);
      else if(['href','src'].includes(at.localName)&&!at.value.startsWith('#')){

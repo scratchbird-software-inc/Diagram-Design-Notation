@@ -12,10 +12,12 @@ data           = "data", identifier, [ string ], block ;
 format         = "format", identifier, [ string ], block ;
 view           = "view", identifier, [ string ], block ;
 block          = "{", { member }, "}", [ ";" ] ;
-member         = property | declaration | targetDeclaration | group ;
+member         = property | declaration | targetDeclaration | flowDeclaration | group ;
 property       = identifier, ":", value, ";" ;
 declaration    = identifier, identifier, [ string ], [ endpoints ], ( block | ";" ) ;
 targetDeclaration = ( "place" | "route" ), reference, block ;
+flowDeclaration = "flow", identifier, [ string ], block ;
+steps          = "steps", ":", reference, { "->", reference }, ";" ;
 group          = identifier, block ;
 endpoints      = reference, "->", reference ;
 reference      = "@", identifier, { ".", identifier } ;
@@ -38,4 +40,7 @@ blockComment   = "/*", { characterExceptClosingComment }, "*/" ;
 (* Strings use JSON escapes; surrogate pairs must be valid. Comments do not nest.
    The maximal-munch lexer recognizes -> before punctuation and adjacent numeric units.
    The generic declaration production is narrowed by legal child types in the specification.
-   Endpoint syntax is legal only on relation declarations in the core. *)
+   Endpoint syntax is legal only on relation declarations in the core.
+   B1-033: a view-level flow block (multi-hop motion sequence) declares its hop chain
+   with the steps production above; steps must resolve to selected elements joined by
+   existing visible relations in their declared direction. *)

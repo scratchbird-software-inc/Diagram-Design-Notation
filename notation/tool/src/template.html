@@ -30,6 +30,9 @@
   <button id="ddn-icon-export" class="ddn-icon" type="button" data-drawer="export" title="Export drawer — SVG, PNG, WebP, workspace snapshot (right)">
     <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M2.5 12.5h11" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
+  <button id="ddn-icon-animation" class="ddn-icon" type="button" data-drawer="animation" title="Animation drawer — start/stop, step one hop, speed, flow selector (right)">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+  </button>
   <span class="ddn-sep" data-viewport></span>
   <button id="ddn-fit-page" type="button" data-viewport title="Fit page">Fit</button>
   <button id="ddn-fit-width" type="button" data-viewport title="Fit width">Fit W</button>
@@ -154,7 +157,33 @@
       <p><button id="ddn-export-svg" type="button">Export SVG</button></p>
       <p><button id="ddn-export-png" type="button">Export PNG (2×)</button></p>
       <p><button id="ddn-export-webp" type="button">Export WebP (2×)</button></p>
+      <p><label class="ddn-check" title="Unchecked: re-render without SMIL animation for print/static targets (the --no-motion render option)"><input id="ddn-export-motion" type="checkbox" checked> Include animation (SMIL)</label></p>
       <p><button id="ddn-save-example" type="button" class="ddn-mini" title="Download a workspace JSON snapshot of this entry, view and settings">Save example snapshot</button></p>
+    </div>
+  </aside>
+  <aside id="ddn-drawer-animation" class="ddn-drawer ddn-right" data-state="closed" aria-label="Animation drawer">
+    <div class="ddn-drawer-head"><h2>Animation</h2><button class="ddn-mini" data-close type="button" title="Close animation drawer">×</button></div>
+    <div class="ddn-drawer-body">
+      <p id="ddn-anim-empty" class="ddn-dim">No animation in this view.</p>
+      <div id="ddn-anim-controls" hidden>
+        <p class="ddn-dim">SMIL playback of the rendered diagram. Default is playing; your pause choice is kept for this session only. Speed re-times the SMIL durations (base values are re-derived from the SVG on every render); the playhead is not rescaled. Print targets: uncheck “Include animation” in the Export drawer.</p>
+        <div class="ddn-row">
+          <button id="ddn-anim-toggle" type="button" title="Start or stop SMIL playback (pauseAnimations / unpauseAnimations)">Pause</button>
+          <button id="ddn-anim-step" type="button" class="ddn-mini" title="Pause and advance exactly one hop (setCurrentTime on the route-length-derived hop boundaries)">Step one hop</button>
+        </div>
+        <label class="ddn-field"><span>Speed</span>
+          <select id="ddn-anim-speed" aria-label="Playback speed multiplier">
+            <option value="0.5">0.5×</option>
+            <option value="1" selected>1×</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+          </select>
+        </label>
+        <label class="ddn-field" id="ddn-anim-flow-field"><span>Flow</span>
+          <select id="ddn-anim-flow" aria-label="Flow to step through"></select>
+        </label>
+        <p id="ddn-anim-status" class="ddn-dim"></p>
+      </div>
     </div>
   </aside>
 </div>

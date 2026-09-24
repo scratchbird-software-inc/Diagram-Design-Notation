@@ -1,0 +1,27 @@
+ddn "0.5";
+module "ddn.examples.motion";
+
+import "shared.ddn" as shared;
+
+// B1-033 motion showcase: declarative SMIL animation on graph relations.
+// - orders -> queue: single travelling marker (defaults: circle, 8px, 60px/s)
+// - queue -> worker: staggered particle stream (rate: 6) — traffic-style flow
+// - worker -> ledger: pulse variant (edge stroke colour/opacity, no marker)
+// The exported SVG animates autonomously; the unified tool's Animation drawer
+// starts/stops, steps one hop, and re-times playback. --no-motion renders the
+// same diagram static for print.
+data pipeline {
+    object orders "Order intake" { kind: topic; fields { field order_id; field placed_at; } }
+    object queue "Dispatch queue" { kind: queue; fields { field order_id; field priority; } }
+    object worker "Fulfilment worker" { kind: activity; }
+    object ledger "Fulfilled orders" { kind: table; fields { field order_id; field fulfilled_at; } }
+    relation submit "Orders submitted" @orders -> @queue { kind: flow; motion: flow; }
+    relation dispatch "Dispatch stream" @queue -> @worker { kind: flow; motion: flow; marker: square; marker_size: 10; rate: 6; speed: 140; marker_color: "#B45309"; }
+    relation record "Record fulfilment" @worker -> @ledger { kind: flow; motion: pulse; pulse_color: "#0E7490"; }
+}
+
+view animated "Order pipeline / motion showcase" {
+    data: [@pipeline];
+    format: @shared.styles.technical;
+    legend { placement: bottom; }
+}

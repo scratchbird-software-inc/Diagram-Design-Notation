@@ -44,7 +44,23 @@ produce `dist/`; it never ships in the package or the bundles.
 npm test                                   # all suites
 npm run build:sdk                          # rebuild dist/ from runtime/ + studio/src
 node cli/cli.js check ../website/examples/basics/01-customer.ddn --workspace ..
+node cli/cli.js render x.ddn --workspace . --no-motion   # static SVG (strip SMIL animation)
 ```
+
+## Flow animation (B1-033)
+
+Graph relations accept optional motion properties — `motion: flow|pulse|none`,
+`marker`, `marker_size`, `marker_color`, `rate` (1–32, staggered particle
+stream), `speed`, `pulse_color` — and views accept `flow <id> { steps: @a ->
+@b -> @c; … }` blocks that resolve each hop to the existing relation between
+consecutive elements (`DDN-E013` when none connects a hop, `DDN-E014` for
+invalid motion values, `DDN-W016` when `rate` exceeds the 32-marker cap). The
+renderer emits deterministic declarative SMIL (`<animateMotion>`/`<animate>`;
+no script, file://-safe, autonomous in exported SVG); `--no-motion` or the
+`noMotion` render option strips it for print. The unified tool exposes an
+Animation drawer (start/stop, step one hop, speed multiplier, flow selector;
+auto-pause on `prefers-reduced-motion`). Normative detail: spec chapter 27
+(`standard/specification/27-flow-animation.md`).
 
 All public output goes through the export/profile machinery — hiding is not
 redaction. History before the monorepo import is in `CHANGELOG.md`.

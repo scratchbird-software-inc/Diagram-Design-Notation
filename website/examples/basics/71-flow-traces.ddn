@@ -1,0 +1,35 @@
+ddn "0.5";
+module "ddn.examples.flow-trace";
+
+import "shared.ddn" as shared;
+
+// B1-033 flow blocks: step-traceable multi-hop motion sequences. Each flow
+// resolves its steps to the existing relations between consecutive elements
+// and renders one marker hopping the concatenated route paths; the unified
+// tool's Animation drawer steps a selected flow exactly one hop at a time.
+// Two flows over one model demonstrate the flow selector.
+data shop {
+    object client "Storefront" { kind: application; }
+    object cart "Cart service" { kind: service; }
+    object payment "Payment gateway" { kind: service; }
+    object orders "Order store" { kind: table; fields { field order_id; field total; } }
+    object warehouse "Warehouse" { kind: activity; }
+    relation checkout "Checkout" @client -> @cart { kind: flow; }
+    relation charge "Charge card" @cart -> @payment { kind: flow; }
+    relation persist "Persist order" @cart -> @orders { kind: flow; }
+    relation fulfil "Release to fulfilment" @orders -> @warehouse { kind: flow; }
+}
+
+view traces "Checkout / multi-hop flow traces" {
+    data: [@shop];
+    format: @shared.styles.technical;
+    flow purchase "Purchase path" {
+        steps: @shop.client -> @shop.cart -> @shop.payment;
+        marker: circle; marker_color: "#B91C1C"; speed: 90;
+    }
+    flow fulfilment "Fulfilment path" {
+        steps: @shop.client -> @shop.cart -> @shop.orders -> @shop.warehouse;
+        marker: square; marker_color: "#1D4ED8"; speed: 70; rate: 2;
+    }
+    legend { placement: bottom; }
+}

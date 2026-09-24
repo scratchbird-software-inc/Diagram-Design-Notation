@@ -1350,7 +1350,10 @@ publishNamespace('DDNContracts',api$5);
       while(peek().type!=='}'){
         if(peek().type==='eof')fail('DDN010','Missing closing brace',peek(),source);
         const t=expect('id');
-        if(peek().type===':'){take();if(Object.hasOwn(node.props,t.value))fail('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail('DDN008','Reserved key',t,source);node.props[t.value]=value();expect(';');}
+        if(peek().type===':'){take();if(Object.hasOwn(node.props,t.value))fail('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail('DDN008','Reserved key',t,source);node.props[t.value]=value();
+          // B1-033: a flow block's steps chain reads `@a -> @b -> @c` as one ordered step list.
+          if(t.value==='steps'){while(peek().type==='->'){take();node.props.steps=[...(Array.isArray(node.props.steps)?node.props.steps:[node.props.steps]),value()];}}
+          expect(';');}
         else node.children.push(declaration(t));
       }
       node.bodyEnd=peek().start;node.end=take().end;depth--;if(peek().type===';')node.end=take().end;return node;
@@ -1582,6 +1585,7 @@ publishNamespace('DDNContracts',api$5);
     frame:['scope','members','at','size','label','dimension'],
     junction:['at','relations','network'],
     keyset:['keys','scope'],
+    flow:['label','steps','marker','marker_color','marker_size','speed','rate','uid'],
   };
   function validateKnown(n,allowed){for(const key of Object.keys(n.props))if(!allowed.includes(key)&&!key.startsWith('x_'))throw new DDNError('DDN033',`Unknown ${n.type} property ${key}`,n.source,n.start);}
   function build(files,entry,viewName,registry,stack=[]){
@@ -1664,6 +1668,22 @@ publishNamespace('DDNContracts',api$5);
     const elementIds=new Set(elements.map(n=>n.id));
     function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
     const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties:resolveValue(n.props,n),source:{file:n.source,start:n.start,end:n.end}};});
+    // B1-033: declarative motion vocabulary (D2). Values are validated here;
+    // emission is the renderer's job. rate beyond the DOM-honest cap is a
+    // warning (DDN-W016) and clamps at render time.
+    const motionDiagnostics=[];
+    const MOTION_RATE_MAX=32;
+    function validateMotionProps(props,source,offset){
+      if(props.motion!==undefined&&!['flow','pulse','none'].includes(props.motion))throw new DDNError('DDN-E014','Unknown motion value '+JSON.stringify(props.motion)+'; expected flow, pulse or none',source,offset);
+      if(props.marker!==undefined&&!['circle','square','rect'].includes(props.marker))throw new DDNError('DDN-E014','Unknown marker shape '+JSON.stringify(props.marker)+'; expected circle, square or rect',source,offset);
+      if(props.marker_size!==undefined&&!(quantity(props.marker_size,NaN)>0&&quantity(props.marker_size,NaN)<=128))throw new DDNError('DDN-E014','marker_size must be a length from >0 to 128px',source,offset);
+      if(props.speed!==undefined&&!(quantity(props.speed,NaN)>0&&quantity(props.speed,NaN)<=10000))throw new DDNError('DDN-E014','speed must be a positive length (px/s) up to 10000',source,offset);
+      if(props.rate!==undefined&&(!Number.isSafeInteger(props.rate)||props.rate<1))throw new DDNError('DDN-E014','rate must be a positive integer (markers in flight)',source,offset);
+      if(props.rate>MOTION_RATE_MAX)motionDiagnostics.push({code:'DDN-W016',severity:'warning',message:'rate '+props.rate+' exceeds the '+MOTION_RATE_MAX+'-marker DOM-honest cap and is clamped to '+MOTION_RATE_MAX+' at render time.',source});
+      for(const key of ['marker_color','pulse_color'])if(props[key]!==undefined&&typeof props[key]!=='string')throw new DDNError('DDN-E014',key+' must be a colour string',source,offset);
+    }
+    const MOTION_KEYS=['motion','marker','rate','speed','marker_size','marker_color','pulse_color'];
+    for(const r of relations)if(MOTION_KEYS.some(k=>r.properties[k]!==undefined))validateMotionProps(r.properties,r.source.file,r.source.start);
     let selected=view.props.select==='all'||view.props.select===undefined?elements.map(n=>n.id):view.props.select.map(r=>ws.resolve(r,view).uid);
     if(!Array.isArray(selected)||selected.some(id=>!elementIds.has(id)))throw new DDNError('DDN057','View selection contains a non-element or out-of-scope element',view.source,view.start);
     const excluded=(view.props.exclude||[]).map(r=>ws.resolve(r,view).uid);selected=[...new Set(selected)].filter(id=>!excluded.includes(id));
@@ -1677,17 +1697,34 @@ publishNamespace('DDNContracts',api$5);
       if(seen.has(num)&&seen.get(num)!==target.id)throw new DDNError('DDN060','Duplicate callout number '+num,view.source,view.start);seen.set(num,target.id);keys[target.id]=num;
     }
     if(p.legend.mode==='numbers')for(const r of visibleRelations)if(!keys[r.id])throw new DDNError('DDN061','Missing explicit callout number for '+r.ref,view.source,view.start);
-    const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[];
+    const placements=Object.create(null),routes=Object.create(null),subdiagrams=[],frames=[],flows=[];
     for(const n of view.children.filter(n=>!n.group)){
       if(n.type==='place'){const target=ws.resolve(n.target,view);if(!shown.has(target.uid))throw new DDNError('DDN062','Placement target is not selected',n.source,n.start);placements[target.uid]=clean(n.props);}
       else if(n.type==='route'){validateCurvePolicy(n.props,n.source,n.start);const target=ws.resolve(n.target,view);if(!visibleRelations.some(r=>r.id===target.uid))throw new DDNError('DDN063','Route target is not visible',n.source,n.start);routes[target.uid]=clean(n.props);}
       else if(n.type==='subdiagram'){const target=ws.resolve(n.props.view,n);if(target.type!=='view')throw new DDNError('DDN064','Subdiagram target must be a view',n.source,n.start);if(!['reference','inline'].includes(n.props.mode))throw new DDNError('DDN900','Reference renderer supports reference and inline modes; balanced collapsed interfaces are specified separately',n.source,n.start);const child=n.props.mode==='inline'?build(files,target.source,target.uid,registry,[...stack,view.uid]).ir:null;subdiagrams.push({id:n.uid,target:target.uid,targetName:target.label||target.id,targetLocal:target.id,name:n.props.label||n.label||target.label||target.id,...clean(n.props),child});}
       else if(n.type==='frame'){frames.push({id:n.uid,name:n.label||n.props.label||n.id,scope:n.props.scope?ws.resolve(n.props.scope,n).uid:null,members:(n.props.members||[]).map(r=>ws.resolve(r,n).uid),...Object.fromEntries(Object.entries(clean(n.props)).filter(([k])=>!['scope','members'].includes(k)))});}
+      // B1-033 (D3): a flow block is a step-traceable multi-hop sequence. Each
+      // hop resolves to the existing visible relation between consecutive
+      // elements (steps follow relation direction); a hop without one is DDN-E013.
+      else if(n.type==='flow'){
+        validateKnown(n,PROPERTIES.flow);
+        if(!Array.isArray(n.props.steps)||n.props.steps.length<2)throw new DDNError('DDN-E013','Flow '+n.id+' needs at least two steps: @a -> @b -> …',n.source,n.start);
+        const steps=n.props.steps.map(r=>{const t=ws.resolve(r,n);if(!elementIds.has(t.uid))throw new DDNError('DDN-E013','Flow step is not a data element in scope: @'+r.$ref,n.source,r.$offset||n.start);if(!shown.has(t.uid))throw new DDNError('DDN-E013','Flow step is not selected in this view: @'+r.$ref,n.source,r.$offset||n.start);return t.uid;});
+        const hops=[];
+        for(let i=0;i<steps.length-1;i++){
+          const match=visibleRelations.find(r=>r.from.element===steps[i]&&r.to.element===steps[i+1]);
+          if(!match)throw new DDNError('DDN-E013','Flow '+n.id+' hop '+(i+1)+' has no visible relation from '+steps[i].split('::').at(-1)+' to '+steps[i+1].split('::').at(-1)+'; steps must follow existing relations in their declared direction',n.source,n.start);
+          hops.push(match.id);
+        }
+        const fprops=resolveValue(n.props,n);
+        validateMotionProps(fprops,n.source,n.start);
+        flows.push({id:n.uid,local:n.id,name:n.label||fprops.label||n.id,steps,hops,properties:fprops,source:{file:n.source,start:n.start,end:n.end}});
+      }
       else throw new DDNError('DDN900','Reference renderer does not implement view declaration '+n.type,n.source,n.start);
     }
-    const diagnostics=[];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
+    const diagnostics=[...motionDiagnostics];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
     const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
-    const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
+    const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
     if(p.projection.kind==='panels' && Array.isArray(p.projection.panels)){
       ir.view.children=[];
       for(const panel of p.projection.panels){if(!panel.view)continue;
@@ -2215,9 +2252,9 @@ function createWorkspace(input){
   undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
   redo(){const t=redo.pop();if(!t)return false;const n={...files};for(const p of t.patch)if(p.after===undefined)delete n[p.file];else n[p.file]=p.after;commit(n,t.label,false);undo.push(t);historyBytes+=t.bytes;return true;},
   subscribe(fn){if(typeof fn!=='function')throw new TypeError('Listener must be a function.');listeners.add(fn);return ()=>listeners.delete(fn);},
-  renderSync({entry,view,overrides={},layoutState=null}){
+  renderSync({entry,view,overrides={},layoutState=null,noMotion=false}){
    const start=performance.now(),base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
-   const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState});
+   const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true});
    const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);redacted?[]:v.ir.elements.flatMap(n=>n.fields||[]);
    const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);
    const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));

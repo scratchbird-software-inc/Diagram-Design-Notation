@@ -1247,6 +1247,90 @@
       "default": "absent / not asserted",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
       "validation_stage": "logical unless constraint states physical, observed or publication"
+    },
+    {
+      "path": "motion",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "flow | pulse | none",
+      "constraint": "Declarative SMIL animation of the relation route: flow travels markers along the route; pulse animates edge stroke colour/opacity; none renders a static edge. Renderer-emitted, deterministic, file://-safe.",
+      "default": "none",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
+    },
+    {
+      "path": "marker",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "circle | square | rect",
+      "constraint": "Travelling marker shape for motion:flow and flow blocks.",
+      "default": "circle",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
+    },
+    {
+      "path": "marker_size",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "length (px), >0 and <=128px",
+      "constraint": "Travelling marker size in px.",
+      "default": "8px",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
+    },
+    {
+      "path": "marker_color",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "colour string",
+      "constraint": "Travelling marker colour; defaults to the relation colour (accent for flow blocks).",
+      "default": "relation colour / accent",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
+    },
+    {
+      "path": "rate",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "integer 1..32",
+      "constraint": "Markers in flight on the route; >1 is a staggered particle stream (traffic-style). Values beyond the 32 DOM-honest cap warn (DDN-W016) and clamp at render time.",
+      "default": "1",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
+    },
+    {
+      "path": "speed",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "length (px/s), >0 and <=10000",
+      "constraint": "Marker travel speed along the route; hop boundaries are route-length/speed derived.",
+      "default": "60px/s",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
+    },
+    {
+      "path": "pulse_color",
+      "group": "Motion and flow animation",
+      "targets": [
+        "relation"
+      ],
+      "value_shape": "colour string",
+      "constraint": "Pulse peak stroke colour for motion:pulse.",
+      "default": "accent",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
     }
   ]
 }

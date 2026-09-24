@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>27. Flow animation (motion markers, flow blocks, tool controls) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>27. Flow animation (motion markers, flow blocks, tool controls)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1 (B1-033). Source grammar remains DDN 0.5; diagrams without motion properties render byte-identical SVG to previous releases. Scope: graph-projection relations and view-level flow blocks. Other projections (sequence, chart, geo, …) ignore motion properties.</p>
+<h2>SMIL, not JavaScript (D1)</h2>
+<p>The renderer emits declarative SMIL — <code>&lt;animateMotion&gt;</code> markers travelling the existing route paths and <code>&lt;animate&gt;</code> stroke/opacity pulses. The output is deterministic: the same DDN source always yields the same animated SVG, so golden-render tests are unaffected. Animated SVG works from <code>file://</code> and animates autonomously when an exported file is opened directly; no script of any kind is embedded.</p>
+<h2>Relation motion properties (D2)</h2>
+<p>All seven are optional per relation and registered in <code>standard/registry/data-properties.json</code> under the &quot;Motion and flow animation&quot; group; invalid values raise <code>DDN-E014</code>.</p>
+<table><thead><tr><th>Property</th><th>Values</th><th>Default</th></tr></thead><tbody><tr><td><code>motion</code></td><td><code>flow</code> \</td><td><code>pulse</code> \</td><td><code>none</code></td><td><code>none</code></td></tr><tr><td><code>marker</code></td><td><code>circle</code> \</td><td><code>square</code> \</td><td><code>rect</code></td><td><code>circle</code></td></tr><tr><td><code>marker_size</code></td><td>length, &gt;0 and ≤128 px</td><td>8 px</td></tr><tr><td><code>marker_color</code></td><td>colour string</td><td>relation colour</td></tr><tr><td><code>rate</code></td><td>integer 1–32 (markers in flight)</td><td>1</td></tr><tr><td><code>speed</code></td><td>length in px/s, &gt;0 and ≤10000</td><td>60 px/s</td></tr><tr><td><code>pulse_color</code></td><td>colour string</td><td>accent</td></tr></tbody></table>
+<p><code>rate &gt; 1</code> emits a staggered particle stream: markers share one <code>&lt;animateMotion&gt;</code> duration and receive evenly distributed negative <code>begin</code> offsets, which is the required behaviour for traffic-style diagrams. <code>pulse</code> animates edge stroke colour and opacity along the route instead of a travelling marker.</p>
+<p>Scale honesty (D6): SVG+SMIL comfortably handles dozens of concurrent markers; hundreds strain the DOM. <code>rate</code> is therefore capped at 32 per relation — larger values warn (<code>DDN-W016</code>) and clamp at render time. A canvas renderer for heavier traffic remains a roadmap possibility only.</p>
+<h2>Flow blocks (D3)</h2>
+<p>A view-level <code>flow</code> block declares a step-traceable multi-hop sequence:</p>
+<pre><code>flow trace &quot;Order path&quot; {
+    steps: @model.client -&gt; @model.service -&gt; @model.orders;
+    marker: square; marker_color: &quot;#d40000&quot;; speed: 90; rate: 2;
+}</code></pre>
+<p>Steps reference declared elements. Each hop resolves to the existing visible relation between consecutive elements, following the relation's declared direction; a hop without one raises <code>DDN-E013</code>, as does a step that is not a selected element. Multiple flows per view are allowed. A flow renders its own marker travelling the concatenated hop route paths in one cycle: every hop marker owns its hop's path and shares the flow cycle duration, confined to its hop window by <code>keyTimes</code> and a discrete opacity animation, so the chain reads as a single marker hopping element to element.</p>
+<h2>Renderer contract (D4)</h2>
+<p>Markers carry stable hooks for controllers: motion groups are <code>g.ddn-motion[data-relation][data-hop][data-hop-start][data-hop-end][data-dur]</code>; flow groups are <code>g.ddn-flow.ddn-flow-&lt;local&gt;[data-flow][data-dur]</code> with per-hop <code>g.ddn-flow-hop[data-hop][data-hop-start][data-hop-end]</code> children. Hop boundary times are route-length/speed derived by the renderer and exposed on those attributes. Export SVG (tool export and CLI render) includes animation by default; the <code>--no-motion</code> CLI flag, the tool's &quot;Include animation&quot; export toggle, and the <code>noMotion</code> render option strip animation for print/static targets as a render option, never by text munging.</p>
+<h2>Tool playback controls (D5)</h2>
+<p>The unified tool (<code>notation/tool/</code>) carries an Animation drawer — a first-class drawer in the drawers configuration (open/closed/none, <code>?drawers=</code>, mode presets) with an icon in the toolbar. The icon is hidden when the rendered view contains no motion; the drawer then shows &quot;No animation in this view&quot;. Controls:</p>
+<ul><li>start/stop via SMIL <code>pauseAnimations()</code>/<code>unpauseAnimations()</code>; default is</li></ul>
+<p>  playing and the pause choice is remembered in memory for the session only;</p>
+<ul><li>step: pauses and advances the selected flow exactly one hop, or — for plain</li></ul>
+<p>  <code>motion</code> relations without flows — one full traversal of the longest route.   Implemented by seeking with <code>setCurrentTime</code> to the route-length-derived hop   boundaries read from the <code>data-hop</code> attributes;</p>
+<ul><li>a speed multiplier (0.5×/1×/2×/4×) implemented by re-setting the SMIL <code>dur</code></li></ul>
+<p>  attributes from cached base durations — chosen over <code>setCurrentTime</code> scaling   because it survives re-renders and needs no per-frame controller loop; the   playhead is not rescaled;</p>
+<ul><li>a flow selector, shown when more than one flow exists.</li></ul>
+<h2>Accessibility and print (D8)</h2>
+<p>The tool respects <code>prefers-reduced-motion</code> by auto-pausing playback at load; the user can still press Play, and that session choice then wins until reload. Print and other static targets are served by the static <code>--no-motion</code> export.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

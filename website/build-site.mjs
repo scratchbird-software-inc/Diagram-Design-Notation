@@ -356,7 +356,7 @@ const homeCards = [
   ['gallery/index.html', 'Gallery — full notation coverage', 'One pre-rendered SVG per installed profile (all 73) plus variation sheets: every chart mark, look × palette, routing × style, layout algorithm, and spacing level — 130 CLI renders.', 'static · file:// safe'],
   ['tools/designer/index.html', 'Visual designer — working prototype', 'Visual-first editor: full 188-kind palette, descriptor-driven inspector, live source transactions, matrix and chart editors, resizable and window-pop-out panels, SVG/PNG/WebP downloads.', 'standalone · no server'],
   ['tools/index.html', 'Unified diagram tool', 'One page for viewing, exploring and editing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.', 'standalone · no server'],
-  ['standard/index.html', 'The open standard', '43 specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.', 'rendered from Markdown'],
+  ['standard/index.html', 'The open standard', '44 specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.', 'rendered from Markdown'],
   ['examples/index.html', 'Examples', '61 basics, projection and quality corpora, and 22 use-case scenarios as runnable .ddn sources — served raw for download.', 'browser + raw files'],
 ];
 
