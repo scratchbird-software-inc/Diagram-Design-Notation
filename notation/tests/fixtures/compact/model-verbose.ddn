@@ -1,0 +1,40 @@
+ddn "0.5";
+module "tests.compact";
+// B1-037 equivalence-gate fixture (verbose side). Paired with model-compact.ddn.
+data model {
+ object customer "Customer" {
+  kind: table;
+  fields {
+   field customer_id { key: primary; datatype: "uuid"; }
+   field display_name "Display name";
+   field email "Email" { nullable: true; }
+   field address { shape: object;
+    fields { field street; field city; }
+   }
+  }
+ }
+ object inbound "Inbound orders" {
+  kind: queue;
+  ports {
+   port input { direction: in; }
+   port output "Output" { direction: out; }
+  }
+ }
+ object events { kind: topic; }
+ object visitor "Site visitor" { kind: "uml.actor"; }
+ object fulfil "Fulfil order" { kind: activity; }
+ object customer_summary "Customer summary" { kind: view; }
+ domain money "Money";
+ sample customers_sample { columns: [@customer.customer_id]; rows: [["c1"]]; }
+ relation places @customer.customer_id -> @inbound.input { kind: flow; }
+ relation actor_link @visitor -> @fulfil { kind: assoc; }
+}
+view main "Main" {
+ data: [@model];
+ legend { mode: numbers; keys: { places: 3, actor_link: 9 }; }
+ publication { size: content; fit: none; }
+}
+view subset "Subset" {
+ data: [@model];
+ select: [@model.customer, @model.inbound, @model.events];
+}

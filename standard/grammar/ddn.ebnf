@@ -12,9 +12,26 @@ data           = "data", identifier, [ string ], block ;
 format         = "format", identifier, [ string ], block ;
 view           = "view", identifier, [ string ], block ;
 block          = "{", { member }, "}", [ ";" ] ;
-member         = property | declaration | targetDeclaration | flowDeclaration | group ;
+member         = property | declaration | typedDeclaration | contextualMember | targetDeclaration | flowDeclaration | group ;
 property       = identifier, ":", value, ";" ;
 declaration    = identifier, identifier, [ string ], [ endpoints ], ( block | ";" ) ;
+(* B1-037 compact authoring, phase 1 (parser desugars both forms to the
+   canonical declaration AST; see spec/01-language.md):
+   - typedDeclaration: a registry object-kind keyword (or declared alias) in
+     declaration position inside a data block introduces an object of that
+     kind. `table customer "Customer" {…}` ≡ `object customer "Customer"
+     { kind: table; … }`. Kind words are contextual: recognized only at
+     data-child statement start followed by an identifier, and never when the
+     word is a structural declaration keyword (object, domain, sample, flow,
+     assertion, relation) — so `object table "…"` still parses. Extension
+     (dotted) kinds are expressible only through a registry-declared `alias`.
+   - contextualMember: inside fields {}/ports {} groups, a bare
+     `id ["label"] (block | ";")` is a field/port member. The explicit
+     field/port keywords remain valid (mixed blocks allowed); a nested group
+     keyword (`fields {…}`) still reads as a group. *)
+typedDeclaration = kindKeyword, identifier, [ string ], ( block | ";" ) ;
+contextualMember = identifier, [ string ], ( block | ";" ) ;
+kindKeyword    = identifier ; (* any registry object-kind keyword or alias matching identifier *)
 targetDeclaration = ( "place" | "route" ), reference, block ;
 flowDeclaration = "flow", identifier, [ string ], block ;
 steps          = "steps", ":", reference, { "->", reference }, ";" ;

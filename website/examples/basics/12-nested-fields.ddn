@@ -1,25 +1,31 @@
 ddn "0.5";
 module "ddn.examples.nested";
 import "shared.ddn" as shared;
+// Teaching example for compact authoring (phase 1): kind keywords act as
+// declaration keywords and field/port keywords may be omitted inside
+// fields {}/ports {} blocks. Both forms desugar to the identical canonical
+// declarations — the verbose equivalents are shown in comments.
 data model {
  domain identifier "Customer identifier" { meaning: "Opaque identifier within the customer registry"; }
  domain postal "Postal code" {meaning:"Postal routing code, with country context required";}
- object customer "Customer profile / nested structure" {
-  kind: collection;
+ // verbose: object customer "Customer profile / nested structure" { kind: collection; … }
+ collection customer "Customer profile / nested structure" {
   fields {
-   field customer_id {domain: @identifier; datatype: "string"; key: true; nullable: false;}
-   field address {shape: object; presence: optional; nullable: false;
-    fields { field street; field city; field postal_code {datatype: "string";} }
+   // verbose: field customer_id {…} — explicit field/port stays valid and mixes freely
+   customer_id {domain: @identifier; datatype: "string"; key: true; nullable: false;}
+   address {shape: object; presence: optional; nullable: false;
+    fields { street; city; postal_code {datatype: "string";} }
    }
-   field contacts {shape: array; presence: optional;
-    fields {field kind {datatype: "string";} field value {datatype: "string";nullable: true;} }
+   contacts {shape: array; presence: optional;
+    fields {kind {datatype: "string";} value {datatype: "string";nullable: true;} }
    }
-   field delivery {shape: variant; discriminator: "method"; variants: [pickup, courier];
-    fields {field method; field location {presence: optional;} }
+   delivery {shape: variant; discriminator: "method"; variants: [pickup, courier];
+    fields {method; location {presence: optional;} }
    }
   }
  }
- object order "Order" {kind: table;fields {field order_id;field customer_id {domain: @identifier;}}}
+ // verbose: object order "Order" { kind: table; fields { field order_id; field customer_id {…} } }
+ table order "Order" {fields {order_id; customer_id {domain: @identifier;}}}
  relation owner @order.customer_id -> @customer.customer_id {kind: ref; enforcement: undecided;}
  relation address_note @customer.address.postal_code -> @postal {kind: candidate;}
 }

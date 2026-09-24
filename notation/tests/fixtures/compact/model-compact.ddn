@@ -1,0 +1,40 @@
+ddn "0.5";
+module "tests.compact";
+// B1-037 equivalence-gate fixture (compact side). Paired with model-verbose.ddn:
+// both must build to the same semanticJSON, byte-identical SVG and identical
+// validation outcomes.
+data model {
+ table customer "Customer" {
+  fields {
+   customer_id { key: primary; datatype: "uuid"; }
+   display_name "Display name";
+   field email "Email" { nullable: true; }
+   address { shape: object;
+    fields { street; city; }
+   }
+  }
+ }
+ queue inbound "Inbound orders" {
+  ports {
+   input { direction: in; }
+   port output "Output" { direction: out; }
+  }
+ }
+ topic events;
+ actor visitor "Site visitor" {}
+ activity fulfil "Fulfil order";
+ view customer_summary "Customer summary" {}
+ domain money "Money";
+ sample customers_sample { columns: [@customer.customer_id]; rows: [["c1"]]; }
+ relation places @customer.customer_id -> @inbound.input { kind: flow; }
+ relation actor_link @visitor -> @fulfil { kind: assoc; }
+}
+view main "Main" {
+ data: [@model];
+ legend { mode: numbers; keys: { places: 3, actor_link: 9 }; }
+ publication { size: content; fit: none; }
+}
+view subset "Subset" {
+ data: [@model];
+ select: [@model.customer, @model.inbound, @model.events];
+}

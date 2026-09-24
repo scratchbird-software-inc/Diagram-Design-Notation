@@ -36,3 +36,33 @@ view v2 "Confine" { data: [@m]; select: [@m.a]; layout { frame_overflow: confine
   if (!expandGone || !confineKept) { console.error('FAIL normalize frame_overflow: expand stripped =', expandGone, ', confine kept =', confineKept); process.exit(1); }
   console.log('PASS normalize strips default frame_overflow: expand, keeps confine');
 }
+/* B1-037 D7: compact authoring syntax is an author choice. The normalizer strips
+ * default-equal pins but never rewrites verbose↔compact; compact input is
+ * preserved (typed declarations stay typed, bare members stay bare). */
+{
+  const fs = require('node:fs'), os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ddn-norm-compact-'));
+  const file = path.join(dir, 'fixture.ddn');
+  const compact = `ddn "0.5";
+module "tests.norm.compact";
+data m {
+  table customer "Customer" { fields { customer_id { key: primary; } name; } }
+  queue inbound { ports { input { direction: in; } } }
+  relation r @customer.customer_id -> @inbound.input { kind: flow; }
+}
+view v { data: [@m]; layout { frame_overflow: expand; } }
+`;
+  fs.writeFileSync(file, compact);
+  const run = cp.spawnSync(process.execPath, [path.join(root, 'tools/normalize-ddn.mjs'), file], { encoding: 'utf8' });
+  if (run.status !== 0) { console.error('FAIL normalize compact preservation:', run.stderr.trim() || run.stdout.trim()); process.exit(1); }
+  const out = fs.readFileSync(file, 'utf8');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const typedKept = out.includes('table customer "Customer"') && out.includes('queue inbound {');
+  const bareKept = out.includes('customer_id { key: primary; }') && out.includes('name;') && out.includes('input { direction: in; }');
+  const notRewritten = !out.includes('object customer') && !out.includes('kind: table') && !out.includes('field customer_id') && !out.includes('port input');
+  const pinStripped = !out.includes('frame_overflow');
+  if (!typedKept || !bareKept || !notRewritten || !pinStripped) {
+    console.error('FAIL normalize compact preservation:', JSON.stringify({ typedKept, bareKept, notRewritten, pinStripped }), '\n' + out); process.exit(1);
+  }
+  console.log('PASS normalize preserves compact authoring syntax (strips pins only)');
+}

@@ -6,6 +6,42 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Compact authoring, phase 1 (B1-037): typed declarations and contextual
+  members, desugared in the parser to the identical canonical AST (D1) — no IR,
+  renderer or runtime changes beyond the parse path, and the use-cases golden
+  renders stay byte-identical.
+  - Typed declarations (D2): every built-in object-kind keyword works as a
+    declaration keyword inside a data block — `table customer "Customer" {…}` ≡
+    `object customer "Customer" { kind: table; … }`. Registered kind aliases
+    spell the same kind (`tbl customer {…}`). Repeating `kind:` in the body is
+    a duplicate property (DDN011).
+  - Extension kinds (D3): dotted keywords (`uml.actor`, `flow.start`) cannot be
+    identifiers, so they opt in through a new optional registry `alias`
+    property; `uml.actor` declares `actor`, so `actor visitor {…}` ≡
+    `kind: "uml.actor"`. `Profiles.registry` carries `alias` into the kind's
+    aliases.
+  - Disambiguation (D4): kind words are contextual — recognized only at
+    data-child statement start followed by an identifier; structural keywords
+    (`object`, `domain`, `sample`, `flow`, `assertion`, `relation`) keep their
+    meaning, so `object table "…" { kind: table; }` still parses. The `view`
+    and `field` kind words are typed declarations only inside data blocks.
+  - Contextual members (D5): inside `fields {}`/`ports {}` the member keyword
+    may be omitted — `fields { id { key: primary; } name; }`; explicit
+    `field`/`port` remains valid and mixes freely; a nested `fields {…}`
+    keyword still reads as a group.
+  - Equivalence gate (`notation/tests/compact-authoring.js`): paired
+    compact/verbose sources across every typed-declaration word plus a fixture
+    corpus (keyed fields, ports, mixed blocks, nested fields, extension alias,
+    member endpoints) must build to equal `DDN.semanticJSON`, byte-identical
+    SVG and identical diagnostics; ambiguity regressions, the converted
+    teaching example (`12-nested-fields.ddn`, both forms in comments), and
+    DDNLive load/render/export + authoring-edit round-trips on compact source
+    are covered. `tests/normalize-ddn.js` proves the normalizer preserves
+    compact input (D7: normalization stays canonical-verbose by policy).
+  - Docs: grammar productions + disambiguation rule in
+    `standard/grammar/ddn.ebnf`, a "Compact authoring" section in spec chapter
+    01, the AI-REFERENCE authoring guide, and this entry. No new error codes.
+
 - Iso on multi-series chart views (B1-036): `series:`/`arrangement:` bar and
   area views (`chart.quality@1`) plan through the quality renderer, which had
   no iso hook — `iso: true`/`depth:` rendered flat **silently**. The quality

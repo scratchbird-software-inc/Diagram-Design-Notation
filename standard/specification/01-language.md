@@ -60,6 +60,35 @@ At document scope: `data`, `format`, and `view`. Within data: `object`, `domain`
 
 Only relations have `@source -> @target` endpoints. Relationships belong to data, never to a formatting override. A renderer MUST NOT invent a relation because two shapes touch. `place @object {at:[0px,0px];}` is optional. Omit it for automatic layout. A placement body can contain size hints alone.
 
+## Compact authoring (phase 1)
+
+Two compact surface forms desugar in the parser to the identical canonical declarations — same identities, member order, property values and omissions; `DDN.semanticJSON`, rendered SVG and validation outcomes are indistinguishable from the verbose form (source locations aside). No new IR and no renderer involvement.
+
+Typed object declarations. Any registry object-kind keyword may act as the declaration keyword inside a data block:
+
+```ddn
+table customer "Customer" { fields { field id; } }
+```
+
+is exactly `object customer "Customer" { kind: table; fields { field id; } }`. The kind property is set by the keyword, so writing `kind:` again in the body is a duplicate property (DDN011). Registered kind aliases spell the same kind (`tbl customer {…}` ≡ `kind: table`). Extension kinds whose keywords are dotted (`uml.actor`, `flow.start`) cannot be identifiers, so they do not get bare typed declarations automatically; a registry entry MAY declare an `alias` (single identifier, e.g. `uml.actor` declares `actor`) that opts the kind into the typed form.
+
+Disambiguation. Kind words are contextual, recognized only at data-child statement start followed by an identifier. The structural declaration keywords — `object`, `domain`, `sample`, `flow`, `assertion`, `relation` — always keep their structural meaning, so an object NAMED after a kind still parses: `object table "Table metadata" { kind: table; }`. The sql `view` and data `field` kind words are typed declarations only inside a data block; at document scope `view` stays the view declaration and inside a fields group `field` stays the member keyword.
+
+Contextual members. Inside `fields {}` and `ports {}` groups the `field`/`port` keyword may be omitted:
+
+```ddn
+table customer "Customer" {
+ fields { id { key: primary; } name; }
+}
+```
+
+A bare `id ["label"] (block | ";")` is a member; the explicit `field`/`port` keywords remain valid and the two forms mix freely in one block. A nested group keyword still wins (`fields {…}` inside a field stays a group), and endpoints are not members — `id @a -> @b` inside a group is a syntax error (DDN010).
+
+Normalization policy. `tools/normalize-ddn.mjs` does not rewrite verbose↔compact in either direction: compactness is an author choice, and the corpus canonical form stays explicit (canonical-verbose). Compact input parses to the same canonical declarations, so the normalizer's default-pin stripping works unchanged on it.
+
+Authoring tools. Studio/CLI authoring edits (`DDNLive.authoring.*`) operate on the canonical model and write token-precise source spans, so editing a compact declaration (label, property, added member) preserves the surrounding compact syntax; newly generated members are emitted in the canonical-verbose form, which mixes legally into compact blocks.
+
+
 ## Recursive members
 
 ```ddn

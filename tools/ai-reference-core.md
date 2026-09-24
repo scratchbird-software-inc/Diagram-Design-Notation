@@ -67,6 +67,13 @@ Members (children that are not groups):
 
 Groups inside objects (and fields): `fields { field <id> ["label"] {…}; … }` (recursive — a field may contain its own `fields` group; nothing else is legal inside a field, DDN042) and `ports { port <id> ["label"] {…}; … }`. Unknown groups → DDN900. Nested field identity is independent of its visible label: resolved children carry their own ids, parent ids, depth and dotted paths; `@model.customer.contacts.value` is a legal relation endpoint.
 
+Compact authoring (phase 1, purely additive — both forms desugar in the parser to the IDENTICAL canonical declarations; semantic model, rendered SVG and validation are indistinguishable):
+
+- Typed declarations: any registry object-kind keyword may be the declaration keyword inside a data block — `table customer "Customer" { … }` ≡ `object customer "Customer" { kind: table; … }`. Registered aliases spell the same kind (`tbl customer {…}`). Do NOT repeat `kind:` in the body (duplicate property, DDN011). Dotted extension kinds (`uml.actor`, `flow.start`) are usable only through a registry-declared `alias` (e.g. `uml.actor` declares `actor`, so `actor customer {…}` ≡ `kind: "uml.actor"`).
+- Disambiguation: kind words are contextual — recognized only at data-child statement start followed by an identifier. Structural keywords (`object`, `domain`, `sample`, `flow`, `assertion`, `relation`) always keep their meaning, so `object table "…" { kind: table; }` (an object NAMED `table`) still parses. The `view`/`field` kind words are typed declarations only inside data blocks.
+- Contextual members: inside `fields {}`/`ports {}` the member keyword may be omitted — `fields { id { key: primary; } name; }` ≡ `fields { field id { key: primary; } field name; }`. Explicit `field`/`port` remains valid and mixes freely; a nested `fields {…}` keyword still reads as a group.
+- The normalizer never rewrites verbose↔compact; compactness is an author choice and the corpus canonical form stays explicit-verbose.
+
 Only `object`/`domain`/`sample`/`flow`/`assertion`/`relation` may appear in data (DDN042). Relations belong to data, never to a format override; a renderer never invents a relation because two shapes touch.
 
 ### 3.2 `format <id> ["label"] { … }` — reusable presentation declarations
