@@ -51,6 +51,29 @@ view overview &quot;Orders / shared model&quot; {
 <p>  <code>@alias.name</code>. See <code>03-views-and-reuse.md</code>. Imports are file-level: they   precede the first module header (canonical), or immediately follow the   FIRST header in the legacy position. <code>DDNLive.io.bundle(files, entry)</code> and   the CLI <code>bundle</code> command merge a workspace into one multi-section file with   byte-identical rendering.</p>
 <h2>Data blocks: the model is the source of truth</h2>
 <p><code>data</code> blocks declare <code>object</code>, <code>domain</code>, <code>relation</code>, and <code>sample</code> definitions — never pictures. Kinds come from the registry (<code>standard/registry/catalogue.json</code>: <code>table</code>, <code>application</code>, <code>process</code>, <code>record</code>, …); relation verbs likewise (<code>references</code>, <code>assoc</code>, <code>flow</code>, <code>uses_domain</code>, …). Fields nest (<code>field address { shape: object; }</code>), samples carry synthetic example rows, and records for charts are objects with an <code>x_record</code> payload. Full model semantics: <code>02-data-model.md</code>; property contracts: <code>10-property-contracts.md</code>.</p>
+<h2>Reuse: presets and fragments (phase 5)</h2>
+<p>Repeated structure declares once as a top-level definition and applies with <code>use: @name;</code> (or a list <code>use: [@a, @b];</code>). Expansion happens in the workspace assembly, before indexing — the result is exactly the handwritten inline form, identities included:</p>
+<pre><code>fields audited { created_at; updated_at { datatype: &quot;timestamp&quot;; } }
+relation_props governed { enforcement: database; }
+preset gentle_pulse { motion: pulse; pulse_color: &quot;#0E7490&quot;; speed: 60; }
+fragment audit_log { table audit_log &quot;Audit log&quot; { fields { event; } } }
+
+data model {
+    use: @audit_log;                        // fragment: data members
+    table customer &quot;Customer&quot; {
+        fields { use: @audited; customer_id { key: primary; } }
+    }
+    ref logs @customer -&gt; @audit_log { use: @governed; }
+    transfers_to events @customer -&gt; @audit_log { use: @gentle_pulse; }
+}</code></pre>
+<ul><li><code>fields</code>/<code>ports</code> — member groups, applied inside a <code>fields {}</code>/<code>ports {}</code></li></ul>
+<p>  group of the same kind; member order is preserved around local members.</p>
+<ul><li><code>relation_props</code> — property sets for relation bodies only.</li><li><code>preset</code> — property sets for any element/relation body and for view-level</li></ul>
+<p>  <code>flow</code> blocks; a motion preset is a preset carrying the B1-033 motion keys.</p>
+<ul><li><code>fragment</code> — include-by-reference data members (unparameterized;</li></ul>
+<p>  parameterized fragments are deferred, see <code>DDN-GAPS.md</code>).</p>
+<p>Precedence: local in-declaration properties override presets; two presets conflicting on a property are a coded error (DDN-E017) unless the declaration resolves the property locally. A preset-applied property is ASSERTED — it is an explicit author decision, present on the expanded declaration — and only the named definitions' own properties apply. <code>version: N</code> on a definition is optional, integer, and documentary only (expansion ignores it). Definitions are closed templates: <code>use:</code> inside a definition body, in a batch header, or in a non-application context is a coded error (DDN-E017).</p>
+<p>Edit scope (inspector/authoring tools): edits write to the DECLARATION SITE, never the shared definition. A property edit on a preset-using declaration inserts a local override into that declaration's body; member-level edits of an expanded field/port/fragment member are refused (DDN-E005) — edit the definition in source, or declare the member locally. See <code>website/examples/basics/74-reusable-presets.ddn</code> for a runnable tour.</p>
 <h2>Views: projections of the model</h2>
 <p>A <code>view</code> picks data (<code>data: [@model]</code>, optionally <code>select:</code> a subset) and a presentation. Presentation is resolved from a <strong>format bundle</strong> — named <code>style</code>, <code>layout</code>, <code>display</code>, <code>publication</code>, <code>legend</code> groups inside a <code>format</code> block, composed into a <code>bundle</code> — with per-view inline overrides:</p>
 <pre><code>view sketch &quot;Orders / workshop sketch&quot; {

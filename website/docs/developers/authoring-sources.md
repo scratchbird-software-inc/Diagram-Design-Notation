@@ -50,6 +50,53 @@ carry synthetic example rows, and records for charts are objects with an
 `x_record` payload. Full model semantics: `02-data-model.md`; property
 contracts: `10-property-contracts.md`.
 
+## Reuse: presets and fragments (phase 5)
+
+Repeated structure declares once as a top-level definition and applies with
+`use: @name;` (or a list `use: [@a, @b];`). Expansion happens in the
+workspace assembly, before indexing — the result is exactly the handwritten
+inline form, identities included:
+
+```ddn
+fields audited { created_at; updated_at { datatype: "timestamp"; } }
+relation_props governed { enforcement: database; }
+preset gentle_pulse { motion: pulse; pulse_color: "#0E7490"; speed: 60; }
+fragment audit_log { table audit_log "Audit log" { fields { event; } } }
+
+data model {
+    use: @audit_log;                        // fragment: data members
+    table customer "Customer" {
+        fields { use: @audited; customer_id { key: primary; } }
+    }
+    ref logs @customer -> @audit_log { use: @governed; }
+    transfers_to events @customer -> @audit_log { use: @gentle_pulse; }
+}
+```
+
+- `fields`/`ports` — member groups, applied inside a `fields {}`/`ports {}`
+  group of the same kind; member order is preserved around local members.
+- `relation_props` — property sets for relation bodies only.
+- `preset` — property sets for any element/relation body and for view-level
+  `flow` blocks; a motion preset is a preset carrying the B1-033 motion keys.
+- `fragment` — include-by-reference data members (unparameterized;
+  parameterized fragments are deferred, see `DDN-GAPS.md`).
+
+Precedence: local in-declaration properties override presets; two presets
+conflicting on a property are a coded error (DDN-E017) unless the declaration
+resolves the property locally. A preset-applied property is ASSERTED — it is
+an explicit author decision, present on the expanded declaration — and only
+the named definitions' own properties apply. `version: N` on a definition is
+optional, integer, and documentary only (expansion ignores it). Definitions
+are closed templates: `use:` inside a definition body, in a batch header, or
+in a non-application context is a coded error (DDN-E017).
+
+Edit scope (inspector/authoring tools): edits write to the DECLARATION SITE,
+never the shared definition. A property edit on a preset-using declaration
+inserts a local override into that declaration's body; member-level edits of
+an expanded field/port/fragment member are refused (DDN-E005) — edit the
+definition in source, or declare the member locally. See
+`website/examples/basics/74-reusable-presets.ddn` for a runnable tour.
+
 ## Views: projections of the model
 
 A `view` picks data (`data: [@model]`, optionally `select:` a subset) and a

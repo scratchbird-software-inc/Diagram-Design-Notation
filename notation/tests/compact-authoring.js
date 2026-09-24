@@ -623,6 +623,235 @@ test('authoring setRecordValue rewrites a compact row canonically', () => {
   assert.match(ws.renderSync({ entry: 'fixture.ddn', view: 'graph_view' }).svg, /<svg/);
 });
 
+/* ------------------------------------------------------------------------
+ * B1-041 phase 5: reusable fragments + property presets. Same equivalence
+ * gate: `use:` applications expand in createWorkspace to the identical
+ * canonical AST as the handwritten inline form, so compact and verbose
+ * sources build equal semanticJSON, byte-identical SVG and identical
+ * diagnostics; expanded identities are exactly as declared inline.
+ * --------------------------------------------------------------------- */
+
+/* D1/D5: named field group ≡ handwritten inline members, identities exactly
+ * as declared inline (no synthetic prefixes), member order preserved around
+ * local members. */
+test('equivalence gate: named field group ≡ handwritten inline fields', () => {
+  assertEquivalent(
+    `ddn "0.5"; module "t"; fields audit { created_at; updated_at { datatype: "timestamp"; } }
+     data m { table customer { fields { id { key: primary; } use: @audit; email "Email"; } } } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t";
+     data m { object customer { kind: table; fields { field id { key: primary; } field created_at; field updated_at { datatype: "timestamp"; } field email "Email"; } } } view v { data: [@m]; }`,
+    'v', 'field group expansion');
+  const ir = build(`ddn "0.5"; module "t"; fields audit { created_at; }
+     data m { table customer { fields { use: @audit; } } } view v { data: [@m]; }`).ir;
+  assert.equal(ir.elements[0].fields[0].id, 't::m.customer.created_at', 'expanded field identity is exactly the inline identity');
+});
+test('equivalence gate: named port group ≡ handwritten inline ports', () => {
+  assertEquivalent(
+    `ddn "0.5"; module "t"; ports chan { input { direction: in; } output "Out" { direction: out; } }
+     data m { queue q { ports { use: @chan; } } } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t";
+     data m { object q { kind: queue; ports { port input { direction: in; } port output "Out" { direction: out; } } } } view v { data: [@m]; }`,
+    'v', 'port group expansion');
+});
+test('nested fields inside a field group keep their tree shape', () => {
+  const ir = build(`ddn "0.5"; module "t"; fields addr { address { shape: object; fields { street; city; } } }
+     data m { table t { fields { use: @addr; } } } view v { data: [@m]; }`).ir;
+  assert.deepEqual(ir.elements[0].fields.map(f => f.path), ['address', 'address.street', 'address.city']);
+  assert.equal(ir.elements[0].fields[1].parent, 't::m.t.address');
+});
+
+/* D2 precedence: local values override applied presets. */
+test('equivalence gate: relation_props with a local override (local wins)', () => {
+  assertEquivalent(
+    `ddn "0.5"; module "t"; relation_props softref { enforcement: undecided; lane: cold; }
+     data m { object a {} object b {} ref r @a -> @b { use: @softref; enforcement: database; } } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t";
+     data m { object a {} object b {} relation r @a -> @b { kind: ref; enforcement: database; lane: cold; } } view v { data: [@m]; }`,
+    'v', 'local overrides relation_props');
+});
+test('two presets with non-conflicting properties merge as a union', () => {
+  const ir = build(`ddn "0.5"; module "t";
+preset p1 { x_a: 1; x_b: 2; } preset p2 { x_c: 3; }
+data m { object a {} object b {} ref r @a -> @b { use: [@p1, @p2]; } } view v { data: [@m]; }`).ir;
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(ir.relations[0].properties).filter(([k]) => k.startsWith('x_'))),
+    { x_a: 1, x_b: 2, x_c: 3 });
+});
+test('conflicting presets are a coded error unless resolved locally (D2)', () => {
+  assert.throws(() => build(`ddn "0.5"; module "t";
+preset p1 { enforcement: database; } preset p2 { enforcement: undecided; }
+data m { object a {} object b {} ref r @a -> @b { use: [@p1, @p2]; } } view v { data: [@m]; }`),
+    e => e.code === 'DDN-E017' && /conflict on property enforcement/.test(e.message) && /@p1/.test(e.message) && /@p2/.test(e.message));
+  // Resolved locally: the declaration's own value wins, no error.
+  const ir = build(`ddn "0.5"; module "t";
+preset p1 { enforcement: database; } preset p2 { enforcement: undecided; }
+data m { object a {} object b {} ref r @a -> @b { use: [@p1, @p2]; enforcement: not_applicable; } } view v { data: [@m]; }`).ir;
+  assert.deepEqual(ir.relations[0].properties.enforcement, { $state: 'not_applicable' });
+  // Same value in both presets is not a conflict.
+  assertEquivalent(
+    `ddn "0.5"; module "t"; preset p1 { enforcement: database; x_a: 1; } preset p2 { enforcement: database; }
+     data m { object a {} object b {} ref r @a -> @b { use: [@p1, @p2]; } } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t";
+     data m { object a {} object b {} relation r @a -> @b { kind: ref; enforcement: database; x_a: 1; } } view v { data: [@m]; }`,
+    'v', 'equal-value presets are not a conflict');
+});
+
+/* D3 omitted-vs-asserted, both directions. */
+test('preset-applied properties are ASSERTED, never omitted (D3)', () => {
+  const withPreset = build(`ddn "0.5"; module "t"; relation_props softref { enforcement: undecided; }
+data m { object a {} object b {} ref r @a -> @b { use: @softref; } } view v { data: [@m]; }`).ir;
+  assert.deepEqual(withPreset.relations[0].properties.enforcement, { $state: 'undecided' }, 'preset assertion is present on the expanded declaration');
+  const handwritten = build(`ddn "0.5"; module "t";
+data m { object a {} object b {} relation r @a -> @b { kind: ref; enforcement: undecided; } } view v { data: [@m]; }`).ir;
+  assert.deepEqual(DDN.semanticJSON(withPreset), DDN.semanticJSON(handwritten), 'assertion via preset ≡ assertion inline');
+  const omitted = build(`ddn "0.5"; module "t";
+data m { object a {} object b {} relation r @a -> @b { kind: ref; } } view v { data: [@m]; }`).ir;
+  assert.notDeepEqual(DDN.semanticJSON(withPreset), DDN.semanticJSON(omitted), 'an asserted property differs from an omitted one');
+});
+test('a preset never smuggles in properties the author did not select (D3)', () => {
+  const ir = build(`ddn "0.5"; module "t"; preset plain { x_tag: "chosen"; }
+data m { object a {} object b {} ref r @a -> @b { use: @plain; } } view v { data: [@m]; }`).ir;
+  assert.equal(ir.relations[0].properties.x_tag, 'chosen');
+  assert.ok(!('enforcement' in ir.relations[0].properties), 'unselected properties stay omitted');
+  assert.ok(!('motion' in ir.relations[0].properties), 'unselected motion stays omitted');
+});
+
+/* D7: motion presets carry B1-033 properties and compose with relations and
+ * with view-level flow blocks. */
+test('equivalence gate: motion preset on a relation (D7)', () => {
+  assertEquivalent(
+    `ddn "0.5"; module "t"; preset std_pulse { motion: pulse; speed: 90; rate: 2; pulse_color: "#B91C1C"; }
+     data m { object a {} object b {} transfers_to f @a -> @b { use: @std_pulse; } } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t";
+     data m { object a {} object b {} relation f @a -> @b { kind: flow; motion: pulse; speed: 90; rate: 2; pulse_color: "#B91C1C"; } } view v { data: [@m]; }`,
+    'v', 'motion preset on relation');
+});
+test('equivalence gate: motion preset composes with a view-level flow block (D7)', () => {
+  const head = `ddn "0.5"; module "t"; data m { object a {} object b {} object c {}
+   relation ab @a -> @b { kind: flow; } relation bc @b -> @c { kind: flow; } }`;
+  assertEquivalent(
+    `${head} preset hop { marker: square; marker_color: "#1D4ED8"; speed: 70; rate: 2; }
+     view v { data: [@m]; flow trace { use: @hop; steps: @m.a -> @m.b -> @m.c; } publication { size: content; fit: none; } }`,
+    `${head}
+     view v { data: [@m]; flow trace { marker: square; marker_color: "#1D4ED8"; speed: 70; rate: 2; steps: @m.a -> @m.b -> @m.c; } publication { size: content; fit: none; } }`,
+    'v', 'motion preset on a flow block');
+});
+
+/* D5/D6: unparameterized fragments — include-by-reference expansion with
+ * identities exactly as handwritten inline (chosen D6 scope; parameterized
+ * fragments deferred, see DDN-GAPS.md). */
+test('equivalence gate: fragment expansion ≡ handwritten inline members', () => {
+  assertEquivalent(
+    `ddn "0.5"; module "t"; fragment pair { table src { fields { id; } } table dst { fields { id; } } ref link @src.id -> @dst.id { enforcement: database; } }
+     data m { use: @pair; object extra {} } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t";
+     data m { object src { kind: table; fields { field id; } } object dst { kind: table; fields { field id; } } relation link @src.id -> @dst.id { kind: ref; enforcement: database; } object extra {} } view v { data: [@m]; }`,
+    'v', 'fragment expansion');
+  const ir = build(`ddn "0.5"; module "t"; fragment pair { object a {} object b {} ref ab @a -> @b {} }
+data m { use: @pair; } view v { data: [@m]; }`).ir;
+  assert.deepEqual(ir.elements.map(n => n.id).sort(), ['t::m.a', 't::m.b'], 'fragment identities are exactly the inline identities');
+  assert.equal(ir.relations[0].id, 't::m.ab');
+});
+test('a fragment applies twice with distinct identities (DDN024 on collision)', () => {
+  assert.throws(() => build(`ddn "0.5"; module "t"; fragment one { object a {} }
+data m { use: @one; use: @one; } view v { data: [@m]; }`), e => e.code === 'DDN024');
+  assert.throws(() => build(`ddn "0.5"; module "t"; fields g { id; }
+data m { table t { fields { use: @g; id; } } } view v { data: [@m]; }`), e => e.code === 'DDN024');
+});
+
+/* D4: version: N is documentary only. */
+test('version: N is accepted, documentary, and never applied (D4)', () => {
+  const ir = build(`ddn "0.5"; module "t"; relation_props softref { version: 3; enforcement: undecided; }
+data m { object a {} object b {} ref r @a -> @b { use: @softref; } } view v { data: [@m]; }`).ir;
+  assert.ok(!('version' in ir.relations[0].properties), 'version is not a merged property');
+  assert.throws(() => build(`ddn "0.5"; module "t"; preset bad { version: 1.5; }
+data m { object a {} } view v { data: [@m]; }`), e => e.code === 'DDN-E017' && /integer/.test(e.message));
+});
+
+/* Cross-file: definitions resolve through imports. */
+test('presets and fragments resolve across imports', () => {
+  const lib = `ddn "0.5"; module "lib";
+fields audit { created_at; } relation_props softref { enforcement: undecided; } fragment pair { object x {} object y {} }`;
+  const main = `ddn "0.5"; module "main"; import "lib.ddn" as lib;
+data m { use: @lib.pair; table t { fields { use: @lib.audit; } } ref r @t -> @x { use: @lib.softref; } }
+view v { data: [@m]; }`;
+  const ir = DDN.build({ 'main.ddn': main, 'lib.ddn': lib }, 'main.ddn', 'v', reg).ir;
+  assert.deepEqual(ir.elements.map(n => n.local).sort(), ['t', 'x', 'y']);
+  assert.equal(ir.elements.find(n => n.local === 't').fields[0].id, 'main::m.t.created_at');
+  assert.deepEqual(ir.relations[0].properties.enforcement, { $state: 'undecided' });
+});
+
+/* Coded errors: wrong context, wrong definition kind, unknown names, nesting. */
+test('use: in a non-application context is a coded error (DDN-E017)', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; preset p { x_a: 1; } data m {} view v { data: [@m]; use: @p; }'), e => e.code === 'DDN-E017' && /legal only/.test(e.message));
+  assert.throws(() => build('ddn "0.5"; module "t"; preset p { x_a: 1; } data m { table t {} } view v { data: [@m]; place @t { use: @p; } }'), e => e.code === 'DDN-E017');
+});
+test('applying the wrong definition kind is a coded error (DDN-E017)', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; fields g { f; } data m { table t { ports { use: @g; } } } view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /fields definition/.test(e.message));
+  assert.throws(() => build('ddn "0.5"; module "t"; relation_props rp { enforcement: undecided; } data m { table t { use: @rp; } } view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /relation declarations only/.test(e.message));
+  assert.throws(() => build('ddn "0.5"; module "t"; fragment fr { object a {} } data m { object b {} ref r @b -> @b { use: @fr; } } view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /fragment definition/.test(e.message));
+  assert.throws(() => build('ddn "0.5"; module "t"; preset p { x_a: 1; } data m { use: @p; } view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /fragment/.test(e.message));
+});
+test('unknown preset or fragment is a coded error (DDN-E017), never a guess', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; data m { use: @nope; } view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /Unknown preset or fragment @nope/.test(e.message));
+  assert.throws(() => build('ddn "0.5"; module "t"; data m { table t { use: @nope; } } view v { data: [@m]; }'), e => e.code === 'DDN-E017');
+});
+test('definitions are closed templates: use: inside a definition is a coded error', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; preset p { x_a: 1; } preset q { use: @p; } data m {} view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /application sites only/.test(e.message));
+  assert.throws(() => build('ddn "0.5"; module "t"; fields g { f; } fragment fr { table t { fields { use: @g; } } } data m {} view v { data: [@m]; }'), e => e.code === 'DDN-E017');
+  assert.throws(() => build('ddn "0.5"; module "t"; relation_props rp { enforcement: undecided; } data m { object a {} relations depends { use: @rp; d @a -> @a; } } view v { data: [@m]; }'), e => e.code === 'DDN-E017' && /batch header/.test(e.message));
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m { use: []; } view v { data: [@m]; }'), e => e.code === 'DDN-E017');
+});
+test('use: never lands in props; definitions stay top-level templates', () => {
+  const ws = DDN.createWorkspace({ 'main.ddn': 'ddn "0.5"; module "t"; fields g { f; } data m { table t { fields { use: @g; } } } view v { data: [@m]; }' }, 'main.ddn');
+  const t = ws.symbols.get('t::m.t');
+  assert.ok(!('use' in t.children.find(c => c.group).props));
+  const def = ws.symbols.get('t::g');
+  assert.equal(def.type, 'fields');
+  assert.equal(def.path, 'g', 'definition is module-scope, not a data element');
+  assert.throws(() => build('ddn "0.5"; module "t"; preset p {} preset p {} data m {} view v { data: [@m]; }'), e => e.code === 'DDN024');
+});
+
+/* D8: inspector edits after expansion write to the declaration site, never
+ * the shared definition. */
+const d8src = `ddn "0.5"; module "t";
+relation_props softref { enforcement: undecided; }
+fields audit { created_at; }
+data m { table t { fields { use: @audit; id { key: primary; } } } object a {} ref r @t -> @a { use: @softref; } }
+view v { data: [@m]; publication { size: content; fit: none; } }
+`;
+test('D8: a property edit on a preset-using declaration writes a local override at the declaration site', () => {
+  const w = A.createWorkspace({ 'main.ddn': d8src });
+  const defBefore = w.getFiles()['main.ddn'].match(/relation_props softref \{[^}]*\}/)[0];
+  A.authoring.setProperty(w, 'main.ddn', 'v', 't::m.r', 'enforcement', 'database');
+  const text = w.getFiles()['main.ddn'];
+  assert.ok(text.includes(defBefore), 'shared definition rewritten: ' + text);
+  assert.ok(text.includes('use: @softref;') && text.includes('enforcement: "database";'), 'override not written at the declaration site: ' + text);
+  const props = w.resolve('main.ddn', 'v').relations.find(r => r.ref === 'm.r').properties;
+  assert.equal(props.enforcement, 'database', 'local override wins after the edit');
+});
+test('D8: member-level edits of a group-expanded member are refused; the shared definition is never rewritten', () => {
+  const w = A.createWorkspace({ 'main.ddn': d8src });
+  const before = w.getFiles()['main.ddn'];
+  assert.throws(() => A.authoring.setProperty(w, 'main.ddn', 'v', 't::m.t.created_at', 'datatype', 'text'),
+    e => e.code === 'DDN-E005' && /@audit/.test(e.message));
+  assert.throws(() => A.authoring.setLabel(w, 'main.ddn', 'v', 't::m.t.created_at', 'Created'),
+    e => e.code === 'DDN-E005');
+  assert.equal(w.getFiles()['main.ddn'], before, 'refused edits changed the source');
+  const r = w.renderSync({ entry: 'main.ddn', view: 'v' });
+  assert.ok(r.svg.startsWith('<?xml'));
+});
+
+/* Fixture corpus additions (fields group + relation_props + motion preset +
+ * fragment) are covered by the paired-corpus gate above; assert the expanded
+ * identities explicitly. */
+test('fixture corpus: expanded identities equal the handwritten twins', () => {
+  const b = DDN.build({ 'compact.ddn': compact }, 'compact.ddn', 'main', reg).ir;
+  assert.deepEqual(b.elements.find(n => n.ref === 'model.customer').fields.map(f => f.local).slice(0, 2), ['created_at', 'updated_at']);
+  assert.equal(b.relations.find(r => r.ref === 'model.doc_link').properties.enforcement && b.relations.find(r => r.ref === 'model.doc_link').properties.enforcement.$state, 'undecided');
+  assert.equal(b.relations.find(r => r.ref === 'model.places').properties.motion, 'pulse');
+  assert.ok(b.elements.some(n => n.ref === 'model.note_src'), 'fragment members present');
+});
 const failed = results.filter(x => x.status === 'fail');
 console.log(JSON.stringify({ tests: results.length, passed: results.length - failed.length, failed: failed.length }));
 if (failed.length) process.exitCode = 1;

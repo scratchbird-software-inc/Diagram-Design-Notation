@@ -1365,6 +1365,23 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
    * field/port member; the explicit field/port keywords stay valid (mixed
    * blocks allowed), and a nested group keyword (`fields {…}`) still wins. */
   const STRUCTURAL_DATA_DECLS=new Set(['object','domain','sample','flow','assertion','relation','fields','ports']);
+  /* B1-041 compact authoring, phase 5 (D1–D8). Author-controlled reuse:
+   * named field/port groups, relation property sets, generic property
+   * presets (motion presets are presets carrying B1-033 keys) and
+   * unparameterized include-by-reference fragments. Definitions are
+   * top-level declarations; applications are `use: @name;` (or a list
+   * `use: [@a, @b];`) inside a data block (fragments), a fields/ports
+   * group (member groups) or an element/relation/flow body (property
+   * presets). The parser records a $use marker child; createWorkspace
+   * expands markers to the IDENTICAL canonical AST as the handwritten
+   * inline form before indexing, so identities are exactly as declared
+   * inline (no synthetic prefixes). Local properties override presets;
+   * two presets conflicting on a property are a coded error (DDN-E017)
+   * unless the declaration resolves it locally; preset-applied
+   * properties are ASSERTED, never omitted, and a preset never smuggles
+   * in properties the author did not select. `version: N` in a
+   * definition is documentary only (integer, ignored semantically). */
+  const PRESET_DEFS=new Set(['fields','ports','relation_props','preset','fragment']);
   let defaultTypedKinds=null;
   function typedKindWords(reg){
     const kinds=api$g.registry(reg||registryCatalogue).kinds,map=new Map();
@@ -1445,19 +1462,28 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       if(t.type==='{'){take();const o=Object.create(null);if(++depth>80)fail$2('DDN007','Maximum nesting exceeded',t,source);while(peek().type!=='}'){let k=take();if(!['string','id'].includes(k.type))fail$2('DDN010','Expected record key',k,source);if(['__proto__','prototype','constructor'].includes(k.value))fail$2('DDN008','Reserved key',k,source);if(Object.hasOwn(o,k.value))fail$2('DDN011',`Duplicate property ${k.value}`,k,source);expect(':');o[k.value]=value();if(![',',';'].includes(peek().type))break;take();}expect('}');depth--;return o;}
       fail$2('DDN010','Expected a value',t,source);
     }
+    function useMarker(node,t){take();
+      const refs=[];
+      if(peek().type==='['){take();if(peek().type===']')fail$2('DDN-E017','use: needs at least one preset or fragment reference',peek(),source);
+        for(;;){if(peek().type!=='@')fail$2('DDN010','Expected a @preset reference in the use: list',peek(),source);refs.push(ref());if(peek().type!==',')break;take();}expect(']');}
+      else refs.push(ref());
+      expect(';');
+      node.children.push({type:'$use',refs,start:t.start,end:tokens[pos-1].end,source});
+    }
     function body(node){expect('{');node.bodyStart=tokens[pos-1].end;if(++depth>80)fail$2('DDN007','Maximum nesting exceeded',peek(),source);
       while(peek().type!=='}'){
         if(peek().type==='eof')fail$2('DDN010','Missing closing brace',peek(),source);
         const t=expect('id');
+        if(t.value==='use'&&peek().type===':'){useMarker(node,t);continue;}
         if(peek().type===':'){take();if(t.value==='projection'&&node.headerProjection)fail$2('DDN-E015','Body projection property conflicts with the `as` profile in the view header; write either the header form or the canonical projection, not both',t,source);if(Object.hasOwn(node.props,t.value))fail$2('DDN011',`Duplicate property ${t.value}`,t,source);if(['__proto__','prototype','constructor'].includes(t.value))fail$2('DDN008','Reserved key',t,source);node.props[t.value]=value();
           // B1-033: a flow block's steps chain reads `@a -> @b -> @c` as one ordered step list.
           if(t.value==='steps'){while(peek().type==='->'){take();node.props.steps=[...(Array.isArray(node.props.steps)?node.props.steps:[node.props.steps]),value()];}}
           expect(';');}
-        else if(node.group&&(node.type==='fields'||node.type==='ports')&&peek().type!=='id'&&!(peek().type==='{'&&t.value===node.type))
+        else if((node.type==='fields'||node.type==='ports')&&peek().type!=='id'&&!(peek().type==='{'&&t.value===node.type))
           node.children.push(contextualMember(node.type,t));
-        else if(!node.group&&node.type==='data'&&t.value==='relations'&&peek().type==='id'&&relationKinds.has(peek().value))
+        else if(!node.group&&(node.type==='data'||node.type==='fragment')&&t.value==='relations'&&peek().type==='id'&&relationKinds.has(peek().value))
           relationBatch(node);
-        else if(!node.group&&node.type==='data'&&peek().type==='id'&&(typedKinds.has(t.value)||relationKinds.has(t.value)))
+        else if(!node.group&&(node.type==='data'||node.type==='fragment')&&peek().type==='id'&&(typedKinds.has(t.value)||relationKinds.has(t.value)))
           node.children.push(compactDataDeclaration(t));
         else if(node.headerProjection&&peek().type==='{'&&t.value==='projection')
           fail$2('DDN-E015','Body projection block conflicts with the `as` profile in the view header; write either the header form or the canonical projection, not both',t,source);
@@ -1501,6 +1527,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
         if(peek().type==='eof')fail$2('DDN010','Missing closing brace',peek(),source);
         const t=expect('id');
         if(peek().type===':'){take();
+          if(t.value==='use')fail$2('DDN-E017','use: is not legal in a relations batch header; apply property presets inside each entry body',t,source);
           if(t.value==='kind')fail$2('DDN011','Duplicate property kind (set by the batch header)',t,source);
           if(Object.hasOwn(shared,t.value))fail$2('DDN011',`Duplicate property ${t.value}`,t,source);
           if(['__proto__','prototype','constructor'].includes(t.value))fail$2('DDN008','Reserved key',t,source);
@@ -1572,6 +1599,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       while(peek().type!=='}'){
         if(peek().type==='eof')fail$2('DDN010','Missing closing brace',peek(),source);
         const t2=expect('id');
+        if(t2.value==='use'&&peek().type===':'){useMarker(n,t2);continue;}
         if(t2.value==='columns'&&peek().type===':'){take();
           if(sawRow)fail$2('DDN-E016','The columns declaration must precede every row of a records block',t2,source);
           if(columns)fail$2('DDN011','Duplicate property columns',t2,source);
@@ -1789,12 +1817,80 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       return docs.get(path);
     }
     const main=load(entry).moduleRecords[0];
+    /* B1-041: preset/fragment definitions are module-scope templates. They
+     * are pre-indexed (so `use:` references resolve, including across
+     * imports), then every application expands to the identical canonical
+     * AST as the handwritten inline form BEFORE the main indexing pass, so
+     * expanded identities are exactly as declared inline. Definition
+     * members are templates, never declarations: they are not indexed and
+     * cannot themselves apply presets (no nesting, no cycles). */
+    for(const d of modules.values())for(const n of d.declarations)if(PRESET_DEFS.has(n.type)){
+      n.doc=d;n.path=n.id;n.uid=n.props.uid||`${d.module}::${n.id}`;
+      const key=d.module+'::'+n.id;
+      if(symbols.has(key))throw new DDNError('DDN024','Duplicate declaration '+n.id,d.source,n.start);
+      symbols.set(key,n);
+      if(n.props.version!==undefined&&!Number.isSafeInteger(n.props.version))throw new DDNError('DDN-E017','Definition version must be an integer (documentary only; expansion ignores it)',d.source,n.start);
+      const noNested=x=>{for(const c of x.children){if(c.type==='$use')throw new DDNError('DDN-E017','A definition body cannot apply presets or fragments (use: is legal at application sites only)',x.source,c.start);noNested(c);}};
+      noNested(n);
+    }
+    function resolvePreset(r,rec){
+      const parts=r.$ref.split('.'),found=n=>n&&PRESET_DEFS.has(n.type)?n:null;
+      if(rec.imported.has(parts[0])){const f=rec.imported.get(parts.shift());
+        for(const m of f.moduleRecords){const n=found(symbols.get(m.module+'::'+parts.join('.')));if(n)return n;}}
+      else {
+        for(let k=parts.length-1;k>=1;k--){const sib=rec.file.moduleById.get(parts.slice(0,k).join('.'));
+          if(sib){const n=found(symbols.get(sib.module+'::'+parts.slice(k).join('.')));if(n)return n;}}
+        const n=found(symbols.get(rec.module+'::'+parts.join('.')));if(n)return n;}
+      throw new DDNError('DDN-E017','Unknown preset or fragment @'+r.$ref,rec.source,r.$offset||0);
+    }
+    function cloneValue(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(cloneValue);const o=Object.create(null);for(const k of Object.keys(v))o[k]=cloneValue(v[k]);return o;}
+    function cloneNode(n,origin){const c={...n,props:cloneValue(n.props),children:n.children.map(x=>cloneNode(x,origin))};c.presetOrigin=origin;return c;}
+    function expandUse(n,rec){
+      const kept=[],propSources=[];
+      for(const c of n.children){
+        if(c.type==='$use'){
+          const ctx=n.group&&(n.type==='fields'||n.type==='ports')?'members'
+            :!n.group&&n.type==='data'?'fragment'
+            :!n.group&&['object','domain','sample','flow','assertion','relation'].includes(n.type)?'props'
+            :null;
+          if(!ctx)throw new DDNError('DDN-E017','use: is legal only inside a data block (fragments), a fields/ports group (member groups), or an element/relation/flow body (property presets)',n.source,c.start);
+          for(const r of c.refs){
+            const def=resolvePreset(r,rec),origin={file:def.source,start:def.start,end:def.end,type:def.type,id:def.id};
+            if(ctx==='members'){if(def.type!==n.type)throw new DDNError('DDN-E017','@'+r.$ref+' is a '+def.type+' definition; a '+n.type+' group applies a '+n.type+' definition',n.source,c.start);
+              for(const m of def.children)kept.push(cloneNode(m,origin));}
+            else if(ctx==='fragment'){if(def.type!=='fragment')throw new DDNError('DDN-E017','@'+r.$ref+' is a '+def.type+' definition; a data block applies a fragment definition',n.source,c.start);
+              for(const m of def.children)kept.push(cloneNode(m,origin));}
+            else {if(def.type==='relation_props'){if(n.type!=='relation')throw new DDNError('DDN-E017','relation_props @'+r.$ref+' applies to relation declarations only',n.source,c.start);}
+              else if(def.type!=='preset')throw new DDNError('DDN-E017','@'+r.$ref+' is a '+def.type+' definition; property position applies a preset or relation_props definition',n.source,c.start);
+              propSources.push({def,at:c.start});}
+          }
+          continue;
+        }
+        expandUse(c,rec);kept.push(c);
+      }
+      n.children=kept;
+      /* D2 precedence: local (in-declaration) values override applied
+       * presets; two presets conflicting on a property are a coded error
+       * unless the declaration resolves the property locally. D3: applied
+       * properties are ASSERTED (present on the expanded declaration), and
+       * only the named presets' own properties apply. */
+      const seen=new Map(),localKeys=new Set(Object.keys(n.props));
+      for(const {def,at} of propSources)for(const k of Object.keys(def.props)){
+        if(k==='version')continue;
+        if(localKeys.has(k))continue;
+        const v=def.props[k],got=seen.get(k);
+        if(got&&JSON.stringify(got.value)!==JSON.stringify(v))throw new DDNError('DDN-E017','Presets @'+got.id+' and @'+def.id+' conflict on property '+k+'; declare '+k+': … locally to resolve the conflict',n.source,at);
+        if(!got){seen.set(k,{value:v,id:def.id});n.props[k]=v;}
+      }
+    }
+    for(const d of modules.values())for(const n of d.declarations)if(!PRESET_DEFS.has(n.type))expandUse(n,d);
     function index(n,d,parent=''){
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;
+      if(PRESET_DEFS.has(n.type)&&!n.group)return; // pre-indexed template
       if(!n.group&&!['place','route'].includes(n.type)){let key=d.module+'::'+n.path;if(symbols.has(key))throw new DDNError('DDN024','Duplicate declaration '+n.path,d.source,n.start);symbols.set(key,n);}
       for(const c of n.children)index(c,d,n.group?parent:n.path);
     }
-    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view'].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format or view',d.source,n.start);index(n,d);}
+    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view',...PRESET_DEFS].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format, view, or a reuse definition (fields, ports, relation_props, preset, fragment)',d.source,n.start);index(n,d);}
     const uidMap=new Map();for(const n of symbols.values()){if(uidMap.has(n.uid))throw new DDNError('DDN026','Duplicate stable uid '+n.uid,n.source,n.start);uidMap.set(n.uid,n);}
     function resolve(r,context){if(!r||!r.$ref)throw new DDNError('DDN030','Expected a reference',context?.source,context?.start);const parts=r.$ref.split('.');let doc=context.doc;
       if(doc.imported.has(parts[0])){const f=doc.imported.get(parts.shift());for(const rec of f.moduleRecords){let node=symbols.get(rec.module+'::'+parts.join('.'));if(node)return node;}}
@@ -4892,7 +4988,14 @@ const idOK=id=>{if(!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(id)||['__proto__','construc
 function value(v){if(v===null)return 'null';if(typeof v==='string')return JSON.stringify(v);if(typeof v==='boolean'||typeof v==='number')return String(v);if(Array.isArray(v))return '['+v.map(value).join(', ')+']';if(v?.$ref)return '@'+v.$ref;if(v?.$quantity!==undefined)return String(v.$quantity)+v.unit;if(v?.$state)return v.$state;if(v?.$missing)return 'missing';return '{ '+Object.entries(v||{}).map(([k,x])=>JSON.stringify(k)+': '+value(x)).join(', ')+' }';}
 function build(ws,entry,view){return D.build(ws.getFiles(),entry,view,assets.registry);}
 function refFor(b,doc,id){const node=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!node)fail('DDN-E002','Model identity is not in this workspace.');let answer=null;const seen=new Set();function visit(d,prefix){if(seen.has(d)||answer)return;seen.add(d);if(d===node.doc.file){answer=(prefix?prefix+'.':'')+(!prefix&&node.doc.module!==doc.module?node.doc.module+'.':'')+node.path;return;}for(const [alias,child]of d.imported)visit(child,(prefix?prefix+'.':'')+alias);}visit(doc.file,'');if(!answer)fail('DDN-E003','The edited source does not import the target definition. Add the required import explicitly.');return answer;}
-function find(b,id){const n=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!n)fail('DDN-E002','Definition not found.');return n;}
+function find(b,id){const n=[...b.workspace.symbols.values()].find(n=>n.uid===id);if(!n)fail('DDN-E002','Definition not found.');
+ /* B1-041 D8: a declaration expanded from a shared fields/ports/fragment
+  * definition has no source text of its own at the application site — its
+  * spans point into the shared definition. Inspector edits must never
+  * rewrite a shared definition, so member-level edits are refused here;
+  * property edits on a preset-USING declaration are unaffected (they write
+  * a local override at the declaration site). */
+ if(n.presetOrigin)fail('DDN-E005','This declaration is expanded from the shared '+n.presetOrigin.type+' definition @'+n.presetOrigin.id+' in '+n.presetOrigin.file+'. Inspector edits never rewrite a shared definition: edit the definition in source, or declare the member locally at the application site.');return n;}
 function propSpan(text,n,key){if(n.bodyStart===undefined)return null;const ts=D.lex(text,n.source).filter(t=>t.start>=n.bodyStart&&t.end<=n.bodyEnd);let depth=0;for(let i=0;i<ts.length;i++){const t=ts[i];if(depth===0&&t.type==='id'&&t.value===key&&ts[i+1]?.type===':'){let j=i+2,d=0;while(j<ts.length){if(ts[j].type===';'&&d===0)return {start:t.start,end:ts[j].end};if(['{','['].includes(ts[j].type))d++;if(['}',']'].includes(ts[j].type))d--;j++;}}if(['{','['].includes(t.type))depth++;if(['}',']'].includes(t.type))depth--;}return null;}
 function property(text,n,key,newValue){const span=propSpan(text,n,key),render=newValue===undefined?'':key+': '+value(newValue)+';';if(span)return {file:n.source,...span,text:render};if(newValue===undefined)return null;if(n.bodyStart!==undefined)return {file:n.source,start:n.bodyStart,end:n.bodyStart,text:'\n    '+render+'\n'};return {file:n.source,start:n.end-1,end:n.end,text:' { '+render+' }'};}
 function labelEdit(text,n,label){const tokens=D.lex(text,n.source).filter(t=>t.start>=n.start&&t.end<=(n.bodyStart??n.end));const idIdx=tokens.findIndex((t,i)=>t.type==='id'&&t.value===n.id&&(tokens[i+1]?.type==='string'||[':','@','{',';'].includes(tokens[i+1]?.type)||i+1===tokens.length));const name=idIdx>=0?idIdx:tokens.findIndex((t,i)=>t.type==='id'&&i>0);const next=tokens[name+1];if(next?.type==='string')return {file:n.source,start:next.start,end:next.end,text:JSON.stringify(label)};const after=(tokens[name]||tokens[0]).end;return {file:n.source,start:after,end:after,text:' '+JSON.stringify(label)};}

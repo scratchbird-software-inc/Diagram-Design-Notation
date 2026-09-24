@@ -1,0 +1,84 @@
+ddn "0.5";
+module "ddn.examples.reuse";
+
+import "shared.ddn" as shared;
+
+// B1-041 author-controlled reuse: named field groups, relation property sets,
+// motion presets and include-by-reference fragments. Definitions are top-level
+// templates; `use:` applications expand to exactly the handwritten inline
+// form (local properties override presets; expanded identities are as if
+// declared inline). `version: N` on a definition is documentary only.
+
+fields audited {
+    version: 1;
+    created_at { datatype: "timestamp"; }
+    updated_at { datatype: "timestamp"; }
+}
+
+relation_props governed {
+    enforcement: database;
+    x_owner: "data-governance";
+}
+
+preset gentle_pulse {
+    motion: pulse;
+    pulse_color: "#0E7490";
+    speed: 60;
+}
+
+preset trace_style {
+    marker: square;
+    marker_color: "#1D4ED8";
+    speed: 80;
+    rate: 2;
+}
+
+fragment audit_log {
+    table audit_log "Audit log" {
+        fields {
+            created_at { datatype: "timestamp"; }
+            updated_at { datatype: "timestamp"; }
+            event { datatype: "text"; }
+        }
+    }
+}
+
+data model {
+    use: @audit_log;
+    table customer "Customer" {
+        fields {
+            use: @audited;
+            customer_id { key: primary; datatype: "uuid"; }
+            display_name "Display name";
+        }
+    }
+    table order "Order" {
+        fields {
+            use: @audited;
+            order_id { key: primary; datatype: "uuid"; }
+            customer_id { datatype: "uuid"; }
+        }
+    }
+    queue events "Order events" {}
+    // A relation property set: governed assertions without repetition.
+    ref places "places" @order.customer_id [zeromany] -> @customer.customer_id [one] { use: @governed; }
+    ref logs "logs to" @customer -> @audit_log { use: @governed; }
+    // A motion preset: B1-033 animation properties reused across relations.
+    transfers_to notifies "notifies" @order -> @events { use: @gentle_pulse; }
+}
+
+view reuse "Reusable presets / customer orders" {
+    data: [@model];
+    format: @shared.styles.technical;
+    legend { placement: bottom; }
+}
+
+view traced "Reusable presets / event trace" {
+    data: [@model];
+    format: @shared.styles.technical;
+    flow order_path "Order path" {
+        use: @trace_style;
+        steps: @model.order -> @model.customer -> @model.audit_log;
+    }
+    publication { size: content; fit: none; }
+}

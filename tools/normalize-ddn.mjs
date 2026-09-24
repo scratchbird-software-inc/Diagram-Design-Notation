@@ -190,6 +190,7 @@ function normalizeFile(abs) {
     }
 
     const visit = (node, view) => {
+      if (node.type === '$use') return; // B1-041 use: applications are author content, never pins
       const isProfileDecl = !node.group && GROUP_TYPES.includes(node.type);
       const isViewGroup = node.group && GROUP_TYPES.includes(node.type) && view;
       const empty = !Object.keys(node.props).length && !node.children.length;

@@ -6,6 +6,50 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Compact authoring, phase 5 (B1-041): author-controlled reuse — named field
+  groups, named port groups, relation property sets, generic property
+  presets (motion presets carry the B1-033 keys) and unparameterized
+  include-by-reference fragments. Definitions are top-level closed
+  templates; each `use: @name;` (or `use: [@a, @b];`) application expands in
+  the workspace assembly to the IDENTICAL canonical AST as the handwritten
+  inline form before indexing — same equivalence gate as phases 1–4 (equal
+  `DDN.semanticJSON`, byte-identical SVG, identical validation outcomes,
+  identities exactly as declared inline); no IR or renderer changes; the
+  use-cases golden renders stay byte-identical.
+  - Definition kinds (D1): `fields`/`ports` (member groups applied inside a
+    `fields {}`/`ports {}` group of the same kind), `relation_props`
+    (relation bodies only), `preset` (any element/relation body and
+    view-level flow blocks), `fragment` (data/records block members).
+  - Precedence (D2): local in-declaration properties override presets; two
+    presets conflicting on a property are a coded error (DDN-E017) unless
+    the declaration resolves the property locally; equal values never
+    conflict.
+  - Assertion (D3): preset-applied properties are ASSERTED on the expanded
+    declaration, never omitted; only the named definitions' own properties
+    apply (no smuggling) — both directions pinned by tests.
+  - Versioning (D4): optional integer `version: N` on a definition is
+    documentary only; expansion ignores it semantically and never merges it.
+  - Identities (D5): expansion yields identities exactly as handwritten
+    inline (no synthetic prefixes); member-order preservation and duplicate
+    collisions (DDN024) verified.
+  - Fragments (D6): chosen scope is the minimum viable one —
+    UNPARAMETERIZED include-by-reference fragments plus all preset types;
+    parameterized fragments are deferred with a note in `DDN-GAPS.md`.
+  - Motion presets (D7): presets carrying `motion`/`marker`/`rate`/`speed`/
+    `pulse_color` apply to relations; marker/speed/rate presets compose with
+    view-level flow blocks (equivalence-gated).
+  - Edit scope (D8): inspector edits after expansion write to the
+    declaration site — a property edit on a preset-using declaration inserts
+    a local override in that body; member-level edits of expanded members
+    are refused (DDN-E005) so the shared definition is never rewritten.
+  - Error allocation: DDN-E017 (reuse/expansion errors; previous ceiling
+    DDN-E016) and DDN-E005 in the authoring family (previously unused).
+  - Grammar (`standard/grammar/ddn.ebnf`: `reuseDefinition`,
+    `useApplication`), spec (`01-language.md` phase-5 chapter), authoring
+    guide (`docs/developers/authoring-sources.md`), teaching example
+    `website/examples/basics/74-reusable-presets.ddn`, paired-fixture corpus
+    extended (field group + relation_props + motion preset + fragment).
+
 - Compact authoring, phase 4 (B1-040): keyed tabular records, desugared in
   the parser to the identical canonical per-row record-object AST (same
   equivalence gate as phases 1–3: equal `DDN.semanticJSON`, byte-identical

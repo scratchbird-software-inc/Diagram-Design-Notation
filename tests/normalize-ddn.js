@@ -125,3 +125,37 @@ view v { data: [@metrics]; layout { frame_overflow: expand; } }
   }
   console.log('PASS normalize preserves keyed tabular records (strips pins only)');
 }
+/* B1-041 D5: reuse definitions and use: applications are author choices too.
+ * The normalizer strips default-equal pins but never expands presets or
+ * fragments to their inline form. */
+{
+  const fs = require('node:fs'), os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ddn-norm-presets-'));
+  const file = path.join(dir, 'fixture.ddn');
+  const compact = `ddn "0.5";
+module "tests.norm.presets";
+fields audit { created_at; updated_at; }
+relation_props softref { enforcement: undecided; }
+preset std_pulse { motion: pulse; speed: 90; }
+fragment pair { object x {} object y {} }
+data m {
+  use: @pair;
+  table t { fields { use: @audit; id { key: primary; } } }
+  ref r @t -> @x { use: [@softref, @std_pulse]; }
+}
+view v { data: [@m]; layout { frame_overflow: expand; } }
+`;
+  fs.writeFileSync(file, compact);
+  const run = cp.spawnSync(process.execPath, [path.join(root, 'tools/normalize-ddn.mjs'), file], { encoding: 'utf8' });
+  if (run.status !== 0) { console.error('FAIL normalize presets preservation:', run.stderr.trim() || run.stdout.trim()); process.exit(1); }
+  const out = fs.readFileSync(file, 'utf8');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const defsKept = out.includes('fields audit {') && out.includes('relation_props softref {') && out.includes('preset std_pulse {') && out.includes('fragment pair {');
+  const usesKept = out.includes('use: @pair;') && out.includes('use: @audit;') && out.includes('use: [@softref, @std_pulse];');
+  const notExpanded = !out.includes('field created_at;') && !out.includes('object x "x"');
+  const pinStripped = !out.includes('frame_overflow');
+  if (!defsKept || !usesKept || !notExpanded || !pinStripped) {
+    console.error('FAIL normalize presets preservation:', JSON.stringify({ defsKept, usesKept, notExpanded, pinStripped }), '\n' + out); process.exit(1);
+  }
+  console.log('PASS normalize preserves reuse definitions and use: applications (strips pins only)');
+}

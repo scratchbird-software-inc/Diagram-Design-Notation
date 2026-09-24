@@ -3,9 +3,17 @@ module "tests.compact";
 // B1-037 equivalence-gate fixture (compact side). Paired with model-verbose.ddn:
 // both must build to the same semanticJSON, byte-identical SVG and identical
 // validation outcomes.
+// B1-041 phase 5: reuse definitions — named field group, relation property
+// set, motion preset and an include-by-reference fragment.
+fields audited { version: 1; created_at; updated_at { datatype: "timestamp"; } }
+relation_props softref { enforcement: undecided; }
+preset slow_pulse { motion: pulse; speed: 40; }
+fragment note_pair { object note_src "Note source" {} object note_dst "Note sink" {} }
 data model {
+ use: @note_pair;
  table customer "Customer" {
   fields {
+   use: @audited;
    customer_id { key: primary; datatype: "uuid"; }
    display_name "Display name";
    field email "Email" { nullable: true; }
@@ -28,8 +36,9 @@ data model {
  sample customers_sample { columns: [@customer.customer_id]; rows: [["c1"]]; }
  // B1-038 phase 2: verb-keyword relations (registry alias transfers_to ≡ kind:
  // flow; brackets ≡ source_mark/target_mark, omitted bracket ≡ omitted mark).
- transfers_to places @customer.customer_id -> @inbound.input;
+ transfers_to places @customer.customer_id -> @inbound.input { use: @slow_pulse; }
  assoc actor_link @visitor [one] -> @fulfil [zeromany];
+ ref doc_link @note_src -> @note_dst { use: @softref; }
  // B1-038 phase 2: named batch — shared properties merge under per-entry ones.
  relations depends {
   enforcement: undecided;
@@ -39,7 +48,7 @@ data model {
 }
 view main "Main" {
  data: [@model];
- legend { mode: numbers; keys: { places: 3, actor_link: 9, fulfil_dep: 4, summary_dep: 5 }; }
+ legend { mode: numbers; keys: { places: 3, actor_link: 9, fulfil_dep: 4, summary_dep: 5, doc_link: 7 }; }
  publication { size: content; fit: none; }
 }
 view subset "Subset" {

@@ -7,12 +7,30 @@
 document       = "ddn", string, ";", { import }, section, { section } ;
 section        = "module", string, ";", { top } ;
 import         = "import", string, "as", identifier, ";" ;
-top            = data | records | format | view ;
+top            = data | records | format | view | reuseDefinition ;
+(* B1-041 compact authoring, phase 5 (workspace-assembly desugar to the
+   identical canonical AST as the handwritten inline form; see
+   spec/01-language.md): author-controlled reuse. Definitions are top-level
+   closed templates; `use: @name;` (or `use: [@a, @b];`) inside a data or
+   records block applies a fragment, inside a fields/ports group applies a
+   member group of the same kind, and inside an element/relation/flow body
+   applies a property preset (relation_props applies to relations only).
+   Expansion precedes indexing, so expanded identities are exactly as
+   declared inline. Local properties override presets; two presets
+   conflicting on a property are a coded error (DDN-E017) unless resolved
+   locally; preset-applied properties are ASSERTED, never omitted, and only
+   the named definitions' own properties apply. `version: N` on a
+   definition is an optional documentary integer, ignored semantically.
+   use: inside a definition body, in a batch header, or in a
+   non-application context is a coded error (DDN-E017). Parameterized
+   fragments are deferred (DDN-GAPS.md). *)
+reuseDefinition = ( "fields" | "ports" | "relation_props" | "preset" | "fragment" ), identifier, [ string ], block ;
+useApplication = "use", ":", ( reference | "[", reference, { ",", reference }, "]" ), ";" ;
 data           = "data", identifier, [ string ], block ;
 format         = "format", identifier, [ string ], block ;
 view           = "view", identifier, [ string ], ( block | viewHeader ) ;
 block          = "{", { member }, "}", [ ";" ] ;
-member         = property | declaration | typedDeclaration | compactRelation | relationBatch | contextualMember | targetDeclaration | flowDeclaration | group ;
+member         = property | declaration | typedDeclaration | compactRelation | relationBatch | contextualMember | targetDeclaration | flowDeclaration | useApplication | group ;
 property       = identifier, ":", value, ";" ;
 declaration    = identifier, identifier, [ string ], [ endpoints ], ( block | ";" ) ;
 (* B1-037 compact authoring, phase 1 (parser desugars both forms to the
@@ -89,7 +107,7 @@ viewData       = reference | "[", [ reference, { ",", reference } ], "]" ;
    batches) mix into a records body freely, which is what lets the refresh
    tool append and rewrite records in canonical form. *)
 records        = "records", identifier, [ string ], "{", { recordsMember }, "}", [ ";" ] ;
-recordsMember  = columnsDecl | labelColumnDecl | recordRow | typedDeclaration | compactRelation | relationBatch | declaration ;
+recordsMember  = columnsDecl | labelColumnDecl | recordRow | typedDeclaration | compactRelation | relationBatch | useApplication | declaration ;
 columnsDecl    = "columns", ":", identifier, { ",", identifier }, ";" ;
 labelColumnDecl = "label_column", ":", identifier, ";" ;
 recordRow      = "row", identifier, ":", scalar, { ",", scalar }, ( block | ";" ) ;

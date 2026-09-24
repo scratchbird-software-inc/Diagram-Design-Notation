@@ -159,6 +159,34 @@ Row identity and refresh. Row ids ARE the record keys of the keyed refresh (see 
 
 Bodies and conflicts. A row's optional body carries extra PROPERTIES only, merged onto the record object under canonical duplicate rules (`kind:` or `x_record:` inside is DDN011, since the row supplies both); nested declarations inside a row body are a coded parse error (DDN-E016). The `columns` and `label_column` directives must precede every row (DDN-E016), are singular (DDN011), and `label_column` must name a declared column (DDN-E016). A column count mismatch is a coded parse error (DDN-E016) naming the row and the expected/actual counts. As with phases 1–3, the normalizer never rewrites verbose↔compact records.
 
+## Compact authoring (phase 5)
+
+Author-controlled reuse follows the same desugar contract, one step later in the pipeline: definitions are top-level templates and each `use:` application expands in the workspace assembly to the identical canonical AST as the handwritten inline form BEFORE indexing, so `DDN.semanticJSON`, rendered SVG, validation outcomes and every expanded identity are indistinguishable from the verbose form (no synthetic prefixes, no IR/renderer changes).
+
+```ddn
+fields audit { field created_at; field updated_at; }        // named field group
+relation_props softref { enforcement: undecided; }          // relation property set
+preset std_pulse { motion: pulse; speed: 90; }              // property preset (motion: B1-033 keys)
+fragment audit_pair { object log_a {} object log_b {} }     // include-by-reference fragment
+
+data model {
+ use: @audit_pair;                                          // fragment application
+ table customer { fields { use: @audit; id { key: primary; } } }
+ ref r @customer -> @log_a { use: @softref; enforcement: database; }
+ transfers_to updates @customer -> @log_b { use: @std_pulse; }
+}
+```
+
+Definition kinds and application sites. Five top-level definition keywords — `fields`, `ports` (member groups, applied inside a `fields {}`/`ports {}` group of the same kind), `relation_props` (properties, applied to relation bodies only), `preset` (properties, applied to any element/relation body and to view-level flow blocks — a motion preset is simply a preset carrying B1-033 keys) and `fragment` (data members, applied inside a data or records block). Applications use `use: @name;` or a list `use: [@a, @b];`. Applying the wrong definition kind at a site, applying in a non-application context (view bodies, `place`/`route`, batch headers), naming an unknown definition, or writing `use:` inside a definition body (definitions are closed templates — no nesting, hence no cycles) are all coded errors (DDN-E017). Definitions resolve across imports like any module-scope declaration.
+
+Precedence and assertion (D2/D3). Local in-declaration properties override applied presets. Two presets applied together that assert the same property with different values are a coded error (DDN-E017) UNLESS the declaration also declares that property locally (the local value resolves the conflict); equal values are not a conflict. A preset-applied property is ASSERTED on the expanded declaration — present exactly as if written inline, never omitted — and a preset never adds properties the author did not select: only the named definitions' own properties apply. Member expansion preserves declaration order around local members; a member id collision after expansion is the ordinary duplicate declaration (DDN024).
+
+Versioning (D4). A definition may declare `version: N` (optional, integer). It is DOCUMENTARY ONLY — a stability signal for human readers and a future compatibility hook. Expansion ignores it semantically and never merges it into applications; do not rely on it for behaviour. A non-integer version is a coded error (DDN-E017).
+
+Edit scope (D8). Inspector/authoring edits after expansion write to the DECLARATION SITE, never the shared definition: a property edit on a preset-using declaration inserts a local override into that declaration's body (which then wins by the precedence rule), and member-level edits of an expanded field/port/fragment member are refused with a coded error (DDN-E005) rather than rewriting the shared template. See `docs/developers/authoring-sources.md`.
+
+Scope note. Parameterized fragments (`fragment f(name) {…}` substitution) are deliberately NOT in this phase; fragments are unparameterized include-by-reference. The deferral is recorded in `DDN-GAPS.md`.
+
 
 ## Recursive members
 
