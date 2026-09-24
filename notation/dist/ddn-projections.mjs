@@ -97,7 +97,7 @@ function render(ir,reg,glyphs='',options={}){
  let composedSubs=[];
  const QR=optionalNamespace('DDNQualityRender');
  if((plan.quality||plan.kind==='fishbone'||plan.kind==='decision')&&!QR)throw new D.DDNError('DDN-E010','Projection '+plan.profile+' is provided by ddn-quality.js; load it after ddn-core.js and ddn-graph.js.');
- const qualityBody=QR?QR.draw(plan,ir,{text,lines,wrap,line,rect,group,colour,s,theme:t,W,H:q(pr.height,600*s)}):null;
+ const qualityBody=QR?QR.draw(plan,ir,{text,lines,wrap,line,rect,group,colour,s,theme:t,W,H:q(pr.height,600*s),diagnostics,options}):null;
  if(qualityBody){body=qualityBody.body;W=qualityBody.W;H=qualityBody.H;}
  if(plan.kind==='matrix'&&!qualityBody){
   const rowW=Math.max(230*s,Math.min(390*s,Math.max(...plan.rows.map(n=>Text.measure(n.name,13*s,p.style.font,600).width))+32*s)),cw=Math.max(130*s,(W-rowW)/plan.columns.length);W=rowW+cw*plan.columns.length;
