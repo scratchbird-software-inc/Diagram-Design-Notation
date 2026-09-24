@@ -6,6 +6,35 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Routing performance, pre-WASM pure-JS round (B1-042): profile-guided
+  optimization of the orthogonal router (`notation/runtime/ddn-layout.js`)
+  and the workspace render path (`notation/studio/src/api.js`). Output is
+  byte-identical on the full golden corpus (use-cases manifest + gallery,
+  no regeneration).
+  - Profile (D1): `node --cpu-prof` on the B1-031 benchmark showed ~94% of
+    render time inside routing — `costSegment`, `cross`, `collinear`,
+    `segs`, `segmentBox` and the A* search loop dominating.
+  - Segment-representation caching (D2.1): prior-route segments are
+    compiled once per relation iteration into orientation+bbox records
+    instead of re-walking point arrays per probe.
+  - Dependency-free spatial narrowing (D2.2): conservative envelope gates
+    skip segment pairs and obstacles that cannot interact (bbox gates are
+    exact supersets of the Liang–Barsky/collinearity/crossing tests), so
+    results and tie-break order are unchanged.
+  - Allocation reduction in the search loop (D2.3): the grid-edge cost
+    cache is now flat typed arrays indexed by lattice position (no string
+    keys, no Map, no per-edge objects).
+  - Completed-geometry caching (D2.4): `renderSync` memoizes the finished
+    render per workspace revision keyed on entry#view + exact render
+    inputs; cached copies are structured clones so callers can never
+    pollute the cache. Cleared with the compiled-IR cache on every edit.
+  - Measured (same machine, node v22.22.3, median of 3): medium-graph cold
+    render 23189.3 ms → 2119.4 ms (~10.9x), large-graph cold 35783.3 ms →
+    2177.2 ms (~16.4x); warm re-renders drop to ~1 ms via the geometry
+    cache. Baseline regenerated
+    (`standard/registry/performance-baseline.json`), smoke ceilings
+    re-tightened by the same 10x + 250 ms-floor idiom.
+
 - Compact authoring, phase 5 (B1-041): author-controlled reuse — named field
   groups, named port groups, relation property sets, generic property
   presets (motion presets carry the B1-033 keys) and unparameterized

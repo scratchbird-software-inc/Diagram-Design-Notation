@@ -31,6 +31,33 @@ function segmentBox(s,b){
  for(let i=0;i<4;i++){if(Math.abs(p[i])<EPS){if(v[i]<0)return false;}else{const t=v[i]/p[i];if(p[i]<0)lo=Math.max(lo,t);else hi=Math.min(hi,t);if(lo>hi)return false;}}return hi>=lo;
 }
 function simplify(points){const out=[];for(const x of points){const p=x.map(round);if(out.length&&same(out.at(-1),p))continue;out.push(p);while(out.length>=3){const[a,b,c]=out.slice(-3);if((Math.abs(a[0]-b[0])<EPS&&Math.abs(b[0]-c[0])<EPS)||(Math.abs(a[1]-b[1])<EPS&&Math.abs(b[1]-c[1])<EPS))out.splice(out.length-2,1);else break;}}return out;}
+/* B1-042 (D2.1/D2.2): scalar twins of segmentBox/cross/collinear plus
+ * precomputed segment records (orientation + bbox). The router's inner loops
+ * evaluate the same prior segments against millions of candidate edges; the
+ * records derive the constants once per relation instead of once per probe,
+ * and the bbox gates narrow collision checks to nearby geometry without any
+ * dependency. Every gate is conservative: it only skips pairs the original
+ * tests would certainly reject, so results (and tie-break order) are exact. */
+function segHitsBox(ax,ay,bx,by,b){
+ if(Math.abs(ax-bx)<EPS&&Math.abs(ay-by)<EPS)return pointInside([ax,ay],b);
+ if(Math.abs(ay-by)<EPS)return ay>b.y+EPS&&ay<b.y+b.h-EPS&&Math.max(ax,bx)>b.x+EPS&&Math.min(ax,bx)<b.x+b.w-EPS;
+ if(Math.abs(ax-bx)<EPS)return ax>b.x+EPS&&ax<b.x+b.w-EPS&&Math.max(ay,by)>b.y+EPS&&Math.min(ay,by)<b.y+b.h-EPS;
+ let lo=0,hi=1,dx=bx-ax,dy=by-ay;const p=[-dx,dx,-dy,dy],v=[ax-b.x-EPS,b.x+b.w-ax-EPS,ay-b.y-EPS,b.y+b.h-ay-EPS];
+ for(let i=0;i<4;i++){if(Math.abs(p[i])<EPS){if(v[i]<0)return false;}else{const t=v[i]/p[i];if(p[i]<0)lo=Math.max(lo,t);else hi=Math.min(hi,t);if(lo>hi)return false;}}return hi>=lo;
+}
+function segRec(a,b){return{ax:a[0],ay:a[1],bx:b[0],by:b[1],horiz:Math.abs(a[1]-b[1])<EPS,vert:Math.abs(a[0]-b[0])<EPS,minx:Math.min(a[0],b[0]),maxx:Math.max(a[0],b[0]),miny:Math.min(a[1],b[1]),maxy:Math.max(a[1],b[1])};}
+function routeSegRecs(points){const out=[];for(let i=1;i<points.length;i++)out.push(segRec(points[i-1],points[i]));return out;}
+function crossRec(s,t,margin=0){
+ if(s.horiz&&t.vert){const x=t.ax,y=s.ay;if(x>s.minx+margin&&x<s.maxx-margin&&y>t.miny+margin&&y<t.maxy-margin)return[x,y];}
+ if(s.vert&&t.horiz)return crossRec(t,s,margin);return null;
+}
+function collinearRec(s,t,tol){
+ if(s.horiz&&t.horiz&&Math.abs(s.ay-t.ay)<tol&&Math.min(s.maxx,t.maxx)-Math.max(s.minx,t.minx)>EPS)return true;
+ if(s.vert&&t.vert&&Math.abs(s.ax-t.ax)<tol&&Math.min(s.maxy,t.maxy)-Math.max(s.miny,t.miny)>EPS)return true;
+ return false;
+}
+/* Any segment of a raw polyline collinear with any precomputed record. */
+function collinearHits(points,recs,tol){for(let i=1;i<points.length;i++){const s=segRec(points[i-1],points[i]);for(const t of recs){if(s.minx>t.maxx+tol||s.maxx<t.minx-tol||s.miny>t.maxy+tol||s.maxy<t.miny-tol)continue;if(collinearRec(s,t,tol))return true;}}return false;}
 function cross(s,t,margin=0){
  const sh=Math.abs(s.a[1]-s.b[1])<EPS,sv=Math.abs(s.a[0]-s.b[0])<EPS,th=Math.abs(t.a[1]-t.b[1])<EPS,tv=Math.abs(t.a[0]-t.b[0])<EPS;
  if(sh&&tv){const x=t.a[0],y=s.a[1];if(x>Math.min(s.a[0],s.b[0])+margin&&x<Math.max(s.a[0],s.b[0])-margin&&y>Math.min(t.a[1],t.b[1])+margin&&y<Math.max(t.a[1],t.b[1])-margin)return[x,y];}
@@ -205,33 +232,46 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
  const inflated=nodes.map(n=>box(n,clear));
  const reservations=[];for(const r of rels){const ep=assignments.get(r.id);for(const which of ['source','target']){const pt=ep[which],dir=ep[which+'_direction'],out=[round(pt[0]+dir[0]*(clear+port)),round(pt[1]+dir[1]*(clear+port))];reservations.push({id:r.id+':reserved:'+which,owner:r.id,points:[pt,out]});}}
  for(const r of rels)if((hints[r.id]?.routing||p.routing)==='straight'){const ep=assignments.get(r.id);reservations.push({id:r.id+':reserved:direct',owner:r.id,points:[ep.source,ep.target]});}
- function costSegment(s,obstacles,prior,permitCross=true){
-  if(same(s.a,s.b))return 0;
-  if(obstacles.some(b=>segmentBox(s,b)))return Infinity;
+ function costSegment(s,obstacles,priorSegs,permitCross=true){
+  const ax=s.a[0],ay=s.a[1],bx=s.b[0],by=s.b[1];
+  if(Math.abs(ax-bx)<EPS&&Math.abs(ay-by)<EPS)return 0;
+  const sh=Math.abs(ay-by)<EPS,sv=Math.abs(ax-bx)<EPS;
+  const sminx=Math.min(ax,bx),smaxx=Math.max(ax,bx),sminy=Math.min(ay,by),smaxy=Math.max(ay,by);
+  // Obstacle bbox gate: segmentBox can only hit when the envelopes overlap.
+  for(let i=0;i<obstacles.length;i++){const b=obstacles[i];
+   if(smaxx<=b.x+EPS||sminx>=b.x+b.w-EPS||smaxy<=b.y+EPS||sminy>=b.y+b.h-EPS)continue;
+   if(segHitsBox(ax,ay,bx,by,b))return Infinity;}
   let cost=length(s);
-  for(const route of prior)for(const t of segs(route.points)){
-   if(collinear(s,t,lane-.1))return Infinity;
-   const c=cross(s,t,-EPS);
-   if(c){ // Reject T contacts and near-corner ambiguity; ordinary clear X crossings are allowed.
-    const endpointDistance=Math.min(...[t.a,t.b].map(x=>Math.hypot(x[0]-c[0],x[1]-c[1])));
-    if(endpointDistance<10||!permitCross)return Infinity;cost+=50;
-   }
+  const tol=lane-.1;
+  for(let i=0;i<priorSegs.length;i++){const t=priorSegs[i];
+   // Envelope gate: collinearity or crossing both require the envelopes to
+   // come within tol of each other.
+   if(sminx>t.maxx+tol||smaxx<t.minx-tol||sminy>t.maxy+tol||smaxy<t.miny-tol)continue;
+   if(sh&&t.horiz){if(Math.abs(ay-t.ay)<tol&&Math.min(smaxx,t.maxx)-Math.max(sminx,t.minx)>EPS)return Infinity;}
+   else if(sv&&t.vert){if(Math.abs(ax-t.ax)<tol&&Math.min(smaxy,t.maxy)-Math.max(sminy,t.miny)>EPS)return Infinity;}
+   let cx,cy;
+   if(sh&&t.vert){cx=t.ax;cy=ay;if(!(cx>sminx-EPS&&cx<smaxx+EPS&&cy>t.miny-EPS&&cy<t.maxy+EPS))continue;}
+   else if(sv&&t.horiz){cx=ax;cy=t.ay;if(!(cx>t.minx-EPS&&cx<t.maxx+EPS&&cy>sminy-EPS&&cy<smaxy+EPS))continue;}
+   else continue;
+   // Reject T contacts and near-corner ambiguity; ordinary clear X crossings are allowed.
+   const endpointDistance=Math.min(Math.hypot(t.ax-cx,t.ay-cy),Math.hypot(t.bx-cx,t.by-cy));
+   if(endpointDistance<10||!permitCross)return Infinity;cost+=50;
   }
   return cost;
  }
  function pointFree(point,obstacles){return !obstacles.some(b=>pointInside(point,b));}
- function search(a,b,obstacles,prior,edgeIndex){
+ function search(a,b,obstacles,priorSegs,edgeIndex){
   const envelope=60+(edgeIndex+1)*lane*2;
   let xs=[a[0],b[0],bounds.minX-envelope,bounds.maxX+envelope],ys=[a[1],b[1],bounds.minY-envelope,bounds.maxY+envelope];
   for(const ob of obstacles){xs.push(ob.x,ob.x+ob.w);ys.push(ob.y,ob.y+ob.h);}
-  for(const route of prior)for(const seg of segs(route.points)){if(Math.abs(seg.a[0]-seg.b[0])<EPS)xs.push(seg.a[0]-lane,seg.a[0]+lane);else ys.push(seg.a[1]-lane,seg.a[1]+lane);}
+  for(const g of priorSegs){if(g.vert)xs.push(g.ax-lane,g.ax+lane);else ys.push(g.ay-lane,g.ay+lane);}
   const uniq=a=>[...new Set(a.map(round))].sort((a,b)=>a-b);xs=uniq(xs);ys=uniq(ys);
   // Try a deterministic catalogue of small-bend paths before graph search.
   const candidates=[[a,b]];
   for(const x of xs)candidates.push([a,[x,a[1]],[x,b[1]],b]);
   for(const y of ys)candidates.push([a,[a[0],y],[b[0],y],b]);
   let best=null,bestCost=Infinity;
-  for(let c of candidates){c=simplify(c);if(segs(c).some(s=>Math.abs(s.a[0]-s.b[0])>EPS&&Math.abs(s.a[1]-s.b[1])>EPS))continue;let cost=0;for(const s of segs(c)){cost+=costSegment(s,obstacles,prior);if(cost>bestCost)break;}cost+=Math.max(0,c.length-2)*20;if(cost<bestCost){best=c;bestCost=cost;}}
+  for(let c of candidates){c=simplify(c);if(segs(c).some(s=>Math.abs(s.a[0]-s.b[0])>EPS&&Math.abs(s.a[1]-s.b[1])>EPS))continue;let cost=0;for(const s of segs(c)){cost+=costSegment(s,obstacles,priorSegs);if(cost>bestCost)break;}cost+=Math.max(0,c.length-2)*20;if(cost<bestCost){best=c;bestCost=cost;}}
   // A small-bend candidate is an incumbent, not an unconditional winner.
   // Search when its cost exceeds the Manhattan bound plus two bends; a short
   // multi-bend route can be far better than an outside-of-drawing excursion.
@@ -241,22 +281,30 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
   const sx=xs.indexOf(round(a[0])),sy=ys.indexOf(round(a[1])),ex=xs.indexOf(round(b[0])),ey=ys.indexOf(round(b[1]));
   const total=nx*ny*2,dist=new Float64Array(total);dist.fill(Infinity);const prev=new Int32Array(total);prev.fill(-1);const start=(sy*nx+sx)*2;
   const heap=new Heap();dist[start]=0;dist[start+1]=0;heap.push({id:start,g:0,score:0});heap.push({id:start+1,g:0,score:0});let count=0,last=-1;
-  const edgeCache=new Map();
+  /* B1-042 (D2.3): grid-edge cost cache as flat typed arrays indexed by the
+   * edge's lattice position — no string keys, no Map, no per-edge objects.
+   * NaN marks an unevaluated edge; costs are never NaN. */
+  const hEdge=new Float64Array(ny*(nx>1?nx-1:0));hEdge.fill(NaN);
+  const vEdge=new Float64Array(nx*(ny>1?ny-1:0));vEdge.fill(NaN);
   while(heap.length){const v=heap.pop();if(v.g!==dist[v.id])continue;if(v.score>=bestCost-EPS)break;if(++count>limit)break;const oldDir=v.id%2,node=(v.id-oldDir)/2,xi=node%nx,yi=(node-xi)/nx;if(xi===ex&&yi===ey){last=v.id;break;}
-   for(const [dx,dy,dir]of [[-1,0,0],[1,0,0],[0,-1,1],[0,1,1]]){const xx=xi+dx,yy=yi+dy;if(xx<0||xx>=nx||yy<0||yy>=ny)continue;const ni=yy*nx+xx,tag=Math.min(node,ni)+':'+Math.max(node,ni);let cost=edgeCache.get(tag);if(cost===undefined){cost=costSegment({a:[xs[xi],ys[yi]],b:[xs[xx],ys[yy]]},obstacles,prior);edgeCache.set(tag,cost);}if(!Number.isFinite(cost))continue;const id=ni*2+dir,next=v.g+cost+(dir===oldDir?0:20);if(next<dist[id]){dist[id]=next;prev[id]=v.id;heap.push({id,g:next,score:next+Math.abs(xs[xx]-b[0])+Math.abs(ys[yy]-b[1])});}}
+   for(const [dx,dy,dir]of [[-1,0,0],[1,0,0],[0,-1,1],[0,1,1]]){const xx=xi+dx,yy=yi+dy;if(xx<0||xx>=nx||yy<0||yy>=ny)continue;const ni=yy*nx+xx;let cost;
+    if(dir===0){const ei=yi*(nx-1)+(xi<xx?xi:xx);cost=hEdge[ei];if(Number.isNaN(cost)){cost=costSegment({a:[xs[xi],ys[yi]],b:[xs[xx],ys[yy]]},obstacles,priorSegs);hEdge[ei]=cost;}}
+    else{const ei=(yi<yy?yi:yy)*nx+xi;cost=vEdge[ei];if(Number.isNaN(cost)){cost=costSegment({a:[xs[xi],ys[yi]],b:[xs[xx],ys[yy]]},obstacles,priorSegs);vEdge[ei]=cost;}}
+    if(!Number.isFinite(cost))continue;const id=ni*2+dir,next=v.g+cost+(dir===oldDir?0:20);if(next<dist[id]){dist[id]=next;prev[id]=v.id;heap.push({id,g:next,score:next+Math.abs(xs[xx]-b[0])+Math.abs(ys[yy]-b[1])});}}
   }
   if(last<0)return best;const points=[];while(last>=0){const nd=Math.floor(last/2);points.push([xs[nd%nx],ys[Math.floor(nd/nx)]]);last=prev[last];}return simplify(points.reverse());
  }
- function labelFor(route,prior){
+ function labelFor(route,priorSegs){
   const size=labelMeasure?labelMeasure(route.r):{w:30,h:30};const a=route.hint.callout?.map(v=>q(v));
   const candidates=a?[{point:a,explicit:true}]:[];
-  for(const s of segs(route.points).sort((a,b)=>length(b)-length(a))){const horizontal=Math.abs(s.a[1]-s.b[1])<EPS,need=horizontal?size.w:size.h,len=length(s);if(len<need+24)continue;
+  const ownSegs=segs(route.points);
+  for(const s of ownSegs.slice().sort((a,b)=>length(b)-length(a))){const horizontal=Math.abs(s.a[1]-s.b[1])<EPS,need=horizontal?size.w:size.h,len=length(s);if(len<need+24)continue;
    const samples=[.5,.25,.75,.125,.875,...Array.from({length:Math.min(30,Math.floor(len/24))},(_,i)=>(i+1)/(Math.min(30,Math.floor(len/24))+1))];
    for(const t of samples){if(t*len<need/2+12||(1-t)*len<need/2+12)continue;candidates.push({point:[s.a[0]+(s.b[0]-s.a[0])*t,s.a[1]+(s.b[1]-s.a[1])*t]});}}
   for(const candidate of candidates){const[x,y]=candidate.point,rect={x:x-size.w/2,y:y-size.h/2,w:size.w,h:size.h};
-   if(!segs(route.points).some(s=>distancePointSegment([x,y],s)<1))continue;
+   if(!ownSegs.some(s=>distancePointSegment([x,y],s)<1))continue;
    if(nodes.some(n=>overlap(rect,n,labelMargin))||extraObstacles.some(n=>overlap(rect,n,labelMargin))||labels.some(l=>overlap(rect,l,labelMargin)))continue;
-   if(prior.some(r=>segs(r.points).some(s=>segmentBox(s,box(rect,labelRouteMargin)))))continue;
+   const bb=box(rect,labelRouteMargin);if(priorSegs.some(t=>segHitsBox(t.ax,t.ay,t.bx,t.by,bb)))continue;
    return {id:route.id,x,y,w:size.w,h:size.h,bounds:rect,explicit:!!candidate.explicit};
   }return null;
  }
@@ -271,9 +319,12 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
   const stubs=[{a:start,b:a},{a:b,b:end}];
   for(const [j,s]of stubs.entries()){const own=j?ownB:ownA;if(nodes.some(n=>n.id!==own.id&&segmentBox(s,box(n,clear))))throw new ErrorClass('DDN212','Endpoint clearance conflicts with another object: '+r.id);}
   const prior=[...routes,...reservations.filter(rt=>rt.owner!==r.id&&!routes.some(old=>old.id===rt.owner))];
+  // B1-042 (D2.1): the prior geometry is fixed for the whole relation
+  // iteration — derive segment records once, not once per probe.
+  const priorSegs=[];for(const rt of prior){const ps=rt.points;for(let i=1;i<ps.length;i++)priorSegs.push(segRec(ps[i-1],ps[i]));}
   let points=null,repaired=false;
   if(hint.via){const specified=simplify([start,...hint.via.map(pt=>pt.map(x=>q(x))),end]);const parts=segs(specified),orthogonal=parts.every(s=>Math.abs(s.a[0]-s.b[0])<EPS||Math.abs(s.a[1]-s.b[1])<EPS);
-   const safe=parts.every((s,i)=>Number.isFinite(costSegment(s,obstacles.filter(ob=>!((i===0&&ob.id===ownA.id)||(i===parts.length-1&&ob.id===ownB.id))),prior)));
+   const safe=parts.every((s,i)=>Number.isFinite(costSegment(s,obstacles.filter(ob=>!((i===0&&ob.id===ownA.id)||(i===parts.length-1&&ob.id===ownB.id))),priorSegs)));
    if(orthogonal&&safe)points=specified;
    else if((hint.policy||p.route_policy)==='strict')throw new ErrorClass(!orthogonal?'DDN073':'DDN213','Unsafe hard waypoint route: '+r.id);
    else repaired=true;
@@ -283,14 +334,15 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
    if(routes.some(rt=>segs(rt.points).some(t=>collinear(s,t,lane-.1))))throw new ErrorClass('DDN214','Straight connectors share a track; choose distinct ports or orthogonal routing');points=[start,end];
   }
   if(!points){if(!pointFree(a,obstacles)||!pointFree(b,obstacles))throw new ErrorClass('DDN212','No free endpoint escape corridor: '+r.id);
-   const center=search(a,b,obstacles,prior,index);if(!center)throw new ErrorClass('DDN215','No unambiguous orthogonal route within bounded search: '+r.id);points=simplify([start,...center,end]);}
+   const center=search(a,b,obstacles,priorSegs,index);if(!center)throw new ErrorClass('DDN215','No unambiguous orthogonal route within bounded search: '+r.id);points=simplify([start,...center,end]);}
   // Check endpoint stubs against other edges too. Actual fields get separate appearance slots.
-  if(segs(points).some(s=>routes.some(rt=>segs(rt.points).some(t=>collinear(s,t,lane-.1))))) {
+  const placedSegs=[];for(const rt of routes){const ps=rt.points;for(let i=1;i<ps.length;i++)placedSegs.push(segRec(ps[i-1],ps[i]));}
+  if(collinearHits(points,placedSegs,lane-.1)) {
    // Try an alternative side only when the author did not pin sides; never replace member identity.
    throw new ErrorClass('DDN216','Independent connector lanes overlap near an endpoint: '+r.id);
   }
   let route={id:r.id,r,routing:hint.routing||p.routing,hint:{...hint},points,source_side:ep.source_side,target_side:ep.target_side};
-  let label=labelFor(route,prior);
+  let label=labelFor(route,priorSegs);
   if(!label){
    // Label placement must not discard an authored hard path. The caller may
    // report the conflict but may not 'repair' it by changing the model's hints.
@@ -307,15 +359,15 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
    for(const y of yList)for(const sign of [b[0]>=a[0]?1:-1]){
     const l=[round(cx-sign*half),y],rr=[round(cx+sign*half),y];
     if(!pointFree(l,obstacles)||!pointFree(rr,obstacles))continue;
-    if(!Number.isFinite(costSegment({a:l,b:rr},obstacles,prior)))continue;
-    const one=search(a,l,obstacles,prior,index),two=one?search(rr,b,obstacles,[...prior,{id:r.id+':partial',points:one}],index):null;
+    if(!Number.isFinite(costSegment({a:l,b:rr},obstacles,priorSegs)))continue;
+    const one=search(a,l,obstacles,priorSegs,index),two=one?search(rr,b,obstacles,priorSegs.concat(routeSegRecs(one)),index):null;
     if(!one||!two)continue;
     const candidate=simplify([start,...one,rr,...two.slice(1),end]);
     const walk=segs(candidate).reduce((n,s)=>n+length(s),0);
     const extent=walk+Math.max(0,candidate.length-2)*20;
     if(extent>=chosenCost)continue;
     const trial={...route,points:candidate,hint:{...route.hint}};
-    const candidateLabel=labelFor(trial,prior);
+    const candidateLabel=labelFor(trial,priorSegs);
     if(candidateLabel){chosen=candidate;chosenLabel=candidateLabel;chosenCost=extent;}
    }
    if(chosen){route.points=chosen;label=chosenLabel;route.labelDetour=true;}
@@ -323,16 +375,16 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
    // It is bounded and remains visible to the attachment optimizer.
    for(let attempt=0;attempt<6&&!label;attempt++){
     const y=Math.min(ownA.y,ownB.y)-pad-(attempt+1)*Math.max(50,m.h+lane*2),l=[cx-half,y],rr=[cx+half,y];
-    const one=search(a,l,obstacles,prior,index+attempt+1),two=one?search(rr,b,obstacles,[...prior,{id:r.id+':partial',points:one}],index+attempt+2):null;
-    if(one&&two&&Number.isFinite(costSegment({a:l,b:rr},obstacles,prior))){const trial={...route,points:simplify([start,...one,rr,...two.slice(1),end])},candidateLabel=labelFor(trial,prior);if(candidateLabel){route.points=trial.points;label=candidateLabel;route.labelDetour=true;}}
+    const one=search(a,l,obstacles,priorSegs,index+attempt+1),two=one?search(rr,b,obstacles,priorSegs.concat(routeSegRecs(one)),index+attempt+2):null;
+    if(one&&two&&Number.isFinite(costSegment({a:l,b:rr},obstacles,priorSegs))){const trial={...route,points:simplify([start,...one,rr,...two.slice(1),end])},candidateLabel=labelFor(trial,priorSegs);if(candidateLabel){route.points=trial.points;label=candidateLabel;route.labelDetour=true;}}
    }
   }
   if(!label)throw new ErrorClass('DDN217','No collision-free relationship label position: '+r.id);
   route.hint.callout=[round(label.x),round(label.y)];route.label=label;routes.push(route);labels.push({...label.bounds,id:r.id});
   if(repaired)diagnostics.push({code:'DDN-LW02',severity:'info',message:'Recomputed unsafe route hint '+r.id});
  }
- const crossings=[];for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)for(const s of segs(routes[i].points))for(const t of segs(routes[j].points)){const point=cross(s,t,8);if(point)crossings.push({point,under:routes[i].id,over:routes[j].id,overHorizontal:Math.abs(t.a[1]-t.b[1])<EPS});}
- const quality=inspect(nodes,routes,labels);
+ const crossings=[],routeRecs=routes.map(r=>routeSegRecs(r.points));for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)for(const s of routeRecs[i])for(const t of routeRecs[j]){if(s.minx>t.maxx+8||s.maxx<t.minx-8||s.miny>t.maxy+8||s.maxy<t.miny-8)continue;const point=crossRec(s,t,8);if(point)crossings.push({point,under:routes[i].id,over:routes[j].id,overHorizontal:t.horiz});}
+ const quality=inspect(nodes,routes,labels,routeRecs);
  if(quality.errors.length&&p.quality!=='warn')throw new ErrorClass('DDN218',quality.errors[0]);
  for(const message of quality.errors)diagnostics.push({code:'DDN-LW03',severity:'warning',message});
  return {routes,crossings,labels,diagnostics,quality};
@@ -343,11 +395,12 @@ function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extr
  const orders=[rels,[...rels].sort((a,b)=>(degree.get(b.from.element)+degree.get(b.to.element))-(degree.get(a.from.element)+degree.get(a.to.element))||distance(b)-distance(a)||a.id.localeCompare(b.id)),[...rels].reverse(),[...rels].sort((a,b)=>distance(a)-distance(b)||a.id.localeCompare(b.id))];
  let last;const failures=[];for(let attempt=0;attempt<orders.length;attempt++)try{const r=routingAttempt(nodes,orders[attempt],profiles,hints,labelMeasure,ErrorClass,extraObstacles);r.strategy=attempt;if(attempt)r.diagnostics.push({code:'DDN-LW04',severity:'info',message:'Deterministic congestion retry selected routing strategy '+attempt});return curvedRouting(r,nodes,profiles,hints,ErrorClass,extraObstacles);}catch(e){if(!['DDN212','DDN215','DDN216','DDN217','DDN218','DDN220','DDN221'].includes(e.code))throw e;last=e;failures.push({strategy:attempt,code:e.code,message:e.message});}last.attempts=failures;throw last;
 }
-function inspect(nodes,routes,labels=[]){const errors=[],overlaps=[],through=[],shared=[],masking=[];
+function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[];
+ const recs=routeRecs||routes.map(r=>routeSegRecs(r.points)),nodeBoxes=nodes.map(n=>box(n,1)),labelBoxes=labels.map(l=>box(l,2));
  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)if(overlap(nodes[i],nodes[j]))overlaps.push([nodes[i].id,nodes[j].id]);
- for(const r of routes)for(const s of segs(r.points))for(const n of nodes)if(n.id!==r.r?.from.element&&n.id!==r.r?.to.element&&segmentBox(s,box(n,1)))through.push([r.id,n.id]);
- for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)if(segs(routes[i].points).some(s=>segs(routes[j].points).some(t=>collinear(s,t,.1))))shared.push([routes[i].id,routes[j].id]);
- for(const l of labels)for(const r of routes)if(l.id!==r.id&&segs(r.points).some(s=>segmentBox(s,box(l,2))))masking.push([l.id,r.id]);
+ for(let i=0;i<routes.length;i++){const r=routes[i];for(const s of recs[i])for(let k=0;k<nodes.length;k++){const n=nodes[k];if(n.id===r.r?.from.element||n.id===r.r?.to.element)continue;const b=nodeBoxes[k];if(s.maxx<=b.x+EPS||s.minx>=b.x+b.w-EPS||s.maxy<=b.y+EPS||s.miny>=b.y+b.h-EPS)continue;if(segHitsBox(s.ax,s.ay,s.bx,s.by,b))through.push([r.id,n.id]);}}
+ for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)if(recs[i].some(s=>recs[j].some(t=>collinearRec(s,t,.1))))shared.push([routes[i].id,routes[j].id]);
+ for(let li=0;li<labels.length;li++)for(let i=0;i<routes.length;i++)if(labels[li].id!==routes[i].id&&recs[i].some(s=>segHitsBox(s.ax,s.ay,s.bx,s.by,labelBoxes[li])))masking.push([labels[li].id,routes[i].id]);
  if(overlaps.length)errors.push(overlaps.length+' overlapping object pairs');if(through.length)errors.push(through.length+' unrelated route/object intersections');if(shared.length)errors.push(shared.length+' independent collinear relation pairs');if(masking.length)errors.push(masking.length+' labels mask unrelated routes');
  return {errors,objectOverlaps:overlaps,routeObjectIntersections:through,sharedTracks:shared,labelRouteIntersections:masking};}
 /* Curved connectors are geometry, never relationship types. The orthogonal

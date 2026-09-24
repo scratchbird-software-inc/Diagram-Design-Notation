@@ -1,6 +1,6 @@
 {
   "$schema": "https://scratchbird.ca/ddn/performance-baseline.schema.json",
-  "description": "B1-031 measured performance baseline for the DDN reference runtime. Median of 3 iterations per case; regenerate with `npm run benchmark`. Timings are machine-dependent — the committed values are a reference point, and the smoke gate only trips beyond 10x.",
+  "description": "B1-031 measured performance baseline for the DDN reference runtime. Median of 3 iterations per case; regenerate with `npm run benchmark`. Timings are machine-dependent — the committed values are a reference point, and the smoke gate only trips beyond 10x (with a 250 ms absolute floor against cold-process noise).",
   "runtime": "0.6.0-beta.1",
   "measuredOn": "2026-09-24",
   "environment": {
@@ -22,60 +22,60 @@
       "description": "basics/01-customer.ddn overview (repo example, 3-file workspace)",
       "selected": 4,
       "relations": 3,
-      "coldMs": 5.6,
-      "warmMs": 4.3,
+      "coldMs": 12.3,
+      "warmMs": 0.5,
       "refreshMs": null,
-      "irBytes": 7167,
+      "irBytes": 7178,
       "svgBytes": 67467,
-      "peakRssMB": 75.9
+      "peakRssMB": 80.1
     },
     {
       "id": "medium-graph",
       "description": "generated 32-node / 31-relation balanced tree (org-chart shape)",
       "selected": 32,
       "relations": 31,
-      "coldMs": 13086.7,
-      "warmMs": 12769.1,
+      "coldMs": 2119.4,
+      "warmMs": 0.6,
       "refreshMs": null,
-      "irBytes": 20058,
+      "irBytes": 20069,
       "svgBytes": 108972,
-      "peakRssMB": 138.1
+      "peakRssMB": 137.3
     },
     {
       "id": "large-graph",
       "description": "generated 127-node / 126-relation balanced tree — just under the 128-element live-view boundary",
       "selected": 127,
       "relations": 126,
-      "coldMs": 18155.1,
-      "warmMs": 18405.4,
+      "coldMs": 2177.2,
+      "warmMs": 1.7,
       "refreshMs": null,
-      "irBytes": 74735,
+      "irBytes": 74746,
       "svgBytes": 271827,
-      "peakRssMB": 159.7
+      "peakRssMB": 148.9
     },
     {
       "id": "chart-refresh",
       "description": "20-record bar chart + replaceData refresh",
       "selected": 20,
       "relations": 0,
-      "coldMs": 8,
-      "warmMs": 2.9,
-      "refreshMs": 9.7,
-      "irBytes": 9551,
+      "coldMs": 6.5,
+      "warmMs": 0.2,
+      "refreshMs": 13.6,
+      "irBytes": 9562,
       "svgBytes": 15397,
-      "peakRssMB": 164.2
+      "peakRssMB": 148.9
     },
     {
       "id": "dashboard-refresh",
       "description": "panels.composed@1 dashboard, 4 child chart views (12 records each) + replaceData refresh",
       "selected": 12,
       "relations": 0,
-      "coldMs": 15.6,
-      "warmMs": 6.2,
-      "refreshMs": 37.8,
-      "irBytes": 31718,
+      "coldMs": 18,
+      "warmMs": 0.6,
+      "refreshMs": 43.7,
+      "irBytes": 31773,
       "svgBytes": 38024,
-      "peakRssMB": 166
+      "peakRssMB": 149
     }
   ]
 }

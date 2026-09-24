@@ -2,6 +2,8 @@
 export function makeLiveAPI(backend,assets){
 'use strict';
 const VERSION='0.6.0-beta.1',D=backend.DDN,clone=x=>JSON.parse(JSON.stringify(x)),Q=n=>({$quantity:n,unit:'px'});
+/* vm-sandboxed hosts (tests, embedded runtimes) may lack structuredClone. */
+const deepClone=typeof structuredClone==='function'?structuredClone:clone;
 assets={...assets,registry:D.profiles.registry(assets.registry)};
 const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
@@ -111,8 +113,8 @@ function relative(base,target){const a=base.split('/').slice(0,-1),b=target.spli
 function resolvePath(base,rel){if(/^(?:[a-z]+:|\/|\\)/i.test(rel)||rel.includes('\\'))fail('LIVE010','Imports must be workspace relative.');const a=base.split('/').slice(0,-1);for(const bit of rel.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!a.length)fail('LIVE010','Import escapes workspace.');a.pop();}else a.push(bit);}return a.join('/');}
 function replaceSpans(text,edits){const sorted=[...edits].sort((a,b)=>b.start-a.start);let last=text.length+1;for(const e of sorted){if(!Number.isInteger(e.start)||!Number.isInteger(e.end)||e.start<0||e.end<e.start||e.end>text.length||e.end>last||typeof e.text!=='string')fail('LIVE031','Overlapping or invalid text edits.');text=text.slice(0,e.start)+e.text+text.slice(e.end);last=e.start;}return text;}
 function createWorkspace(input){
- let files=filesChecked(input),revision=0;const cache=new Map(),listeners=new Set(),undo=[],redo=[];let historyBytes=0,destroyed=false;
- function notify(changed){revision++;cache.clear();for(const fn of listeners){try{fn({revision,changedFiles:changed});}catch(e){console.error('DDN listener:',e);}}}
+ let files=filesChecked(input),revision=0;const cache=new Map(),geometryCache=new Map(),listeners=new Set(),undo=[],redo=[];let historyBytes=0,destroyed=false;
+ function notify(changed){revision++;cache.clear();geometryCache.clear();for(const fn of listeners){try{fn({revision,changedFiles:changed});}catch(e){console.error('DDN listener:',e);}}}
  function commit(next,label='Edit source',record=true){if(destroyed)fail('LIVE016','Workspace destroyed.');next=filesChecked(next);const keys=[...new Set([...Object.keys(files),...Object.keys(next)])],patch=keys.filter(k=>files[k]!==next[k]).map(k=>({file:k,before:files[k],after:next[k]}));if(!patch.length)return revision;if(record){const bytes=patch.reduce((n,p)=>n+(p.before?.length||0)+(p.after?.length||0),0);undo.push({patch,label,bytes});historyBytes+=bytes;while(undo.length>60||historyBytes>16000000&&undo.length>1)historyBytes-=undo.shift().bytes;redo.length=0;}files=next;notify(patch.map(p=>p.file));return revision;}
  function compiled(entry,view){if(!Object.hasOwn(files,entry))fail('LIVE012','Missing entry: '+entry);const key=entry+'#'+(view||'');if(cache.has(key))return cache.get(key);const built=D.build(files,entry,view,assets.registry),ir=built.ir;
   if(ir.view.selected.length>128||ir.view.relations.length>384)fail('LIVE013','Live view limit: 128 elements and 384 relationships. Split the model into linked views.');
@@ -139,6 +141,14 @@ function createWorkspace(input){
   subscribe(fn){if(typeof fn!=='function')throw new TypeError('Listener must be a function.');listeners.add(fn);return()=>listeners.delete(fn);},
   renderSync({entry,view,overrides={},layoutState=null,noMotion=false,isoFrom=null}){
    const start=performance.now(),base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
+   /* B1-042 (D2.4): completed-geometry memoization. The cache lives beside the
+    * compiled-IR cache and is cleared with it on every source change, so
+    * entry#view plus the exact render inputs identifies an unchanged view.
+    * Stored copies are structured clones: callers may mutate what they get,
+    * the cache stays pristine, and every render returns a fresh object. */
+   const geometryKey=entry+'#'+view+'|'+JSON.stringify([overrides,layoutState,noMotion===true,isoFrom]);
+   const hit=geometryCache.get(geometryKey);
+   if(hit)return{...deepClone(hit),milliseconds:performance.now()-start};
    /* B1-034 (D6): isoFrom carries the host's previous committed depths
     * ({depths: {elementId: px}}) so ddn-iso emits a short declarative SMIL
     * transition (<=300 ms) on refresh-driven height changes. */
@@ -148,7 +158,9 @@ function createWorkspace(input){
    const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));
    for(const m of result.scene.projection?.mapping||[])if(sourceMap[m.source])sourceMap[m.occurrence]={...sourceMap[m.source],sourceId:m.source};
    const keys=clone((redacted?publicIR:v.ir).view.keys);
-   return{svg:result.svg,scene:result.scene,layoutState:result.scene.layoutState||null,diagnostics:result.diagnostics||[],entry,view,modelFingerprint:fingerprint(JSON.stringify(D.semanticJSON(redacted?publicIR:base.ir))),revision,milliseconds:performance.now()-start,profiles:clone(redacted?publicIR.view.profiles:p),capabilities:capabilities(v.ir),overrides:v.options,keys,sourceMap,dependencies:redacted?[]:base.dependencies.slice()};
+   const out={svg:result.svg,scene:result.scene,layoutState:result.scene.layoutState||null,diagnostics:result.diagnostics||[],entry,view,modelFingerprint:fingerprint(JSON.stringify(D.semanticJSON(redacted?publicIR:base.ir))),revision,milliseconds:performance.now()-start,profiles:clone(redacted?publicIR.view.profiles:p),capabilities:capabilities(v.ir),overrides:v.options,keys,sourceMap,dependencies:redacted?[]:base.dependencies.slice()};
+   geometryCache.set(geometryKey,deepClone(out));while(geometryCache.size>4)geometryCache.delete(geometryCache.keys().next().value);
+   return out;
   },
   async render(options){return this.renderSync(options);},
   exportVegaLite({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(!backend.Projections)fail('DDN-E010','Vega-Lite export is provided by ddn-projections.js; load it after ddn-core.js and ddn-graph.js.');return backend.Projections.vegaLite(v.ir);},
@@ -157,7 +169,7 @@ function createWorkspace(input){
   projectionPlan(entry,view){return clone(backend.Engine.plan(compiled(entry,view).ir,D.DDNError));},
   exportModel({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(v.ir.view.profiles.layout.x_interaction&&v.ir.view.profiles.export.mode==='redacted'){if(!backend.Interaction)fail('DDN-E010','Interaction validation is provided by ddn-graph.js; load it after ddn-core.js.');backend.Interaction.validate(v.ir);}return backend.Export.serialize(v.ir);},
   snapshot(entry,view,overrides={},layoutState=null){checkOptions(overrides);return{format:'ddn-workspace@1',runtime:ENGINES,files:{...files},entry,view,overrides:clone(overrides),...(layoutState?{layoutState:clone(layoutState)}:{})};},
-  destroy(){cache.clear();listeners.clear();undo.length=redo.length=0;files=Object.create(null);destroyed=true;}
+  destroy(){cache.clear();geometryCache.clear();listeners.clear();undo.length=redo.length=0;files=Object.create(null);destroyed=true;}
  };return ws;
 }
 const workspaces=new Map();
