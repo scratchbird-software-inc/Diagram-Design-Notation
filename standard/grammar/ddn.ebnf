@@ -7,7 +7,7 @@
 document       = "ddn", string, ";", { import }, section, { section } ;
 section        = "module", string, ";", { top } ;
 import         = "import", string, "as", identifier, ";" ;
-top            = data | format | view ;
+top            = data | records | format | view ;
 data           = "data", identifier, [ string ], block ;
 format         = "format", identifier, [ string ], block ;
 view           = "view", identifier, [ string ], ( block | viewHeader ) ;
@@ -69,6 +69,31 @@ mark           = "[", identifier, "]" ; (* desugars to source_mark / target_mark
    exactly (defaults apply at build). *)
 viewHeader     = ":", viewData, [ "as", string ], ( block | ";" ) ;
 viewData       = reference | "[", [ reference, { ",", reference } ], "]" ;
+(* B1-040 compact authoring, phase 4 (same desugar rule as phases 1–3):
+   keyed tabular records. A `records` block is a data block whose column order
+   is declared once; each `row <id>:` desugars to the identical canonical
+   `object <id> "<label>" { kind: record; x_record: { <column>: <value>, … } }`
+   declaration — per-row identity, column order, scalar types and the
+   missing/null/undecided distinction preserved, so projections and the B1-029
+   keyed refresh (row ids ARE the record keys) are unchanged. Row values are
+   scalar literals only (string, number, quantity, boolean, null, missing,
+   undecided, not_applicable, conflicting, or a bare word — no references,
+   arrays or nested records). The optional label_column names the column that
+   supplies each row's display label (string or finite number; any other
+   scalar falls back to the row id); without it the label is the row id.
+   A column count mismatch is a coded parse error (DDN-E016) naming the row
+   and the expected/actual counts; a row's optional body carries extra
+   PROPERTIES only (merged onto the record object; kind:/x_record: inside is
+   a duplicate — DDN011; nested declarations are DDN-E016). Canonical data
+   members (object/relation declarations, typed declarations, relation
+   batches) mix into a records body freely, which is what lets the refresh
+   tool append and rewrite records in canonical form. *)
+records        = "records", identifier, [ string ], "{", { recordsMember }, "}", [ ";" ] ;
+recordsMember  = columnsDecl | labelColumnDecl | recordRow | typedDeclaration | compactRelation | relationBatch | declaration ;
+columnsDecl    = "columns", ":", identifier, { ",", identifier }, ";" ;
+labelColumnDecl = "label_column", ":", identifier, ";" ;
+recordRow      = "row", identifier, ":", scalar, { ",", scalar }, ( block | ";" ) ;
+scalar         = string | quantity | number | atom ;
 targetDeclaration = ( "place" | "route" ), reference, block ;
 flowDeclaration = "flow", identifier, [ string ], block ;
 steps          = "steps", ":", reference, { "->", reference }, ";" ;

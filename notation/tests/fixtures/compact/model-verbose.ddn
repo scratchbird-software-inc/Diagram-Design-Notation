@@ -47,3 +47,18 @@ view header "Header form" {
  select: [@model.customer];
  publication { size: content; fit: none; }
 }
+// B1-040 verbose twin of the compact records block above.
+data metrics {
+ object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+ object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+ object m3 "m3" { kind: record; x_record: { label: missing, value: null, unit: "ms" }; note: "outlier"; }
+}
+view metrics_graph "Metrics / graph" {
+ data: [@metrics];
+ publication { size: content; fit: none; }
+}
+view metrics_chart "Metrics / chart" {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication { size: content; fit: none; }
+}

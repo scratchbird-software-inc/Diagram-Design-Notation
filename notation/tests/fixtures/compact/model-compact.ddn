@@ -52,3 +52,21 @@ view header "Header form": @model as "ddn@1" {
  select: [@model.customer];
  publication { size: content; fit: none; }
 }
+// B1-040 phase 4: keyed tabular records ≡ one canonical record object per row
+// (missing/null keep their semantics; a missing label falls back to the row id).
+records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: "Beta", 20, "ms";
+ row m3: missing, null, "ms" { note: "outlier"; };
+}
+view metrics_graph "Metrics / graph" {
+ data: [@metrics];
+ publication { size: content; fit: none; }
+}
+view metrics_chart "Metrics / chart" {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication { size: content; fit: none; }
+}

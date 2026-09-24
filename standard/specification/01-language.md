@@ -135,6 +135,30 @@ Profile implies kind. The versioned profile string uniquely identifies the proje
 
 Conflicts. The header owns the projection when `as` is present, so a body `projection {…}` block or `projection:` property is a coded parse error (DDN-E015) — write either the header form or the canonical projection, not both. A body `data:` property after a header datasource stays a plain duplicate property (DDN011). As with phases 1–2, the normalizer never rewrites verbose↔compact headers; authoring edits stay token-precise on the header form.
 
+## Compact authoring (phase 4)
+
+Keyed tabular records follow the same desugar contract: a `records` block is a data block whose column order is declared once, and the parser expands every row to the identical canonical record-object declaration — per-row identity, column order, scalar types and the missing/null/undecided distinction preserved — so `DDN.semanticJSON`, rendered SVG and validation outcomes are indistinguishable from the verbose form.
+
+```ddn
+ddn "0.5";
+module "shop.facts";
+records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: missing, null, "ms";
+ row m3: "Gamma", 30, "ms" { note: "outlier"; };
+}
+```
+
+Each `row <id>:` is exactly `object <id> "<label>" { kind: record; x_record: { <column>: <value>, … } }` — the row above desugars to `object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }`. Column order maps values to `x_record` keys positionally; `missing`, `null`, `undecided`/`not_applicable`/`conflicting` keep their canonical literal semantics. Row values are scalar literals only (string, number, quantity, boolean, null, missing, the state words, or a bare word); references, arrays and nested records are a coded parse error (DDN-E016).
+
+Labels. The optional `label_column` names the column that supplies each row's display label: a string (or finite number, coerced) becomes the object label; any other scalar — including `missing` and `null` — falls back to the row id, mirroring the canonical `label||id` display rule. Without a `label_column` the label is the row id (the same convention the refresh tool uses when it appends records).
+
+Row identity and refresh. Row ids ARE the record keys of the keyed refresh (see the data-refresh contract): refreshing a `records` block targets rows by id, and keyed add/remove/update works against the compact source. Updates rewrite a touched row as its canonical object form in place (preserving its display label and any extra body properties); removals delete the row statement; additions are appended in canonical object form. Canonical data members — object/relation declarations, typed declarations, relation batches — mix into a records body freely, which is what makes that round-trip legal.
+
+Bodies and conflicts. A row's optional body carries extra PROPERTIES only, merged onto the record object under canonical duplicate rules (`kind:` or `x_record:` inside is DDN011, since the row supplies both); nested declarations inside a row body are a coded parse error (DDN-E016). The `columns` and `label_column` directives must precede every row (DDN-E016), are singular (DDN011), and `label_column` must name a declared column (DDN-E016). A column count mismatch is a coded parse error (DDN-E016) naming the row and the expected/actual counts. As with phases 1–3, the normalizer never rewrites verbose↔compact records.
+
 
 ## Recursive members
 

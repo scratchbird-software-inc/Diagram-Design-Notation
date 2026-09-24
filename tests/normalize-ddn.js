@@ -95,3 +95,33 @@ view plain: @m;
   }
   console.log('PASS normalize preserves compact view headers (strips pins only)');
 }
+/* B1-040 D5: keyed tabular records are an author choice too. The normalizer
+ * strips default-equal pins but never expands a records block to per-row
+ * canonical objects. */
+{
+  const fs = require('node:fs'), os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ddn-norm-records-'));
+  const file = path.join(dir, 'fixture.ddn');
+  const compact = `ddn "0.5";
+module "tests.norm.records";
+records metrics {
+  columns: label, value, unit;
+  label_column: label;
+  row m1: "Alpha", 10, "ms";
+  row m2: missing, null, "ms" { note: "outlier"; };
+}
+view v { data: [@metrics]; layout { frame_overflow: expand; } }
+`;
+  fs.writeFileSync(file, compact);
+  const run = cp.spawnSync(process.execPath, [path.join(root, 'tools/normalize-ddn.mjs'), file], { encoding: 'utf8' });
+  if (run.status !== 0) { console.error('FAIL normalize records preservation:', run.stderr.trim() || run.stdout.trim()); process.exit(1); }
+  const out = fs.readFileSync(file, 'utf8');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const rowsKept = out.includes('records metrics {') && out.includes('row m1: "Alpha", 10, "ms";') && out.includes('row m2: missing, null, "ms" { note: "outlier"; };');
+  const notRewritten = !out.includes('object m1') && !out.includes('object m2') && !out.includes('kind: record') && !out.includes('x_record');
+  const pinStripped = !out.includes('frame_overflow');
+  if (!rowsKept || !notRewritten || !pinStripped) {
+    console.error('FAIL normalize records preservation:', JSON.stringify({ rowsKept, notRewritten, pinStripped }), '\n' + out); process.exit(1);
+  }
+  console.log('PASS normalize preserves keyed tabular records (strips pins only)');
+}

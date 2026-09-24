@@ -64,3 +64,25 @@ view header "One-line header / compact view declaration": @model as "ddn@1" {
  format: @shared.styles.technical; select: [@model.order,@model.customer];
  publication {size: content;fit: none;overflow: error;}
 }
+// verbose:
+//   data metrics {
+//    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+//    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+//    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
+//    object m4 "Delta" { kind: record; x_record: { label: "Delta", value: 25, unit: "ms" }; }
+//    object m5 "m5" { kind: record; x_record: { label: missing, value: null, unit: "ms" }; note: "awaiting measurement"; }
+//   }
+records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: "Beta", 20, "ms";
+ row m3: "Gamma", 15, "ms";
+ row m4: "Delta", 25, "ms";
+ row m5: missing, null, "ms" { note: "awaiting measurement"; };
+}
+view metrics_chart "Order timings / keyed tabular records" {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3, @metrics.m4]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication {size: content;fit: none;}
+}

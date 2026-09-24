@@ -52,7 +52,7 @@ test('typed declaration without body desugars like verbose semicolon form', () =
 const fx = path.join(__dirname, 'fixtures', 'compact');
 const compact = fs.readFileSync(path.join(fx, 'model-compact.ddn'), 'utf8');
 const verbose = fs.readFileSync(path.join(fx, 'model-verbose.ddn'), 'utf8');
-for (const view of ['main', 'subset', 'header'])
+for (const view of ['main', 'subset', 'header', 'metrics_graph', 'metrics_chart'])
   test('equivalence gate: paired fixture corpus, view ' + view, () => {
     const a = DDN.build({ 'verbose.ddn': verbose }, 'verbose.ddn', view, reg);
     const b = DDN.build({ 'compact.ddn': compact }, 'compact.ddn', view, reg);
@@ -118,9 +118,24 @@ test('basics 12-nested-fields compact example equals verbose expansion', () => {
   const twin = files['12-nested-fields.ddn']
     .replace('collection customer "Customer profile / nested structure" {', 'object customer "Customer profile / nested structure" { kind: collection;')
     .replace('table order "Order" {fields {order_id; customer_id', 'object order "Order" {kind: table; fields {field order_id; field customer_id')
-    .replace('view header "One-line header / compact view declaration": @model as "ddn@1" {', 'view header "One-line header / compact view declaration" { data: [@model]; projection { kind: graph; profile: "ddn@1"; }');
+    .replace('view header "One-line header / compact view declaration": @model as "ddn@1" {', 'view header "One-line header / compact view declaration" { data: [@model]; projection { kind: graph; profile: "ddn@1"; }')
+    .replace(`records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: "Beta", 20, "ms";
+ row m3: "Gamma", 15, "ms";
+ row m4: "Delta", 25, "ms";
+ row m5: missing, null, "ms" { note: "awaiting measurement"; };
+}`, `data metrics {
+ object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+ object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+ object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
+ object m4 "Delta" { kind: record; x_record: { label: "Delta", value: 25, unit: "ms" }; }
+ object m5 "m5" { kind: record; x_record: { label: missing, value: null, unit: "ms" }; note: "awaiting measurement"; }
+}`);
   assert.notEqual(twin, files['12-nested-fields.ddn'], 'twin mutation targets missing');
-  for (const view of ['detailed', 'large', 'collapsed', 'header']) {
+  for (const view of ['detailed', 'large', 'collapsed', 'header', 'metrics_chart']) {
     const a = DDN.build({ ...files, 'twin.ddn': twin }, 'twin.ddn', view, reg);
     const b = DDN.build(files, '12-nested-fields.ddn', view, reg);
     assert.deepEqual(DDN.semanticJSON(b.ir), DDN.semanticJSON(a.ir));
@@ -415,6 +430,197 @@ test('authoring label edit preserves the compact view header syntax', () => {
   assert.ok(text.includes('view v "Header view": @m as "ddn@1";'), 'header corrupted: ' + text);
   const r = w.renderSync({ entry: 'main.ddn', view: 'v' });
   assert.ok(r.svg.startsWith('<?xml'));
+});
+
+/* ------------------------------------------------------------------------
+ * B1-040 phase 4: keyed tabular records. Same equivalence gate: the parser
+ * desugars each `row <id>:` to the identical canonical record object, so
+ * compact and verbose sources build equal semanticJSON, byte-identical SVG
+ * and identical diagnostics. Row ids ARE the B1-029 refresh keys.
+ * --------------------------------------------------------------------- */
+
+/* Baseline pair from the item (label_column + missing/null + a row body),
+ * rendered as a chart to prove projections consume the desugared records. */
+const recCompact = `ddn "0.5"; module "t";
+records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: "Beta", 20, "ms";
+ row m3: "Gamma", 30, "ms" { note: "outlier"; };
+}
+view chart_view {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication { size: content; fit: none; }
+}`;
+const recVerbose = `ddn "0.5"; module "t";
+data metrics {
+ object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+ object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+ object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 30, unit: "ms" }; note: "outlier"; }
+}
+view chart_view {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication { size: content; fit: none; }
+}`;
+test('equivalence gate: records block with label_column, row body, chart render', () => {
+  assertEquivalent(recCompact, recVerbose, 'chart_view', 'records block');
+});
+
+/* Every scalar literal class keeps its canonical semantics positionally. */
+test('equivalence gate: every scalar literal class in row position', () => {
+  const cols = 's, n, q, b, nil, miss, und, na, conf, bare';
+  const vals = '"txt", -3.5, 12px, true, null, missing, undecided, not_applicable, conflicting, plain';
+  const verb = '{ s: "txt", n: -3.5, q: 12px, b: true, nil: null, miss: missing, und: undecided, na: not_applicable, conf: conflicting, bare: plain }';
+  assertEquivalent(
+    `ddn "0.5"; module "t"; records r { columns: ${cols}; row r1: ${vals}; } view v { data: [@r]; }`,
+    `ddn "0.5"; module "t"; data r { object r1 "r1" { kind: record; x_record: ${verb}; } } view v { data: [@r]; }`,
+    'v', 'scalar literal classes');
+  const ir = build(`ddn "0.5"; module "t"; records r { columns: ${cols}; row r1: ${vals}; } view v { data: [@r]; }`).ir;
+  const xr = ir.elements[0].properties.x_record;
+  assert.equal(xr.nil, null);
+  assert.deepEqual(xr.miss, { $missing: true });
+  assert.deepEqual(xr.und, { $state: 'undecided' });
+  assert.deepEqual(xr.na, { $state: 'not_applicable' });
+  assert.deepEqual(xr.conf, { $state: 'conflicting' });
+  assert.equal(xr.bare, 'plain');
+  assert.deepEqual(xr.q, { $quantity: 12, unit: 'px' });
+});
+
+/* Label rules: label_column string wins; finite numbers coerce; any other
+ * scalar (missing/null/state) falls back to the row id; no label_column at
+ * all means the row id is the label (the refresh tool's own convention). */
+test('label_column variants: string, number coercion, missing/null fallback', () => {
+  const ir = build(`ddn "0.5"; module "t";
+records r { columns: label, v; label_column: label;
+ row a: "Alpha", 1; row b: 42, 2; row c: missing, 3; row d: null, 4; row e: undecided, 5; }
+records plain { columns: v; row z: 9; }
+view v { data: [@r, @plain]; }`).ir;
+  const names = Object.fromEntries(ir.elements.map(n => [n.ref.split('.').pop(), n.name]));
+  assert.deepEqual(names, { a: 'Alpha', b: '42', c: 'c', d: 'd', e: 'e', z: 'z' });
+  const xr = ir.elements.find(n => n.name === 'c').properties.x_record;
+  assert.deepEqual(xr.label, { $missing: true }, 'label column value stays in the record payload');
+});
+
+/* Canonical data members mix into a records body (this is what makes refresh
+ * round-trips legal); an empty records block is an empty data block. */
+test('canonical members mix into a records block; empty block is empty data', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; records r { columns: v; row a: 1; object b "B" { kind: record; x_record: { v: 2 }; } table t { fields { f; } } } view v { data: [@r]; }',
+    'ddn "0.5"; module "t"; data r { object a "a" { kind: record; x_record: { v: 1 }; } object b "B" { kind: record; x_record: { v: 2 }; } object t { kind: table; fields { field f; } } } view v { data: [@r]; }',
+    'v', 'mixed records body');
+  assertEquivalent(
+    'ddn "0.5"; module "t"; records r { columns: v; } view v { data: [@r]; }',
+    'ddn "0.5"; module "t"; data r { } view v { data: [@r]; }',
+    'v', 'empty records block');
+});
+
+/* Coded errors. */
+test('column count mismatch names the row and expected/actual counts (DDN-E016)', () => {
+  for (const [vals, expected, actual] of [['1, 2', 1, 2], ['1, 2, 3, 4', 3, 4]]) {
+    const cols = expected === 1 ? 'v' : 'a, b, c';
+    try {
+      DDN.parse(`ddn "0.5"; module "t"; records r { columns: ${cols}; row bad: ${vals}; }`);
+      assert.fail('expected DDN-E016');
+    } catch (e) {
+      assert.equal(e.code, 'DDN-E016');
+      assert.match(e.message, /Row bad/);
+      assert.match(e.message, new RegExp(actual + ' value'));
+      assert.match(e.message, new RegExp(expected + ' column'));
+    }
+  }
+});
+test('records directives: order, singularity and membership are coded errors', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { row a: 1; columns: v; }'), e => e.code === 'DDN-E016' && /columns before its first row/.test(e.message));
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: 1; columns: v; }'), e => e.code === 'DDN-E016' && /precede every row/.test(e.message));
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v, v; }'), e => e.code === 'DDN011');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; columns: w; }'), e => e.code === 'DDN011');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; label_column: v; label_column: v; }'), e => e.code === 'DDN011');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; label_column: nope; row a: 1; }'), e => e.code === 'DDN-E016' && /not one of the declared columns/.test(e.message));
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { label_column: v; }'), e => e.code === 'DDN-E016');
+});
+test('row values are scalar literals only; row bodies carry properties only (DDN-E016)', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: @r.a; }'), e => e.code === 'DDN-E016');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: [1]; }'), e => e.code === 'DDN-E016');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: { x: 1 }; }'), e => e.code === 'DDN-E016');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: 1 { fields { f; } } }'), e => e.code === 'DDN-E016' && /properties only/.test(e.message));
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: 1 { kind: record; } }'), e => e.code === 'DDN011');
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; records r { columns: v; row a: 1 { x_record: {}; } }'), e => e.code === 'DDN011');
+});
+test('a records block is a data block to tools (label keeps its position)', () => {
+  const doc = DDN.parse('ddn "0.5"; module "t"; records r "R" { columns: v; }');
+  assert.equal(doc.declarations[0].type, 'data');
+  assert.equal(doc.declarations[0].label, 'R');
+});
+
+/* D4: row ids ARE the B1-029 refresh keys — keyed add/remove/update against a
+ * compact records block. Selector-only graph view: changes are legal. */
+const recGraphSrc = `ddn "0.5";
+module "t";
+records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: "Beta", 20, "ms";
+ row m3: "Gamma", 15, "ms" { note: "outlier"; };
+}
+view graph_view { data: [@metrics]; publication { size: content; fit: none; } }
+`;
+test('keyed refresh on a compact records block: add, remove, update commit', () => {
+  const ws = A.createWorkspace({ 'fixture.ddn': recGraphSrc });
+  const before = ws.renderSync({ entry: 'fixture.ddn', view: 'graph_view' }).svg;
+  const r = ws.replaceData('metrics', [
+    { key: 'm1', label: 'Alpha', value: 16, unit: 'ms' },
+    { key: 'm3', label: 'Gamma', value: 20, unit: 'ms' },
+    { key: 'm9', label: 'Omega', value: 7, unit: 'ms' }]);
+  assert.equal(r.committed, true, JSON.stringify(r.diagnostics));
+  assert.deepEqual(r.added, ['m9']);
+  assert.deepEqual(r.removed, ['m2']);
+  assert.deepEqual(r.updated.sort(), ['m1', 'm3']);
+  const text = ws.getFiles()['fixture.ddn'];
+  assert.ok(!/row m2/.test(text), 'removed row statement deleted');
+  assert.ok(text.includes('object m1 "Alpha" { kind: record; x_record: { "label": "Alpha", "value": 16, "unit": "ms" }; }'), 'updated row rewritten in canonical form: ' + text);
+  assert.ok(text.includes('object m3 "Gamma"') && text.includes('note: "outlier";'), 'extra row body properties preserved');
+  assert.ok(text.includes('object m9'), 'added record appended in canonical form');
+  assert.ok(text.includes('columns: label, value, unit;'), 'untouched directives preserved');
+  const after = ws.renderSync({ entry: 'fixture.ddn', view: 'graph_view' });
+  assert.match(after.svg, /<svg/);
+  assert.notEqual(after.svg, before, 'updated values change the rendered graph labels/records');
+  const xr = Object.fromEntries(ws.resolve('fixture.ddn', 'graph_view').elements.map(e => [e.ref.split('.').pop(), e.properties.x_record]));
+  assert.equal(xr.m1.value, 16); assert.equal(xr.m9.value, 7); assert.equal(xr.m2, undefined);
+});
+test('keyed refresh with identical values re-renders byte-identical', () => {
+  const ws = A.createWorkspace({ 'fixture.ddn': recGraphSrc });
+  const before = ws.renderSync({ entry: 'fixture.ddn', view: 'graph_view' }).svg;
+  const r = ws.replaceData('metrics', [
+    { key: 'm1', label: 'Alpha', value: 10, unit: 'ms' },
+    { key: 'm2', label: 'Beta', value: 20, unit: 'ms' },
+    { key: 'm3', label: 'Gamma', value: 15, unit: 'ms' }]);
+  assert.equal(r.committed, true, JSON.stringify(r.diagnostics));
+  assert.equal(ws.renderSync({ entry: 'fixture.ddn', view: 'graph_view' }).svg, before);
+});
+test('refresh removal of a view-referenced row is rejected transactionally', () => {
+  const src = recGraphSrc + `view chart_view {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication { size: content; fit: none; }
+}
+`;
+  const ws = A.createWorkspace({ 'fixture.ddn': src });
+  const before = ws.getFiles();
+  const r = ws.replaceData('metrics', [{ key: 'm1', label: 'Alpha', value: 10, unit: 'ms' }]);
+  assert.equal(r.committed, false);
+  assert.ok(r.diagnostics.some(d => d.failure === 'removed-record-referenced' && d.record === 'm2'));
+  assert.deepEqual(ws.getFiles(), before, 'nothing commits on a rejected refresh');
+});
+test('authoring setRecordValue rewrites a compact row canonically', () => {
+  const ws = A.createWorkspace({ 'fixture.ddn': recGraphSrc });
+  A.authoring.setRecordValue(ws, 'fixture.ddn', 'graph_view', 't::metrics.m3', 'value', 99);
+  const text = ws.getFiles()['fixture.ddn'];
+  assert.ok(text.includes('object m3 "Gamma" { kind: record; x_record: { "label": "Gamma", "value": 99, "unit": "ms" }; note: "outlier"; }'), text);
+  assert.match(ws.renderSync({ entry: 'fixture.ddn', view: 'graph_view' }).svg, /<svg/);
 });
 
 const failed = results.filter(x => x.status === 'fail');

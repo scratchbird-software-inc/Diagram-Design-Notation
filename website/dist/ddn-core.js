@@ -1554,6 +1554,80 @@
         fail('DDN010',`Expected ; or block after view header`,peek(),source);
       }
       function headerRef(){if(peek().type!=='@')fail('DDN010','Expected a @data reference in the view header',peek(),source);return ref();}
+      /* B1-040 D1: keyed tabular records. A `records` block is a data block
+       * whose column order is declared once and each `row <id>:` desugars to
+       * the identical canonical
+       * `object <id> "<label>" { kind: record; x_record: {…} }` declaration —
+       * per-row identity, column order, scalar types and the
+       * missing/null/undecided distinction preserved, so projections, refresh
+       * (row ids ARE the B1-029 keys) and validation are unchanged. Canonical
+       * data members (objects, relations, typed/batch forms) mix in freely. */
+      function recordsDeclaration(t){
+        let n={type:'data',id:null,label:null,props:Object.create(null),children:[],start:t.start,source,compactRecords:true};
+        n.id=expect('id').value;
+        if(peek().type==='string')n.label=take().value;
+        expect('{');n.bodyStart=tokens[pos-1].end;if(++depth>80)fail('DDN007','Maximum nesting exceeded',peek(),source);
+        let columns=null,labelColumn=null,sawRow=false;
+        while(peek().type!=='}'){
+          if(peek().type==='eof')fail('DDN010','Missing closing brace',peek(),source);
+          const t2=expect('id');
+          if(t2.value==='columns'&&peek().type===':'){take();
+            if(sawRow)fail('DDN-E016','The columns declaration must precede every row of a records block',t2,source);
+            if(columns)fail('DDN011','Duplicate property columns',t2,source);
+            columns=[];
+            for(;;){const ct=expect('id');
+              if(['__proto__','prototype','constructor'].includes(ct.value))fail('DDN008','Reserved key',ct,source);
+              if(columns.includes(ct.value))fail('DDN011',`Duplicate column ${ct.value}`,ct,source);
+              columns.push(ct.value);
+              if(peek().type!==',')break;take();}
+            expect(';');continue;}
+          if(t2.value==='label_column'&&peek().type===':'){take();
+            if(sawRow)fail('DDN-E016','The label_column declaration must precede every row of a records block',t2,source);
+            if(labelColumn)fail('DDN011','Duplicate property label_column',t2,source);
+            labelColumn=expect('id').value;expect(';');continue;}
+          if(t2.value==='row'){if(!columns)fail('DDN-E016','A records block must declare columns before its first row',t2,source);
+            sawRow=true;n.children.push(recordRow(t2,columns,labelColumn));continue;}
+          if(t2.value==='relations'&&peek().type==='id'&&relationKinds.has(peek().value)){relationBatch(n);continue;}
+          if(peek().type==='id'&&(typedKinds.has(t2.value)||relationKinds.has(t2.value))){n.children.push(compactDataDeclaration(t2));continue;}
+          n.children.push(declaration(t2));
+        }
+        if(!columns)fail('DDN-E016','A records block requires a columns declaration',{start:n.start},source);
+        if(labelColumn&&!columns.includes(labelColumn))fail('DDN-E016',`label_column ${labelColumn} is not one of the declared columns (${columns.join(', ')})`,{start:n.start},source);
+        n.bodyEnd=peek().start;n.end=take().end;depth--;if(peek().type===';')n.end=take().end;
+        return n;
+      }
+      function recordRow(kw,columns,labelColumn){
+        let n={type:'object',id:null,label:null,props:Object.create(null),children:[],start:kw.start,source};
+        n.id=expect('id').value;expect(':');
+        const vals=[recordScalar()];
+        while(peek().type===','){take();vals.push(recordScalar());}
+        if(vals.length!==columns.length)fail('DDN-E016',`Row ${n.id} declares ${vals.length} value(s) but the records block declares ${columns.length} column(s) (${columns.join(', ')})`,kw,source);
+        if(labelColumn&&!columns.includes(labelColumn))fail('DDN-E016',`label_column ${labelColumn} is not one of the declared columns (${columns.join(', ')})`,kw,source);
+        n.props.kind='record';
+        const xr=Object.create(null);columns.forEach((c,i)=>{xr[c]=vals[i];});
+        n.props.x_record=xr;
+        n.compactRow={columns:[...columns],labelColumn};
+        // The label column supplies the display label when it holds a string or
+        // finite number; any other scalar (missing/null/state/boolean) falls
+        // back to the row id, mirroring the canonical `label||id` display rule.
+        const lv=labelColumn?xr[labelColumn]:undefined;
+        n.label=typeof lv==='string'?lv:(typeof lv==='number'&&Number.isFinite(lv)?String(lv):n.id);
+        if(peek().type===';'){n.end=take().end;return n;}
+        if(peek().type==='{'){body(n);
+          if(n.children.length)fail('DDN-E016',`Row ${n.id}: a row body carries extra properties only; nested declarations are not supported`,{start:n.start},source);
+          return n;}
+        fail('DDN010',`Expected ; or block after row ${n.id}`,peek(),source);
+      }
+      function recordScalar(){
+        const t=peek();
+        if(['string','number','quantity'].includes(t.type))return take().value;
+        if(t.type==='id'){take();
+          if(t.value==='true')return true;if(t.value==='false')return false;if(t.value==='null')return null;
+          if(['undecided','not_applicable','conflicting'].includes(t.value))return {$state:t.value};
+          if(t.value==='missing')return {$missing:true};
+          return t.value;}
+        fail('DDN-E016','Row values must be scalar literals (string, number, quantity, boolean, null, missing, undecided, not_applicable, conflicting, or a bare word)',t,source);
+      }
       expect('id','ddn');let version=expect('string').value;expect(';');
       if(!SOURCE_VERSIONS.includes(version))fail('DDN012',`Unsupported language version ${version}; expected ${SOURCE_VERSIONS.join(', ')}`,tokens[1],source);
       const imports=[],sections=[],declarations=[];
@@ -1569,7 +1643,8 @@
         const decls=[];
         while(peek().type!=='eof'&&!(peek().type==='id'&&peek().value==='module')){
           if(peek().type==='id'&&peek().value==='import')fail('DDN015','Import must precede the first module header (or follow it in the legacy position before any declaration)',peek(),source);
-          decls.push(declaration(expect('id')));
+          const dt=expect('id');
+          decls.push(dt.value==='records'&&peek().type==='id'?recordsDeclaration(dt):declaration(dt));
         }
         sections.push({module,declarations:decls});declarations.push(...decls);
       }while(peek().type==='id'&&peek().value==='module');
@@ -2601,6 +2676,17 @@
   function property(text,n,key,newValue){const span=propSpan(text,n,key),render=newValue===undefined?'':key+': '+value(newValue)+';';if(span)return {file:n.source,...span,text:render};if(newValue===undefined)return null;if(n.bodyStart!==undefined)return {file:n.source,start:n.bodyStart,end:n.bodyStart,text:'\n    '+render+'\n'};return {file:n.source,start:n.end-1,end:n.end,text:' { '+render+' }'};}
   function labelEdit(text,n,label){const tokens=D.lex(text,n.source).filter(t=>t.start>=n.start&&t.end<=(n.bodyStart??n.end));const idIdx=tokens.findIndex((t,i)=>t.type==='id'&&t.value===n.id&&(tokens[i+1]?.type==='string'||[':','@','{',';'].includes(tokens[i+1]?.type)||i+1===tokens.length));const name=idIdx>=0?idIdx:tokens.findIndex((t,i)=>t.type==='id'&&i>0);const next=tokens[name+1];if(next?.type==='string')return {file:n.source,start:next.start,end:next.end,text:JSON.stringify(label)};const after=(tokens[name]||tokens[0]).end;return {file:n.source,start:after,end:after,text:' '+JSON.stringify(label)};}
   function apply(ws,b,edits,entry,view){return ws.applyEdits(edits.filter(Boolean),{expectedRevision:ws.revision,entry,view});}
+  /* B1-040: a compact `row` desugars to a canonical record object whose x_record
+   * lives in the row's value list, not in a source body — property-level edits
+   * cannot target it. Rewrite the whole row statement as the equivalent
+   * canonical object (a legal mix inside a records block), preserving the row's
+   * current display label and any extra body properties. */
+  function recordEdit(text,n,record){
+   if(!n.compactRow)return property(text,n,'x_record',record);
+   const extra=Object.keys(n.props).filter(k=>!['kind','x_record'].includes(k)).map(k=>k+': '+value(n.props[k])+';').join(' ');
+   const code='object '+n.id+' '+JSON.stringify(n.label??n.id)+' { kind: record; x_record: '+value(record)+';'+(extra?' '+extra:'')+' }';
+   return {file:n.source,start:n.start,end:n.end,text:code};
+  }
   function addLocal(ws,entry,view,code,newObjectId){const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],data=v.doc.declarations.find(n=>n.type==='data'&&n.id==='editor_data'),edits=[];if(data)edits.push({file:v.source,start:data.bodyEnd,end:data.bodyEnd,text:'\n    '+code+'\n'});else {edits.push({file:v.source,start:v.start,end:v.start,text:'data editor_data {\n    '+code+'\n}\n\n'});const ds=Array.isArray(v.props.data)?v.props.data:[v.props.data];edits.push(property(text,v,'data',[...ds,{$ref:'editor_data'}]));}if(newObjectId&&v.props.select)edits.push(property(text,v,'select',[...v.props.select,{$ref:'editor_data.'+newObjectId}]));return apply(ws,b,edits,entry,view);}
   api.authoring={
    setMatrixCell(ws,entry,view,row,column,newValue,options={}){if(!options||typeof options!=='object'||Array.isArray(options)||Object.keys(options).some(k=>!['remove','id'].includes(k))||options.remove!==undefined&&typeof options.remove!=='boolean')fail('DDN-E007','Matrix edit options require a boolean remove flag and optional id');return this.setMatrixCells(ws,entry,view,[{row,column,...(options.remove?{remove:true}:{value:newValue}),...(options.id?{id:options.id}:{})}]);},
@@ -2624,7 +2710,7 @@
     if(code.length){const data=editableWriteData();edits.push({file:data.source,start:data.bodyEnd,end:data.bodyEnd,text:'\n    '+code.join('\n    ')+'\n'});}
     return apply(ws,b,edits,entry,view);
    },
-   setRecordValue(ws,entry,view,id,key,val){idOK(key);const b=build(ws,entry,view),n=find(b,id),record=n.props.x_record;if(!record||typeof record!=='object')fail('DDN-E006','Selected object has no x_record value record');return apply(ws,b,[property(ws.getFiles()[n.source],n,'x_record',{...record,[key]:val})],entry,view);},
+   setRecordValue(ws,entry,view,id,key,val){idOK(key);const b=build(ws,entry,view),n=find(b,id),record=n.props.x_record;if(!record||typeof record!=='object')fail('DDN-E006','Selected object has no x_record value record');return apply(ws,b,[recordEdit(ws.getFiles()[n.source],n,{...record,[key]:val})],entry,view);},
    replaceData(ws,name,records){
     if(typeof name!=='string'||!name)fail('DDN-E001','Data block name is required.');
     if(!Array.isArray(records)||records.some(r=>!r||typeof r!=='object'||Array.isArray(r)))fail('DDN-E011','replaceData records must be an array of plain objects.');
@@ -2685,7 +2771,7 @@
      if(diagnostics.length)return result({diagnostics});
     }
     const edits=[],addedIds=[];
-    for(const [n,r]of pairs)edits.push(property(text,n,'x_record',r));
+    for(const [n,r]of pairs)edits.push(recordEdit(text,n,r));
     for(const n of removed){let start=n.start;while(start>0&&(text[start-1]===' '||text[start-1]==='\t'))start--;let end=n.end;if(text[end]==='\r'&&text[end+1]==='\n')end+=2;else if(text[end]==='\n')end++;edits.push({file:block.source,start,end,text:''});}
     if(added.length){const taken=new Set(block.children.map(n=>n.id)),code=[];added.forEach((r,j)=>{let id;if(keyed)id=r.key;else {const base=name+'_r'+(keep+j+1);id=base;let n2=2;while(taken.has(id))id=base+'_'+(n2++);}taken.add(id);addedIds.push(id);code.push('    object '+id+' '+JSON.stringify(id)+' { kind: record; x_record: '+value(payload(r))+'; }');});edits.push({file:block.source,start:block.bodyEnd,end:block.bodyEnd,text:'\n'+code.join('\n')+'\n'});}
     // D3 transactional validation: every workspace view that builds today must still build

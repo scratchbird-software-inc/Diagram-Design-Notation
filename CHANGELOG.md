@@ -6,6 +6,56 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Compact authoring, phase 4 (B1-040): keyed tabular records, desugared in
+  the parser to the identical canonical per-row record-object AST (same
+  equivalence gate as phases 1–3: equal `DDN.semanticJSON`, byte-identical
+  SVG, identical validation outcomes) — no IR, renderer or runtime changes
+  beyond the parse path; the use-cases golden renders stay byte-identical.
+  - Syntax (D1): `records <id> ["label"] { columns: a, b, c;
+    label_column: a; row <id>: <scalar>, … (";" | "{" props "}") ; … }` —
+    each row ≡ `object <id> "<label>" { kind: record; x_record:
+    { <column>: <value>, … } }`. Column order maps values to `x_record`
+    keys positionally; row ids ARE the record identity (and the B1-029
+    keyed-refresh keys).
+  - Types (D2): row values are scalar literals only — strings, numbers,
+    quantities, booleans, `null`, `missing`, `undecided`/`not_applicable`/
+    `conflicting`, or bare words — parsed with the existing literal rules
+    (`missing`/`null`/state distinctions preserved). References, arrays and
+    nested records are a coded parse error (DDN-E016). A column count
+    mismatch is a coded parse error (DDN-E016) naming the row and the
+    expected/actual counts.
+  - Labels: the optional `label_column` names the column supplying the
+    display label — a string or finite number wins; any other scalar
+    (including `missing`/`null`) falls back to the row id, mirroring the
+    canonical `label||id` display rule. Without a `label_column` the label
+    is the row id (the refresh tool's own append convention).
+  - Bodies (D3): a row's optional body carries extra PROPERTIES only,
+    merged onto the record object (`kind:`/`x_record:` inside is DDN011;
+    nested declarations are DDN-E016).
+  - Refresh interaction (D4): keyed add/remove/update via
+    `replaceData` works against a compact records block — updates rewrite a
+    touched row as its canonical object form in place (label and extra body
+    properties preserved), removals delete the row statement, additions are
+    appended in canonical form; canonical data members mix into a records
+    body freely, so the round-trip stays legal. Transactional removal
+    guards are unchanged.
+  - Normalization (D5): `tools/normalize-ddn.mjs` unchanged — it never
+    rewrites verbose↔compact records; `tests/normalize-ddn.js` proves
+    records preservation with pin stripping intact.
+  - Equivalence gate (`notation/tests/compact-authoring.js`, now 69 tests):
+    baseline pair with chart render, every scalar literal class, label_column
+    variants, mixed canonical members, empty block, all coded-error forms,
+    keyed-refresh add/remove/update + same-values byte-identity +
+    transactional rejection, and an authoring `setRecordValue` round-trip.
+    The paired compact/verbose fixtures gained a records block plus graph
+    and chart views; the `12-nested-fields.ddn` teaching example gained a
+    records section (measured 50.2% non-formatting-character and 49.6%
+    token reduction vs its verbose expansion, 5-row block).
+  - Docs: `records`/`recordRow` productions in `standard/grammar/ddn.ebnf`,
+    a "Compact authoring (phase 4)" section in spec chapter 01, the
+    AI-REFERENCE authoring guide, and this entry. New error-code ceiling:
+    DDN-E016 (prior ceilings DDN-E015/W016/ISO152/ISOW02 confirmed by grep).
+
 - Compact authoring, phase 3 (B1-039): one-line view headers, desugared in
   the parser to the identical canonical view AST (same equivalence gate as
   phases 1–2: equal `DDN.semanticJSON`, byte-identical SVG, identical
