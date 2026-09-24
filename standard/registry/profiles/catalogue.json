@@ -179,7 +179,10 @@
       "family": "concept",
       "code": "ACTOR",
       "glyph": "object",
-      "aliases": [],
+      "alias": "actor",
+      "aliases": [
+        "actor"
+      ],
       "defaults": {}
     },
     {

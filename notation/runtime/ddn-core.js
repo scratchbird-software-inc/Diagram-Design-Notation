@@ -5,6 +5,7 @@
 import {publishNamespace} from './ddn-module-registry.js';
 import Contracts from './ddn-contracts.js';
 import Profiles from './ddn-profiles.js';
+import RegistryCatalogue from './assets/catalogue.js';
   'use strict';
   const VERSION = '0.6.0-beta.1';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
@@ -51,8 +52,33 @@ import Profiles from './ddn-profiles.js';
     }
     out.push({type:'eof',value:'',start:i,end:i});return out;
   }
-  function parse(text, source='input.ddn') {
+  /* B1-037 compact authoring, phase 1 (D1–D5). Compact forms desugar in the
+   * parser to the IDENTICAL canonical AST as the verbose form; no IR, runtime
+   * or renderer changes.
+   * D2/D3: a registry object-kind keyword (or a declared alias) in declaration
+   * position inside a data block introduces an object of that kind:
+   *   table customer "Customer" { … }  ≡  object customer "Customer" { kind: table; … }
+   * D4: kind words are contextual — recognized only at data-child declaration
+   * start followed by an identifier. Structural declaration keywords
+   * (object, domain, sample, flow, assertion, relation) keep their meaning, so
+   * `object table "…"` and `object fields "…"` still parse, and a `view`/`field`
+   * kind word is a typed declaration ONLY inside a data block.
+   * D5: inside fields {}/ports {} groups a bare `id ["label"] (block|";")` is a
+   * field/port member; the explicit field/port keywords stay valid (mixed
+   * blocks allowed), and a nested group keyword (`fields {…}`) still wins. */
+  const STRUCTURAL_DATA_DECLS=new Set(['object','domain','sample','flow','assertion','relation','fields','ports']);
+  let defaultTypedKinds=null;
+  function typedKindWords(reg){
+    const kinds=Profiles.registry(reg||RegistryCatalogue).kinds,map=new Map();
+    for(const k of kinds)for(const w of [k.keyword,...(k.aliases||[])]){
+      if(!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(w)||STRUCTURAL_DATA_DECLS.has(w))continue;
+      if(!map.has(w))map.set(w,k.keyword);
+    }
+    return map;
+  }
+  function parse(text, source='input.ddn', kindWords=null) {
     const tokens=lex(text,source);let pos=0,depth=0;
+    const typedKinds=kindWords||(defaultTypedKinds||(defaultTypedKinds=typedKindWords(null)));
     const peek=(n=0)=>tokens[pos+n], take=()=>tokens[pos++];
     function expect(type,value){let t=take();if(t.type!==type||(value!==undefined&&t.value!==value))fail('DDN010',`Expected ${value||type}; found ${t.value||t.type}`,t,source);return t;}
     function ref(){const t=expect('@');let parts=[expect('id').value];while(peek().type==='.'){take();parts.push(expect('id').value);}return {$ref:parts.join('.'),$offset:t.start};}
@@ -70,9 +96,26 @@ import Profiles from './ddn-profiles.js';
           // B1-033: a flow block's steps chain reads `@a -> @b -> @c` as one ordered step list.
           if(t.value==='steps'){while(peek().type==='->'){take();node.props.steps=[...(Array.isArray(node.props.steps)?node.props.steps:[node.props.steps]),value()];}}
           expect(';');}
+        else if(node.group&&(node.type==='fields'||node.type==='ports')&&peek().type!=='id'&&!(peek().type==='{'&&t.value===node.type))
+          node.children.push(contextualMember(node.type,t));
+        else if(!node.group&&node.type==='data'&&peek().type==='id'&&typedKinds.has(t.value))
+          node.children.push(typedDeclaration(t,typedKinds.get(t.value)));
         else node.children.push(declaration(t));
       }
       node.bodyEnd=peek().start;node.end=take().end;depth--;if(peek().type===';')node.end=take().end;return node;
+    }
+    function typedDeclaration(t,keyword){let n={type:'object',id:null,label:null,props:Object.create(null),children:[],start:t.start,source};
+      n.props.kind=keyword;n.id=expect('id').value;
+      if(peek().type==='string')n.label=take().value;
+      if(peek().type==='@'){n.from=ref();expect('->');n.to=ref();}
+      if(peek().type===';'){n.end=take().end;return n;}
+      return body(n);
+    }
+    function contextualMember(groupType,t){let n={type:groupType==='fields'?'field':'port',id:t.value,label:null,props:Object.create(null),children:[],start:t.start,source};
+      if(peek().type==='string')n.label=take().value;
+      if(peek().type===';'){n.end=take().end;return n;}
+      if(peek().type==='{')return body(n);
+      fail('DDN010',`Expected ; or block after ${n.type} ${n.id}`,peek(),source);
     }
     function declaration(t){let n={type:t.value,id:null,label:null,props:Object.create(null),children:[],start:t.start,source};
       if(['place','route'].includes(n.type)){n.target=ref();n.id=n.target.$ref;return body(n);}
@@ -209,7 +252,7 @@ import Profiles from './ddn-profiles.js';
     return {text:out.join('\n')+'\n',diagnostics};
   }
 
-  function createWorkspace(files,entry){
+  function createWorkspace(files,entry,kindWords=null){
     const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set();
     // Iterative load: deep import chains must not exhaust the call stack.
     // Frames preserve the original pre-order (a file's module sections are
@@ -220,7 +263,7 @@ import Profiles from './ddn-profiles.js';
       const stack=[];
       const open=p=>{
         if(!Object.hasOwn(files,p))throw new DDNError('DDN022','Missing workspace file '+p,p);
-        active.add(p);const d=parse(files[p],p);docs.set(p,d);d.imported=new Map();
+        active.add(p);const d=parse(files[p],p,kindWords);docs.set(p,d);d.imported=new Map();
         // A file registers ALL its module sections (RFC-117 D2). Module records
         // are what nodes carry as n.doc: identity, own declarations and the
         // file-level import map.
@@ -307,7 +350,7 @@ import Profiles from './ddn-profiles.js';
   function validateKnown(n,allowed){for(const key of Object.keys(n.props))if(!allowed.includes(key)&&!key.startsWith('x_'))throw new DDNError('DDN033',`Unknown ${n.type} property ${key}`,n.source,n.start);}
   function build(files,entry,viewName,registry,stack=[]){
     registry=Profiles.registry(registry);
-    const ws=createWorkspace(files,entry);const all=[...ws.symbols.values()];const view=all.find(n=>n.type==='view'&&((viewName&&(n.id===viewName||n.path===viewName||n.uid===viewName))||(!viewName&&n.doc===ws.main)));
+    const ws=createWorkspace(files,entry,typedKindWords(registry));const all=[...ws.symbols.values()];const view=all.find(n=>n.type==='view'&&((viewName&&(n.id===viewName||n.path===viewName||n.uid===viewName))||(!viewName&&n.doc===ws.main)));
     if(!view)throw new DDNError('DDN040','View not found: '+(viewName||'(default)'),entry);
     if(stack.includes(view.uid)||stack.length>6)throw new DDNError('DDN065','Recursive or excessive inline subdiagram expansion',view.source,view.start);
     validateKnown(view,PROPERTIES.view);
@@ -481,6 +524,6 @@ import Profiles from './ddn-profiles.js';
     return {ir,workspace:ws,viewNode:view};
   }
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
   publishNamespace('DDN',api);
   export default api;
