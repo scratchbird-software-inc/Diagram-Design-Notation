@@ -1331,6 +1331,18 @@
       "default": "accent",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
       "validation_stage": "logical"
+    },
+    {
+      "path": "depth",
+      "group": "Isometric depth (ddn-iso)",
+      "targets": [
+        "object"
+      ],
+      "value_shape": "length (px), 0..2000",
+      "constraint": "Per-element extrusion height for isometric views (optional ddn-iso module, B1-034): overrides the view-level projection depth for this object (chart record or graph node). Requires iso:true or a view-level depth; without the ddn-iso.js bundle the view renders flat with a coded diagnostic.",
+      "default": "inherit the view depth",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
     }
   ]
 }

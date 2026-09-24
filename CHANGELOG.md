@@ -6,6 +6,38 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Isometric depth via the optional `ddn-iso` module (B1-034): axonometric
+  ("2.5D") rendering in pure SVG. (D1) New optional seventh bundle
+  `dist/ddn-iso.js` (all formats; npm subpath `@ddn/notation/iso`), never in
+  `ddn.global.js`; an `iso: true` view without it renders the visible
+  placeholder "Isometric view requires ddn-iso.js" plus the coded `DDN-E010`
+  diagnostic (the B1-025 geo path), and a `depth` property without it degrades
+  to the flat render plus a coded warning — never a crash. (D2) Projection
+  math `sx=(x−y)·cos30°`, `sy=(x+y)·sin30°−z`, unit-tested against independent
+  reference values; face shading top=base / left ×0.85 / right ×0.7;
+  painter's-algorithm z-order is a total order (footprint x+y, then height,
+  then element id — determinism tested). (D3) New projection properties `iso`
+  and `depth` on graph/chart views: `depth: 24px`, per-record
+  `depth: "x_record.load"`, and `depth: @data.record.field` bindings; per-object
+  `depth:` overrides the view depth (registered in
+  `standard/registry/data-properties.json`). New codes `DDN-ISO150/151/152`,
+  `DDN-ISOW01/02`. (D4) Stage-1 chart extrusions: bar columns, pie/donut
+  thickness, area ribbon, treemap blocks (axes/labels stay flat-overlayed).
+  (D5) Stage-2 iso graph nodes: extruded prisms on an iso ground plane, labels
+  on the top face; relations are routed flat by the ordinary engine and then
+  projected onto the ground plane (never 3D routing), endpoints at prism
+  top-face centres. (D6) Refresh-driven depth transitions: hosts pass
+  `renderSync({isoFrom:{depths}})` after `ws.replaceData(...)` and get a
+  declarative one-shot SMIL transition (250 ms; `noMotion` strips it);
+  demonstrated by the synthetic load monitor
+  `examples/embed/iso-load-monitor.html`. (D7) Same input → same SVG, tested
+  for charts and graphs. (D9) Zero dependencies; `ddn-iso.min.js` is 14,396
+  bytes (≤20 KB target). Examples 72/73, spec chapter 43, modules guide,
+  tests `notation/tests/iso.js` (19) + modular-bundles iso scenario (14/14).
+  Drive-by: `tools/build-schemas.py` no longer tails into the nonexistent
+  `tools/build-capabilities.js` (capabilities.json is maintained in
+  `standard/registry/` directly).
+
 - Flow animation (B1-033): declarative SMIL motion for graph relations and
   multi-hop flow blocks. (D1) The renderer emits `<animateMotion>`/`<animate>`
   (no script, deterministic, file://-safe; exported SVG animates autonomously).

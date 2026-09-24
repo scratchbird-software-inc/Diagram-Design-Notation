@@ -12,6 +12,7 @@ embedding shapes — open the one that matches yours and copy it:
 | [projections-only.html](../../examples/embed/projections-only.html) | Chart page loading only core + graph + projections bundles (skip quality/geo/Studio) | yes |
 | [geo-optional.html](../../examples/embed/geo-optional.html) | A `kind:geo` view rendered *without* `ddn-geo`: inline placeholder + coded `DDN-E010` diagnostic, never a silent gap | yes |
 | [data-refresh.html](../../examples/embed/data-refresh.html) | Live dashboard: `ws.replaceData(name, records)` swaps data-block records and re-renders in place | yes |
+| [iso-load-monitor.html](../../examples/embed/iso-load-monitor.html) | Optional `ddn-iso` module: data-bound isometric depth (`depth: "x_record.load"`) growing/shrinking on each refresh tick with a ≤300 ms SMIL transition | yes |
 
 The smallest useful snippet (global build, works from `file://`):
 

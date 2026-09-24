@@ -28,9 +28,10 @@ produce `dist/`; it never ships in the package or the bundles.
 - `dist/` — shipped builds, committed so Studio and examples work without a
   build step: the all-in-one `ddn.global.js` (+ `ddn.mjs`, `ddn.d.ts`) and the
   modular bundles `ddn-core` / `ddn-graph` / `ddn-projections` /
-  `ddn-quality` plus the optional `ddn-geo` (geographic maps; never in the
-  all-in-one — missing module renders a visible placeholder + DDN-E010
-  diagnostic) — each in three formats (IIFE `.js`, ES module `.mjs`,
+  `ddn-quality` plus the optional `ddn-geo` (geographic maps) and `ddn-iso`
+  (isometric depth, B1-034) — both never in the
+  all-in-one; a missing optional module renders a visible placeholder +
+  DDN-E010 diagnostic — each in three formats (IIFE `.js`, ES module `.mjs`,
   minified `.min.js` + `.min.js.map`, with `.d.ts`/`.d.mts` copies; contents
   and load order in the generated `dist/README.md`). Regenerate with
   `npm run build:sdk` (Rollup; see `../tools/rollup.config.mjs`).

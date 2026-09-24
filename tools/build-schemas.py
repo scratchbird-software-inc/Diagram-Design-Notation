@@ -81,6 +81,7 @@ write('schema/extension.schema.json',extension)
 manifest={'$schema':S,'$id':'urn:ddn:schema:publication-manifest:0.3','title':'Production publication manifest contract','type':'object','required':['version','language','registry','renderer','entry','view','dependencies','outputs','diagnostics'],'properties':{'version':{'const':'0.3'},'language':{'type':'string'},'registry':{'type':'string'},'renderer':{'type':'string'},'entry':{'type':'string'},'view':{'type':'string'},'semanticHash':{'type':'string'},'renderHash':{'type':'string'},'dependencies':{'type':'array','items':{'type':'object','required':['uri','sha256'],'properties':{'uri':{'type':'string'},'sha256':{'type':'string','pattern':'^[0-9a-f]{64}$'}}}},'resources':{'type':'object'},'outputs':{'type':'array','items':{'type':'object','required':['path','mediaType'],'properties':{'path':{'type':'string'},'mediaType':{'type':'string'},'sha256':{'type':'string'}}}},'diagnostics':{'type':'array','items':diag}},'additionalProperties':False}
 write('schema/publication-manifest.schema.json',manifest)
 
-# Formatting enums are generated from executable constants, not a second hand-edited source.
-import subprocess
-subprocess.run(["node",str(root/"tools/build-capabilities.js")],check=True)
+# capabilities.json is maintained directly in standard/registry (B1-034 drive-by:
+# the historical tail call to tools/build-capabilities.js named a file that never
+# existed; the schema files above are complete before this point).
+print('schemas written; capabilities.json lives in standard/registry/capabilities.json')

@@ -41,6 +41,7 @@ const MEMBERS = {
   quality: ['ddn-quality-render'],
   projections: ['ddn-projections'],
   geo: ['ddn-geo'],
+  iso: ['ddn-iso'],
 };
 const memberFile = new Map();
 for (const [bundle, files] of Object.entries(MEMBERS))
@@ -52,10 +53,11 @@ const BUNDLES = {
   quality: { blurb: 'Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js.' },
   projections: { blurb: 'Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen.' },
   geo: { blurb: 'Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent).' },
+  iso: { blurb: 'Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent).' },
   global: { blurb: 'unified public runtime (no old compatibility renderer)' },
 };
 
-const SIBLING_SPEC = /^\.\/ddn-(core|graph|quality|projections|geo)\.js$/;
+const SIBLING_SPEC = /^\.\/ddn-(core|graph|quality|projections|geo|iso)\.js$/;
 /* Entry files address sibling bundles with their final dist-relative
  * specifiers (./ddn-core.js …). Those files do not exist next to the entries,
  * so mark them external in resolveId before the default resolver runs; the
@@ -84,7 +86,7 @@ function pathsFor() {
   return id => {
     if (SIBLING_SPEC.test(id)) return id;
     const base = path.basename(id);
-    if (/^ddn-(core|graph|quality|projections|geo)\.js$/.test(base)) return './' + base;
+    if (/^ddn-(core|graph|quality|projections|geo|iso)\.js$/.test(base)) return './' + base;
     const owner = memberFile.get(base);
     return owner ? './ddn-' + owner + '.js' : id;
   };
@@ -108,6 +110,7 @@ function configsFor(name) {
     quality: `var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-quality requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-quality requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!==${V})throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNQualityRender)return;`,
     projections: `var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-projections requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-projections requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!==${V})throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNProjections)return;`,
     geo: `var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-geo requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-geo requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!==${V})throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNGeo)return;`,
+    iso: `var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-iso requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-iso requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!==${V})throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNIso)return;`,
     global: `var h=typeof globalThis!=='undefined'?globalThis:this;if(h.DDNLive&&h.DDNLive.VERSION===${V}){if(typeof module==='object'&&module.exports)module.exports=h.DDNLive;return;}if(h.DDNLive)throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');`,
   };
   const intro = intros[name];

@@ -72,7 +72,7 @@ placed diagram rather than the model.
 
 ### `renderSync(request)`
 
-`ws.renderSync({ entry, view, overrides?, layoutState? }): RenderResult` —
+`ws.renderSync({ entry, view, overrides?, layoutState?, noMotion?, isoFrom? }): RenderResult` —
 render one view deterministically. `RenderResult` carries `svg`, `scene`,
 `layoutState`, `diagnostics`, `milliseconds`, `modelFingerprint`,
 `sourceMap`, `dependencies`, and the resolved `overrides`.
@@ -86,6 +86,12 @@ document.querySelector("#out").innerHTML = r.svg;
 `overrides` is the `Options` type from `public.d.ts` (theme, look, routing,
 mark, placement, spacing-era presentation switches). `'source'` means "keep
 what the view declared".
+
+`noMotion: true` strips SMIL animation (B1-033 flow motion and B1-034 iso depth
+transitions) for print/static targets. `isoFrom: { depths: { elementId: px } }`
+(B1-034, optional ddn-iso module) hands the host's previous committed depths to
+an `iso`/`depth` view so changed extrusions carry a declarative one-shot SMIL
+transition (250 ms); omit it (or pass equal depths) for a static render.
 
 Relation-rendering override keys (B1-011):
 

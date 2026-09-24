@@ -6,16 +6,17 @@ terser) is a pinned devDependency and never ships inside these bundles.
 
 | Bundle | Contains | Requires loaded first | .js bytes | .mjs bytes | .min.js bytes | .min.js gzip |
 |---|---|---|---|---|---|
-| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 691820 | 686862 | 594553 | 133051 |
+| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 695510 | 690466 | 596571 | 133757 |
 | `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 151781 | 148914 | 108180 | 40007 |
 | `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 20469 | 20005 | 15633 | 7022 |
-| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 90082 | 88644 | 74314 | 27348 |
+| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 91683 | 90219 | 75333 | 27810 |
 | `ddn-geo.js` / `.mjs` / `.min.js` | Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23771 | 23139 | 16201 | 6841 |
-| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 975198 | 965892 | 816239 | 211869 |
+| `ddn-iso.js` / `.mjs` / `.min.js` | Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23406 | 22788 | 14396 | 5996 |
+| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo and ddn-iso, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 980489 | 971071 | 819295 | 213042 |
 
 Every bundle ships three formats: a readable browser IIFE (`.js`, publishes
 the documented globals `DDNLive`, `DDNRender`, `DDNProjections`,
-`DDNQualityRender`, `DDNGeo`), a minified IIFE with source map (`.min.js` +
+`DDNQualityRender`, `DDNGeo`, `DDNIso`), a minified IIFE with source map (`.min.js` +
 `.min.js.map`), and a real ES module (`.mjs`). Types: `d.ts`/`d.mts`
 copies per bundle. `ddn.css` carries the default mark styles (page CSS wins
 over script-inlined presentation).
@@ -33,7 +34,7 @@ bundlers can tree-shake the `.mjs` builds when you import just what you need.
 ## npm subpaths
 
 `@ddn/notation` resolves to `ddn.global.js`/`ddn.mjs`; the subpaths `./core`,
-`./graph`, `./projections`, `./quality`, `./geo` resolve to the matching modular bundles
+`./graph`, `./projections`, `./quality`, `./geo`, `./iso` resolve to the matching modular bundles
 (`require` → `.js`, `import` → `.mjs`, types → `.d.ts`/`.d.mts`). In ESM the
 modules load prerequisites automatically; in CommonJS `require('@ddn/notation/core')`
 before any non-core subpath (same realm, same-version module stacking is a no-op).
@@ -41,7 +42,7 @@ before any non-core subpath (same realm, same-version module stacking is a no-op
 ## Load order
 
 `ddn-core.js` first, then `ddn-graph.js`, then `ddn-quality.js`,
-`ddn-projections.js` and the optional `ddn-geo.js` in any order. Each non-core bundle throws immediately if its
+`ddn-projections.js` and the optional `ddn-geo.js` / `ddn-iso.js` in any order. Each non-core bundle throws immediately if its
 prerequisite is missing; loading the same bundle twice is a no-op; mixing versions
 throws the single-version guard. Do not mix `ddn.global.js` with the modular bundles
 on one page — load either the all-in-one or the modules.
@@ -50,11 +51,17 @@ The engine is a registry: `DDNEngine.registerProjectionRenderer(name, fn)`. The 
 renderer registers as `graph` inside ddn-graph.js; chart/matrix/panels/timeline/table/
 sequence/timing/chen register inside ddn-projections.js; fishbone/decision register
 inside ddn-quality.js; the optional geographic module registers `geo` inside
-ddn-geo.js with `optional: true`. Rendering or planning an unregistered kind throws coded error
+ddn-geo.js with `optional: true`. The optional isometric module (ddn-iso.js) registers
+no kind: an `iso: true` view or a `depth` property routes through the engine to the
+DDNIso namespace (graph views render as iso prisms; bar/pie/donut/area/treemap charts
+extrude). Rendering or planning an unregistered kind throws coded error
 `DDN-E010` naming the kind and the bundle that provides it — with one owner-directed
 exception: a geo view rendered without ddn-geo.js produces an inline SVG placeholder
 ("Map view requires ddn-geo.js") plus the coded `DDN-E010` diagnostic on the
-diagnostics channel (never silent); the rest of the page renders. The fishbone and decision
+diagnostics channel (never silent); the rest of the page renders. An `iso: true` view
+rendered without ddn-iso.js produces the analogous placeholder ("Isometric view
+requires ddn-iso.js"); a `depth` property without the module degrades to the flat
+render plus the coded diagnostic — never a crash. The fishbone and decision
 renderers compose the page through ddn-projections.js, so those two kinds need both
 ddn-quality.js and ddn-projections.js at render time.
 
@@ -67,7 +74,9 @@ ddn-quality.js and ddn-projections.js at render time.
   `ddn-projections.js` for page composition).
 - Geographic maps: add `ddn-geo.js` (optional; missing module degrades to a
   visible placeholder, never silently).
-- Everything except geo, one script tag: `ddn.global.js`.
+- Isometric depth (2.5D charts, iso diagram prisms): add `ddn-iso.js` (optional;
+  same placeholder/degradation contract as ddn-geo).
+- Everything except geo and iso, one script tag: `ddn.global.js`.
 
 ## Data refresh
 

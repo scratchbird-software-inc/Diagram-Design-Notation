@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN isometric depth — load monitor (synthetic)</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e;white-space:pre-wrap}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer;margin:0 6px 6px 0}</style>
+<h1>Isometric load monitor — <code>depth: "x_record.load"</code> + keyed refresh</h1>
+<p><strong>Synthetic demo</strong> over the minified production builds <code>ddn-core.min.js</code> + <code>ddn-graph.min.js</code> +
+<code>ddn-projections.min.js</code> + the optional <code>ddn-iso.min.js</code> (B1-034). The bar chart binds its extrusion
+depth to the record payload (<code>depth: "x_record.load"</code>); each tick pushes new cpu/memory/disk loads through
+<code>ws.replaceData('load', rows)</code> and re-renders, passing the previous committed depths as
+<code>renderSync({isoFrom:{depths}})</code> so ddn-iso emits a short declarative SMIL transition (250&nbsp;ms) per changed
+column. Model, view and layout are untouched — only the data block's record lines change.</p>
+<script src="../../dist/ddn-core.min.js"></script>
+<script src="../../dist/ddn-graph.min.js"></script>
+<script src="../../dist/ddn-projections.min.js"></script>
+<script src="../../dist/ddn-iso.min.js"></script>
+<div id="status" class="status">running…</div>
+<button id="tick">Tick (synthetic load change)</button>
+<button id="reset">Reset</button>
+<div id="out"></div>
+<script>
+const rec=(id,name,label,value,load)=>'    object '+id+' "'+name+'" { kind: record; x_record: { label: "'+label+'", value: '+value+', load: '+load+', unit: "%" }; }';
+const src=rows=>"ddn \"0.5\";\nmodule \"ddn.examples.iso-load-monitor\";\n\n// Synthetic load monitor: cpu/memory/disk columns grow/shrink on refresh.\ndata load {\n"+rows.map(r=>rec(...r)).join('\n')+"\n}\n\nview monitor \"Synthetic load monitor / iso depth\" {\n    data: [@load];\n    projection { kind: chart; profile: \"chart.basic@1\"; records: [@load.cpu, @load.mem, @load.disk]; mark: bar; x: \"x_record.label\"; y: \"x_record.value\"; unit: \"%\"; iso: true; depth: \"x_record.load\"; width: 900px; height: 560px; }\n    publication { size: content; fit: none; }\n}\n";
+const base=[['cpu','CPU','cpu',42,30],['mem','Memory','mem',63,44],['disk','Disk','disk',35,22]];
+const ws=DDNLive.createWorkspace({'monitor.ddn':src(base)});
+const out=document.querySelector('#out'),status=document.querySelector('#status');
+let prevDepths=null,step=0;
+function depths(){ // previous committed depths, keyed by record element uid
+  const ir=ws.resolve('monitor.ddn','monitor'),d={};
+  for(const n of ir.elements){const v=n.properties.x_record&&n.properties.x_record.load;if(typeof v==='number')d[n.id]=v;}
+  return d;
+}
+function draw(note){
+  const r=ws.renderSync({entry:'monitor.ddn',view:'monitor',isoFrom:prevDepths?{depths:prevDepths}:null});
+  out.innerHTML=r.svg;
+  status.textContent='revision '+ws.revision+' · '+note+' · DDNIso '+DDNIso.VERSION;
+}
+function tick(){
+  step++;
+  prevDepths=depths();
+  const wave=i=>Math.round(20+55*Math.abs(Math.sin(step*0.9+i*1.7)));
+  const rows=base.map((r,i)=>({key:r[0],label:r[2],value:wave(i),load:Math.max(4,wave(i+1)),unit:'%'}));
+  const res=ws.replaceData('load',rows);
+  draw('tick '+step+' → committed '+res.committed);
+}
+document.querySelector('#tick').addEventListener('click',tick);
+document.querySelector('#reset').addEventListener('click',()=>{prevDepths=depths();ws.replaceData('load',base.map(r=>({key:r[0],label:r[2],value:r[3],load:r[4],unit:'%'})));draw('reset');});
+draw('initial render');
+</script></html>

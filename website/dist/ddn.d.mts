@@ -27,7 +27,7 @@ export interface Options {
 export interface LayoutState { format:'ddn-layout-state@1'; view:string; positions:Record<string,[number,number]> }
 export interface Diagnostic {code:string;severity?:'info'|'warning'|'error';message:string;source?:string;offset?:number}
 export interface Scene {marks?:ProjectionMark[];projection?:{kind:ProjectionKind;profile:string;sourceIds?:string[];quantitative?:boolean;[key:string]:unknown};nodes:Array<{id:string;x:number;y:number;w:number;h:number;[key:string]:unknown}>; routes:Array<Record<string,unknown>>;layoutState?:LayoutState;[key:string]:unknown}
-export interface RenderRequest {entry:string;view:string;overrides?:Options;layoutState?:LayoutState|null}
+export interface RenderRequest {entry:string;view:string;overrides?:Options;layoutState?:LayoutState|null;noMotion?:boolean;isoFrom?:{depths?:Record<string,number>}|null}
 export interface RenderResult {svg:string;scene:Scene;layoutState:LayoutState|null;diagnostics:Diagnostic[];entry:string;view:string;revision:number;milliseconds:number;modelFingerprint:string;sourceMap:Record<string,Record<string,unknown>>;dependencies:string[];profiles:Record<string,unknown>;capabilities:Record<string,unknown>;keys:Record<string,number>;overrides:Options}
 export interface Snapshot extends RenderRequest {format:'ddn-workspace@1';runtime:Record<string,string>;files:SourceFiles}
 export interface TextEdit {file:string;start:number;end:number;text:string}

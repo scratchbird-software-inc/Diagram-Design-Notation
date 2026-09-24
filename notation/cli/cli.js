@@ -8,6 +8,9 @@ const DDN=require('../runtime/ddn-core.js').default,Render=require('../runtime/d
  * pre-registers the world-110m asset (under its repo-relative and bare names). */
 const Geo=require('../runtime/ddn-geo.js').default;
 Render.registerProjectionRenderer('geo',Geo.render,{optional:true});
+/* B1-034: the CLI also wires the optional isometric module; loading it
+ * publishes the DDNIso namespace the engine consults for iso/depth views. */
+require('../runtime/ddn-iso.js');
 try{
  const asset=path.join(__dirname,'../../assets/geo/world-110m.json');
  if(fs.existsSync(asset)){const g=fs.readFileSync(asset,'utf8');Geo.registerGeography('assets/geo/world-110m.json',g);Geo.registerGeography('world-110m',g);}

@@ -137,9 +137,12 @@ function createWorkspace(input){
   undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
   redo(){const t=redo.pop();if(!t)return false;const n={...files};for(const p of t.patch)if(p.after===undefined)delete n[p.file];else n[p.file]=p.after;commit(n,t.label,false);undo.push(t);historyBytes+=t.bytes;return true;},
   subscribe(fn){if(typeof fn!=='function')throw new TypeError('Listener must be a function.');listeners.add(fn);return()=>listeners.delete(fn);},
-  renderSync({entry,view,overrides={},layoutState=null,noMotion=false}){
+  renderSync({entry,view,overrides={},layoutState=null,noMotion=false,isoFrom=null}){
    const start=performance.now(),base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
-   const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true});
+   /* B1-034 (D6): isoFrom carries the host's previous committed depths
+    * ({depths: {elementId: px}}) so ddn-iso emits a short declarative SMIL
+    * transition (<=300 ms) on refresh-driven height changes. */
+   const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true,...(isoFrom?{isoFrom}:{})});
    const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir),fields=redacted?[]:v.ir.elements.flatMap(n=>n.fields||[]);
    const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);
    const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));

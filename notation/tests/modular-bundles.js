@@ -89,9 +89,21 @@ test('geo is optional: missing module degrades to placeholder + DDN-E010 diagnos
  assert.equal(r2.diagnostics.filter(d=>d.code==='DDN-E010').length,0);
  assert.throws(()=>context('core','geo'),/ddn-geo requires ddn-graph\.js/);
 });
+test('iso is optional: missing module degrades to placeholder + DDN-E010 diagnostic, loaded module renders',()=>{
+ const ISO={'72-iso-charts.ddn':basics('72-iso-charts.ddn'),'shared.ddn':basics('shared.ddn')};
+ const c=context('core','graph','projections');
+ const r=c.DDNLive.createWorkspace(ISO).renderSync({entry:'72-iso-charts.ddn',view:'iso_bar'});
+ assert.ok(r.svg.includes('Isometric view requires ddn-iso.js')&&r.svg.includes('ddn-missing-module'));
+ assert.equal(r.diagnostics.filter(d=>d.code==='DDN-E010').length,1);
+ const c2=context('core','graph','projections','iso');
+ const r2=c2.DDNLive.createWorkspace(ISO).renderSync({entry:'72-iso-charts.ddn',view:'iso_bar'});
+ assert.ok(r2.svg.includes('ddn-iso-front')&&!r2.svg.includes('Isometric view requires'));
+ assert.equal(r2.diagnostics.filter(d=>d.code==='DDN-E010').length,0);
+ assert.throws(()=>context('core','iso'),/ddn-iso requires ddn-graph\.js/);
+});
 test('sdk-build.json lists every bundle with bytes/sha256/files and per-format freshness digests',()=>{
  const b=JSON.parse(fs.readFileSync(path.join(root,'../release/validation/sdk-build.json'),'utf8')).bundles;
- for(const n of ['core','graph','projections','quality','geo','global']){assert.ok(b[n],'bundle '+n);assert.ok(b[n].bytes>0&&/^[a-f0-9]{64}$/.test(b[n].sha256)&&b[n].files.length>0);}
+ for(const n of ['core','graph','projections','quality','geo','iso','global']){assert.ok(b[n],'bundle '+n);assert.ok(b[n].bytes>0&&/^[a-f0-9]{64}$/.test(b[n].sha256)&&b[n].files.length>0);}
  assert.equal(b.core.bytes,fs.statSync(path.join(dist,'ddn-core.js')).size);
  assert.equal(b.global.bytes,fs.statSync(path.join(dist,'ddn.global.js')).size);
  const crypto=require('node:crypto'),sha=s=>crypto.createHash('sha256').update(s).digest('hex');

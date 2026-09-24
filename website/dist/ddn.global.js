@@ -240,7 +240,7 @@
 
   /* SPDX-License-Identifier: GPL-2.0-or-later. Bounded, typed projection plans. No expressions, external loaders or implicit joins. */
   const common=['kind','profile','width','height'];
-  const supported={graph:['kind','profile','inputs','analysis_budget','traces'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common],geo:[...common,'records','mark','x','y','value','size','unit','filter','order','missing','geography','method','graticule']};
+  const supported={graph:['kind','profile','inputs','analysis_budget','traces','iso','depth'],fishbone:[...common,'effect','relation'],decision:[...common,'records','inputs','outputs','hit_policy','coverage','analysis_budget','filter','order'],chen:common,matrix:[...common,'write_data','rows','columns','relation','value','duplicates','encoding'],table:[...common,'records','columns','filter','order','missing'],panels:[...common,'columns','panels','value'],chart:[...common,'records','mark','x','y','x_type','size','unit','aggregate','filter','order','missing','inner_radius','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','iso','depth'],timeline:[...common,'records','start','end','label','dependencies','filter','order'],sequence:[...common],timing:[...common],geo:[...common,'records','mark','x','y','value','size','unit','filter','order','missing','geography','method','graticule']};
   const ref$1=x=>typeof x==='string'?x:x?.$ref;
   function get$1(record,path){
    if(typeof path!=='string'||!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(path)||path.split('.').some(k=>['__proto__','prototype','constructor'].includes(k)))throw Object.assign(new Error('Unsafe property binding '+path),{code:'DDN-PJ004'});
@@ -252,6 +252,12 @@
    const p=ir.view.profiles.projection||{kind:'graph',profile:'ddn@1'},kind=p.kind,byId=new Map(ir.elements.map(n=>[n.id,n])),byRel=new Map(ir.relations.map(r=>[r.id,r])),shown=new Set(ir.view.selected);
    const fail=(code,msg,n)=>{const e=new ErrorClass(code,msg,n?.source?.file||ir.view.source?.file,n?.source?.start||ir.view.source?.start);if(ErrorClass===Error){e.message=msg;e.code=code;}throw e;};
    if(!supported[kind])fail('DDN-PJ001','Unsupported projection '+kind);
+   /* B1-034 (D3/D8): iso/depth are validated before the per-kind key check so
+    * every kind reports the same coded contract; rendering lives in the
+    * optional ddn-iso bundle (missing module → placeholder or flat + DDN-E010). */
+   if(p.iso!==undefined&&typeof p.iso!=='boolean')fail('DDN-ISO150','iso must be a boolean (iso: true|false)');
+   if(p.depth!==undefined){const v=p.depth,ok=typeof v==='number'||typeof v==='string'||(v&&v.$quantity!==undefined)||(v&&v.$ref!==undefined&&typeof v.$field==='string');if(!ok)fail('DDN-ISO151','depth is a px quantity, a number, an "x_record.field" per-record binding or @data.record.field');if(typeof v==='number'&&(!Number.isFinite(v)||v<0||v>2000))fail('DDN-ISO151','depth must be a finite number 0..2000 (px)');if(typeof v==='string'&&!/^([A-Za-z_][A-Za-z0-9_]*)(\.[A-Za-z_][A-Za-z0-9_]*)*$/.test(v))fail('DDN-ISO151','depth per-record binding must be a property path like "x_record.load"');}
+   if((p.iso!==undefined||p.depth!==undefined)&&!['graph','chart'].includes(kind))fail('DDN-ISO150','iso/depth apply to graph and chart projections');
    for(const k of Object.keys(p))if(!supported[kind].includes(k))fail('DDN-PJ005',kind+' projection does not use '+k+'; no silent ignored settings');
    for(const k of ['width','height'])if(p[k]!==undefined){const v=typeof p[k]==='number'?p[k]:p[k]?.unit==='px'?p[k].$quantity:NaN;if(!Number.isFinite(v)||v<240||v>12000)fail('DDN-PJ006','Projection '+k+' must be 240..12000 px');}
    const resolve=(x,type='element')=>{const n=(type==='relation'?byRel:byId).get(ref$1(x));if(!n)fail('DDN-PJ007','Projection reference is outside its data scope: '+ref$1(x));if(type==='element'&&!shown.has(n.id))fail('DDN-PJ008','Projection binds an excluded/not-selected element: '+n.id);return n;};
@@ -1581,7 +1587,7 @@
     };
     const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
     const PROPERTIES={
-      projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','traces','geography','method','graticule'],
+      projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','traces','geography','method','graticule','iso','depth'],
       notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
       layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
       display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
@@ -1647,7 +1653,24 @@
       if(!Number.isSafeInteger(p.display.depth)||p.display.depth<0||p.display.depth>64)throw new DDNError('DDN046','display.depth must be 0..64',view.source,view.start);
       if(!['repair','strict'].includes(p.layout.route_policy)||!['error','warn'].includes(p.layout.quality))throw new DDNError('DDN046','Invalid routing policy',view.source,view.start);
       if(p.legend.mode==='numbers'&&p.legend.placement==='none')throw new DDNError('DDN047','Numbered relationships require a legend',view.source,view.start);
-      function resolveValue(v,n){if(Array.isArray(v))return v.map(x=>resolveValue(x,n));if(v&&typeof v==='object'){if(v.$ref)return {$ref:ws.resolve(v,n).uid};const o={};for(const[k,x]of Object.entries(v))if(k!=='$offset')o[k]=resolveValue(x,n);return o;}return v;}
+      function resolveValue(v,n){if(Array.isArray(v))return v.map(x=>resolveValue(x,n));if(v&&typeof v==='object'){if(v.$ref)return {$ref:ws.resolve(v,n).uid};const o={};for(const[k,x]of Object.entries(v))if(k!=='$offset')o[k]=k==='depth'?resolveDepthValue(x,n):resolveValue(x,n);return o;}return v;}
+      /* B1-034 (D3): depth: @data.record.field — the dotted reference names a
+       * record element plus a field path. Whole-reference resolution wins; on a
+       * miss the longest resolvable prefix is the record and the remainder is
+       * the field (kept as {$ref,$field} for the optional ddn-iso module). */
+      function resolveDepthValue(x,n){
+       if(!x||typeof x!=='object'||!x.$ref)return resolveValue(x,n);
+       try{return {$ref:ws.resolve(x,n).uid};}
+       catch(e){
+        if(e.code!=='DDN031')throw e;
+        const parts=x.$ref.split('.');
+        for(let i=parts.length-1;i>=1;i--){
+         try{const t=ws.resolve({$ref:parts.slice(0,i).join('.'),$offset:x.$offset},n);return {$ref:t.uid,$field:parts.slice(i).join('.')};}
+         catch(e2){if(e2.code!=='DDN031')throw e2;}
+        }
+        throw e;
+       }
+      }
       for(const prop of ['object_clearance','edge_clearance','port_clearance','gap','row_gap'])if(quantity(p.layout[prop],0)<0)throw new DDNError('DDN046','Layout lengths cannot be negative: '+prop,view.source,view.start);
       if(p.layout.junctions!==undefined&&p.layout.junctions!=='explicit')throw new DDNError('DDN046','Only explicit junction semantics are allowed',view.source,view.start);
       if(p.layout.shared_segments!==undefined&&p.layout.shared_segments!=='forbidden')throw new DDNError('DDN046','Shared network trunks require an adopted network profile; independent sharing is forbidden',view.source,view.start);
@@ -2089,7 +2112,7 @@
   publishNamespace('DDNExport',api$c);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later. One recursive, source-preserving dispatcher on a renderer registry. */
-  const renderers=new Map(),BUNDLES={graph:'ddn-graph.js',chart:'ddn-projections.js',matrix:'ddn-projections.js',panels:'ddn-projections.js',timeline:'ddn-projections.js',table:'ddn-projections.js',sequence:'ddn-projections.js',timing:'ddn-projections.js',chen:'ddn-projections.js',fishbone:'ddn-quality.js',decision:'ddn-quality.js',geo:'ddn-geo.js'},OPTIONAL=new Set(['geo']);
+  const renderers=new Map(),BUNDLES={graph:'ddn-graph.js',chart:'ddn-projections.js',matrix:'ddn-projections.js',panels:'ddn-projections.js',timeline:'ddn-projections.js',table:'ddn-projections.js',sequence:'ddn-projections.js',timing:'ddn-projections.js',chen:'ddn-projections.js',fishbone:'ddn-quality.js',decision:'ddn-quality.js',geo:'ddn-geo.js',iso:'ddn-iso.js'},OPTIONAL=new Set(['geo','iso']);
   function registerProjectionRenderer(name,fn,opts={}){if(typeof name!=='string'||!name||typeof fn!=='function')throw new api$e.DDNError('DDN-E010','Renderer registration needs a projection kind name and a render function.');renderers.set(name,fn);if(opts.optional)OPTIONAL.add(name);}
   function rendererFor(kind){const fn=renderers.get(kind);if(fn)return fn;const bundle=BUNDLES[kind];throw new api$e.DDNError('DDN-E010','No renderer registered for projection kind "'+kind+'". '+(bundle?'It is provided by '+bundle+'; load it after ddn-core.js'+(bundle==='ddn-graph.js'?'.':' and ddn-graph.js.'):'No runtime bundle provides it.'));}
   /* B1-025 (D3): optional kinds degrade visibly, never silently. A geo view rendered
@@ -2101,7 +2124,7 @@
    let pageW=q(pub.width,1280),pageH=q(pub.height,800);if(['a4','letter'].includes(pub.size)){pageW=pub.size==='a4'?210*96/25.4:816;pageH=pub.size==='a4'?297*96/25.4:1056;if(pub.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
    const margin=q(pub.margin,32),f=n=>Number(n.toFixed(3));
    const bw=Math.min(660,pageW-2*margin-64),bh=132,bx=(pageW-bw)/2,by=(pageH-bh)/2,bundle=BUNDLES[kind]||'ddn-'+kind+'.js';
-   const message='Map view requires '+bundle,sub='Optional module not loaded — load '+bundle+' after ddn-core.js and ddn-graph.js.';
+   const message=(kind==='iso'?'Isometric view requires ':kind==='geo'?'Map view requires ':'Projection requires ')+bundle,sub='Optional module not loaded — load '+bundle+' after ddn-core.js and ddn-graph.js.';
    const diag={code:'DDN-E010',severity:'error',message:'No renderer registered for projection kind "'+kind+'". It is provided by '+bundle+'; load it after ddn-core.js and ddn-graph.js. Inline placeholder rendered instead (optional module).'};
    const svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="ddn-svg ddn-view-${esc(kind)} ddn-missing-module" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(message)}</desc><rect width="100%" height="100%" fill="#F2F4F7"/><text x="${f(margin)}" y="${f(margin+26)}" font-size="24" font-weight="650" fill="#1F2933" font-family="system-ui,sans-serif">${esc(ir.view.name)}</text><g class="ddn-placeholder" data-missing-module="${esc(bundle)}"><rect x="${f(bx)}" y="${f(by)}" width="${f(bw)}" height="${f(bh)}" rx="8" fill="#FFFFFF" stroke="#B7791F" stroke-width="1.6" stroke-dasharray="6 4"/><text x="${f(pageW/2)}" y="${f(by+52)}" font-size="19" font-weight="650" fill="#8A5A00" text-anchor="middle" font-family="system-ui,sans-serif">${esc(message)}</text><text x="${f(pageW/2)}" y="${f(by+86)}" font-size="13" fill="#4B5563" text-anchor="middle" font-family="system-ui,sans-serif">${esc(sub)}</text></g><text x="${f(margin)}" y="${f(pageH-margin)}" font-size="11" fill="#4B5563" font-family="system-ui,sans-serif">One model · source-bound occurrences · placeholder (optional module missing)</text></svg>`;
    const scene={width:pageW,height:pageH,smallestText:11,scale:1,origin:[0,0],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:[],marks:[],projection:{kind,profile:p.projection?.profile||'',sourceIds:[],quantitative:false},drawingBounds:{x:bx,y:by,w:bw,h:bh},drawingArea:{x:margin,y:margin,w:pageW-2*margin,h:pageH-2*margin},textMeasurement:{mode:'estimated',requestedFont:p.style?.font||'sans'},placeholder:bundle};
@@ -2120,7 +2143,24 @@
    if(ir.view.profiles.projection.profile==='family.tree@1'){
    const shown=new Set(ir.view.selected);
    const next={...ir,elements:ir.elements.map(n=>{if(n.kind!=='family.person'||!shown.has(n.id))return n;const b=n.properties.x_birth,d=n.properties.x_death;if(b===undefined&&d===undefined)return n;const years=b!==undefined&&d!==undefined?b+'-'+d:b!==undefined?'b. '+b:'d. '+d;return {...n,name:n.name+' ('+years+')'};})};ir=next;}
-   const kind=ir.view.profiles.projection?.kind||'graph',fn=renderers.get(kind),opts={...options,renderChild:render$4};if(!fn&&OPTIONAL.has(kind))return placeholder(ir,kind);return (fn||rendererFor(kind))(ir,registry,glyphs,opts);}
+   const kind=ir.view.profiles.projection?.kind||'graph',fn=renderers.get(kind),opts={...options,renderChild:render$4};
+   if(!fn&&OPTIONAL.has(kind)&&kind!=='iso')return placeholder(ir,kind);
+   /* B1-034 (D1): an iso:true view needs the optional ddn-iso module. Missing
+    * module → the same visible placeholder + coded DDN-E010 diagnostic path as
+    * geo (B1-025). Graph views delegate to the iso renderer; chart views fall
+    * through to their normal renderer, which consults DDNIso per mark. */
+   const pr2=ir.view.profiles.projection||{},ISO=optionalNamespace('DDNIso');
+   if(pr2.iso===true){
+    if(!ISO)return placeholder(ir,'iso');
+    if(kind==='graph')return ISO.renderGraph(ir,registry,glyphs,opts);
+   }
+   /* A depth property without the module degrades to the flat render plus a
+    * coded diagnostic — never a crash (D1). */
+   const depthRequested=pr2.depth!==undefined||ir.elements.some(n=>ir.view.selected.includes(n.id)&&n.properties&&n.properties.depth!==undefined);
+   const out=(fn||rendererFor(kind))(ir,registry,glyphs,opts);
+   if(depthRequested&&!ISO)out.diagnostics.push({code:'DDN-E010',severity:'warning',message:'depth is rendered by the optional ddn-iso.js module; it is not loaded, so the view rendered flat. Load ddn-iso.js after ddn-core.js and ddn-graph.js.'});
+   if(depthRequested&&ISO&&kind==='graph'&&pr2.iso!==true)out.diagnostics.push({code:'DDN-ISOW01',severity:'warning',message:'depth on a graph view applies with iso: true; without it the view renders flat.'});
+   return out;}
   function plan(ir,ErrorClass=api$e.DDNError){rendererFor(ir.view.profiles.projection?.kind||'graph');return api$i.plan(ir,ErrorClass);}
   const api$b={VERSION:'0.6.0-beta.1',render: render$4,plan,registerProjectionRenderer,hasRenderer:k=>renderers.get(k)!==undefined,registeredKinds:()=>[...renderers.keys()]};
   publishNamespace('DDNEngine',api$b);
@@ -3788,7 +3828,14 @@
    }
    const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
    if(plan.kind==='chart'&&!qualityBody){
-    H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s,right=W-55*s,plotH=bottom-top,plotW=right-left;
+    /* B1-034 (D4): optional iso extrusions via ddn-iso.js. isoSpec is null for
+     * flat views, for unsupported marks (warned, flat), and whenever the module
+     * is absent (the engine already surfaced the placeholder/diagnostic). */
+    const ISO=optionalNamespace('DDNIso'),byId=new Map(ir.elements.map(n=>[n.id,n]));
+    let isoSpec=ISO?ISO.chartSpec(ir,plan.mark):null;
+    if(isoSpec&&!isoSpec.supported){diagnostics.push({code:'DDN-ISOW01',severity:'warning',message:'iso/depth extrusion is implemented for the bar, pie, donut, area and treemap marks; the '+plan.mark+' mark renders flat.'});isoSpec=null;}
+    const isoPrev=id=>options.noMotion?undefined:options.isoFrom?.depths?.[id];
+    H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s-(isoSpec?Math.ceil(isoSpec.viewDepth*ISO.SIN30):0),right=W-55*s-(isoSpec?Math.ceil(isoSpec.viewDepth*ISO.COS30)+4:0),plotH=bottom-top,plotW=right-left;
     if(plan.empty){
      body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
      body+=text(left+plotW/2,top+plotH/2,'0 records · intentionally empty data set',12,400,'middle');
@@ -3798,7 +3845,8 @@
      for(let i=0;i<pts.length;i++){const pt=pts[i],span=pt.y/total*2*Math.PI,end=angle+span,col=colour(i);let d='';const xy=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
       if(span>0){const slices=span>=Math.PI*2-.000001?2:1,step=span/slices;let start=xy(angle,radius);d=`M${f(start[0])} ${f(start[1])}`;for(let z=1;z<=slices;z++){const b=xy(angle+step*z,radius);d+=`A${radius} ${radius} 0 ${step>Math.PI?1:0} 1 ${f(b[0])} ${f(b[1])}`;}
        if(inner){const b=xy(end,inner);d+=`L${f(b[0])} ${f(b[1])}`;for(let z=1;z<=slices;z++){const b=xy(end-step*z,inner);d+=`A${inner} ${inner} 0 ${step>Math.PI?1:0} 0 ${f(b[0])} ${f(b[1])}`;}}else d+=`L${cx} ${cy}`;d+='Z';
-       body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><path data-value="${pt.y}" d="${d}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`,{cx,cy,radius,startAngle:angle,endAngle:end,value:pt.y},pr.y);}
+       if(isoSpec){const dp=isoSpec.depthOf(byId.get(pt.sourceIds[0]));if(dp>0)body+=`<g class="ddn-iso-thickness" data-id="${esc(pt.sourceIds[0])}">${ISO.arcSide(cx,cy,radius,inner,angle,end,dp,col,isoPrev(pt.sourceIds[0]))}</g>`;}
+       body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><path data-value="${pt.y}"${isoSpec?` data-depth="${f(isoSpec.depthOf(byId.get(pt.sourceIds[0])))}"`:''} d="${d}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`,{cx,cy,radius,startAngle:angle,endAngle:end,value:pt.y},pr.y);}
       const xx=2*radius+100*s,label=wrap(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit,W-xx-35*s,12);body+=`<rect x="${xx}" y="${ly-12*s}" width="${14*s}" height="${14*s}" fill="${col}"/>`+lines(label,xx+24*s,ly,12);ly+=Math.max(35*s,label.length*18*s+12*s);angle=end;
      }H=Math.max(H,ly+40*s);body+=text(20*s,H-20*s,'Total '+fmtNumber(total)+' '+plan.unit+' · angles encode values; zero entries have no sector.',11);
     }else if(plan.mark==='treemap'){
@@ -3818,7 +3866,8 @@
      }
      function drawLeaf(n,gi){
       const b=n.box,i=(groupLeaf[gi]||0);groupLeaf[gi]=i+1;leafCount++;const col=colour(gi+i),label=n.name+': '+fmtNumber(n.value)+' '+plan.unit,ix=b.x+2*s,iy=b.y+2*s,iw=Math.max(0,b.w-4*s),ih=Math.max(0,b.h-4*s);
-      let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title><rect data-value="${n.value}" x="${f(ix)}" y="${f(iy)}" width="${f(iw)}" height="${f(ih)}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`;
+      const isoD=isoSpec?isoSpec.depthOf(byId.get(n.sourceIds[0])):0;
+      let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title>`+(isoD>0?ISO.column(ix,iy,iw,ih,isoD,col,t.surface,isoPrev(n.sourceIds[0])):`<rect data-value="${n.value}" x="${f(ix)}" y="${f(iy)}" width="${f(iw)}" height="${f(ih)}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`);
       const fitted=wrap(label,iw-16*s,12);
       if(ih>=(fitted.length*15+10)*s&&fitted.every(v=>Text.measure(v,12*s,p.style.font,400).width<=iw-16*s))content+=lines(fitted,ix+8*s,iy+18*s,12,400);
       body+=group(n.sourceIds[0],n.sourceIds,content,{x:b.x,y:b.y,w:b.w,h:b.h,value:n.value,path:n.path},pr.y);
@@ -4144,11 +4193,15 @@
      let coords=pts.map((pt,i)=>({pt,x:fx(pt.x,i),y:fy(pt.y)}));
      if(['line','area'].includes(plan.mark)){
       const d=coords.map((a,i)=>(i?'L':'M')+f(a.x)+' '+f(a.y)).join(' ');
+      if(plan.mark==='area'&&isoSpec&&isoSpec.viewDepth>0)body+=ISO.ribbon(coords.map(a=>[a.x,a.y]),isoSpec.viewDepth,colour(0),undefined,isoPrev('area'));
       if(plan.mark==='area')body+=`<path d="${d}L${f(coords.at(-1).x)} ${f(fy(0))}L${f(coords[0].x)} ${f(fy(0))}Z" fill="${colour(0)}" opacity=".18"/>`;
       body+=`<path d="${d}" fill="none" stroke="${colour(0)}" stroke-width="2.5"/>`;
      }
      for(let i=0;i<coords.length;i++){const{x,y,pt}=coords[i],col=colour(plan.mark==='bar'?i:0);let content=`<title>${esc(String(pt.rawX)+': '+fmtNumber(pt.y)+' '+plan.unit)}</title>`,box;
-      if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
+      if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);
+       const isoD=isoSpec?isoSpec.depthOf(byId.get(pt.sourceIds[0])):0;
+       if(isoD>0)content+=ISO.column(x-bw/2,yy,bw,h,isoD,col,t.surface,isoPrev(pt.sourceIds[0]));
+       else content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
       else {const radius=plan.mark==='point'&&pr.size?21*Math.sqrt(pt.size/Math.max(Number.MIN_VALUE,...pts.map(p=>p.size))):4;content+=`<circle data-value="${pt.y}" cx="${f(x)}" cy="${f(y)}" r="${f(radius)}" fill="${col}" fill-opacity=".82" stroke="${t.surface}"/>`;box={x:x-radius,y:y-radius,w:radius*2,h:radius*2};}
       body+=group(pt.sourceIds[0],pt.sourceIds,content,{...box,value:pt.y,dataX:pt.x},pr.y);
       if(pt.error!==undefined){const et=fy(pt.y+pt.error),eb=fy(pt.y-pt.error),cap=Math.min(14*s,(box.w||20*s)/2);
@@ -4431,9 +4484,12 @@
     undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
     redo(){const t=redo.pop();if(!t)return false;const n={...files};for(const p of t.patch)if(p.after===undefined)delete n[p.file];else n[p.file]=p.after;commit(n,t.label,false);undo.push(t);historyBytes+=t.bytes;return true;},
     subscribe(fn){if(typeof fn!=='function')throw new TypeError('Listener must be a function.');listeners.add(fn);return ()=>listeners.delete(fn);},
-    renderSync({entry,view,overrides={},layoutState=null,noMotion=false}){
+    renderSync({entry,view,overrides={},layoutState=null,noMotion=false,isoFrom=null}){
      const start=performance.now(),base=compiled(entry,view),v=apply(base.ir,overrides),p=v.ir.view.profiles;
-     const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true});
+     /* B1-034 (D6): isoFrom carries the host's previous committed depths
+      * ({depths: {elementId: px}}) so ddn-iso emits a short declarative SMIL
+      * transition (<=300 ms) on refresh-driven height changes. */
+     const result=backend.Engine.render(v.ir,assets.registry,assets.glyphs,{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true,...(isoFrom?{isoFrom}:{})});
      const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);redacted?[]:v.ir.elements.flatMap(n=>n.fields||[]);
      const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);
      const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));

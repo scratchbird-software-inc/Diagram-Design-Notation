@@ -52,7 +52,7 @@ const entryFiles = n => fs.readdirSync(path.join(root, 'notation/runtime')).filt
     }
     bundles[n] = {
       bytes: formats['js'].bytes, sha256: formats['js'].sha256,
-      files: (MEMBERS[n] || Object.entries(MEMBERS).filter(([k]) => k !== 'geo').flatMap(([, v]) => v)).map(f => 'notation/runtime/' + f + '.js'),
+      files: (MEMBERS[n] || Object.entries(MEMBERS).filter(([k]) => k !== 'geo' && k !== 'iso').flatMap(([, v]) => v)).map(f => 'notation/runtime/' + f + '.js'),
       formats,
     };
   }
@@ -87,11 +87,12 @@ ${row('graph', BUNDLES.graph.blurb, 'ddn-core.js')}
 ${row('quality', BUNDLES.quality.blurb, 'ddn-core.js + ddn-graph.js')}
 ${row('projections', BUNDLES.projections.blurb, 'ddn-core.js + ddn-graph.js')}
 ${row('geo', BUNDLES.geo.blurb, 'ddn-core.js + ddn-graph.js')}
-${row('global', 'All-in-one: every bundle above except the optional ddn-geo, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed.', '—')}
+${row('iso', BUNDLES.iso.blurb, 'ddn-core.js + ddn-graph.js')}
+${row('global', 'All-in-one: every bundle above except the optional ddn-geo and ddn-iso, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed.', '—')}
 
 Every bundle ships three formats: a readable browser IIFE (\`.js\`, publishes
 the documented globals \`DDNLive\`, \`DDNRender\`, \`DDNProjections\`,
-\`DDNQualityRender\`, \`DDNGeo\`), a minified IIFE with source map (\`.min.js\` +
+\`DDNQualityRender\`, \`DDNGeo\`, \`DDNIso\`), a minified IIFE with source map (\`.min.js\` +
 \`.min.js.map\`), and a real ES module (\`.mjs\`). Types: \`d.ts\`/\`d.mts\`
 copies per bundle. \`ddn.css\` carries the default mark styles (page CSS wins
 over script-inlined presentation).
@@ -109,7 +110,7 @@ bundlers can tree-shake the \`.mjs\` builds when you import just what you need.
 ## npm subpaths
 
 \`@ddn/notation\` resolves to \`ddn.global.js\`/\`ddn.mjs\`; the subpaths \`./core\`,
-\`./graph\`, \`./projections\`, \`./quality\`, \`./geo\` resolve to the matching modular bundles
+\`./graph\`, \`./projections\`, \`./quality\`, \`./geo\`, \`./iso\` resolve to the matching modular bundles
 (\`require\` → \`.js\`, \`import\` → \`.mjs\`, types → \`.d.ts\`/\`.d.mts\`). In ESM the
 modules load prerequisites automatically; in CommonJS \`require('@ddn/notation/core')\`
 before any non-core subpath (same realm, same-version module stacking is a no-op).
@@ -117,7 +118,7 @@ before any non-core subpath (same realm, same-version module stacking is a no-op
 ## Load order
 
 \`ddn-core.js\` first, then \`ddn-graph.js\`, then \`ddn-quality.js\`,
-\`ddn-projections.js\` and the optional \`ddn-geo.js\` in any order. Each non-core bundle throws immediately if its
+\`ddn-projections.js\` and the optional \`ddn-geo.js\` / \`ddn-iso.js\` in any order. Each non-core bundle throws immediately if its
 prerequisite is missing; loading the same bundle twice is a no-op; mixing versions
 throws the single-version guard. Do not mix \`ddn.global.js\` with the modular bundles
 on one page — load either the all-in-one or the modules.
@@ -126,11 +127,17 @@ The engine is a registry: \`DDNEngine.registerProjectionRenderer(name, fn)\`. Th
 renderer registers as \`graph\` inside ddn-graph.js; chart/matrix/panels/timeline/table/
 sequence/timing/chen register inside ddn-projections.js; fishbone/decision register
 inside ddn-quality.js; the optional geographic module registers \`geo\` inside
-ddn-geo.js with \`optional: true\`. Rendering or planning an unregistered kind throws coded error
+ddn-geo.js with \`optional: true\`. The optional isometric module (ddn-iso.js) registers
+no kind: an \`iso: true\` view or a \`depth\` property routes through the engine to the
+DDNIso namespace (graph views render as iso prisms; bar/pie/donut/area/treemap charts
+extrude). Rendering or planning an unregistered kind throws coded error
 \`DDN-E010\` naming the kind and the bundle that provides it — with one owner-directed
 exception: a geo view rendered without ddn-geo.js produces an inline SVG placeholder
 ("Map view requires ddn-geo.js") plus the coded \`DDN-E010\` diagnostic on the
-diagnostics channel (never silent); the rest of the page renders. The fishbone and decision
+diagnostics channel (never silent); the rest of the page renders. An \`iso: true\` view
+rendered without ddn-iso.js produces the analogous placeholder ("Isometric view
+requires ddn-iso.js"); a \`depth\` property without the module degrades to the flat
+render plus the coded diagnostic — never a crash. The fishbone and decision
 renderers compose the page through ddn-projections.js, so those two kinds need both
 ddn-quality.js and ddn-projections.js at render time.
 
@@ -143,7 +150,9 @@ ddn-quality.js and ddn-projections.js at render time.
   \`ddn-projections.js\` for page composition).
 - Geographic maps: add \`ddn-geo.js\` (optional; missing module degrades to a
   visible placeholder, never silently).
-- Everything except geo, one script tag: \`ddn.global.js\`.
+- Isometric depth (2.5D charts, iso diagram prisms): add \`ddn-iso.js\` (optional;
+  same placeholder/degradation contract as ddn-geo).
+- Everything except geo and iso, one script tag: \`ddn.global.js\`.
 
 ## Data refresh
 

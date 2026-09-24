@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>43. Isometric depth (optional ddn-iso module) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>43. Isometric depth (optional ddn-iso module)</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1 (B1-034). Source grammar remains DDN 0.5; views without <code>iso</code>/<code>depth</code> render byte-identical SVG to previous releases. Scope: <code>graph</code> and <code>chart</code> projections. All rendering is pure SVG — no WebGL, canvas or 3D engine.</p>
+<h2>Optional module (D1)</h2>
+<p>Isometric depth ships as the optional seventh bundle <code>dist/ddn-iso.js</code> (readable IIFE, <code>.min.js</code> + source map, <code>.mjs</code>, type copies; npm subpath <code>@ddn/notation/iso</code>). It is never part of <code>ddn.global.js</code>. The module publishes the <code>DDNIso</code> namespace and registers no projection kind; the engine routes <code>iso: true</code> views through it. Missing module, never silent:</p>
+<ul><li>an <code>iso: true</code> view renders a visible inline placeholder (&quot;Isometric view</li></ul>
+<p>  requires ddn-iso.js&quot;) plus the coded <code>DDN-E010</code> diagnostic — the same   owner-directed exception path as the geographic module (B1-025);</p>
+<ul><li>a <code>depth</code> property without the module degrades to the flat render plus a</li></ul>
+<p>  coded <code>DDN-E010</code> warning on the diagnostics channel — never a crash.</p>
+<h2>Notation (D3)</h2>
+<p>View/projection level, on <code>graph</code> and <code>chart</code> projections only:</p>
+<table><thead><tr><th>Property</th><th>Values</th><th>Default</th></tr></thead><tbody><tr><td><code>iso</code></td><td><code>true</code> \</td><td><code>false</code></td><td><code>false</code></td></tr><tr><td><code>depth</code></td><td>length (px) 0..2000, <code>&quot;x_record.field&quot;</code> per-record binding, or <code>@data.record.field</code></td><td><code>0</code> (flat); <code>18</code> when <code>iso: true</code> sets no explicit depth</td></tr></tbody></table>
+<p>Per-element <code>depth:</code> on a data-block object overrides the view depth for that object (building heights differ); the default inherits the view depth. The per-object property is registered in <code>standard/registry/data-properties.json</code>. Invalid forms raise <code>DDN-ISO150</code> (iso not boolean; iso/depth on other kinds), <code>DDN-ISO151</code> (depth form) or <code>DDN-ISO152</code> (binding does not resolve to a finite 0..2000 number).</p>
+<pre><code>ddn &quot;0.5&quot;;
+module &quot;example.iso&quot;;
+
+data tiers {
+    object web &quot;Web&quot; { kind: record; depth: 26px; x_record: { tier: &quot;Web&quot;, value: 420, load: 26, unit: &quot;req/s&quot; }; }
+    object api &quot;API&quot; { kind: record; x_record: { tier: &quot;API&quot;, value: 610, load: 34, unit: &quot;req/s&quot; }; }
+}
+
+view iso_bar &quot;Iso bar&quot; {
+    data: [@tiers];
+    projection { kind: chart; profile: &quot;chart.basic@1&quot;; records: [@tiers.web, @tiers.api]; mark: bar; x: &quot;x_record.tier&quot;; y: &quot;x_record.value&quot;; unit: &quot;req/s&quot;; iso: true; depth: &quot;x_record.load&quot;; }
+}</code></pre>
+<h2>Projection math and shading (D2)</h2>
+<p>Axonometric projection at 30°: <code>sx=(x−y)·cos30°</code>, <code>sy=(x+y)·sin30°−z</code>. Pure functions, unit-tested against independently computed reference values (<code>notation/tests/iso.js</code>). Face shading derives from the base colour: top = base, left = ×0.85, right = ×0.7 (<code>DDNIso.shade</code>). Painter's-algorithm z-order is a total order — footprint <code>x+y</code>, then height, then element id — so the same input always yields the same SVG (D7).</p>
+<h2>Stage 1 — chart extrusions (D4)</h2>
+<p>With <code>iso: true</code> or <code>depth</code> &gt; 0, the bar (columns), pie/donut (thickness walls), area (ribbon) and treemap (blocks) marks extrude; each mark is the flat face plus top/front/side faces. Axis labels and grid stay flat-overlayed. Other marks warn (<code>DDN-ISOW01</code>) and render flat.</p>
+<h2>Stage 2 — iso diagram nodes (D5)</h2>
+<p><code>iso: true</code> on a graph view renders nodes as extruded prisms on an isometric ground plane, labels on the top face (kept horizontal for legibility). Relations are routed flat by the ordinary engine and the resulting 2D route points are then projected onto the ground plane — routing is never computed in 3D; endpoints attach at prism top-face centres. Frames and subdiagrams are flat-view devices and are omitted in iso graph views (<code>DDN-ISOW02</code>).</p>
+<h2>Refresh-driven depth transitions (D6)</h2>
+<p>Keyed refresh (<code>ws.replaceData</code>, B1-029) of a bound depth field re-renders with the new heights; a same-values refresh re-renders byte-identical. Hosts pass the previous committed depths as <code>renderSync({isoFrom:{depths}})</code> and ddn-iso emits a declarative one-shot SMIL <code>&lt;animate&gt;</code> (250 ms, ≤300 ms) per changed face; <code>noMotion</code> strips animation for print/static targets. Demonstrated by <code>examples/embed/iso-load-monitor.html</code> (synthetic load monitor).</p>
+<h2>Colour binding (D3)</h2>
+<p>Colour-by-value stays with the existing chart/geo colour mechanisms and host refresh overrides (<code>renderSync({overrides})</code>); ddn-iso deliberately does not add a second colour system.</p>
+<h2>Limits</h2>
+<p>The bundle targets ≤20 KB minified (actual: see <code>dist/README.md</code>). Depth is bounded to 0..2000 px. Extrusion is illustrative depth, not measured 3D geometry; quantitative values remain encoded by the flat mark geometry.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -15,12 +15,13 @@ Every bundle ships three formats: readable browser IIFE (`.js`), ES module
 
 | Bundle | `.js` bytes | `.min.js` (gzip) | Provides | Load after |
 |---|---:|---:|---|---|
-| `ddn-core` | 680,026 | 586,662 (130,574) | Parse, resolve, validate (`createWorkspace`, `parse`, `resolve`, `analyze`, authoring, io). No rendering. | — |
-| `ddn-graph` | 146,951 | 105,209 (39,045) | Graph-family rendering: layout, routing, shapes, palettes, interaction validation. | `ddn-core.js` |
-| `ddn-projections` | 89,652 | 73,979 (27,241) | Fixed-grid projections: chart (basic marks plus the Category-2 pack — distributions, tree, grid, network families and statistical overlays), matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
+| `ddn-core` | 695,510 | 596,571 (133,757) | Parse, resolve, validate (`createWorkspace`, `parse`, `resolve`, `analyze`, authoring, io). No rendering. | — |
+| `ddn-graph` | 151,781 | 108,180 (40,007) | Graph-family rendering: layout, routing, shapes, palettes, interaction validation. | `ddn-core.js` |
+| `ddn-projections` | 91,683 | 75,333 (27,810) | Fixed-grid projections: chart (basic marks plus the Category-2 pack — distributions, tree, grid, network families and statistical overlays), matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
 | `ddn-quality` | 20,469 | 15,633 (7,022) | Quality charts, fishbone causes, decision/rule-table rendering. | `ddn-graph.js` (renders through `ddn-projections.js`) |
 | `ddn-geo` | 23,771 | 16,201 (6,841) | **Optional** geographic module: mercator/equirectangular/albers/equal-earth projection math, GeoJSON ingestion, choropleth/symbol/outline map rendering. Registers the `geo` kind with `optional: true`. | `ddn-graph.js` |
-| `ddn.global` | 957,996 | 805,100 (208,228) | All of the above **except** the optional `ddn-geo`, plus the web component — one file, nothing to order. | — |
+| `ddn-iso` | 23,406 | 14,396 (5,996) | **Optional** isometric module (B1-034): axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms. Publishes `DDNIso`; no new kind. | `ddn-graph.js` |
+| `ddn.global` | 980,489 | 819,295 (213,042) | All of the above **except** the optional `ddn-geo` and `ddn-iso`, plus the web component — one file, nothing to order. | — |
 
 The `.mjs` files are real ES modules (named exports for the live API and the
 internal namespaces); non-core `.mjs` files import their prerequisites
@@ -44,10 +45,11 @@ Order is mandatory — every later bundle attaches to the earlier ones:
 <script src="notation/dist/ddn-projections.js"></script>  <!-- needed for chart/matrix/panels/… views -->
 <script src="notation/dist/ddn-quality.js"></script>      <!-- needed for quality/fishbone/decision views -->
 <script src="notation/dist/ddn-geo.js"></script>          <!-- optional: geographic (map) views -->
+<script src="notation/dist/ddn-iso.js"></script>          <!-- optional: isometric depth (iso/depth views) -->
 ```
 
 Under Node, `require("@ddn/notation/core")`, `…/graph`, `…/projections`,
-`…/quality`, `…/geo` apply the same registration in the same order (see the
+`…/quality`, `…/geo`, `…/iso` apply the same registration in the same order (see the
 `exports` map in `notation/package.json`).
 
 ## The optional geographic module (ddn-geo)
@@ -82,6 +84,50 @@ Planning (`ws.projectionPlan`) stays a hard `DDN-E010`, and every other kind
 keeps the hard throw below. Verified in `notation/tests/geo.js` and
 `notation/tests/modular-bundles.js`.
 
+## The optional isometric module (ddn-iso)
+
+`ddn-iso` (B1-034) is the seventh bundle and the second **optional** one — same
+contract as ddn-geo: never embedded in `ddn.global.js`, loaded only on demand.
+It adds axonometric ("2.5D") depth to the existing `graph` and `chart` kinds —
+it registers no projection kind of its own:
+
+- `iso: true` on a view switches it to the isometric treatment; `depth: <px>`
+  (default `0` = flat, `18` when `iso: true` sets no explicit depth) is the
+  extrusion thickness.
+- `depth: "x_record.load"` binds per-record depth (the chart binding idiom);
+  `depth: @data.record.field` binds one record's field as the view depth — the
+  host grows/shrinks heights by pushing data with `ws.replaceData(...)` and
+  re-rendering, passing `renderSync({isoFrom:{depths}})` with the previous
+  committed depths to get a declarative SMIL transition (250 ms; `noMotion`
+  strips it for print).
+- Per-object `depth:` on data-block objects overrides the view depth (building
+  heights differ).
+- Stage 1 charts: extruded bar columns, pie/donut thickness, area ribbon,
+  treemap blocks. Axis labels and grid stay flat-overlayed.
+- Stage 2 graphs (`iso: true` on a `graph` view): nodes render as extruded
+  prisms on an iso ground plane with labels on the top face; relations are
+  routed flat by the ordinary engine and then **projected onto the ground
+  plane** (routing is never computed in 3D); endpoints attach at the prism
+  top-face centres.
+
+Projection math (D2): `sx=(x−y)·cos30°`, `sy=(x+y)·sin30°−z`; face shading
+top = base, left = ×0.85, right = ×0.7 (`DDNIso.shade`); painter's-algorithm
+z-order is a total order (footprint `x+y`, then height, then element id) so
+renders are deterministic. Colour-by-value stays with the existing chart/geo
+colour mechanisms and refresh overrides — ddn-iso does not add a second colour
+system.
+
+Missing module (D1): an `iso: true` view rendered without `ddn-iso.js` shows
+the visible placeholder "Isometric view requires ddn-iso.js" plus the coded
+`DDN-E010` diagnostic; a `depth` property without the module degrades to the
+flat render plus a coded warning — never a crash. Validation codes:
+`DDN-ISO150` (iso must be boolean; iso/depth only on graph/chart),
+`DDN-ISO151` (depth form), `DDN-ISO152` (binding must resolve to a finite
+0..2000 number), `DDN-ISOW01` (unsupported mark renders flat; depth on a graph
+without `iso: true`), `DDN-ISOW02` (frames/subdiagrams omitted in iso graph
+views). Verified in `notation/tests/iso.js`; demo:
+`examples/embed/iso-load-monitor.html`.
+
 ## DDN-E010 behavior
 
 Calling a capability whose bundle is not loaded never silently degrades: the
@@ -99,7 +145,10 @@ load it. Verified behaviors (`notation/tests/modular-bundles.js`):
   `ddn-projections.js`.
 - Geo views without `ddn-geo.js` render the visible placeholder box and
   surface the coded `DDN-E010` through diagnostics (see the ddn-geo section
-  above) — the one owner-directed exception to the hard throw.
+  above) — an owner-directed exception to the hard throw, mirrored by
+  `iso: true` views without `ddn-iso.js` ("Isometric view requires
+  ddn-iso.js"). A `depth` property without ddn-iso.js degrades to the flat
+  render plus a coded `DDN-E010` warning on the diagnostics channel.
 
 Working single-page proofs ship in `website/examples/embed/core-only-check.html`
 (core-only) and `website/examples/embed/core-graph.html` (core + graph).
@@ -126,4 +175,7 @@ Working single-page proofs ship in `website/examples/embed/core-only-check.html`
   `ddn-quality.js` for quality views).
 - Pages with geographic maps: add `ddn-geo.js` and register the geography
   asset (see above); without it, map views show the placeholder, not a crash.
+- Pages with isometric depth (2.5D charts, iso diagram prisms): add
+  `ddn-iso.js`; without it, `iso: true` views show the placeholder and
+  `depth`-only views render flat with a diagnostic.
 - Anything else, or when in doubt: `ddn.global.js`.

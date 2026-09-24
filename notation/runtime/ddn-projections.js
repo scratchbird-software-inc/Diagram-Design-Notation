@@ -128,7 +128,14 @@ function render(ir,reg,glyphs='',options={}){
  }
  const fmtNumber=n=>n!==0&&(Math.abs(n)>=1e9||Math.abs(n)<.01)?n.toExponential(3):new Intl.NumberFormat('en',{maximumFractionDigits:2}).format(n);
  if(plan.kind==='chart'&&!qualityBody){
-  H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s,right=W-55*s,plotH=bottom-top,plotW=right-left;
+  /* B1-034 (D4): optional iso extrusions via ddn-iso.js. isoSpec is null for
+   * flat views, for unsupported marks (warned, flat), and whenever the module
+   * is absent (the engine already surfaced the placeholder/diagnostic). */
+  const ISO=optionalNamespace('DDNIso'),byId=new Map(ir.elements.map(n=>[n.id,n]));
+  let isoSpec=ISO?ISO.chartSpec(ir,plan.mark):null;
+  if(isoSpec&&!isoSpec.supported){diagnostics.push({code:'DDN-ISOW01',severity:'warning',message:'iso/depth extrusion is implemented for the bar, pie, donut, area and treemap marks; the '+plan.mark+' mark renders flat.'});isoSpec=null;}
+  const isoPrev=id=>options.noMotion?undefined:options.isoFrom?.depths?.[id];
+  H=Math.max(q(pr.height,600*s),340*s);W=Math.max(W,650*s);const pts=plan.points,left=100*s,top=35*s,bottom=H-115*s-(isoSpec?Math.ceil(isoSpec.viewDepth*ISO.SIN30):0),right=W-55*s-(isoSpec?Math.ceil(isoSpec.viewDepth*ISO.COS30)+4:0),plotH=bottom-top,plotW=right-left;
   if(plan.empty){
    body+=line(left,top,left,bottom,t.ink,1.4)+line(left,bottom,right,bottom,t.ink,1.4)+text(left,top-14*s,plan.unit||pr.y,12,650);
    body+=text(left+plotW/2,top+plotH/2,'0 records · intentionally empty data set',12,400,'middle');
@@ -138,7 +145,8 @@ function render(ir,reg,glyphs='',options={}){
    for(let i=0;i<pts.length;i++){const pt=pts[i],span=pt.y/total*2*Math.PI,end=angle+span,col=colour(i);let d='';const xy=(a,r)=>[cx+Math.cos(a)*r,cy+Math.sin(a)*r];
     if(span>0){const slices=span>=Math.PI*2-.000001?2:1,step=span/slices;let start=xy(angle,radius);d=`M${f(start[0])} ${f(start[1])}`;for(let z=1;z<=slices;z++){const b=xy(angle+step*z,radius);d+=`A${radius} ${radius} 0 ${step>Math.PI?1:0} 1 ${f(b[0])} ${f(b[1])}`;}
      if(inner){const b=xy(end,inner);d+=`L${f(b[0])} ${f(b[1])}`;for(let z=1;z<=slices;z++){const b=xy(end-step*z,inner);d+=`A${inner} ${inner} 0 ${step>Math.PI?1:0} 0 ${f(b[0])} ${f(b[1])}`;}}else d+=`L${cx} ${cy}`;d+='Z';
-     body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><path data-value="${pt.y}" d="${d}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`,{cx,cy,radius,startAngle:angle,endAngle:end,value:pt.y},pr.y);}
+     if(isoSpec){const dp=isoSpec.depthOf(byId.get(pt.sourceIds[0]));if(dp>0)body+=`<g class="ddn-iso-thickness" data-id="${esc(pt.sourceIds[0])}">${ISO.arcSide(cx,cy,radius,inner,angle,end,dp,col,isoPrev(pt.sourceIds[0]))}</g>`;}
+     body+=group(pt.sourceIds[0],pt.sourceIds,`<title>${esc(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit)}</title><path data-value="${pt.y}"${isoSpec?` data-depth="${f(isoSpec.depthOf(byId.get(pt.sourceIds[0])))}"`:''} d="${d}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`,{cx,cy,radius,startAngle:angle,endAngle:end,value:pt.y},pr.y);}
     const xx=2*radius+100*s,label=wrap(pt.rawX+': '+fmtNumber(pt.y)+' '+plan.unit,W-xx-35*s,12);body+=`<rect x="${xx}" y="${ly-12*s}" width="${14*s}" height="${14*s}" fill="${col}"/>`+lines(label,xx+24*s,ly,12);ly+=Math.max(35*s,label.length*18*s+12*s);angle=end;
    }H=Math.max(H,ly+40*s);body+=text(20*s,H-20*s,'Total '+fmtNumber(total)+' '+plan.unit+' · angles encode values; zero entries have no sector.',11);
   }else if(plan.mark==='treemap'){
@@ -158,7 +166,8 @@ function render(ir,reg,glyphs='',options={}){
    }
    function drawLeaf(n,gi){
     const b=n.box,i=(groupLeaf[gi]||0);groupLeaf[gi]=i+1;leafCount++;const col=colour(gi+i),label=n.name+': '+fmtNumber(n.value)+' '+plan.unit,ix=b.x+2*s,iy=b.y+2*s,iw=Math.max(0,b.w-4*s),ih=Math.max(0,b.h-4*s);
-    let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title><rect data-value="${n.value}" x="${f(ix)}" y="${f(iy)}" width="${f(iw)}" height="${f(ih)}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`;
+    const isoD=isoSpec?isoSpec.depthOf(byId.get(n.sourceIds[0])):0;
+    let content=`<title>${esc(n.path+': '+fmtNumber(n.value)+' '+plan.unit)}</title>`+(isoD>0?ISO.column(ix,iy,iw,ih,isoD,col,t.surface,isoPrev(n.sourceIds[0])):`<rect data-value="${n.value}" x="${f(ix)}" y="${f(iy)}" width="${f(iw)}" height="${f(ih)}" fill="${col}" stroke="${t.surface}" stroke-width="2"/>`);
     const fitted=wrap(label,iw-16*s,12);
     if(ih>=(fitted.length*15+10)*s&&fitted.every(v=>Text.measure(v,12*s,p.style.font,400).width<=iw-16*s))content+=lines(fitted,ix+8*s,iy+18*s,12,400);
     body+=group(n.sourceIds[0],n.sourceIds,content,{x:b.x,y:b.y,w:b.w,h:b.h,value:n.value,path:n.path},pr.y);
@@ -484,11 +493,15 @@ function render(ir,reg,glyphs='',options={}){
    let coords=pts.map((pt,i)=>({pt,x:fx(pt.x,i),y:fy(pt.y)}));
    if(['line','area'].includes(plan.mark)){
     const d=coords.map((a,i)=>(i?'L':'M')+f(a.x)+' '+f(a.y)).join(' ');
+    if(plan.mark==='area'&&isoSpec&&isoSpec.viewDepth>0)body+=ISO.ribbon(coords.map(a=>[a.x,a.y]),isoSpec.viewDepth,colour(0),undefined,isoPrev('area'));
     if(plan.mark==='area')body+=`<path d="${d}L${f(coords.at(-1).x)} ${f(fy(0))}L${f(coords[0].x)} ${f(fy(0))}Z" fill="${colour(0)}" opacity=".18"/>`;
     body+=`<path d="${d}" fill="none" stroke="${colour(0)}" stroke-width="2.5"/>`;
    }
    for(let i=0;i<coords.length;i++){const{x,y,pt}=coords[i],col=colour(plan.mark==='bar'?i:0);let content=`<title>${esc(String(pt.rawX)+': '+fmtNumber(pt.y)+' '+plan.unit)}</title>`,box;
-    if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
+    if(plan.mark==='bar'){const bw=Math.max(2,plotW/pts.length*.65),yy=Math.min(y,fy(0)),h=Math.abs(fy(0)-y);
+     const isoD=isoSpec?isoSpec.depthOf(byId.get(pt.sourceIds[0])):0;
+     if(isoD>0)content+=ISO.column(x-bw/2,yy,bw,h,isoD,col,t.surface,isoPrev(pt.sourceIds[0]));
+     else content+=`<rect data-value="${pt.y}" x="${f(x-bw/2)}" y="${f(yy)}" width="${f(bw)}" height="${f(h)}" fill="${col}"/>`;box={x:x-bw/2,y:yy,w:bw,h};}
     else {const radius=plan.mark==='point'&&pr.size?21*Math.sqrt(pt.size/Math.max(Number.MIN_VALUE,...pts.map(p=>p.size))):4;content+=`<circle data-value="${pt.y}" cx="${f(x)}" cy="${f(y)}" r="${f(radius)}" fill="${col}" fill-opacity=".82" stroke="${t.surface}"/>`;box={x:x-radius,y:y-radius,w:radius*2,h:radius*2};}
     body+=group(pt.sourceIds[0],pt.sourceIds,content,{...box,value:pt.y,dataX:pt.x},pr.y);
     if(pt.error!==undefined){const et=fy(pt.y+pt.error),eb=fy(pt.y-pt.error),cap=Math.min(14*s,(box.w||20*s)/2);
