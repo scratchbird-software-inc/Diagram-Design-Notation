@@ -1139,6 +1139,10 @@
       "start": "none",
       "end": "open",
       "glyph": "link",
+      "alias": "satisfies",
+      "aliases": [
+        "satisfies"
+      ],
       "source": [
         "req.implementation"
       ],

@@ -76,9 +76,36 @@ import RegistryCatalogue from './assets/catalogue.js';
     }
     return map;
   }
-  function parse(text, source='input.ddn', kindWords=null) {
+  /* B1-038 compact authoring, phase 2 (D1–D6). Verb-keyword relations and
+   * named relation batches desugar in the parser to the IDENTICAL canonical
+   * relation AST; no IR, runtime or renderer changes.
+   * D1: a registry relationship keyword (or declared alias) in declaration
+   * position inside a data block introduces a relation of that kind:
+   *   ref places "places" @customer [one] -> @purchase [zeromany] { enforcement: database; }
+   *   ≡ relation places "places" @customer -> @purchase
+   *     { kind: ref; source_mark: one; target_mark: zeromany; enforcement: database; }
+   * Brackets are optional per side; an OMITTED bracket omits the mark property
+   * (never defaulted). Enforcement is never implied (D2).
+   * D3: verb words are contextual like kind words — declaration position only,
+   * and words that are both a kind and a verb (note, report, test, …) read as
+   * a relation ONLY when endpoints follow the id/label; `object ref "…"`
+   * still parses.
+   * D4: `relations <kind> { shared props; id "label" @x -> @y { overrides }; … }`
+   * expands to one canonical relation per entry; per-entry properties win over
+   * batch-shared ones; identity is never positional. */
+  let defaultRelationKinds=null;
+  function relationKindWords(reg){
+    const kinds=Profiles.registry(reg||RegistryCatalogue).relationships,map=new Map();
+    for(const k of kinds)for(const w of [k.keyword,...(k.aliases||[])]){
+      if(!/^[A-Za-z_][A-Za-z0-9_-]*$/.test(w)||STRUCTURAL_DATA_DECLS.has(w))continue;
+      if(!map.has(w))map.set(w,k.keyword);
+    }
+    return map;
+  }
+  function parse(text, source='input.ddn', kindWords=null, relWords=null) {
     const tokens=lex(text,source);let pos=0,depth=0;
     const typedKinds=kindWords||(defaultTypedKinds||(defaultTypedKinds=typedKindWords(null)));
+    const relationKinds=relWords||(defaultRelationKinds||(defaultRelationKinds=relationKindWords(null)));
     const peek=(n=0)=>tokens[pos+n], take=()=>tokens[pos++];
     function expect(type,value){let t=take();if(t.type!==type||(value!==undefined&&t.value!==value))fail('DDN010',`Expected ${value||type}; found ${t.value||t.type}`,t,source);return t;}
     function ref(){const t=expect('@');let parts=[expect('id').value];while(peek().type==='.'){take();parts.push(expect('id').value);}return {$ref:parts.join('.'),$offset:t.start};}
@@ -98,8 +125,10 @@ import RegistryCatalogue from './assets/catalogue.js';
           expect(';');}
         else if(node.group&&(node.type==='fields'||node.type==='ports')&&peek().type!=='id'&&!(peek().type==='{'&&t.value===node.type))
           node.children.push(contextualMember(node.type,t));
-        else if(!node.group&&node.type==='data'&&peek().type==='id'&&typedKinds.has(t.value))
-          node.children.push(typedDeclaration(t,typedKinds.get(t.value)));
+        else if(!node.group&&node.type==='data'&&t.value==='relations'&&peek().type==='id'&&relationKinds.has(peek().value))
+          relationBatch(node);
+        else if(!node.group&&node.type==='data'&&peek().type==='id'&&(typedKinds.has(t.value)||relationKinds.has(t.value)))
+          node.children.push(compactDataDeclaration(t));
         else node.children.push(declaration(t));
       }
       node.bodyEnd=peek().start;node.end=take().end;depth--;if(peek().type===';')node.end=take().end;return node;
@@ -110,6 +139,53 @@ import RegistryCatalogue from './assets/catalogue.js';
       if(peek().type==='@'){n.from=ref();expect('->');n.to=ref();}
       if(peek().type===';'){n.end=take().end;return n;}
       return body(n);
+    }
+    // B1-038 D3: a word that is both an object-kind word and a relationship
+    // word (note, report, test, …) is a relation only when endpoints follow
+    // the id/label; otherwise it stays a typed object declaration.
+    function compactDataDeclaration(t){
+      let j=pos+1;if(tokens[j]?.type==='string')j++;
+      if(relationKinds.has(t.value)&&(tokens[j]?.type==='@'||!typedKinds.has(t.value)))
+        return compactRelation(t,relationKinds.get(t.value));
+      return typedDeclaration(t,typedKinds.get(t.value));
+    }
+    function markBracket(n,key){if(peek().type==='['){take();n.props[key]=expect('id').value;expect(']');}}
+    function compactRelation(t,keyword){let n={type:'relation',id:null,label:null,props:Object.create(null),children:[],start:t.start,source};
+      n.props.kind=keyword;n.id=expect('id').value;
+      if(peek().type==='string')n.label=take().value;
+      if(peek().type==='@'){n.from=ref();markBracket(n,'source_mark');expect('->');n.to=ref();markBracket(n,'target_mark');}
+      if(peek().type===';'){n.end=take().end;return n;}
+      return body(n);
+    }
+    /* B1-038 D4: named batch. Shared properties use canonical property names;
+     * each entry carries its own id/label/endpoints (identity never
+     * positional) and optional bracket marks; per-entry properties win over
+     * batch-shared ones. The batch header fixes the kind, so `kind:` in a
+     * shared or entry position is a duplicate property (DDN011). */
+    function relationBatch(node){
+      const kw=take(),keyword=relationKinds.get(kw.value),shared=Object.create(null);
+      expect('{');if(++depth>80)fail('DDN007','Maximum nesting exceeded',kw,source);
+      while(peek().type!=='}'){
+        if(peek().type==='eof')fail('DDN010','Missing closing brace',peek(),source);
+        const t=expect('id');
+        if(peek().type===':'){take();
+          if(t.value==='kind')fail('DDN011','Duplicate property kind (set by the batch header)',t,source);
+          if(Object.hasOwn(shared,t.value))fail('DDN011',`Duplicate property ${t.value}`,t,source);
+          if(['__proto__','prototype','constructor'].includes(t.value))fail('DDN008','Reserved key',t,source);
+          shared[t.value]=value();expect(';');continue;}
+        let n={type:'relation',id:t.value,label:null,props:Object.create(null),children:[],start:t.start,source};
+        if(peek().type==='string')n.label=take().value;
+        n.from=ref();markBracket(n,'source_mark');expect('->');n.to=ref();markBracket(n,'target_mark');
+        if(peek().type==='{')body(n);
+        else if(peek().type===';')n.end=take().end;
+        else fail('DDN010',`Expected ; or block after relation ${n.id}`,peek(),source);
+        if(Object.hasOwn(n.props,'kind'))fail('DDN011','Duplicate property kind (set by the batch header)',{start:n.start},source);
+        const merged=Object.create(null);merged.kind=keyword;
+        for(const k of Object.keys(shared))merged[k]=shared[k];
+        for(const k of Object.keys(n.props))merged[k]=n.props[k];
+        n.props=merged;node.children.push(n);
+      }
+      take();depth--;if(peek().type===';')take();
     }
     function contextualMember(groupType,t){let n={type:groupType==='fields'?'field':'port',id:t.value,label:null,props:Object.create(null),children:[],start:t.start,source};
       if(peek().type==='string')n.label=take().value;
@@ -252,7 +328,7 @@ import RegistryCatalogue from './assets/catalogue.js';
     return {text:out.join('\n')+'\n',diagnostics};
   }
 
-  function createWorkspace(files,entry,kindWords=null){
+  function createWorkspace(files,entry,kindWords=null,relWords=null){
     const docs=new Map(),modules=new Map(),symbols=new Map(),active=new Set();
     // Iterative load: deep import chains must not exhaust the call stack.
     // Frames preserve the original pre-order (a file's module sections are
@@ -263,7 +339,7 @@ import RegistryCatalogue from './assets/catalogue.js';
       const stack=[];
       const open=p=>{
         if(!Object.hasOwn(files,p))throw new DDNError('DDN022','Missing workspace file '+p,p);
-        active.add(p);const d=parse(files[p],p,kindWords);docs.set(p,d);d.imported=new Map();
+        active.add(p);const d=parse(files[p],p,kindWords,relWords);docs.set(p,d);d.imported=new Map();
         // A file registers ALL its module sections (RFC-117 D2). Module records
         // are what nodes carry as n.doc: identity, own declarations and the
         // file-level import map.
@@ -350,7 +426,7 @@ import RegistryCatalogue from './assets/catalogue.js';
   function validateKnown(n,allowed){for(const key of Object.keys(n.props))if(!allowed.includes(key)&&!key.startsWith('x_'))throw new DDNError('DDN033',`Unknown ${n.type} property ${key}`,n.source,n.start);}
   function build(files,entry,viewName,registry,stack=[]){
     registry=Profiles.registry(registry);
-    const ws=createWorkspace(files,entry,typedKindWords(registry));const all=[...ws.symbols.values()];const view=all.find(n=>n.type==='view'&&((viewName&&(n.id===viewName||n.path===viewName||n.uid===viewName))||(!viewName&&n.doc===ws.main)));
+    const ws=createWorkspace(files,entry,typedKindWords(registry),relationKindWords(registry));const all=[...ws.symbols.values()];const view=all.find(n=>n.type==='view'&&((viewName&&(n.id===viewName||n.path===viewName||n.uid===viewName))||(!viewName&&n.doc===ws.main)));
     if(!view)throw new DDNError('DDN040','View not found: '+(viewName||'(default)'),entry);
     if(stack.includes(view.uid)||stack.length>6)throw new DDNError('DDN065','Recursive or excessive inline subdiagram expansion',view.source,view.start);
     validateKnown(view,PROPERTIES.view);
@@ -524,6 +600,6 @@ import RegistryCatalogue from './assets/catalogue.js';
     return {ir,workspace:ws,viewNode:view};
   }
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles};
   publishNamespace('DDN',api);
   export default api;

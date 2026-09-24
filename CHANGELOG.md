@@ -6,6 +6,49 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Compact authoring, phase 2 (B1-038): verb-keyword relations and named
+  relation batches, desugared in the parser to the identical canonical
+  relation AST (same equivalence gate as phase 1: equal `DDN.semanticJSON`,
+  byte-identical SVG, identical validation outcomes) — no IR, renderer or
+  runtime changes beyond the parse path; the use-cases golden renders stay
+  byte-identical.
+  - Verb relations (D1/D2): every built-in relationship keyword works as a
+    declaration keyword inside a data block —
+    `ref places "places" @customer [one] -> @purchase [zeromany] { enforcement: database; }`
+    ≡ `relation places "places" @customer -> @purchase { kind: ref;
+    source_mark: one; target_mark: zeromany; enforcement: database; }`.
+    Brackets are optional per side; an OMITTED bracket omits the mark
+    property (never defaulted), and enforcement is never implied.
+  - Disambiguation (D3): verb words are contextual like kind words. Words
+    registered as both an object kind and a relationship (`note`, `report`,
+    `test`, `decision`, `issue`, `schedule`, `snapshot`, `export`, `trigger`,
+    `namespace`) read as relations only when `@` endpoints follow the
+    id/label; `flow`/`domain` stay structural; `object ref "…"` still parses.
+  - Named batches (D4): `relations <kind> { shared props; id "label" @x -> @y
+    { overrides }; … }` expands to one canonical relation per entry; the
+    header fixes the kind (`kind:` inside is DDN011), batch-shared properties
+    merge UNDER per-entry ones (per-entry wins — the format-override
+    precedence idiom), and identity is never positional. Anonymous arrow
+    chains are explicitly not provided.
+  - Extension kinds (D6): profile relationship entries may now declare a
+    registry `alias` (mechanism extended from phase-1 object kinds);
+    `req.satisfies` declares `satisfies`, usable as a compact verb and as a
+    batch header.
+  - Equivalence gate (`notation/tests/compact-authoring.js`): every compact
+    verb vs its verbose twin, all bracket combinations with
+    omitted-vs-asserted mark preservation, member-terminated endpoints,
+    batches with shared+override/alias/extension headers, kind/verb ambiguity
+    regressions, and a `labelEdit` fix in `notation/studio/src/authoring.js`
+    so authoring label edits stay token-precise on batch entries and bare
+    labelled members. `tests/normalize-ddn.js` proves the normalizer
+    preserves compact relations and batches (D7: canonical-verbose by
+    policy). The `12-nested-fields.ddn` teaching example now also shows
+    compact relations and a batch; the rest of the corpus stays verbose.
+  - Docs: grammar productions + disambiguation rule in
+    `standard/grammar/ddn.ebnf`, a "Compact authoring (phase 2)" section in
+    spec chapter 01, the AI-REFERENCE authoring guide, and this entry. No new
+    error codes.
+
 - Compact authoring, phase 1 (B1-037): typed declarations and contextual
   members, desugared in the parser to the identical canonical AST (D1) — no IR,
   renderer or runtime changes beyond the parse path, and the use-cases golden

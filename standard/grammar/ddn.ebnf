@@ -12,7 +12,7 @@ data           = "data", identifier, [ string ], block ;
 format         = "format", identifier, [ string ], block ;
 view           = "view", identifier, [ string ], block ;
 block          = "{", { member }, "}", [ ";" ] ;
-member         = property | declaration | typedDeclaration | contextualMember | targetDeclaration | flowDeclaration | group ;
+member         = property | declaration | typedDeclaration | compactRelation | relationBatch | contextualMember | targetDeclaration | flowDeclaration | group ;
 property       = identifier, ":", value, ";" ;
 declaration    = identifier, identifier, [ string ], [ endpoints ], ( block | ";" ) ;
 (* B1-037 compact authoring, phase 1 (parser desugars both forms to the
@@ -32,6 +32,29 @@ declaration    = identifier, identifier, [ string ], [ endpoints ], ( block | ";
 typedDeclaration = kindKeyword, identifier, [ string ], ( block | ";" ) ;
 contextualMember = identifier, [ string ], ( block | ";" ) ;
 kindKeyword    = identifier ; (* any registry object-kind keyword or alias matching identifier *)
+(* B1-038 compact authoring, phase 2 (same desugar rule as phase 1):
+   - compactRelation: a registry relationship keyword (or declared alias) in
+     declaration position inside a data block introduces a relation of that
+     kind, with optional per-endpoint cardinality brackets:
+     `ref places "places" @customer [one] -> @purchase [zeromany]
+     { enforcement: database; }` ≡ `relation places "places" @customer ->
+     @purchase { kind: ref; source_mark: one; target_mark: zeromany;
+     enforcement: database; }`. Each bracket is optional; an OMITTED bracket
+     omits the mark property (never defaulted), and enforcement is never
+     implied. A word that is both an object-kind word and a relationship word
+     (note, report, test, …) reads as a relation ONLY when endpoints follow
+     the id/label; the structural keywords (flow, domain) never act as verbs.
+   - relationBatch: `relations <kind> { shared props; id ["label"] endpoints
+     [ marks ] (block | ";"); … }` expands to one canonical relation per
+     entry; the header fixes the kind (writing kind: inside is DDN011),
+     batch-shared properties merge UNDER per-entry properties (per-entry wins
+     on conflict), and identity is never positional — each entry carries its
+     own id, label and endpoints. *)
+compactRelation = verbKeyword, identifier, [ string ], reference, [ mark ], "->", reference, [ mark ], ( block | ";" ) ;
+relationBatch  = "relations", verbKeyword, "{", { property | batchEntry }, "}", [ ";" ] ;
+batchEntry     = identifier, [ string ], reference, [ mark ], "->", reference, [ mark ], ( block | ";" ) ;
+verbKeyword    = identifier ; (* any registry relationship keyword or alias matching identifier *)
+mark           = "[", identifier, "]" ; (* desugars to source_mark / target_mark *)
 targetDeclaration = ( "place" | "route" ), reference, block ;
 flowDeclaration = "flow", identifier, [ string ], block ;
 steps          = "steps", ":", reference, { "->", reference }, ";" ;

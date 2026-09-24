@@ -1,9 +1,11 @@
 ddn "0.5";
 module "ddn.examples.nested";
 import "shared.ddn" as shared;
-// Teaching example for compact authoring (phase 1): kind keywords act as
-// declaration keywords and field/port keywords may be omitted inside
-// fields {}/ports {} blocks. Both forms desugar to the identical canonical
+// Teaching example for compact authoring (phases 1–2): kind keywords act as
+// declaration keywords, field/port keywords may be omitted inside
+// fields {}/ports {} blocks, relationship keywords act as relation verbs with
+// optional [mark] brackets, and `relations <kind> { … }` batches expand to one
+// relation per entry. All forms desugar to the identical canonical
 // declarations — the verbose equivalents are shown in comments.
 data model {
  domain identifier "Customer identifier" { meaning: "Opaque identifier within the customer registry"; }
@@ -26,8 +28,14 @@ data model {
  }
  // verbose: object order "Order" { kind: table; fields { field order_id; field customer_id {…} } }
  table order "Order" {fields {order_id; customer_id {domain: @identifier;}}}
- relation owner @order.customer_id -> @customer.customer_id {kind: ref; enforcement: undecided;}
- relation address_note @customer.address.postal_code -> @postal {kind: candidate;}
+ // verbose: relation owner @order.customer_id -> @customer.customer_id {kind: ref; source_mark: one; target_mark: one; enforcement: undecided;}
+ ref owner @order.customer_id [one] -> @customer.customer_id [one] {enforcement: undecided;}
+ // verbose: relation address_note @customer.address.postal_code -> @postal {kind: candidate;}
+ //          relation id_match @order.customer_id -> @identifier {kind: candidate;}
+ relations candidate {
+  address_note @customer.address.postal_code -> @postal;
+  id_match @order.customer_id -> @identifier;
+ }
 }
 view detailed "Nested fields / domains and representations" {
  data: [@model]; format: @shared.styles.technical; select: [@model.order,@model.customer,@model.postal];

@@ -127,6 +127,144 @@ test('basics 12-nested-fields compact example equals verbose expansion', () => {
   }
 });
 
+/* ---- B1-038 phase 2: verb-keyword relations + named batches (D1–D6) ---- */
+
+/* Every built-in relationship keyword AND registered alias works as a compact
+ * relation verb (D1): `verb r @a -> @b {}` ≡ `relation r @a -> @b { kind: verb; }`.
+ * Structural keywords (flow) stay structural declarations, never verbs. */
+const verbs = DDN.relationKindWords(reg);
+test('compact-relation verb map covers every built-in relationship keyword', () => {
+  const rels = DDN.profiles.registry(reg).relationships;
+  for (const r of rels) if (/^[A-Za-z_][A-Za-z0-9_-]*$/.test(r.keyword) && !['flow', 'domain'].includes(r.keyword))
+    assert.ok(verbs.has(r.keyword), 'missing compact relation verb ' + r.keyword);
+  assert.ok(!verbs.has('flow'), 'flow must stay a structural element keyword');
+  assert.ok(!verbs.has('domain'), 'domain must stay a structural element keyword');
+});
+test('equivalence gate: every compact verb vs verbose kind property', () => {
+  for (const [word, keyword] of verbs)
+    assertEquivalent(
+      `ddn "0.5"; module "t"; data m { object a {} object b {} ${word} r @a -> @b {} } view v { data: [@m]; }`,
+      `ddn "0.5"; module "t"; data m { object a {} object b {} relation r @a -> @b { kind: ${JSON.stringify(keyword)}; } } view v { data: [@m]; }`,
+      'v', 'compact relation ' + word);
+});
+test('compact relation with label and brackets ≡ verbose marks (D1)', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { object a {} object b {} ref places "places" @a [one] -> @b [zeromany] { enforcement: database; } } view v { data: [@m]; }',
+    'ddn "0.5"; module "t"; data m { object a {} object b {} relation places "places" @a -> @b { kind: ref; source_mark: one; target_mark: zeromany; enforcement: database; } } view v { data: [@m]; }',
+    'v', 'labelled ref with both brackets');
+});
+test('brackets optional per side; omitted bracket = omitted mark, never defaulted', () => {
+  const cases = [
+    ['@a -> @b', ''],
+    ['@a [one] -> @b', 'source_mark: one; '],
+    ['@a -> @b [zeromany]', 'target_mark: zeromany; '],
+  ];
+  for (const [endpoints, marks] of cases) {
+    assertEquivalent(
+      `ddn "0.5"; module "t"; data m { object a {} object b {} ref r ${endpoints} {} } view v { data: [@m]; }`,
+      `ddn "0.5"; module "t"; data m { object a {} object b {} relation r @a -> @b { kind: ref; ${marks}} } view v { data: [@m]; }`,
+      'v', 'bracket combination ' + endpoints);
+    const ir = build(`ddn "0.5"; module "t"; data m { object a {} object b {} ref r ${endpoints} {} } view v { data: [@m]; }`).ir;
+    assert.equal('source_mark' in ir.relations[0].properties, marks.includes('source_mark'), endpoints + ': source_mark omission drift');
+    assert.equal('target_mark' in ir.relations[0].properties, marks.includes('target_mark'), endpoints + ': target_mark omission drift');
+  }
+});
+test('compact form never implies enforcement (D2)', () => {
+  const ir = build('ddn "0.5"; module "t"; data m { object a {} object b {} ref r @a -> @b {} } view v { data: [@m]; }').ir;
+  assert.ok(!('enforcement' in ir.relations[0].properties));
+});
+test('field/port-terminated endpoints keep @obj.member syntax in compact form (D5)', () => {
+  assertEquivalent(
+    'ddn "0.5"; module "t"; data m { table a { fields { id; } } queue b { ports { p { direction: in; } } } transfers_to t @a.id -> @b.p; } view v { data: [@m]; }',
+    'ddn "0.5"; module "t"; data m { object a { kind: table; fields { field id; } } object b { kind: queue; ports { port p { direction: in; } } } relation t @a.id -> @b.p { kind: flow; } } view v { data: [@m]; }',
+    'v', 'member endpoints in compact relation');
+});
+
+/* Named batches (D4): shared properties merge under per-entry ones. */
+test('named batch ≡ one canonical relation per entry, per-entry wins', () => {
+  assertEquivalent(
+    `ddn "0.5"; module "t"; data m { object x {} object y {} object z {}
+     relations depends {
+      enforcement: undecided;
+      dep_a "a" @x -> @y;
+      dep_b "b" @y -> @z { lane: hot; }
+     } } view v { data: [@m]; publication { size: content; fit: none; } }`,
+    `ddn "0.5"; module "t"; data m { object x {} object y {} object z {}
+     relation dep_a "a" @x -> @y { kind: depends; enforcement: undecided; }
+     relation dep_b "b" @y -> @z { kind: depends; enforcement: undecided; lane: hot; }
+     } view v { data: [@m]; publication { size: content; fit: none; } }`,
+    'v', 'batch with shared + override properties');
+});
+test('batch entries carry own id/label/endpoints — identity never positional', () => {
+  const ir = build(`ddn "0.5"; module "t"; data m { object x {} object y {} object z {}
+    relations depends { dep_a "a" @x -> @y; dep_b "b" @y -> @z; } } view v { data: [@m]; }`).ir;
+  assert.deepEqual(ir.relations.map(r => [r.ref, r.name]), [['m.dep_a', 'a'], ['m.dep_b', 'b']]);
+  assert.ok(ir.relations.every(r => r.kind === 'depends'));
+});
+test('batch header accepts registry aliases and extension-kind aliases (D6)', () => {
+  const req = 'object q { kind: "req.requirement"; x_diagram: { code: "R1"; text: "t"; }; } object i { kind: "req.implementation"; }';
+  const ir = build(`ddn "0.5"; module "t"; data m { ${req} relations satisfies { s1 @i -> @q; } } view v { data: [@m]; }`).ir;
+  assert.equal(ir.relations[0].kind, 'req.satisfies');
+  assertEquivalent(
+    `ddn "0.5"; module "t"; data m { object a {} object b {} relations associated_with { r @a -> @b; } } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t"; data m { object a {} object b {} relation r @a -> @b { kind: assoc; } } view v { data: [@m]; }`,
+    'v', 'batch via registry alias');
+});
+test('extension relation alias works as a compact verb (D6)', () => {
+  const req = 'object q { kind: "req.requirement"; x_diagram: { code: "R1"; text: "t"; }; } object i { kind: "req.implementation"; }';
+  assertEquivalent(
+    `ddn "0.5"; module "t"; data m { ${req} satisfies s @i -> @q {} } view v { data: [@m]; }`,
+    `ddn "0.5"; module "t"; data m { ${req} relation s @i -> @q { kind: "req.satisfies"; } } view v { data: [@m]; }`,
+    'v', 'compact verb via extension alias');
+});
+test('kind: inside a batch (shared or entry) is a duplicate of the header kind (DDN011)', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; data m { object a {} relations depends { kind: ref; d @a -> @a; } } view v { data: [@m]; }'), e => e.code === 'DDN011');
+  assert.throws(() => build('ddn "0.5"; module "t"; data m { object a {} relations depends { d @a -> @a { kind: ref; } } } view v { data: [@m]; }'), e => e.code === 'DDN011');
+});
+test('batch entry needs endpoints and a terminator (DDN010)', () => {
+  assert.throws(() => DDN.parse('ddn "0.5"; module "t"; data m { relations depends { d } } view v { data: [@m]; }'), e => e.code === 'DDN010');
+});
+test('kind: repeated in a compact verb body is a duplicate (DDN011)', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; data m { object a {} object b {} ref r @a -> @b { kind: ref; } } view v { data: [@m]; }'), e => e.code === 'DDN011');
+});
+
+/* D3 ambiguity regressions: verb words are contextual. */
+test('object NAMED after a verb keyword still parses', () => {
+  for (const name of ['ref', 'depends', 'note', 'satisfies']) {
+    const ir = build(`ddn "0.5"; module "t"; data m { object ${name} "Meta" { kind: table; } } view v { data: [@m]; }`).ir;
+    assert.equal(ir.elements[0].name, 'Meta');
+    assert.equal(ir.elements[0].kind, 'table');
+  }
+});
+test('words that are both a kind and a verb disambiguate on endpoints', () => {
+  for (const word of ['note', 'report', 'test', 'decision', 'issue', 'schedule', 'snapshot', 'export', 'trigger', 'namespace']) {
+    const asObject = build(`ddn "0.5"; module "t"; data m { ${word} x "X" {} } view v { data: [@m]; }`).ir;
+    assert.equal(asObject.elements[0].kind, word, word + ' with a block stays a typed object');
+    const asRelation = build(`ddn "0.5"; module "t"; data m { object a {} object b {} ${word} x @a -> @b {} } view v { data: [@m]; }`).ir;
+    assert.equal(asRelation.relations.length, 1, word + ' with endpoints is a relation');
+    assert.equal(asRelation.relations[0].kind, word);
+  }
+});
+test('verb word without endpoints parses but fails build like a canonical relation (DDN055)', () => {
+  assert.throws(() => build('ddn "0.5"; module "t"; data m { ref r {} } view v { data: [@m]; }'), e => e.code === 'DDN055');
+});
+test('relations: as a property inside data is not a batch header', () => {
+  const doc = DDN.parse('ddn "0.5"; module "t"; data m { relations: [@x]; } view v { data: [@m]; }');
+  assert.equal(doc.declarations[0].props.relations[0].$ref, 'x');
+});
+
+/* D7: authoring edits preserve compact relation/batch syntax. */
+test('authoring label edit preserves compact relation and batch syntax', () => {
+  const w = A.createWorkspace({ 'main.ddn': compact });
+  A.authoring.setLabel(w, 'main.ddn', 'main', 'tests.compact::model.fulfil_dep', 'Fulfil (edited)');
+  const text = w.getFiles()['main.ddn'];
+  assert.ok(text.includes('fulfil_dep "Fulfil (edited)" @fulfil -> @inbound;'), 'batch entry corrupted: ' + text.slice(0, 600));
+  assert.ok(text.includes('assoc actor_link @visitor [one] -> @fulfil [zeromany];'), 'compact verb corrupted');
+  assert.ok(text.includes('relations depends {'), 'batch header corrupted');
+  const r = w.renderSync({ entry: 'main.ddn', view: 'main' });
+  assert.ok(r.svg.includes('Fulfil (edited)'));
+});
+
 /* D8: compact source round-trips through the unified tool load/render/export and
  * authoring edits preserve surrounding compact syntax. */
 test('compact source round-trips through DDNLive load/render/export', () => {

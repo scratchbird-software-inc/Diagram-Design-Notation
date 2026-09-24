@@ -26,12 +26,20 @@ data model {
  view customer_summary "Customer summary" {}
  domain money "Money";
  sample customers_sample { columns: [@customer.customer_id]; rows: [["c1"]]; }
- relation places @customer.customer_id -> @inbound.input { kind: flow; }
- relation actor_link @visitor -> @fulfil { kind: assoc; }
+ // B1-038 phase 2: verb-keyword relations (registry alias transfers_to ≡ kind:
+ // flow; brackets ≡ source_mark/target_mark, omitted bracket ≡ omitted mark).
+ transfers_to places @customer.customer_id -> @inbound.input;
+ assoc actor_link @visitor [one] -> @fulfil [zeromany];
+ // B1-038 phase 2: named batch — shared properties merge under per-entry ones.
+ relations depends {
+  enforcement: undecided;
+  fulfil_dep "Fulfil dependency" @fulfil -> @inbound;
+  summary_dep @customer_summary -> @customer { lane: hot; }
+ }
 }
 view main "Main" {
  data: [@model];
- legend { mode: numbers; keys: { places: 3, actor_link: 9 }; }
+ legend { mode: numbers; keys: { places: 3, actor_link: 9, fulfil_dep: 4, summary_dep: 5 }; }
  publication { size: content; fit: none; }
 }
 view subset "Subset" {

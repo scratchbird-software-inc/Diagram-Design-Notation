@@ -88,6 +88,32 @@ Normalization policy. `tools/normalize-ddn.mjs` does not rewrite verbose↔compa
 
 Authoring tools. Studio/CLI authoring edits (`DDNLive.authoring.*`) operate on the canonical model and write token-precise source spans, so editing a compact declaration (label, property, added member) preserves the surrounding compact syntax; newly generated members are emitted in the canonical-verbose form, which mixes legally into compact blocks.
 
+## Compact authoring (phase 2)
+
+Two more compact surface forms follow the same desugar contract as phase 1: identical canonical relations, with `DDN.semanticJSON`, rendered SVG and validation indistinguishable from the verbose form.
+
+Verb-keyword relations. Any registry relationship keyword may act as the declaration keyword inside a data block, with optional per-endpoint cardinality brackets:
+
+```ddn
+ref places "places" @customer [one] -> @purchase [zeromany] { enforcement: database; }
+```
+
+is exactly `relation places "places" @customer -> @purchase { kind: ref; source_mark: one; target_mark: zeromany; enforcement: database; }`. Each bracket is optional independently; an OMITTED bracket means the mark property is omitted — never defaulted — so the omitted-versus-asserted distinction survives intact. Enforcement is never implied: a compact `ref` without `enforcement` in the body has no enforcement property, exactly like the canonical form. Registered relationship aliases spell the same kind (`transfers_to t @a -> @b;` ≡ `kind: flow`), and extension (dotted) relationship kinds opt in through a registry-declared `alias` the same way object kinds do (e.g. `req.satisfies` declares `satisfies`). Endpoint member syntax is unchanged: `@order.customer_id [one]` keeps the field/port binding. Repeating `kind:` in the body is a duplicate property (DDN011); a compact verb without endpoints parses and fails build exactly like a canonical endpoint-less relation (DDN055).
+
+Disambiguation. Verb words are contextual under the same rule as kind words: declaration position inside a data block, followed by an identifier. A word registered as BOTH an object kind and a relationship (`note`, `report`, `test`, `decision`, `issue`, `schedule`, `snapshot`, `export`, `trigger`, `namespace`) reads as a relation only when `@` endpoints follow the id/label — `note n "N" {}` stays a typed object, `note n @a -> @b {}` is a relation. The structural keywords `flow` and `domain` never act as verbs, so `object ref "…" { kind: table; }` and `flow f {}` keep their meaning.
+
+Named relation batches. Relations sharing a kind and configuration declare once:
+
+```ddn
+relations depends {
+ enforcement: undecided;                  // shared properties, canonical names
+ dep_a "a" @x -> @y;
+ dep_b "b" @y -> @z { lane: hot; }        // per-entry body overrides shared
+}
+```
+
+expands to one canonical `relation` per entry with the kind taken from the batch header. Batch-shared properties merge UNDER per-entry properties — per-entry wins on conflict, the same precedence idiom as format overrides. Every entry carries its own id, label and endpoints (bracket marks allowed), so identity is never positional and legend keys, routes and references address entries by their own ids. The header fixes the kind, so `kind:` in a shared or entry position is a duplicate property (DDN011). The header word must be a relationship keyword or declared alias; `relations` followed by anything else is not a batch, and a `relations:` property inside a data block keeps its property meaning. Anonymous arrow chains are deliberately NOT part of this form.
+
 
 ## Recursive members
 

@@ -26,12 +26,15 @@ data model {
  object customer_summary "Customer summary" { kind: view; }
  domain money "Money";
  sample customers_sample { columns: [@customer.customer_id]; rows: [["c1"]]; }
+ // B1-038 verbose twins of the compact verb relations and batch above.
  relation places @customer.customer_id -> @inbound.input { kind: flow; }
- relation actor_link @visitor -> @fulfil { kind: assoc; }
+ relation actor_link @visitor -> @fulfil { kind: assoc; source_mark: one; target_mark: zeromany; }
+ relation fulfil_dep "Fulfil dependency" @fulfil -> @inbound { kind: depends; enforcement: undecided; }
+ relation summary_dep @customer_summary -> @customer { kind: depends; enforcement: undecided; lane: hot; }
 }
 view main "Main" {
  data: [@model];
- legend { mode: numbers; keys: { places: 3, actor_link: 9 }; }
+ legend { mode: numbers; keys: { places: 3, actor_link: 9, fulfil_dep: 4, summary_dep: 5 }; }
  publication { size: content; fit: none; }
 }
 view subset "Subset" {

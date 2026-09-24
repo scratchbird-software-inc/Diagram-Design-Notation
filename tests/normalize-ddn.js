@@ -49,6 +49,8 @@ data m {
   table customer "Customer" { fields { customer_id { key: primary; } name; } }
   queue inbound { ports { input { direction: in; } } }
   relation r @customer.customer_id -> @inbound.input { kind: flow; }
+  ref owner @customer [one] -> @inbound [zeromany] { enforcement: undecided; }
+  relations depends { dep @inbound -> @customer; }
 }
 view v { data: [@m]; layout { frame_overflow: expand; } }
 `;
@@ -59,10 +61,11 @@ view v { data: [@m]; layout { frame_overflow: expand; } }
   fs.rmSync(dir, { recursive: true, force: true });
   const typedKept = out.includes('table customer "Customer"') && out.includes('queue inbound {');
   const bareKept = out.includes('customer_id { key: primary; }') && out.includes('name;') && out.includes('input { direction: in; }');
-  const notRewritten = !out.includes('object customer') && !out.includes('kind: table') && !out.includes('field customer_id') && !out.includes('port input');
+  const relationsKept = out.includes('ref owner @customer [one] -> @inbound [zeromany]') && out.includes('relations depends {') && out.includes('dep @inbound -> @customer;');
+  const notRewritten = !out.includes('object customer') && !out.includes('kind: table') && !out.includes('field customer_id') && !out.includes('port input') && !out.includes('relation owner') && !out.includes('kind: ref') && !out.includes('relation dep');
   const pinStripped = !out.includes('frame_overflow');
-  if (!typedKept || !bareKept || !notRewritten || !pinStripped) {
-    console.error('FAIL normalize compact preservation:', JSON.stringify({ typedKept, bareKept, notRewritten, pinStripped }), '\n' + out); process.exit(1);
+  if (!typedKept || !bareKept || !relationsKept || !notRewritten || !pinStripped) {
+    console.error('FAIL normalize compact preservation:', JSON.stringify({ typedKept, bareKept, relationsKept, notRewritten, pinStripped }), '\n' + out); process.exit(1);
   }
   console.log('PASS normalize preserves compact authoring syntax (strips pins only)');
 }
