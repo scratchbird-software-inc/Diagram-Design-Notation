@@ -1,6 +1,7 @@
 # 43. Isometric depth (optional ddn-iso module)
 
-Status: implemented in runtime 0.6.0-beta.1 (B1-034). Source grammar remains
+Status: implemented in runtime 0.6.0-beta.1 (B1-034; multi-series quality
+charts B1-036). Source grammar remains
 DDN 0.5; views without `iso`/`depth` render byte-identical SVG to previous
 releases. Scope: `graph` and `chart` projections. All rendering is pure SVG —
 no WebGL, canvas or 3D engine.
@@ -65,6 +66,18 @@ With `iso: true` or `depth` > 0, the bar (columns), pie/donut (thickness
 walls), area (ribbon) and treemap (blocks) marks extrude; each mark is the
 flat face plus top/front/side faces. Axis labels and grid stay flat-overlayed.
 Other marks warn (`DDN-ISOW01`) and render flat.
+
+Multi-series views (`series:`/`arrangement:` on `chart.quality@1`) plan through
+the quality renderer; the same extrusion applies there (B1-036): one column per
+series point for bar layers, one ribbon per series for area layers. Each series
+sits on its own depth plane — geometry translated by `li·depth` along the
+extrusion vector — so coincident faces never z-fight, and all marks emit in one
+total painter's order (`DDNIso.paintOrder`: depth plane back-to-front, then
+footprint x, then stack level, then source id). Quality transforms (histogram,
+pareto, waterfall, boxplot) and unsupported layer marks (line/point) warn
+`DDN-ISOW01` and render flat. The absent-module degradation is unchanged:
+`iso: true` → visible placeholder plus `DDN-E010`; depth-only → flat render
+plus a `DDN-E010` warning.
 
 ## Stage 2 — iso diagram nodes (D5)
 

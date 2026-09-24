@@ -170,6 +170,67 @@ test('isoFrom emits a declarative SMIL transition ≤300ms; noMotion strips it',
  assert.ok(!rNo.svg.includes('<animate'),'noMotion strips the transition');
 });
 
+/* ---- B1-036: multi-series (quality-render) path ---- */
+const MS_VIEW='iso_multiseries_bar';
+test('multi-series quality chart with iso extrudes one column per series point (8 records)',()=>{
+ const c=context('core','graph','quality','projections','iso');
+ const r=c.DDNLive.createWorkspace(ISO_CHARTS).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ for(const cls of['ddn-iso-front','ddn-iso-top','ddn-iso-side'])assert.equal((r.svg.match(new RegExp(cls,'g'))||[]).length,8,cls);
+ assert.ok(!r.diagnostics.some(d=>d.code==='DDN-ISOW01'),'no flat warning on the supported path');
+ assert.ok(r.svg.includes('Line A / Q1')&&r.svg.includes('Line B / Q4'),'series point titles preserved');
+});
+test('multi-series iso painter order: within a category the back series paints first; re-render is byte-identical',()=>{
+ const c=context('core','graph','quality','projections','iso');
+ const ws=c.DDNLive.createWorkspace(ISO_CHARTS);
+ const r=ws.renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.ok(r.svg.indexOf('Line A / Q1')>-1&&r.svg.indexOf('Line A / Q1')<r.svg.indexOf('Line B / Q1'),'Line A column before Line B in the same group');
+ assert.equal(ws.renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW}).svg,r.svg,'same input → same SVG');
+});
+test('multi-series iso honours a per-record depth binding on the quality path',()=>{
+ const c=context('core','graph','quality','projections','iso');
+ const src=ISO_CHARTS['72-iso-charts.ddn'].replace('series:"x_record.line"; arrangement:group; unit:"req/s"; iso:true; depth:18px;','series:"x_record.line"; arrangement:group; unit:"req/s"; iso:true; depth:"x_record.value";');
+ const r=c.DDNLive.createWorkspace({'72-iso-charts.ddn':src,'shared.ddn':ISO_CHARTS['shared.ddn']}).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.ok(r.svg.includes('data-value-depth="420"')&&r.svg.includes('data-value-depth="410"'),'per-record depths bound');
+});
+test('multi-series stacked bar and overlay area extrude (columns / ribbons)',()=>{
+ const c=context('core','graph','quality','projections','iso');
+ const stacked=ISO_CHARTS['72-iso-charts.ddn'].replace('arrangement:group','arrangement:stack');
+ const r=c.DDNLive.createWorkspace({'72-iso-charts.ddn':stacked,'shared.ddn':ISO_CHARTS['shared.ddn']}).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.equal((r.svg.match(/ddn-iso-front/g)||[]).length,8,'stacked columns');
+ const area=ISO_CHARTS['72-iso-charts.ddn'].replace('mark:bar; x:"x_record.quarter"; y:"x_record.value"; series:"x_record.line"; arrangement:group;','mark:area; x:"x_record.quarter"; y:"x_record.value"; series:"x_record.line"; arrangement:overlay;');
+ const r2=c.DDNLive.createWorkspace({'72-iso-charts.ddn':area,'shared.ddn':ISO_CHARTS['shared.ddn']}).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.equal((r2.svg.match(/ddn-iso-ribbon/g)||[]).length,2,'one ribbon per series');
+ assert.ok(!r2.diagnostics.some(d=>d.code==='DDN-ISOW01'));
+});
+test('iso on an unsupported quality layer mark warns (DDN-ISOW01) and renders flat',()=>{
+ const c=context('core','graph','quality','projections','iso');
+ const src=ISO_CHARTS['72-iso-charts.ddn'].replace('series:"x_record.line"; arrangement:group;','series:"x_record.line"; arrangement:overlay;').replace('mark:bar; x:"x_record.quarter"','mark:line; x:"x_record.quarter"');
+ const r=c.DDNLive.createWorkspace({'72-iso-charts.ddn':src,'shared.ddn':ISO_CHARTS['shared.ddn']}).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.ok(!r.svg.includes('ddn-iso-front')&&!r.svg.includes('ddn-iso-ribbon'));
+ assert.equal(r.diagnostics.filter(d=>d.code==='DDN-ISOW01').length,1);
+});
+test('iso on a quality transform chart (histogram) warns (DDN-ISOW01) and renders flat',()=>{
+ const c=context('core','graph','quality','projections','iso');
+ const q=f=>fs.readFileSync(path.join(root,'../website/examples/quality',f),'utf8');
+ const files={};for(const f2 of['model.ddn','views.ddn','formats.ddn','details.ddn'])files[f2]=q(f2);
+ files['views.ddn']=files['views.ddn'].replace('transform: "histogram"; mark: "bar";','transform: "histogram"; mark: "bar"; iso: true;');
+ const r=c.DDNLive.createWorkspace(files).renderSync({entry:'views.ddn',view:'histogram'});
+ assert.ok(!r.svg.includes('ddn-iso-front'));
+ assert.equal(r.diagnostics.filter(d=>d.code==='DDN-ISOW01').length,1);
+});
+test('multi-series iso without ddn-iso.js: iso:true → placeholder + DDN-E010; depth-only → flat + DDN-E010 warning',()=>{
+ let c=context('core','graph','quality','projections');
+ let r=c.DDNLive.createWorkspace(ISO_CHARTS).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.ok(r.svg.includes('ddn-missing-module')&&r.svg.includes('Isometric view requires ddn-iso.js'));
+ assert.equal(r.diagnostics.filter(d=>d.code==='DDN-E010').length,1);
+ const files={'72-iso-charts.ddn':ISO_CHARTS['72-iso-charts.ddn'].replace('iso:true; depth:18px; width:1120px; height:640px; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}','depth:18px; width:1120px; height:640px; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}'),'shared.ddn':ISO_CHARTS['shared.ddn']};
+ assert.ok(!files['72-iso-charts.ddn'].includes('iso:true; depth:18px;'),'patched depth-only');
+ c=context('core','graph','quality','projections');
+ r=c.DDNLive.createWorkspace(files).renderSync({entry:'72-iso-charts.ddn',view:MS_VIEW});
+ assert.ok(!r.svg.includes('ddn-missing-module')&&!r.svg.includes('ddn-iso-front'),'flat render, no placeholder');
+ assert.equal(r.diagnostics.filter(d=>d.code==='DDN-E010'&&d.severity==='warning').length,1);
+});
+
 /* ---- determinism (D7) ---- */
 test('same input → same SVG for iso charts and iso graphs',()=>{
  const c=context('core','graph','projections','iso');

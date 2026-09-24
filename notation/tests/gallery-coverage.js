@@ -61,13 +61,13 @@ test('iso plates exist for every extrudable mark plus the iso graph', () => {
   const cov = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
   for (const id of Object.keys(cov.profiles)) assert.ok(!id.startsWith('iso'), 'iso variants are sheets, not profiles');
   const marks = cov.sheets.marks.views.filter(v => v.iso).map(v => v.view).sort();
-  assert.deepEqual(marks, ['mark_iso_area', 'mark_iso_bar', 'mark_iso_donut', 'mark_iso_pie', 'mark_iso_treemap'], 'marks sheet iso variants');
+  assert.deepEqual(marks, ['mark_iso_area', 'mark_iso_bar', 'mark_iso_donut', 'mark_iso_multiseries', 'mark_iso_pie', 'mark_iso_treemap'], 'marks sheet iso variants');
   const charts = cov.sheets.iso.views.map(v => v.view).sort();
-  assert.deepEqual(charts, ['iso_area', 'iso_bar', 'iso_donut', 'iso_pie', 'iso_treemap'], 'iso chart sheet views');
+  assert.deepEqual(charts, ['iso_area', 'iso_bar', 'iso_donut', 'iso_multiseries_bar', 'iso_pie', 'iso_treemap'], 'iso chart sheet views');
   assert.ok(cov.sheets.iso.views.every(v => v.iso), 'every iso sheet plate must be extruded');
   assert.deepEqual(cov.sheets.isograph.views.map(v => v.view), ['iso_map'], 'iso graph plate');
   const isoViews = Object.values(cov.sheets).flatMap(s => s.views.filter(v => v.iso));
-  assert.ok(isoViews.length >= 11, 'expected at least 11 iso plates, got ' + isoViews.length);
+  assert.ok(isoViews.length >= 13, 'expected at least 13 iso plates, got ' + isoViews.length);
   for (const v of isoViews) {
     const p = path.join(galleryDir, v.svg);
     assert.ok(fs.existsSync(p), 'missing iso SVG ' + v.svg);

@@ -189,10 +189,11 @@
       "svg": "profiles/chart-qq-1.svg"
     },
     "chart.quality@1": {
-      "entry": "website/examples/quality/views.ddn",
-      "view": "grouped_bars",
-      "title": "06 / Defects — grouped bars",
-      "svg": "profiles/chart-quality-1.svg"
+      "entry": "website/examples/basics/72-iso-charts.ddn",
+      "view": "iso_multiseries_bar",
+      "title": "Synthetic line throughput / iso multi-series bar",
+      "svg": "profiles/chart-quality-1.svg",
+      "iso": true
     },
     "chart.quantiledot@1": {
       "entry": "website/examples/basics/62-distribution-charts.ddn",
@@ -795,6 +796,12 @@
           "title": "Chart marks / iso treemap",
           "svg": "marks/iso_treemap.svg",
           "iso": true
+        },
+        {
+          "view": "mark_iso_multiseries",
+          "title": "Chart marks / iso multi-series bar",
+          "svg": "marks/iso_multiseries.svg",
+          "iso": true
         }
       ]
     },
@@ -1079,6 +1086,12 @@
           "view": "iso_treemap",
           "title": "Synthetic tier throughput / iso treemap blocks",
           "svg": "iso/iso_treemap.svg",
+          "iso": true
+        },
+        {
+          "view": "iso_multiseries_bar",
+          "title": "Synthetic line throughput / iso multi-series bar",
+          "svg": "iso/iso_multiseries_bar.svg",
           "iso": true
         }
       ]

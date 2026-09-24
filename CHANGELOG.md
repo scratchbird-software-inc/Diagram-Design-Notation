@@ -6,6 +6,21 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Iso on multi-series chart views (B1-036): `series:`/`arrangement:` bar and
+  area views (`chart.quality@1`) plan through the quality renderer, which had
+  no iso hook — `iso: true`/`depth:` rendered flat **silently**. The quality
+  renderer now extrudes with the ddn-iso primitives: one column per series
+  point (bar layers), one ribbon per series (area layers), each series on its
+  own depth plane so faces never z-fight, emitted in one total painter's order
+  (`DDNIso.paintOrder`). Unsupported layer marks (line/point) and quality
+  transforms (histogram/pareto/waterfall/boxplot) warn `DDN-ISOW01` and render
+  flat; absent-module degradation is unchanged (placeholder + `DDN-E010` for
+  `iso: true`, flat + `DDN-E010` warning for depth-only). `72-iso-charts.ddn`
+  gains an `iso_multiseries_bar` view, the gallery marks sheet gains
+  `mark_iso_multiseries`, registry/spec chapter 43 document the capability, and
+  `notation/tests/iso.js` covers extrusion, painter order, per-record depth
+  binding, warnings, degradation and determinism on this path.
+
 - Static gallery shows the isometric diagram types (B1-035):
   `tools/build-gallery.js` now loads `notation/runtime/ddn-iso.js` (mirroring
   the CLI's optional-module wiring — the gap that left the gallery with zero

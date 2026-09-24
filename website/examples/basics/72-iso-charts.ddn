@@ -47,3 +47,24 @@ view iso_treemap "Synthetic tier throughput / iso treemap blocks" {
     projection { kind:chart; profile:"chart.treemap@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:treemap; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:20px; width:1120px; height:640px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
 }
+
+// Multi-series iso (B1-036): series:/arrangement: views plan through the quality
+// renderer (chart.quality@1), which extrudes with the same ddn-iso primitives —
+// one column per series point, each series on its own depth plane so faces never
+// z-fight. Without ddn-iso.js this view degrades exactly like the others.
+data throughput {
+    object a_q1 "Line A / Q1" { kind: record; x_record: { quarter: "Q1", line: "Line A", value: 420, unit: "req/s" }; }
+    object a_q2 "Line A / Q2" { kind: record; x_record: { quarter: "Q2", line: "Line A", value: 510, unit: "req/s" }; }
+    object a_q3 "Line A / Q3" { kind: record; x_record: { quarter: "Q3", line: "Line A", value: 460, unit: "req/s" }; }
+    object a_q4 "Line A / Q4" { kind: record; x_record: { quarter: "Q4", line: "Line A", value: 610, unit: "req/s" }; }
+    object b_q1 "Line B / Q1" { kind: record; x_record: { quarter: "Q1", line: "Line B", value: 300, unit: "req/s" }; }
+    object b_q2 "Line B / Q2" { kind: record; x_record: { quarter: "Q2", line: "Line B", value: 360, unit: "req/s" }; }
+    object b_q3 "Line B / Q3" { kind: record; x_record: { quarter: "Q3", line: "Line B", value: 330, unit: "req/s" }; }
+    object b_q4 "Line B / Q4" { kind: record; x_record: { quarter: "Q4", line: "Line B", value: 410, unit: "req/s" }; }
+}
+
+view iso_multiseries_bar "Synthetic line throughput / iso multi-series bar" {
+    data: [@throughput]; format: @shared.styles.technical;
+    projection { kind:chart; profile:"chart.quality@1"; records:[@throughput.a_q1, @throughput.a_q2, @throughput.a_q3, @throughput.a_q4, @throughput.b_q1, @throughput.b_q2, @throughput.b_q3, @throughput.b_q4]; mark:bar; x:"x_record.quarter"; y:"x_record.value"; series:"x_record.line"; arrangement:group; unit:"req/s"; iso:true; depth:18px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}

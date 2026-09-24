@@ -57,7 +57,8 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
 - `gallery/` — generated full-coverage gallery (B1-010): one pre-rendered SVG
   per installed profile (all 98) plus variation sheets (chart marks — flat and
   isometric — looks × palettes, routing × look, layout algorithms, spacing
-  levels, and the B1-035 isometric chart/graph plates) — 188 SVGs via
+  levels, and the B1-035 isometric chart/graph plates, incl. the B1-036
+  multi-series iso bar) — 190 SVGs via
   the real CLI render path, a static `index.html` (no inlined runtime,
   `file://`-safe), and `coverage.json`, the machine-readable coverage map the
   permanent gate `notation/tests/gallery-coverage.js` enforces. Sources for

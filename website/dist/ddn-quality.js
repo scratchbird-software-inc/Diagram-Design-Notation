@@ -52,7 +52,7 @@
    const c=rgb(fill).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}),lum=.2126*c[0]+.7152*c[1]+.0722*c[2];return {fill,ink:(lum+.05)/.05>=1.05/(lum+.05)?'#000000':'#FFFFFF'};
   }
   function draw(plan,ir,c){
-   const {text,lines,wrap,line,rect,group,colour,s,theme:t}=c,p=ir.view.profiles.projection;let W=c.W,H=600*s,body='';
+   const {text,lines,wrap,line,rect,group,colour,s,theme:t,diagnostics=[],options={}}=c,p=ir.view.profiles.projection;let W=c.W,H=600*s,body='';
    const recolor=(svg,col)=>svg.replace(/(<text\b[^>]*\bfill=")[^"]*(")/g,'$1'+col+'$2');
    const sourceGroup=(ids,content,box={},property)=>group(ids[0],ids,content,box,property);
    if(plan.kind==='matrix'&&plan.encoding){
@@ -99,11 +99,23 @@
    else if(tr==='waterfall'){categories=points.map(b=>b.x);ys=points.flatMap(b=>[b.start,b.end]);}
    else if(tr==='pareto'){categories=points.map(b=>b.x);ys=[0,plan.total];}
    else {categories=plan.categories;ys=points.filter(n=>n.y!==null).flatMap(n=>[n.start,n.end]);if(plan.target!==undefined)ys.push(plan.target);}
+   /* B1-036 (D1): iso hook on the quality path (multi-series bar/area charts).
+    * Absent module: the engine already degraded visibly before this renderer ran
+    * (iso:true → placeholder + DDN-E010; depth-only → flat + DDN-E010 warning),
+    * so a null ISO here simply renders flat, mirroring the basic-chart path. */
+   const ISO=optionalNamespace('DDNIso'),byId=new Map(ir.elements.map(n=>[n.id,n]));let isoSpec=null;
+   if(ISO){
+    const spec=ISO.chartSpec(ir,tr==='identity'?plan.mark:'bar');
+    if(spec&&tr!=='identity')diagnostics.push({code:'DDN-ISOW01',severity:'warning',message:'iso/depth extrusion is implemented for untransformed (identity) quality charts; the '+tr+' transform renders flat.'});
+    else if(spec&&!(spec.supported&&plan.layers.every(l=>ISO.EXTRUDED_MARKS.includes(l.mark))))diagnostics.push({code:'DDN-ISOW01',severity:'warning',message:'iso/depth extrusion is implemented for bar and area layers on quality charts; the '+plan.mark+' mark renders flat.'});
+    else isoSpec=spec;
+   }
    if(categories.length)W=Math.max(W,categories.length*65*s+155*s);
    let lo=tr==='boxplot'?Math.min(...ys):Math.min(0,...ys),hi=tr==='boxplot'?Math.max(...ys):Math.max(0,...ys);if(tr==='boxplot'&&hi>lo){const pad=(hi-lo)*.08;lo-=pad;hi+=pad;}if(lo===hi)hi=lo+1;if(!Number.isFinite(hi-lo))throw Object.assign(new Error('Quantitative extent overflow'),{code:'DDN-QC099'});
    const legendSlots=[];let legendX=100*s,legendY=54*s;if(tr==='identity')for(const layer of plan.layers){const ww=Math.min(W-155*s,Math.max(110*s,layer.series.length*8*s+50*s));if(legendX+ww>W-55*s){legendX=100*s;legendY+=24*s;}legendSlots.push({x:legendX,y:legendY,w:ww});legendX+=ww;}H+=Math.max(0,legendY-54*s);
    const labelDepth=categories.length?Math.max(...categories.map(x=>wrap(String(x),(W-155*s)/categories.length-10*s,11).length)):1,labelSpace=Math.max(145*s,(labelDepth*16+75)*s);H+=labelSpace-145*s;
-   const left=100*s,right=W-(tr==='pareto'?90:55)*s,top=Math.max(80*s,legendY+26*s),bottom=H-labelSpace,pw=right-left,ph=bottom-top,fy=v=>bottom-(v-lo)/(hi-lo)*ph,barWidth=pw/Math.max(categories.length,1)*.66,step=pw/Math.max(categories.length,1),xcat=i=>left+(i+.5)*step;
+   const isoPad=isoSpec?isoSpec.viewDepth*plan.layers.length:0;
+   const left=100*s,right=W-(tr==='pareto'?90:55)*s-(isoPad?Math.ceil(isoPad*ISO.COS30)+4:0),top=Math.max(80*s,legendY+26*s)+(isoPad?Math.ceil(isoPad*ISO.SIN30):0),bottom=H-labelSpace,pw=right-left,ph=bottom-top,fy=v=>bottom-(v-lo)/(hi-lo)*ph,barWidth=pw/Math.max(categories.length,1)*.66,step=pw/Math.max(categories.length,1),xcat=i=>left+(i+.5)*step;
    let xValues=categories;if(tr==='identity'&&plan.xType!=='category'){xValues=categories.map(x=>plan.xType==='date'?Date.parse(x+'T00:00:00Z'):x);xmin=Math.min(...xValues);xmax=Math.max(...xValues);}
    if(!Number.isFinite(xmax-xmin))throw Object.assign(new Error('Quantitative x span overflow'),{code:'DDN-QC099'});
    const fx=v=>xmax===xmin?left+pw/2:left+(v-xmin)/(xmax-xmin)*pw;
@@ -122,7 +134,34 @@
    }else if(tr==='pareto'){
     points.forEach((pt,i)=>body+=bar(xcat(i)-barWidth/2,barWidth,0,pt.y,colour(0),pt.sourceIds,{value:pt.y,title:pt.x+' · '+pt.y}));const d=points.map((pt,i)=>(i?'L':'M')+f(xcat(i))+' '+f(fy(pt.cumulative))).join(' ');body+=`<path d="${d}" stroke="${colour(2)}" fill="none" stroke-width="2.5"/>`;points.forEach((pt,i)=>body+=sourceGroup(pt.cumulativeSourceIds,`<circle cx="${xcat(i)}" cy="${fy(pt.cumulative)}" r="${4*s}" fill="${colour(2)}"><title>${fmt(pt.percent)}% cumulative</title></circle>`,{x:xcat(i)-4*s,y:fy(pt.cumulative)-4*s,w:8*s,h:8*s,value:pt.percent,aggregate:true}));body+=text(right,30*s,'Cumulative %',12,600,'end');
    }else {
-    const n=plan.series.length;plan.layers.forEach((layer,li)=>{const ser=layer.series,col=colour(li),ps=points.filter(pt=>pt.series===ser);let runs=[],run=[];for(const pt of ps){if(pt.y===null){if(run.length)runs.push(run);run=[];}else run.push(pt);}if(run.length)runs.push(run);
+    const n=plan.series.length;
+    if(isoSpec){
+     /* B1-036 (D1): bar layers extrude as columns, area layers as ribbons
+      * (ddn-iso primitives). Series li sits on its own depth plane — geometry
+      * translated by (li·d·cos30°, −li·d·sin30°) — so coincident faces never
+      * z-fight. One total painter's order via ISO.paintOrder: plane (back
+      * first), then footprint x, then stack level, then source id. */
+     const isoPrev=id=>options.noMotion?undefined:options.isoFrom?.depths?.[id],items=[];
+     plan.layers.forEach((layer,li)=>{
+      const ser=layer.series,col=colour(li),ps=points.filter(pt=>pt.series===ser),o=li*isoSpec.viewDepth,ox=o*ISO.COS30,oy=-o*ISO.SIN30;
+      let runs=[],run=[];for(const pt of ps){if(pt.y===null){if(run.length)runs.push(run);run=[];}else run.push(pt);}if(run.length)runs.push(run);
+      if(layer.mark==='area')for(const run2 of runs){
+       const topPts=run2.map(pt=>[xc(pt.x)+ox,fy(pt.end)+oy]),d=topPts.map((pt,i)=>(i?'L':'M')+f(pt[0])+' '+f(pt[1])).join(''),bottomPath=run2.slice().reverse().map(pt=>'L'+f(xc(pt.x)+ox)+' '+f(fy(pt.start)+oy)).join('');
+       let svg=(isoSpec.viewDepth>0?ISO.ribbon(topPts,isoSpec.viewDepth,col,undefined,isoPrev('area:'+ser)):'')+`<path d="${d+bottomPath}Z" fill="${col}" opacity="${plan.arrangement==='overlay'?.15:.36}"/>`+`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.3"${li%3===1?' stroke-dasharray="7 3"':li%3===2?' stroke-dasharray="2 3"':''}/>`;
+       svg+=run2.map(pt=>`<circle cx="${f(xc(pt.x)+ox)}" cy="${f(fy(pt.end)+oy)}" r="${4*s}" fill="${col}" stroke="${t.surface}"/>`).join('');
+       items.push({x:Math.min(...topPts.map(pt=>pt[0])),y:-o,z:0,id:'area:'+ser+':'+items.length,svg});
+      }
+      if(layer.mark==='bar')ps.filter(pt=>pt.y!==null).forEach(pt=>{
+       let x=xc(pt.x)+ox,w=barWidth;if(plan.arrangement==='group'){w=barWidth/n;x+=-barWidth/2+w*(plan.series.indexOf(ser)+.5);}
+       const yy=Math.min(fy(pt.start),fy(pt.end))+oy,hh=Math.abs(fy(pt.end)-fy(pt.start)),bx=x-w/2,dp=isoSpec.depthOf(byId.get(pt.sourceIds[0])),meta={value:pt.y,rawValue:pt.rawY,start:pt.start,end:pt.end,series:ser,synthetic:!!pt.synthetic},title=ser+' / '+pt.x+': '+fmt(pt.rawY);
+       const svg=dp>0
+        ?sourceGroup(pt.sourceIds,`<title>${esc(title)}</title>`+ISO.column(bx,yy,w,hh,dp,col,t.surface,isoPrev(pt.sourceIds[0])),{x:bx,y:yy-dp*ISO.SIN30,w:w+dp*ISO.COS30,h:hh+dp*ISO.SIN30,...meta,depth:dp},p.y)
+        :sourceGroup(pt.sourceIds,`<rect x="${f(bx)}" y="${f(yy)}" width="${f(w)}" height="${f(hh)}" fill="${col}" stroke="${t.surface}" stroke-width="1"><title>${esc(title)}</title></rect>`,{x:bx,y:yy,w,h:hh,...meta},p.y);
+       items.push({x:bx,y:-o,z:-yy,id:pt.sourceIds[0],svg});
+      });
+     });
+     body+=ISO.paintOrder(items).map(it=>it.svg).join('');
+    }else plan.layers.forEach((layer,li)=>{const ser=layer.series,col=colour(li),ps=points.filter(pt=>pt.series===ser);let runs=[],run=[];for(const pt of ps){if(pt.y===null){if(run.length)runs.push(run);run=[];}else run.push(pt);}if(run.length)runs.push(run);
      if(['line','area'].includes(layer.mark))for(const run of runs){const d=run.map((pt,i)=>(i?'L':'M')+f(xc(pt.x))+' '+f(fy(pt.end))).join(' ');if(layer.mark==='area'){const bottomPath=run.slice().reverse().map(pt=>'L'+f(xc(pt.x))+' '+f(fy(pt.start))).join(' ');body+=`<path d="${d+bottomPath}Z" fill="${col}" opacity="${plan.arrangement==='overlay'?.15:.36}"/>`;}body+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.3"${li%3===1?' stroke-dasharray="7 3"':li%3===2?' stroke-dasharray="2 3"':''}/>`;}
      ps.filter(pt=>pt.y!==null).forEach(pt=>{let x=xc(pt.x),w=barWidth;if(layer.mark==='bar'){if(plan.arrangement==='group'){w=barWidth/n;x+=-barWidth/2+w*(plan.series.indexOf(ser)+.5);}body+=bar(x-w/2,w,pt.start,pt.end,col,pt.sourceIds,{value:pt.y,rawValue:pt.rawY,start:pt.start,end:pt.end,series:ser,synthetic:!!pt.synthetic,title:ser+' / '+pt.x+': '+fmt(pt.rawY)});}else body+=sourceGroup(pt.sourceIds,`<circle cx="${f(x)}" cy="${f(fy(pt.end))}" r="${4*s}" fill="${col}" stroke="${t.surface}"><title>${esc(ser+' / '+pt.x+': '+fmt(pt.rawY))}</title></circle>`,{x:x-4*s,y:fy(pt.end)-4*s,w:8*s,h:8*s,value:pt.y,series:ser},p.y);});
     });

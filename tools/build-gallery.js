@@ -40,14 +40,14 @@ const catalogue = require(path.join(ROOT, 'standard/registry/profiles/catalogue.
 
 /* Variation sheets: gallery src file -> the views that make up the sheet. */
 const SHEETS = [
-  { id: 'marks', title: 'Chart marks', file: 'marks.ddn', blurb: 'Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1); radar, funnel, gauge, candlestick, treemap, sankey (their own profiles); and the Category-2 pack (B1-024): histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle; and the isometric variants of the extrudable marks (B1-035): iso bar, pie, donut, area, treemap.' },
+  { id: 'marks', title: 'Chart marks', file: 'marks.ddn', blurb: 'Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1); radar, funnel, gauge, candlestick, treemap, sankey (their own profiles); and the Category-2 pack (B1-024): histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle; and the isometric variants of the extrudable marks (B1-035): iso bar, pie, donut, area, treemap — plus an iso multi-series grouped bar (B1-036).' },
   { id: 'looks', title: 'Looks × palettes', file: 'looks.ddn', blurb: 'Every look (classic, handDrawn, neo) crossed with every palette theme (default, neutral, dark, night, forest, base).' },
   { id: 'routing', title: 'Routing × look', file: 'routing.ddn', blurb: 'Every routing mode (orthogonal, straight, curved bezier, curved rounded) crossed with every look.' },
   { id: 'layouts', title: 'Layout algorithms', file: 'layouts.ddn', blurb: 'Every placement algorithm: native grid, manual (pinned), layered, tree, mindmap, grouped, and the pattern-based fit_grid, circular, radial, spanning_tree, organic.' },
   { id: 'spacing', title: 'Spacing levels', file: 'spacing.ddn', blurb: 'The four spacing hints (tight, normal, loose, expanded) on one graph (B1-008).' },
   /* B1-035: iso sheets source their views straight from the basics examples
    * (entry overrides the default gallery/src/<file>). */
-  { id: 'iso', title: 'Isometric charts', entry: 'website/examples/basics/72-iso-charts.ddn', blurb: 'Every extrudable chart mark (bar, pie, donut, area, treemap) with iso depth, from examples/basics/72-iso-charts.ddn (B1-034).' },
+  { id: 'iso', title: 'Isometric charts', entry: 'website/examples/basics/72-iso-charts.ddn', blurb: 'Every extrudable chart mark (bar, pie, donut, area, treemap) with iso depth, plus a multi-series grouped bar on the quality-render path (B1-036), from examples/basics/72-iso-charts.ddn (B1-034).' },
   { id: 'isograph', title: 'Isometric graph', entry: 'website/examples/basics/73-iso-architecture.ddn', blurb: 'Graph nodes as extruded prisms on an isometric ground plane, from examples/basics/73-iso-architecture.ddn (B1-034).' }
 ];
 
@@ -152,7 +152,10 @@ function main() {
   const coverageJson = {
     version: pkg.version,
     generatedBy: 'tools/build-gallery.js (every SVG via notation/cli/cli.js render)',
-    profiles: Object.fromEntries([...coverage.entries()].sort().map(([id, c]) => [id, { entry: c.entry, view: c.view, title: c.title, svg: 'profiles/' + slug(id) + '.svg' }])),
+    profiles: Object.fromEntries([...coverage.entries()].sort().map(([id, c]) => {
+      const job = jobs.find(j => j.section === 'profiles' && j.profile === id);
+      return [id, { entry: c.entry, view: c.view, title: c.title, svg: 'profiles/' + slug(id) + '.svg', ...(job && job.iso ? { iso: true } : {}) }];
+    })),
     sheets: Object.fromEntries(SHEETS.map(s => [s.id, { title: s.title, source: sheetEntry(s), views: sheetViews(s).map(v => {
       const svg = s.id + '/' + v.id.replace(/^mark_/, '') + '.svg';
       const job = jobs.find(j => j.section === s.id && j.relSvg === svg);
@@ -173,7 +176,7 @@ function page(cov) {
   }
   const profileSections = [...families.entries()].sort().map(([fam, rows]) =>
     `<section class="family" id="family-${esc(fam)}">\n<h3>${esc(fam)}</h3>\n<div class="grid">\n` +
-    rows.map(([id, c]) => `<figure id="profile-${esc(slug(id))}"><a href="${esc(c.svg)}"><img src="${esc(c.svg)}" alt="${esc(id)} — ${esc(c.title)}" loading="lazy"></a><figcaption><code>${esc(id)}</code><br>${esc(c.title)}<br><small>${esc(c.entry)} · view <code>${esc(c.view)}</code></small></figcaption></figure>`).join('\n') +
+    rows.map(([id, c]) => `<figure id="profile-${esc(slug(id))}"><a href="${esc(c.svg)}"><img src="${esc(c.svg)}" alt="${esc(id)} — ${esc(c.title)}" loading="lazy"></a><figcaption><code>${esc(id)}</code><br>${esc(c.title)}<br><small>${esc(c.entry)} · view <code>${esc(c.view)}</code></small>${c.iso ? '<br><small>Live rendering of this view requires the optional <code>ddn-iso.js</code> module; without it the view degrades to a flat placeholder plus DDN-E010.</small>' : ''}</figcaption></figure>`).join('\n') +
     `\n</div>\n</section>`).join('\n');
   const sheetSections = Object.entries(cov.sheets).map(([id, s]) =>
     `<section class="sheet" id="sheet-${esc(id)}">\n<h3>${esc(s.title)}</h3>\n<p>${esc(SHEETS.find(x => x.id === id).blurb)}</p>\n<div class="grid">\n` +
