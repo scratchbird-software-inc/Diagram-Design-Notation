@@ -2,6 +2,18 @@
 
 **DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
+> **Pointer amendment (B1-051, 2026-09).** The shipping realisation of this
+> specification is the **unified diagram tool in design mode** —
+> `/tools/index.html?mode=design`: one tool, one URL, one I/O contract, where
+> the designer is literally the viewer with more functionality (drag-to-pin,
+> kind palette with click-to-place, connect-two-elements, inspector editing).
+> The separate-application charter below and the `designer/prototype/` review
+> prototype it produced are retired: the prototype's URLs redirect to design
+> mode and its sources are kept, deprecated, for history and its regression
+> suite. The VE-requirements and contracts in these chapters remain the design
+> reference for the deeper editing workflows (projection sheets, drafts,
+> impact analysis) that design mode has not yet absorbed.
+
 ## Decision
 Create **DDN Designer**, a separate visual-first application at `designer/index.html` and optional package `ddn-designer`. Preserve the existing Studio at `live/editor.html`. Both use the same public DDN library and canonical source workspace. This document is a proposed implementation specification, not a declaration that the production visual editor has shipped.
 

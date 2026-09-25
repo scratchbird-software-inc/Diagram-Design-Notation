@@ -1,5 +1,12 @@
 # @ddn/designer — DDN visual designer (proposal)
 
+> **Status update (B1-051, 2026-09).** The shipping designer is the unified
+> diagram tool in **design mode** — `/tools/index.html?mode=design`: the
+> designer as the viewer with more functionality. This package's prototype is
+> retired (redirect stubs + deprecated sources kept for its regression suite);
+> the specification and contracts below remain the design reference for
+> workflows design mode has not yet absorbed.
+
 The **visual-first designer** for DDN: a specification (0.2.0), proposed
 contracts, and a bounded working prototype for an editor where the diagram
 is the primary interface — distinct from the source-first Studio in

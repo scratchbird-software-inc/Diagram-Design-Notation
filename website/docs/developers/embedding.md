@@ -76,7 +76,7 @@ Host-control matrix:
 
 | Knob | Values | Effect |
 | --- | --- | --- |
-| `?mode=` | `diagram` · `view` · `explore` (default) · `edit` | Preset for toolbar/icons/drawer states; `diagram` hides the toolbar *and* forces every drawer to `none` |
+| `?mode=` | `diagram` · `view` · `explore` (default) · `edit` · `design` | Preset for toolbar/icons/drawer states; `diagram` hides the toolbar *and* forces every drawer to `none`. `design` additionally turns the editing affordances on by default (drag-to-pin armed, design bar with add-element/add-relation on the stage) — see "Embedding the designer" below |
 | `?toolbar=off` | `off` only; anything else ignored | Hides the whole icon toolbar **without** changing drawer availability — beats the mode preset's `toolbar:true` |
 | `?drawers=` | `name:state` pairs, comma-separated | Per-drawer state, highest precedence (over localStorage and the preset); malformed pairs ignored |
 | drawer states | `open` · `closed` · `none` · `api` | `none`: unavailable to everyone. `api`: icon hidden, not user-openable, **openable by host code** via `DDNTool.setDrawer`. Never offered in the gear popup, but tolerated there when present |
@@ -93,7 +93,7 @@ Host-control matrix:
 The mermaid-style embed contract, formalized: the host keeps DDN source **as a
 variable**, passes it in, and reads the (possibly edited) source back out —
 identically in viewer-style (`mode=diagram`/`view`) and designer-style
-(`mode=explore`/`edit`) usage, with the render worker on or off.
+(`mode=explore`/`edit`/`design`) usage, with the render worker on or off.
 
 ```html
 <iframe id="tool" src="tools/index.html?toolbar=off&drawers=source:api"></iframe>
@@ -140,6 +140,46 @@ explicit final `getSource` are the whole contract.
 
 Runnable end-to-end:
 [examples/embed/tool-host-roundtrip.html](../../examples/embed/tool-host-roundtrip.html).
+
+## Embedding the designer
+
+The designer is not a separate page — **it is the same tool in design mode**:
+`?mode=design` gives you everything from `explore` plus the editing
+affordances on by default: the source drawer open per preset (like `edit`),
+the inspector available, **drag-to-pin armed** (still user-toggleable), and
+the design bar on the stage — **Add element** (pick a kind from the plate-glyph
+palette, then click on the diagram to place and pin it there) and **Connect**
+(click a source element, click a target element, pick a verb — one relation
+is created). Every creation is a normal undoable source edit through
+`DDNLive.authoring`, so `onSourceChange` / `getSource` report them exactly
+like source-drawer edits.
+
+The supported embedded-designer shape is `?mode=design&toolbar=off` plus
+host-driven I/O: no tool chrome, the creation gestures on the stage, and the
+host passing DDN in and out through the contract above.
+
+```html
+<iframe id="designer" style="width:100%;height:560px;border:0"
+  src="tools/index.html?mode=design&toolbar=off&drawers=source:api,appearance:api,files:none,export:none"></iframe>
+<script>
+  const tool = document.getElementById('designer').contentWindow.DDNTool;
+  await tool.setSource(ddnText);            // load variable → designer renders it
+  tool.onSourceChange(p => { latest = p; }); // visual edits notify the host
+  const edited = tool.getSource({ single: true }); // host gets the edited DDN back
+</script>
+```
+
+Hosts and tests can also drive the gestures programmatically — the same code
+paths as the on-stage clicks: `DDNTool.placeElement(kind, x, y)` (the
+click-to-place drop), `DDNTool.connectElements(fromId, toId, verb, label)`
+(the source→target→verb connect), `DDNTool.startPlacement(kind)` /
+`startConnect()` / `cancelDesignGesture()` / `getDesignGesture()` for the
+armed-gesture state. Element ids for `connectElements` come from
+`tool.workspace.resolve(entry, view).elements`.
+
+Runnable end-to-end (load variable → visual edit → host reads the edited DDN
+back; carries a `?selftest=1` harness):
+[examples/embed/designer-host.html](../../examples/embed/designer-host.html).
 
 
 Recipe — bare diagram, no toolbar, with a host button that opens the source

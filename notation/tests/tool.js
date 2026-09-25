@@ -81,6 +81,41 @@ test('mode presets (D4): diagram/view/explore/edit', () => {
   assert.equal(T.resolveDrawerConfig('bogus', null, null).mode, T.DEFAULT_MODE, 'unknown mode falls back to the default');
 });
 
+/* ---- B1-051 (D1): design mode — the designer as the viewer-superset ---- */
+
+test('design mode preset (D1): explore drawers plus source open, design flag, editable affordances', () => {
+  assert.equal(T.parseMode('design'), 'design', 'design is a mode');
+  const d = T.resolveDrawerConfig('design', null, null);
+  assert.equal(d.mode, 'design');
+  assert.equal(d.toolbar, true, 'toolbar on');
+  assert.equal(d.icons, true, 'drawer icons on');
+  assert.equal(d.drawers.source, 'open', 'source drawer open per preset (like edit)');
+  for (const k of ['appearance', 'files', 'export', 'animation']) assert.equal(d.drawers[k], 'closed');
+  assert.equal(d.design, true, 'design flag marks the mode for the design bar + drag-pin default');
+  for (const m of ['diagram', 'view', 'explore', 'edit'])
+    assert.equal(T.resolveDrawerConfig(m, null, null).design, false, m + ' is not design');
+  const off = T.resolveDrawerConfig('design', null, null, 'off');
+  assert.equal(off.toolbar, false, '?mode=design&toolbar=off is the embedded-designer shape');
+  assert.equal(off.design, true, 'design affordances survive toolbar=off');
+  assert.equal(off.drawers.source, 'open', 'drawer preset untouched by toolbar=off');
+});
+
+test('freshLocalId (D2): kind-slugged, collision-free local identifiers', () => {
+  assert.equal(T.freshLocalId([], 'table'), 'new_table');
+  assert.equal(T.freshLocalId(['mod.editor_data.new_table'], 'table'), 'new_table_2', 'uid tails collide');
+  assert.equal(T.freshLocalId(['new_table', 'new_table_2'], 'table'), 'new_table_3');
+  assert.equal(T.freshLocalId(['new_flow_start'], 'flow.start'), 'new_flow_start_2', 'kind keywords slug');
+  assert.equal(T.freshLocalId(null, '###'), 'new_element', 'empty base falls back');
+});
+
+test('legacy redirect mapper accepts mode=design (B1-051 D3)', () => {
+  const R = require('../tool/src/redirect.js');
+  const q = R.mapLegacyParams('?src=../examples/basics/01-customer.ddn&mode=design', 'http://x/tools/designer/index.html', '../index.html');
+  assert.ok(q.includes('mode=design'), 'design mode survives legacy redirects: ' + q);
+  assert.ok(q.includes('src='), 'src survives');
+});
+
+
 test('precedence (D3): URL param > localStorage > preset defaults', () => {
   const c = T.resolveDrawerConfig('explore', { files: 'open', source: 'open' }, 'source:none,bogus:x');
   assert.equal(c.drawers.source, 'none', 'URL beats localStorage');

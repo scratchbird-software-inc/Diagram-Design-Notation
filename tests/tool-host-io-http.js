@@ -50,7 +50,7 @@ const server = http.createServer((req, res) => {
   const p = path.normalize(path.join(site, decodeURIComponent(url.pathname)));
   if (!p.startsWith(site) || !fs.existsSync(p) || !fs.statSync(p).isFile()) { res.statusCode = 404; res.end(); return; }
   let bytes = fs.readFileSync(p);
-  if (url.pathname.endsWith('tool-host-roundtrip.html')) {
+  if (url.pathname.endsWith('tool-host-roundtrip.html') || url.pathname.endsWith('designer-host.html')) {
     /* The hanging <img> delays the load event so headless chrome stays alive
      * until the selftest POSTs its results. */
     bytes = Buffer.from(bytes.toString('utf8').replace('</body>', () =>
@@ -66,26 +66,33 @@ function nextResult(timeoutMs) {
     setTimeout(() => reject(new Error('timed out waiting for the page to post results')), timeoutMs);
   });
 }
-async function runCase(name, pageQuery) {
+async function runCase(name, pageQuery, page, minLines) {
   const chrome = cp.spawn(BIN, ['--headless', '--disable-gpu', '--no-sandbox', '--window-size=1400,900',
-    '--dump-dom', BASE + '/examples/embed/tool-host-roundtrip.html?selftest=1&report=' + encodeURIComponent(BASE + '/result') + pageQuery], { stdio: 'pipe' });
+    '--dump-dom', BASE + '/examples/embed/' + page + '?selftest=1&report=' + encodeURIComponent(BASE + '/result') + pageQuery], { stdio: 'pipe' });
   let body;
   try { body = await nextResult(120000); }
   finally { chrome.kill(); }
   const out = JSON.parse(body);
   for (const l of out.lines) console.log('  ', l);
   assert.ok(out.pass, name + ' selftest failed');
-  assert.ok(out.lines.length >= 12, 'selftest ran the full battery');
+  assert.ok(out.lines.length >= minLines, 'selftest ran the full battery');
   assert.ok(out.lines.every(l => l.startsWith('PASS')), 'all lines pass');
 }
 
 (async () => {
   assert.ok(fs.existsSync(BIN), 'missing ' + BIN);
   assert.ok(fs.existsSync(path.join(site, 'examples/embed/tool-host-roundtrip.html')), 'example page missing — run build:site? (the page is committed)');
+  assert.ok(fs.existsSync(path.join(site, 'examples/embed/designer-host.html')), 'designer-host example page missing (B1-051 D4)');
   await new Promise(r => server.listen(PORT, r));
   try {
-    await test('host I/O round trip over HTTP, render worker default', () => runCase('worker', ''));
-    await test('host I/O round trip over HTTP, ?worker=off parity', () => runCase('sync', '&worker=off'));
+    await test('host I/O round trip over HTTP, render worker default', () => runCase('worker', '', 'tool-host-roundtrip.html', 12));
+    await test('host I/O round trip over HTTP, ?worker=off parity', () => runCase('sync', '&worker=off', 'tool-host-roundtrip.html', 12));
+    /* B1-051 (D4): the embedded designer — ?mode=design&toolbar=off driven
+     * entirely through the host I/O contract; the selftest performs the visual
+     * edits (click-to-place, connect) through the same code paths as the
+     * on-stage gestures and reads the edited DDN back. */
+    await test('embedded designer (?mode=design) host round trip, render worker default', () => runCase('design worker', '', 'designer-host.html', 12));
+    await test('embedded designer (?mode=design) host round trip, ?worker=off parity', () => runCase('design sync', '&worker=off', 'designer-host.html', 12));
   } finally {
     for (const r of hanging) try { r.end(); } catch { /* gone */ }
     server.close();

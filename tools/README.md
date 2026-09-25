@@ -5,7 +5,7 @@ Small tools shared by the monorepo components. Per-component test suites live in
 
 - `serve.js` — local, read-only static server for the repository root
   (`node serve.js` → http://127.0.0.1:8080; Studio at `/notation/studio/editor.html`,
-  designer prototype at `/designer/prototype/index.html`).
+  designer (design mode) at `/tools/index.html?mode=design`).
 - `build-sdk.js` — builds the public runtime bundles in `notation/dist/` from the
   ES-module sources in `notation/runtime/` + `notation/studio/src/` with Rollup
   (`rollup.config.mjs`; pinned `rollup` + `@rollup/plugin-terser` devDependencies):

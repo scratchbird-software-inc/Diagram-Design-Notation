@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN embedded designer — host drives design mode through the tool I/O contract</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1180px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e;white-space:pre-wrap}.status.err{background:#f8e2e2;color:#8a1f1f}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer;margin:0 6px 6px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}iframe{width:100%;height:560px;border:1px solid #b9c8d8;border-radius:8px;background:#fff}textarea{width:100%;height:560px;box-sizing:border-box;font:12px/1.5 ui-monospace,monospace;border:1px solid #b9c8d8;border-radius:8px;padding:10px;background:#fff;color:#20374e}label{font:14px system-ui}</style>
+<h1>Embedded designer — the tool in <code>?mode=design</code>, driven by its host</h1>
+<p>The iframe runs the unified tool as an <strong>embedded designer</strong>:
+<code>?mode=design&amp;toolbar=off</code> with host-openable drawers
+(<code>drawers=source:api,…</code>). Design mode is the viewer plus editing
+affordances: drag-to-pin is armed, the <em>Add element</em> palette
+(click-to-place) and <em>Connect</em> (click source → click target → pick a
+verb) sit on the stage, and the host drives everything else through the B1-050
+I/O contract. The textarea holds DDN source <strong>as a variable</strong>.
+<strong>Load into designer</strong> passes it in with
+<code>DDNTool.setSource</code>. Edit visually in the frame — drag elements,
+place new ones, connect them — and every edit notifies the host through
+<code>DDNTool.onSourceChange</code>. <strong>Get edited DDN back</strong> calls
+<code>DDNTool.getSource</code>: the visual edits are in the text. Serve over
+HTTP (<code>node tools/serve.js</code>). Recipe:
+<a href="../../docs/developers/embedding.html">embedding.md → Embedding the designer</a>.</p>
+<button id="loadBtn">Load DDN into designer (setSource)</button>
+<button id="readBtn">Get edited DDN back (getSource)</button>
+<button id="openSource">Open source drawer</button>
+<label>revision: <code id="rev">—</code> · change events: <code id="events">0</code></label>
+<div id="status" class="status">waiting for the designer…</div>
+<div class="grid">
+<iframe id="tool" title="DDN embedded designer, chromeless design mode"></iframe>
+<textarea id="ddn" spellcheck="false" aria-label="DDN source variable"></textarea>
+</div>
+<script>
+const frame = document.getElementById('tool'), status = document.getElementById('status'),
+  ta = document.getElementById('ddn'), params = new URLSearchParams(location.search);
+/* Parent query passes through so the same page demonstrates worker and
+ * ?worker=off parity (the headless check runs both). */
+frame.src = '../../tools/index.html?mode=design&toolbar=off&drawers=source:api,appearance:api,files:none,export:none'
+  + (params.get('worker') === 'off' ? '&worker=off' : '');
+const START = `ddn "0.5";
+module "shop.design";
+
+data model {
+    object client "Client application" { kind: application; }
+    object service "Order service" { kind: application; }
+    object orders "Orders" { kind: table; fields { field order_id; field status; } }
+    relation request "Submit order" @client -> @service { kind: flow; }
+    relation write "Persist order" @service -> @orders { kind: flow; }
+}
+
+view overview "Order processing" {
+    data: [@model];
+    layout { algorithm: auto; routing: curved; crossings: gap; }
+    style { look: classic; theme: forest; }
+    publication { size: content; fit: none; }
+    legend { mode: tokens; placement: right; }
+}
+`;
+ta.value = START;
+function say(msg, isErr) { status.textContent = msg; status.classList.toggle('err', !!isErr); }
+function tool() { return frame.contentWindow.DDNTool; }
+let events = 0, lastPayload = null;
+function wire() {
+  tool().onSourceChange(p => {
+    events++; lastPayload = p;
+    document.getElementById('events').textContent = String(events);
+    document.getElementById('rev').textContent = 'rev ' + p.revision + ' · ' + Object.keys(p.files).join(', ');
+  });
+}
+async function loadIntoDesigner() {
+  const r = await tool().setSource(ta.value);
+  document.getElementById('rev').textContent = 'rev ' + r.revision + ' · ' + r.entry;
+  return r;
+}
+frame.addEventListener('load', () => {
+  const t0 = Date.now();
+  (function wait() {
+    if (tool() && tool().setSource) {
+      wire();
+      loadIntoDesigner().then(
+        r => say('designer ready — ' + r.entry + ' view "' + r.view + '" rendered (rev ' + r.revision + '). Edit visually, then read back.'),
+        e => say('initial setSource failed: ' + (e.code || '') + ' ' + e.message, true));
+      if (params.get('selftest') === '1') setTimeout(selftest, 400);
+    } else if (Date.now() - t0 < 10000) setTimeout(wait, 100);
+    else say('DDNTool did not appear — serve over HTTP, not file://', true);
+  })();
+});
+document.getElementById('loadBtn').addEventListener('click', () =>
+  loadIntoDesigner().then(r => say('setSource resolved — ' + r.entry + ' view "' + r.view + '" rendered'),
+    e => say('setSource rejected — ' + (e.code || '') + ': ' + e.message, true)));
+document.getElementById('readBtn').addEventListener('click', () => {
+  try {
+    const text = tool().getSource({ single: true });
+    ta.value = text;
+    say('getSource — the textarea now holds the visually edited source (' + text.length + ' chars)');
+  } catch (e) { say('getSource: ' + (e.code || '') + ': ' + e.message, true); }
+});
+document.getElementById('openSource').addEventListener('click', () => {
+  try { tool().setDrawer('source', 'open'); say('source drawer opened by the host'); }
+  catch (e) { say('setDrawer: ' + e.message, true); }
+});
+/* Headless/selftest hooks (same pattern as tool-host-roundtrip.html): run
+ * with ?selftest=1; ?report=<url> POSTs the JSON lines; ?worker=off checks
+ * parity. The visual edits below go through the SAME code paths as the
+ * on-stage gestures: placeElement is the click-to-place drop, connectElements
+ * is the source→target→verb connect — both commit one undoable source edit. */
+async function selftest() {
+  const out = [], ok = (name, cond, extra) => out.push(((cond ? 'PASS ' : 'FAIL ') + name) + (cond ? '' : ' — ' + String(extra).slice(0, 240)));
+  const t = tool(), doc = frame.contentDocument;
+  try {
+    const r = await t.setSource(START);
+    ok('setSource(string) resolves after render', r && r.entry === 'main.ddn' && r.view === 'overview', JSON.stringify(r));
+    const cfg = t.getDrawerConfig();
+    ok('mode=design active (design flag, source drawer open by preset)', cfg.mode === 'design' && cfg.design === true && cfg.drawers.source === 'api', JSON.stringify(cfg));
+    ok('design bar visible with toolbar=off', !doc.getElementById('ddn-design-bar').hidden, 'design bar hidden');
+    ok('drag-to-pin armed by default in design mode', doc.getElementById('ddn-drag-mode').checked === true, 'drag-mode checkbox not checked');
+    // Visual edit 1: click-to-place a new element (the palette drop path).
+    t.placeElement('table', 620, 420);
+    const afterPlace = t.workspace.resolve(r.entry, r.view);
+    const placed = afterPlace.elements.find(e => e.id.endsWith('.new_table'));
+    ok('click-to-place created a new element', !!placed && placed.kind === 'table', afterPlace.elements.map(e => e.id).join(','));
+    const placedText = t.getSource({ single: true });
+    ok('placed element pinned at the drop point in source', /place\s+@/.test(placedText) && /620/.test(placedText) && /420/.test(placedText), placedText.slice(-500));
+    ok('placed element selected for inspector rename', t.state.selected === placed.id, String(t.state.selected));
+    // Visual edit 2: connect two existing elements (source → target → verb).
+    const ir = t.workspace.resolve(r.entry, r.view);
+    const ids = ir.elements.map(e => e.id).filter(id => !id.endsWith('.new_table'));
+    t.connectElements(ids[0], ids[2] || ids[1], 'flow', 'Notify');
+    const connectedText = t.getSource({ single: true });
+    ok('connect created a relation between the two clicked elements', /relation\s+new_relation\s+"Notify"/.test(connectedText) && /kind:\s*"flow"/.test(connectedText), connectedText.slice(-600));
+    const afterConnect = t.workspace.resolve(r.entry, r.view);
+    ok('new relation visible in the view', afterConnect.relations.some(x => x.name === 'Notify'), afterConnect.relations.map(x => x.id).join(','));
+    await t.diagram.ready;
+    ok('stage re-rendered after the visual edits', !!doc.querySelector('#ddn-diagram[data-ddn-rendered]'), 'no data-ddn-rendered');
+    // Change notification + host read-back round trip.
+    await new Promise(res => setTimeout(res, t.SOURCE_NOTIFY_DEBOUNCE_MS + 150));
+    ok('onSourceChange fired with { revision, files } for the visual edits', events > 0 && lastPayload && typeof lastPayload.revision === 'number' && lastPayload.files['main.ddn'].includes('Notify'), String(events));
+    const r2 = await t.setSource(connectedText);
+    ok('edited DDN feeds straight back in (load variable → edit → reload)', r2 && r2.view === 'overview', JSON.stringify(r2));
+    const again = t.getSource({ single: true });
+    ok('reloaded source keeps both visual edits', again.includes('new_table') && again.includes('Notify'), again.slice(-400));
+  } catch (e) { out.push('FAIL selftest fatal — ' + String(e && e.stack || e).slice(0, 300)); }
+  const pass = out.every(l => l.startsWith('PASS'));
+  say('SELFTEST ' + (pass ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), !pass);
+  document.title = 'SELFTEST-' + (pass ? 'PASS' : 'FAIL');
+  if (params.get('report')) {
+    try { await fetch(params.get('report'), { method: 'POST', body: JSON.stringify({ pass, lines: out }) }); } catch (e) { /* server gone */ }
+  }
+}
+</script>
+</body>
+</html>

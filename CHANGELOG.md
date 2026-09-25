@@ -6,6 +6,42 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Design mode: the designer IS the viewer with more functionality** (B1-051).
+  `?mode=design` is a new top-level mode of the unified tool: everything from
+  `explore` plus the editing affordances on by default — source drawer open
+  per preset, inspector available, drag-to-pin armed (still toggleable), and a
+  new on-stage **design bar**: **Add element** (searchable palette of every
+  installed kind drawn with the notation-plate glyphs via
+  `DDNLive.glyphs.forKind`; pick a kind, click on the diagram — the element is
+  created and pinned at the drop point, then stays selected for renaming) and
+  **Connect** (click source element → click target element → pick verb: one
+  relation, connect stays armed for chains, Esc cancels). Both gestures are
+  graph-projection-gated like drag-to-pin and commit ordinary undoable source
+  edits through `DDNLive.authoring`, so the B1-050 host I/O contract reports
+  them like any edit. Programmatic counterparts for hosts/tests:
+  `DDNTool.placeElement` / `connectElements` / `startPlacement` /
+  `startConnect` / `cancelDesignGesture` / `getDesignGesture`.
+  - **Prototype retired** (D3): `designer/prototype/standalone.html` and
+    `index.html` are now param-preserving redirect stubs to
+    `?mode=design` (same pattern as the B1-027 viewer/studio retirements, via
+    the shared `redirect.js` mapper, which now accepts `mode=design`); the
+    website mirror `/tools/designer/index.html` redirects identically. The
+    prototype sources are kept with deprecation banners and remain the
+    fixture of the designer regression suite (retargeted to regenerate the
+    prototype from sources instead of reading the committed generated pages);
+    `build-standalone.mjs` refuses to clobber the stubs without `--force`.
+  - **Site**: the examples-page "Designer" column now links the same tool in
+    design mode; homepage/features CTAs and cards present Viewer and Designer
+    as one tool, two modes.
+  - **Embedded designer** (D4): `?mode=design&toolbar=off` + the B1-050 host
+    I/O contract is the documented, tested embedded-designer shape — runnable
+    as `website/examples/embed/designer-host.html` (load variable → visual
+    edit → host reads the edited DDN back; `?selftest=1` harness, exercised
+    worker-on and `?worker=off` in `tests/tool-host-io-http.js`).
+  - **Docs** (D5): `designer/specification/00-charter.md` carries a pointer
+    amendment naming design mode the shipping realisation; `tool.md` gains a
+    design-mode chapter; `embedding.md` gains "Embedding the designer".
+
 - **Host I/O contract** (B1-050): the embedded tool now has a documented,
   tested in/out API — a host page passes DDN source IN as a variable and gets
   the (possibly edited) DDN back OUT, identically in viewer and designer

@@ -47,7 +47,7 @@
 <p>The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit page/width/height/100%) with a slim icon toolbar and four pop-in drawers: <strong>appearance</strong> (top), <strong>source</strong> (bottom), <strong>files</strong> (left), <strong>export</strong> (right). Drawers overlay the stage, animate open/closed, and close independently.</p>
 <p>Each drawer has four states — <code>open</code>, <code>closed</code>, <code>none</code> (icon hidden, unavailable to everyone), <code>api</code> (icon hidden, not user-openable, but openable by host code via <code>DDNTool.setDrawer</code> — for embeds; never offered in the gear popup, tolerated when present in a saved config) — configured by, in ascending precedence:</p>
 <ol><li>the <code>?mode=</code> preset: <code>diagram</code> (bare stage, no toolbar — for embeds),</li></ol>
-<p>   <code>view</code> (stage + viewport controls only), <code>explore</code> (default; toolbar, all    drawers closed), <code>edit</code> (toolbar, source drawer open);</p>
+<p>   <code>view</code> (stage + viewport controls only), <code>explore</code> (default; toolbar, all    drawers closed), <code>edit</code> (toolbar, source drawer open), <code>design</code> (explore    plus the editing affordances on by default — see &quot;Design mode&quot; below);</p>
 <ol><li>the saved settings in <code>localStorage</code> key <code>ddn-tool-drawers</code> (gear popup);</li><li>the URL parameter, e.g.</li></ol>
 <p>   <code>?drawers=appearance:closed,source:api,files:none,export:closed</code>    (malformed pairs are ignored).</p>
 <p>Independently of the mode, <code>?toolbar=off</code> hides the whole icon toolbar <em>without</em> changing drawer availability (unlike <code>mode=diagram</code>, which also forces every drawer to <code>none</code>); it beats the preset's toolbar and tolerates malformed values (anything but <code>off</code> is ignored). Combined with <code>?drawers=source:api</code> this gives the host-controlled embed: no chrome at all, yet the host can still open drawers through <code>DDNTool</code> — see <a href="embedding.html">embedding.md</a> → &quot;Controlling the embedded tool&quot;.</p>
@@ -58,6 +58,15 @@
 <p>  the page together with its whole import closure (multi-file examples   render), size-capped like a dropped file. Strictly relative — any scheme,   host, or absolute path is rejected inline.</p>
 <ul><li><strong><code>?entry=&lt;catalogue entry or relative .ddn path&gt;&amp;view=&lt;view id&gt;</code></strong>: if the</li></ul>
 <p>  entry is in the bundled catalogue it boots from there; otherwise the path   is fetched with the same import closure. <code>history.replaceState</code> keeps the   URL shareable when switching examples/views.</p>
+<h2>Design mode (B1-051): the designer IS the viewer with more functionality</h2>
+<p><code>?mode=design</code> is the shipping designer: one page, one I/O contract, with the editing affordances layered on top of <code>explore</code>:</p>
+<ul><li><strong>Source drawer open per preset</strong> (like <code>edit</code>) and the inspector available;</li><li><strong>drag-to-pin armed by default</strong> (the toolbar toggle stays — turn it off any</li></ul>
+<p>  time);</p>
+<ul><li>the <strong>design bar</strong> on the stage:</li><li><strong>Add element</strong> — a palette of every installed object kind drawn with the</li></ul>
+<p>    notation-plate glyphs (<code>DDNLive.glyphs.forKind</code>), searchable; picking a     kind arms click-to-place, and the next click on the diagram creates the     element at that spot and pins it there (one undoable source edit; the new     element stays selected for renaming in the inspector);</p>
+<ul><li><strong>Connect</strong> — click a source element, click a target element, pick a verb</li></ul>
+<p>    (and optional label): one relation is created between them. Connect stays     armed after a creation so chains of relations are quick; Esc cancels any     armed gesture.</p>
+<p>Both gestures need a graph projection; on data-bound projections (charts, timelines, sequence, …) the buttons disable with an explaining tooltip — the same rule drag-to-pin already follows. The programmatic counterparts (<code>DDNTool.placeElement</code>, <code>DDNTool.connectElements</code>, <code>startPlacement</code>, <code>startConnect</code>, <code>cancelDesignGesture</code>, <code>getDesignGesture</code>) drive the same code paths for hosts and tests. <code>?mode=design&amp;toolbar=off</code> plus the B1-050 host I/O contract is the supported embedded-designer shape — see <a href="embedding.html">embedding.md</a> → &quot;Embedding the designer&quot; and <a href="../../examples/embed/designer-host.html">examples/embed/designer-host.html</a>. The old <code>designer/prototype/</code> review prototype is retired: its URLs redirect here (preserving <code>?src=</code>), its sources are kept — deprecated — for history and its regression suite.</p>
 <h2>Feature map (from the retired tools)</h2>
 <ul><li>Viewer: fit modes, per-kind/verb/object colour overrides, per-kind</li></ul>
 <p>  typography, click-to-select panels, PNG export — appearance drawer.</p>
@@ -65,6 +74,8 @@
 <p>  controls, capability-driven control disabling — files + appearance drawers.</p>
 <ul><li>Studio editor: per-file source editing with apply/discard and live apply,</li></ul>
 <p>  undo/redo, find/replace/go-to-line, guided inspector edits (label, kind,   pin/unpin, hide, add field, delete, go-to-source, add element/relation),   drag-to-pin on the stage, workspace new/rename/delete and zip/json I/O,   dirty guard on unload — source + files drawers.</p>
+<ul><li>Designer prototype: kind palette with plate glyphs, click-to-place,</li></ul>
+<p>  connect-two-elements — the design bar in design mode.</p>
 <ul><li>Export drawer: SVG, PNG (2×), WebP (2×), example snapshot (workspace JSON).</li></ul>
 <p>Rendering reuses the shared <code>&lt;ddn-example&gt;</code> component (<code>DDNLive.mount</code>); its internal chrome is hidden and every feature is driven through its public surface plus <code>DDNLive.authoring</code> / <code>DDNLive.io</code>. Presentation overrides are a temporary view overlay — the loaded source is only changed by explicit source or inspector edits.</p>
 <h2>Appearance drawer: override-channel option map (B1-046)</h2>

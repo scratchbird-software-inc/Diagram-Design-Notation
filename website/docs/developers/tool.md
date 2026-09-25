@@ -56,7 +56,8 @@ ascending precedence:
 
 1. the `?mode=` preset: `diagram` (bare stage, no toolbar — for embeds),
    `view` (stage + viewport controls only), `explore` (default; toolbar, all
-   drawers closed), `edit` (toolbar, source drawer open);
+   drawers closed), `edit` (toolbar, source drawer open), `design` (explore
+   plus the editing affordances on by default — see "Design mode" below);
 2. the saved settings in `localStorage` key `ddn-tool-drawers` (gear popup);
 3. the URL parameter, e.g.
    `?drawers=appearance:closed,source:api,files:none,export:closed`
@@ -84,6 +85,38 @@ all, yet the host can still open drawers through `DDNTool` — see
   is fetched with the same import closure. `history.replaceState` keeps the
   URL shareable when switching examples/views.
 
+## Design mode (B1-051): the designer IS the viewer with more functionality
+
+`?mode=design` is the shipping designer: one page, one I/O contract, with the
+editing affordances layered on top of `explore`:
+
+- **Source drawer open per preset** (like `edit`) and the inspector available;
+- **drag-to-pin armed by default** (the toolbar toggle stays — turn it off any
+  time);
+- the **design bar** on the stage:
+  - **Add element** — a palette of every installed object kind drawn with the
+    notation-plate glyphs (`DDNLive.glyphs.forKind`), searchable; picking a
+    kind arms click-to-place, and the next click on the diagram creates the
+    element at that spot and pins it there (one undoable source edit; the new
+    element stays selected for renaming in the inspector);
+  - **Connect** — click a source element, click a target element, pick a verb
+    (and optional label): one relation is created between them. Connect stays
+    armed after a creation so chains of relations are quick; Esc cancels any
+    armed gesture.
+
+Both gestures need a graph projection; on data-bound projections (charts,
+timelines, sequence, …) the buttons disable with an explaining tooltip — the
+same rule drag-to-pin already follows. The programmatic counterparts
+(`DDNTool.placeElement`, `DDNTool.connectElements`, `startPlacement`,
+`startConnect`, `cancelDesignGesture`, `getDesignGesture`) drive the same code
+paths for hosts and tests. `?mode=design&toolbar=off` plus the B1-050 host I/O
+contract is the supported embedded-designer shape — see
+[embedding.md](embedding.md) → "Embedding the designer" and
+[examples/embed/designer-host.html](../../examples/embed/designer-host.html).
+The old `designer/prototype/` review prototype is retired: its URLs redirect
+here (preserving `?src=`), its sources are kept — deprecated — for history and
+its regression suite.
+
 ## Feature map (from the retired tools)
 
 - Viewer: fit modes, per-kind/verb/object colour overrides, per-kind
@@ -95,6 +128,8 @@ all, yet the host can still open drawers through `DDNTool` — see
   pin/unpin, hide, add field, delete, go-to-source, add element/relation),
   drag-to-pin on the stage, workspace new/rename/delete and zip/json I/O,
   dirty guard on unload — source + files drawers.
+- Designer prototype: kind palette with plate glyphs, click-to-place,
+  connect-two-elements — the design bar in design mode.
 - Export drawer: SVG, PNG (2×), WebP (2×), example snapshot (workspace JSON).
 
 Rendering reuses the shared `<ddn-example>` component (`DDNLive.mount`); its
