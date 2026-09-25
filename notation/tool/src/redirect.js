@@ -40,7 +40,7 @@ function mapLegacyParams(search, stubHref, toolHref) {
   const view = params.get('view');
   if (view) out.set('view', view.trim());
   const mode = params.get('mode');
-  if (['diagram', 'view', 'explore', 'edit'].includes(mode)) out.set('mode', mode);
+  if (['diagram', 'view', 'explore', 'edit', 'design'].includes(mode)) out.set('mode', mode);
   /* B1-043: the explicit sync-fallback switch survives legacy redirects. */
   if (params.get('worker') === 'off') out.set('worker', 'off');
   const drawers = params.get('drawers');

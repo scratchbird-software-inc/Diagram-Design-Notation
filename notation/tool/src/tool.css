@@ -57,6 +57,31 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
  * is opacity .38) — and a spinner sits in the corner. Non-blocking: the stage
  * stays interactive because the computation runs off the main thread. */
 #ddn-diagram.ddn-rendering { opacity: .38; }
+/* ---- design bar (B1-051: ?mode=design creation gestures) ---- */
+#ddn-design-bar {
+  position: absolute; top: 8px; left: 8px; z-index: 4;
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 8px; border: 1px solid #cbd5e3; border-radius: 10px;
+  background: #fffffff2; box-shadow: 0 4px 14px #243b5918; font-size: 12px;
+}
+#ddn-design-bar[hidden] { display: none; }
+#ddn-design-bar button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; }
+#ddn-design-bar button svg { width: 14px; height: 14px; display: block; }
+#ddn-design-hint { max-width: 46ch; }
+#ddn-palette-popup, #ddn-connect-popup {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 6; width: 320px;
+  background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 10px 12px;
+  box-shadow: 0 12px 32px #243b5933;
+}
+#ddn-palette-popup[hidden], #ddn-connect-popup[hidden] { display: none; }
+#ddn-palette-search { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+#ddn-palette-list { max-height: 320px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+.ddn-palette-item { display: flex; align-items: center; gap: 8px; text-align: left; border: 0; background: transparent; border-radius: 7px; padding: 4px 6px; }
+.ddn-palette-item:hover { background: #eef4ff; }
+.ddn-palette-glyph { width: 20px; height: 20px; flex: none; display: inline-flex; color: #40536b; font-size: 10px; align-items: center; justify-content: center; }
+.ddn-palette-glyph svg { width: 20px; height: 20px; display: block; }
+#ddn-connect-popup label { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
+#ddn-connect-popup select { max-width: 220px; }
 #ddn-busy {
   position: absolute; top: 10px; right: 12px; z-index: 3;
   display: flex; align-items: center; gap: 8px;

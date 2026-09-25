@@ -32,7 +32,13 @@ const MODES = {
   diagram: { toolbar: false, icons: false, drawers: { appearance: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
   view: { toolbar: true, icons: false, drawers: { appearance: 'none', source: 'none', files: 'none', export: 'none', animation: 'none' } },
   explore: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'closed', files: 'closed', export: 'closed', animation: 'closed' } },
-  edit: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } }
+  edit: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } },
+  /* B1-051 (D1): design mode — the designer IS the viewer with more
+   * functionality. Everything from explore PLUS the editing affordances on by
+   * default: source drawer open (like edit), drag-to-pin armed (still
+   * toggleable), and the design bar visible (kind palette click-to-place,
+   * connect-two-elements). Embeddable as ?mode=design&toolbar=off + host I/O. */
+  design: { toolbar: true, icons: true, drawers: { appearance: 'closed', source: 'open', files: 'closed', export: 'closed', animation: 'closed' } }
 };
 const DEFAULT_MODE = 'explore';
 
@@ -70,7 +76,8 @@ function parseToolbarParam(v) { return v != null && String(v).toLowerCase() === 
 function resolveDrawerConfig(mode, stored, urlDrawers, urlToolbar) {
   const preset = MODES[parseMode(mode) || DEFAULT_MODE];
   const drawers = { ...preset.drawers, ...cleanDrawerConfig(stored), ...parseDrawersParam(urlDrawers) };
-  return { mode: parseMode(mode) || DEFAULT_MODE, toolbar: preset.toolbar && parseToolbarParam(urlToolbar) !== 'off', icons: preset.icons, drawers };
+  const resolved = parseMode(mode) || DEFAULT_MODE;
+  return { mode: resolved, toolbar: preset.toolbar && parseToolbarParam(urlToolbar) !== 'off', icons: preset.icons, drawers, design: resolved === 'design' };
 }
 
 /* Fit scale of an sw×sh SVG inside a cw×ch container (same semantics as the
@@ -299,6 +306,18 @@ function viewListFrom(entries) {
 function isPlausibleSourceFile(f) {
   if (!f || typeof f.name !== 'string') return false;
   return /\.ddn($|\.)/i.test(f.name) || /\.(zip|json)$/i.test(f.name) || (typeof f.type === 'string' && f.type.startsWith('text/'));
+}
+
+/* B1-051 (D2): pick a fresh local identifier for a design-mode creation.
+ * `taken` is any iterable of existing local ids (or uids — the tail after the
+ * last '.' is compared too); the kind keyword is slugged into the base. */
+function freshLocalId(taken, base) {
+  const b = String(base || 'element').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'element';
+  const used = new Set();
+  for (const id of taken || []) { used.add(String(id)); used.add(String(id).split('.').pop()); }
+  let candidate = 'new_' + b, n = 1;
+  while (used.has(candidate)) candidate = 'new_' + b + '_' + (++n);
+  return candidate;
 }
 
 const MAX_FILE_BYTES = 50_000_000;
@@ -532,7 +551,7 @@ const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
   overrideProfileWrites, cssOverlayRecord, pickEntryView,
-  isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
+  isPlausibleSourceFile, freshLocalId, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
   MIN_TEXT_PX, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem,
   hopWindowsFromMarkers, nextHopTime, scaledDuration,
@@ -572,6 +591,12 @@ const els = {
   posX: $('ddn-pos-x'), posY: $('ddn-pos-y'), pin: $('ddn-pin'), unpin: $('ddn-unpin'), hide: $('ddn-hide'),
   addField: $('ddn-add-field'), goSource: $('ddn-go-source'), deleteDef: $('ddn-delete-def'),
   addElement: $('ddn-add-element'), addRelation: $('ddn-add-relation'),
+  designBar: $('ddn-design-bar'), designHint: $('ddn-design-hint'),
+  paletteToggle: $('ddn-palette-toggle'), palettePopup: $('ddn-palette-popup'),
+  paletteSearch: $('ddn-palette-search'), paletteList: $('ddn-palette-list'),
+  connect: $('ddn-connect'), connectPopup: $('ddn-connect-popup'),
+  connectSummary: $('ddn-connect-summary'), connectVerb: $('ddn-connect-verb'),
+  connectName: $('ddn-connect-name'), connectCreate: $('ddn-connect-create'), connectCancel: $('ddn-connect-cancel'),
   exportSvg: $('ddn-export-svg'), exportPng: $('ddn-export-png'), exportWebp: $('ddn-export-webp'), saveExample: $('ddn-save-example'),
   exportMotion: $('ddn-export-motion'),
   animEmpty: $('ddn-anim-empty'), animControls: $('ddn-anim-controls'), animToggle: $('ddn-anim-toggle'),
@@ -672,6 +697,11 @@ function applyDrawerConfig() {
   // B1-033: the animation icon exists only when the render contains motion.
   const animSvg = svgEl();
   if (!(animSvg && animSvg.querySelector('.ddn-motion, .ddn-flow'))) iconEls.animation.hidden = true;
+  // B1-051: the design bar exists only in design mode; per-render capability
+  // gating (updateDesignBar) refines its buttons.
+  els.designBar.hidden = !c.design;
+  if (c.design) updateDesignBar();
+  else cancelDesignGesture();
   // Drawer open/close resizes the stage; re-fit once the transition settles.
   clearTimeout(state._fitTimer);
   state._fitTimer = setTimeout(() => applyFit(), 220);
@@ -772,6 +802,8 @@ function mount() {
     applyOverrideCss();
     applyFit();
     attachDrag();
+    attachDesign();
+    updateDesignBar();
     refreshAnimation();
     status();
   });
@@ -838,6 +870,7 @@ function attachPan() {
   let pan = null;
   stage.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
+    if (design.placing || design.connecting) return; // an armed design gesture owns the stage
     if (els.dragMode.checked && e.target.closest && e.target.closest('.ddn-node[data-id]')) return; // drag-to-pin owns node drags
     pan = { x: e.clientX, y: e.clientY, left: stage.scrollLeft, top: stage.scrollTop, moved: 0 };
   });
@@ -1254,6 +1287,7 @@ function attachDrag() {
   let drag = null;
   canvas.addEventListener('pointerdown', e => {
     if (!els.dragMode.checked || e.button !== 0) return;
+    if (design.placing || design.connecting) return; // an armed design gesture owns the stage
     const el = e.target.closest('.ddn-node[data-id]');
     const g = diagram.result && diagram.result.scene.nodes && diagram.result.scene.nodes.find(n => n.id === (el && el.dataset.id));
     const drawing = el && el.closest('svg') && el.closest('svg').querySelector('g[id$="drawing"]');
@@ -1298,6 +1332,186 @@ els.dragMode.addEventListener('change', () => {
     status('drag-to-pin is unavailable in this projection');
   }
 });
+
+/* ------------------------------------------------ B1-051 design mode (D1/D2)
+ * The designer is the viewer with more functionality: in ?mode=design the
+ * design bar appears with the two creation gestures the old prototype had and
+ * the unified tool lacked —
+ *   · click-to-place: pick an object kind from the palette (plate glyphs from
+ *     DDNLive.glyphs, the same iconography as the notation plates), then click
+ *     on the diagram — the element is created at that spot and pinned there;
+ *   · connect: click a source element, click a target element, pick a verb —
+ *     one relation is created between them.
+ * Both gestures are thin drivers over DDNLive.authoring (addElement / pin /
+ * addRelation), so every creation is one undoable source edit, exactly like an
+ * inspector edit. Esc cancels an armed gesture. */
+const design = { placing: null, connecting: false, from: null, to: null };
+
+function graphEditable() {
+  const caps = state.diagram && state.diagram.capabilities;
+  return !!(state.diagram && state.diagram.result && caps && !caps.sequence && caps.graphControls !== false);
+}
+function designHint(text) { els.designHint.textContent = text || 'Palette: pick a kind, click on the diagram to place it. Connect: click source, then target.'; }
+function cancelDesignGesture() {
+  design.placing = null; design.connecting = false; design.from = null; design.to = null;
+  els.paletteToggle.classList.remove('active');
+  els.connect.classList.remove('active');
+  els.palettePopup.hidden = true; els.connectPopup.hidden = true;
+  designHint();
+}
+function armPlacement(kind) {
+  cancelDesignGesture();
+  design.placing = kind;
+  els.paletteToggle.classList.add('active');
+  const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
+  designHint('Placing “' + label + '” — click on the diagram to drop it there (Esc cancels).');
+  status('click-to-place armed: ' + kind);
+}
+function armConnect() {
+  cancelDesignGesture();
+  design.connecting = true;
+  els.connect.classList.add('active');
+  designHint('Connect: click the SOURCE element (Esc cancels).');
+}
+els.paletteToggle.addEventListener('click', () => {
+  if (design.placing) { cancelDesignGesture(); return; }
+  buildPalette();
+  els.palettePopup.hidden = !els.palettePopup.hidden;
+  els.connectPopup.hidden = true;
+  if (!els.palettePopup.hidden) els.paletteSearch.focus();
+});
+els.connect.addEventListener('click', () => { if (design.connecting) cancelDesignGesture(); else armConnect(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && (design.placing || design.connecting || !els.palettePopup.hidden)) cancelDesignGesture(); });
+
+/* Palette: every installed kind with its plate glyph (DDNLive.glyphs.forKind —
+ * the 24×24 stroke icons of the notation plates). */
+function buildPalette() {
+  const q = els.paletteSearch.value.trim().toLowerCase();
+  const kinds = A.kinds.filter(k => !q || (k.id + ' ' + k.label + ' ' + k.code).toLowerCase().includes(q));
+  els.paletteList.replaceChildren(...kinds.map(k => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ddn-palette-item';
+    b.title = 'Place a ' + k.label + ' (' + k.id + ') — then click on the diagram';
+    const g = A.glyphs && A.glyphs.forKind(k.id);
+    const icon = document.createElement('span'); icon.className = 'ddn-palette-glyph'; icon.setAttribute('aria-hidden', 'true');
+    if (g) { icon.innerHTML = '<svg viewBox="' + g.viewBox + '">' + g.svg + '</svg>'; } else icon.textContent = k.code;
+    const lab = document.createElement('span'); lab.textContent = k.label;
+    b.append(icon, lab);
+    b.addEventListener('click', () => armPlacement(k.id));
+    return b;
+  }));
+  if (!kinds.length) els.paletteList.append(dim('no kind matches “' + els.paletteSearch.value + '”'));
+}
+els.paletteSearch.addEventListener('input', buildPalette);
+
+/* World-coordinates of a stage pointer event (same drawing-group inverse CTM
+ * as drag-to-pin), or null when the event is outside the rendered drawing. */
+function stageWorldPoint(e) {
+  const svg = svgEl();
+  const drawing = svg && svg.querySelector('g[id$="drawing"]');
+  const inv = drawing && drawing.getScreenCTM() && drawing.getScreenCTM().inverse();
+  if (!inv) return null;
+  return new DOMPoint(e.clientX, e.clientY).matrixTransform(inv);
+}
+function nodeIdAt(e) {
+  const el = e.target && e.target.closest && e.target.closest('.ddn-node[data-id]');
+  if (!el) return null;
+  const g = state.diagram && state.diagram.result && state.diagram.result.scene.nodes && state.diagram.result.scene.nodes.find(n => n.id === el.dataset.id);
+  return g ? g.id : null;
+}
+
+/* Click-to-place: create the element at the clicked spot and pin it there —
+ * one guided source edit; the new element stays selected for renaming. */
+function placeElement(kind, x, y) {
+  guard(() => {
+    flush();
+    const ir = state.ws.resolve(state.entry, state.view);
+    const id = freshLocalId(ir.elements.map(n2 => n2.id), kind);
+    const label = (A.kinds.find(k => k.id === kind) || {}).label || kind;
+    guided(() => {
+      A.authoring.addElement(state.ws, state.entry, state.view, { id, name: 'New ' + label.toLowerCase(), kind });
+      const after = state.ws.resolve(state.entry, state.view);
+      const uid = after.elements.map(n2 => n2.id).find(u => u === id || u.endsWith('.' + id)) || id;
+      if (Number.isFinite(x) && Number.isFinite(y) && graphEditable())
+        A.authoring.pin(state.ws, state.entry, state.view, uid, x, y);
+      state.selected = uid;
+      state.selectedRelation = null;
+      status('placed ' + uid + (Number.isFinite(x) ? ' at ' + Math.round(x) + ',' + Math.round(y) : '') + ' — rename it in the inspector');
+    });
+  });
+}
+
+/* Connect: create one relation between two clicked elements. */
+function connectElements(from, to, kind, name) {
+  guard(() => {
+    flush();
+    const ir = state.ws.resolve(state.entry, state.view);
+    const id = freshLocalId(ir.relations.map(r => r.id), 'relation');
+    const label = (A.relations.find(r => r.id === kind) || {}).label || kind;
+    guided(() => {
+      A.authoring.addRelation(state.ws, state.entry, state.view, { id, name: name || label, kind, from, to });
+      const after = state.ws.resolve(state.entry, state.view);
+      state.selectedRelation = after.relations.map(r => r.id).find(u => u === id || u.endsWith('.' + id)) || id;
+      state.selected = null;
+      status('connected ' + from + ' → ' + to + ' (' + kind + ') — relation ' + state.selectedRelation);
+    });
+  });
+}
+els.connectVerb.replaceChildren(...A.relations.map(r => new Option(r.label + ' (' + r.id + ')', r.id)));
+els.connectVerb.value = 'assoc';
+els.connectCreate.addEventListener('click', () => {
+  const from = design.from, to = design.to, kind = els.connectVerb.value, name = els.connectName.value.trim();
+  els.connectPopup.hidden = true;
+  const keepConnecting = design.connecting;
+  cancelDesignGesture();
+  if (keepConnecting) armConnect(); // chain more connections without re-clicking the tool
+  connectElements(from, to, kind, name);
+});
+els.connectCancel.addEventListener('click', () => cancelDesignGesture());
+
+/* Design gesture clicks intercept the stage in the CAPTURE phase, ahead of the
+ * component's own select/pan handlers, and are consumed (no selection, no pan)
+ * until the gesture completes or Esc cancels. */
+function attachDesign() {
+  const stage = stageEl();
+  if (!stage || stage.dataset.toolDesign) return;
+  stage.dataset.toolDesign = 'true';
+  stage.addEventListener('click', e => {
+    if (!design.placing && !design.connecting) return;
+    e.stopPropagation(); e.preventDefault();
+    if (design.placing) {
+      const p = stageWorldPoint(e);
+      const kind = design.placing;
+      cancelDesignGesture();
+      if (!p) { status('click inside the diagram to place the element'); return; }
+      placeElement(kind, p.x, p.y);
+      return;
+    }
+    const id = nodeIdAt(e);
+    if (!id) { designHint('Connect: click an ELEMENT — that click was empty canvas.'); return; }
+    if (!design.from) { design.from = id; designHint('Connect: source is ' + id + ' — now click the TARGET (Esc cancels).'); return; }
+    if (id === design.from) { designHint('Connect: target must differ from the source (' + id + ').'); return; }
+    design.to = id;
+    els.connectSummary.textContent = design.from + ' → ' + design.to;
+    els.connectName.value = '';
+    els.connectPopup.hidden = false;
+  }, true);
+  /* An armed gesture also owns pointer drags: suppress pan and drag-to-pin. */
+  stage.addEventListener('pointerdown', e => { if (design.placing || design.connecting) e.stopPropagation(); }, true);
+}
+
+/* Per-render gating: creation gestures need a graph projection (the same rule
+ * as drag-to-pin); on data-bound projections the buttons explain themselves. */
+function updateDesignBar() {
+  els.designBar.hidden = !state.config.design;
+  if (!state.config.design) return;
+  const ok = graphEditable();
+  els.paletteToggle.disabled = !ok;
+  els.connect.disabled = !ok;
+  els.paletteToggle.title = ok ? 'Add element — pick a kind, then click on the diagram to place it' : 'Element placement needs a graph projection — this view is data-bound';
+  els.connect.title = ok ? 'Connect two elements — click source, click target, pick a verb' : 'Connecting needs a graph projection — this view is data-bound';
+  if (!ok && (design.placing || design.connecting)) cancelDesignGesture();
+}
 
 /* ------------------------------------------------ animation drawer (B1-033, D5)
  * SMIL playback controls over the rendered SVG. Default state is playing;
@@ -1924,6 +2138,8 @@ function boot() {
   // (that session choice then wins until the page reloads).
   if (reducedMotion()) anim.playing = false;
   applyDrawerConfig();
+  // B1-051 (D1): design mode arms drag-to-pin by default (still toggleable).
+  els.dragMode.checked = state.config.design === true;
   catalogueUI();
   let booted = false;
   try {
@@ -1978,6 +2194,12 @@ host.DDNTool = Object.assign({}, pure, {
   selectFlow: id => { anim.selectedFlow = id; els.animFlow.value = id; },
   getAnimationState: () => ({ playing: anim.playing, speed: anim.speed, flows: anim.flows.map(f => ({ ...f })), selectedFlow: anim.selectedFlow }),
   showSource, flush, snapshot, openFiles,
+  /* B1-051 design-mode surface (D1/D2): the programmatic counterparts of the
+   * design-bar gestures, for hosts and tests. */
+  startPlacement: armPlacement, startConnect: armConnect, cancelDesignGesture,
+  placeElement, connectElements,
+  getDesignGesture: () => ({ placing: design.placing, connecting: design.connecting, from: design.from, to: design.to }),
+  updateDesignBar,
   renderMode, getRenderWorkerState: () => ({ mode: renderMode(), disabledReason: workerState.reason, degraded: !!(workerState.bridge && workerState.bridge.degraded), verifiedMetrics: workerState.bridge ? workerState.bridge.verifiedMetrics : 0 }),
   state
 });

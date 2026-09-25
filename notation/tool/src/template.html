@@ -95,6 +95,30 @@
       <div class="ddn-drawer-body" id="ddn-appearance-body"></div>
     </aside>
     <section id="ddn-stage" aria-label="Diagram stage">
+      <div id="ddn-design-bar" hidden>
+        <button id="ddn-palette-toggle" type="button" title="Add element — pick a kind, then click on the diagram to place it">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Add element
+        </button>
+        <button id="ddn-connect" type="button" title="Connect two elements — click source, click target, pick a verb">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="12.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12.5" cy="3.5" r="2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M5.2 10.8 10.8 5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Connect
+        </button>
+        <span id="ddn-design-hint" class="ddn-dim"></span>
+        <div id="ddn-palette-popup" hidden>
+          <input id="ddn-palette-search" type="search" placeholder="Find a kind…" aria-label="Find an object kind">
+          <div id="ddn-palette-list" role="listbox" aria-label="Object kinds"></div>
+        </div>
+        <div id="ddn-connect-popup" hidden>
+          <p id="ddn-connect-summary" class="ddn-dim"></p>
+          <label>Verb <select id="ddn-connect-verb" aria-label="Relationship verb"></select></label>
+          <label>Label <input id="ddn-connect-name" type="text" placeholder="optional"></label>
+          <div class="ddn-row">
+            <button id="ddn-connect-create" type="button">Create relation</button>
+            <button id="ddn-connect-cancel" type="button" class="ddn-mini">Cancel</button>
+          </div>
+        </div>
+      </div>
       <div id="ddn-diagram"></div>
       <div id="ddn-busy" hidden><span class="ddn-spinner" aria-hidden="true"></span>Rendering…</div>
       <div id="ddn-hint"><p>Open a .ddn file, pick an example,<br>drop files anywhere, or paste a source.</p></div>
