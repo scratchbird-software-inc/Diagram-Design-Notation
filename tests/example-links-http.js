@@ -68,7 +68,10 @@ function checkLink({ page, href, url }) {
 /* B1-051 (D3): the retired prototype URL must redirect — params preserved,
  * mode=design forced — and render the linked source in the unified tool. */
 function checkDesignerRedirect() {
-  const u = new URL(BASE + '/tools/designer/index.html?src=../../examples/basics/01-customer.ddn');
+  // worker=off pins the synchronous path for the same --dump-dom race reason
+  // as the tool crawl (and doubles as a param-preservation check: the stub
+  // must forward it, per the B1-043 mapper rule).
+  const u = new URL(BASE + '/website/tools/designer/index.html?src=../../examples/basics/01-customer.ddn&worker=off');
   const dom = dumpDom(u.origin + u.pathname + u.search);
   assert.ok(dom.includes('data-ddn-rendered='), 'designer redirect did not render — status: ' + toolStatus(dom));
   assert.ok(!toolStatus(dom).startsWith('Error:'), 'designer redirect tool error: ' + toolStatus(dom));
