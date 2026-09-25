@@ -6,6 +6,28 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- AI-optimized authoring reference generator (B1-047, tooling):
+  `tools/build-ai-reference.mjs` + rewritten `tools/ai-reference-core.md` now
+  produce a fully self-sufficient AI authoring specification. New generated
+  content: a use-when annotation column on all 98 diagram profiles (sourced
+  from `tools/ai-reference/profile-annotations.json`; the build FAILS on any
+  unannotated or unknown profile) and a FIX column on the diagnostics table
+  (hand-authored recovery guidance in
+  `tools/ai-reference/diagnostic-fixes.json` for 53 common codes; the build
+  fails when required coverage gaps or codes the runtime never raises
+  appear). New template sections: normative DO/DON'T AI failure-mode rules
+  (§1.1), a user-intent → projection/profile/mark decision guide (§6),
+  authoring behaviours (defaults and omitted-vs-asserted, missing/null,
+  keyed replaceData contract, motion, iso/geo module requirements, DDN071
+  rule of thumb — §7), optimization and size limits (§8), multi-file
+  authoring with the single-file preference (§12), and 26 worked recipes
+  (25 + shared library) spanning ERD, DFD, flowchart, C4, org/mind maps,
+  sequence, state machines, matrix, fishbone, decision tables, timeline,
+  chart families (bar/pie/gauge/histogram/sankey), panels and composed
+  dashboards, geo choropleth/symbols, iso chart+graph, and animated flow
+  traces — every recipe validated via check AND render (58 runs). The
+  generator now prints a D2/D4 completeness report (11 inventory items +
+  ≤350 KiB size gate) and fails the build when any item is unmet.
 - Tool option completeness + base-font UX (B1-046): the appearance drawer now
   covers every override-channel option the live API accepts — the previously
   missing Field depth control (`depth`, 0–64 levels) is added, and an

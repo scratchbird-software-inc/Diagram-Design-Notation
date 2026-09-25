@@ -1,17 +1,23 @@
 #!/usr/bin/env node
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * B1-030: generate DDN-AI-REFERENCE.md from the pinned release sources.
+ * B1-030/B1-047: generate DDN-AI-REFERENCE.md from the pinned release sources.
  *
  * Hand-authored prose lives in tools/ai-reference-core.md with `<!-- @gen:NAME -->`
  * placeholders. Everything under a placeholder is derived HERE from
  * standard/registry/*.json + notation/runtime sources (never hand-maintained):
  * vocabulary counts, property whitelists (the real DDN.PROPERTIES keyword list),
  * resolved defaults, enums, projection kinds + per-kind supported keys, the full
- * vocabulary tables, the diagnostic-code table, and the grammar appendix.
+ * vocabulary tables (profiles carry a use-when column from
+ * tools/ai-reference/profile-annotations.json — the build fails on any
+ * unannotated or unknown profile), the diagnostic-code table with a FIX column
+ * (tools/ai-reference/diagnostic-fixes.json — required coverage enforced),
+ * and the grammar appendix.
  *
  * Every ```ddn fenced block in the assembled document is executed against the
  * reference CLI (check AND render, every declared view); the build fails if any
- * example fails.
+ * example fails. The CLI then prints the D2/D4 completeness report and fails
+ * when any inventory item is unmet (sections present, 98 profiles annotated,
+ * >=20 recipes, <=350 KiB).
  *
  * Usage: node tools/build-ai-reference.mjs [outputPath] [--no-validate]
  *   default output: ../kimi-DDN-workarea/DDN-AI-REFERENCE.md (workarea, gitignored)
@@ -54,6 +60,8 @@ function evalData(src, name) {
 
 function loadSources() {
   const capabilities = readJSON('standard/registry/capabilities.json');
+  const profileAnnotations = readJSON('tools/ai-reference/profile-annotations.json').annotations;
+  const diagnosticFixes = readJSON('tools/ai-reference/diagnostic-fixes.json');
   const catalogue = readJSON('standard/registry/catalogue.json');
   const profilesCatalogue = readJSON('standard/registry/profiles/catalogue.json');
   const dataProperties = readJSON('standard/registry/data-properties.json');
@@ -69,7 +77,8 @@ function loadSources() {
     'const common=' + commonLit + ';const supported=' + supportedLit + ';return {supported};')();
   const version = capabilities.version;
   return { capabilities, catalogue, profilesCatalogue, dataProperties, grammar,
-    PROPERTIES, CHOICES, DEFAULTS, projectionSupported, version };
+    PROPERTIES, CHOICES, DEFAULTS, projectionSupported, version,
+    profileAnnotations, diagnosticFixes };
 }
 
 /* ---------- diagnostics extraction (runtime + Studio src) ---------- */
@@ -96,8 +105,12 @@ function extractDiagnostics() {
       if (s.trim().length > 2) out.push(s);
     }
     return out;
-  };  for (const f of files) {
+  };
+  const mentioned = new Set(); // every code literal anywhere in the scanned sources
+  const ANYCODE = new RegExp("'(" + CODE + ")'", 'g');
+  for (const f of files) {
     const src = fs.readFileSync(f.abs, 'utf8');
+    for (const m of src.matchAll(ANYCODE)) mentioned.add(m[1]);
     for (const re of patterns) {
       for (const m of src.matchAll(re)) {
         const code = m[1];
@@ -117,12 +130,12 @@ function extractDiagnostics() {
       }
     }
   }
-  return [...codes.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([code, c]) => ({
+  return { list: [...codes.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([code, c]) => ({
     code,
     severity: c.severity.has('error') ? 'error' : [...c.severity][0],
     files: [...c.files].sort(),
     message: [...c.messages].sort().join('<br>').replace(/\|/g, '\\|') || '(no literal message)',
-  }));
+  })), mentioned };
 }
 
 /* ---------- generated sections ---------- */
@@ -205,10 +218,14 @@ function genVocabulary(S) {
         joinList(r.source), joinList(r.target), yn(r.allow_self), yn(r.member_endpoints)])));
 
   out.push('### 4.5 Diagram profiles (' + pc.profiles.length + ')\n\n' +
-    'A profile is selected in a view\'s projection: `projection { kind: graph; profile: "c4.container@1"; }`. `kind` MUST equal the profile\'s registered projection (DDN-PF002); unknown profile → DDN-PF001. Per-profile enforced rules are in section 6.\n\n' +
-    table(['profile id', 'projection', 'diagram families', 'scope', 'validation', 'unsupported'],
-      pc.profiles.map(p => [p.id, p.projection, joinList(p.diagramFamilies), p.scope,
-        joinList(p.validation, '; '), joinList(p.unsupported, '; ')])));
+    'A profile is selected in a view\'s projection: `projection { kind: graph; profile: "c4.container@1"; }`. `kind` MUST equal the profile\'s registered projection (DDN-PF002); unknown profile → DDN-PF001. Per-profile enforced rules are in section 6. `use when` is the authoring-intent annotation (tools/ai-reference/profile-annotations.json; the generator fails if any profile lacks one).\n\n' +
+    table(['profile id', 'projection', 'use when', 'diagram families', 'scope', 'validation', 'unsupported'],
+      pc.profiles.map(p => {
+        const ann = S.profileAnnotations[p.id];
+        if (!ann) throw new Error('profile ' + p.id + ' lacks a use-when annotation in tools/ai-reference/profile-annotations.json');
+        return [p.id, p.projection, ann, joinList(p.diagramFamilies), p.scope,
+          joinList(p.validation, '; '), joinList(p.unsupported, '; ')];
+      })));
 
   out.push('### 4.6 Endpoint marks (' + cat.endpoints.length + '; set via `source_mark:` / `target_mark:` on relations)\n\n' +
     'Structural participation marks (`one`, `zeroone`, `many`, `zeromany`, `diamond`, `triangle`) are allowed only on `structural`-family relations (DDN114). Unknown mark → DDN114.\n\n' +
@@ -241,24 +258,41 @@ function genProjectionKinds(S) {
     jsonBlock(S.projectionSupported));
 }
 
-function genDiagnostics(diagnostics) {
+function genDiagnostics(diagnostics, S, mentioned) {
+  const fixes = S.diagnosticFixes.fixes;
+  const known = new Set(diagnostics.map(d => d.code));
+  for (const code of Object.keys(fixes))
+    if (!known.has(code) && !mentioned.has(code)) throw new Error('diagnostic-fixes.json names code ' + code + ' that the runtime never raises');
+  for (const code of S.diagnosticFixes.requiredCoverage)
+    if (!fixes[code]) throw new Error('diagnostic-fixes.json lacks a fix for required code ' + code);
+    else if (!known.has(code) && !mentioned.has(code)) throw new Error('requiredCoverage code ' + code + ' is not a runtime diagnostic');
+  for (const code of Object.keys(fixes))
+    if (!known.has(code)) {
+      diagnostics.push({ code, severity: 'error', files: ['runtime (computed raise site)'], message: '(code selected dynamically at the raise site; no static literal message)' });
+      known.add(code);
+      diagnostics.sort((a, b) => a.code.localeCompare(b.code));
+    }
+  const fixed = diagnostics.filter(d => fixes[d.code]).length;
   return wrap('diagnostics',
-    '## 8. Diagnostics (' + diagnostics.length + ' codes, machine-extracted from runtime + Studio sources)\n\n' +
-    '`check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–14x` process/governance contracts, `DDN15x` redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` is a reserved legacy warning), `DDN-E0xx` Studio authoring-edit / missing runtime bundle (`DDN-E010`), `DDN-IO…` Studio archive/workspace import-export I/O, `DDN-I…` interaction (experimental sequence-lane projection), `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. How to fix: read the message (it names the offending element/relation/property); the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §5 coordinate policy).\n\n' +
-    table(['code', 'severity', 'raised by', 'meaning (message template(s); runtime values concatenated between literal parts)'],
-      diagnostics.map(d => [d.code, d.severity, d.files.join(', '), d.message])));
+    '## 9. Diagnostics and error recovery (' + diagnostics.length + ' codes, machine-extracted from runtime + Studio sources; ' + fixed + ' carry a hand-authored FIX)\n\n' +
+    '`check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).\n\n' +
+    table(['code', 'severity', 'meaning (message template(s); runtime values concatenated between literal parts)', 'FIX (authoring recovery)'],
+      diagnostics.map(d => [d.code, d.severity, d.message, fixes[d.code] || ''])));
 }
 
 function genGrammar(S) {
   return wrap('grammar',
-    '## 12. Appendix — full grammar (standard/grammar/ddn.ebnf, verbatim)\n\n```ebnf\n' + S.grammar.trim() + '\n```');
+    '## 15. Appendix — full grammar (standard/grammar/ddn.ebnf, verbatim)\n\n```ebnf\n' + S.grammar.trim() + '\n```');
 }
 
 /* ---------- assembly ---------- */
 
 export function assemble({ validate = true } = {}) {
   const S = loadSources();
-  const diagnostics = extractDiagnostics();
+  for (const id of Object.keys(S.profileAnnotations))
+    if (!S.profilesCatalogue.profiles.some(p => p.id === id))
+      throw new Error('profile-annotations.json names unknown profile ' + id);
+  const { list: diagnostics, mentioned } = extractDiagnostics();
   const sections = {
     'counts': genCounts(S, diagnostics),
     'properties': genProperties(S),
@@ -266,7 +300,7 @@ export function assemble({ validate = true } = {}) {
     'enums': genEnums(S),
     'vocabulary': genVocabulary(S),
     'projection-kinds': genProjectionKinds(S),
-    'diagnostics': genDiagnostics(diagnostics),
+    'diagnostics': genDiagnostics(diagnostics, S, mentioned),
     'grammar': genGrammar(S),
   };
   let text = read('tools/ai-reference-core.md');
@@ -276,7 +310,29 @@ export function assemble({ validate = true } = {}) {
     return sections[name];
   });
   if (/<!-- @gen:[\w-]+ -->/.test(text)) throw new Error('unreplaced @gen placeholder remains');
-  return { text, version: S.version, diagnosticCount: diagnostics.length };
+  return { text, version: S.version, diagnosticCount: diagnostics.length, sources: S, diagnostics };
+}
+
+/* ---------- D2 completeness self-check ---------- */
+
+export function completenessReport(text, S, diagnostics, validation) {
+  const has = (re, label) => ({ ok: re.test(text), label });
+  const fixedCount = diagnostics.filter(d => S.diagnosticFixes.fixes[d.code]).length;
+  const checks = [
+    has(/## 2\. File anatomy[\s\S]*multi-module[\s\S]*import "<path>" as/, 'D2.1 file/module structure, imports, multi-file vs single-file, section blocks'),
+    has(/## 2\.2[\s\S]*Comments:[\s\S]*Atoms:[\s\S]*quantit/i, 'D2.2 complete lexical/grammar summary (literals, identifiers, refs, comments, quantities, colours, strings)'),
+    has(/### 3\.1[\s\S]*Typed declarations[\s\S]*Verb relations[\s\S]*Named batches[\s\S]*View headers[\s\S]*Keyed tabular records[\s\S]*Reuse presets/, 'D2.3 every declaration form, canonical AND compact'),
+    has(/Full property key whitelist[\s\S]*Resolved-profile defaults[\s\S]*Enumerated values/, 'D2.4 complete property tables from runtime whitelists/DEFAULTS/CHOICES'),
+    { ok: S.profilesCatalogue.profiles.every(p => S.profileAnnotations[p.id]), label: 'D2.5 all ' + S.profilesCatalogue.profiles.length + ' profiles annotated with use-when (generator fails otherwise)' },
+    has(/## 6\. Decision guide[\s\S]*\| org chart[\s\S]*\| database schema[\s\S]*timeline →[\s\S]*dashboard →/, 'D2.6 decision guide intent → view kind/profile/mark'),
+    has(/## 7\. Behaviours[\s\S]*omitted ≠[\s\S]*missing[\s\S]*replaceData[\s\S]*ddn-iso[\s\S]*ddn-geo[\s\S]*DDN071/, 'D2.7 behaviours: defaults, omitted-vs-asserted, missing/null, refresh, iso/geo modules, DDN071'),
+    has(/## 8\. Optimization[\s\S]*compact forms[\s\S]*records`? block[\s\S]*preset[\s\S]*128[\s\S]*384/, 'D2.8 optimization: compact forms, records, presets, size limits, drill-down'),
+    { ok: S.diagnosticFixes.requiredCoverage.every(c => S.diagnosticFixes.fixes[c]) && fixedCount >= S.diagnosticFixes.requiredCoverage.length, label: 'D2.9 error-recovery FIX column for ' + S.diagnosticFixes.requiredCoverage.length + ' common codes (' + fixedCount + ' of ' + diagnostics.length + ' codes carry fixes)' },
+    { ok: validation && validation.blocks >= 20, label: 'D2.10 worked recipes: ' + (validation ? validation.blocks : 0) + ' ```ddn blocks (>=20 required), ' + (validation ? validation.checked : 0) + ' check+render runs, all pass' },
+    has(/## 12\. Multi-file authoring[\s\S]*single-file self-contained is preferred/i, 'D2.11 multi-file pattern + single-file preference note'),
+    { ok: Buffer.byteLength(text, 'utf8') <= 350 * 1024, label: 'D4 size ' + (Buffer.byteLength(text, 'utf8') / 1024).toFixed(1) + ' KiB <= 350 KiB' },
+  ];
+  return checks;
 }
 
 /* ---------- worked-example validation (check AND render) ---------- */
@@ -333,12 +389,18 @@ if (isMain) {
   const validate = !args.includes('--no-validate');
   const outArg = args.find(a => !a.startsWith('--'));
   const out = path.resolve(outArg || path.join(root, '..', 'kimi-DDN-workarea', 'DDN-AI-REFERENCE.md'));
-  const { text, version, diagnosticCount } = assemble({ validate });
+  const { text, version, diagnosticCount, sources, diagnostics } = assemble({ validate });
+  let validation = null;
   if (validate) {
-    const { blocks, checked } = validateExamples(text);
-    console.log('ai-reference: ' + checked + ' check+render runs across ' + blocks + ' ```ddn blocks, all pass');
+    validation = validateExamples(text);
+    console.log('ai-reference: ' + validation.checked + ' check+render runs across ' + validation.blocks + ' ```ddn blocks, all pass');
   }
+  console.log('ai-reference completeness report (D2/D4 self-check):');
+  const checks = completenessReport(text, sources, diagnostics, validation);
+  for (const c of checks) console.log('  [' + (c.ok ? 'x' : ' ') + '] ' + c.label);
+  const unmet = checks.filter(c => !c.ok);
+  if (unmet.length) throw new Error('completeness self-check failed: ' + unmet.map(c => c.label).join('; '));
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, text, 'utf8');
-  console.log('ai-reference: wrote ' + out + ' (runtime ' + version + ', ' + diagnosticCount + ' diagnostic codes, ' + text.length + ' bytes)');
+  console.log('ai-reference: wrote ' + out + ' (runtime ' + version + ', ' + diagnosticCount + ' diagnostic codes, ' + Buffer.byteLength(text, 'utf8') + ' bytes)');
 }
