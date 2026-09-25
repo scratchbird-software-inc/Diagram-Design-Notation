@@ -1,0 +1,182 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN host round-trip — DDN in as a variable, DDN back out</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1180px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e;white-space:pre-wrap}.status.err{background:#f8e2e2;color:#8a1f1f}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer;margin:0 6px 6px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}iframe{width:100%;height:560px;border:1px solid #b9c8d8;border-radius:8px;background:#fff}textarea{width:100%;height:560px;box-sizing:border-box;font:12px/1.5 ui-monospace,monospace;border:1px solid #b9c8d8;border-radius:8px;padding:10px;background:#fff;color:#20374e}label{font:14px system-ui}</style>
+<h1>Host round-trip — DDN <em>in</em> as a variable, DDN back <em>out</em></h1>
+<p>The iframe runs the unified tool (<code>tools/index.html</code>) chromeless
+(<code>?toolbar=off</code>, drawers <code>api</code>). This page is the host:
+the textarea holds DDN source <strong>as a variable</strong>. <strong>Load into
+tool</strong> passes it in with <code>DDNTool.setSource</code> (a Promise that
+resolves after the render). Edit in the tool — the host-opened source drawer,
+or an appearance override — and every change notifies the host through
+<code>DDNTool.onSourceChange</code> (see the revision line). <strong>Read back
+updated DDN</strong> calls <code>DDNTool.getSource({ includeAppearance: true
+})</code>: the current presentation is serialized <em>into</em> the source
+with the same canonical save-serializer the tool's own Save path uses, so the
+text you get back re-renders exactly what you saw. Serve over HTTP
+(<code>node tools/serve.js</code>). Recipe:
+<a href="../../docs/developers/embedding.html">embedding.md → Passing DDN in and out</a>.</p>
+<button id="loadBtn">Load DDN into tool (setSource)</button>
+<button id="readBtn">Read back updated DDN (getSource includeAppearance)</button>
+<button id="readPlainBtn">Read back without appearance</button>
+<button id="openSource">Open source drawer</button>
+<button id="appearance">Make an appearance change (host)</button>
+<label>revision: <code id="rev">—</code> · change events: <code id="events">0</code></label>
+<div id="status" class="status">waiting for the tool…</div>
+<div class="grid">
+<iframe id="tool" title="DDN tool, chromeless"></iframe>
+<textarea id="ddn" spellcheck="false" aria-label="DDN source variable"></textarea>
+</div>
+<script>
+const frame = document.getElementById('tool'), status = document.getElementById('status'),
+  ta = document.getElementById('ddn'), params = new URLSearchParams(location.search);
+/* Parent query passes through to the tool so the same page demonstrates
+ * worker and ?worker=off parity (and the headless checks both). */
+frame.src = '../../tools/index.html?toolbar=off&drawers=source:api,appearance:api,files:none,export:none'
+  + (params.get('worker') === 'off' ? '&worker=off' : '');
+const START = `ddn "0.5";
+module "shop.demo";
+
+data model {
+    object client "Client application" { kind: application; }
+    object service "Order service" { kind: application; }
+    object orders "Orders" { kind: table; fields { field order_id; field status; } }
+    relation request "Submit order" @client -> @service { kind: flow; }
+    relation write "Persist order" @service -> @orders { kind: flow; }
+}
+
+view overview "Order processing" {
+    data: [@model];
+    layout { algorithm: auto; routing: curved; crossings: gap; }
+    style { look: classic; theme: forest; }
+    publication { size: content; fit: none; }
+    legend { mode: tokens; placement: right; }
+}
+`;
+ta.value = START;
+function say(msg, isErr) { status.textContent = msg; status.classList.toggle('err', !!isErr); }
+function tool() { return frame.contentWindow.DDNTool; }
+let events = 0, lastPayload = null;
+function wire() {
+  const t = tool();
+  t.onSourceChange(p => {
+    events++; lastPayload = p;
+    document.getElementById('events').textContent = String(events);
+    document.getElementById('rev').textContent = 'rev ' + p.revision + ' · ' + Object.keys(p.files).join(', ');
+  });
+}
+frame.addEventListener('load', () => {
+  const t0 = Date.now();
+  (function wait() {
+    if (tool() && tool().setSource) {
+      wire();
+      loadIntoTool().then(
+        r => say('tool ready — ' + r.entry + ' view "' + r.view + '" rendered (rev ' + r.revision + '). Edit away, then read back.'),
+        e => say('initial setSource failed: ' + (e.code || '') + ' ' + e.message, true));
+      if (params.get('selftest') === '1') setTimeout(selftest, 400);
+      if (params.get('flow') === 'demo') setTimeout(async () => {
+        document.getElementById('appearance').click();
+        await tool().diagram.ready;
+        document.getElementById('readBtn').click();
+      }, 600);
+    } else if (Date.now() - t0 < 10000) setTimeout(wait, 100);
+    else say('DDNTool did not appear — serve over HTTP, not file://', true);
+  })();
+});
+async function loadIntoTool() {
+  const r = await tool().setSource(ta.value);
+  document.getElementById('rev').textContent = 'rev ' + r.revision + ' · ' + r.entry;
+  return r;
+}
+document.getElementById('loadBtn').addEventListener('click', () =>
+  loadIntoTool().then(r => say('setSource resolved — ' + r.entry + ' view "' + r.view + '" rendered'),
+    e => say('setSource rejected — ' + (e.code || '') + ': ' + e.message, true)));
+function readBack(opts, label) {
+  try {
+    const text = tool().getSource({ ...opts, single: true });
+    ta.value = text;
+    say(label + ' — the textarea now holds the tool\'s current source (' + text.length + ' chars)');
+  } catch (e) { say('getSource: ' + (e.code || '') + ': ' + e.message, true); }
+}
+document.getElementById('readBtn').addEventListener('click', () => readBack({ includeAppearance: true }, 'getSource({ includeAppearance: true })'));
+document.getElementById('readPlainBtn').addEventListener('click', () => readBack({}, 'getSource()'));
+document.getElementById('openSource').addEventListener('click', () => {
+  try { tool().setDrawer('source', 'open'); say('source drawer opened by the host'); }
+  catch (e) { say('setDrawer: ' + e.message, true); }
+});
+document.getElementById('appearance').addEventListener('click', () => {
+  const t = tool(), K = frame.contentWindow.DDNLive.kinds[0].code;
+  t.setOption('theme', 'night');
+  t.setOption('routing', 'rounded');
+  t.setKindColour(K, '#b45309');
+  say('host applied appearance overrides: theme night, routing rounded, kind ' + K + ' recoloured — read back to see them serialized into the source');
+});
+/* Headless/selftest hooks (same pattern as tool-host-control.html): run with
+ * ?selftest=1; ?report=<url> POSTs the JSON lines; ?worker=off checks parity. */
+function stageSvg() {
+  const d = tool().diagram;
+  /* The renderer's own SVG bytes — DOM outerHTML would carry the per-mount
+   * component uid (safeSVG id prefixing), which is chrome, not picture. */
+  return d && d.result ? d.result.svg : '';
+}
+function overlayCss() {
+  const d = tool().diagram;
+  const el = d && d.shadowRoot.querySelector('#ddn-tool-overrides');
+  return el ? el.textContent : '';
+}
+async function selftest() {
+  const out = [], ok = (name, cond, extra) => out.push(((cond ? 'PASS ' : 'FAIL ') + name) + (cond ? '' : ' — ' + String(extra).slice(0, 200)));
+  const t = tool();
+  try {
+    const r = await t.setSource(START);
+    ok('setSource(string) resolves after render', r && r.entry === 'main.ddn' && r.view === 'overview', JSON.stringify(r));
+    ok('stage rendered', !!stageSvg(), document.getElementById('rev').textContent);
+    // Appearance changes: option channel + CSS overlay channel.
+    const K = frame.contentWindow.DDNLive.kinds[0].code;
+    t.setOption('theme', 'night');
+    t.setOption('routing', 'rounded');
+    t.setKindColour(K, '#b45309');
+    t.setKindTypography(K, { family: 'mono', size: 14 });
+    await t.diagram.ready;
+    const before = stageSvg(), beforeCss = overlayCss();
+    ok('overrides visible on stage', before.includes('svg') && beforeCss.includes('#b45309'), beforeCss);
+    // OUT with appearance, then back IN — D5 byte-identical round trip.
+    const text = t.getSource({ includeAppearance: true, single: true });
+    ok('includeAppearance serializes options into the source', /theme:\s*"night"/.test(text) && /routing:\s*"curved"/.test(text) && /curve:\s*"rounded"/.test(text), text.slice(-600));
+    ok('includeAppearance serializes the CSS overlay as x_tool_presentation', text.includes('x_tool_presentation') && text.includes('#b45309'), text.slice(-600));
+    const r2 = await t.setSource(text);
+    await new Promise(res => setTimeout(res, 100));
+    ok('round trip resolves', r2 && r2.view === 'overview', JSON.stringify(r2));
+    ok('D5: SVG byte-identical after reload', stageSvg() === before, stageSvg().length + ' vs ' + before.length);
+    ok('D5: CSS overlay restored from source', overlayCss() === beforeCss, overlayCss());
+    // Change notification fired for the actions above.
+    await new Promise(res => setTimeout(res, t.SOURCE_NOTIFY_DEBOUNCE_MS + 150));
+    ok('onSourceChange fired with { revision, files }', events > 0 && lastPayload && typeof lastPayload.revision === 'number' && lastPayload.files['main.ddn'], String(events));
+    // Multi-file map in/out fidelity.
+    const files = { 'a.ddn': START.replace('module "shop.demo"', 'module "shop.a"').replace('view overview', 'view va').replace('"Order processing"', '"A"'),
+      'b.ddn': 'ddn "0.5";\nmodule "shop.b";\nimport "a.ddn" as a;\nview vb "B" {\n    data: [@a.model];\n    publication { size: content; fit: none; }\n    legend { mode: tokens; placement: right; }\n}\n' };
+    const r3 = await t.setSource(files, { entry: 'b.ddn', view: 'vb' });
+    ok('setSource(map, opts) honours entry/view', r3.entry === 'b.ddn' && r3.view === 'vb', JSON.stringify(r3));
+    const got = t.getSource();
+    ok('getSource() map fidelity', got.files['a.ddn'] === files['a.ddn'] && got.files['b.ddn'] === files['b.ddn'] && got.entry === 'b.ddn' && got.view === 'vb' && typeof got.revision === 'number', Object.keys(got.files).join(','));
+    let singleErr = '';
+    try { t.getSource({ single: true }); } catch (e) { singleErr = e.code + ' ' + e.message; }
+    ok('getSource({single:true}) errors coded on multi-file', singleErr.startsWith('DDN-T107'), singleErr);
+    // Coded rejection for broken source.
+    let bad = '';
+    await t.setSource('this is not ddn').then(() => {}, e => { bad = (e.code || 'NO-CODE') + ' ' + e.message; });
+    ok('setSource rejects coded on invalid source', /^DDN/.test(bad), bad);
+    await t.setSource(START);
+  } catch (e) { out.push('FAIL selftest fatal — ' + String(e && e.stack || e).slice(0, 300)); }
+  const pass = out.every(l => l.startsWith('PASS'));
+  say('SELFTEST ' + (pass ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), !pass);
+  document.title = 'SELFTEST-' + (pass ? 'PASS' : 'FAIL');
+  if (params.get('report')) {
+    try { await fetch(params.get('report'), { method: 'POST', body: JSON.stringify({ pass, lines: out }) }); } catch (e) { /* server gone */ }
+  }
+}
+</script>
+</body>
+</html>

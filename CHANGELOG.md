@@ -6,6 +6,36 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Host I/O contract** (B1-050): the embedded tool now has a documented,
+  tested in/out API — a host page passes DDN source IN as a variable and gets
+  the (possibly edited) DDN back OUT, identically in viewer and designer
+  usage and with the render worker on or off.
+  - `DDNTool.setSource(source, opts)` — a source string or a
+    `{ "name.ddn": text }` map (`loadFiles` stays as alias); replaces the
+    workspace and resolves after the render with `{ revision, entry, view }`,
+    rejecting with coded diagnostics (`LIVE010/011`, `DDN-T1xx`, or the
+    parser/builder codes). `opts.entry`/`opts.view` pick the initial view.
+  - `DDNTool.getSource(opts)` — the current source of truth:
+    `{ files, entry, view, revision }`; `opts.single: true` flattens a
+    single-file workspace (coded `DDN-T107` on multi-file);
+    `opts.includeAppearance: true` first serializes the current presentation
+    into the source through the new `DDNLive.authoring.setViewProfile` — the
+    same canonical serializer every save path uses. Option-channel overrides
+    become the view profile properties they came from (the exact inverse of
+    the runtime override channel); CSS-overlay overrides (colours, per-kind
+    typography) become the view's `x_tool_presentation` extension record,
+    re-applied on load. Round trip guaranteed and tested:
+    `setSource(getSource({ includeAppearance: true }))` re-renders
+    byte-identical SVG with the overlay restored.
+  - `DDNTool.onSourceChange(cb)` / `offSourceChange(cb)` — debounced
+    (200 ms) `{ revision, files, entry, view }` after every source-affecting
+    action. No implicit session-end event exists; `embedding.md` documents
+    both honest hand-off patterns ("Passing DDN in and out" + extended
+    host-control matrix).
+  - New tested example `website/examples/embed/tool-host-roundtrip.html`;
+    headless coverage `tests/tool-host-io-http.js` (worker + `?worker=off`),
+    node coverage in `notation/tests/tool.js`. Existing `DDNTool` methods
+    unchanged; all additions are additive.
 - **Host-controlled embedding** (B1-049): the unified tool can now be
   embedded with no chrome at all while the host page keeps full control.
   - New drawer state `api` — icon hidden, not user-openable, but openable by

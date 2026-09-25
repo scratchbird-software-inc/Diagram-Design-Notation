@@ -327,6 +327,110 @@ test('D3: DDN071 names the implied minimum base font; a satisfiable font renders
   assert.ok(out.svg.includes('<svg'), '16px renders');
 });
 
+/* ---- B1-050: host I/O contract pure parts + the appearance serializer ---- */
+
+test('B1-050 overrideProfileWrites mirrors api.js apply() branch-for-branch', () => {
+  const Q = n => ({ $quantity: n, unit: 'px' });
+  assert.deepEqual(T.overrideProfileWrites({}), { groups: {}, routes: {} }, 'empty overrides write nothing');
+  assert.deepEqual(T.overrideProfileWrites({ theme: 'source', routing: 'source', look: null }).groups, {}, "'source'/null write nothing");
+  const w = T.overrideProfileWrites({
+    theme: 'night', font: 'serif', look: 'handDrawn', roughness: 1.5, hachure: false, fontSize: 18,
+    routing: 'rounded', curveTension: 0.5, curveRadius: 24, crossings: 'bridge', endpointOrdering: 'preserve',
+    placement: 'grid', autoPlace: false, gridStep: 16, fontSize2: undefined,
+    fields: 'names', depth: 2, domains: 'hide', datatypes: 'show', kind: 'icon', labels: 'text',
+    legend: 'off', title: 'off', footer: 'on', mark: 'bar',
+    relationRouting: { flow: 'straight', 'm::d.r': 'rounded' }
+  });
+  assert.deepEqual(w.groups.style, { theme: 'night', font: 'serif', look: 'handDrawn', roughness: 1.5, hachure: false, font_size: Q(18) });
+  assert.deepEqual(w.groups.layout, {
+    routing: 'curved', curve: 'rounded', curve_tension: 0.5, curve_radius: Q(24),
+    crossings: 'bridge', endpoint_ordering: 'preserve', algorithm: 'grid', center: 'pins',
+    auto_place: false, grid_step: Q(16)
+  }, 'rounded → routing curved + curve rounded; placement with source center pins (apply() semantics)');
+  assert.deepEqual(w.groups.display, { fields: 'names', depth: 2, domains: 'hide', datatypes: 'show', kind: 'icon' });
+  assert.deepEqual(w.groups.legend, { mode: 'text' });
+  assert.deepEqual(w.groups.chrome, { legend: 'off', title: 'off', footer: 'on' });
+  assert.deepEqual(w.groups.projection, { mark: 'bar' });
+  assert.deepEqual(w.routes, { flow: { routing: 'straight' }, 'm::d.r': { routing: 'curved', curve: 'rounded' } });
+  const p = T.overrideProfileWrites({ page: 'a4-landscape' });
+  assert.deepEqual(p.groups.publication, { size: 'a4', width: Q(1600), height: Q(1000), fit: 'contain', overflow: 'error', orientation: 'landscape' }, 'page defaults width/height like apply()');
+  const pc = T.overrideProfileWrites({ page: 'custom', width: 1200, height: 800 });
+  assert.deepEqual(pc.groups.publication, { size: 'figure', width: Q(1200), height: Q(800), fit: 'contain', overflow: 'error' });
+  const pw = T.overrideProfileWrites({ page: 'content' });
+  assert.equal(pw.groups.publication.size, 'content');
+  assert.equal(pw.groups.publication.fit, 'none');
+  const c = T.overrideProfileWrites({ placement: 'circular', center: 'content' });
+  assert.deepEqual(c.groups.layout, { algorithm: 'circular', center: 'content' }, 'explicit center is not pinned');
+});
+
+test('B1-050 cssOverlayRecord keeps only the non-empty CSS overlay channels', () => {
+  assert.equal(T.cssOverlayRecord({ kindColours: {}, verbColours: {}, objectColours: {}, typography: {} }), null);
+  assert.equal(T.cssOverlayRecord({}), null);
+  const rec = T.cssOverlayRecord({ kindColours: { APP: '#ff0000' }, typography: { APP: { family: 'mono', size: 12 } }, verbColours: {} });
+  assert.deepEqual(rec, { kindColours: { APP: '#ff0000' }, typography: { APP: { family: 'mono', size: 12 } } });
+  assert.notEqual(rec.kindColours, undefined);
+});
+
+test('B1-050 pickEntryView: opts.entry/opts.view win; coded DDN-T1xx errors', () => {
+  const parse = (t, n) => A.parse(t, n);
+  const files = {
+    'a.ddn': 'ddn "0.5";\nmodule "m.a";\ndata d { object x "X" { kind: application; } }\nview va "A" { data: [@d]; }\n',
+    'b.ddn': 'ddn "0.5";\nmodule "m.b";\ndata e { object y "Y" { kind: application; } }\nview vb "B" { data: [@e]; }\nview vc "C" { data: [@e]; }\n'
+  };
+  assert.deepEqual(T.pickEntryView(files, {}, parse), { entry: 'a.ddn', view: 'va' }, 'first file with a view, its first view');
+  assert.deepEqual(T.pickEntryView(files, { entry: 'b.ddn' }, parse), { entry: 'b.ddn', view: 'vb' });
+  assert.deepEqual(T.pickEntryView(files, { view: 'vc' }, parse), { entry: 'b.ddn', view: 'vc' }, 'view search crosses files');
+  assert.throws(() => T.pickEntryView(files, { entry: 'z.ddn' }, parse), e => e.code === 'DDN-T102');
+  assert.throws(() => T.pickEntryView(files, { view: 'nope' }, parse), e => e.code === 'DDN-T104');
+  assert.throws(() => T.pickEntryView({ 'x.ddn': 'ddn "0.5";\nmodule "m.x";\ndata d { object x "X" { kind: application; } }\n' }, {}, parse), e => e.code === 'DDN-T105', 'no view anywhere');
+  assert.throws(() => T.pickEntryView({}, {}, parse), e => e.code === 'DDN-T101');
+});
+
+test('B1-050 authoring.setViewProfile writes groups, route members and x_tool_presentation through the canonical serializer', () => {
+  const src = 'ddn "0.5";\nmodule "m.prof";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\n\nview v "V" {\n    data: [@model];\n    layout { algorithm: auto; routing: curved; }\n    publication { size: content; fit: none; }\n}\n';
+  const ws = A.createWorkspace({ 'main.ddn': src });
+  const rev = A.authoring.setViewProfile(ws, 'main.ddn', 'v',
+    T.overrideProfileWrites({ theme: 'night', routing: 'rounded', fontSize: 18 }).groups,
+    { routes: { 'm.prof::model.r': { routing: 'straight' } }, presentation: { kindColours: { APP: '#b45309' } } });
+  assert.equal(rev, 1);
+  const text = ws.getFiles()['main.ddn'];
+  assert.match(text, /style \{\s+theme: "night";/, 'new style group inserted');
+  assert.match(text, /font_size: 18px/, 'quantity serialized as px');
+  assert.match(text, /route @model\.r \{\s+routing: "straight";\s+\}/, 'route member for the relation');
+  assert.match(text, /x_tool_presentation: \{ "kindColours": \{ "APP": "#b45309" \} \};/, 'CSS overlay as extension record');
+  const ir = ws.resolve('main.ddn', 'v');
+  assert.equal(ir.view.profiles.style.theme, 'night');
+  assert.equal(ir.view.profiles.layout.routing, 'curved');
+  assert.equal(ir.view.profiles.layout.curve, 'rounded');
+  assert.deepEqual(ir.view.routes['m.prof::model.r'], { routing: 'straight' });
+  /* Idempotent: applying the same writes again changes nothing. */
+  const rev2 = A.authoring.setViewProfile(ws, 'main.ddn', 'v',
+    T.overrideProfileWrites({ theme: 'night', routing: 'rounded', fontSize: 18 }).groups,
+    { routes: { 'm.prof::model.r': { routing: 'straight' } }, presentation: { kindColours: { APP: '#b45309' } } });
+  assert.equal(rev2, rev, 'identical rewrite is a no-op commit');
+  /* Removal: presentation null strips the extension record. */
+  A.authoring.setViewProfile(ws, 'main.ddn', 'v', {}, { presentation: null });
+  assert.ok(!ws.getFiles()['main.ddn'].includes('x_tool_presentation'));
+  /* Invalid values are rejected by the commit-time build validation, coded. */
+  assert.throws(() => A.authoring.setViewProfile(ws, 'main.ddn', 'v', { style: { theme: 'not-a-theme' } }, {}),
+    e => !!e.code, 'unknown theme fails coded');
+  assert.throws(() => A.authoring.setViewProfile(ws, 'main.ddn', 'v', { bogusGroup: { x: 1 } }, {}),
+    e => e.code === 'DDN-E001', 'unknown profile group refused');
+});
+
+test('B1-050 D5 node-level round trip: serialized appearance re-renders byte-identical with no overrides', () => {
+  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.rt";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\n\nview v "V" {\n    data: [@model];\n    layout { algorithm: auto; routing: curved; crossings: gap; }\n    style { look: classic; theme: forest; }\n    publication { size: content; fit: none; }\n    legend { mode: tokens; placement: right; }\n}\n' };
+  const overrides = { theme: 'night', routing: 'rounded', fontSize: 18, fields: 'names', labels: 'text', footer: 'off' };
+  const ws1 = A.createWorkspace(files);
+  const before = ws1.renderSync({ entry: 'main.ddn', view: 'v', overrides }).svg;
+  const writes = T.overrideProfileWrites(overrides);
+  A.authoring.setViewProfile(ws1, 'main.ddn', 'v', writes.groups, { routes: {} });
+  const out = ws1.getFiles();
+  const ws2 = A.createWorkspace(out);
+  const after = ws2.renderSync({ entry: 'main.ddn', view: 'v' }).svg;
+  assert.strictEqual(after, before, 'source-serialized appearance renders the same bytes as the override channel');
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;

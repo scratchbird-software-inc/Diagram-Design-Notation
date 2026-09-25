@@ -5273,6 +5273,37 @@
    value,
    setLabel(ws,entry,view,id,label){if(typeof label!=='string'||label.length>4096)fail('DDN-E001','Label must be text up to 4096 characters.');const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[labelEdit(ws.getFiles()[n.source],n,label)],entry,view);},
    setProperty(ws,entry,view,id,key,v){idOK(key);const b=build(ws,entry,view),n=find(b,id);return apply(ws,b,[property(ws.getFiles()[n.source],n,key,v)],entry,view);},
+   /* B1-050 (D2): write presentation state INTO the view's source — the inverse
+    * of the runtime override channel (api.js apply()). `groups` maps a view
+    * profile group name (layout/style/display/legend/chrome/publication/
+    * projection) to the properties to set; `routes` maps a relation definition
+    * id to {routing, curve?} written as `route @ref { … }` members;
+    * `presentation` (record or null) is the tool's CSS-overlay state stored as
+    * the view's x_tool_presentation extension property (null removes it). All
+    * values serialize through the canonical `value` writer above — the same
+    * serializer every other authoring write uses — and the whole batch commits
+    * as one validated source transaction. */
+   setViewProfile(ws,entry,view,groups,{routes,presentation}={}){
+    const PROFILE_GROUPS=['layout','style','display','legend','chrome','publication','projection'];
+    if(!groups||typeof groups!=='object'||Array.isArray(groups))fail('DDN-E001','View profile writes need a {group: {key: value}} record.');
+    for(const g of Object.keys(groups))if(!PROFILE_GROUPS.includes(g))fail('DDN-E001','Unknown view profile group: '+g);
+    const b=build(ws,entry,view),v=b.viewNode,text=ws.getFiles()[v.source],edits=[];
+    for(const [g,props]of Object.entries(groups)){
+     if(!props||typeof props!=='object'||Array.isArray(props)||Object.keys(props).length>40)fail('DDN-E001','View profile group '+g+' needs a property record of at most 40 entries.');
+     const node=v.children.find(n=>n.type===g);
+     if(node)for(const [key,val]of Object.entries(props))edits.push(property(text,node,key,val));
+     else if(Object.keys(props).length)edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    '+g+' {\n        '+Object.entries(props).map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});
+    }
+    for(const [id,hint]of Object.entries(routes||{})){
+     if(!hint||typeof hint!=='object'||Array.isArray(hint))fail('DDN-E001','Route hints need a {routing, curve?} record.');
+     const ref=refFor(b,v.doc,id);
+     const node=v.children.find(n=>n.type==='route'&&(()=>{try{return b.workspace.resolve(n.target,n).uid===id;}catch{return false;}})());
+     if(node)for(const [key,val]of Object.entries(hint))edits.push(property(text,node,key,val));
+     else edits.push({file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    route @'+ref+' {\n        '+Object.entries(hint).map(([k,x])=>k+': '+value(x)+';').join('\n        ')+'\n    }\n'});
+    }
+    if(presentation!==undefined)edits.push(property(text,v,'x_tool_presentation',presentation===null?undefined:presentation));
+    return apply(ws,b,edits,entry,view);
+   },
    pin(ws,entry,view,id,x,y){if(!['graph'].includes(ws.resolve(entry,view).view.profiles.projection?.kind||'graph'))fail('DDN-E006','This view uses data-bound coordinates; edit the underlying values rather than pinning a mark.');if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>1e7||Math.abs(y)>1e7)fail('DDN-E001','Position must be finite, bounded world coordinates.');const b=build(ws,entry,view),v=b.viewNode,ref=refFor(b,v.doc,id),pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id),at=[{$quantity:Math.round(x*1000)/1000,unit:'px'},{$quantity:Math.round(y*1000)/1000,unit:'px'}];const edit=pl?property(ws.getFiles()[pl.source],pl,'at',at):{file:v.source,start:v.bodyEnd,end:v.bodyEnd,text:'\n    place @'+ref+' { at: '+value(at)+'; }\n'};return apply(ws,b,[edit],entry,view);},
    unpin(ws,entry,view,id){const b=build(ws,entry,view),v=b.viewNode,pl=v.children.find(n=>n.type==='place'&&b.workspace.resolve(n.target,n).uid===id);if(!pl||pl.props.at===undefined)return false;const e=Object.keys(pl.props).length===1?{file:pl.source,start:pl.start,end:pl.end,text:''}:property(ws.getFiles()[pl.source],pl,'at',undefined);return apply(ws,b,[e],entry,view);},
    hide(ws,entry,view,id){const b=build(ws,entry,view),v=b.viewNode,ref=refFor(b,v.doc,id),list=v.props.exclude||[];if(list.some(r=>b.workspace.resolve(r,v).uid===id))return false;return apply(ws,b,[property(ws.getFiles()[v.source],v,'exclude',[...list,{$ref:ref}])],entry,view);},

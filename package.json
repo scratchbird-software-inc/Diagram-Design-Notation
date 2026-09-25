@@ -16,7 +16,7 @@
     "test:normalize": "node tests/normalize-ddn.js",
     "test:packaging": "node tools/tests/packaging.js",
     "test:ai-reference": "node tests/ai-reference.js",
-    "test:site": "node tests/website-links.js && node tests/viewer-src-http.js && node tests/tool-worker-http.js && node tests/example-links-http.js",
+    "test:site": "node tests/website-links.js && node tests/viewer-src-http.js && node tests/tool-worker-http.js && node tests/tool-host-io-http.js && node tests/example-links-http.js",
     "test:brand": "node tests/brand-assets.js",
     "build:brand": "node tools/build-brand.mjs",
     "test:core": "npm --prefix notation run test:core",

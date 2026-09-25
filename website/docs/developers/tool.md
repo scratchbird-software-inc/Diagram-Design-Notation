@@ -156,10 +156,47 @@ minimum (DDN071) — use ≥16px" — without touching the stage; the runtime
 DDN071 message itself also states the implied minimum base font. Invalid
 overrides fail identically via the default worker path and `?worker=off`.
 
+## Host I/O contract (B1-050)
+
+For hosts embedding the tool, three additive methods formalize DDN in/out —
+the same in every mode and with the render worker on or off:
+
+- **`DDNTool.setSource(source, opts)`** — IN. A single-file source string or a
+  `{ "name.ddn": text }` map (`loadFiles` remains as the legacy alias).
+  Replaces the workspace and returns a Promise resolving after the render
+  with `{ revision, entry, view }`; failures reject with coded diagnostics
+  (`LIVE010/011` for the map contract, `DDN-T1xx` for entry/view problems,
+  the parser/builder codes for broken source). `opts.entry` / `opts.view`
+  pick the initial view.
+- **`DDNTool.getSource(opts)`** — OUT. Default: `{ files, entry, view,
+  revision }`, the current source of truth. `opts.single: true` flattens a
+  single-file workspace to a string (coded `DDN-T107` on multi-file).
+  `opts.includeAppearance: true` first serializes the current presentation
+  into the current view's source via `DDNLive.authoring.setViewProfile` (the
+  canonical save-serializer): option-channel overrides become the view
+  profile properties they came from; the CSS-overlay channels (colours,
+  per-kind typography) become the view's `x_tool_presentation` extension
+  record, which any load re-applies. The result round-trips:
+  `setSource(getSource({ includeAppearance: true }))` re-renders
+  byte-identical SVG (tested; see below).
+- **`DDNTool.onSourceChange(cb)` / `offSourceChange(cb)`** — NOTIFY. Fires
+  debounced (200 ms, `DDNTool.SOURCE_NOTIFY_DEBOUNCE_MS`) after every
+  source-affecting action — source-drawer apply/live-apply, inspector edit,
+  drag-pin, undo/redo, file new/rename/delete, `setSource`/load — with
+  `{ revision, files, entry, view }`. There is no implicit session-end event;
+  hosts keep the latest payload or call `getSource` when their own UI closes
+  the embed (both patterns documented in
+  [embedding.md](embedding.md) → "Passing DDN in and out").
+
+Runnable example:
+[examples/embed/tool-host-roundtrip.html](../../examples/embed/tool-host-roundtrip.html);
+headless coverage in `tests/tool-host-io-http.js` (worker and `?worker=off`).
+
 ## Test hooks
 
 `window.DDNTool` mirrors the old `DDNViewer` surface (pure functions plus
-`loadFiles`, `setFit`, `exportSvgString`, `setDrawer`, `setToolbar`,
+`loadFiles`, `setSource`, `getSource`, `onSourceChange`/`offSourceChange`,
+`setFit`, `exportSvgString`, `setDrawer`, `setToolbar`,
 `getDrawerConfig`, `state`, …) for tests and integrations; `setDrawer` opens
 `api` drawers but throws a clear error when asked to open a `none` drawer.
 `window.DDNRedirect.mapLegacyParams` is the old-URL parameter mapper used by

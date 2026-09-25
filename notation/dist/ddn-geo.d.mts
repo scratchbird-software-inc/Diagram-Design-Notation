@@ -58,6 +58,10 @@ export interface Authoring {
  value(value:unknown):string;
  setLabel(ws:Workspace,entry:string,view:string,id:string,label:string):number;
  setProperty(ws:Workspace,entry:string,view:string,id:string,key:string,value:unknown):number;
+ /** B1-050: write presentation state into the view's source (profile groups,
+  * route members, x_tool_presentation extension record) as one validated
+  * transaction; the canonical value serializer is reused. */
+ setViewProfile(ws:Workspace,entry:string,view:string,groups:Record<string,Record<string,unknown>>,options?:{routes?:Record<string,Record<string,unknown>>;presentation?:Record<string,unknown>|null}):number;
  pin(ws:Workspace,entry:string,view:string,id:string,x:number,y:number):number;unpin(ws:Workspace,entry:string,view:string,id:string):number|false;hide(ws:Workspace,entry:string,view:string,id:string):number|false;
  addElement(ws:Workspace,entry:string,view:string,data:{id:string;name?:string;kind?:string}):number;
  addField(ws:Workspace,entry:string,view:string,parent:string,data:{id:string;name?:string}):number;

@@ -14,6 +14,7 @@ embedding shapes — open the one that matches yours and copy it:
 | [data-refresh.html](../../examples/embed/data-refresh.html) | Live dashboard: `ws.replaceData(name, records)` swaps data-block records and re-renders in place | yes |
 | [iso-load-monitor.html](../../examples/embed/iso-load-monitor.html) | Optional `ddn-iso` module: data-bound isometric depth (`depth: "x_record.load"`) growing/shrinking on each refresh tick with a ≤300 ms SMIL transition | yes |
 | [tool-host-control.html](../../examples/embed/tool-host-control.html) | Host-controlled embedding of the unified *tool*: `?toolbar=off` + an `api`-state source drawer opened by host-page buttons via `DDNTool.setDrawer` | no — cross-frame scripting needs any static server (`node tools/serve.js`) |
+| [tool-host-roundtrip.html](../../examples/embed/tool-host-roundtrip.html) | The host I/O contract: DDN **in** as a variable via `DDNTool.setSource`, change notification via `DDNTool.onSourceChange`, (edited) DDN back **out** via `DDNTool.getSource({ includeAppearance: true })` — textarea ↔ tool round trip | no — cross-frame scripting needs any static server (`node tools/serve.js`) |
 
 The smallest useful snippet (global build, works from `file://`):
 
@@ -82,7 +83,64 @@ Host-control matrix:
 | `DDNTool.setDrawer(name, state)` | drawer name + state above | Opens/closes/reconfigures a drawer. Opening a `none` drawer throws `drawer "<name>" is none — unavailable; set it to closed or api before opening` — reconfigure it first |
 | `DDNTool.setToolbar(visible)` | boolean | Shows/hides the icon toolbar at runtime |
 | `DDNTool.getDrawerConfig()` | — | Snapshot of `{ mode, toolbar, icons, drawers }` |
-| `DDNTool.loadFiles(files, entry, view)` | `{ name: source }` map | Loads host-supplied sources into the embedded tool |
+| `DDNTool.loadFiles(files, entry, view)` | `{ name: source }` map | Loads host-supplied sources into the embedded tool (legacy alias of `setSource`) |
+| `DDNTool.setSource(source, opts)` — **IN** | source string or `{ name: source }` map | Replaces the workspace; returns a Promise resolving after the render with `{ revision, entry, view }`, rejecting with coded diagnostics (`LIVE010/011`, `DDN-T1xx`, parser/builder codes). `opts.entry`/`opts.view` pick the initial view |
+| `DDNTool.getSource(opts)` — **OUT** | — | Current source of truth: `{ files, entry, view, revision }`; `opts.single: true` flattens a single-file workspace to a string (coded `DDN-T107` on multi-file); `opts.includeAppearance: true` first serializes the current presentation into the source (see below) |
+| `DDNTool.onSourceChange(cb)` / `offSourceChange(cb)` — **NOTIFY** | callback | `cb({ revision, files, entry, view })` fires debounced (200 ms) after every source-affecting action; `onSourceChange` also returns an unsubscribe function |
+
+## Passing DDN in and out
+
+The mermaid-style embed contract, formalized: the host keeps DDN source **as a
+variable**, passes it in, and reads the (possibly edited) source back out —
+identically in viewer-style (`mode=diagram`/`view`) and designer-style
+(`mode=explore`/`edit`) usage, with the render worker on or off.
+
+```html
+<iframe id="tool" src="tools/index.html?toolbar=off&drawers=source:api"></iframe>
+<script>
+  const tool = document.getElementById('tool').contentWindow.DDNTool;
+  // IN — a source string or a { "name.ddn": text } map; multi-file works.
+  await tool.setSource(ddnText);                 // resolves after the render
+  // NOTIFY — the "user edited something" signal.
+  let latest = null;
+  tool.onSourceChange(p => { latest = p; });     // { revision, files, entry, view }
+  // OUT — current source of truth, straight back into a variable.
+  const out = tool.getSource();                  // { files, entry, view, revision }
+  const text = tool.getSource({ single: true }); // single-file flatten
+</script>
+```
+
+`getSource({ includeAppearance: true })` serializes the user's current
+presentation **into the returned source**: option-channel overrides
+(palette/font/routing/layout/page/chrome…) are written back as the view
+profile properties they came from — the exact inverse of the runtime override
+channel — and the CSS-overlay overrides (per-kind/verb/object colours,
+per-kind typography, which standard DDN deliberately cannot express) are
+stored as the view's `x_tool_presentation` extension record, which loading
+re-applies. Both writes go through `DDNLive.authoring.setViewProfile` — the
+same canonical serializer every save path uses; there is no second
+serializer. The round trip is guaranteed: feeding the result back through
+`setSource` re-renders **byte-identical SVG** with the overrides restored
+(tested headlessly in `tests/tool-host-io-http.js` and at the SDK level in
+`notation/tests/tool.js`).
+
+**Session hand-off** — two honest patterns; pick either:
+
+1. **Keep the latest notification.** Every `onSourceChange` payload already
+   carries `{ revision, files }`; when your own UI closes the embed, use the
+   latest payload (or nothing, if `revision` never moved).
+2. **Read on close.** When your UI tears the embed down, call
+   `getSource({ includeAppearance: true })` (or plain `getSource()`) at that
+   moment.
+
+There is **no implicit "session end" event**: an iframe-less web embed cannot
+know when the host considers the session over — the tool never fires one, and
+`beforeunload` is not observable as data. The notification stream plus an
+explicit final `getSource` are the whole contract.
+
+Runnable end-to-end:
+[examples/embed/tool-host-roundtrip.html](../../examples/embed/tool-host-roundtrip.html).
+
 
 Recipe — bare diagram, no toolbar, with a host button that opens the source
 drawer (runnable as

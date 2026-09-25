@@ -201,6 +201,93 @@ function toolOverrides(presentation) {
   return o;
 }
 
+/* B1-050 (D2): inverse of the component override channel (api.js apply()).
+ * Maps set presentation options back to the view profile properties they
+ * came from, so getSource({includeAppearance:true}) can serialize the current
+ * presentation INTO the source through authoring.setViewProfile. Mirrors
+ * apply() branch-for-branch; the D5 round-trip test (SVG byte-identical after
+ * reload without overrides) guards the correspondence. */
+function overrideProfileWrites(o) {
+  const groups = {}, Q = n => ({ $quantity: n, unit: 'px' });
+  const put = (g, k, v) => { (groups[g] = groups[g] || {})[k] = v; };
+  const src = v => v == null || v === 'source';
+  o = o || {};
+  if (!src(o.mark)) put('projection', 'mark', o.mark);
+  if (!src(o.endpointOrdering)) put('layout', 'endpoint_ordering', o.endpointOrdering);
+  if (!src(o.placement)) { put('layout', 'algorithm', o.placement); if (src(o.center)) put('layout', 'center', 'pins'); }
+  if (o.autoPlace != null) put('layout', 'auto_place', o.autoPlace);
+  if (o.gridStep != null) put('layout', 'grid_step', Q(o.gridStep));
+  if (!src(o.center)) put('layout', 'center', o.center);
+  if (!src(o.routing)) { put('layout', 'routing', o.routing === 'rounded' ? 'curved' : o.routing); put('layout', 'curve', o.routing === 'rounded' ? 'rounded' : 'bezier'); }
+  if (o.curveTension != null) put('layout', 'curve_tension', o.curveTension);
+  if (o.curveRadius != null) put('layout', 'curve_radius', Q(o.curveRadius));
+  if (!src(o.crossings)) put('layout', 'crossings', o.crossings);
+  for (const k of ['theme', 'font']) if (!src(o[k])) put('style', k, o[k]);
+  for (const k of ['look', 'roughness', 'hachure']) if (o[k] != null) put('style', k, o[k]);
+  if (o.fontSize != null) put('style', 'font_size', Q(o.fontSize));
+  for (const k of ['fields', 'domains', 'datatypes', 'kind']) if (!src(o[k])) put('display', k, o[k]);
+  if (o.depth != null) put('display', 'depth', o.depth);
+  if (!src(o.labels)) put('legend', 'mode', o.labels);
+  for (const k of ['legend', 'title', 'footer']) if (!src(o[k])) put('chrome', k, o[k]);
+  if (!src(o.page)) {
+    put('publication', 'size', 'figure');
+    put('publication', 'width', Q(o.width != null ? o.width : 1600));
+    put('publication', 'height', Q(o.height != null ? o.height : 1000));
+    put('publication', 'fit', 'contain');
+    put('publication', 'overflow', 'error');
+    if (o.page === 'content') { put('publication', 'size', 'content'); put('publication', 'fit', 'none'); }
+    if (o.page === 'web') { put('publication', 'width', Q(1600)); put('publication', 'height', Q(1000)); }
+    if (o.page.startsWith('a4-')) { put('publication', 'size', 'a4'); put('publication', 'orientation', o.page.endsWith('portrait') ? 'portrait' : 'landscape'); }
+    if (o.page.startsWith('letter-')) { put('publication', 'size', 'letter'); put('publication', 'orientation', o.page.endsWith('portrait') ? 'portrait' : 'landscape'); }
+  }
+  const routes = {};
+  for (const [key, v] of Object.entries(o.relationRouting || {}))
+    routes[key] = v === 'rounded' ? { routing: 'curved', curve: 'rounded' } : { routing: v };
+  return { groups, routes };
+}
+
+/* The CSS-overlay presentation state (per-kind/verb/object colours, per-kind
+ * typography) has no standard-DDN representation (spec 04: arbitrary source
+ * CSS and per-view palette aliases are not allowed). It round-trips as the
+ * view's x_tool_presentation extension record; null when no overlay is set. */
+function cssOverlayRecord(presentation) {
+  const p = presentation || {}, out = {};
+  for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography'])
+    if (p[k] && typeof p[k] === 'object' && Object.keys(p[k]).length) out[k] = JSON.parse(JSON.stringify(p[k]));
+  return Object.keys(out).length ? out : null;
+}
+
+/* B1-050 (D1): pick the entry file and view for setSource. opts.entry /
+ * opts.view win; otherwise the first file (sorted) declaring a view, and its
+ * first view. Coded DDN-T1xx errors; parseFn is injected (A.parse) so the
+ * helper stays node-testable. */
+function pickEntryView(files, opts, parseFn) {
+  const toolError = (code, msg) => { const e = new Error(msg); e.code = code; return e; };
+  opts = opts || {};
+  if (typeof parseFn !== 'function') throw toolError('DDN-T100', 'parse function required');
+  const names = Object.keys(files || {}).sort();
+  if (!names.length) throw toolError('DDN-T101', 'setSource needs at least one source file');
+  const viewsOf = name => parseFn(files[name], name).declarations.filter(n => n.type === 'view');
+  if (opts.entry != null) {
+    if (!Object.prototype.hasOwnProperty.call(files, opts.entry))
+      throw toolError('DDN-T102', 'setSource: opts.entry "' + opts.entry + '" is not in the source map (' + names.join(', ') + ')');
+    const views = viewsOf(opts.entry);
+    if (!views.length) throw toolError('DDN-T103', 'setSource: entry "' + opts.entry + '" declares no view');
+    if (opts.view != null && !views.some(v => v.id === opts.view))
+      throw toolError('DDN-T104', 'setSource: entry "' + opts.entry + '" has no view "' + opts.view + '" (has: ' + views.map(v => v.id).join(', ') + ')');
+    return { entry: opts.entry, view: opts.view != null ? opts.view : views[0].id };
+  }
+  if (opts.view != null) {
+    for (const name of names) if (viewsOf(name).some(v => v.id === opts.view)) return { entry: name, view: opts.view };
+    throw toolError('DDN-T104', 'setSource: no file declares a view "' + opts.view + '"');
+  }
+  for (const name of names) {
+    const views = viewsOf(name);
+    if (views.length) return { entry: name, view: views[0].id };
+  }
+  throw toolError('DDN-T105', 'setSource: no view declaration found in the source');
+}
+
 /* Flatten ws.entries() into a picker list [{entry, view, label}]. */
 function viewListFrom(entries) {
   if (!Array.isArray(entries)) throw new Error('entries array required');
@@ -444,6 +531,7 @@ function createRenderBridge({ worker, measure, onDegraded, onTiming, seedLimit =
 const pure = {
   DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
+  overrideProfileWrites, cssOverlayRecord, pickEntryView,
   isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
   MIN_TEXT_PX, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem,
@@ -1473,15 +1561,17 @@ function load(files, entry, view, options) {
   state.entry = entry || '';
   state.view = view || '';
   state.saved = { ...files };
-  unsubscribe = state.ws.subscribe(() => { filesUI(); updateHistory(); });
+  unsubscribe = state.ws.subscribe(() => { filesUI(); updateHistory(); emitSourceChange(); });
   entriesUI(view);
   filesUI();
   showSource(Object.prototype.hasOwnProperty.call(files, state.entry) ? state.entry : Object.keys(files)[0]);
   els.inspectorControls.hidden = true;
   els.selectionSummary.textContent = 'Click an object or relation in the diagram.';
+  restoreToolPresentation();
   mount();
   updateHistory();
   repopulateOverridePanels();
+  emitSourceChange();
   status('opened ' + Object.keys(files).length + ' file(s) — nothing leaves this page');
 }
 
@@ -1702,6 +1792,118 @@ els.saveExample.addEventListener('click', () => guard(() => {
   status('example snapshot saved');
 }));
 
+/* ------------------------------------------------ B1-050 host I/O contract
+ * setSource / getSource / onSourceChange — the documented in/out API for host
+ * pages (embedding.md "Passing DDN in and out"). */
+
+function toolError(code, msg) { const e = new Error(msg); e.code = code; return e; }
+function coded(e) { return e && e.code ? e : toolError('DDN-T100', e && e.message || String(e)); }
+
+/* D3: change notification. Fires (debounced SOURCE_NOTIFY_DEBOUNCE_MS after
+ * the last source-affecting action, same idiom as live-apply) with
+ * { revision, files, entry, view } after every workspace commit (source-drawer
+ * apply/live-apply, inspector edit, drag-pin, undo/redo, file new/rename/
+ * delete) and after every load/setSource. There is no implicit "session end"
+ * event — the host keeps the latest payload or calls getSource itself. */
+const sourceListeners = new Set();
+const SOURCE_NOTIFY_DEBOUNCE_MS = 200;
+let sourceNotifyTimer = null;
+function emitSourceChange() {
+  clearTimeout(sourceNotifyTimer);
+  if (!sourceListeners.size) return;
+  sourceNotifyTimer = setTimeout(() => {
+    if (!state.ws) return;
+    const payload = { revision: state.ws.revision, files: state.ws.getFiles(), entry: state.entry, view: state.view };
+    for (const cb of [...sourceListeners]) { try { cb(payload); } catch (e) { console.error('DDNTool onSourceChange listener:', e); } }
+  }, SOURCE_NOTIFY_DEBOUNCE_MS);
+}
+function onSourceChange(cb) {
+  if (typeof cb !== 'function') throw toolError('DDN-T108', 'onSourceChange needs a callback function');
+  sourceListeners.add(cb);
+  return () => sourceListeners.delete(cb);
+}
+function offSourceChange(cb) { sourceListeners.delete(cb); }
+
+/* x_tool_presentation restore: sources written by
+ * getSource({includeAppearance:true}) carry the CSS-overlay presentation as a
+ * view extension record; loading re-applies it so the round trip is
+ * appearance-identical, not just layout-identical. */
+function restoreToolPresentation() {
+  try {
+    const files = state.ws && state.ws.getFiles();
+    if (!files || !Object.prototype.hasOwnProperty.call(files, state.entry)) return;
+    const v = A.parse(files[state.entry], state.entry).declarations.find(n => n.type === 'view' && n.id === state.view);
+    const rec = v && v.props && v.props.x_tool_presentation;
+    if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return;
+    for (const k of ['kindColours', 'verbColours', 'objectColours', 'typography'])
+      if (rec[k] && typeof rec[k] === 'object' && !Array.isArray(rec[k])) state.presentation[k] = JSON.parse(JSON.stringify(rec[k]));
+  } catch { /* overlay restore is best-effort; a broken record never blocks a load */ }
+}
+
+/* D1 — IN. Accepts a single-file source string or a { "name.ddn": text } map;
+ * replaces the current workspace and resolves after the first render with
+ * { revision, entry, view }. Failures reject with a coded error (LIVE010/011
+ * for the map contract, DDN-T1xx for entry/view problems, the parser/builder
+ * codes for broken source). Works in every mode, worker on or off. */
+function setSource(source, opts) {
+  let files, pick;
+  try {
+    if (typeof source === 'string') files = { 'main.ddn': source };
+    else files = source;
+    A.filesChecked(files);
+    pick = pickEntryView(files, opts, (t, n) => A.parse(t, n));
+  } catch (e) { return Promise.reject(coded(e)); }
+  state.catalogueIndex = -1;
+  try { load(files, pick.entry, pick.view); } catch (e) { return Promise.reject(coded(e)); }
+  const d = state.diagram;
+  if (!d) return Promise.reject(toolError('DDN-T105', 'setSource: source loaded but no view is mounted'));
+  return d.ready.then(
+    () => ({ revision: state.ws.revision, entry: state.entry, view: state.view }),
+    e => Promise.reject(coded(e)));
+}
+
+/* D2 — OUT. Default: { files, entry, view, revision } — the current source of
+ * truth, feeding straight back into setSource. opts.single flattens a
+ * single-file workspace to a string (coded error on multi-file).
+ * opts.includeAppearance first serializes the current presentation into the
+ * current view's source through authoring.setViewProfile — the same canonical
+ * serializer every save path uses — so the returned source re-renders
+ * byte-identically with no overrides applied. */
+function getSource(opts) {
+  opts = opts || {};
+  if (!state.ws) throw toolError('DDN-T106', 'getSource: no source loaded');
+  flush();
+  if (opts.includeAppearance) {
+    if (!state.entry || !state.view) throw toolError('DDN-T106', 'getSource({ includeAppearance: true }) needs a mounted view');
+    const writes = overrideProfileWrites(toolOverrides(state.presentation));
+    /* Verb-keyed routing expands to one route member per visible relation of
+     * that kind (apply() semantics); unknown keys are dropped, never fatal. */
+    let ir = null;
+    try { ir = state.ws.resolve(state.entry, state.view); } catch { ir = null; }
+    const routes = {};
+    if (ir) {
+      const byId = new Set(ir.relations.map(r => r.id));
+      for (const [key, hint] of Object.entries(writes.routes)) {
+        if (byId.has(key)) { routes[key] = hint; continue; }
+        for (const r of ir.relations) if (r.kind === key) routes[r.id] = hint;
+      }
+    }
+    A.authoring.setViewProfile(state.ws, state.entry, state.view, writes.groups,
+      { routes, presentation: cssOverlayRecord(state.presentation) });
+    showSource(state.currentFile);
+    updateHistory();
+    status('appearance serialized into ' + state.entry + ' view "' + state.view + '"');
+  }
+  const files = state.ws.getFiles();
+  if (opts.single) {
+    const names = Object.keys(files);
+    if (names.length !== 1)
+      throw toolError('DDN-T107', 'getSource({ single: true }) needs a single-file workspace; this one has ' + names.length + ' files (' + names.join(', ') + ') — take the files map instead');
+    return files[names[0]];
+  }
+  return { files, entry: state.entry, view: state.view, revision: state.ws.revision };
+}
+
 /* ------------------------------------------------ deep links + boot */
 
 function loadFromSrc(src) {
@@ -1756,6 +1958,8 @@ function boot() {
 /* Documented test/integration surface; mirrors host.DDNViewer (D7). */
 host.DDNTool = Object.assign({}, pure, {
   loadFiles: (files, entry, view) => load(files, entry, view),
+  setSource, getSource, onSourceChange, offSourceChange,
+  SOURCE_NOTIFY_DEBOUNCE_MS,
   loadExample, setFit, zoomStep, applyOverrideCss, exportSvgString, rasterize,
   setDrawer, setToolbar, getDrawerConfig: () => JSON.parse(JSON.stringify(state.config)),
   setOption, resetAppearance,

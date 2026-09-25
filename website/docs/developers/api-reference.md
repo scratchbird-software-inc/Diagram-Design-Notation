@@ -231,10 +231,16 @@ first (`diagram.destroy()`).
 `DDNLive.authoring` is the structured-edit façade (`Authoring` in
 `public.d.ts`): methods like `setMatrixCell`, `setMatrixCells`,
 `setRecordValue`, `replaceData`, `setAssignment`, `setLabel`, `setProperty`,
-`pin`/`unpin`/`hide`, `addElement`, `addField`, `addRelation`,
-`deleteDefinition`, and `sourceOf`. Each takes the workspace plus
-`entry`/`view` coordinates and performs a validated source edit — this is
-what the visual designer uses, so hand tools get the same guarantees.
+`setViewProfile`, `pin`/`unpin`/`hide`, `addElement`, `addField`,
+`addRelation`, `deleteDefinition`, and `sourceOf`. Each takes the workspace
+plus `entry`/`view` coordinates and performs a validated source edit — this
+is what the visual designer uses, so hand tools get the same guarantees.
+`setViewProfile(ws, entry, view, groups, { routes, presentation })` writes
+presentation state into the view's source (profile-group properties,
+`route @ref` members, and the `x_tool_presentation` extension record) as one
+validated transaction through the canonical value serializer — the mechanism
+behind the tool's `getSource({ includeAppearance: true })` (see
+[embedding.md](embedding.md) → "Passing DDN in and out").
 
 ```js
 DDNLive.authoring.setLabel(ws, "model.ddn", "overview", "model.order", "Sales order");
