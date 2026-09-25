@@ -228,6 +228,64 @@ test('old sources are kept but marked deprecated (D9)', () => {
   assert.ok(fs.existsSync(path.join(root, 'notation/studio/portable-editor.html')), 'studio build artifact kept');
 });
 
+/* ---- B1-046: option completeness mapping + base-font DDN071 UX ---- */
+
+test('D1 mapping: every override-channel option in the live API has a drawer control', () => {
+  const api = fs.readFileSync(path.join(root, 'notation/studio/src/api.js'), 'utf8');
+  const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  const defBlock = /const defaults=\{([^}]+)\};/.exec(api)[1];
+  const keys = [...defBlock.matchAll(/(\w+):/g)].map(m => m[1]);
+  assert.ok(keys.length >= 25, 'override channel enumeration should find every defaults key');
+  const selectBlock = /const SELECT_FIELDS = \[([\s\S]*?)\n\];/.exec(tool)[1];
+  const covered = new Set([...selectBlock.matchAll(/'(\w+)'/g)].map(m => m[1]));
+  /* relationRouting is not a single select: the "Routing per relation class"
+   * panel drives it per verb (verbRouting) and per clicked relation
+   * (relationRouting), merged in toolOverrides. */
+  const panelCovered = { relationRouting: 'state.presentation.verbRouting' };
+  const missing = keys.filter(k => !covered.has(k) && !(k in panelCovered && tool.includes(panelCovered[k])));
+  assert.deepEqual(missing, [], 'override options without a drawer control');
+});
+
+test('D1: the B1-045 Chrome section and the animation drawer are present', () => {
+  const tool = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  for (const frag of ["['Chrome', [", "['Legend', 'legend'", "['Title block', 'title'", "['Footer line', 'footer'", "['Field depth (levels)', 'depth'"])
+    assert.ok(tool.includes(frag), 'missing ' + frag);
+  const html = fs.readFileSync(path.join(root, 'notation/tool/ddn-tool.html'), 'utf8');
+  for (const id of ['ddn-drawer-animation', 'ddn-icon-animation', 'ddn-anim-toggle', 'ddn-anim-step', 'ddn-anim-speed', 'ddn-anim-flow'])
+    assert.ok(html.includes('id="' + id + '"'), '#' + id + ' missing from the built tool');
+});
+
+test('D2: base-font floor and friendly pre-render message derive from the DDN071 constants', () => {
+  assert.equal(T.MIN_TEXT_PX, 8 * 96 / 72);
+  assert.equal(T.baseFontFloor(), 16, 'default minimum_text 8pt ≈ 10.67px floors the base font at 16px');
+  assert.equal(T.baseFontFloor(8 * 96 / 72), 16, '8pt ≈ 10.67px gives the same floor');
+  assert.equal(T.baseFontFloor(8), 12, 'a relaxed 8px minimum allows 12px base');
+  assert.equal(T.smallestRolePx(16), 11);
+  assert.equal(T.smallestRolePx(8), 5.5);
+  assert.equal(T.baseFontProblem(null), null, 'unset (source default) never blocks');
+  assert.equal(T.baseFontProblem(16), null);
+  assert.equal(T.baseFontProblem(12, 8), null);
+  const msg = T.baseFontProblem(8);
+  assert.match(msg, /Base font 8px would make the smallest text 5\.50px, below the 10\.67px minimum \(DDN071\) — use ≥16px/);
+  assert.match(T.baseFontProblem(7), /smallest text 4\.81px/);
+  assert.match(T.baseFontProblem(12, 10.67), /10\.67px minimum \(DDN071\) — use ≥16px/);
+  assert.equal(T.quantityPx({ $quantity: 8, unit: 'pt' }), 8 * 96 / 72);
+  assert.equal(T.quantityPx({ $quantity: 9, unit: 'px' }), 9);
+  assert.equal(T.quantityPx(11, 10.66), 11);
+  assert.equal(T.quantityPx(null, 10.66), 10.66);
+  assert.equal(T.quantityPx({ $quantity: NaN, unit: 'px' }, 10.66), 10.66);
+});
+
+test('D3: DDN071 names the implied minimum base font; a satisfiable font renders', () => {
+  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.font";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; overflow: error; } }\n' };
+  assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 8 } }),
+    e => e.code === 'DDN071' && /5\.50px is below minimum 10\.67px — increase base font to ≥15\.5px/.test(e.message));
+  assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 15 } }),
+    e => e.code === 'DDN071' && /10\.31px is below minimum 10\.67px/.test(e.message), '15px is still below the floor');
+  const out = A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 16 } });
+  assert.ok(out.svg.includes('<svg'), '16px renders');
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;

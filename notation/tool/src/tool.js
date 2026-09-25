@@ -86,6 +86,46 @@ const FONT_STACKS = {
 };
 const ROUTING_VALUES = ['orthogonal', 'straight', 'curved', 'rounded'];
 
+/* B1-046 (D2): DDN071 bounds, mirroring the check in ddn-render.js — the
+ * smallest text role is 11/16 of the base font (capped at 11px absolute and at
+ * 12·scale with relations; page scale and embedding_scale can only shrink it),
+ * and publication.minimum_text defaults to 8pt ≈ 10.67px. The tool's floor is the
+ * smallest base font that keeps that role at/above the minimum at full scale,
+ * so the drawer cannot offer values the renderer must reject. */
+const MIN_TEXT_PX = 8 * 96 / 72; // publication.minimum_text default: 8pt ≈ 10.67px
+/* Read a profile quantity ({$quantity, unit} or plain number) as px. */
+function quantityPx(v, dflt) {
+  if (v == null) return dflt;
+  if (typeof v === 'number') return v;
+  if (typeof v === 'object' && Number.isFinite(v.$quantity)) {
+    if (v.unit === 'pt') return v.$quantity * 96 / 72;
+    if (v.unit == null || v.unit === 'px') return v.$quantity;
+  }
+  return dflt;
+}
+function smallestRolePx(baseFontPx) {
+  const b = Number(baseFontPx);
+  if (!Number.isFinite(b)) throw new Error('base font must be a number of px');
+  return Math.min(11 * b / 16, 11);
+}
+function baseFontFloor(minTextPx) {
+  const m = minTextPx == null ? MIN_TEXT_PX : Number(minTextPx);
+  if (!Number.isFinite(m) || m <= 0) throw new Error('minimum text must be a positive number of px');
+  return Math.max(1, Math.ceil(16 * m / 11 - 1e-9));
+}
+/* Friendly pre-render validation (D2): null when the base font is satisfiable,
+ * else a message naming the implied minimum — the stage is never touched for
+ * a preventable input error. */
+function baseFontProblem(baseFontPx, minTextPx) {
+  if (baseFontPx == null) return null;
+  const m = minTextPx == null ? MIN_TEXT_PX : Number(minTextPx);
+  const smallest = smallestRolePx(baseFontPx);
+  if (smallest >= m) return null;
+  return 'Base font ' + baseFontPx + 'px would make the smallest text ' + smallest.toFixed(2) +
+    'px, below the ' + m.toFixed(2) + 'px minimum (DDN071) — use ≥' + baseFontFloor(m) +
+    'px (or lower publication.minimum_text in the source)';
+}
+
 /* Presentation-override CSS rules (adapted from the B1-007/B1-011 viewer to
  * the component SVG, which keys occurrences with data-id). CSS beats SVG
  * presentation attributes, so these restyle the render without touching the
@@ -396,6 +436,7 @@ const pure = {
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
   isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
+  MIN_TEXT_PX, quantityPx, smallestRolePx, baseFontFloor, baseFontProblem,
   hopWindowsFromMarkers, nextHopTime, scaledDuration,
   parseWorkerParam, workerDisabledReason, packMetrics, unpackMetrics, createRenderBridge
 };
@@ -747,12 +788,13 @@ const SELECT_FIELDS = [
     ['Auto-place', 'autoPlace', 'checkbox'],
     ['Layout centre', 'center', () => A.choices.center.map(titled)],
     ['Grid step (px)', 'gridStep', 'number', 8, 512, 8],
-    ['Base font (px)', 'fontSize', 'number', 8, 64, 1],
+    ['Base font (px)', 'fontSize', 'number', baseFontFloor(), 64, 1],
     ['Pen roughness', 'roughness', 'number', 0, 3, 0.2],
     ['Hatch shading', 'hachure', 'checkbox']
   ]],
   ['Content', [
     ['Detail', 'fields', () => A.choices.fields.map(titled)],
+    ['Field depth (levels)', 'depth', 'number', 0, 64, 1],
     ['Relation labels', 'labels', () => A.choices.labels.map(titled)],
     ['Domain bindings', 'domains', () => A.choices.domains.map(titled)],
     ['Datatypes', 'datatypes', () => A.choices.datatypes.map(titled)],
@@ -809,6 +851,22 @@ const selectedGroup = appGroup('Clicked object / relation');
 
 function setOption(key, value) {
   guard(() => {
+    /* D2: a base font the renderer must reject (DDN071) is caught here, before
+     * any render starts — the stage keeps the last good picture undimmed, the
+     * input returns to the last committed value, and the message names the
+     * remedy. */
+    if (key === 'fontSize' && value != null) {
+      const info = state.diagram && state.diagram.info;
+      const mt = info && quantityPx(info.profiles.publication && info.profiles.publication.minimum_text, MIN_TEXT_PX);
+      const problem = baseFontProblem(value, mt);
+      if (problem) {
+        const committed = state.presentation.options.fontSize;
+        optionInputs.fontSize.value = committed == null ? '' : String(committed);
+        els.sourceError.textContent = problem;
+        status(problem);
+        return;
+      }
+    }
     if (value == null || value === 'source') delete state.presentation.options[key];
     else state.presentation.options[key] = value;
     if (state.diagram) return state.diagram.setOptions(toolOverrides(state.presentation));
@@ -833,6 +891,12 @@ function syncOptionInputs() {
     else input.title = '';
     if (key === 'mark') input.disabled = !(caps && caps.projection === 'chart');
     if (key === 'width' || key === 'height') input.disabled = (opts.page !== 'custom') || !!(caps && caps.sequence);
+    /* D2: the base-font floor follows the source's publication.minimum_text
+     * (default 8pt ≈ 10.67px) so sources that relax the rule can use smaller fonts. */
+    if (key === 'fontSize') {
+      const mt = info && quantityPx(info.profiles.publication && info.profiles.publication.minimum_text, MIN_TEXT_PX);
+      input.min = String(baseFontFloor(mt));
+    }
   }
 }
 

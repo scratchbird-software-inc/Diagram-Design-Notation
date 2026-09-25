@@ -92,6 +92,59 @@ surface plus `DDNLive.authoring` / `DDNLive.io`. Presentation overrides are a
 temporary view overlay — the loaded source is only changed by explicit source
 or inspector edits.
 
+## Appearance drawer: override-channel option map (B1-046)
+
+Every presentation option the live API's override channel accepts
+(`DDNLive.checkOptions` / `api.js` `defaults`) is reachable from the
+appearance drawer. The mapping is guarded by a test in
+`notation/tests/tool.js`:
+
+| Drawer group | Control | Override key |
+| --- | --- | --- |
+| Style | Drawing style | `look` |
+| Style | Palette | `theme` |
+| Style | Font role | `font` |
+| Style | Routing | `routing` |
+| Style | Curve tension | `curveTension` |
+| Style | Curve radius (px) | `curveRadius` |
+| Style | Crossings | `crossings` |
+| Style | Endpoint ordering | `endpointOrdering` |
+| Layout | Placement | `placement` |
+| Layout | Auto-place | `autoPlace` |
+| Layout | Layout centre | `center` |
+| Layout | Grid step (px) | `gridStep` |
+| Layout | Base font (px) | `fontSize` |
+| Layout | Pen roughness | `roughness` |
+| Layout | Hatch shading | `hachure` |
+| Content | Detail | `fields` |
+| Content | Field depth (levels) | `depth` |
+| Content | Relation labels | `labels` |
+| Content | Domain bindings | `domains` |
+| Content | Datatypes | `datatypes` |
+| Content | Kind indicator | `kind` |
+| Content | Chart mark | `mark` |
+| Chrome | Legend | `legend` |
+| Chrome | Title block | `title` |
+| Chrome | Footer line | `footer` |
+| Page | Page / artboard | `page` |
+| Page | Width (px) | `width` |
+| Page | Height (px) | `height` |
+| Routing per relation class | per-verb / per-relation routing rows | `relationRouting` |
+
+Selects offer **As authored** (`source`), which clears the override; numeric
+fields clear back to the source value when emptied.
+
+**Base font validation (DDN071):** the renderer rejects a base font whose
+smallest text role (11⁄16 of the base, before page scaling) would fall below
+`publication.minimum_text` (default 8pt ≈ 10.67px). The Base font input is
+constrained to the satisfiable range derived from that rule (floor 16px at
+the default minimum; lower when the source relaxes `minimum_text`). A value
+typed in anyway produces an inline message naming the implied minimum —
+"Base font 8px would make the smallest text 5.50px, below the 10.67px
+minimum (DDN071) — use ≥16px" — without touching the stage; the runtime
+DDN071 message itself also states the implied minimum base font. Invalid
+overrides fail identically via the default worker path and `?worker=off`.
+
 ## Test hooks
 
 `window.DDNTool` mirrors the old `DDNViewer` surface (pure functions plus

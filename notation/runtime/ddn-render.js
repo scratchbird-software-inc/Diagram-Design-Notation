@@ -218,7 +218,16 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(scale<=0)throw new DDN.DDNError('DDN070','Page has no usable drawing area');
  const embeddingScale=q(p.publication.embedding_scale,1);if(embeddingScale<=0||embeddingScale>4)throw new DDN.DDNError('DDN070','embedding_scale must be >0 and <=4');
  const fontSize=Math.min(11*q(p.style.font_size,16)/16*scale,rels.length?12*scale:Infinity,11)*embeddingScale,minFont=q(p.publication.minimum_text,10.66);
- if(fontSize<minFont){let d={code:'DDN071',severity:p.publication.overflow==='error'?'error':'warning',message:`Smallest final text ${fontSize.toFixed(2)}px is below minimum ${minFont.toFixed(2)}px`};if(d.severity==='error')throw new DDN.DDNError(d.code,d.message);diags.push(d);}
+ if(fontSize<minFont){
+  /* B1-046 (D3): name the remedy. smallest = min(11·base/16·scale, rels?12·scale:∞, 11)·embed,
+   * so the implied minimum base font is 16·minFont/(11·scale·embed) — unless a
+   * fixed cap (12·scale with relations, 11 absolute) binds below the minimum,
+   * in which case no base font can fix it and the page must grow. */
+  const relCap=rels.length?12*scale*embeddingScale:Infinity,absCap=11*embeddingScale;
+  const remedy=Math.min(relCap,absCap)<minFont
+   ?'the page scale already caps the smallest text role below the minimum, so a larger base font cannot fix it — enlarge the page, reduce content, or raise publication.minimum_text/embedding_scale'
+   :`increase base font to ≥${(16*minFont/(11*scale*embeddingScale)).toFixed(1)}px or enlarge the smallest text role`;
+  let d={code:'DDN071',severity:p.publication.overflow==='error'?'error':'warning',message:`Smallest final text ${fontSize.toFixed(2)}px is below minimum ${minFont.toFixed(2)}px — ${remedy}`};if(d.severity==='error')throw new DDN.DDNError(d.code,d.message);diags.push(d);}
  if(legendPlacement==='right'&&legendHeight>pageH-(headBlock+50)-extraHeader)throw new DDN.DDNError('DDN072','Legend exceeds page height');
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;

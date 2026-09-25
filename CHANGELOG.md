@@ -6,6 +6,20 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- Tool option completeness + base-font UX (B1-046): the appearance drawer now
+  covers every override-channel option the live API accepts — the previously
+  missing Field depth control (`depth`, 0–64 levels) is added, and an
+  automated test maps every `api.js` override key to its drawer control
+  (per-verb/per-relation routing covers `relationRouting`). The Base font
+  input is constrained to the DDN071-satisfiable range derived from
+  `publication.minimum_text` (floor 16px at the 8pt default; follows the
+  source's value), and an impossible value typed in anyway produces a
+  friendly pre-render message naming the remedy without dimming the stage.
+  The runtime `DDN071` message now states the implied minimum base font
+  (e.g. "… below minimum 10.67px — increase base font to ≥15.5px …") and
+  says so when the page scale makes any base font insufficient. Invalid
+  overrides fail identically via the worker and `?worker=off` paths
+  (parity test).
 - View-level chrome options (B1-045; spec chapter 44): `legend: auto|on|off`,
   `title: on|off` and `footer: on|off` as flat view keywords, a
   `chrome { … }` view group, or named `chrome` declarations referencable from

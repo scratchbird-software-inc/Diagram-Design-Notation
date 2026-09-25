@@ -203,6 +203,34 @@ test('corpus: worker render equals sync render byte-for-byte for every catalogue
   }
 });
 
+/* ---- D4 parity (B1-046): an invalid override combination fails the SAME way
+ * via the worker bridge and the synchronous path — same code, same message. */
+test('D4 parity: DDN071 rejects identically via worker and sync rendering', async () => {
+  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.font";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; overflow: error; } }\n' };
+  const workerSource = fs.readFileSync(path.join(root, 'notation/dist/ddn.global.js'), 'utf8') + '\n;\n' +
+    fs.readFileSync(path.join(root, 'notation/tool/src/worker.js'), 'utf8');
+  const w = new Worker(workerSource, { eval: true });
+  const port = { postMessage: (m, t) => w.postMessage(m, t), terminate: () => w.terminate() };
+  w.on('message', m => port.onmessage && port.onmessage({ data: m }));
+  w.on('error', e => port.onerror && port.onerror(e));
+  const bridge = T.createRenderBridge({ worker: port, measure });
+  port.postMessage({ type: 'init', registry: A.engineAssets.registry, glyphs: A.engineAssets.glyphs });
+  A.setRenderBridge(bridge);
+  try {
+    let wErr = null, sErr = null;
+    try { await A.createWorkspace(files).render({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 8 } }); } catch (e) { wErr = e; }
+    try { A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 8 } }); } catch (e) { sErr = e; }
+    assert.ok(wErr && sErr, 'both paths must reject');
+    assert.equal(wErr.code, 'DDN071'); assert.equal(sErr.code, 'DDN071');
+    assert.equal(wErr.message, sErr.message, 'identical message in both modes');
+    assert.match(wErr.message, /increase base font to ≥15\.5px/);
+    assert.equal(bridge.degraded, false, 'a genuine render error is not a degradation');
+  } finally {
+    A.setRenderBridge(null);
+    await bridge.terminate();
+  }
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;
