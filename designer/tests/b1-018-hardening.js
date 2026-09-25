@@ -42,14 +42,20 @@ test('app.js boot: splitter widths validated, no raw +store.get coercion remains
   assert.ok(!app.includes("+store.get('ddn-designer-split"), 'raw numeric coercion of a stored width is still present');
 });
 
-// 3. Dead <input type="file" id="fileInput"> removed from every designer page.
+// 3. Dead <input type="file" id="fileInput"> removed from the designer sources;
+//    B1-051: the generated pages are now redirect stubs to ?mode=design.
 test('dead fileInput element removed from source and generated designer pages', () => {
   assert.ok(!body.includes('id="fileInput"'), 'body.html still declares fileInput');
   assert.ok(!app.includes('fileInput'), 'app.js references fileInput');
-  for (const f of ['index.html', 'standalone.html'])
-    assert.ok(!fs.readFileSync(path.join(PROTO, f), 'utf8').includes('id="fileInput"'), f + ' is stale — run build-standalone.mjs');
+  for (const f of ['index.html', 'standalone.html']) {
+    const committed = fs.readFileSync(path.join(PROTO, f), 'utf8');
+    assert.ok(!committed.includes('id="fileInput"'), f + ' unexpectedly declares fileInput');
+    assert.ok(committed.includes('mode=design') && committed.includes('ddn-redirect-target'), f + ' must stay the B1-051 redirect stub to ?mode=design');
+  }
   const mirror = path.join(ROOT, 'website', 'tools', 'designer', 'index.html');
-  assert.ok(!fs.readFileSync(mirror, 'utf8').includes('id="fileInput"'), 'website mirror is stale — run npm run build:site');
+  const mirrorHtml = fs.readFileSync(mirror, 'utf8');
+  assert.ok(!mirrorHtml.includes('id="fileInput"'), 'website mirror is stale — run npm run build:site');
+  assert.ok(mirrorHtml.includes('mode=design') && mirrorHtml.includes('ddn-redirect-target'), 'website mirror must stay the B1-051 redirect stub — run npm run build:site');
 });
 
 // 4. setView unknown-view fallback scans the real workspace entries, not a

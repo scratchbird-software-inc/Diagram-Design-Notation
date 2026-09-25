@@ -88,26 +88,34 @@ test('greps: density vars, comfortable override, export formats, WebP detect, gl
   assert.ok(app.includes('renderFailure'), 'renderFailure guard kept');
 });
 
-// 5. build-standalone byte-identity re-asserted (ED-001 gate shape).
+// 5. build-standalone byte-identity re-asserted (ED-001 gate shape). B1-051:
+//    the committed index.html/standalone.html are now redirect stubs to the
+//    unified tool's design mode; the prototype is regenerated into a temp dir
+//    and the two runs must still be byte-identical.
 test('build-standalone.mjs regenerates byte-identical output twice', () => {
   const d1 = fs.mkdtempSync(path.join(os.tmpdir(), 'b1012-a-')), d2 = fs.mkdtempSync(path.join(os.tmpdir(), 'b1012-b-'));
   for (const d of [d1, d2]) cp.execFileSync('node', [path.join(PROTO, 'build-standalone.mjs'), '--out', d], { stdio: 'pipe' });
-  for (const f of ['index.html', 'standalone.html']) {
+  for (const f of ['index.html', 'standalone.html'])
     assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(d2, f), 'utf8'), f + ' not deterministic');
-    assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(PROTO, f), 'utf8'), f + ' differs from committed regeneration');
+  for (const f of ['index.html', 'standalone.html']) {
+    const committed = fs.readFileSync(path.join(PROTO, f), 'utf8');
+    assert.ok(committed.includes('mode=design') && committed.includes('ddn-redirect-target'), f + ' must stay the B1-051 redirect stub to ?mode=design');
   }
 });
 
-// 6. Headless chromium driver run: the driver page is generated from the REAL
-//    committed standalone.html plus the committed driver scenario, so the
-//    exercised chrome can never drift from the shipped one.
+// 6. Headless chromium driver run: the driver page is generated from a FRESH
+//    build-standalone.mjs regeneration of the prototype (B1-051: the committed
+//    standalone.html is now a redirect stub) plus the committed driver
+//    scenario, so the exercised chrome can never drift from the sources.
 test('headless driver: density, splitters, detach/float/reattach, tooltips, raster, matrix interop', () => {
   const shellDir = path.join(os.homedir(), '.cache', 'ms-playwright');
   const shell = fs.readdirSync(shellDir).filter(d => d.startsWith('chromium_headless_shell-')).sort().pop();
   assert.ok(shell, 'no chromium headless shell under ' + shellDir);
   const bin = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-headless-shell');
   assert.ok(fs.existsSync(bin), 'missing ' + bin);
-  const standalone = fs.readFileSync(path.join(PROTO, 'standalone.html'), 'utf8');
+  const build = fs.mkdtempSync(path.join(os.tmpdir(), 'b1012-build-'));
+  cp.execFileSync('node', [path.join(PROTO, 'build-standalone.mjs'), '--out', build], { stdio: 'pipe' });
+  const standalone = fs.readFileSync(path.join(build, 'standalone.html'), 'utf8');
   const driver = fs.readFileSync(path.join(__dirname, 'b1-012-designer-chrome.driver.js'), 'utf8');
   assert.ok(!driver.includes('</script>'), 'driver must not close its script tag');
   const page = standalone.replace('</body>', () => '<script>' + driver + '\n</script></body>');

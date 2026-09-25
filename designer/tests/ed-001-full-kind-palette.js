@@ -160,7 +160,10 @@ test('editProjectionProperty: mark replacement touches only the projection group
   ws.destroy();
 });
 
-// 7. Deterministic page and UI-map regeneration.
+// 7. Deterministic page and UI-map regeneration. B1-051: the committed
+//    index.html/standalone.html are redirect stubs to the unified tool's
+//    design mode; determinism is asserted between two temp regenerations, and
+//    the generated standalone keeps its markers.
 test('build-standalone.mjs and build-ui-maps.mjs regenerate byte-identical output', () => {
   const root = path.join(__dirname, '..', '..');
   const d1 = fs.mkdtempSync(path.join(os.tmpdir(), 'ed001-a-')), d2 = fs.mkdtempSync(path.join(os.tmpdir(), 'ed001-b-'));
@@ -168,9 +171,13 @@ test('build-standalone.mjs and build-ui-maps.mjs regenerate byte-identical outpu
     cp.execFileSync('node', [path.join(root, 'designer/prototype/build-standalone.mjs'), '--out', d], { stdio: 'pipe' });
     cp.execFileSync('node', [path.join(root, 'designer/prototype/build-ui-maps.mjs'), '--out', d], { stdio: 'pipe' });
   }
-  for (const f of ['index.html', 'standalone.html', 'kind-ui-map.js', 'relation-ui-map.js']) {
+  for (const f of ['index.html', 'standalone.html', 'kind-ui-map.js', 'relation-ui-map.js'])
     assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(d2, f), 'utf8'), f + ' not deterministic');
+  for (const f of ['kind-ui-map.js', 'relation-ui-map.js'])
     assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(root, 'designer/prototype', f), 'utf8'), f + ' differs from committed regeneration');
+  for (const f of ['index.html', 'standalone.html']) {
+    const committed = fs.readFileSync(path.join(root, 'designer/prototype', f), 'utf8');
+    assert.ok(committed.includes('mode=design') && committed.includes('ddn-redirect-target'), f + ' must stay the B1-051 redirect stub to ?mode=design');
   }
   const standalone = fs.readFileSync(path.join(d1, 'standalone.html'), 'utf8');
   assert.ok(standalone.includes('Diagram-Design-Notation ↗'), 'standalone keeps its header link');

@@ -1,11 +1,12 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-048 (D6/D7): permanent
- * example-link crawl gate. Every "Open in" link on the examples index plus any
- * ?src= link on the gallery/use-cases pages is opened over real HTTP in
- * headless chromium, and the target surface must actually RENDER the diagram:
- *   - unified tool (?src= links): the dumped DOM carries data-ddn-rendered and
- *     the status line is neither an error nor "no source loaded";
- *   - designer (?src= links): #paper holds a rendered <svg> and #status reads
- *     "Live render" (the ?src= loader announces failures as toast errors).
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-048 (D6/D7) + B1-051 (D3):
+ * permanent example-link crawl gate. Every "Open in" link on the examples
+ * index plus any ?src= link on the gallery/use-cases pages is opened over real
+ * HTTP in headless chromium, and the target surface must actually RENDER the
+ * diagram: the dumped DOM carries data-ddn-rendered and the status line is
+ * neither an error nor "no source loaded". Design-mode links additionally
+ * must show the design bar (B1-051: the designer is the tool in ?mode=design).
+ * The retired /tools/designer/ URL is checked once below: its redirect stub
+ * must land on the tool, in design mode, rendering the linked source.
  * Links are resolved exactly as the browser resolves them (page URL + href),
  * so path-depth mistakes, wrong-directory src params and redirect-stub drift
  * all fail here. Tool URLs pin ?worker=off for the same --dump-dom race
@@ -51,27 +52,27 @@ function toolStatus(dom) {
   const m = dom.match(/<span id="ddn-tool-status"[^>]*>([\s\S]*?)<\/span>/);
   return m ? m[1].replace(/<[^>]+>/g, '').trim() : '(status not found)';
 }
-function designerStatus(dom) {
-  const m = dom.match(/<span id="status"[^>]*>([\s\S]*?)<\/span>/);
-  return m ? m[1].replace(/<[^>]+>/g, '').trim() : '(status not found)';
-}
 
 function checkLink({ page, href, url }) {
-  const isDesigner = url.includes('/tools/designer/');
   const u = new URL(url);
-  if (!isDesigner && !u.searchParams.has('worker')) u.searchParams.set('worker', 'off');
+  if (!u.searchParams.has('worker')) u.searchParams.set('worker', 'off');
   const dom = dumpDom(u.origin + u.pathname + u.search);
   const label = page + ' -> ' + href;
-  if (isDesigner) {
-    const rendered = /<div[^>]*id="paper"[^>]*>\s*<svg[\s>]/.test(dom);
-    const status = designerStatus(dom);
-    assert.ok(rendered, 'designer did not render an SVG into #paper for ' + label + ' — status: ' + status);
-    assert.ok(!/^(LOAD|DDN|Error)|rejected|no view declared|HTTP \d/.test(status), 'designer ?src= load failed for ' + label + ': ' + status);
-  } else {
-    assert.ok(dom.includes('data-ddn-rendered='), 'tool did not render for ' + label + ' — status: ' + toolStatus(dom));
-    assert.ok(!toolStatus(dom).startsWith('Error:'), 'tool error for ' + label + ': ' + toolStatus(dom));
-    assert.ok(!/^no source loaded/.test(toolStatus(dom)), 'tool loaded the file but rendered nothing for ' + label + ': ' + toolStatus(dom));
-  }
+  assert.ok(dom.includes('data-ddn-rendered='), 'tool did not render for ' + label + ' — status: ' + toolStatus(dom));
+  assert.ok(!toolStatus(dom).startsWith('Error:'), 'tool error for ' + label + ': ' + toolStatus(dom));
+  assert.ok(!/^no source loaded/.test(toolStatus(dom)), 'tool loaded the file but rendered nothing for ' + label + ': ' + toolStatus(dom));
+  if (u.searchParams.get('mode') === 'design')
+    assert.ok(!/id="ddn-design-bar" hidden/.test(dom), 'design-mode link did not show the design bar for ' + label);
+}
+
+/* B1-051 (D3): the retired prototype URL must redirect — params preserved,
+ * mode=design forced — and render the linked source in the unified tool. */
+function checkDesignerRedirect() {
+  const u = new URL(BASE + '/tools/designer/index.html?src=../../examples/basics/01-customer.ddn');
+  const dom = dumpDom(u.origin + u.pathname + u.search);
+  assert.ok(dom.includes('data-ddn-rendered='), 'designer redirect did not render — status: ' + toolStatus(dom));
+  assert.ok(!toolStatus(dom).startsWith('Error:'), 'designer redirect tool error: ' + toolStatus(dom));
+  assert.ok(!/id="ddn-design-bar" hidden/.test(dom), 'designer redirect did not land in design mode (design bar hidden)');
 }
 
 const server = cp.spawn(process.execPath, [path.join(root, 'tools/serve.js')], { env: { ...process.env, PORT: String(PORT) }, stdio: 'pipe' });
@@ -107,6 +108,7 @@ server.stdout.on('data', () => { ready = true; });
     });
     console.log('PASS crawl: ' + (unique.length - failures.length) + '/' + unique.length + ' links render');
     if (failures.length) { console.error(failures.join('\n')); }
+    test('retired /tools/designer/ URL redirects to ?mode=design and renders', checkDesignerRedirect);
   } finally {
     server.kill();
   }

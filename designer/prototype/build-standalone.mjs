@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later.
+// Deprecated (B1-051): retired review prototype — superseded by the unified tool in design mode (/tools/index.html?mode=design). Kept for history and the regression suite; do not extend.
 // Regenerates designer/prototype/index.html and standalone.html deterministically
 // from style.css, body.html, workspace.json and the local scripts. Node, no
 // dependencies. Running it twice produces byte-identical output.
@@ -68,6 +69,15 @@ export function buildPages() {
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const outIdx = process.argv.indexOf('--out');
   const outDir = outIdx > -1 ? process.argv[outIdx + 1] : here;
+  /* B1-051: the committed index.html/standalone.html in this directory are
+   * redirect stubs to the unified tool's design mode. Regenerating in place
+   * would clobber them, so writing into the prototype directory itself needs
+   * an explicit --force; tests and review builds use --out <dir>. */
+  if (outDir === here && !process.argv.includes('--force')) {
+    console.error('build-standalone: the prototype is retired (B1-051) and its committed HTML files are redirect stubs.');
+    console.error('Regenerate into a scratch directory with --out <dir> (this is what the test suite does), or pass --force to overwrite the stubs deliberately.');
+    process.exit(2);
+  }
   mkdirSync(outDir, { recursive: true });
   const pages = buildPages();
   for (const [name, content] of Object.entries(pages)) writeFileSync(join(outDir, name), content);

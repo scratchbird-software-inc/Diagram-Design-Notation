@@ -63,12 +63,13 @@ test('no link escapes above website/ and no absolute local paths in website/', (
   assert.deepEqual(escapes, [], escapes.slice(0, 40).join('\n'));
 });
 
-/* B1-023 (D2/D5) + B1-027 (D8) + B1-048 (D6): every examples-page row for a
- * view-bearing file links the unified tool with a ?src= deep link whose target
- * exists; single-file rows (no `import "..."` lines) also link the designer,
- * import-bearing rows are tool-only with the note. Files with no top-level
- * `view` declaration are library files: neither surface can render them, so
- * they carry the library note and NO "Open in" link. */
+/* B1-023 (D2/D5) + B1-027 (D8) + B1-048 (D6) + B1-051 (D3): every examples-page
+ * row for a view-bearing file links the unified tool with a ?src= deep link
+ * whose target exists; single-file rows (no `import "..."` lines) also link
+ * the same tool in design mode (?mode=design — the retired designer prototype
+ * URL is now a redirect stub), import-bearing rows stay explore-only with the
+ * note. Files with no top-level `view` declaration are library files: no mode
+ * can render them, so they carry the library note and NO "Open in" link. */
 test('examples page: per-row tool/designer ?src= links match the D2 rule and resolve on disk', () => {
   const pagePath = path.join(site, 'examples/index.html');
   const html = fs.readFileSync(pagePath, 'utf8');
@@ -80,28 +81,38 @@ test('examples page: per-row tool/designer ?src= links match the D2 rule and res
   for (const f of ddnFiles) {
     const enc = f.split('/').map(encodeURIComponent).join('/');
     const tool = '../tools/index.html?src=../examples/' + enc + '&amp;mode=explore';
-    const designer = '../tools/designer/index.html?src=../../examples/' + enc;
+    const designer = '../tools/index.html?src=../examples/' + enc + '&amp;mode=design';
     const src = fs.readFileSync(path.join(examplesRoot, f), 'utf8');
     const imports = /^[ \t]*import[ \t]+"/m.test(src);
     const views = /^[ \t]*view[ \t]/m.test(src);
     if (!views) {
       libraries++;
-      if (html.includes('src=../examples/' + enc) || html.includes('src=../../examples/' + enc)) errors.push(f + ': view-less library file must not carry an Open-in link');
+      if (html.includes('src=../examples/' + enc)) errors.push(f + ': view-less library file must not carry an Open-in link');
       continue;
     }
     viewBearing++;
     if (!html.includes('href="' + tool + '"')) errors.push(f + ': tool link missing');
     const hasDesigner = html.includes('href="' + designer + '"');
-    if (imports && hasDesigner) errors.push(f + ': import-bearing example must be tool-only');
-    if (!imports && !hasDesigner) errors.push(f + ': single-file example must link the designer');
+    if (imports && hasDesigner) errors.push(f + ': import-bearing example must be explore-only');
+    if (!imports && !hasDesigner) errors.push(f + ': single-file example must link design mode');
     const abs = path.resolve(path.dirname(pagePath), tool.split('?')[0]);
     if (!fs.existsSync(abs)) errors.push(f + ': tool page missing at ' + abs);
   }
-  const toolLinks = (html.match(/href="\.\.\/tools\/index\.html\?src=/g) || []).length;
-  const designerLinks = (html.match(/href="\.\.\/tools\/designer\/index\.html\?src=/g) || []).length;
-  assert.strictEqual(toolLinks, viewBearing, 'one tool link per view-bearing example');
-  console.log('  examples: ' + ddnFiles.length + ' files · ' + toolLinks + ' tool links · ' + designerLinks + ' designer links · ' + (viewBearing - designerLinks) + ' tool-only (multi-file) · ' + libraries + ' library files (no link)');
+  const toolLinks = (html.match(/href="\.\.\/tools\/index\.html\?src=[^"]*&amp;mode=explore"/g) || []).length;
+  const designerLinks = (html.match(/href="\.\.\/tools\/index\.html\?src=[^"]*&amp;mode=design"/g) || []).length;
+  assert.strictEqual(toolLinks, viewBearing, 'one explore link per view-bearing example');
+  console.log('  examples: ' + ddnFiles.length + ' files · ' + toolLinks + ' tool links · ' + designerLinks + ' design-mode links · ' + (viewBearing - designerLinks) + ' explore-only (multi-file) · ' + libraries + ' library files (no link)');
   assert.deepEqual(errors, [], errors.slice(0, 20).join('\n'));
+});
+
+/* B1-051 (D3): the retired designer prototype URL is a param-preserving
+ * redirect stub to ?mode=design, like the B1-027 viewer/studio stubs. */
+test('retired designer URL is a redirect stub to the tool in design mode', () => {
+  const stub = fs.readFileSync(path.join(site, 'tools', 'designer', 'index.html'), 'utf8');
+  assert.ok(stub.includes('ddn-redirect-target'), 'redirect target anchor missing');
+  assert.ok(stub.includes('"mode=design"') || stub.includes('?mode=design'), 'stub does not force mode=design');
+  assert.ok(stub.includes('mapLegacyParams'), 'shared legacy-param mapper not inlined');
+  assert.ok(!stub.includes('id="paper"'), 'stub still ships the retired prototype');
 });
 
 test('build:site is fresh (re-run into temp dir byte-matches committed output)', () => {

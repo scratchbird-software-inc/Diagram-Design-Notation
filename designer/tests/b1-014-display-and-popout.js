@@ -103,16 +103,21 @@ test('greps: Display tab, pop-out buttons + tooltips, resize CSS, export groups,
 });
 
 // 4. build-standalone byte-identity re-asserted (ED-001/B1-012 gate shape).
+//    B1-051: the committed HTML files are redirect stubs; regeneration runs in
+//    a temp dir and must stay deterministic.
 test('build-standalone.mjs regenerates byte-identical output twice', () => {
   const d1 = fs.mkdtempSync(path.join(os.tmpdir(), 'b1014-a-')), d2 = fs.mkdtempSync(path.join(os.tmpdir(), 'b1014-b-'));
   for (const d of [d1, d2]) cp.execFileSync('node', [path.join(PROTO, 'build-standalone.mjs'), '--out', d], { stdio: 'pipe' });
-  for (const f of ['index.html', 'standalone.html']) {
+  for (const f of ['index.html', 'standalone.html'])
     assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(d2, f), 'utf8'), f + ' not deterministic');
-    assert.strictEqual(fs.readFileSync(path.join(d1, f), 'utf8'), fs.readFileSync(path.join(PROTO, f), 'utf8'), f + ' differs from committed regeneration');
+  for (const f of ['index.html', 'standalone.html']) {
+    const committed = fs.readFileSync(path.join(PROTO, f), 'utf8');
+    assert.ok(committed.includes('mode=design') && committed.includes('ddn-redirect-target'), f + ' must stay the B1-051 redirect stub to ?mode=design');
   }
 });
 
-// 5. Headless chromium driver run against the REAL committed standalone.html.
+// 5. Headless chromium driver run against a FRESH regeneration of the retired
+//    prototype (B1-051: committed standalone.html is a redirect stub).
 //    The downloaded single-file bundle is re-checked with the CLI in node.
 test('headless driver: display tab, downloads, resized float, window pop-out with child edit', () => {
   const shellDir = path.join(os.homedir(), '.cache', 'ms-playwright');
@@ -120,7 +125,9 @@ test('headless driver: display tab, downloads, resized float, window pop-out wit
   assert.ok(shell, 'no chromium headless shell under ' + shellDir);
   const bin = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-headless-shell');
   assert.ok(fs.existsSync(bin), 'missing ' + bin);
-  const standalone = fs.readFileSync(path.join(PROTO, 'standalone.html'), 'utf8');
+  const build = fs.mkdtempSync(path.join(os.tmpdir(), 'b1014-build-'));
+  cp.execFileSync('node', [path.join(PROTO, 'build-standalone.mjs'), '--out', build], { stdio: 'pipe' });
+  const standalone = fs.readFileSync(path.join(build, 'standalone.html'), 'utf8');
   const driver = fs.readFileSync(path.join(__dirname, 'b1-014-display-and-popout.driver.js'), 'utf8');
   assert.ok(!driver.includes('</script>'), 'driver must not close its script tag');
   const page = standalone.replace('</body>', () => '<script>' + driver + '\n</script></body>');

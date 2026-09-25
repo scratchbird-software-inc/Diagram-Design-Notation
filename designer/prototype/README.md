@@ -1,5 +1,7 @@
 # DDN Designer interaction prototype
 
+> **Deprecated (B1-051, 2026-09): retired.** The designer is now the unified diagram tool itself in **design mode** — `/tools/index.html?mode=design` (one tool, two modes: viewer and designer). `index.html` and `standalone.html` in this directory are redirect stubs to it; the sources below are kept for history and as the regression-suite fixture (`npm --prefix designer test` still builds and exercises the prototype from these files). Do not extend the prototype.
+
 **Status: review prototype, not the full production visual editor.** The renderer is the unchanged DDN 0.7.0 runtime. The existing Studio is not modified or included as a replacement.
 
 Open `../DDN-Designer-Prototype.html` for the self-contained version. `index.html` is the equivalent multi-file version when the complete directory tree is accessible. A loopback server avoids single-file document-portal restrictions on Linux.

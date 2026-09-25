@@ -1,3 +1,6 @@
+/* Deprecated (B1-051): retired review prototype. The designer is now the unified
+ * diagram tool in design mode (/tools/index.html?mode=design). These sources are
+ * kept for history and the regression suite — do not extend. */
 /* SPDX-License-Identifier: GPL-2.0-or-later. Designer command layer: staged
  * source transactions shared by the prototype and the Node test suites.
  * Each command runs on a scratch workspace, validates, then commits one
