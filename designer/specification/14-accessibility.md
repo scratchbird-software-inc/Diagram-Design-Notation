@@ -1,6 +1,6 @@
 # Accessibility, keyboard and pointer operation
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Baseline
 Target WCAG 2.2 AA for the finished visual application, then test it with users and assistive technology. This document and its prototype are not certification. Dragging alternatives and pointer target requirements are design inputs, not optional polish. WCAG 2.5.7 requires an alternative single-pointer operation for nonessential dragging; keyboard support alone is not the entire requirement. [R22]

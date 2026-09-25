@@ -1,6 +1,6 @@
 # 40. Network/bus and rack profiles (`network.basic@1`, `network.rack@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-114
+Status: implemented in runtime 0.7.0, governed by RFC-114
 (`standard/governance/rfcs/RFC-114-network.md`). Source grammar remains DDN
 0.5; the profiles, kinds, verb, glyphs and extension property are registry
 entries, so this chapter is a semantic addition, not a grammar change.

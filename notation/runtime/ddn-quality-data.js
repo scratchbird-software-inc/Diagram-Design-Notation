@@ -4,7 +4,7 @@
  */
 import {publishNamespace} from './ddn-module-registry.js';
 'use strict';
-const VERSION='0.6.0-beta.1';
+const VERSION='0.7.0';
 const MISSING=Object.freeze({$missing:true});
 const isMissing=v=>v===undefined||v?.$missing===true;
 const primitive=v=>v===null||['string','boolean','number'].includes(typeof v);

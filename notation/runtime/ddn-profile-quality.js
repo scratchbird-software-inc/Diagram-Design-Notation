@@ -136,6 +136,6 @@ function validate(ir,E){
   }
  }
 }
-const api={VERSION:'0.6.0-beta.1',validate};
+const api={VERSION:'0.7.0',validate};
 publishNamespace('DDNProfileQuality',api);
 export default api;

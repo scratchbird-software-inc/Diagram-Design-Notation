@@ -194,7 +194,7 @@
     },
     "remainingCrossings": 0,
     "routing": "orthogonal",
-    "engine": "ddn-native@0.6.0-beta.1"
+    "engine": "ddn-native@0.7.0"
   },
   "drawingBounds": {
     "x": 0,

@@ -4,7 +4,7 @@ import catalogue from './assets/profiles-catalogue.js';
 import Bindings from './ddn-projection-data.js';
 import Extra from './ddn-profile-quality.js';
 'use strict';
-const VERSION='0.6.0-beta.1';
+const VERSION='0.7.0';
 const cache=new WeakMap();
 function registry(base){
  if(cache.has(base))return cache.get(base);

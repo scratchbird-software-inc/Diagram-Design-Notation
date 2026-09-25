@@ -1,11 +1,11 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-graph — Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-graph — Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. */
 (function () {
   'use strict';
 
-  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-graph requires ddn-core.js to be loaded first');if(h.DDNLive.VERSION!=="0.6.0-beta.1")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNRender)return;
+  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-graph requires ddn-core.js to be loaded first');if(h.DDNLive.VERSION!=="0.7.0")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNRender)return;
 
   var pkg = {
-    "version": "0.6.0-beta.1"}
+    "version": "0.7.0"}
   ;
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -394,14 +394,14 @@
    if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
    return out+'</g>';
   }
-  const api$5={VERSION:'0.6.0-beta.1',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
+  const api$5={VERSION:'0.7.0',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
   publishNamespace('DDNShapes',api$5);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
    * DDN 0.3 deterministic native layout and obstacle-aware orthogonal routing.
    * Bounded search is deliberate: infeasibility produces a diagnostic, never an invisible topology change.
    */
-  const VERSION$3='0.6.0-beta.1',EPS=.01;
+  const VERSION$3='0.7.0',EPS=.01;
   const q$3=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
   const round=x=>Math.round(x*1000)/1000;
   /* B1-008 spacing hints: fixed deterministic factors (D2/D4). Applied to inter-node
@@ -917,7 +917,7 @@
    * publication and export checks; imports only pin-pattern geometry from Live.
    */
   const Patterns=namespace('DDNPinPlacement');
-  const VERSION$2='0.6.0-beta.1',q$2=api$4.q,clone=x=>JSON.parse(JSON.stringify(x));
+  const VERSION$2='0.7.0',q$2=api$4.q,clone=x=>JSON.parse(JSON.stringify(x));
   function fail$1(code,message){throw Object.assign(new Error(message),{code});}
   const center=g=>[g.x+g.w/2,g.y+g.h/2];
   function stateChecked(state,key){

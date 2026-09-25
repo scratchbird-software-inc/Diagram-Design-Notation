@@ -1,6 +1,6 @@
 # 23. Flat lifecycle profiles and restricted rule-based decision tables
 
-**DDN 0.6.0-beta.1.** These are small executable semantic profiles, not SCXML, full UML statecharts, DMN/FEEL or a workflow service. They validate specified rules and traces without calling databases or executing action references. The diagram remains a view of the declared model.
+**DDN 0.7.0.** These are small executable semantic profiles, not SCXML, full UML statecharts, DMN/FEEL or a workflow service. They validate specified rules and traces without calling databases or executing action references. The diagram remains a view of the declared model.
 
 ## 23.1 Typed input domains and predicates
 

@@ -15,9 +15,5 @@ view diagram "09 / Namespace organization" {
     select: [@c.tables.orders, @s.model.routine, @n.model.schema];
     publication { width: 1370px; height: 640px; }
     legend { keys: { "model.r_orders_schema": 1, "model.r_routine_schema": 2 }; }
-    
-    
-    
-    
-    
+
 }

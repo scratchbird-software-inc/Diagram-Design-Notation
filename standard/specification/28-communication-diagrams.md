@@ -1,6 +1,6 @@
 # 28. Communication diagrams (profile `uml.communication@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-102
+Status: implemented in runtime 0.7.0, governed by RFC-102
 (`standard/governance/rfcs/RFC-102-communication-diagram.md`). Source grammar
 remains DDN 0.5; profiles and extension properties are atom/record property
 values, so this chapter is a semantic addition, not a grammar change.

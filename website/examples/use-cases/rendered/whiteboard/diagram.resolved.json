@@ -127,6 +127,11 @@
           "model.r_b": 2
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -150,6 +155,7 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/01-whiteboard.ddn",
       "start": 225,

@@ -1,11 +1,11 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-quality — Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-quality — Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. */
 (function () {
   'use strict';
 
-  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-quality requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-quality requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.6.0-beta.1")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNQualityRender)return;
+  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-quality requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-quality requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.7.0")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNQualityRender)return;
 
   var pkg = {
-    "version": "0.6.0-beta.1"}
+    "version": "0.7.0"}
   ;
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -181,7 +181,7 @@
    body+=lines(wrap(foot,W-24*s,11),12*s,H-43*s,11)+text(12*s,H-14*s,'Supplied synthetic observations / source-bound marks / finite JavaScript arithmetic, not certified financial computation.',11);
    return {body,W,H};
   }
-  const api$1={VERSION:'0.6.0-beta.1',draw,encodedColour};
+  const api$1={VERSION:'0.7.0',draw,encodedColour};
   publishNamespace('DDNQualityRender',api$1);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later. ddn-quality bundle entry (B1-019).

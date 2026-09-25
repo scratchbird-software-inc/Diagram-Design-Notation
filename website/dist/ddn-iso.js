@@ -1,11 +1,11 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-iso — Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-iso — Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). */
 (function () {
   'use strict';
 
-  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-iso requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-iso requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.6.0-beta.1")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNIso)return;
+  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-iso requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-iso requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.7.0")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNIso)return;
 
   var pkg = {
-    "version": "0.6.0-beta.1"}
+    "version": "0.7.0"}
   ;
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -275,7 +275,7 @@
    return {svg:out,scene,diagnostics,_ir:ir};
   }
 
-  const api$1={VERSION:'0.6.0-beta.1',ANGLE,COS30,SIN30,SHADE,TRANSITION_MS,project,shade,paintOrder,column,columnFaces,arcSide,arcSideFaces,ribbon,resolveViewDepth,elementDepth,chartSpec,renderGraph,EXTRUDED_MARKS};
+  const api$1={VERSION:'0.7.0',ANGLE,COS30,SIN30,SHADE,TRANSITION_MS,project,shade,paintOrder,column,columnFaces,arcSide,arcSideFaces,ribbon,resolveViewDepth,elementDepth,chartSpec,renderGraph,EXTRUDED_MARKS};
   publishNamespace('DDNIso',api$1);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later. ddn-iso bundle entry

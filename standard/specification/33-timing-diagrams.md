@@ -1,6 +1,6 @@
 # 33. Timing diagrams (projection `timing`, profile `uml.timing@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-107
+Status: implemented in runtime 0.7.0, governed by RFC-107
 (`standard/governance/rfcs/RFC-107-timing-diagram.md`). Source grammar remains
 DDN 0.5; projection kinds are atom property values, so `kind:timing;` is a
 semantic addition, not a grammar change.

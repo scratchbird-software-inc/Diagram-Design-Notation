@@ -6,7 +6,7 @@ they use; B1-019 moved the sources to real ES modules and the build to Rollup
 devDependencies — the runtime itself still has zero runtime dependencies). All
 bundles live in `notation/dist/` and are rebuilt deterministically by
 `npm run build:sdk` (`tools/build-sdk.js`); the numbers below are the
-current build from `release/validation/sdk-build.json` (0.6.0-beta.1).
+current build from `release/validation/sdk-build.json` (0.7.0).
 
 ## Bundle table
 

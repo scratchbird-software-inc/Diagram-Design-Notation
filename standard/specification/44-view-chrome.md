@@ -1,6 +1,6 @@
 # 44. View chrome: legend, title and footer visibility
 
-Status: implemented in runtime 0.6.0-beta.1 (B1-045). Source grammar remains
+Status: implemented in runtime 0.7.0 (B1-045). Source grammar remains
 DDN 0.5; views that declare no chrome option render byte-identical SVG to
 previous releases, and the use-cases manifest is unchanged.
 

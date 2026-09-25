@@ -1,6 +1,6 @@
 # Commands, transactions and draft validation
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Authoritative edit path
 All gestures and inspector edits call the same semantic command bus. No DOM/SVG mutation is a committed source edit. The command stages are **prepare → preview → validate → commit → render**. A command envelope identifies the base revision, exact view/selection/occurrence, intended scope, arguments and user-visible history label.

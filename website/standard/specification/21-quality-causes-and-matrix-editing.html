@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>21. Quality causes, encoded matrices, and source-assignment editing</h1>
-<p><strong>DDN 0.6.0-beta.1. Implemented reference contract.</strong> This chapter adds profiles without changing the separation of data, reusable formats, and named views. Source remains UTF-8. Runtime capabilities, examples, validators, and the public library must agree; a source property must not silently select an unimplemented algorithm.</p>
+<p><strong>DDN 0.7.0. Implemented reference contract.</strong> This chapter adds profiles without changing the separation of data, reusable formats, and named views. Source remains UTF-8. Runtime capabilities, examples, validators, and the public library must agree; a source property must not silently select an unimplemented algorithm.</p>
 <h2>21.1 Fishbone / Ishikawa profile</h2>
 <p><code>projection.kind: fishbone</code> with <code>profile: &quot;fishbone.basic@1&quot;</code> selects a measured spine-and-branch projection. Objects have kinds <code>quality.effect</code>, <code>quality.category</code>, and <code>quality.cause</code>. Directed <code>quality.cause</code> relations point <strong>from contributing cause to parent cause/category/effect</strong>. The source identifies possible causal relationships; the renderer does not establish their truth. This follows the qualitative cause/category purpose described by ASQ [Q1], not a statistical causality test.</p>
 <pre><code>projection {
@@ -76,7 +76,7 @@ DDNLive.authoring.setMatrixCells(workspace, &quot;views.ddn&quot;, &quot;raci&qu
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

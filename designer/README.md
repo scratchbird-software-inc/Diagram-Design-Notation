@@ -1,9 +1,9 @@
 # @ddn/designer — DDN visual designer (proposal)
 
-The **visual-first designer** for DDN: a specification (0.2.0-beta.1), proposed
+The **visual-first designer** for DDN: a specification (0.2.0), proposed
 contracts, and a bounded working prototype for an editor where the diagram
 is the primary interface — distinct from the source-first Studio in
-`../notation/studio/`. Built against the DDN 0.6.0-beta.1 runtime.
+`../notation/studio/`. Built against the DDN 0.7.0 runtime.
 
 ## Contents
 
@@ -42,7 +42,7 @@ is the primary interface — distinct from the source-first Studio in
 ## Status and boundaries
 
 Research + proposed specification + bounded prototype — not a production
-editor. The runtime audit baseline is 0.6.0-beta.1; known gaps (draft
+editor. The runtime audit baseline is 0.7.0; known gaps (draft
 validation API, occurrence addressing, safe kind conversion, full projection
 editors) are listed in the specification. Source-preserving transactions and
 keeping the Studio intact are hard requirements (ADR-02: DDN-native SVG/scene

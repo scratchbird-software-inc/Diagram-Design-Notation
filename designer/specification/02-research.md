@@ -1,6 +1,6 @@
 # Research synthesis and implementation choice
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Method
 Review primary project documentation and license texts, not visual popularity rankings. The research examines drawing UX, property models, connection semantics, command history, model/view reuse and integration constraints. No proprietary source is copied; no installed competitor usability benchmark was performed. See `research/PRIMARY-SOURCES.md` and its dated machine-readable source records.

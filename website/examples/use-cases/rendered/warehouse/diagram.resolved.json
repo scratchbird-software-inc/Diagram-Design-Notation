@@ -129,6 +129,11 @@
           "model.r_d": 3
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -153,11 +158,12 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/15-warehouse.ddn",
       "start": 238,
-      "end": 667,
-      "bodyEnd": 666
+      "end": 628,
+      "bodyEnd": 627
     }
   },
   "elements": [

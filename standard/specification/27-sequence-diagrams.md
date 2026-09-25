@@ -1,6 +1,6 @@
 # 27. Sequence diagrams (projection `sequence`, profile `uml.sequence@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-101
+Status: implemented in runtime 0.7.0, governed by RFC-101
 (`standard/governance/rfcs/RFC-101-sequence-diagram.md`). Source grammar remains
 DDN 0.5; projection kinds are atom property values, so `kind:sequence;` is a
 semantic addition, not a grammar change.

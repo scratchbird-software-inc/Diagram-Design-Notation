@@ -1,6 +1,6 @@
 # Endpoint-order correction — verification record
 
-Runtime **0.6.0-beta.1**, patched directly from `ddn-0.5-field-guide-complete.zip`.
+Runtime **0.7.0**, patched directly from `ddn-0.5-field-guide-complete.zip`.
 Source syntax remains DDN 0.5. The runtime is the same in the public distribution
 and every updated self-contained page.
 

@@ -24,24 +24,12 @@ view deployment "Hybrid deployment / fragments are not copies" {
     select: [@model.orders, @model.shard, @model.primary, @model.follower, @model.local, @model.cloud];
     publication { width: 1550px; height: 1050px; }
     legend { mode: numbers; width: 300px; keys: { "fragment": 1, "copy1": 2, "copy2": 3, "on_local": 4, "on_cloud": 5, "replica_stream": 6 }; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     frame local_scope "ON-PREMISES" { members: [@model.primary, @model.local]; }
     frame cloud_scope "CLOUD" { members: [@model.follower, @model.cloud]; }
 }
 view namespaces "Namespace / the same data, a different concern" {
     data: [@model]; format: @shared.styles.technical;
     select: [@model.orders, @model.schema];
-    
-    
+
 }

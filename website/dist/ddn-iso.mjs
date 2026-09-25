@@ -1,4 +1,4 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-iso — Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-iso — Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). */
 import './ddn-core.js';
 import './ddn-graph.js';
 import './ddn-core.js';
@@ -8,7 +8,7 @@ import './ddn-graph.js';
 import './ddn-graph.js';
 
 var pkg = {
-  "version": "0.6.0-beta.1"}
+  "version": "0.7.0"}
 ;
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -278,7 +278,7 @@ function renderGraph(ir,reg,glyphs='',options={}){
  return {svg:out,scene,diagnostics,_ir:ir};
 }
 
-const api$1={VERSION:'0.6.0-beta.1',ANGLE,COS30,SIN30,SHADE,TRANSITION_MS,project,shade,paintOrder,column,columnFaces,arcSide,arcSideFaces,ribbon,resolveViewDepth,elementDepth,chartSpec,renderGraph,EXTRUDED_MARKS};
+const api$1={VERSION:'0.7.0',ANGLE,COS30,SIN30,SHADE,TRANSITION_MS,project,shade,paintOrder,column,columnFaces,arcSide,arcSideFaces,ribbon,resolveViewDepth,elementDepth,chartSpec,renderGraph,EXTRUDED_MARKS};
 publishNamespace('DDNIso',api$1);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later. ddn-iso bundle entry

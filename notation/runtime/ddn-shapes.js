@@ -147,6 +147,6 @@ function render(g,p,theme){
  if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
  return out+'</g>';
 }
-const api={VERSION:'0.6.0-beta.1',measure,render,anchor,polygon,shapeOf,segmentInterior};
+const api={VERSION:'0.7.0',measure,render,anchor,polygon,shapeOf,segmentInterior};
 publishNamespace('DDNShapes',api);
 export default api;

@@ -1,4 +1,4 @@
-/** DDN 0.6.0-beta.1 public API. Source access is not a security boundary. */
+/** DDN 0.7.0 public API. Source access is not a security boundary. */
 export type SourceFiles = Record<string, string>;
 export type Placement = 'source'|'auto'|'grid'|'manual'|'fit_grid'|'circular'|'radial'|'layered'|'tree'|'spanning_tree'|'mindmap'|'grouped'|'organic';
 export type ProjectionKind = 'graph'|'chen'|'matrix'|'table'|'panels'|'chart'|'timeline'|'fishbone'|'decision';

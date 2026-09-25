@@ -1,6 +1,6 @@
 # 35. CMMN-style case diagrams (profile `cmmn.basic@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-109
+Status: implemented in runtime 0.7.0, governed by RFC-109
 (`standard/governance/rfcs/RFC-109-cmmn.md`). Source grammar remains DDN 0.5;
 the kinds are registry entries, stage grouping is the existing view `frame`
 with a resolved `scope`, and sentry typing uses a registered `x_*` extension

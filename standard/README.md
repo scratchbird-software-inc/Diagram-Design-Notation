@@ -14,7 +14,7 @@ implements this directory; anything here outranks the implementation.
 - `schemas/` — JSON Schemas (draft 2020-12): resolved IR, scene, value,
   extension, publication manifest, layout state, workspace.
 - `registry/` — the machine-readable vocabulary: `catalogue.json`
-  (152 object kinds, 90 relation verbs, 118 facets at 0.6.0-beta.1),
+  (152 object kinds, 90 relation verbs, 118 facets at 0.7.0),
   `capabilities.json`, `data-properties.json`, `relation-constraints.json`,
   `extensions.json`, `glyph-library.svg`, `text-metrics.json`, and
   `profiles/catalogue.json` (24 installed versioned profiles).

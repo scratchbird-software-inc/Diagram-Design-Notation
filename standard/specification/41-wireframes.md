@@ -1,6 +1,6 @@
 # 41. Wireframe stencil profile (`wireframe.ui@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-115
+Status: implemented in runtime 0.7.0, governed by RFC-115
 (`standard/governance/rfcs/RFC-115-wireframes.md`). Source grammar remains
 DDN 0.5; the profile and its kinds are registry entries, so this chapter
 is a semantic addition, not a grammar change.

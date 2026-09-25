@@ -20,8 +20,5 @@ view temporal "Two time axes / not the same as recovery" {
     data: [@model]; format: @shared.styles.technical;
     publication { width: 1480px; height: 800px; }
     legend { mode: numbers; keys: { "illustration": 2 }; }
-    
-    
-    
-    
+
 }

@@ -1,6 +1,6 @@
 # 24. Child-view panels and bounded notation completion
 
-**DDN 0.6.0-beta.1.** This chapter completes the fourth implementation stage: real child-view composition, box-plot integration (chapter 22), and selected local notation gaps. A useful supported profile is not blanket external-standard conformance.
+**DDN 0.7.0.** This chapter completes the fourth implementation stage: real child-view composition, box-plot integration (chapter 22), and selected local notation gaps. A useful supported profile is not blanket external-standard conformance.
 
 ## 24.1 Composed panels
 

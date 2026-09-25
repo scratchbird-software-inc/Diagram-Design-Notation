@@ -125,6 +125,11 @@
           "dfd.r_output": 2
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -148,6 +153,7 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/11-data-flow.ddn",
       "start": 224,

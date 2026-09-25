@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>23. Flat lifecycle profiles and restricted rule-based decision tables</h1>
-<p><strong>DDN 0.6.0-beta.1.</strong> These are small executable semantic profiles, not SCXML, full UML statecharts, DMN/FEEL or a workflow service. They validate specified rules and traces without calling databases or executing action references. The diagram remains a view of the declared model.</p>
+<p><strong>DDN 0.7.0.</strong> These are small executable semantic profiles, not SCXML, full UML statecharts, DMN/FEEL or a workflow service. They validate specified rules and traces without calling databases or executing action references. The diagram remains a view of the declared model.</p>
 <h2>23.1 Typed input domains and predicates</h2>
 <p>The two profiles share an input-domain definition. Each input has a unique safe <code>key</code>, a <code>type</code> (<code>enum</code>, <code>boolean</code>, <code>number</code>), and optional boolean <code>nullable</code>/<code>optional</code> flags. Enum inputs declare distinct scalar <code>values</code>. Number inputs declare finite <code>min</code> and <code>max</code>, inclusive. There are one to eight declared inputs for a decision table; a lifecycle may have none when transitions need no guards.</p>
 <p>Missing and null are independent. An optional value can be omitted; a nullable value can explicitly be null. A numeric string is not a number. An undeclared input key fails evaluation rather than entering a hidden side channel.</p>
@@ -105,7 +105,7 @@
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

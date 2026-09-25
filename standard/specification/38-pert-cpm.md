@@ -1,6 +1,6 @@
 # 38. PERT/CPM critical-path profile (`pert.cpm@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-112
+Status: implemented in runtime 0.7.0, governed by RFC-112
 (`standard/governance/rfcs/RFC-112-pert-cpm.md`). Source grammar remains DDN
 0.5; the profile, the reused vocabulary and the extension property are
 registry entries, so this chapter is a semantic addition, not a grammar

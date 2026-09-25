@@ -1,7 +1,7 @@
 # DDN developer documentation
 
 Developer-facing documentation for the Diagram Design Notation (DDN) reference
-runtime, version 0.6.0-beta.1. These pages cover using the runtime as a
+runtime, version 0.7.0. These pages cover using the runtime as a
 library and embedding rendered diagrams; they are verified against
 `notation/studio/src/public.d.ts` and the shipped bundles under
 `notation/dist/` by the permanent gate `notation/tests/gallery-coverage.js`.

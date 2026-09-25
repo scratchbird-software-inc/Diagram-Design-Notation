@@ -1,6 +1,6 @@
 # Simple property editors with exact scope and serialization
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Three scope layers
 Every control has one declared write scope: **model**, **view**, or **session**. Model edits change shared definitions. View edits affect only the chosen representation or its explicit local override. Session preferences include pan/zoom and panel state and are not semantic changes. Shared format edits are a separate explicit action, never the default consequence of clicking a style button.

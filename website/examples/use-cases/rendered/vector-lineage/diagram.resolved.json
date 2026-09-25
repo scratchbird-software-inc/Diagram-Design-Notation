@@ -125,6 +125,11 @@
           "model.r_output": 2
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -148,6 +153,7 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/16-vector-lineage.ddn",
       "start": 241,

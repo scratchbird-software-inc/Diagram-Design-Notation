@@ -53,6 +53,6 @@ function render(ir,registry,glyphs,options={}){if(['state.flat@1','state.composi
  if(depthRequested&&ISO&&kind==='graph'&&pr2.iso!==true)out.diagnostics.push({code:'DDN-ISOW01',severity:'warning',message:'depth on a graph view applies with iso: true; without it the view renders flat.'});
  return out;}
 function plan(ir,ErrorClass=D.DDNError){rendererFor(ir.view.profiles.projection?.kind||'graph');return Data.plan(ir,ErrorClass);}
-const api={VERSION:'0.6.0-beta.1',render,plan,registerProjectionRenderer,hasRenderer:k=>renderers.get(k)!==undefined,registeredKinds:()=>[...renderers.keys()]};
+const api={VERSION:'0.7.0',render,plan,registerProjectionRenderer,hasRenderer:k=>renderers.get(k)!==undefined,registeredKinds:()=>[...renderers.keys()]};
 publishNamespace('DDNEngine',api);
 export default api;

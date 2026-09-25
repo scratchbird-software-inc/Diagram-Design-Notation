@@ -1,6 +1,6 @@
 # Review, diagnostics, shared impact and trust
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Validation is a user-visible model
 Each file/view has independently reported states: editable draft; structurally valid; profile-incomplete; current-view checked; impacted views pending; published artifact matching a recorded revision. None of these is equivalent to approved production data architecture. A green indicator must include its validation scope and timestamp/revision.

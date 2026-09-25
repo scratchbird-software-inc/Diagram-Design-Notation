@@ -13,9 +13,5 @@ data model {
 view documents "Document structure / presence versus null" {
     data: [@model]; format: @shared.styles.technical;
     legend { mode: numbers; keys: { "nested": 1, "repeated": 2 }; }
-    
-    
-    
-    
-    
+
 }

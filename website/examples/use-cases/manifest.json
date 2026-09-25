@@ -1,6 +1,6 @@
 {
   "edition": "use-cases.1",
-  "engine": "0.6.0-beta.1",
+  "engine": "0.7.0",
   "results": [
     {
       "case": 1,
@@ -193,7 +193,7 @@
       "resolved": "use-cases/rendered/domains/diagram.resolved.json",
       "scene": "use-cases/rendered/domains/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/08-domains.ddn": "b04db98b5a0b19b547ece2d15e3f3f69c291090028b2d1443a70ec1b5bec1780",
+        "use-cases/08-domains.ddn": "8db73b1dbaaf8b048fc5f56b5f2ca0d25fb149836f5f3b81267cd0efd3832cd3",
         "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
         "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
         "use-cases/data/domains.ddn": "d5a2efa191aadde5342cb3f6101e3f06bac8cb4d7c434c739e7b4998f667fdf0"
@@ -212,7 +212,7 @@
       "resolved": "use-cases/rendered/namespaces/diagram.resolved.json",
       "scene": "use-cases/rendered/namespaces/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/09-namespaces.ddn": "265e8bce07a95b7b05645e173a7d1243603aafd54ede124294f014891379ee8d",
+        "use-cases/09-namespaces.ddn": "ff0401743a131adc65660f5b308593dd41dfada352c39b5e22a6a66989f67b30",
         "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
         "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
         "use-cases/data/sql.ddn": "28dcd884ccafc3829872e2d75e0889e1fd3f4ec59cd607a3a7c9a0b13a4c32a3",
@@ -232,7 +232,7 @@
       "resolved": "use-cases/rendered/hybrid-deployment/diagram.resolved.json",
       "scene": "use-cases/rendered/hybrid-deployment/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/10-hybrid-deployment.ddn": "56f85b769ca7279fdb586c3c873a71eb615ef4b305ac0267ee7b91f95271ab67",
+        "use-cases/10-hybrid-deployment.ddn": "c67e8c978d18ab7b8bf93277840f4c281e4a739f9571b3253a33ef30e56d94fa",
         "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
         "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
         "use-cases/data/deployment.ddn": "928722c4525f97c85b7ee9c10afda8e6e28a878658a8f039da62ce9815a5f1a5"
@@ -270,7 +270,7 @@
       "resolved": "use-cases/rendered/streaming/diagram.resolved.json",
       "scene": "use-cases/rendered/streaming/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/12-streaming.ddn": "8a9fc3e32f7c2686036ff34fe9d672016ea362a8bfaef945186d58d472851271",
+        "use-cases/12-streaming.ddn": "ccecf86748a408300ab7c0d29842f8622f111499cb457d3e64be030495bf4556",
         "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
         "use-cases/data/commerce.ddn": "d9e41ffea8e43d75ca8176e8e30b5a122255321c8b7a84c95c701b8fc7c803e1",
         "use-cases/data/flow.ddn": "f58e628ddbc9a506ab018b8621b579e85559ef7da9b272f67ab9749baef99f4b"
@@ -308,7 +308,7 @@
       "resolved": "use-cases/rendered/temporal/diagram.resolved.json",
       "scene": "use-cases/rendered/temporal/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/14-temporal.ddn": "1a135ef0a2cc3594ea07375eb9477a8c2646afa945eddbffc8a338e7e3e5d647",
+        "use-cases/14-temporal.ddn": "88739383c975e1edb259a684b1e98e173085fe12035a70004627081cd908f9c9",
         "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
         "use-cases/data/temporal.ddn": "bb41e785c8e806d269dc23e9f4e53c70c5ed1beeb9d46af54f4b3295bd52090a"
       },
@@ -326,7 +326,7 @@
       "resolved": "use-cases/rendered/warehouse/diagram.resolved.json",
       "scene": "use-cases/rendered/warehouse/diagram.scene.json",
       "sourceHashes": {
-        "use-cases/15-warehouse.ddn": "56befd6dc1499173ffb20365cdd5a9b7729b57a7e9ca25fac57c58a848b576ce",
+        "use-cases/15-warehouse.ddn": "38e6a24d352c44cd46d84bf88f2f01d277c2aa580790eabde2378e17adce4504",
         "use-cases/formats.ddn": "06d2e310146440609cbdee7f82986c05a4b3354785c268b42f014ebf8a6915c4",
         "use-cases/data/warehouse.ddn": "9c751f7b29a3da072722034f3656934e0a36fc9da9fe7f598e5a5de3466947da"
       },

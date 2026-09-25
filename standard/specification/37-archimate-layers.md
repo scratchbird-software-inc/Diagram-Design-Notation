@@ -1,6 +1,6 @@
 # 37. ArchiMate-style layered profile (`archimate.basic@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-111
+Status: implemented in runtime 0.7.0, governed by RFC-111
 (`standard/governance/rfcs/RFC-111-archimate.md`). Source grammar remains DDN
 0.5; the nine element kinds and the relation verb are registry entries, so
 this chapter is a semantic addition, not a grammar change.

@@ -20,7 +20,7 @@ try:
    page.evaluate('document.querySelector("#toast").classList.remove("show")')
    page.screenshot(path=str(R/'design'/name),full_page=True)
   original=page.evaluate('DesignerPrototype.workspace.getFiles()["model.ddn"]')
-  ck('Unchanged patched runtime loaded',page.evaluate('DDNLive.VERSION')=='0.6.0-beta.1')
+  ck('Unchanged patched runtime loaded',page.evaluate('DDNLive.VERSION')=='0.7.0')
   ck('Four source-driven objects render',page.locator('#paper .ddn-node').count()==4)
   shot('01-main.png')
   page.fill('#paletteSearch','table');ck('Palette search hides nonmatching starters',page.locator('[data-add]:visible').count()==1);page.fill('#paletteSearch','')

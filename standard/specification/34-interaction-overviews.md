@@ -1,6 +1,6 @@
 # 34. Interaction overviews (profile `uml.interaction_overview@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-108
+Status: implemented in runtime 0.7.0, governed by RFC-108
 (`standard/governance/rfcs/RFC-108-interaction-overview.md`). Source grammar
 remains DDN 0.5; the extension value is a record of atoms, so this is a
 semantic/registry addition, not a grammar change.

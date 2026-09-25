@@ -255,6 +255,6 @@ function render(ir,reg,glyphs='',options={}){
  return{svg:out,scene,diagnostics,_ir:ir};
 }
 
-const api={VERSION:'0.6.0-beta.1',render,plan:planGeo,projections,ingest,geoPath,fitProjection,registerGeography,hasGeography:n=>GEOGRAPHIES.has(n),geographies:()=>[...GEOGRAPHIES.keys()]};
+const api={VERSION:'0.7.0',render,plan:planGeo,projections,ingest,geoPath,fitProjection,registerGeography,hasGeography:n=>GEOGRAPHIES.has(n),geographies:()=>[...GEOGRAPHIES.keys()]};
 publishNamespace('DDNGeo',api);
 export default api;

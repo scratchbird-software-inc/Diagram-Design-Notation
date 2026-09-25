@@ -128,6 +128,11 @@
           "model.r_binding": 3
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -152,11 +157,12 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/08-domains.ddn",
       "start": 262,
-      "end": 738,
-      "bodyEnd": 737
+      "end": 709,
+      "bodyEnd": 708
     }
   },
   "elements": [

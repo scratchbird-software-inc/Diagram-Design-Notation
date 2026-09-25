@@ -21,16 +21,5 @@ view flow "Capture, transport and transformation are different" {
     data: [@model]; format: @shared.styles.technical; display: @shared.styles.compact;
     publication { width: 1550px; height: 1020px; }
     legend { mode: numbers; keys: { "r1":1, "r2":2, "r3":3, "r4":4, "r5":5, "r6":6 }; width: 300px; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }

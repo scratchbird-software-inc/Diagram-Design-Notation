@@ -1,7 +1,7 @@
 # API reference
 
 The public surface of the DDN runtime, as declared in
-`notation/studio/src/public.d.ts` (0.6.0-beta.1). The same object is
+`notation/studio/src/public.d.ts` (0.7.0). The same object is
 `window.DDNLive` in the browser, `require("@ddn/notation")` under Node, and
 the default export of `notation/dist/ddn.mjs`. Every method below is
 grep-verified against `public.d.ts` by `notation/tests/gallery-coverage.js`.

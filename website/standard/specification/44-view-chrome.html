@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>44. View chrome: legend, title and footer visibility</h1>
-<p>Status: implemented in runtime 0.6.0-beta.1 (B1-045). Source grammar remains DDN 0.5; views that declare no chrome option render byte-identical SVG to previous releases, and the use-cases manifest is unchanged.</p>
+<p>Status: implemented in runtime 0.7.0 (B1-045). Source grammar remains DDN 0.5; views that declare no chrome option render byte-identical SVG to previous releases, and the use-cases manifest is unchanged.</p>
 <p>Page chrome is presentation: the relationship key, the view title/header block, and the footer line. None of it carries model facts — the same data with the same semantics renders with or without it — so visibility is a view-level option, not a renderer decision.</p>
 <h2>Options (D2)</h2>
 <p>Three properties, available at three equivalent sites: as flat view-level keywords, as properties of a <code>chrome</code> group inside a view, and as properties of a named <code>chrome</code> declaration inside a <code>format</code> block (referenced directly or through a <code>bundle</code>):</p>
@@ -75,7 +75,7 @@ view card2 &quot;Card 2&quot; { data: [@model]; chrome { legend: off; } }</code>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

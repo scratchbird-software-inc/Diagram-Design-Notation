@@ -1,6 +1,6 @@
 # 43. Isometric depth (optional ddn-iso module)
 
-Status: implemented in runtime 0.6.0-beta.1 (B1-034; multi-series quality
+Status: implemented in runtime 0.7.0 (B1-034; multi-series quality
 charts B1-036). Source grammar remains
 DDN 0.5; views without `iso`/`depth` render byte-identical SVG to previous
 releases. Scope: `graph` and `chart` projections. All rendering is pure SVG —

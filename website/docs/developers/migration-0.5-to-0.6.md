@@ -1,6 +1,6 @@
-# Migration: 0.5 → 0.6.0-beta.1
+# Migration: 0.5 → 0.7.0
 
-Beta 1 (0.6.0-beta.1; designer 0.2.0-beta.1) is additive over 0.5.x: every
+Beta 1 (0.7.0; designer 0.2.0-beta.1) is additive over 0.5.x: every
 0.5 source still parses, and renders that opt into nothing are byte-identical
 to their 0.5 output (the determinism goldens in `notation/tests/` prove it).
 This page lists what changed, with before/after for each.
@@ -9,7 +9,7 @@ This page lists what changed, with before/after for each.
 
 **Before (0.5.x):** runtime and package stamps `0.5.x`, language versions
 `"0.3"`/`"0.4"`/`"0.5"` in sources.
-**After:** `notation/package.json` and the runtime stamp `0.6.0-beta.1`
+**After:** `notation/package.json` and the runtime stamp `0.7.0`
 (`DDNLive.VERSION`), designer `0.2.0-beta.1`. Language version stamps in
 `.ddn` files are **unchanged** — sources keep declaring `ddn "0.3"…"0.5"`;
 no source edit is required.

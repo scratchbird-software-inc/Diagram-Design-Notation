@@ -1,6 +1,6 @@
 # Full visual editing across all projections
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Graphs are not the only canvas
 The editor advertises full coverage of supported DDN definitions through visual structured tools, not drag behavior for every mark. The projection capability manifest determines insertion tools, selection mappings, properties, and legal coordinate edits. Render support, guided editing and external conformance remain separate claims.

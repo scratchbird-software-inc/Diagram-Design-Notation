@@ -17,7 +17,9 @@ try{
 }catch{}
 function usage(){console.log('Usage: node notation/cli/cli.js check|render|resolve|bundle <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR] [--no-motion]');}
 function main(){
- const args=process.argv.slice(2);if(args.length<2){usage();process.exitCode=2;return;}
+ const args=process.argv.slice(2);
+ if(args[0]==='--version'||args[0]==='-V'||args[0]==='version'){console.log(DDN.VERSION);return;}
+ if(args.length<2){usage();process.exitCode=2;return;}
  const [command,file]=args;const get=k=>{const i=args.indexOf(k);return i<0?null:args[i+1];},flag=k=>args.includes(k);
  if(!['check','render','resolve','bundle'].includes(command))throw new Error('Unknown command '+command);
  const root=path.resolve(get('--workspace')||'.'),absolute=path.resolve(file),entry=path.relative(root,absolute).split(path.sep).join('/');

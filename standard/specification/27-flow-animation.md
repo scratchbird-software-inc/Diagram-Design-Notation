@@ -1,6 +1,6 @@
 # 27. Flow animation (motion markers, flow blocks, tool controls)
 
-Status: implemented in runtime 0.6.0-beta.1 (B1-033). Source grammar remains DDN
+Status: implemented in runtime 0.7.0 (B1-033). Source grammar remains DDN
 0.5; diagrams without motion properties render byte-identical SVG to previous
 releases. Scope: graph-projection relations and view-level flow blocks. Other
 projections (sequence, chart, geo, …) ignore motion properties.

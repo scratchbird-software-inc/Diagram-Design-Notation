@@ -12,6 +12,6 @@ labels: bug
 
 **Minimal source reproducer** (`.ddn` snippet or command line):
 
-**Version:** <!-- e.g. 0.6.0-beta.1 -->
+**Version:** <!-- e.g. 0.7.0 -->
 
 **Note:** do not paste sensitive model or sample data — synthetic data only.

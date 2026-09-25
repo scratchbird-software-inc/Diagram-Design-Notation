@@ -13,7 +13,5 @@ view diagram "14 / Valid time and recorded time" {
     select: [@t.model.history, @t.model.example];
     publication { width: 1700px; height: 850px; }
     legend { keys: { "model.r_example": 1 }; }
-    
-    
-    
+
 }

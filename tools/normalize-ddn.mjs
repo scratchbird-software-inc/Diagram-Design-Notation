@@ -10,6 +10,10 @@
  *   - drops dead empty group blocks;
  *   - keeps default-equal properties that are the file's evident purpose
  *     (D3 keep-vs-strip heuristic, every keep is logged).
+ *   - whitespace pass (B1-048 D4): stable, idempotent, human-readable minimal
+ *     formatting — trailing spaces/tabs stripped, runs of blank lines collapsed
+ *     to one, exactly one final newline. String literals and comments are never
+ *     touched; formatting only, never verbose↔compact conversion (B1-037 D7).
  * Never touches data semantics (data/field/relation/sample values are content).
  *
  * Modes:
@@ -154,6 +158,39 @@ function lineSpan(text, start, end) {
 const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'standard/registry/catalogue.json'), 'utf8'));
 const glyphDefs = fs.readFileSync(path.join(ROOT, 'standard/registry/glyph-library.svg'), 'utf8').match(/<defs>([\s\S]*?)<\/defs>/)[1];
 
+/* B1-048 D4 whitespace pass. Protected spans (string literals and comments)
+ * are located with the same lexical rules as DDN.lex, then, outside them:
+ * trailing spaces/tabs are stripped from every line, runs of blank lines
+ * collapse to one, and the file ends with exactly one newline. Idempotent by
+ * construction; formatting only — tokens and comments are byte-preserved. */
+function formatWhitespace(text) {
+  const spans = [];
+  for (let i = 0; i < text.length; i++) {
+    if (text.startsWith('//', i)) { const e = text.indexOf('\n', i); i = e < 0 ? text.length : e; continue; }
+    if (text.startsWith('/*', i)) { const e = text.indexOf('*/', i + 2); const end = e < 0 ? text.length : e + 2; spans.push([i, end]); i = end - 1; continue; }
+    if (text[i] === '"') {
+      const s = i++; let esc = false;
+      while (i < text.length) { if (!esc && text[i] === '"') break; if (text[i] === '\\' && !esc) esc = true; else esc = false; i++; }
+      spans.push([s, Math.min(i + 1, text.length)]); continue;
+    }
+  }
+  const lines = text.split('\n');
+  const starts = []; let off = 0;
+  for (const line of lines) { starts.push(off); off += line.length + 1; }
+  const protectedLine = idx => spans.some(([s, e]) => starts[idx] < e && starts[idx] + lines[idx].length + 1 > s);
+  const out = [];
+  let blanks = 0;
+  for (let idx = 0; idx < lines.length; idx++) {
+    if (protectedLine(idx)) { out.push(lines[idx]); blanks = 0; continue; }
+    const stripped = lines[idx].replace(/[ \t]+$/, '');
+    if (stripped === '') { blanks++; if (blanks > 1) continue; out.push(''); continue; }
+    blanks = 0;
+    out.push(stripped);
+  }
+  while (out.length && out[out.length - 1] === '') out.pop();
+  return out.join('\n') + '\n';
+}
+
 function renderViews(abs, textOverride) {
   const { files, entry } = loadWorkspace(abs);
   if (textOverride !== undefined) files[entry] = textOverride;
@@ -169,7 +206,7 @@ function renderViews(abs, textOverride) {
 
 function normalizeFile(abs) {
   const original = fs.readFileSync(abs, 'utf8');
-  const stats = { pins: {}, keeps: [], header: false, emptyBlocks: 0, collapsed: 0, errors: [] };
+  const stats = { pins: {}, keeps: [], header: false, emptyBlocks: 0, collapsed: 0, whitespace: false, errors: [] };
   const bump = (type, key) => { const k = type + '.' + key; stats.pins[k] = (stats.pins[k] || 0) + 1; };
 
   let ws = null;
@@ -246,6 +283,8 @@ function normalizeFile(abs) {
     edits.sort((a, b) => b.start - a.start);
     for (const e of edits) text = text.slice(0, e.start) + e.text + text.slice(e.end);
   }
+  const formatted = formatWhitespace(text);
+  if (formatted !== text) { stats.whitespace = true; text = formatted; }
   try { DDN.parse(text, abs); } catch (err) { stats.errors.push('normalized text does not parse: ' + err.message); return { file: abs, changed: false, stats, before: original.length, after: original.length }; }
   return { file: abs, changed: text !== original, stats, before: original.length, after: text.length, text };
 }
@@ -288,6 +327,7 @@ const summary = {
   keeps: [...new Set(results.flatMap(r => (r.stats.keeps || []).map(k => path.relative(ROOT, r.file) + ': ' + k)))],
   headersBumped: results.filter(r => r.stats.header).length,
   emptyBlocksDropped: sum(r => r.stats.emptyBlocks || 0),
+  whitespaceFixed: results.filter(r => r.stats.whitespace).length,
   rendersIdentical, rendersChanged,
   errors: results.flatMap(r => (r.stats.errors || []).map(e => path.relative(ROOT, r.file) + ': ' + e)),
   changedFiles: results.filter(r => r.changed).map(r => ({ file: path.relative(ROOT, r.file), before: r.before, after: r.after, renders: r.renders })),

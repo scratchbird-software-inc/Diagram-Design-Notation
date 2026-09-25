@@ -5,7 +5,7 @@
 import {publishNamespace} from './ddn-module-registry.js';
 import Shapes from './ddn-shapes.js';
 'use strict';
-const VERSION='0.6.0-beta.1',EPS=.01;
+const VERSION='0.7.0',EPS=.01;
 const q=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
 const round=x=>Math.round(x*1000)/1000;
 /* B1-008 spacing hints: fixed deterministic factors (D2/D4). Applied to inter-node

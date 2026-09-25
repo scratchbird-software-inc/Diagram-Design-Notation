@@ -1,11 +1,11 @@
 # Product charter, scope and terminology
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Decision
 Create **DDN Designer**, a separate visual-first application at `designer/index.html` and optional package `ddn-designer`. Preserve the existing Studio at `live/editor.html`. Both use the same public DDN library and canonical source workspace. This document is a proposed implementation specification, not a declaration that the production visual editor has shipped.
 
-The deliverable accompanies the audited 0.6.0-beta.1 endpoint-ordering patch. Its runtime SHA-256 is recorded in `audit/library-audit.json`. This package changes no existing Studio or renderer files. The interactive review prototype demonstrates a subset and labels the rest as design screens.
+The deliverable accompanies the audited 0.7.0 endpoint-ordering patch. Its runtime SHA-256 is recorded in `audit/library-audit.json`. This package changes no existing Studio or renderer files. The interactive review prototype demonstrates a subset and labels the rest as design screens.
 
 ## Outcome
 A user can start from a blank canvas or template, insert a meaningful object, add/edit fields without choosing datatypes, connect objects or fields, refine the model, create additional views, and save real DDN source. Another user can open those files in Studio, change them, and return to Designer without data or comment loss. A third-party webpage can display the result with only the DDN runtime, not the editor.

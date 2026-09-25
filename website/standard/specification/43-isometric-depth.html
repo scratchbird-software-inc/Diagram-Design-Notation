@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>43. Isometric depth (optional ddn-iso module)</h1>
-<p>Status: implemented in runtime 0.6.0-beta.1 (B1-034; multi-series quality charts B1-036). Source grammar remains DDN 0.5; views without <code>iso</code>/<code>depth</code> render byte-identical SVG to previous releases. Scope: <code>graph</code> and <code>chart</code> projections. All rendering is pure SVG — no WebGL, canvas or 3D engine.</p>
+<p>Status: implemented in runtime 0.7.0 (B1-034; multi-series quality charts B1-036). Source grammar remains DDN 0.5; views without <code>iso</code>/<code>depth</code> render byte-identical SVG to previous releases. Scope: <code>graph</code> and <code>chart</code> projections. All rendering is pure SVG — no WebGL, canvas or 3D engine.</p>
 <h2>Optional module (D1)</h2>
 <p>Isometric depth ships as the optional seventh bundle <code>dist/ddn-iso.js</code> (readable IIFE, <code>.min.js</code> + source map, <code>.mjs</code>, type copies; npm subpath <code>@ddn/notation/iso</code>). It is never part of <code>ddn.global.js</code>. The module publishes the <code>DDNIso</code> namespace and registers no projection kind; the engine routes <code>iso: true</code> views through it. Missing module, never silent:</p>
 <ul><li>an <code>iso: true</code> view renders a visible inline placeholder (&quot;Isometric view</li></ul>
@@ -67,7 +67,7 @@ view iso_bar &quot;Iso bar&quot; {
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

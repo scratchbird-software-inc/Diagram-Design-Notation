@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>26. Local endpoint ordering (DDN 0.5 routing patch)</h1>
-<p>Status: implemented bounded routing policy in runtime 0.6.0-beta.1. Source grammar remains DDN 0.5; existing files need no rewrite. This chapter supplements chapters on native layout, curved routes, and source-preserving placement.</p>
+<p>Status: implemented bounded routing policy in runtime 0.7.0. Source grammar remains DDN 0.5; existing files need no rewrite. This chapter supplements chapters on native layout, curved routes, and source-preserving placement.</p>
 <h2>Invariants and compatibility groups</h2>
 <p>A semantic endpoint is an element, field, or named port identity. Its visual attachment does not authorize a change of semantic identity. An ordering group is an object occurrence plus side plus visible field-row identity (or the unbound body). Attachments from different visible rows MUST NOT trade row identities. Free body attachments and repeated connections to the same row MAY exchange compatible slots. Hidden-member projections retain the hidden source IDs.</p>
 <p>An explicit fraction or named port is not a free slot. Waypoint-authored endpoints are not automatically permuted. An authored side constrains the side but, absent a fraction/port/guide, does not necessarily freeze the order of free slots on it. A pinned element constrains its world-space position; it does not implicitly freeze all free attachments on that element. <code>place.size</code> is not a position pin.</p>
@@ -54,7 +54,7 @@
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

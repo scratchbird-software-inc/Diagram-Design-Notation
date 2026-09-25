@@ -1,6 +1,6 @@
 # 39. Fault tree and event tree profiles (`fault.tree@1`, `event.tree@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-113
+Status: implemented in runtime 0.7.0, governed by RFC-113
 (`standard/governance/rfcs/RFC-113-fault-event-tree.md`). Source grammar
 remains DDN 0.5; the profiles, kinds, verb and extension property are
 registry entries, so this chapter is a semantic addition, not a grammar

@@ -1,11 +1,11 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-geo — Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-geo — Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). */
 (function () {
   'use strict';
 
-  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-geo requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-geo requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.6.0-beta.1")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNGeo)return;
+  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-geo requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-geo requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.7.0")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNGeo)return;
 
   var pkg = {
-    "version": "0.6.0-beta.1"}
+    "version": "0.7.0"}
   ;
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -287,7 +287,7 @@
    return {svg:out,scene,diagnostics,_ir:ir};
   }
 
-  const api$1={VERSION:'0.6.0-beta.1',render,plan:planGeo,projections,ingest,geoPath,fitProjection,registerGeography,hasGeography:n=>GEOGRAPHIES.has(n),geographies:()=>[...GEOGRAPHIES.keys()]};
+  const api$1={VERSION:'0.7.0',render,plan:planGeo,projections,ingest,geoPath,fitProjection,registerGeography,hasGeography:n=>GEOGRAPHIES.has(n),geographies:()=>[...GEOGRAPHIES.keys()]};
   publishNamespace('DDNGeo',api$1);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later. ddn-geo bundle entry

@@ -1,11 +1,11 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-graph — Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-graph — Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. */
 import './ddn-core.js';
 import './ddn-core.js';
 import './ddn-core.js';
 import './ddn-core.js';
 
 var pkg = {
-  "version": "0.6.0-beta.1"}
+  "version": "0.7.0"}
 ;
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -394,14 +394,14 @@ function render$2(g,p,theme){
  if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
  return out+'</g>';
 }
-const api$5={VERSION:'0.6.0-beta.1',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
+const api$5={VERSION:'0.7.0',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
 publishNamespace('DDNShapes',api$5);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
  * DDN 0.3 deterministic native layout and obstacle-aware orthogonal routing.
  * Bounded search is deliberate: infeasibility produces a diagnostic, never an invisible topology change.
  */
-const VERSION$3='0.6.0-beta.1',EPS=.01;
+const VERSION$3='0.7.0',EPS=.01;
 const q$3=(x,d=0)=>typeof x==='number'?x:x&&Number.isFinite(x.$quantity)?x.$quantity*({px:1,pt:96/72,mm:96/25.4,cm:96/2.54,in:96}[x.unit]||1):d;
 const round=x=>Math.round(x*1000)/1000;
 /* B1-008 spacing hints: fixed deterministic factors (D2/D4). Applied to inter-node
@@ -917,7 +917,7 @@ publishNamespace('DDNLayout',api$4);
  * publication and export checks; imports only pin-pattern geometry from Live.
  */
 const Patterns=namespace('DDNPinPlacement');
-const VERSION$2='0.6.0-beta.1',q$2=api$4.q,clone=x=>JSON.parse(JSON.stringify(x));
+const VERSION$2='0.7.0',q$2=api$4.q,clone=x=>JSON.parse(JSON.stringify(x));
 function fail$1(code,message){throw Object.assign(new Error(message),{code});}
 const center=g=>[g.x+g.w/2,g.y+g.h/2];
 function stateChecked(state,key){

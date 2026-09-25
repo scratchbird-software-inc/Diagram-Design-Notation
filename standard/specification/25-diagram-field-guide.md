@@ -1,6 +1,6 @@
 # 25. Diagram field guide and executable documentation
 
-**Documentation edition: field-guide.1. Runtime: DDN 0.6.0-beta.1.**
+**Documentation edition: field-guide.1. Runtime: DDN 0.7.0.**
 
 The field guide is the user-oriented counterpart to the language specification. A notation registry is not a tutorial, and a list of rendered files is not a diagram-type catalogue.
 

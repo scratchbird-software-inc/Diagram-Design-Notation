@@ -20,7 +20,7 @@ const run=(script,esm)=>cp.execFileSync(process.execPath,esm?['--input-type=modu
 const erd=JSON.stringify(ERD),ref=JSON.stringify(path.join(consumer,'ref.svg'));
 
 test('package.json carries main/module/types/exports/files/sideEffects',()=>{
- assert.equal(pj.name,'@ddn/notation');assert.equal(pj.version,'0.6.0-beta.1');
+ assert.equal(pj.name,'@ddn/notation');assert.equal(pj.version,'0.7.0');
  assert.equal(pj.main,'dist/ddn.global.js');assert.equal(pj.module,'dist/ddn.mjs');assert.equal(pj.types,'dist/ddn.d.ts');
  assert.deepEqual(Object.keys(pj.exports),['.','./core','./graph','./projections','./quality','./geo','./iso','./package.json']);
  for(const k of['.','./core','./graph','./projections','./quality','./geo','./iso']){
@@ -41,10 +41,10 @@ test('exports map targets all exist inside the tarball',()=>{
   for(const cond of['import','require'])for(const leaf of['default','types'])
    assert.ok(list.has('package/'+pj.exports[k][cond][leaf].replace('./','')),k+' '+cond+' '+leaf);
 });
-test('require(full) exposes VERSION 0.6.0-beta.1 and renders',()=>{
+test('require(full) exposes VERSION 0.7.0 and renders',()=>{
  run(`const fs=require('node:fs');
  const api=require(${JSON.stringify(path.join(pkg,'dist/ddn.global.js'))});
- if(api.VERSION!=='0.6.0-beta.1')throw new Error('bad VERSION '+api.VERSION);
+ if(api.VERSION!=='0.7.0')throw new Error('bad VERSION '+api.VERSION);
  const svg=api.createWorkspace(${erd}).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
  if(!svg.includes('<svg'))throw new Error('no svg');
  fs.writeFileSync(${ref},svg);`);
@@ -52,7 +52,7 @@ test('require(full) exposes VERSION 0.6.0-beta.1 and renders',()=>{
 });
 test('core subpath lacks render: DDN-E010 naming ddn-graph.js',()=>{
  run(`const api=require(${JSON.stringify(path.join(pkg,'dist/ddn-core.js'))});
- if(api.VERSION!=='0.6.0-beta.1')throw new Error('bad VERSION');
+ if(api.VERSION!=='0.7.0')throw new Error('bad VERSION');
  const ws=api.createWorkspace(${erd});
  try{ws.renderSync({entry:'01-customer.ddn',view:'overview'});throw new Error('rendered without graph');}
  catch(e){if(e.code!=='DDN-E010'||!e.message.includes('ddn-graph.js'))throw e;}`);
@@ -70,7 +70,7 @@ test('ESM wrappers import prerequisites first; same-version stacking is a no-op'
  const q=await import(${JSON.stringify(path.join(pkg,'dist/ddn-quality.mjs'))});
  const p=await import(${JSON.stringify(path.join(pkg,'dist/ddn-projections.mjs'))});
  const f=await import(${JSON.stringify(path.join(pkg,'dist/ddn.mjs'))});
- if(g.default.VERSION!=='0.6.0-beta.1'||typeof g.parse!=='function')throw new Error('ESM surface missing');
+ if(g.default.VERSION!=='0.7.0'||typeof g.parse!=='function')throw new Error('ESM surface missing');
  if(q.default!==g.default||p.default!==g.default)throw new Error('subpath wrappers must share one DDNLive');
  const svg=g.default.createWorkspace(${erd}).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
  if(svg!==fs.readFileSync(${ref},'utf8'))throw new Error('ESM render mismatch vs full');`;
@@ -81,7 +81,7 @@ test('minified bundles and source maps ship in the tarball and work',()=>{
  for(const f of ['ddn.global.min.js','ddn.global.min.js.map','ddn-core.min.js','ddn-core.min.js.map','ddn-graph.min.js','ddn-quality.min.js','ddn-projections.min.js','ddn-geo.min.js','ddn-geo.min.js.map','ddn-iso.min.js','ddn-iso.min.js.map'])
   assert.ok(list.includes('package/dist/'+f),'missing '+f);
  run(`const api=require(${JSON.stringify(path.join(pkg,'dist/ddn.global.min.js'))});
- if(api.VERSION!=='0.6.0-beta.1')throw new Error('bad VERSION in minified bundle');
+ if(api.VERSION!=='0.7.0')throw new Error('bad VERSION in minified bundle');
  const svg=api.createWorkspace(${erd}).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
  if(!svg.includes('<svg'))throw new Error('minified bundle did not render');`);
  const map=JSON.parse(fs.readFileSync(path.join(pkg,'dist/ddn.global.min.js.map'),'utf8'));

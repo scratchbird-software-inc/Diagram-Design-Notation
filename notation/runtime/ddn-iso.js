@@ -248,6 +248,6 @@ function renderGraph(ir,reg,glyphs='',options={}){
  return{svg:out,scene,diagnostics,_ir:ir};
 }
 
-const api={VERSION:'0.6.0-beta.1',ANGLE,COS30,SIN30,SHADE,TRANSITION_MS,project,shade,paintOrder,column,columnFaces,arcSide,arcSideFaces,ribbon,resolveViewDepth,elementDepth,chartSpec,renderGraph,EXTRUDED_MARKS};
+const api={VERSION:'0.7.0',ANGLE,COS30,SIN30,SHADE,TRANSITION_MS,project,shade,paintOrder,column,columnFaces,arcSide,arcSideFaces,ribbon,resolveViewDepth,elementDepth,chartSpec,renderGraph,EXTRUDED_MARKS};
 publishNamespace('DDNIso',api);
 export default api;

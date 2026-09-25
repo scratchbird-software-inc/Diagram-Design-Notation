@@ -1,6 +1,6 @@
 {
   "patch": "ddn-endpoint-ordering@1",
-  "runtime": "0.6.0-beta.1",
+  "runtime": "0.7.0",
   "base": {
     "baseArchive": "ddn-0.5-field-guide-complete.zip",
     "baseArchiveSha256": "84822fca9656c39dafde2dcad482d913bd7a2a1ff5b06fb744034d440423abcb",

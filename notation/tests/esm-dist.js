@@ -14,7 +14,7 @@ const p = f => JSON.stringify(path.join(dist, f));
 
 test('ESM: ddn.mjs default + named exports render in Node', () => {
   const out = esm(`import api,{VERSION,createWorkspace,parse,DDN} from ${p('ddn.mjs')};
-   if(VERSION!=='0.6.0-beta.1'||api.VERSION!==VERSION)throw new Error('version surface');
+   if(VERSION!=='0.7.0'||api.VERSION!==VERSION)throw new Error('version surface');
    if(typeof DDN.parse!=='function'||parse!==DDN.parse)throw new Error('namespace surface');
    const svg=createWorkspace(${JSON.stringify(ERD)}).renderSync({entry:'01-customer.ddn',view:'overview'}).svg;
    if(!svg.includes('<svg'))throw new Error('no svg');console.log(svg.length);`);

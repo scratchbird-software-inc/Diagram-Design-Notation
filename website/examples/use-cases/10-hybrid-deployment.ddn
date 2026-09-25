@@ -15,17 +15,7 @@ view diagram "10 / Shards, copies and placement" {
     publication { width: 1600px; height: 1080px; }
     legend { keys: { "model.r_part": 1, "model.r_primary_fragment": 2, "model.r_follower_fragment": 3, "model.r_primary_host": 4, "model.r_follower_host": 5, "model.r_replication": 6 }; }
     display { fields: none; badges: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     frame local "ON-PREMISES / placement view" { members: [@d.model.primary, @d.model.local]; }
     frame cloud "CLOUD / placement view" { members: [@d.model.follower, @d.model.cloud]; }
 }

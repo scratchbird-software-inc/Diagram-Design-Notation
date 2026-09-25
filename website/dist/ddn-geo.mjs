@@ -1,4 +1,4 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-geo — Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-geo — Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). */
 import './ddn-core.js';
 import './ddn-graph.js';
 import './ddn-core.js';
@@ -8,7 +8,7 @@ import './ddn-graph.js';
 import './ddn-graph.js';
 
 var pkg = {
-  "version": "0.6.0-beta.1"}
+  "version": "0.7.0"}
 ;
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -290,7 +290,7 @@ function render(ir,reg,glyphs='',options={}){
  return {svg:out,scene,diagnostics,_ir:ir};
 }
 
-const api$1={VERSION:'0.6.0-beta.1',render,plan:planGeo,projections,ingest,geoPath,fitProjection,registerGeography,hasGeography:n=>GEOGRAPHIES.has(n),geographies:()=>[...GEOGRAPHIES.keys()]};
+const api$1={VERSION:'0.7.0',render,plan:planGeo,projections,ingest,geoPath,fitProjection,registerGeography,hasGeography:n=>GEOGRAPHIES.has(n),geographies:()=>[...GEOGRAPHIES.keys()]};
 publishNamespace('DDNGeo',api$1);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later. ddn-geo bundle entry

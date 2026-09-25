@@ -136,6 +136,11 @@
           "model.r_replication": 6
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -182,11 +187,12 @@
         ]
       }
     ],
+    "flows": [],
     "source": {
       "file": "use-cases/10-hybrid-deployment.ddn",
       "start": 275,
-      "end": 1115,
-      "bodyEnd": 1114
+      "end": 1061,
+      "bodyEnd": 1060
     }
   },
   "elements": [

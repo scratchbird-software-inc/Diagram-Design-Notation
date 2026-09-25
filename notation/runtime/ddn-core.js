@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later
- * DDN reference decoder, 0.6.0-beta.1. No runtime dependencies.
+ * DDN reference decoder, 0.7.0. No runtime dependencies.
  * This is an executable core demonstrator, NOT a complete conformance implementation.
  */
 import {publishNamespace} from './ddn-module-registry.js';
@@ -7,7 +7,7 @@ import Contracts from './ddn-contracts.js';
 import Profiles from './ddn-profiles.js';
 import RegistryCatalogue from './assets/catalogue.js';
   'use strict';
-  const VERSION = '0.6.0-beta.1';
+  const VERSION = '0.7.0';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
   class DDNError extends Error {
     constructor(code, message, source, offset) {

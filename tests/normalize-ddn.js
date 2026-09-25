@@ -159,3 +159,30 @@ view v { data: [@m]; layout { frame_overflow: expand; } }
   }
   console.log('PASS normalize preserves reuse definitions and use: applications (strips pins only)');
 }
+/* B1-048 D4: the whitespace pass is stable and idempotent — trailing spaces
+ * stripped, blank runs collapsed to one, exactly one final newline — and it
+ * never touches string literals or comments. */
+{
+  const fs = require('node:fs'), os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ddn-norm-ws-'));
+  const file = path.join(dir, 'fixture.ddn');
+  fs.writeFileSync(file, 'ddn "0.5";\nmodule "tests.norm.ws";\n\ndata m {   \n  table t "T  spaced" {\n\n\n    fields { id; }   \n  }\n}\n\n\n\n/* a block comment\n\n   with blank lines and trailing ws   \n*/\nview v { data: [@m]; }\n\n\n');
+  const norm = p => cp.spawnSync(process.execPath, [path.join(root, 'tools/normalize-ddn.mjs'), p], { encoding: 'utf8' });
+  let run = norm(file);
+  if (run.status !== 0) { console.error('FAIL normalize whitespace pass:', run.stderr.trim() || run.stdout.trim()); process.exit(1); }
+  const once = fs.readFileSync(file, 'utf8');
+  run = norm(file);
+  const twice = fs.readFileSync(file, 'utf8');
+  fs.rmSync(dir, { recursive: true, force: true });
+  const idem = once === twice;
+  const sansComments = once.replace(/\/\*[\s\S]*?\*\//g, 'x');
+  const noTrailing = !/[ \t]\n/.test(sansComments);
+  const blankCollapsed = !/\n[ \t]*\n[ \t]*\n/.test(sansComments);
+  const finalNl = once.endsWith('}\n') && !once.endsWith('\n\n');
+  const commentKept = once.includes('/* a block comment\n\n   with blank lines and trailing ws   \n*/');
+  const stringKept = once.includes('"T  spaced"');
+  if (!idem || !noTrailing || !blankCollapsed || !finalNl || !commentKept || !stringKept) {
+    console.error('FAIL normalize whitespace pass:', JSON.stringify({ idem, noTrailing, blankCollapsed, finalNl, commentKept, stringKept }), '\n' + JSON.stringify(once)); process.exit(1);
+  }
+  console.log('PASS normalize whitespace pass is stable, idempotent, and preserves strings/comments');
+}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DDN 0.6.0-beta.1 — endpoint-ordering replacement patch — DDN</title>
+<title>DDN 0.7.0 — endpoint-ordering replacement patch — DDN</title>
 <link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
@@ -26,14 +26,14 @@
 </div></header>
 <main class="site-main">
 <article class="md-body">
-<h1>DDN 0.6.0-beta.1 — endpoint-ordering replacement patch</h1>
+<h1>DDN 0.7.0 — endpoint-ordering replacement patch</h1>
 <p>This patch targets the runtime in <strong>ddn-0.5-field-guide</strong> (field-guide.1, previously 0.5.0-draft.1). It is built from that actual archive, not from an older companion. It changes routing, not the authored business model or field order.</p>
 <h2>Install by replacing files</h2>
 <ol><li>Back up your extracted project directory and any edited standalone HTML files.</li><li>Extract the patch ZIP **into the existing directory containing <code>package.json</code>,</li></ol>
 <p>   <code>dist/</code>, <code>reference/</code>, and <code>field-guide/</code>**. Allow the files to be replaced.    The patch archive has project-relative paths, not an additional project folder.</p>
 <ol><li>Close the old tab and reload the site (or hard refresh with Ctrl+Shift+R).</li></ol>
 <p>   Restart <code>npm run serve</code> if it was running. No npm dependency install is needed.</p>
-<ol><li>The public version is now <code>DDNLive.VERSION === &quot;0.6.0-beta.1&quot;</code>.</li></ol>
+<ol><li>The public version is now <code>DDNLive.VERSION === &quot;0.7.0&quot;</code>.</li></ol>
 <p><code>dist/ddn.global.js</code> is the deployable single-file library. <code>dist/ddn.mjs</code> imports that same file; the declarations are beside it. The updated <code>reference/</code> and <code>live/src/</code> files keep local rebuilds from bringing back the old router.</p>
 <p>The patch also replaces the self-contained HTML pages inside this distribution. They embed their own JavaScript and would otherwise continue to run the old code. A standalone copy saved elsewhere is not updated by changing <code>dist/ddn.global.js</code>: replace it with the updated <code>field-guide/portable.html</code> or Studio copy.</p>
 <p>No existing <code>.ddn</code> source is replaced. Existing exported SVGs and earlier evidence are not magically rerendered. Open the source and export again when a fresh SVG is needed. Earlier validation records are historical; current patch evidence is in <code>patches/endpoint-ordering/validation/</code>.</p>
@@ -59,7 +59,7 @@
 <p><small>Rendered from <a href="ROUTING-PATCH.md">ROUTING-PATCH.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

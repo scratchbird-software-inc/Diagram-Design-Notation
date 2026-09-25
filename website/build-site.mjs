@@ -459,6 +459,12 @@ for (const f of ddnFiles) {
  * top-level line statements in the grammar, so scanning the source text is
  * exact and keeps the site builder free of a runtime load. */
 const hasImports = f => /^[ \t]*import[ \t]+"/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
+/* B1-048 (D6): a file with no top-level `view` declaration is a library file
+ * (shared model/data/formats imported by other examples). Neither surface can
+ * render it — the tool loads it with "no source loaded" and the designer
+ * reports "no view declared" — so the index must not offer an "Open in" link
+ * for it. Line-anchored grep, exact for the same reason as hasImports. */
+const hasViews = f => /^[ \t]*view[ \t]/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
 const srcParam = f => '../examples/' + f.split('/').map(encodeURIComponent).join('/');
 // The designer still sits one directory deeper than the unified tool.
 const designerSrcParam = f => '../../examples/' + f.split('/').map(encodeURIComponent).join('/');
@@ -473,7 +479,9 @@ writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
     '<h2>' + esc(dir === '.' ? 'Top level' : dir + '/') + ' <small>(' + files.length + ')</small></h2>\n<table>\n<thead><tr><th>File</th><th>Bytes</th><th>Open in</th></tr></thead><tbody>\n' +
     files.map(f => {
       const size = fs.statSync(path.join(examplesRoot, f)).size;
-      const open = hasImports(f)
+      const open = !hasViews(f)
+        ? '<small>library file — imported by other examples</small>'
+        : hasImports(f)
         ? '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> <small>(multi-file — tool only)</small>'
         : '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> · <a href="../tools/designer/index.html?src=' + designerSrcParam(f) + '">Designer</a>';
       return '<tr><td><a href="' + f.split('/').map(encodeURIComponent).join('/') + '"><code>' + esc(f) + '</code></a></td><td>' + size + '</td><td>' + open + '</td></tr>';

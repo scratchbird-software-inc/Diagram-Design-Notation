@@ -1,6 +1,6 @@
 # 29. Object diagrams (profile `uml.object@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-103
+Status: implemented in runtime 0.7.0, governed by RFC-103
 (`standard/governance/rfcs/RFC-103-object-diagram.md`). Source grammar remains
 DDN 0.5; profiles and extension properties are atom/record property values, so
 this chapter is a semantic addition, not a grammar change.

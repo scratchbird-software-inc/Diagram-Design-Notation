@@ -23,18 +23,7 @@ view classic "Classic / fixed semantic notation" {
     style: @shared.styles.classic;
     publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
     legend { mode: text; placement: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
 
 view handDrawn "Hand drawn / the same model" {
@@ -43,18 +32,7 @@ view handDrawn "Hand drawn / the same model" {
     style: @shared.styles.hand;
     publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
     legend { mode: text; placement: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
 
 view neo "Neo / the same model" {
@@ -63,18 +41,7 @@ view neo "Neo / the same model" {
     style: @shared.styles.neo;
     publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
     legend { mode: text; placement: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
 
 view dark "Dark canvas / fixed contrast palette" {
@@ -83,18 +50,7 @@ view dark "Dark canvas / fixed contrast palette" {
     style: @shared.styles.dark;
     publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
     legend { mode: text; placement: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
 
 view neutral "Neutral / print-safe symbols" {
@@ -103,18 +59,7 @@ view neutral "Neutral / print-safe symbols" {
     style: @shared.styles.neutral;
     publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
     legend { mode: text; placement: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }
 
 view forest "Forest canvas / hand-drawn treatment" {
@@ -123,16 +68,5 @@ view forest "Forest canvas / hand-drawn treatment" {
     style: @shared.styles.forest;
     publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
     legend { mode: text; placement: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }

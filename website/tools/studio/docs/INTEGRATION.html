@@ -83,7 +83,7 @@ DDNLive.authoring.setMatrixCells(workspace, &quot;views.ddn&quot;, &quot;raci&qu
   {row: rowId, column: newOwnerId, value: &quot;A&quot;}
 ]);</code></pre>
 <p>Matrix creation uses the projection's <code>write_data</code> shared block or an unambiguous shared row block, not a display-only cell. Transactions validate the current view before commit and are undoable; other dependent views validate on their next render. Rule evaluation is pure, typed and budgeted; transition actions are never executed. Chart values/dates and matrix cell coordinates cannot be dragged or re-laid out as graph nodes. Unsupported quality mark overrides and redacted projections fail explicitly.</p>
-<h2>Endpoint-ordering policy (0.6.0-beta.1)</h2>
+<h2>Endpoint-ordering policy (0.7.0)</h2>
 <p>Free compatible slots are optimized by default. The optional overlay <code>endpointOrdering: &quot;preserve&quot;</code> selects the legacy stable-ID slot order; <code>&quot;source&quot;</code> follows the DDN layout. This does not change field identities, pins, or quantitative coordinate meaning. See <code>../../spec/26-local-endpoint-ordering.md</code>.</p>
 <h2>Styling rendered diagrams (CSS hooks)</h2>
 <p>Rendered SVG carries deterministic class hooks on every mark — root <code>ddn-svg ddn-view-&lt;kind&gt; ddn-profile-&lt;profile-slug&gt;</code>, nodes <code>ddn-node ddn-kind-&lt;code&gt;</code>, relations <code>ddn-rel ddn-verb-&lt;verb&gt;</code>, plus <code>ddn-field</code>, <code>ddn-label</code>, <code>ddn-panel</code>, <code>ddn-frame</code> and <code>ddn-mark ddn-mark-&lt;type&gt;</code> in projections — so a host page can restyle diagrams with its own CSS. Script-level declarations (format palette, look, object/occurrence choices) are emitted as inline SVG presentation attributes and continue to win for the elements they name; no <code>&lt;style&gt;</code> block or <code>!important</code> is ever emitted into the SVG.</p>
@@ -94,7 +94,7 @@ DDNLive.authoring.setMatrixCells(workspace, &quot;views.ddn&quot;, &quot;raci&qu
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../../docs/index.html">Docs</a>

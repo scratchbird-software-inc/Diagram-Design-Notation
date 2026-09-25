@@ -1,6 +1,6 @@
 # 30. Hierarchical state machines (profile `state.composite@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-104
+Status: implemented in runtime 0.7.0, governed by RFC-104
 (`standard/governance/rfcs/RFC-104-hierarchical-state.md`). Source grammar
 remains DDN 0.5; frames and `x_*` properties are existing syntax, so this
 chapter is a semantic addition, not a grammar change.

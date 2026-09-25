@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Migration: 0.5 → 0.6.0-beta.1 — DDN</title>
+<title>Migration: 0.5 → 0.7.0 — DDN</title>
 <link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
 <link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
@@ -26,10 +26,10 @@
 </div></header>
 <main class="site-main">
 <article class="md-body">
-<h1>Migration: 0.5 → 0.6.0-beta.1</h1>
-<p>Beta 1 (0.6.0-beta.1; designer 0.2.0-beta.1) is additive over 0.5.x: every 0.5 source still parses, and renders that opt into nothing are byte-identical to their 0.5 output (the determinism goldens in <code>notation/tests/</code> prove it). This page lists what changed, with before/after for each.</p>
+<h1>Migration: 0.5 → 0.7.0</h1>
+<p>Beta 1 (0.7.0; designer 0.2.0-beta.1) is additive over 0.5.x: every 0.5 source still parses, and renders that opt into nothing are byte-identical to their 0.5 output (the determinism goldens in <code>notation/tests/</code> prove it). This page lists what changed, with before/after for each.</p>
 <h2>Version stamps</h2>
-<p><strong>Before (0.5.x):</strong> runtime and package stamps <code>0.5.x</code>, language versions <code>&quot;0.3&quot;</code>/<code>&quot;0.4&quot;</code>/<code>&quot;0.5&quot;</code> in sources. <strong>After:</strong> <code>notation/package.json</code> and the runtime stamp <code>0.6.0-beta.1</code> (<code>DDNLive.VERSION</code>), designer <code>0.2.0-beta.1</code>. Language version stamps in <code>.ddn</code> files are <strong>unchanged</strong> — sources keep declaring <code>ddn &quot;0.3&quot;…&quot;0.5&quot;</code>; no source edit is required.</p>
+<p><strong>Before (0.5.x):</strong> runtime and package stamps <code>0.5.x</code>, language versions <code>&quot;0.3&quot;</code>/<code>&quot;0.4&quot;</code>/<code>&quot;0.5&quot;</code> in sources. <strong>After:</strong> <code>notation/package.json</code> and the runtime stamp <code>0.7.0</code> (<code>DDNLive.VERSION</code>), designer <code>0.2.0-beta.1</code>. Language version stamps in <code>.ddn</code> files are <strong>unchanged</strong> — sources keep declaring <code>ddn &quot;0.3&quot;…&quot;0.5&quot;</code>; no source edit is required.</p>
 <h2>Element defaults are registry-driven and visible (B1-002)</h2>
 <p><strong>Before:</strong> defaults for an element kind lived in the renderer; a declared element showed only the properties the author wrote. <strong>After:</strong> <code>DDNLive.defaults.forKind(kind)</code> returns the registry default property set for a kind, and declare/create paths populate from it.</p>
 <pre><code>// after
@@ -60,7 +60,7 @@ DDNLive.defaults.forKind(&quot;table&quot;);   // deep copy of the registry defa
 <p><small>Rendered from <a href="migration-0.5-to-0.6.md">migration-0.5-to-0.6.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

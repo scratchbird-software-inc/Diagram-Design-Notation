@@ -41,7 +41,7 @@ I designed everything as a set of static modules so you do not need a web server
 
 ### Runtime bundles
 
-The browser SDK in `notation/dist/` ships as optional libraries plus the unchanged all-in-one build. Sources are real ES modules; the bundles are built with Rollup (pinned devDependency) in three formats each — readable IIFE (`.js`), ES module (`.mjs`), minified IIFE with source map (`.min.js` + `.min.js.map`). Byte sizes at 0.6.0-beta.1 (generated details in `notation/dist/README.md`; the same bundles are downloadable from the site's `website/download/` page):
+The browser SDK in `notation/dist/` ships as optional libraries plus the unchanged all-in-one build. Sources are real ES modules; the bundles are built with Rollup (pinned devDependency) in three formats each — readable IIFE (`.js`), ES module (`.mjs`), minified IIFE with source map (`.min.js` + `.min.js.map`). Byte sizes at 0.7.0 (generated details in `notation/dist/README.md`; the same bundles are downloadable from the site's `website/download/` page):
 
 | Bundle               | Contains                                                                                      | Requires                                            | `.js` bytes | `.min.js` bytes | `.min.js` gzip |
 | -------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------- | ----------- | --------------- | -------------- |
@@ -73,12 +73,12 @@ See `website/examples/basics/59-data-refresh.ddn` and `website/examples/embed/da
 ### npm package
 
 The runtime is pack-able as `@ddn/notation` (`notation/`; version
-0.6.0-beta.1, license GPL-2.0-or-later, zero *runtime* dependencies — the
+0.7.0, license GPL-2.0-or-later, zero *runtime* dependencies — the
 Rollup build toolchain is a pinned devDependency and never ships in the
 package). `npm pack` in
 `notation/` produces a tarball limited to `dist/`, `README.md`, and
 `package.json`. **Not yet published to the npm registry** — install the
-tarball directly (`npm i ./ddn-notation-0.6.0-beta.1.tgz`); `npm i
+tarball directly (`npm i ./ddn-notation-0.7.0.tgz`); `npm i
 @ddn/notation` becomes available once the first `v*` tag is published. The
 publish path itself is ready and continuously validated:
 `.github/workflows/publish.yml` runs the packaging gate and
@@ -165,7 +165,7 @@ I am currently doing this as GPL-2.0-or-later; see `LICENSE` but depending on fe
 
 ## Legacy path mapping
 
-Documents imported from the 0.6.0-beta.1 monolith and the designer specification 0.1 package may still reference their original paths.  This will be corrected over time.
+Documents imported from the 0.7.0 monolith and the designer specification 0.1 package may still reference their original paths.  This will be corrected over time.
 
 **Mapping:**
 

@@ -137,6 +137,11 @@
           "stream.r_search_write": 6
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -164,11 +169,12 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/12-streaming.ddn",
       "start": 265,
-      "end": 960,
-      "bodyEnd": 959
+      "end": 901,
+      "bodyEnd": 900
     }
   },
   "elements": [

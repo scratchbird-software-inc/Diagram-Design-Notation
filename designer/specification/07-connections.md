@@ -1,6 +1,6 @@
 # Drawing, reconnecting and explaining relationships
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Connection state machine
 `idle → source-selected → target-candidate → type-choice → draft-preview → committed` with explicit cancellation at every precommit state. Drag and two-click Connect use the same state machine. A keyboard flow chooses source object/field/port, relation meaning, target and endpoint properties. Touch users are not required to hold and drag a tiny port.

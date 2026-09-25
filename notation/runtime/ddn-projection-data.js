@@ -513,6 +513,6 @@ function normPPF(p){
  const q=p-0.5,r=q*q;
  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
 }
-const api={VERSION:'0.6.0-beta.1',get,date,plan,supported,participants:orderedParticipants,quantile,normPPF,quality:Quality};
+const api={VERSION:'0.7.0',get,date,plan,supported,participants:orderedParticipants,quantile,normPPF,quality:Quality};
 publishNamespace('DDNProjectionData',api);
 export default api;

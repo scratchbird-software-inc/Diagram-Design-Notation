@@ -122,6 +122,11 @@
           "tables.r_order_customer": 1
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -171,6 +176,7 @@
       }
     ],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/22-linked-documentation.ddn",
       "start": 239,

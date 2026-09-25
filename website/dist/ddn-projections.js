@@ -1,11 +1,11 @@
-/*! DDN 0.6.0-beta.1 · GPL-2.0-or-later · modular runtime bundle: ddn-projections — Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. */
+/*! DDN 0.7.0 · GPL-2.0-or-later · modular runtime bundle: ddn-projections — Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. */
 (function () {
   'use strict';
 
-  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-projections requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-projections requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.6.0-beta.1")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNProjections)return;
+  var h=typeof globalThis!=='undefined'?globalThis:this;if(!h.DDNLive)throw new Error('ddn-projections requires ddn-core.js to be loaded first');if(!h.DDNRender)throw new Error('ddn-projections requires ddn-graph.js to be loaded first');if(h.DDNLive.VERSION!=="0.7.0")throw new Error('A different DDNLive runtime is already loaded. Load exactly one version.');if(h.DDNProjections)return;
 
   var pkg = {
-    "version": "0.6.0-beta.1"}
+    "version": "0.7.0"}
   ;
 
   /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -679,7 +679,7 @@
    else {if(['radar','funnel','gauge','candlestick','treemap','sankey'].includes(plan.mark))throw new D.DDNError('DDN-PJ070','Radar, funnel, gauge, candlestick, treemap and sankey marks have no faithful Vega-Lite mapping in this adapter; use the native SVG projection');spec.data={values:plan.points.map(n=>({x:n.rawX,y:n.y,size:n.size,sourceIds:n.sourceIds.join('|')}))};spec.mark=['pie','donut'].includes(plan.mark)?{type:'arc',innerRadius:plan.mark==='donut'?100:0}:plan.mark;const type={category:'nominal',number:'quantitative',date:'temporal'}[plan.xType];spec.encoding=['pie','donut'].includes(plan.mark)?{theta:{field:'y',type:'quantitative'},color:{field:'x',type:'nominal'}}:{x:{field:'x',type,...(type==='temporal'?{scale:{type:'utc'}}:{})},y:{field:'y',type:'quantitative',title:plan.unit||p.y}};if(plan.mark==='point'&&p.size)spec.encoding.size={field:'size',type:'quantitative'};}
    return spec;
   }
-  const api$1={VERSION:'0.6.0-beta.1',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};
+  const api$1={VERSION:'0.7.0',render,vegaLite,plan:Data.plan,evaluateDecision:(ir,input)=>Data.quality.evaluateDecision(Data.plan(ir,D.DDNError),input),simulateLifecycle:(ir,events,expected)=>Data.quality.simulate(Data.plan(ir,D.DDNError).lifecycle,events,expected)};
   publishNamespace('DDNProjections',api$1);
 
   /* SPDX-License-Identifier: GPL-2.0-or-later. ddn-projections bundle entry

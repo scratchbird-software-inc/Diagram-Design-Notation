@@ -122,6 +122,11 @@
           "model.r_example": 1
         }
       },
+      "chrome": {
+        "legend": "auto",
+        "title": "on",
+        "footer": "on"
+      },
       "validation": {
         "mode": "logical",
         "unknown_extensions": "warn"
@@ -144,11 +149,12 @@
     "routes": {},
     "subdiagrams": [],
     "frames": [],
+    "flows": [],
     "source": {
       "file": "use-cases/14-temporal.ddn",
       "start": 227,
-      "end": 564,
-      "bodyEnd": 563
+      "end": 550,
+      "bodyEnd": 549
     }
   },
   "elements": [

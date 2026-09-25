@@ -1,6 +1,6 @@
 # Privacy, safety, local files and authorized export
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Threat model
 Treat source, filenames, labels, notes, profile metadata, imported archives and assets as untrusted input. Treat installed renderer/descriptor/adapter code as trusted versioned application code. The host decides which workspace data a user may receive. Once confidential source has been sent to a browser, a view visibility control cannot protect it from that user.

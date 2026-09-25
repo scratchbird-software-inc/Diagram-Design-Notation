@@ -1,6 +1,6 @@
 # Shape recipes, semantic options and palette simplification
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## The simplifying rule
 **One semantic kind plus applicable options; one profile-approved recipe; a small inspector.** Do not simplify by merging different kinds until their meaning disappears. A table and a SQL view can share the same card implementation but are not values of a decorative “shape” setting.

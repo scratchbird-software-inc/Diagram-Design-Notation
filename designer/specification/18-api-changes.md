@@ -1,6 +1,6 @@
 # Required core/API extensions and compatibility plan
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Existing API is not enough for full visual construction
 The audited helpers are useful but not a universal command system. This spec does not claim they already expose reconnection, explicit generic write targets or draft-profile inspection. The new editor may initially wrap them for its supported subset; production completeness requires the additions below.
@@ -20,7 +20,7 @@ The audited helpers are useful but not a universal command system. This spec doe
 | Worker execution | render Promise calls sync backend | Serialize requests/results and cancel/terminate real worker generations. |
 
 ## Descriptor/package versions
-Use `designer-ui@0.1` for this metadata proposal. Runtime remains 0.6.0-beta.1 in the prototype. Do not label the specification as DDN 0.6 until implementation and migration tests exist. Installed profile versions remain independent; a single generic editor can expose several profile variants.
+Use `designer-ui@0.1` for this metadata proposal. Runtime remains 0.7.0 in the prototype. Do not label the specification as DDN 0.6 until implementation and migration tests exist. Installed profile versions remain independent; a single generic editor can expose several profile variants.
 
 ## Source evolution
 The core DDN declarations continue to own meanings. UI descriptors are separate installed JSON, not embedded arbitrary executable scripts. No new source syntax is necessary for a generic property inspector. An occurrence layer and first-class draft references may need syntax; keep them in separate RFCs with grammar and compatibility tests. A visual app's session JSON must never become required to interpret source semantics.

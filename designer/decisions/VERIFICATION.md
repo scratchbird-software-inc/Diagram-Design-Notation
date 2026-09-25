@@ -4,7 +4,7 @@ Prepared 8 September 2026. This is an author-produced research/specification pac
 
 ## Audited foundation
 
-The accessible complete DDN field-guide archive was extracted and the endpoint-ordering patch overlaid on an analysis copy. Its runtime identifies itself as **0.6.0-beta.1**. The copied prototype library has SHA-256:
+The accessible complete DDN field-guide archive was extracted and the endpoint-ordering patch overlaid on an analysis copy. Its runtime identifies itself as **0.7.0**. The copied prototype library has SHA-256:
 
 ```text
 05ba94e1a9add994e16523f2b0f862b0b5dc3c733e293987aa287f1c6cc1585d

@@ -8,7 +8,7 @@ import './ddn-patterns.js'; // sibling bundle: load order only; the namespace co
 import {namespace} from './ddn-module-registry.js';
 const Patterns=namespace('DDNPinPlacement');
 'use strict';
-const VERSION='0.6.0-beta.1',q=Layout.q,clone=x=>JSON.parse(JSON.stringify(x));
+const VERSION='0.7.0',q=Layout.q,clone=x=>JSON.parse(JSON.stringify(x));
 function fail(code,message){throw Object.assign(new Error(message),{code});}
 const center=g=>[g.x+g.w/2,g.y+g.h/2];
 const same=(a,b)=>Math.abs(a[0]-b[0])<.001&&Math.abs(a[1]-b[1])<.001;

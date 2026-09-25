@@ -15,16 +15,5 @@ view diagram "12 / Event publication and consumers" {
     publication { width: 1640px; height: 1090px; }
     legend { keys: { "stream.r_capture": 1, "stream.r_publish": 2, "stream.r_history_delivery": 3, "stream.r_search_delivery": 4, "stream.r_history_write": 5, "stream.r_search_write": 6 }; }
     display { fields: none; badges: none; }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 }

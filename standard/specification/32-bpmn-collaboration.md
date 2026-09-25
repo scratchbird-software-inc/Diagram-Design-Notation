@@ -1,6 +1,6 @@
 # 32. BPMN-style process collaboration (profile `bpmn.basic@1` on projection `graph`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-106
+Status: implemented in runtime 0.7.0, governed by RFC-106
 (`standard/governance/rfcs/RFC-106-bpmn.md`). Source grammar remains DDN 0.5;
 the kind and verb are registry entries, pools/lanes are view frames with
 pass-through `x_*` properties, and event/gateway typing uses registered `x_*`

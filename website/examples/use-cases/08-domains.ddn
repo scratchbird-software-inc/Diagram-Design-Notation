@@ -14,10 +14,5 @@ view diagram "08 / Domain discovery and binding" {
     select: [@c.tables.orders, @d.model.support, @c.domains.customer_id, @d.model.binding];
     publication { width: 1730px; height: 700px; }
     legend { keys: { "model.r_order_domain": 1, "model.r_support_candidate": 2, "model.r_binding": 3 }; }
-    
-    
-    
-    
-    
-    
+
 }

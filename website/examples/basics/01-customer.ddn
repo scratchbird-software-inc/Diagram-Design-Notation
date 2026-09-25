@@ -9,21 +9,14 @@ view overview "Customer data / a shared model" {
     legend: @shared.styles.numbers;
     select: [@customer.model.customer, @customer.model.order, @customer.model.customer_identifier, @customer.model.customers];
     legend { keys: { "model.order_customer": 7, "model.customer_domain": 12, "model.order_domain": 18 }; }
-    
-    
-    
-    
-    
-    
-    
+
 }
 view compact "Customer data / compact view" {
     data: [@customer.model];
     format: @shared.styles.technical;
     display: @shared.styles.compact;
     select: [@customer.model.order, @customer.model.customer];
-    
-    
+
 }
 view print "Customer data / print rendition" {
     data: [@customer.model];
@@ -31,8 +24,7 @@ view print "Customer data / print rendition" {
     style: @shared.styles.neutral;
     publication: @shared.styles.paper;
     select: [@customer.model.order, @customer.model.customer];
-    
-    
+
 }
 view embedded "Customer data / minimal chrome for embedding" {
     data: [@customer.model];

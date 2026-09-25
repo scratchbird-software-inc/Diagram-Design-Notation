@@ -1,6 +1,6 @@
 # 42. Family tree / genealogy profile (`family.tree@1`)
 
-Status: implemented in runtime 0.6.0-beta.1, governed by RFC-116
+Status: implemented in runtime 0.7.0, governed by RFC-116
 (`standard/governance/rfcs/RFC-116-family-tree.md`). Source grammar
 remains DDN 0.5; the profile, kinds and verbs are registry entries, so
 this chapter is a semantic addition, not a grammar change.

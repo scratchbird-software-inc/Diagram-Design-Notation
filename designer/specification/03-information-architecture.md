@@ -1,6 +1,6 @@
 # Information architecture and interface surfaces
 
-**DDN Designer specification 0.2.0-beta.1 — proposed; baseline audited 0.6.0-beta.1.**
+**DDN Designer specification 0.2.0 — proposed; baseline audited 0.7.0.**
 
 ## Application separation
 `live/editor.html` remains Studio, the source-first application. `designer/index.html` becomes Designer. A top-level project navigation may link both, but neither route redirects to or replaces the other. Open source in Studio is an explicit handoff with a workspace snapshot, selected view and stable selection. If a second window is used, the receiving editor reports its base revision; automatic cross-tab write merging is not assumed.

@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>27. Flow animation (motion markers, flow blocks, tool controls)</h1>
-<p>Status: implemented in runtime 0.6.0-beta.1 (B1-033). Source grammar remains DDN 0.5; diagrams without motion properties render byte-identical SVG to previous releases. Scope: graph-projection relations and view-level flow blocks. Other projections (sequence, chart, geo, …) ignore motion properties.</p>
+<p>Status: implemented in runtime 0.7.0 (B1-033). Source grammar remains DDN 0.5; diagrams without motion properties render byte-identical SVG to previous releases. Scope: graph-projection relations and view-level flow blocks. Other projections (sequence, chart, geo, …) ignore motion properties.</p>
 <h2>SMIL, not JavaScript (D1)</h2>
 <p>The renderer emits declarative SMIL — <code>&lt;animateMotion&gt;</code> markers travelling the existing route paths and <code>&lt;animate&gt;</code> stroke/opacity pulses. The output is deterministic: the same DDN source always yields the same animated SVG, so golden-render tests are unaffected. Animated SVG works from <code>file://</code> and animates autonomously when an exported file is opened directly; no script of any kind is embedded.</p>
 <h2>Relation motion properties (D2)</h2>
@@ -59,7 +59,7 @@
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>

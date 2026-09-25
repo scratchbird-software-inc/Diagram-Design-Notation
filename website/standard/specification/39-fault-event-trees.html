@@ -27,7 +27,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>39. Fault tree and event tree profiles (<code>fault.tree@1</code>, <code>event.tree@1</code>)</h1>
-<p>Status: implemented in runtime 0.6.0-beta.1, governed by RFC-113 (<code>standard/governance/rfcs/RFC-113-fault-event-tree.md</code>). Source grammar remains DDN 0.5; the profiles, kinds, verb and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Status: implemented in runtime 0.7.0, governed by RFC-113 (<code>standard/governance/rfcs/RFC-113-fault-event-tree.md</code>). Source grammar remains DDN 0.5; the profiles, kinds, verb and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
 <p>Fault trees decompose a top event downward through AND/OR gates into basic events; event trees follow an initiating event forward through gate branches to outcomes. Both profiles run on the existing <code>graph</code> projection with the tree layout. Users write <code>projection { kind:graph; profile:&quot;fault.tree@1&quot;; }</code> (or <code>&quot;event.tree@1&quot;</code>) with <code>layout { algorithm:tree; direction:down; }</code>. This is profile-level notation coverage, not a reliability-engineering certification.</p>
 <h2>Metamodel</h2>
 <ul><li>Gates are <code>tree.gate</code> objects (silhouette <code>diamond</code>, fallback <code>gateway</code>,</li></ul>
@@ -48,7 +48,7 @@
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="../../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../../docs/index.html">Docs</a>
