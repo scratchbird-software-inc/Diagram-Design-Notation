@@ -66,5 +66,10 @@ view erd "Synthetic sales / crow's-foot ERD" {
     data: [@sales];
     format: @shared.styles.technical;
     projection { kind:graph; profile:"erd.crowfoot@1"; }
+    // Organic placement spreads the four tables around the relation flow; the
+    // crow's-foot marks and relation labels carry the semantics, so the legend
+    // is switched off.
+    layout { algorithm: organic; }
+    chrome { legend: off; }
     publication {size: content; fit: none; overflow: error;}
 }
