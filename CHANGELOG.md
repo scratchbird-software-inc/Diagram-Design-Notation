@@ -4,6 +4,24 @@ All notable changes to the Diagram Design Notation project are documented here.
 Component-level history predating the monorepo import lives in
 `notation/CHANGELOG.md` and `website/examples/use-cases/CHANGELOG.md`.
 
+## [Unreleased]
+
+- **Host-controlled embedding** (B1-049): the unified tool can now be
+  embedded with no chrome at all while the host page keeps full control.
+  - New drawer state `api` — icon hidden, not user-openable, but openable by
+    host code via `DDNTool.setDrawer` (accepted in `?drawers=`, mode presets
+    and saved localStorage configs; never offered in the gear popup).
+    `none` stays "unavailable to everyone": `DDNTool.setDrawer(name, 'open')`
+    on a `none` drawer throws a clear misuse error.
+  - New URL parameter `?toolbar=off` hides the whole icon toolbar *without*
+    changing drawer availability (unlike `mode=diagram`, which also forces
+    every drawer to `none`); beats the mode preset's toolbar, malformed
+    values ignored.
+  - `DDNTool.setToolbar(visible)` shows/hides the toolbar at runtime.
+  - Docs: `embedding.md` gains a "Controlling the embedded tool" section
+    (host-control matrix + copy-paste recipe); new tested example
+    `website/examples/embed/tool-host-control.html`.
+
 ## [0.7.0] - 2026-09-25
 
 - **DDN 0.7.0** (B1-048): packaging release over the 0.6.0-beta.1 language

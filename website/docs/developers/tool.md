@@ -48,16 +48,27 @@ page/width/height/100%) with a slim icon toolbar and four pop-in drawers:
 (right). Drawers overlay the stage, animate open/closed, and close
 independently.
 
-Each drawer has three states — `open`, `closed`, `none` (icon hidden) —
-configured by, in ascending precedence:
+Each drawer has four states — `open`, `closed`, `none` (icon hidden,
+unavailable to everyone), `api` (icon hidden, not user-openable, but openable
+by host code via `DDNTool.setDrawer` — for embeds; never offered in the gear
+popup, tolerated when present in a saved config) — configured by, in
+ascending precedence:
 
 1. the `?mode=` preset: `diagram` (bare stage, no toolbar — for embeds),
    `view` (stage + viewport controls only), `explore` (default; toolbar, all
    drawers closed), `edit` (toolbar, source drawer open);
 2. the saved settings in `localStorage` key `ddn-tool-drawers` (gear popup);
 3. the URL parameter, e.g.
-   `?drawers=appearance:closed,source:none,files:closed,export:closed`
+   `?drawers=appearance:closed,source:api,files:none,export:closed`
    (malformed pairs are ignored).
+
+Independently of the mode, `?toolbar=off` hides the whole icon toolbar
+*without* changing drawer availability (unlike `mode=diagram`, which also
+forces every drawer to `none`); it beats the preset's toolbar and tolerates
+malformed values (anything but `off` is ignored). Combined with
+`?drawers=source:api` this gives the host-controlled embed: no chrome at
+all, yet the host can still open drawers through `DDNTool` — see
+[embedding.md](embedding.md) → "Controlling the embedded tool".
 
 ## Loading sources
 
@@ -148,6 +159,8 @@ overrides fail identically via the default worker path and `?worker=off`.
 ## Test hooks
 
 `window.DDNTool` mirrors the old `DDNViewer` surface (pure functions plus
-`loadFiles`, `setFit`, `exportSvgString`, `setDrawer`, `getDrawerConfig`,
-`state`, …) for tests and integrations; `window.DDNRedirect.mapLegacyParams`
-is the old-URL parameter mapper used by the redirect stubs.
+`loadFiles`, `setFit`, `exportSvgString`, `setDrawer`, `setToolbar`,
+`getDrawerConfig`, `state`, …) for tests and integrations; `setDrawer` opens
+`api` drawers but throws a clear error when asked to open a `none` drawer.
+`window.DDNRedirect.mapLegacyParams` is the old-URL parameter mapper used by
+the redirect stubs.

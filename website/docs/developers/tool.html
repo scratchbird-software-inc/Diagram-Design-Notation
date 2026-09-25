@@ -45,11 +45,12 @@
 <p><code>?worker=off</code> forces the synchronous path (debugging, tests, exotic hosts). The status bar announces the synchronous fallback when it is active.</p>
 <h2>Layout and drawers</h2>
 <p>The page is a diagram stage (pointer-drag pan, wheel/slider zoom, fit page/width/height/100%) with a slim icon toolbar and four pop-in drawers: <strong>appearance</strong> (top), <strong>source</strong> (bottom), <strong>files</strong> (left), <strong>export</strong> (right). Drawers overlay the stage, animate open/closed, and close independently.</p>
-<p>Each drawer has three states — <code>open</code>, <code>closed</code>, <code>none</code> (icon hidden) — configured by, in ascending precedence:</p>
+<p>Each drawer has four states — <code>open</code>, <code>closed</code>, <code>none</code> (icon hidden, unavailable to everyone), <code>api</code> (icon hidden, not user-openable, but openable by host code via <code>DDNTool.setDrawer</code> — for embeds; never offered in the gear popup, tolerated when present in a saved config) — configured by, in ascending precedence:</p>
 <ol><li>the <code>?mode=</code> preset: <code>diagram</code> (bare stage, no toolbar — for embeds),</li></ol>
 <p>   <code>view</code> (stage + viewport controls only), <code>explore</code> (default; toolbar, all    drawers closed), <code>edit</code> (toolbar, source drawer open);</p>
 <ol><li>the saved settings in <code>localStorage</code> key <code>ddn-tool-drawers</code> (gear popup);</li><li>the URL parameter, e.g.</li></ol>
-<p>   <code>?drawers=appearance:closed,source:none,files:closed,export:closed</code>    (malformed pairs are ignored).</p>
+<p>   <code>?drawers=appearance:closed,source:api,files:none,export:closed</code>    (malformed pairs are ignored).</p>
+<p>Independently of the mode, <code>?toolbar=off</code> hides the whole icon toolbar <em>without</em> changing drawer availability (unlike <code>mode=diagram</code>, which also forces every drawer to <code>none</code>); it beats the preset's toolbar and tolerates malformed values (anything but <code>off</code> is ignored). Combined with <code>?drawers=source:api</code> this gives the host-controlled embed: no chrome at all, yet the host can still open drawers through <code>DDNTool</code> — see <a href="embedding.html">embedding.md</a> → &quot;Controlling the embedded tool&quot;.</p>
 <h2>Loading sources</h2>
 <ul><li><strong>Files drawer</strong>: open files / a folder / a workspace <code>.zip</code> or <code>.json</code></li></ul>
 <p>  (with merge-into-current), drag-drop anywhere on the page, paste source   text, or pick from the bundled example catalogue.</p>
@@ -72,7 +73,7 @@
 <p>Selects offer <strong>As authored</strong> (<code>source</code>), which clears the override; numeric fields clear back to the source value when emptied.</p>
 <p><strong>Base font validation (DDN071):</strong> the renderer rejects a base font whose smallest text role (11⁄16 of the base, before page scaling) would fall below <code>publication.minimum_text</code> (default 8pt ≈ 10.67px). The Base font input is constrained to the satisfiable range derived from that rule (floor 16px at the default minimum; lower when the source relaxes <code>minimum_text</code>). A value typed in anyway produces an inline message naming the implied minimum — &quot;Base font 8px would make the smallest text 5.50px, below the 10.67px minimum (DDN071) — use ≥16px&quot; — without touching the stage; the runtime DDN071 message itself also states the implied minimum base font. Invalid overrides fail identically via the default worker path and <code>?worker=off</code>.</p>
 <h2>Test hooks</h2>
-<p><code>window.DDNTool</code> mirrors the old <code>DDNViewer</code> surface (pure functions plus <code>loadFiles</code>, <code>setFit</code>, <code>exportSvgString</code>, <code>setDrawer</code>, <code>getDrawerConfig</code>, <code>state</code>, …) for tests and integrations; <code>window.DDNRedirect.mapLegacyParams</code> is the old-URL parameter mapper used by the redirect stubs.</p>
+<p><code>window.DDNTool</code> mirrors the old <code>DDNViewer</code> surface (pure functions plus <code>loadFiles</code>, <code>setFit</code>, <code>exportSvgString</code>, <code>setDrawer</code>, <code>setToolbar</code>, <code>getDrawerConfig</code>, <code>state</code>, …) for tests and integrations; <code>setDrawer</code> opens <code>api</code> drawers but throws a clear error when asked to open a <code>none</code> drawer. <code>window.DDNRedirect.mapLegacyParams</code> is the old-URL parameter mapper used by the redirect stubs.</p>
 </article>
 <p><small>Rendered from <a href="tool.md">tool.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>

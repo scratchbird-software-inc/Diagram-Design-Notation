@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DDN host-controlled embedding — toolbar=off + api drawers</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<style>body{font:16px system-ui;background:#edf2f8;color:#20374e;max-width:1100px;margin:30px auto;padding:0 20px}h1{font-size:24px}.status{font:14px ui-monospace,monospace;padding:8px 12px;border-radius:6px;margin:12px 0;background:#e2f4e5;color:#1d5c2e;white-space:pre-wrap}.status.err{background:#f8e2e2;color:#8a1f1f}code{background:#fff;padding:1px 5px;border-radius:4px}button{font:15px system-ui;padding:8px 16px;border:0;border-radius:6px;background:#2d5a8a;color:#fff;cursor:pointer;margin:0 6px 6px 0}iframe{width:100%;height:560px;border:1px solid #b9c8d8;border-radius:8px;background:#fff}</style>
+<h1>Host-controlled embedding — <code>?toolbar=off</code> + <code>api</code> drawers</h1>
+<p>The iframe below runs the unified tool (<code>tools/index.html</code>) with
+<code>?toolbar=off&amp;drawers=source:api</code>: no icon toolbar at all, and the
+source drawer is in the <code>api</code> state — hidden from the user, not
+user-openable, but fully openable by <em>host code</em> through
+<code>DDNTool.setDrawer</code>. The buttons are this page's own chrome; the
+"files drawer" button demonstrates the misuse result for a <code>none</code>
+drawer. Serve over HTTP (<code>node tools/serve.js</code>) — cross-frame
+scripting and <code>?src=</code> deep links are not available from
+<code>file://</code>. Recipe:
+<a href="../../docs/developers/embedding.html">embedding.md → Controlling the embedded tool</a>.</p>
+<button id="openSource">Open source drawer (host)</button>
+<button id="closeSource">Close source drawer (host)</button>
+<button id="openFiles">Open files drawer (none — reports misuse)</button>
+<button id="showToolbar">Show toolbar via DDNTool.setToolbar(true)</button>
+<div id="status" class="status">waiting for the tool…</div>
+<iframe id="tool" title="DDN tool, toolbar hidden"
+  src="../../tools/index.html?toolbar=off&amp;drawers=source:api,appearance:closed,files:none,export:closed"></iframe>
+<script>
+const frame = document.getElementById('tool'), status = document.getElementById('status');
+function say(msg, isErr) { status.textContent = msg; status.classList.toggle('err', !!isErr); }
+function tool() { return frame.contentWindow.DDNTool; }
+frame.addEventListener('load', () => {
+  // The tool boots asynchronously; poll briefly for its integration surface.
+  const t0 = Date.now();
+  (function wait() {
+    if (tool() && tool().setDrawer) {
+      const c = tool().getDrawerConfig();
+      say('tool ready — toolbar: ' + c.toolbar + ', source drawer: ' + c.drawers.source +
+        ' (hidden from the user, openable by this page)');
+      if (location.hash === '#demo') document.getElementById('openSource').click();
+      if (location.hash === '#selftest') selftest();
+    } else if (Date.now() - t0 < 10000) setTimeout(wait, 100);
+    else say('DDNTool did not appear — serve over HTTP, not file://', true);
+  })();
+});
+/* Hash-triggered hooks for the headless-Chromium checks (B1-049 report):
+ * #demo opens the source drawer; #selftest runs the behavioural assertions. */
+function selftest() {
+  const t = tool(), out = [];
+  const ok = (name, cond) => out.push((cond ? 'PASS ' : 'FAIL ') + name);
+  const c = t.getDrawerConfig();
+  ok('toolbar hidden by ?toolbar=off', c.toolbar === false);
+  ok('source drawer is api', c.drawers.source === 'api');
+  const frameDoc = frame.contentDocument;
+  ok('toolbar element hidden', frameDoc.getElementById('ddn-toolbar').hidden === true);
+  ok('source icon hidden', frameDoc.getElementById('ddn-icon-source').hidden === true);
+  ok('source drawer closed until host-opened', frameDoc.getElementById('ddn-drawer-source').dataset.state === 'closed');
+  t.setDrawer('source', 'open');
+  ok('host opened api drawer', frameDoc.getElementById('ddn-drawer-source').dataset.state === 'open');
+  let threw = '';
+  try { t.setDrawer('files', 'open'); } catch (e) { threw = e.message; }
+  ok('opening a none drawer throws', /is none — unavailable/.test(threw));
+  ok('gear popup states exclude api', Array.isArray(t.GEAR_STATES) && !t.GEAR_STATES.includes('api') && t.DRAWER_STATES.includes('api'));
+  t.setToolbar(true);
+  ok('setToolbar(true) reveals the toolbar', frameDoc.getElementById('ddn-toolbar').hidden === false);
+  say('SELFTEST ' + (out.every(l => l.startsWith('PASS')) ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), out.some(l => l.startsWith('FAIL')));
+}
+document.getElementById('openSource').addEventListener('click', () => {
+  try { tool().setDrawer('source', 'open'); say('host opened the source drawer — no toolbar involved'); }
+  catch (e) { say('setDrawer: ' + e.message, true); }
+});
+document.getElementById('closeSource').addEventListener('click', () => {
+  try { tool().setDrawer('source', 'api'); say('source drawer back to api (hidden, host-only)'); }
+  catch (e) { say('setDrawer: ' + e.message, true); }
+});
+document.getElementById('openFiles').addEventListener('click', () => {
+  try { tool().setDrawer('files', 'open'); say('unexpected: files drawer opened', true); }
+  catch (e) { say('expected misuse result — setDrawer: ' + e.message, true); }
+});
+document.getElementById('showToolbar').addEventListener('click', () => {
+  tool().setToolbar(true); say('toolbar revealed by host code (DDNTool.setToolbar(true))');
+});
+</script>

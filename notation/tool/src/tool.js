@@ -2,7 +2,7 @@
  * One page replacing the end-user viewer (B1-007), the studio gallery and the
  * studio editor: a diagram stage with pan/zoom, an icon toolbar, and pop-in
  * drawers (appearance top, source bottom, files left, export right) whose
- * open/closed/none state is configurable per drawer via ?drawers=, a settings
+ * open/closed/none/api state is configurable per drawer via ?drawers=, a settings
  * popup persisted to localStorage, and ?mode= presets (D2-D4).
  *
  * Rendering reuses the shared <ddn-example> component (DDNLive.mount) as the
@@ -18,7 +18,11 @@
 /* --- pure functions (unit tested in node) --- */
 
 const DRAWERS = ['appearance', 'source', 'files', 'export', 'animation'];
-const DRAWER_STATES = ['open', 'closed', 'none'];
+/* B1-049: `api` = icon hidden and not user-openable, but openable by host code
+ * via DDNTool.setDrawer — unlike `none`, which is unavailable to everyone.
+ * The gear popup offers only GEAR_STATES (`api` is a host feature). */
+const DRAWER_STATES = ['open', 'closed', 'none', 'api'];
+const GEAR_STATES = ['open', 'closed', 'none'];
 const STORAGE_KEY = 'ddn-tool-drawers';
 
 /* D4: mode presets. toolbar=false hides the whole icon toolbar (embed use);
@@ -56,11 +60,17 @@ function cleanDrawerConfig(obj) {
   return out;
 }
 
-/* Precedence (D3): preset (D4) < localStorage < URL param. */
-function resolveDrawerConfig(mode, stored, urlDrawers) {
+/* B1-049 (D2): `?toolbar=off` hides the whole icon toolbar WITHOUT changing
+ * drawer availability (unlike mode=diagram, which also forces drawers none).
+ * Only the exact value `off` counts; anything else is ignored. */
+function parseToolbarParam(v) { return v != null && String(v).toLowerCase() === 'off' ? 'off' : null; }
+
+/* Precedence (D3): preset (D4) < localStorage < URL param. `?toolbar=off`
+ * beats the preset's toolbar:true but never touches drawer states. */
+function resolveDrawerConfig(mode, stored, urlDrawers, urlToolbar) {
   const preset = MODES[parseMode(mode) || DEFAULT_MODE];
   const drawers = { ...preset.drawers, ...cleanDrawerConfig(stored), ...parseDrawersParam(urlDrawers) };
-  return { mode: parseMode(mode) || DEFAULT_MODE, toolbar: preset.toolbar, icons: preset.icons, drawers };
+  return { mode: parseMode(mode) || DEFAULT_MODE, toolbar: preset.toolbar && parseToolbarParam(urlToolbar) !== 'off', icons: preset.icons, drawers };
 }
 
 /* Fit scale of an sw×sh SVG inside a cw×ch container (same semantics as the
@@ -432,7 +442,7 @@ function createRenderBridge({ worker, measure, onDegraded, onTiming, seedLimit =
 }
 
 const pure = {
-  DRAWERS, DRAWER_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig,
+  DRAWERS, DRAWER_STATES, GEAR_STATES, MODES, DEFAULT_MODE, STORAGE_KEY, parseMode, parseDrawersParam, cleanDrawerConfig, resolveDrawerConfig, parseToolbarParam,
   computeFitScale, overrideRuleFor, typographyRuleFor, overrideCss, toolOverrides, viewListFrom,
   isPlausibleSourceFile, rasterCanvasSize, srcFromQuery, srcFetchErrorMessage, srcImportClosure,
   exportSvgWithOverrides, MAX_FILE_BYTES, MAX_RASTER_PX, FONT_STACKS, ROUTING_VALUES,
@@ -567,8 +577,8 @@ function applyDrawerConfig() {
   els.settings.hidden = !c.icons;
   for (const name of DRAWERS) {
     const st = c.drawers[name];
-    drawerEls[name].dataset.state = c.icons ? st : 'none';
-    iconEls[name].hidden = !c.icons || st === 'none';
+    drawerEls[name].dataset.state = c.icons ? (st === 'api' ? 'closed' : st) : 'none';
+    iconEls[name].hidden = !c.icons || st === 'none' || st === 'api';
     iconEls[name].classList.toggle('active', c.icons && st === 'open');
   }
   // B1-033: the animation icon exists only when the render contains motion.
@@ -580,9 +590,17 @@ function applyDrawerConfig() {
 }
 function setDrawer(name, st, persist) {
   if (!DRAWERS.includes(name) || !DRAWER_STATES.includes(st)) throw new Error('unknown drawer or state: ' + name + ':' + st);
+  // B1-049 (D3): `none` is unavailable to everyone — host code must first
+  // reconfigure it (closed/api). `api` drawers are exactly the host-openable case.
+  if (st === 'open' && state.config.drawers[name] === 'none')
+    throw new Error('drawer "' + name + '" is none — unavailable; set it to closed or api before opening');
   state.config.drawers[name] = st;
   applyDrawerConfig();
   if (persist) saveStoredDrawers();
+}
+function setToolbar(visible) {
+  state.config.toolbar = !!visible;
+  applyDrawerConfig();
 }
 function saveStoredDrawers() {
   try { host.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.config.drawers)); } catch { /* private mode */ }
@@ -603,7 +621,13 @@ function settingsUI() {
     label.textContent = name[0].toUpperCase() + name.slice(1) + ' drawer ';
     const sel = document.createElement('select');
     sel.dataset.drawer = name;
-    for (const st of DRAWER_STATES) sel.add(new Option(st, st));
+    for (const st of GEAR_STATES) sel.add(new Option(st, st));
+    // B1-049: a host-set `api` state is shown (disabled) but never offered.
+    if (!GEAR_STATES.includes(state.config.drawers[name])) {
+      const cur = new Option(state.config.drawers[name] + ' (host)', state.config.drawers[name]);
+      cur.disabled = true;
+      sel.add(cur);
+    }
     sel.value = state.config.drawers[name];
     sel.addEventListener('change', () => setDrawer(name, sel.value, false));
     label.append(sel);
@@ -615,7 +639,7 @@ $('ddn-settings-close').addEventListener('click', () => { els.settingsPopup.hidd
 $('ddn-settings-save').addEventListener('click', () => { saveStoredDrawers(); els.settingsPopup.hidden = true; status('drawer settings saved in this browser'); });
 $('ddn-settings-clear').addEventListener('click', () => {
   try { host.localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
-  state.config = resolveDrawerConfig(new URLSearchParams(location.search).get('mode'), null, new URLSearchParams(location.search).get('drawers'));
+  state.config = resolveDrawerConfig(new URLSearchParams(location.search).get('mode'), null, new URLSearchParams(location.search).get('drawers'), new URLSearchParams(location.search).get('toolbar'));
   applyDrawerConfig(); settingsUI(); status('saved drawer settings cleared');
 });
 
@@ -1693,7 +1717,7 @@ function loadFromSrc(src) {
 function boot() {
   const params = new URLSearchParams(location.search);
   installRenderWorker();
-  if (workerState.reason) status('synchronous rendering: ' + workerState.reason);  state.config = resolveDrawerConfig(params.get('mode'), loadStoredDrawers(), params.get('drawers'));
+  if (workerState.reason) status('synchronous rendering: ' + workerState.reason);  state.config = resolveDrawerConfig(params.get('mode'), loadStoredDrawers(), params.get('drawers'), params.get('toolbar'));
   // D8: prefers-reduced-motion auto-pauses; the user can still press Play
   // (that session choice then wins until the page reloads).
   if (reducedMotion()) anim.playing = false;
@@ -1733,7 +1757,7 @@ function boot() {
 host.DDNTool = Object.assign({}, pure, {
   loadFiles: (files, entry, view) => load(files, entry, view),
   loadExample, setFit, zoomStep, applyOverrideCss, exportSvgString, rasterize,
-  setDrawer, getDrawerConfig: () => JSON.parse(JSON.stringify(state.config)),
+  setDrawer, setToolbar, getDrawerConfig: () => JSON.parse(JSON.stringify(state.config)),
   setOption, resetAppearance,
   setKindTypography: (code, style) => { state.presentation.typography[code] = style; repopulateOverridePanels(); applyOverrideCss(); },
   setKindColour: (code, col) => { state.presentation.kindColours[code] = col; applyOverrideCss(); },

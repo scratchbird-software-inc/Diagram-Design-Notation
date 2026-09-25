@@ -13,6 +13,7 @@ embedding shapes — open the one that matches yours and copy it:
 | [geo-optional.html](../../examples/embed/geo-optional.html) | A `kind:geo` view rendered *without* `ddn-geo`: inline placeholder + coded `DDN-E010` diagnostic, never a silent gap | yes |
 | [data-refresh.html](../../examples/embed/data-refresh.html) | Live dashboard: `ws.replaceData(name, records)` swaps data-block records and re-renders in place | yes |
 | [iso-load-monitor.html](../../examples/embed/iso-load-monitor.html) | Optional `ddn-iso` module: data-bound isometric depth (`depth: "x_record.load"`) growing/shrinking on each refresh tick with a ≤300 ms SMIL transition | yes |
+| [tool-host-control.html](../../examples/embed/tool-host-control.html) | Host-controlled embedding of the unified *tool*: `?toolbar=off` + an `api`-state source drawer opened by host-page buttons via `DDNTool.setDrawer` | no — cross-frame scripting needs any static server (`node tools/serve.js`) |
 
 The smallest useful snippet (global build, works from `file://`):
 
@@ -61,6 +62,49 @@ the current SVG text; `diagram.getState()` returns the restorable state;
 `mount` is loaded only in `ddn.global.js` (the component is part of the full
 bundle); the modular splits are headless — drive them with
 `renderSync`/`render` and place `result.svg` yourself.
+
+## Controlling the embedded tool
+
+When you embed the unified *tool* (`ddn-tool.html`, served as
+`tools/index.html`) in an iframe — rather than the headless runtime — the
+host page controls its chrome through URL parameters at load time and the
+`window.DDNTool` surface (reachable as `iframe.contentWindow.DDNTool` on a
+same-origin frame) at runtime.
+
+Host-control matrix:
+
+| Knob | Values | Effect |
+| --- | --- | --- |
+| `?mode=` | `diagram` · `view` · `explore` (default) · `edit` | Preset for toolbar/icons/drawer states; `diagram` hides the toolbar *and* forces every drawer to `none` |
+| `?toolbar=off` | `off` only; anything else ignored | Hides the whole icon toolbar **without** changing drawer availability — beats the mode preset's `toolbar:true` |
+| `?drawers=` | `name:state` pairs, comma-separated | Per-drawer state, highest precedence (over localStorage and the preset); malformed pairs ignored |
+| drawer states | `open` · `closed` · `none` · `api` | `none`: unavailable to everyone. `api`: icon hidden, not user-openable, **openable by host code** via `DDNTool.setDrawer`. Never offered in the gear popup, but tolerated there when present |
+| `DDNTool.setDrawer(name, state)` | drawer name + state above | Opens/closes/reconfigures a drawer. Opening a `none` drawer throws `drawer "<name>" is none — unavailable; set it to closed or api before opening` — reconfigure it first |
+| `DDNTool.setToolbar(visible)` | boolean | Shows/hides the icon toolbar at runtime |
+| `DDNTool.getDrawerConfig()` | — | Snapshot of `{ mode, toolbar, icons, drawers }` |
+| `DDNTool.loadFiles(files, entry, view)` | `{ name: source }` map | Loads host-supplied sources into the embedded tool |
+
+Recipe — bare diagram, no toolbar, with a host button that opens the source
+drawer (runnable as
+[examples/embed/tool-host-control.html](../../examples/embed/tool-host-control.html)):
+
+```html
+<iframe id="tool" style="width:100%;height:560px;border:0"
+  src="tools/index.html?toolbar=off&drawers=source:api,appearance:closed,files:none,export:closed"></iframe>
+<button onclick="document.getElementById('tool').contentWindow.DDNTool.setDrawer('source','open')">
+  Edit source
+</button>
+```
+
+`toolbar=off` removes every tool icon; `source:api` keeps the source drawer
+out of the user's reach while leaving it fully functional for your code —
+the combination `mode=diagram` cannot express, since that preset forces all
+drawers to `none` (unavailable to everyone, host code included).
+
+Serve the pair over HTTP: cross-frame scripting (`contentWindow.DDNTool`)
+and `?src=` deep links are unavailable from `file://` pages — see the
+`file://` caveats section below. The tool itself is a single
+self-contained file, so any static server (`node tools/serve.js`) is enough.
 
 ## Framework notes
 

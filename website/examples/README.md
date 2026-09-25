@@ -78,7 +78,10 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
   `core-graph.html` (B1-004 — only `ddn-core.js` + `ddn-graph.js` rendering
   the `basics/01-customer.ddn` overview), and `core-only-check.html`
   (B1-004 — the coded `DDN-E010` refusal when a render is attempted without a
-  renderer bundle).
+  renderer bundle). `tool-host-control.html` (B1-049) embeds the unified
+  *tool* instead of the runtime: `?toolbar=off` + `?drawers=source:api` hide
+  all chrome while host-page buttons open the source drawer via
+  `DDNTool.setDrawer` (needs a static server for cross-frame scripting).
 - `use-cases/` — 22 scenarios (whiteboard, ERD, relational, SQL dependencies,
   documents, graph schema, streaming, lineage, governance, security,
   recovery, migration, …) with shared `data/` modules and `formats.ddn`.

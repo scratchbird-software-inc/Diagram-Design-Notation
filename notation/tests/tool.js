@@ -92,6 +92,47 @@ test('precedence (D3): URL param > localStorage > preset defaults', () => {
   assert.equal(dirty.drawers.export, 'open', 'valid stored state kept');
 });
 
+/* ---- B1-049: host-controlled embedding (api drawer state + ?toolbar=off) ---- */
+
+test('api drawer state (D1): accepted in URL param, localStorage config, and DRAWER_STATES', () => {
+  assert.ok(T.DRAWER_STATES.includes('api'), 'api is a drawer state');
+  assert.ok(!T.GEAR_STATES.includes('api'), 'gear popup never offers api');
+  assert.deepEqual(T.GEAR_STATES, ['open', 'closed', 'none']);
+  assert.deepEqual(T.parseDrawersParam('source:api,appearance:bogus'), { source: 'api' }, 'api accepted in ?drawers=');
+  const c = T.resolveDrawerConfig('explore', { source: 'api', files: 'api' }, 'export:api');
+  assert.equal(c.drawers.source, 'api', 'api accepted from localStorage');
+  assert.equal(c.drawers.files, 'api');
+  assert.equal(c.drawers.export, 'api', 'api accepted from URL');
+  assert.equal(c.drawers.appearance, 'closed', 'preset default fills the rest');
+});
+
+test('?toolbar=off (D2): hides the toolbar without touching drawer states; beats preset toolbar:true', () => {
+  assert.equal(T.parseToolbarParam('off'), 'off');
+  assert.equal(T.parseToolbarParam('OFF'), 'off', 'case-insensitive per worker-param idiom');
+  for (const bad of [null, '', 'on', 'true', '0', 'offf']) assert.equal(T.parseToolbarParam(bad), null, 'malformed value ignored: ' + bad);
+  const c = T.resolveDrawerConfig('explore', null, 'source:api', 'off');
+  assert.equal(c.toolbar, false, 'toolbar hidden');
+  assert.equal(c.icons, true, 'icons config untouched — drawers stay in their configured states');
+  assert.equal(c.drawers.source, 'api', 'drawer states unchanged by toolbar=off');
+  const ed = T.resolveDrawerConfig('edit', null, null, 'off');
+  assert.equal(ed.toolbar, false, 'beats the edit preset toolbar:true');
+  assert.equal(ed.drawers.source, 'open', 'preset drawer states still apply');
+  const on = T.resolveDrawerConfig('explore', null, null, 'on');
+  assert.equal(on.toolbar, true, 'anything but off is ignored');
+  const d = T.resolveDrawerConfig('diagram', null, null, null);
+  assert.equal(d.toolbar, false, 'mode=diagram still hides the toolbar without the param');
+});
+
+test('setDrawer hardening (D3): opening a none drawer throws; api drawers open; setToolbar exists', () => {
+  // The DOM setDrawer lives behind the browser boot; the shared contract is
+  // asserted here and exercised for real in the headless-Chromium embed check
+  // (website/examples/embed/tool-host-control.html, see the B1-049 report).
+  const src = fs.readFileSync(path.join(root, 'notation/tool/src/tool.js'), 'utf8');
+  assert.ok(src.includes('is none — unavailable'), 'setDrawer reports misuse when opening a none drawer');
+  assert.ok(/setDrawer, setToolbar,/.test(src), 'DDNTool exposes setDrawer + setToolbar');
+  assert.ok(src.includes("st === 'api' ? 'closed' : st"), 'api drawers render closed until host-opened');
+});
+
 /* ---- overrides ---- */
 
 test('overrideRuleFor: kind/verb/object CSS rules and validation', () => {
