@@ -191,6 +191,18 @@ minimum (DDN071) — use ≥16px" — without touching the stage; the runtime
 DDN071 message itself also states the implied minimum base font. Invalid
 overrides fail identically via the default worker path and `?worker=off`.
 
+**Artboard validation (DDN071):** the Page/artboard controls (`page`, `width`,
+`height`) scale the drawing down to fit (`fit: contain`); an artboard small
+enough to push the smallest text role below `publication.minimum_text` would
+hard-fail the render. The tool computes that bound before rendering — from
+the current scene's unscaled drawing bounds plus the fixed chrome overhead —
+and refuses the choice inline, naming the smallest usable artboard ("Artboard
+400×400px fits this drawing only at 29% scale … smallest usable artboard for
+this drawing is 849×962px …"). The inputs return to the last committed values
+and the stage keeps the last good picture undimmed; the runtime DDN071 on
+this path names the same remedy (larger page / bigger base font / relaxed
+`minimum_text`). Worker on and `?worker=off` behave identically.
+
 ## Host I/O contract (B1-050)
 
 For hosts embedding the tool, three additive methods formalize DDN in/out —

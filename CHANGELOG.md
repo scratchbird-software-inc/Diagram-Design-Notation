@@ -6,6 +6,21 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Crow's-foot ERD example facelift + artboard DDN071 UX** (B1-052).
+  `website/examples/basics/37-crows-foot-erd.ddn` now renders with
+  `layout { algorithm: organic; }` and `chrome { legend: off; }` (the
+  crow's-foot marks and relation labels self-describe the relations); the
+  `erd.crowfoot@1` gallery plate regenerated accordingly (all other goldens
+  byte-identical). In the unified tool, the Page/artboard controls are
+  pre-validated against the DDN071 minimum-text rule before rendering: an
+  artboard too small for the current drawing is refused inline with a message
+  naming the smallest usable artboard (computed from the last scene's
+  unscaled drawing bounds plus fixed chrome overhead), the inputs return to
+  the last committed values, and the stage keeps the last good picture
+  undimmed — no more hard DDN071 + stale-dimmed stage for a preventable input
+  error. Worker on/off parity; the runtime DDN071 on this path already names
+  the remedy (B1-046), unchanged.
+
 - **Design mode: the designer IS the viewer with more functionality** (B1-051).
   `?mode=design` is a new top-level mode of the unified tool: everything from
   `explore` plus the editing affordances on by default — source drawer open

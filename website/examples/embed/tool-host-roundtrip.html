@@ -169,6 +169,29 @@ async function selftest() {
     await t.setSource('this is not ddn').then(() => {}, e => { bad = (e.code || 'NO-CODE') + ' ' + e.message; });
     ok('setSource rejects coded on invalid source', /^DDN/.test(bad), bad);
     await t.setSource(START);
+    /* B1-052 D5/D7: artboard pre-validation — a too-small page must be refused
+     * BEFORE rendering, with a friendly DDN071 message naming the smallest
+     * usable artboard, no stale-dimmed stage, and the last good render kept.
+     * Runs in both worker modes (this page passes ?worker=off through). */
+    await new Promise(res => setTimeout(res, 150));
+    const host = frame.contentDocument.getElementById('ddn-diagram');
+    t.setOption('page', 'custom');
+    await t.diagram.ready;
+    await new Promise(res => setTimeout(res, 150));
+    const goodSvg = stageSvg(), goodFp = host.getAttribute('data-ddn-rendered');
+    ok('custom artboard at the default 1600×1000 renders', !!goodSvg && !!goodFp, String(goodFp));
+    t.setOption('width', 400);
+    await new Promise(res => setTimeout(res, 300));
+    const artErr = frame.contentDocument.getElementById('ddn-source-error').textContent;
+    const canvas = t.diagram.shadowRoot.querySelector('.canvas');
+    ok('artboard refusal names the smallest usable artboard (DDN071)', /DDN071/.test(artErr) && /smallest usable artboard for this drawing is \d+×\d+px/.test(artErr), artErr);
+    ok('artboard refusal shows the attempted size and the fit scale', /Artboard 400×1000px fits this drawing only at \d+% scale/.test(artErr), artErr);
+    ok('no stale-dim for a preventable artboard error', canvas && !canvas.classList.contains('stale'), canvas && canvas.className);
+    ok('last good render kept on stage', stageSvg() === goodSvg && host.getAttribute('data-ddn-rendered') === goodFp, String(host.getAttribute('data-ddn-rendered')));
+    ok('refused width not committed', t.state.presentation.options.width == null, String(t.state.presentation.options.width));
+    t.setOption('page', 'source');
+    await t.diagram.ready;
+    ok('page reset to source re-renders cleanly', !!stageSvg() && frame.contentDocument.getElementById('ddn-source-error').textContent === '', frame.contentDocument.getElementById('ddn-source-error').textContent);
   } catch (e) { out.push('FAIL selftest fatal — ' + String(e && e.stack || e).slice(0, 300)); }
   const pass = out.every(l => l.startsWith('PASS'));
   say('SELFTEST ' + (pass ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), !pass);

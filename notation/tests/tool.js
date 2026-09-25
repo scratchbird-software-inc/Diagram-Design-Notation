@@ -352,8 +352,61 @@ test('D2: base-font floor and friendly pre-render message derive from the DDN071
   assert.equal(T.quantityPx({ $quantity: NaN, unit: 'px' }, 10.66), 10.66);
 });
 
-test('D3: DDN071 names the implied minimum base font; a satisfiable font renders', () => {
-  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.font";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; overflow: error; } }\n' };
+test('B1-052 D5: artboard pre-validation names the smallest usable artboard (DDN071)', () => {
+  assert.equal(T.pageDims('source'), null, 'source publication is the source file\'s business');
+  assert.equal(T.pageDims('content'), null, 'content-sized pages never down-scale');
+  assert.deepEqual(T.pageDims('web'), { w: 1600, h: 1000 });
+  assert.deepEqual(T.pageDims('custom', 400, 300), { w: 400, h: 300 });
+  assert.deepEqual(T.pageDims('custom'), { w: 1600, h: 1000 }, 'custom defaults mirror the component');
+  const a4p = T.pageDims('a4-portrait'), a4l = T.pageDims('a4-landscape');
+  assert.ok(Math.abs(a4p.w - 210 * 96 / 25.4) < 1e-9 && Math.abs(a4p.h - 297 * 96 / 25.4) < 1e-9);
+  assert.ok(a4l.w === a4p.h && a4l.h === a4p.w, 'landscape swaps the axes');
+  const lp = T.pageDims('letter-portrait');
+  assert.ok(lp.w === 8.5 * 96 && lp.h === 11 * 96);
+  assert.throws(() => T.pageDims('tabloid'), /unknown page preset/);
+  // Scale floor: default base 16 → smallest role 11px; relations cap at 12·scale.
+  assert.ok(Math.abs(T.pageScaleFloor(8 * 96 / 72, 16, true) - (8 * 96 / 72) / 11) < 1e-12);
+  assert.ok(T.pageScaleFloor(8, 16, false) < T.pageScaleFloor(16, 16, false), 'higher minimum → higher floor');
+  assert.throws(() => T.pageScaleFloor(0, 16, true), /positive number/);
+  // Scene geometry: 800×500 drawing, 360×210 chrome overhead, default minimum.
+  const ctx = { contentW: 800, contentH: 500, chromeW: 360, chromeH: 210, minTextPx: 8 * 96 / 72, baseFontPx: 16, hasRelations: true, embeddingScale: 1 };
+  const floor = T.pageScaleFloor(ctx.minTextPx, ctx.baseFontPx, true);
+  const minW = Math.ceil(800 * floor + 360 - 1e-9), minH = Math.ceil(500 * floor + 210 - 1e-9);
+  assert.equal(T.artboardProblem(minW, minH, ctx), null, 'the named minimum artboard is usable');
+  assert.equal(T.artboardProblem(1600, 1000, ctx), null, 'a generous artboard passes');
+  assert.equal(T.artboardProblem(null, null, ctx), null, 'content-sized page never blocks');
+  assert.equal(T.artboardProblem(400, 400, null), null, 'no scene yet → renderer backstop');
+  const msg = T.artboardProblem(400, 400, ctx);
+  assert.match(msg, /Artboard 400×400px/);
+  assert.match(msg, /below the 10\.67px minimum \(DDN071\)/);
+  assert.match(msg, new RegExp('smallest usable artboard for this drawing is ' + minW + '×' + minH + 'px'));
+  assert.match(msg, /enlarge the base font, reduce content, or lower publication\.minimum_text/);
+  const oneSide = T.artboardProblem(1600, 400, ctx);
+  assert.match(oneSide, /Artboard 1600×400px/, 'one short side is enough to block');
+  assert.match(oneSide, new RegExp(minW + '×' + minH + 'px'));
+  // Cross-check against the renderer: a page below the named minimum must hard-fail
+  // DDN071 with the remedy; at/above it must render.
+  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.art";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; overflow: error; } }\n' };
+  const ws = A.createWorkspace(files);
+  const full = ws.renderSync({ entry: 'main.ddn', view: 'v' });
+  const scene = full.scene;
+  const liveCtx = { contentW: scene.drawingBounds.w, contentH: scene.drawingBounds.h,
+    chromeW: scene.width - scene.drawingArea.w, chromeH: scene.height - scene.drawingArea.h,
+    minTextPx: 8 * 96 / 72, baseFontPx: 16, hasRelations: true, embeddingScale: 1 };
+  const msg2 = T.artboardProblem(400, 400, liveCtx);
+  assert.ok(msg2, 'tiny artboard flagged for the live scene too');
+  const mw = Number(/is (\d+)×(\d+)px/.exec(msg2)[1]), mh = Number(/is (\d+)×(\d+)px/.exec(msg2)[2]);
+  assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { page: 'custom', width: 800, height: 1000 } }),
+    e => e.code === 'DDN071' && /enlarge the page, reduce content, or raise publication\.minimum_text\/embedding_scale/.test(e.message),
+    'below the named minimum the renderer fails DDN071 naming the remedy');
+  assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { page: 'custom', width: mw - 20, height: 1000 } }),
+    e => e.code === 'DDN071' && /increase base font to ≥[\d.]+px|enlarge the page/.test(e.message),
+    'just below the named minimum every DDN071 branch names its remedy');
+  const ok = A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { page: 'custom', width: mw, height: Math.max(mh, 400) } });
+  assert.ok(ok.svg.includes('<svg'), 'the named minimum artboard renders (height clamped to the component floor 400)');
+});
+
+test('D3: DDN071 names the implied minimum base font; a satisfiable font renders', () => {  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.font";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; publication { size: content; fit: none; overflow: error; } }\n' };
   assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 8 } }),
     e => e.code === 'DDN071' && /5\.50px is below minimum 10\.67px — increase base font to ≥15\.5px/.test(e.message));
   assert.throws(() => A.createWorkspace(files).renderSync({ entry: 'main.ddn', view: 'v', overrides: { fontSize: 15 } }),
