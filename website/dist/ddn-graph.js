@@ -1256,6 +1256,13 @@
    ir=Export.project(ir);
    const textBefore=api$7.stats();
    const p=ir.view.profiles,t=themes[p.style.theme],mono=p.style.theme==='neutral';
+   /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
+    * pre-option emission rules exactly. legend off behaves like placement none
+    * for layout and emission; title off drops the header block and its reserved
+    * band; footer off drops the footer line. */
+   const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
+   const legendPlacement=chrome.legend==='off'?'none':p.legend.placement;
+   const headBlock=titleOn?110:20;
    const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
    const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
    const context={byId:new Map(ir.elements.map(n=>[n.id,n])),members:new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(f=>[f.id,f]))),degrees:{}};
@@ -1263,7 +1270,7 @@
    for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
    let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
    
-   if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=p.legend.placement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$4.round(q$1(p.layout.gap,100)*api$4.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
+   if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=legendPlacement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$4.round(q$1(p.layout.gap,100)*api$4.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
    const placed=api$3.place(geoms,rels,ir,options);geoms=placed.nodes;
    geoms.reduce((m,g)=>Math.max(m,g.w),270);geoms.reduce((m,g)=>Math.max(m,g.h),130);
    const byId=new Map(geoms.map(g=>[g.id,g]));
@@ -1284,25 +1291,25 @@
    const width=maxX-minX+30,height=maxY-minY+30;
    let pageW=q$1(p.publication.width,1280),pageH=q$1(p.publication.height,800);
    if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:8.5*96;pageH=p.publication.size==='a4'?297*96/25.4:11*96;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
-   const margin=q$1(p.publication.margin,32),legendW=p.legend.placement==='right'?q$1(p.legend.width,270):0;
+   const margin=q$1(p.publication.margin,32),legendW=legendPlacement==='right'?q$1(p.legend.width,270):0;
    let legendEntries=rels.map(r=>{const a=ir.elements.find(n=>n.id===r.from.element),b=ir.elements.find(n=>n.id===r.to.element),reg=DDN$1.relationEntry(registry,r.kind);const fromName=a.name+(r.from.member?'.'+(a.fields.find(f=>f.id===r.from.member)?.name||a.ports.find(f=>f.id===r.from.member)?.name||r.from.member.split('.').at(-1)):'');const toName=b.name+(r.to.member?'.'+(b.fields.find(f=>f.id===r.to.member)?.name||b.ports.find(f=>f.id===r.to.member)?.name||r.to.member.split('.').at(-1)):'');let detail=`${fromName} → ${toName}: ${r.name}`;
     const qualifiers=['enforcement','capture','transport','delivery','scope'];for(const prop of qualifiers)if(r.properties[prop]!==undefined)detail+=`; ${prop}: ${pretty(r.properties[prop])}`;
     return {id:r.id,key:ir.view.keys[r.id],name:r.name,reg,lines:api$7.wrap(detail,Math.max(legendW,300)-42,12,p.style.font,400)};
    });
-   const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=p.legend.placement==='bottom'?legendHeight:0;
+   const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=legendPlacement==='bottom'?legendHeight:0;
    const pageTitle=p.publication.title||ir.view.name;
-   if(p.publication.size==='content'){pageW=Math.max(640,api$7.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));pageH=Math.max(360,height+2*margin+110+bottomH,p.legend.placement==='right'?legendHeight+170:0);}
-   const titleLines=api$7.wrap(pageTitle,pageW-2*margin,24,p.style.font,650),captionLines=p.publication.caption?api$7.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0);
-   const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-100-bottomH-extraHeader;
+   if(p.publication.size==='content'){pageW=Math.max(640,api$7.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));pageH=Math.max(360,height+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
+   const titleLines=titleOn?api$7.wrap(pageTitle,pageW-2*margin,24,p.style.font,650):[],captionLines=titleOn&&p.publication.caption?api$7.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=titleOn?(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0):0;
+   const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-(headBlock-10)-bottomH-extraHeader;
    let scale=p.publication.fit==='none'?1:Math.min(1,availW/width,availH/height);
    const diags=[...ir.diagnostics,...placed.diagnostics,...routed.diagnostics];
    if(scale<=0)throw new DDN$1.DDNError('DDN070','Page has no usable drawing area');
    const embeddingScale=q$1(p.publication.embedding_scale,1);if(embeddingScale<=0||embeddingScale>4)throw new DDN$1.DDNError('DDN070','embedding_scale must be >0 and <=4');
    const fontSize=Math.min(11*q$1(p.style.font_size,16)/16*scale,rels.length?12*scale:Infinity,11)*embeddingScale,minFont=q$1(p.publication.minimum_text,10.66);
    if(fontSize<minFont){let d={code:'DDN071',severity:p.publication.overflow==='error'?'error':'warning',message:`Smallest final text ${fontSize.toFixed(2)}px is below minimum ${minFont.toFixed(2)}px`};if(d.severity==='error')throw new DDN$1.DDNError(d.code,d.message);diags.push(d);}
-   if(p.legend.placement==='right'&&legendHeight>pageH-160-extraHeader)throw new DDN$1.DDNError('DDN072','Legend exceeds page height');
+   if(legendPlacement==='right'&&legendHeight>pageH-(headBlock+50)-extraHeader)throw new DDN$1.DDNError('DDN072','Legend exceeds page height');
    if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
-   const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?90+extraHeader+availH/2-pinFocus[1]*scale:90+extraHeader-minY*scale+10;
+   const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
    let diagram='';
    for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$1(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
    const routeColours={};
@@ -1392,18 +1399,19 @@
     if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$1(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
     else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$1(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
    }
-   const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$4.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
+   const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$4.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
    const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
    const fontClass='ddn-font-'+hash(font);
    const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
-   let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$1(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$1(p.publication.caption||'')} ${esc$1(p.style.look)} look; ${esc$1(p.style.theme)} presentation. Crossings are not connections. Relationship details are in the adjacent legend.</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
-   out+=text$1(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
+   let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$1(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$1(p.publication.caption||'')} ${esc$1(p.style.look)} look; ${esc$1(p.style.theme)} presentation. Crossings are not connections.${chrome.legend==='off'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+   if(titleOn)out+=text$1(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
    out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
-   if(p.legend.placement!=='none'&&legendEntries.length){let lx=p.legend.placement==='right'?pageW-margin-legendW:margin,ly=p.legend.placement==='right'?95+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,p.legend.placement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
+   if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
     for(const entry of legendEntries){const key=p.legend.mode==='numbers'?entry.key:entry.reg.code;if(p.legend.mode==='numbers')out+=`<circle cx="${lx+12}" cy="${ly-4}" r="12" fill="${t.surface}" stroke="${t.ink}"/>`+text$1(lx+12,ly,String(key),11,t.ink,700,'text-anchor="middle"');else out+=text$1(lx,ly,String(key),11,t.muted,650);
      out+=multilines(lx+34,ly,entry.lines,12,t.ink,18);ly+=Math.max(44,entry.lines.length*18+16);}
    }
-   out+=line(margin,pageH-39,pageW-margin,pageH-39,t.rule,1)+text$1(margin,pageH-20,'Same data · independent view · fixed semantics · presentation only',11,t.muted)+text$1(pageW-margin,pageH-20,ir.view.local+' / '+ir.registry,11,t.muted,400,'text-anchor="end"')+'</svg>';
+   if(footerOn)out+=line(margin,pageH-39,pageW-margin,pageH-39,t.rule,1)+text$1(margin,pageH-20,'Same data · independent view · fixed semantics · presentation only',11,t.muted)+text$1(pageW-margin,pageH-20,ir.view.local+' / '+ir.registry,11,t.muted,400,'text-anchor="end"');
+   out+='</svg>';
    const textAfter=api$7.stats(),estimated=textAfter.estimated-textBefore.estimated;
    if(estimated){if(p.publication.metrics==='required')throw new DDN$1.DDNError('DDN077','Required measured fonts unavailable; supply text metrics or a browser provider');diags.push({code:'DDN-TW01',severity:'warning',message:'Some text runs used estimated metrics; this is not a typography-certified publication.'});}
    scene.layoutState={format:'ddn-layout-state@1',view:options.viewKey||ir.view.id,positions:Object.fromEntries(geoms.map(g=>[g.id,[g.x,g.y]]))};

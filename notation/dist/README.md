@@ -6,13 +6,13 @@ terser) is a pinned devDependency and never ships inside these bundles.
 
 | Bundle | Contains | Requires loaded first | .js bytes | .mjs bytes | .min.js bytes | .min.js gzip |
 |---|---|---|---|---|---|
-| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 726152 | 720290 | 610904 | 137999 |
-| `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 156629 | 153656 | 110740 | 40996 |
-| `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 24453 | 23911 | 18168 | 7869 |
-| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 91703 | 90239 | 75357 | 27818 |
-| `ddn-geo.js` / `.mjs` / `.min.js` | Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23771 | 23139 | 16201 | 6841 |
-| `ddn-iso.js` / `.mjs` / `.min.js` | Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23406 | 22788 | 14396 | 5996 |
-| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo and ddn-iso, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 1020412 | 1009984 | 838913 | 218810 |
+| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 727915 | 722007 | 611838 | 138264 |
+| `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 157292 | 154303 | 110835 | 41111 |
+| `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 24722 | 24170 | 18271 | 7923 |
+| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 91972 | 90500 | 75471 | 27868 |
+| `ddn-geo.js` / `.mjs` / `.min.js` | Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 24245 | 23601 | 16383 | 6930 |
+| `ddn-iso.js` / `.mjs` / `.min.js` | Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23672 | 23046 | 14511 | 6059 |
+| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo and ddn-iso, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 1023376 | 1012868 | 840174 | 219277 |
 
 Every bundle ships three formats: a readable browser IIFE (`.js`, publishes
 the documented globals `DDNLive`, `DDNRender`, `DDNProjections`,

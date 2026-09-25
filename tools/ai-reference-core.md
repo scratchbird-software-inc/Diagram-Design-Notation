@@ -83,7 +83,7 @@ Only `object`/`domain`/`sample`/`flow`/`assertion`/`relation` may appear in data
 
 ### 3.2 `format <id> ["label"] { … }` — reusable presentation declarations
 
-Named declarations: `notation`, `style`, `layout`, `display`, `publication`, `legend`, `validation`, `export`, `projection`, `keyset`, and `bundle` (a bundle references one declaration of each concern by `@ref`). Example:
+Named declarations: `notation`, `style`, `layout`, `display`, `publication`, `legend`, `chrome`, `validation`, `export`, `projection`, `keyset`, and `bundle` (a bundle references one declaration of each concern by `@ref`). Example:
 
 ```text
 format styles {
@@ -121,7 +121,7 @@ view overview "Title" {
 
 **Resolution order (weakest → strongest):** language defaults → referenced bundle → directly referenced concern (`layout: @x`) → view-local override group (`layout { … }`). Conflicting identities fail rather than last-import-wins. `format:` must reference a `bundle` (DDN043); a concern reference must point at a declaration of that concern type (DDN044).
 
-View-level property keys allowed (DDN033 for anything else not starting `x_`): `projection, data, format, notation, style, layout, display, publication, legend, select, exclude, description, uid, validation, export, spacing`. View children may additionally be `place`, `route`, `frame`, `subdiagram` declarations and override groups named after the concerns (`projection`, `style`, `layout`, …). Any other child → DDN900.
+View-level property keys allowed (DDN033 for anything else not starting `x_`): `projection, data, format, notation, style, layout, display, publication, legend, chrome, title, footer, select, exclude, description, uid, validation, export, spacing`. View children may additionally be `place`, `route`, `frame`, `subdiagram` declarations and override groups named after the concerns (`projection`, `style`, `layout`, …). Any other child → DDN900.
 
 **Selection**: `select: all` (default) or an explicit array of element refs; refs must resolve to in-scope elements (DDN057). `exclude` removes occurrences. A relation is visible when both endpoints are selected unless `display.relations: none`.
 
@@ -134,6 +134,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 **`subdiagram`**: `view:` (must resolve to a view, DDN064), `mode: reference|inline` (DDN900 otherwise), `at`, `size`, `label`, `binding`, `uid`. `reference` links; `inline` embeds the child's own selection/presentation — inline recursion or depth > 6 → DDN065.
 
 **`legend` / `keyset`**: numbered mode assigns callout numbers via `keys: { "<relation-id-or-local-name>": n }`; ambiguous/unknown keys → DDN058, non-positive-integer numbers → DDN059, duplicate numbers → DDN060. `mode: numbers` requires a visible legend placement (DDN047) and a number for EVERY visible relation (DDN061); shared `keyset` declarations preserve numbers across views. Numbers identify relations; they are not time order.
+
+**`chrome`** (B1-045; spec chapter 44): page-chrome visibility, independent of the legend profile's content settings. Flat view-level keywords `legend: auto|on|off`, `title: on|off`, `footer: on|off` (a string `legend:` value is the chrome shorthand; `legend: @ref` still names a legend profile), or a `chrome { legend: …; title: …; footer: …; }` group / named `chrome` declaration (referencable from a bundle). Defaults (`auto`/`on`/`on`) reproduce the pre-B1-045 emission rules byte-for-byte: graph views show the relationship key whenever placement is not `none` (even when route labels self-label); chart series colour keys, matrix encoding keys and geo choropleth/size keys show whenever their data exists; title header and footer lines always show. `off` suppresses and reclaims the reserved band. `legend: off` with `mode: numbers` → DDN047. Invalid flat values → DDN-E018; invalid group/profile values → DDN046. The unified tool's appearance drawer exposes the same three toggles (As authored/on/off) through the render-override channel (`LIVE002` invalid; `legend: off` + numbers → `LIVE021`).
 
 **`validation { mode: sketch|logical|strict; unknown_extensions: warn|error; }`** — `logical` (default): unregistered `x_*` extensions and unknown semantic properties are preserved with warnings (DDN-W103/DDN-W106); `strict`: unregistered extensions (DDN103) and unknown semantic properties (DDN106) fail; sketch-mode endpoint kind mismatches defer to warnings (DDN-W102).
 

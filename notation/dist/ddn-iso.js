@@ -255,8 +255,10 @@
    }
    if(ir.view.frames.length||ir.view.subdiagrams.length)diagnostics.push({code:'DDN-ISOW02',severity:'warning',message:'Isometric graph views render nodes and relations on the ground plane; frames and subdiagrams are flat-view devices and are omitted here (never silently merged).'});
    body+=text(0,H-12*s,'Isometric projection (axonometric 30°) · '+nodes.length+' prisms · relations routed flat, then projected onto the ground plane · prism height is the declared depth.',11);
-   /* Page composition mirrors the geo module's page shape. */
-   const margin=q(p.publication.margin,32),titleLines=Text.wrap(ir.view.name,W,24*s,p.style.font,650),header=Math.max(92*s,(titleLines.length*29+48)*s),footer=46*s;
+   /* Page composition mirrors the geo module's page shape.
+    * B1-045 (D2): chrome toggles; defaults reproduce the pre-option page shape. */
+   const chrome=p.chrome||{title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
+   const margin=q(p.publication.margin,32),titleLines=titleOn?Text.wrap(ir.view.name,W,24*s,p.style.font,650):[],header=titleOn?Math.max(92*s,(titleLines.length*29+48)*s):0,footer=footerOn?46*s:0;
    let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
    if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
    const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
@@ -264,8 +266,10 @@
    const tx=margin+(aw-W*pscale)/2,ty=margin+header;
    const line=(x,y,xx,yy,colour=t.rule,width=1)=>`<path d="M${f(x)} ${f(y)}L${f(xx)} ${f(yy)}" stroke="${colour}" stroke-width="${width}" fill="none"/>`;
    let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${R.cls('ddn-svg','ddn-view-graph','ddn-iso','ddn-profile-'+R.slug(pr.profile))}" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(pr.profile)}. Isometric graph view (axonometric 30°). Nodes are extruded prisms; relations are flat-computed routes projected onto the ground plane.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
-   out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+pr.profile+' / ISO',11,600)+titleLines.map((v,i)=>text(margin,margin+42*s+i*29*s,v,24,650)).join('')+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(pscale)})">`+body+'</g>';
-   out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme+' · iso',11)+text(pageW-margin,pageH-margin,'iso',11,600,'end')+'</svg>';
+   if(titleOn)out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+pr.profile+' / ISO',11,600)+titleLines.map((v,i)=>text(margin,margin+42*s+i*29*s,v,24,650)).join('');
+   out+=`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(pscale)})">`+body+'</g>';
+   if(footerOn)out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme+' · iso',11)+text(pageW-margin,pageH-margin,'iso',11,600,'end');
+   out+='</svg>';
    const after=Text.stats();if(after.estimated>stats.estimated&&!diagnostics.some(d2=>d2.code==='DDN-TW01'))diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});
    const scene={width:pageW,height:pageH,smallestText:smallest,scale:pscale,origin:[tx,ty],nodes:nodes.map(g=>({id:g.id,depth:depthOf(byId.get(g.id))})),routes:fs.routes.map(r=>({id:r.id,points:r.points.map(pt2=>P(pt2[0],pt2[1],0))})),crossings:[],frames:[],subdiagrams:[],marks,projection:{kind:'graph',profile:pr.profile,iso:true,depth:viewDepth,sourceIds:[...shown],quantitative:false},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:after.estimated>stats.estimated?'estimated':'measured',requestedFont:p.style.font}};
    return {svg:out,scene,diagnostics,_ir:ir};

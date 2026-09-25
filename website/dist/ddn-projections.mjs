@@ -654,7 +654,9 @@ function render(ir,reg,glyphs='',options={}){
  }
  if(!Number.isFinite(W)||!Number.isFinite(H)||W>50000||H>50000)throw new D.DDNError('DDN-PJ060','Projection extent exceeds bounded publication budget');
  // Page composition: measurements and all visible labels participate, unlike CSS-only scaling.
- const margin=q(p.publication.margin,32),titleLines=wrap(ir.view.name,W,24,650),header=Math.max(92*s,(titleLines.length*29+48)*s),footer=46*s;
+ /* B1-045 (D2): chrome toggles. Defaults reproduce the pre-option page shape. */
+ const chrome=p.chrome||{title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
+ const margin=q(p.publication.margin,32),titleLines=titleOn?wrap(ir.view.name,W,24,650):[],header=titleOn?Math.max(92*s,(titleLines.length*29+48)*s):0,footer=footerOn?46*s:0;
  let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
  if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
  const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
@@ -665,8 +667,10 @@ function render(ir,reg,glyphs='',options={}){
  if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');
  const tx=margin+(aw-W*scale)/2,ty=margin+header;
  let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${R.cls('ddn-svg','ddn-view-'+plan.kind,'ddn-profile-'+R.slug(plan.profile))}" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
- out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650)+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
- out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end')+'</svg>';
+ if(titleOn)out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650);
+ out+=`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
+ if(footerOn)out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end');
+ out+='</svg>';
  const after=Text.stats(),estimated=after.estimated>stats.estimated;if(estimated){if(p.publication.metrics==='required')throw new D.DDNError('DDN077','Required measured fonts unavailable for projection');diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});}
  const scene={width:pageW,height:pageH,smallestText:smallest,scale,origin:[tx,ty],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:composedSubs,marks,projection:{kind:plan.kind,profile:plan.profile,sourceIds:plan.sourceIds||[],quantitative:!!plan.quantitative},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:estimated?'estimated':'measured',requestedFont:p.style.font}};
  return {svg:out,scene,diagnostics,_ir:ir};

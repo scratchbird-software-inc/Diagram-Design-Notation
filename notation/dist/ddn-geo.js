@@ -247,23 +247,27 @@
     }
    }
 
-   /* Legend. */
+   /* Legend. B1-045: legend: off suppresses the choropleth ramp and the
+    * symbol size key; auto/on keep today's always-when-data rule. */
+   const legendOn=(p.chrome||{legend:'auto'}).legend!=='off';
    body+='</g>'; // end clipped map layer
    let ly=H-8*s;
-   if(plan.mark==='choropleth'&&domain){
+   if(legendOn&&plan.mark==='choropleth'&&domain){
     const lw=Math.min(150*s,W/6);let lx=0;const lo=domain[0],hi=domain[1];
     for(let i=0;i<5;i++){const v0=lo+(hi-lo)*i/5,v1=lo+(hi-lo)*(i+1)/5;body+=rect(lx,ly-64*s,lw,14*s,ramp(i/4),t.rule)+text(lx+2*s,ly-40*s,fmtNumber(v0)+(i===4?' – '+fmtNumber(v1):''),11);lx+=lw+8*s;}
     if(plan.unit)body+=text(lx,ly-52*s,plan.unit,11,600);
    }
-   if(plan.mark==='symbol'&&plan.dots.some(d=>d.size!==undefined)){
+   if(legendOn&&plan.mark==='symbol'&&plan.dots.some(d=>d.size!==undefined)){
     const sizes=plan.dots.map(d=>d.size),sMax=Math.max(...sizes);let lx=0;
     for(const frac of [.25,.6,1]){const v=sMax*frac,r=Math.max(2*s,Math.sqrt(frac)*16*s);body+=`<circle cx="${f(lx+18*s)}" cy="${f(ly-56*s)}" r="${f(r)}" fill="none" stroke="${t.accent}" stroke-width="1.2"/>`+text(lx+18*s+r+5*s,ly-52*s,fmtNumber(v),11);lx+=2*r+70*s;}
    }
    body+=text(0,H-2*s,'Geographic projection: '+plan.method+' · '+geography.features.length+' features · positions derive from declared coordinates only',11);
 
    if(!Number.isFinite(W)||!Number.isFinite(H)||W>50000||H>50000)throw new D.DDNError('DDN-PJ060','Projection extent exceeds bounded publication budget');
-   /* Page composition identical in shape to the data-bound projections. */
-   const margin=q(p.publication.margin,32),titleLines=wrap(ir.view.name,W,24,650),header=Math.max(92*s,(titleLines.length*29+48)*s),footer=46*s;
+   /* Page composition identical in shape to the data-bound projections.
+    * B1-045 (D2): chrome toggles; defaults reproduce the pre-option page shape. */
+   const chrome=p.chrome||{title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
+   const margin=q(p.publication.margin,32),titleLines=titleOn?wrap(ir.view.name,W,24,650):[],header=titleOn?Math.max(92*s,(titleLines.length*29+48)*s):0,footer=footerOn?46*s:0;
    let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
    if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
    const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
@@ -274,8 +278,10 @@
    if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');
    const tx=margin+(aw-W*scale)/2,ty=margin+header;
    let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${R.cls('ddn-svg','ddn-view-geo','ddn-profile-'+R.slug(plan.profile))}" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Geographic projection (${plan.method}). Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
-   out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650)+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
-   out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,'geo',11,600,'end')+'</svg>';
+   if(titleOn)out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650);
+   out+=`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
+   if(footerOn)out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,'geo',11,600,'end');
+   out+='</svg>';
    const after=Text.stats(),estimated=after.estimated>stats.estimated;if(estimated){if(p.publication.metrics==='required')throw new D.DDNError('DDN077','Required measured fonts unavailable for projection');diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});}
    const scene={width:pageW,height:pageH,smallestText:smallest,scale,origin:[tx,ty],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:[],marks,projection:{kind:'geo',profile:plan.profile,sourceIds:plan.sourceIds,quantitative:plan.mark!=='outline'},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:estimated?'estimated':'measured',requestedFont:p.style.font}};
    return {svg:out,scene,diagnostics,_ir:ir};

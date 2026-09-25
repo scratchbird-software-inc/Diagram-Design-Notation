@@ -53,6 +53,9 @@ function encodedColour(intensity,theme,palette){
 }
 function draw(plan,ir,c){
  const {text,lines,wrap,line,rect,group,colour,s,theme:t,diagnostics=[],options={}}=c,p=ir.view.profiles.projection;let W=c.W,H=600*s,body='';
+ /* B1-045 (D2): legend: off suppresses colour/series keys; auto/on keep the
+  * pre-option always-when-data rule. */
+ const legendOn=(ir.view.profiles.chrome||{legend:'auto'}).legend!=='off';
  const recolor=(svg,col)=>svg.replace(/(<text\b[^>]*\bfill=")[^"]*(")/g,'$1'+col+'$2');
  const sourceGroup=(ids,content,box={},property)=>group(ids[0],ids,content,box,property);
  if(plan.kind==='matrix'&&plan.encoding){
@@ -63,9 +66,11 @@ function draw(plan,ir,c){
    for(let j=0;j<plan.columns.length;j++){const cell=plan.cells[i][j],x=rw+j*cw,paint=cell.length?encodedColour(cell[0].intensity,t,ir.view.profiles.style.theme==='neutral'?'grey':plan.encoding.palette):{fill:t.background,ink:t.muted},ids=cell.map(n=>n.id),txt=lines(cellLines[j],x+cw/2,y+(rh-(cellLines[j].length-1)*18*s)/2+4*s,12,600,'middle');body+=group(ids[0]||plan.rows[i].id,ids,rect(x,y,cw,rh,paint.fill,t.rule,true)+recolor(txt,paint.ink),{x,y,w:cw,h:rh,rowId:plan.rows[i].id,columnId:plan.columns[j].id,relationKind:p.relation,rawValue:cell[0]?.raw??null},p.value);}
    y+=rh;
   }
-  let xx=0,yy=y+40*s;const e=plan.encoding,legend=e.mode==='numeric'?Array.from({length:5},(_,i)=>({t:i/4,label:fmt(e.domain[0]+(e.domain[1]-e.domain[0])*i/4)})):e.labels.map((label,i)=>({t:e.labels.length===1?.5:i/(e.labels.length-1),label:e.mode==='bands'?label+' ['+e.boundaries[i]+', '+e.boundaries[i+1]+(i===e.labels.length-1?']':')'):label}));
+  if(legendOn){let xx=0,yy=y+40*s;const e=plan.encoding,legend=e.mode==='numeric'?Array.from({length:5},(_,i)=>({t:i/4,label:fmt(e.domain[0]+(e.domain[1]-e.domain[0])*i/4)})):e.labels.map((label,i)=>({t:e.labels.length===1?.5:i/(e.labels.length-1),label:e.mode==='bands'?label+' ['+e.boundaries[i]+', '+e.boundaries[i+1]+(i===e.labels.length-1?']':')'):label}));
   for(const v of legend){const lw=Math.min(W,Math.max(120*s,v.label.length*7*s+48*s));if(xx+lw>W){xx=0;yy+=38*s;}body+=rect(xx,yy-17*s,22*s,22*s,encodedColour(v.t,t,ir.view.profiles.style.theme==='neutral'?'grey':e.palette).fill,t.rule,true)+text(xx+31*s,yy,v.label,11);xx+=lw;}
-  H=yy+60*s;body+=text(0,H-16*s,'Missing is not zero. Colours follow the declared legend; labels remain visible in monochrome exports.',11);return {body,W,H};
+  H=yy+60*s;body+=text(0,H-16*s,'Missing is not zero. Colours follow the declared legend; labels remain visible in monochrome exports.',11);}
+  else H=y+40*s;
+  return {body,W,H};
  }
  if(plan.kind==='fishbone'){
   const count=n=>1+n.children.reduce((s,c)=>s+count(c),0),depth=n=>1+Math.max(0,...n.children.map(depth));
@@ -112,7 +117,7 @@ function draw(plan,ir,c){
  }
  if(categories.length)W=Math.max(W,categories.length*65*s+155*s);
  let lo=tr==='boxplot'?Math.min(...ys):Math.min(0,...ys),hi=tr==='boxplot'?Math.max(...ys):Math.max(0,...ys);if(tr==='boxplot'&&hi>lo){const pad=(hi-lo)*.08;lo-=pad;hi+=pad;}if(lo===hi)hi=lo+1;if(!Number.isFinite(hi-lo))throw Object.assign(new Error('Quantitative extent overflow'),{code:'DDN-QC099'});
- const legendSlots=[];let legendX=100*s,legendY=54*s;if(tr==='identity')for(const layer of plan.layers){const ww=Math.min(W-155*s,Math.max(110*s,layer.series.length*8*s+50*s));if(legendX+ww>W-55*s){legendX=100*s;legendY+=24*s;}legendSlots.push({x:legendX,y:legendY,w:ww});legendX+=ww;}H+=Math.max(0,legendY-54*s);
+ const legendSlots=[];let legendX=100*s,legendY=54*s;if(legendOn&&tr==='identity')for(const layer of plan.layers){const ww=Math.min(W-155*s,Math.max(110*s,layer.series.length*8*s+50*s));if(legendX+ww>W-55*s){legendX=100*s;legendY+=24*s;}legendSlots.push({x:legendX,y:legendY,w:ww});legendX+=ww;}H+=Math.max(0,legendY-54*s);
  const labelDepth=categories.length?Math.max(...categories.map(x=>wrap(String(x),(W-155*s)/categories.length-10*s,11).length)):1,labelSpace=Math.max(145*s,(labelDepth*16+75)*s);H+=labelSpace-145*s;
  const isoPad=isoSpec?isoSpec.viewDepth*plan.layers.length:0;
  const left=100*s,right=W-(tr==='pareto'?90:55)*s-(isoPad?Math.ceil(isoPad*ISO.COS30)+4:0),top=Math.max(80*s,legendY+26*s)+(isoPad?Math.ceil(isoPad*ISO.SIN30):0),bottom=H-labelSpace,pw=right-left,ph=bottom-top,fy=v=>bottom-(v-lo)/(hi-lo)*ph,barWidth=pw/Math.max(categories.length,1)*.66,step=pw/Math.max(categories.length,1),xcat=i=>left+(i+.5)*step;
@@ -165,7 +170,7 @@ function draw(plan,ir,c){
    if(['line','area'].includes(layer.mark))for(const run of runs){const d=run.map((pt,i)=>(i?'L':'M')+f(xc(pt.x))+' '+f(fy(pt.end))).join(' ');if(layer.mark==='area'){const bottomPath=run.slice().reverse().map(pt=>'L'+f(xc(pt.x))+' '+f(fy(pt.start))).join(' ');body+=`<path d="${d+bottomPath}Z" fill="${col}" opacity="${plan.arrangement==='overlay'?.15:.36}"/>`;}body+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.3"${li%3===1?' stroke-dasharray="7 3"':li%3===2?' stroke-dasharray="2 3"':''}/>`;}
    ps.filter(pt=>pt.y!==null).forEach(pt=>{let x=xc(pt.x),w=barWidth;if(layer.mark==='bar'){if(plan.arrangement==='group'){w=barWidth/n;x+=-barWidth/2+w*(plan.series.indexOf(ser)+.5);}body+=bar(x-w/2,w,pt.start,pt.end,col,pt.sourceIds,{value:pt.y,rawValue:pt.rawY,start:pt.start,end:pt.end,series:ser,synthetic:!!pt.synthetic,title:ser+' / '+pt.x+': '+fmt(pt.rawY)});}else body+=sourceGroup(pt.sourceIds,`<circle cx="${f(x)}" cy="${f(fy(pt.end))}" r="${4*s}" fill="${col}" stroke="${t.surface}"><title>${esc(ser+' / '+pt.x+': '+fmt(pt.rawY))}</title></circle>`,{x:x-4*s,y:fy(pt.end)-4*s,w:8*s,h:8*s,value:pt.y,series:ser},p.y);});
   });
-  plan.layers.forEach((layer,i)=>{const a=legendSlots[i];body+=line(a.x,a.y,a.x+22*s,a.y,colour(i),3)+text(a.x+29*s,a.y+4*s,layer.series,11);});
+  if(legendSlots.length)plan.layers.forEach((layer,i)=>{const a=legendSlots[i];body+=line(a.x,a.y,a.x+22*s,a.y,colour(i),3)+text(a.x+29*s,a.y+4*s,layer.series,11);});
   if(plan.target!==undefined)body+=line(left,fy(plan.target),right,fy(plan.target),t.ink,1.6,'6 4')+text(right,fy(plan.target)-8*s,'Target '+fmt(plan.target),11,600,'end');
  }
  if(tr!=='histogram'){

@@ -1923,10 +1923,11 @@
       display:{fields:'names',kind:'icon_token',maturity:'token',badges:'tokens',relations:'between_selected',samples:'show',domains:'hide',datatypes:'hide',depth:32},
       publication:{size:'figure',width:{$quantity:1280,unit:'px'},height:{$quantity:800,unit:'px'},margin:{$quantity:32,unit:'px'},fit:'contain',minimum_text:{$quantity:8,unit:'pt'},overflow:'error'},
       legend:{mode:'text',placement:'right',width:{$quantity:310,unit:'px'},keys:{}},
+      chrome:{legend:'auto',title:'on',footer:'on'},
       validation:{mode:'logical',unknown_extensions:'warn'},
       export:{mode:'full',elements:[],fields:null,properties:[],include_samples:false,identifier_mode:'opaque',title:'Published data view',format:'json'},
     };
-    const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
+    const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
     const PROPERTIES={
       projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','traces','geography','method','graticule','iso','depth'],
       notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
@@ -1934,10 +1935,11 @@
       display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
       publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
       legend:['mode','placement','width','keys','keyset','scope'],
+      chrome:['legend','title','footer'],
       validation:['mode','unknown_extensions'],
       export:['mode','elements','fields','properties','include_samples','identifier_mode','title','format'],
-      bundle:['projection','notation','style','layout','display','publication','legend','validation','export','spacing'],
-      view:['projection','data','format','notation','style','layout','display','publication','legend','select','exclude','description','uid','validation','export','spacing'],
+      bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','validation','export','spacing'],
+      view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','select','exclude','description','uid','validation','export','spacing'],
       place:['at','size'],route:['via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
       subdiagram:['view','mode','at','size','label','binding','uid'],
       frame:['scope','members','at','size','label','dimension'],
@@ -1967,9 +1969,25 @@
       if(view.props.format){bundle=ws.resolve(view.props.format,view);if(bundle.type!=='bundle')throw new DDNError('DDN043','format must reference a bundle',view.source,view.start);}
       for(const type of Object.keys(p)){
         const r=view.props[type]||(bundle&&bundle.props[type]);let def=null;
-        if(r){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
+        // B1-045 (D2/D3): a string `legend: auto|on|off` is the chrome shorthand,
+        // not a legend profile reference; it is applied to p.chrome below.
+        if(r&&!(type==='legend'&&typeof r==='string')){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
         const overrides=group(view,type);if(overrides){validateKnown(overrides,PROPERTIES[type]);p[type]={...p[type],...resolveValue(overrides.props,overrides)};}
         if(type==='legend'&&def&&def.props.keyset){let keyset=ws.resolve(def.props.keyset,def);if(keyset.type!=='keyset')throw new DDNError('DDN044','Expected keyset',def.source,def.start);p.legend.keys={...keyset.props.keys,...p.legend.keys};}
+      }
+      /* B1-045 (D2/D3): view chrome visibility. Flat keywords legend:/title:/footer:
+       * on the view (or its format bundle) mirror into the chrome profile bag; the
+       * view beats the bundle. A {$ref} legend value still names a legend profile.
+       * Invalid values are the coded error DDN-E018. */
+      for(const src of [bundle,view]){
+        if(!src)continue;
+        for(const k of ['legend','title','footer']){
+          const raw=src.props[k];
+          if(typeof raw!=='string')continue;
+          const allowed=CHOICES.chrome[k];
+          if(!allowed.includes(raw))throw new DDNError('DDN-E018','Unknown '+k+' chrome value '+JSON.stringify(raw)+'; expected '+allowed.join(', '),src.source,src.start);
+          p.chrome[k]=raw;
+        }
       }
       if(quantity(p.style.font_size,16)<8||quantity(p.style.font_size,16)>64)throw new DDNError('DDN046','font_size must be between 8px and 64px',view.source,view.start);
       // Spacing hint: view declaration wins over the referenced format (bundle);
@@ -1993,7 +2011,7 @@
       if(!Number.isSafeInteger(p.layout.columns)||p.layout.columns<1||p.layout.columns>100)throw new DDNError('DDN046','layout.columns must be 1..100',view.source,view.start);
       if(!Number.isSafeInteger(p.display.depth)||p.display.depth<0||p.display.depth>64)throw new DDNError('DDN046','display.depth must be 0..64',view.source,view.start);
       if(!['repair','strict'].includes(p.layout.route_policy)||!['error','warn'].includes(p.layout.quality))throw new DDNError('DDN046','Invalid routing policy',view.source,view.start);
-      if(p.legend.mode==='numbers'&&p.legend.placement==='none')throw new DDNError('DDN047','Numbered relationships require a legend',view.source,view.start);
+      if(p.legend.mode==='numbers'&&(p.legend.placement==='none'||p.chrome.legend==='off'))throw new DDNError('DDN047','Numbered relationships require a legend',view.source,view.start);
       function resolveValue(v,n){if(Array.isArray(v))return v.map(x=>resolveValue(x,n));if(v&&typeof v==='object'){if(v.$ref)return {$ref:ws.resolve(v,n).uid};const o={};for(const[k,x]of Object.entries(v))if(k!=='$offset')o[k]=k==='depth'?resolveDepthValue(x,n):resolveValue(x,n);return o;}return v;}
       /* B1-034 (D3): depth: @data.record.field — the dotted reference names a
        * record element plus a field path. Whole-reference resolution wins; on a
@@ -2515,8 +2533,8 @@
   const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
   class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
   const fail=(code,message)=>{throw new LiveError(code,message);};
-  const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
-  const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
+  const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],legend:['source','on','off'],title:['source','on','off'],footer:['source','on','off'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
+  const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',legend:'source',title:'source',footer:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
   const routingValues=['orthogonal','straight','curved','rounded'];
   function checkOptions(o={}){
    if(!o||typeof o!=='object'||Array.isArray(o))fail('LIVE001','Presentation options must be a record.');
@@ -2602,6 +2620,11 @@
    if(o.fontSize!==null)p.style.font_size=Q(o.fontSize);
    for(const k of ['fields','domains','datatypes','kind'])if(o[k]!=='source')p.display[k]=o[k];if(o.depth!==null)p.display.depth=o.depth;
    if(o.labels!=='source')p.legend.mode=o.labels;
+   /* B1-045 (D4): chrome visibility overlay. legend:off with numbered
+    * relationships is the same contradiction the parser rejects with DDN047. */
+   p.chrome=p.chrome||{legend:'auto',title:'on',footer:'on'};
+   for(const k of ['legend','title','footer'])if(o[k]!=='source')p.chrome[k]=o[k];
+   if(p.chrome.legend==='off'&&p.legend.mode==='numbers')fail('LIVE021','Numbered relationships require a legend');
    if(p.legend.mode==='numbers'){
     if(p.legend.placement==='none')p.legend.placement='right';
     const used=new Set(Object.values(ir.view.keys)),rels=[...ir.relations].sort((a,b)=>a.id.localeCompare(b.id));let n=1;

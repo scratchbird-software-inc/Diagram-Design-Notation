@@ -1924,10 +1924,11 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     display:{fields:'names',kind:'icon_token',maturity:'token',badges:'tokens',relations:'between_selected',samples:'show',domains:'hide',datatypes:'hide',depth:32},
     publication:{size:'figure',width:{$quantity:1280,unit:'px'},height:{$quantity:800,unit:'px'},margin:{$quantity:32,unit:'px'},fit:'contain',minimum_text:{$quantity:8,unit:'pt'},overflow:'error'},
     legend:{mode:'text',placement:'right',width:{$quantity:310,unit:'px'},keys:{}},
+    chrome:{legend:'auto',title:'on',footer:'on'},
     validation:{mode:'logical',unknown_extensions:'warn'},
     export:{mode:'full',elements:[],fields:null,properties:[],include_samples:false,identifier_mode:'opaque',title:'Published data view',format:'json'},
   };
-  const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
+  const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
   const PROPERTIES={
     projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','traces','geography','method','graticule','iso','depth'],
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
@@ -1935,10 +1936,11 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
     publication:['size','width','height','margin','orientation','fit','minimum_text','overflow','title','caption','embedding_scale','metrics'],
     legend:['mode','placement','width','keys','keyset','scope'],
+    chrome:['legend','title','footer'],
     validation:['mode','unknown_extensions'],
     export:['mode','elements','fields','properties','include_samples','identifier_mode','title','format'],
-    bundle:['projection','notation','style','layout','display','publication','legend','validation','export','spacing'],
-    view:['projection','data','format','notation','style','layout','display','publication','legend','select','exclude','description','uid','validation','export','spacing'],
+    bundle:['projection','notation','style','layout','display','publication','legend','chrome','title','footer','validation','export','spacing'],
+    view:['projection','data','format','notation','style','layout','display','publication','legend','chrome','title','footer','select','exclude','description','uid','validation','export','spacing'],
     place:['at','size'],route:['via','source_side','target_side','callout','policy','source_fraction','target_fraction','routing','curve','curve_tension','curve_radius'],
     subdiagram:['view','mode','at','size','label','binding','uid'],
     frame:['scope','members','at','size','label','dimension'],
@@ -1968,9 +1970,25 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     if(view.props.format){bundle=ws.resolve(view.props.format,view);if(bundle.type!=='bundle')throw new DDNError('DDN043','format must reference a bundle',view.source,view.start);}
     for(const type of Object.keys(p)){
       const r=view.props[type]||(bundle&&bundle.props[type]);let def=null;
-      if(r){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
+      // B1-045 (D2/D3): a string `legend: auto|on|off` is the chrome shorthand,
+      // not a legend profile reference; it is applied to p.chrome below.
+      if(r&&!(type==='legend'&&typeof r==='string')){def=ws.resolve(r,view.props[type]?view:bundle);if(def.type!==type)throw new DDNError('DDN044',`Expected ${type} profile, found ${def.type}`,view.source,view.start);p[type]={...p[type],...resolveValue(def.props,def)};}
       const overrides=group(view,type);if(overrides){validateKnown(overrides,PROPERTIES[type]);p[type]={...p[type],...resolveValue(overrides.props,overrides)};}
       if(type==='legend'&&def&&def.props.keyset){let keyset=ws.resolve(def.props.keyset,def);if(keyset.type!=='keyset')throw new DDNError('DDN044','Expected keyset',def.source,def.start);p.legend.keys={...keyset.props.keys,...p.legend.keys};}
+    }
+    /* B1-045 (D2/D3): view chrome visibility. Flat keywords legend:/title:/footer:
+     * on the view (or its format bundle) mirror into the chrome profile bag; the
+     * view beats the bundle. A {$ref} legend value still names a legend profile.
+     * Invalid values are the coded error DDN-E018. */
+    for(const src of [bundle,view]){
+      if(!src)continue;
+      for(const k of ['legend','title','footer']){
+        const raw=src.props[k];
+        if(typeof raw!=='string')continue;
+        const allowed=CHOICES.chrome[k];
+        if(!allowed.includes(raw))throw new DDNError('DDN-E018','Unknown '+k+' chrome value '+JSON.stringify(raw)+'; expected '+allowed.join(', '),src.source,src.start);
+        p.chrome[k]=raw;
+      }
     }
     if(quantity(p.style.font_size,16)<8||quantity(p.style.font_size,16)>64)throw new DDNError('DDN046','font_size must be between 8px and 64px',view.source,view.start);
     // Spacing hint: view declaration wins over the referenced format (bundle);
@@ -1994,7 +2012,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     if(!Number.isSafeInteger(p.layout.columns)||p.layout.columns<1||p.layout.columns>100)throw new DDNError('DDN046','layout.columns must be 1..100',view.source,view.start);
     if(!Number.isSafeInteger(p.display.depth)||p.display.depth<0||p.display.depth>64)throw new DDNError('DDN046','display.depth must be 0..64',view.source,view.start);
     if(!['repair','strict'].includes(p.layout.route_policy)||!['error','warn'].includes(p.layout.quality))throw new DDNError('DDN046','Invalid routing policy',view.source,view.start);
-    if(p.legend.mode==='numbers'&&p.legend.placement==='none')throw new DDNError('DDN047','Numbered relationships require a legend',view.source,view.start);
+    if(p.legend.mode==='numbers'&&(p.legend.placement==='none'||p.chrome.legend==='off'))throw new DDNError('DDN047','Numbered relationships require a legend',view.source,view.start);
     function resolveValue(v,n){if(Array.isArray(v))return v.map(x=>resolveValue(x,n));if(v&&typeof v==='object'){if(v.$ref)return {$ref:ws.resolve(v,n).uid};const o={};for(const[k,x]of Object.entries(v))if(k!=='$offset')o[k]=k==='depth'?resolveDepthValue(x,n):resolveValue(x,n);return o;}return v;}
     /* B1-034 (D3): depth: @data.record.field — the dotted reference names a
      * record element plus a field path. Whole-reference resolution wins; on a
@@ -3725,6 +3743,13 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  ir=Export.project(ir);
  const textBefore=api$9.stats();
  const p=ir.view.profiles,t=themes[p.style.theme],mono=p.style.theme==='neutral';
+ /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
+  * pre-option emission rules exactly. legend off behaves like placement none
+  * for layout and emission; title off drops the header block and its reserved
+  * band; footer off drops the footer line. */
+ const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
+ const legendPlacement=chrome.legend==='off'?'none':p.legend.placement;
+ const headBlock=titleOn?110:20;
  const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
  const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
  const context={byId:new Map(ir.elements.map(n=>[n.id,n])),members:new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(f=>[f.id,f]))),degrees:{}};
@@ -3732,7 +3757,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
  
- if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$2(p.publication.width,1280),reserve=p.legend.placement==='right'?q$2(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$2(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$6.round(q$2(p.layout.gap,100)*api$6.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
+ if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$2(p.publication.width,1280),reserve=legendPlacement==='right'?q$2(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$2(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$6.round(q$2(p.layout.gap,100)*api$6.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=api$5.place(geoms,rels,ir,options);geoms=placed.nodes;
  geoms.reduce((m,g)=>Math.max(m,g.w),270);geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
@@ -3753,25 +3778,25 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const width=maxX-minX+30,height=maxY-minY+30;
  let pageW=q$2(p.publication.width,1280),pageH=q$2(p.publication.height,800);
  if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:8.5*96;pageH=p.publication.size==='a4'?297*96/25.4:11*96;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
- const margin=q$2(p.publication.margin,32),legendW=p.legend.placement==='right'?q$2(p.legend.width,270):0;
+ const margin=q$2(p.publication.margin,32),legendW=legendPlacement==='right'?q$2(p.legend.width,270):0;
  let legendEntries=rels.map(r=>{const a=ir.elements.find(n=>n.id===r.from.element),b=ir.elements.find(n=>n.id===r.to.element),reg=DDN$1.relationEntry(registry,r.kind);const fromName=a.name+(r.from.member?'.'+(a.fields.find(f=>f.id===r.from.member)?.name||a.ports.find(f=>f.id===r.from.member)?.name||r.from.member.split('.').at(-1)):'');const toName=b.name+(r.to.member?'.'+(b.fields.find(f=>f.id===r.to.member)?.name||b.ports.find(f=>f.id===r.to.member)?.name||r.to.member.split('.').at(-1)):'');let detail=`${fromName} → ${toName}: ${r.name}`;
   const qualifiers=['enforcement','capture','transport','delivery','scope'];for(const prop of qualifiers)if(r.properties[prop]!==undefined)detail+=`; ${prop}: ${pretty(r.properties[prop])}`;
   return {id:r.id,key:ir.view.keys[r.id],name:r.name,reg,lines:api$9.wrap(detail,Math.max(legendW,300)-42,12,p.style.font,400)};
  });
- const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=p.legend.placement==='bottom'?legendHeight:0;
+ const legendHeight=50+legendEntries.reduce((n,e)=>n+Math.max(44,e.lines.length*18+16),0),bottomH=legendPlacement==='bottom'?legendHeight:0;
  const pageTitle=p.publication.title||ir.view.name;
- if(p.publication.size==='content'){pageW=Math.max(640,api$9.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));pageH=Math.max(360,height+2*margin+110+bottomH,p.legend.placement==='right'?legendHeight+170:0);}
- const titleLines=api$9.wrap(pageTitle,pageW-2*margin,24,p.style.font,650),captionLines=p.publication.caption?api$9.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0);
- const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-100-bottomH-extraHeader;
+ if(p.publication.size==='content'){pageW=Math.max(640,api$9.measure(pageTitle,24,p.style.font,650).width+2*margin,width+2*margin+(legendW?legendW+25:0));pageH=Math.max(360,height+2*margin+headBlock+bottomH,legendPlacement==='right'?legendHeight+headBlock+60:0);}
+ const titleLines=titleOn?api$9.wrap(pageTitle,pageW-2*margin,24,p.style.font,650):[],captionLines=titleOn&&p.publication.caption?api$9.wrap(p.publication.caption,pageW-2*margin,13,p.style.font,400):[],extraHeader=titleOn?(titleLines.length-1)*28+(captionLines.length?captionLines.length*18+8:0):0;
+ const availW=pageW-2*margin-(legendW?legendW+25:0),availH=pageH-2*margin-(headBlock-10)-bottomH-extraHeader;
  let scale=p.publication.fit==='none'?1:Math.min(1,availW/width,availH/height);
  const diags=[...ir.diagnostics,...placed.diagnostics,...routed.diagnostics];
  if(scale<=0)throw new DDN$1.DDNError('DDN070','Page has no usable drawing area');
  const embeddingScale=q$2(p.publication.embedding_scale,1);if(embeddingScale<=0||embeddingScale>4)throw new DDN$1.DDNError('DDN070','embedding_scale must be >0 and <=4');
  const fontSize=Math.min(11*q$2(p.style.font_size,16)/16*scale,rels.length?12*scale:Infinity,11)*embeddingScale,minFont=q$2(p.publication.minimum_text,10.66);
  if(fontSize<minFont){let d={code:'DDN071',severity:p.publication.overflow==='error'?'error':'warning',message:`Smallest final text ${fontSize.toFixed(2)}px is below minimum ${minFont.toFixed(2)}px`};if(d.severity==='error')throw new DDN$1.DDNError(d.code,d.message);diags.push(d);}
- if(p.legend.placement==='right'&&legendHeight>pageH-160-extraHeader)throw new DDN$1.DDNError('DDN072','Legend exceeds page height');
+ if(legendPlacement==='right'&&legendHeight>pageH-(headBlock+50)-extraHeader)throw new DDN$1.DDNError('DDN072','Legend exceeds page height');
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
- const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?90+extraHeader+availH/2-pinFocus[1]*scale:90+extraHeader-minY*scale+10;
+ const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
  let diagram='';
  for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$3(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
  const routeColours={};
@@ -3861,18 +3886,19 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$3(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
   else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$3(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
  }
- const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$6.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:90+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
+ const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$6.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
  const fontClass='ddn-font-'+hash(font);
  const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt$1(pageW)}" height="${fmt$1(pageH)}" viewBox="0 0 ${fmt$1(pageW)} ${fmt$1(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$3(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$3(p.publication.caption||'')} ${esc$3(p.style.look)} look; ${esc$3(p.style.theme)} presentation. Crossings are not connections. Relationship details are in the adjacent legend.</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
- out+=text$1(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt$1(pageW)}" height="${fmt$1(pageH)}" viewBox="0 0 ${fmt$1(pageW)} ${fmt$1(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$3(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$3(p.publication.caption||'')} ${esc$3(p.style.look)} look; ${esc$3(p.style.theme)} presentation. Crossings are not connections.${chrome.legend==='off'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+ if(titleOn)out+=text$1(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
  out+=`<g id="drawing" transform="translate(${fmt$1(tx)} ${fmt$1(ty)}) scale(${fmt$1(scale)})">${diagram}</g>`;
- if(p.legend.placement!=='none'&&legendEntries.length){let lx=p.legend.placement==='right'?pageW-margin-legendW:margin,ly=p.legend.placement==='right'?95+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,p.legend.placement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
+ if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
   for(const entry of legendEntries){const key=p.legend.mode==='numbers'?entry.key:entry.reg.code;if(p.legend.mode==='numbers')out+=`<circle cx="${lx+12}" cy="${ly-4}" r="12" fill="${t.surface}" stroke="${t.ink}"/>`+text$1(lx+12,ly,String(key),11,t.ink,700,'text-anchor="middle"');else out+=text$1(lx,ly,String(key),11,t.muted,650);
    out+=multilines(lx+34,ly,entry.lines,12,t.ink,18);ly+=Math.max(44,entry.lines.length*18+16);}
  }
- out+=line(margin,pageH-39,pageW-margin,pageH-39,t.rule,1)+text$1(margin,pageH-20,'Same data · independent view · fixed semantics · presentation only',11,t.muted)+text$1(pageW-margin,pageH-20,ir.view.local+' / '+ir.registry,11,t.muted,400,'text-anchor="end"')+'</svg>';
+ if(footerOn)out+=line(margin,pageH-39,pageW-margin,pageH-39,t.rule,1)+text$1(margin,pageH-20,'Same data · independent view · fixed semantics · presentation only',11,t.muted)+text$1(pageW-margin,pageH-20,ir.view.local+' / '+ir.registry,11,t.muted,400,'text-anchor="end"');
+ out+='</svg>';
  const textAfter=api$9.stats(),estimated=textAfter.estimated-textBefore.estimated;
  if(estimated){if(p.publication.metrics==='required')throw new DDN$1.DDNError('DDN077','Required measured fonts unavailable; supply text metrics or a browser provider');diags.push({code:'DDN-TW01',severity:'warning',message:'Some text runs used estimated metrics; this is not a typography-certified publication.'});}
  scene.layoutState={format:'ddn-layout-state@1',view:options.viewKey||ir.view.id,positions:Object.fromEntries(geoms.map(g=>[g.id,[g.x,g.y]]))};
@@ -4014,6 +4040,9 @@ function encodedColour(intensity,theme,palette){
 }
 function draw(plan,ir,c){
  const {text,lines,wrap,line,rect,group,colour,s,theme:t,diagnostics=[],options={}}=c,p=ir.view.profiles.projection;let W=c.W,H=600*s,body='';
+ /* B1-045 (D2): legend: off suppresses colour/series keys; auto/on keep the
+  * pre-option always-when-data rule. */
+ const legendOn=(ir.view.profiles.chrome||{legend:'auto'}).legend!=='off';
  const recolor=(svg,col)=>svg.replace(/(<text\b[^>]*\bfill=")[^"]*(")/g,'$1'+col+'$2');
  const sourceGroup=(ids,content,box={},property)=>group(ids[0],ids,content,box,property);
  if(plan.kind==='matrix'&&plan.encoding){
@@ -4024,9 +4053,11 @@ function draw(plan,ir,c){
    for(let j=0;j<plan.columns.length;j++){const cell=plan.cells[i][j],x=rw+j*cw,paint=cell.length?encodedColour(cell[0].intensity,t,ir.view.profiles.style.theme==='neutral'?'grey':plan.encoding.palette):{fill:t.background,ink:t.muted},ids=cell.map(n=>n.id),txt=lines(cellLines[j],x+cw/2,y+(rh-(cellLines[j].length-1)*18*s)/2+4*s,12,600,'middle');body+=group(ids[0]||plan.rows[i].id,ids,rect(x,y,cw,rh,paint.fill,t.rule,true)+recolor(txt,paint.ink),{x,y,w:cw,h:rh,rowId:plan.rows[i].id,columnId:plan.columns[j].id,relationKind:p.relation,rawValue:cell[0]?.raw??null},p.value);}
    y+=rh;
   }
-  let xx=0,yy=y+40*s;const e=plan.encoding,legend=e.mode==='numeric'?Array.from({length:5},(_,i)=>({t:i/4,label:fmt(e.domain[0]+(e.domain[1]-e.domain[0])*i/4)})):e.labels.map((label,i)=>({t:e.labels.length===1?.5:i/(e.labels.length-1),label:e.mode==='bands'?label+' ['+e.boundaries[i]+', '+e.boundaries[i+1]+(i===e.labels.length-1?']':')'):label}));
+  if(legendOn){let xx=0,yy=y+40*s;const e=plan.encoding,legend=e.mode==='numeric'?Array.from({length:5},(_,i)=>({t:i/4,label:fmt(e.domain[0]+(e.domain[1]-e.domain[0])*i/4)})):e.labels.map((label,i)=>({t:e.labels.length===1?.5:i/(e.labels.length-1),label:e.mode==='bands'?label+' ['+e.boundaries[i]+', '+e.boundaries[i+1]+(i===e.labels.length-1?']':')'):label}));
   for(const v of legend){const lw=Math.min(W,Math.max(120*s,v.label.length*7*s+48*s));if(xx+lw>W){xx=0;yy+=38*s;}body+=rect(xx,yy-17*s,22*s,22*s,encodedColour(v.t,t,ir.view.profiles.style.theme==='neutral'?'grey':e.palette).fill,t.rule,true)+text(xx+31*s,yy,v.label,11);xx+=lw;}
-  H=yy+60*s;body+=text(0,H-16*s,'Missing is not zero. Colours follow the declared legend; labels remain visible in monochrome exports.',11);return {body,W,H};
+  H=yy+60*s;body+=text(0,H-16*s,'Missing is not zero. Colours follow the declared legend; labels remain visible in monochrome exports.',11);}
+  else H=y+40*s;
+  return {body,W,H};
  }
  if(plan.kind==='fishbone'){
   const count=n=>1+n.children.reduce((s,c)=>s+count(c),0),depth=n=>1+Math.max(0,...n.children.map(depth));
@@ -4073,7 +4104,7 @@ function draw(plan,ir,c){
  }
  if(categories.length)W=Math.max(W,categories.length*65*s+155*s);
  let lo=tr==='boxplot'?Math.min(...ys):Math.min(0,...ys),hi=tr==='boxplot'?Math.max(...ys):Math.max(0,...ys);if(tr==='boxplot'&&hi>lo){const pad=(hi-lo)*.08;lo-=pad;hi+=pad;}if(lo===hi)hi=lo+1;if(!Number.isFinite(hi-lo))throw Object.assign(new Error('Quantitative extent overflow'),{code:'DDN-QC099'});
- const legendSlots=[];let legendX=100*s,legendY=54*s;if(tr==='identity')for(const layer of plan.layers){const ww=Math.min(W-155*s,Math.max(110*s,layer.series.length*8*s+50*s));if(legendX+ww>W-55*s){legendX=100*s;legendY+=24*s;}legendSlots.push({x:legendX,y:legendY,w:ww});legendX+=ww;}H+=Math.max(0,legendY-54*s);
+ const legendSlots=[];let legendX=100*s,legendY=54*s;if(legendOn&&tr==='identity')for(const layer of plan.layers){const ww=Math.min(W-155*s,Math.max(110*s,layer.series.length*8*s+50*s));if(legendX+ww>W-55*s){legendX=100*s;legendY+=24*s;}legendSlots.push({x:legendX,y:legendY,w:ww});legendX+=ww;}H+=Math.max(0,legendY-54*s);
  const labelDepth=categories.length?Math.max(...categories.map(x=>wrap(String(x),(W-155*s)/categories.length-10*s,11).length)):1,labelSpace=Math.max(145*s,(labelDepth*16+75)*s);H+=labelSpace-145*s;
  const isoPad=isoSpec?isoSpec.viewDepth*plan.layers.length:0;
  const left=100*s,right=W-(tr==='pareto'?90:55)*s-(isoPad?Math.ceil(isoPad*ISO.COS30)+4:0),top=Math.max(80*s,legendY+26*s)+(isoPad?Math.ceil(isoPad*ISO.SIN30):0),bottom=H-labelSpace,pw=right-left,ph=bottom-top,fy=v=>bottom-(v-lo)/(hi-lo)*ph,barWidth=pw/Math.max(categories.length,1)*.66,step=pw/Math.max(categories.length,1),xcat=i=>left+(i+.5)*step;
@@ -4126,7 +4157,7 @@ function draw(plan,ir,c){
    if(['line','area'].includes(layer.mark))for(const run of runs){const d=run.map((pt,i)=>(i?'L':'M')+f$1(xc(pt.x))+' '+f$1(fy(pt.end))).join(' ');if(layer.mark==='area'){const bottomPath=run.slice().reverse().map(pt=>'L'+f$1(xc(pt.x))+' '+f$1(fy(pt.start))).join(' ');body+=`<path d="${d+bottomPath}Z" fill="${col}" opacity="${plan.arrangement==='overlay'?.15:.36}"/>`;}body+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.3"${li%3===1?' stroke-dasharray="7 3"':li%3===2?' stroke-dasharray="2 3"':''}/>`;}
    ps.filter(pt=>pt.y!==null).forEach(pt=>{let x=xc(pt.x),w=barWidth;if(layer.mark==='bar'){if(plan.arrangement==='group'){w=barWidth/n;x+=-barWidth/2+w*(plan.series.indexOf(ser)+.5);}body+=bar(x-w/2,w,pt.start,pt.end,col,pt.sourceIds,{value:pt.y,rawValue:pt.rawY,start:pt.start,end:pt.end,series:ser,synthetic:!!pt.synthetic,title:ser+' / '+pt.x+': '+fmt(pt.rawY)});}else body+=sourceGroup(pt.sourceIds,`<circle cx="${f$1(x)}" cy="${f$1(fy(pt.end))}" r="${4*s}" fill="${col}" stroke="${t.surface}"><title>${esc$1(ser+' / '+pt.x+': '+fmt(pt.rawY))}</title></circle>`,{x:x-4*s,y:fy(pt.end)-4*s,w:8*s,h:8*s,value:pt.y,series:ser},p.y);});
   });
-  plan.layers.forEach((layer,i)=>{const a=legendSlots[i];body+=line(a.x,a.y,a.x+22*s,a.y,colour(i),3)+text(a.x+29*s,a.y+4*s,layer.series,11);});
+  if(legendSlots.length)plan.layers.forEach((layer,i)=>{const a=legendSlots[i];body+=line(a.x,a.y,a.x+22*s,a.y,colour(i),3)+text(a.x+29*s,a.y+4*s,layer.series,11);});
   if(plan.target!==undefined)body+=line(left,fy(plan.target),right,fy(plan.target),t.ink,1.6,'6 4')+text(right,fy(plan.target)-8*s,'Target '+fmt(plan.target),11,600,'end');
  }
  if(tr!=='histogram'){
@@ -4753,7 +4784,9 @@ function render(ir,reg,glyphs='',options={}){
  }
  if(!Number.isFinite(W)||!Number.isFinite(H)||W>50000||H>50000)throw new D.DDNError('DDN-PJ060','Projection extent exceeds bounded publication budget');
  // Page composition: measurements and all visible labels participate, unlike CSS-only scaling.
- const margin=q(p.publication.margin,32),titleLines=wrap(ir.view.name,W,24,650),header=Math.max(92*s,(titleLines.length*29+48)*s),footer=46*s;
+ /* B1-045 (D2): chrome toggles. Defaults reproduce the pre-option page shape. */
+ const chrome=p.chrome||{title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
+ const margin=q(p.publication.margin,32),titleLines=titleOn?wrap(ir.view.name,W,24,650):[],header=titleOn?Math.max(92*s,(titleLines.length*29+48)*s):0,footer=footerOn?46*s:0;
  let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:816;pageH=p.publication.size==='a4'?297*96/25.4:1056;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
  if(p.publication.size==='content'){pageW=W+margin*2;pageH=H+margin*2+header+footer;}
  const aw=pageW-2*margin,ah=pageH-2*margin-header-footer;if(aw<=0||ah<=0)throw new D.DDNError('DDN-PJ061','Page has no remaining drawing area');
@@ -4764,8 +4797,10 @@ function render(ir,reg,glyphs='',options={}){
  if(smallest*scale*embed<min-.001)warnOrFail('DDN071','Projection text would fall below the final publication minimum');
  const tx=margin+(aw-W*scale)/2,ty=margin+header;
  let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${R.cls('ddn-svg','ddn-view-'+plan.kind,'ddn-profile-'+R.slug(plan.profile))}" xmlns="http://www.w3.org/2000/svg" width="${f(pageW)}" height="${f(pageH)}" viewBox="0 0 ${f(pageW)} ${f(pageH)}" role="img" aria-labelledby="projection-title projection-description" style="font-family:${esc(Text.FONTS[p.style.font])}"><title id="projection-title">${esc(ir.view.name)}</title><desc id="projection-description">${esc(plan.profile)}. Data-bound projection. Inspect marks to locate shared source definitions.</desc><rect width="100%" height="100%" fill="${t.background}"/>`;
- out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650)+`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
- out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end')+'</svg>';
+ if(titleOn)out+=text(margin,margin+8*s,'DDN / 0.5 PROJECTION PREVIEW / '+plan.profile,11,600)+lines(titleLines,margin,margin+42*s,24,650);
+ out+=`<g id="drawing" transform="translate(${f(tx)} ${f(ty)}) scale(${f(scale)})">`+rect(0,0,W,H,t.surface,t.rule)+body+'</g>';
+ if(footerOn)out+=line(margin,pageH-margin-23*s,pageW-margin,pageH-margin-23*s)+text(margin,pageH-margin,'One model · source-bound occurrences · '+p.style.look+' / '+p.style.theme,11)+text(pageW-margin,pageH-margin,plan.kind,11,600,'end');
+ out+='</svg>';
  const after=Text.stats(),estimated=after.estimated>stats.estimated;if(estimated){if(p.publication.metrics==='required')throw new D.DDNError('DDN077','Required measured fonts unavailable for projection');diagnostics.push({code:'DDN-TW01',severity:'warning',message:'Some projection text used estimated metrics. Browser-specific shaping is not certified.'});}
  const scene={width:pageW,height:pageH,smallestText:smallest,scale,origin:[tx,ty],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:composedSubs,marks,projection:{kind:plan.kind,profile:plan.profile,sourceIds:plan.sourceIds||[],quantitative:!!plan.quantitative},drawingBounds:{x:0,y:0,w:W,h:H},drawingArea:{x:margin,y:margin+header,w:aw,h:ah},textMeasurement:{mode:estimated?'estimated':'measured',requestedFont:p.style.font}};
  return {svg:out,scene,diagnostics,_ir:ir};
@@ -4789,8 +4824,8 @@ assets={...assets,registry:D.profiles.registry(assets.registry)};
 const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
 const fail=(code,message)=>{throw new LiveError(code,message);};
-const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
-const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
+const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],legend:['source','on','off'],title:['source','on','off'],footer:['source','on','off'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
+const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',legend:'source',title:'source',footer:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
 const routingValues=['orthogonal','straight','curved','rounded'];
 function checkOptions(o={}){
  if(!o||typeof o!=='object'||Array.isArray(o))fail('LIVE001','Presentation options must be a record.');
@@ -4876,6 +4911,11 @@ function apply(base,overrides){
  if(o.fontSize!==null)p.style.font_size=Q(o.fontSize);
  for(const k of ['fields','domains','datatypes','kind'])if(o[k]!=='source')p.display[k]=o[k];if(o.depth!==null)p.display.depth=o.depth;
  if(o.labels!=='source')p.legend.mode=o.labels;
+ /* B1-045 (D4): chrome visibility overlay. legend:off with numbered
+  * relationships is the same contradiction the parser rejects with DDN047. */
+ p.chrome=p.chrome||{legend:'auto',title:'on',footer:'on'};
+ for(const k of ['legend','title','footer'])if(o[k]!=='source')p.chrome[k]=o[k];
+ if(p.chrome.legend==='off'&&p.legend.mode==='numbers')fail('LIVE021','Numbered relationships require a legend');
  if(p.legend.mode==='numbers'){
   if(p.legend.placement==='none')p.legend.placement='right';
   const used=new Set(Object.values(ir.view.keys)),rels=[...ir.relations].sort((a,b)=>a.id.localeCompare(b.id));let n=1;

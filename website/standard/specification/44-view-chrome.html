@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>44. View chrome: legend, title and footer visibility — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../examples/index.html">Examples</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>44. View chrome: legend, title and footer visibility</h1>
+<p>Status: implemented in runtime 0.6.0-beta.1 (B1-045). Source grammar remains DDN 0.5; views that declare no chrome option render byte-identical SVG to previous releases, and the use-cases manifest is unchanged.</p>
+<p>Page chrome is presentation: the relationship key, the view title/header block, and the footer line. None of it carries model facts — the same data with the same semantics renders with or without it — so visibility is a view-level option, not a renderer decision.</p>
+<h2>Options (D2)</h2>
+<p>Three properties, available at three equivalent sites: as flat view-level keywords, as properties of a <code>chrome</code> group inside a view, and as properties of a named <code>chrome</code> declaration inside a <code>format</code> block (referenced directly or through a <code>bundle</code>):</p>
+<pre><code>view embedded &quot;Minimal chrome for embedding&quot; {
+    data: [@model];
+    legend: off;          // auto | on | off   (default auto)
+    title: off;           // on | off          (default on)
+    footer: off;          // on | off          (default on)
+}
+
+format styles {
+    chrome minimal { legend: off; title: off; footer: off; }
+    bundle embed { chrome: @minimal; }
+}
+view card &quot;Card&quot; { data: [@model]; format: @styles.embed; }
+view card2 &quot;Card 2&quot; { data: [@model]; chrome { legend: off; } }</code></pre>
+<ul><li><code>legend: auto</code> applies the per-view-kind emission rule that predates this</li></ul>
+<p>  chapter (below). <code>on</code> pins today's emission explicitly, guarding the author   against future heuristic changes; under the current rules <code>on</code> and <code>auto</code>   emit identically for every view kind. <code>off</code> suppresses the legend and   reclaims its reserved band.</p>
+<ul><li><code>title: off</code> suppresses the view title/header block (the</li></ul>
+<p>  <code>DDN / …</code> eyebrow line, the wrapped view title or <code>publication.title</code>   override, the caption, and the look/theme tag) and its reserved band.   <code>publication.title</code> / <code>publication.caption</code> keep their text-override   meaning; this option only controls visibility (D2).</p>
+<ul><li><code>footer: off</code> suppresses the footer line (the</li></ul>
+<p>  <code>Same data · independent view …</code> / <code>One model · …</code> line and its page   reservation).</p>
+<ul><li>A flat <code>legend:</code> keyword whose value is one of the three chrome words is</li></ul>
+<p>  the chrome shorthand; a <code>legend: @reference</code> still names a legend profile.   When a view uses the string shorthand, a bundle-level legend profile   reference is not applied at that position (declare a <code>legend { … }</code> group   for keys/mode alongside the shorthand).</p>
+<ul><li>Numbered relationships need their key: <code>legend: off</code> with</li></ul>
+<p>  <code>legend { mode: numbers }</code> is the coded error <code>DDN047</code>, matching the   existing <code>placement: none</code> rule.</p>
+<ul><li>Invalid values are coded errors: <code>DDN-E018</code> for a flat keyword</li></ul>
+<p>  (<code>legend: sometimes</code>), <code>DDN046</code> for a <code>chrome</code> group/profile value outside   the choice lists.</p>
+<h2>Emission sites and the <code>auto</code> rule (D1 survey)</h2>
+<p>Every chrome emission site in the runtime is under option control:</p>
+<ul><li><strong>Graph / chen views</strong> (<code>ddn-render.js</code>): the <code>RELATIONSHIP KEY</code> block is</li></ul>
+<p>  emitted when <code>legend.placement</code> is not <code>none</code> and at least one relation is   visible — independent of whether route labels already self-label the   relations (that duplication is exactly what <code>legend: off</code> answers). The   header block and the footer line were always emitted. <code>auto</code> = these rules.</p>
+<ul><li><strong>Data-bound projections</strong> (<code>ddn-projections.js</code>: chart, table, matrix,</li></ul>
+<p>  panels, timeline, fishbone, decision, sequence, timing): one shared page   compositor emits the header (<code>DDN / 0.5 PROJECTION PREVIEW / …</code> plus the   view title) and the footer (<code>One model · source-bound occurrences · …</code>).   Relationship legends are already disabled for projected graph bodies.</p>
+<ul><li><strong>Quality projections</strong> (<code>ddn-quality-render.js</code>): the matrix encoding</li></ul>
+<p>  colour key (with the &quot;Missing is not zero…&quot; note) and the multi-series   chart colour key (identity transform) are <code>legend</code>-governed chrome and are   emitted whenever their data exists; <code>legend: off</code> suppresses them and their   reserved rows.</p>
+<ul><li><strong>Geographic views</strong> (<code>ddn-geo.js</code>): the choropleth ramp key and the symbol</li></ul>
+<p>  size key are <code>legend</code>-governed; the page header/footer match the   projection compositor. The in-drawing method caption   (&quot;Geographic projection: …&quot;) is content, not chrome, and stays.</p>
+<ul><li><strong>Isometric views</strong> (<code>ddn-iso.js</code>): the page header/footer match the</li></ul>
+<p>  projection compositor; isometric views emit no relationship legend.</p>
+<p>The accessibility <code>&lt;title&gt;</code>/<code>&lt;desc&gt;</code> inside the SVG root are not chrome and are always emitted; the <code>&lt;desc&gt;</code> sentence pointing at the adjacent legend is dropped only when <code>legend: off</code> suppresses that legend.</p>
+<h2>Tool overlay (D4)</h2>
+<p>The unified tool's appearance drawer carries a <strong>Chrome</strong> section — Legend, Title block and Footer line selects with <code>As authored / on / off</code> — wired through the same render-override channel as the detail and relation-label controls (<code>setOptions</code> / workspace <code>overrides</code>). Override values are validated (<code>LIVE002</code> for an unknown value), and <code>legend: off</code> against numbered relationships is rejected with <code>LIVE021</code>, mirroring the source-level <code>DDN047</code>. Overrides never rewrite the source; an exported SVG carries the active presentation state per the existing override semantics.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.6.0-beta.1 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

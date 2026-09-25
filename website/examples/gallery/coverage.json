@@ -81,9 +81,9 @@
       "svg": "profiles/chart-arc-1.svg"
     },
     "chart.basic@1": {
-      "entry": "website/examples/basics/59-data-refresh.ddn",
-      "view": "latency_chart",
-      "title": "Latency / chart",
+      "entry": "website/examples/basics/12-nested-fields.ddn",
+      "view": "metrics_chart",
+      "title": "Order timings / keyed tabular records",
       "svg": "profiles/chart-basic-1.svg"
     },
     "chart.beeswarm@1": {

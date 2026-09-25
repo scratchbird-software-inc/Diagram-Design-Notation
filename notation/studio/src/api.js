@@ -8,8 +8,8 @@ assets={...assets,registry:D.profiles.registry(assets.registry)};
 const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
 class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
 const fail=(code,message)=>{throw new LiveError(code,message);};
-const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
-const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
+const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],legend:['source','on','off'],title:['source','on','off'],footer:['source','on','off'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
+const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',legend:'source',title:'source',footer:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
 const routingValues=['orthogonal','straight','curved','rounded'];
 function checkOptions(o={}){
  if(!o||typeof o!=='object'||Array.isArray(o))fail('LIVE001','Presentation options must be a record.');
@@ -95,6 +95,11 @@ function apply(base,overrides){
  if(o.fontSize!==null)p.style.font_size=Q(o.fontSize);
  for(const k of ['fields','domains','datatypes','kind'])if(o[k]!=='source')p.display[k]=o[k];if(o.depth!==null)p.display.depth=o.depth;
  if(o.labels!=='source')p.legend.mode=o.labels;
+ /* B1-045 (D4): chrome visibility overlay. legend:off with numbered
+  * relationships is the same contradiction the parser rejects with DDN047. */
+ p.chrome=p.chrome||{legend:'auto',title:'on',footer:'on'};
+ for(const k of ['legend','title','footer'])if(o[k]!=='source')p.chrome[k]=o[k];
+ if(p.chrome.legend==='off'&&p.legend.mode==='numbers')fail('LIVE021','Numbered relationships require a legend');
  if(p.legend.mode==='numbers'){
   if(p.legend.placement==='none')p.legend.placement='right';
   const used=new Set(Object.values(ir.view.keys)),rels=[...ir.relations].sort((a,b)=>a.id.localeCompare(b.id));let n=1;

@@ -759,6 +759,11 @@ const SELECT_FIELDS = [
     ['Kind indicator', 'kind', () => A.choices.kind.map(titled)],
     ['Chart mark', 'mark', () => A.choices.mark.map(titled)]
   ]],
+  ['Chrome', [
+    ['Legend', 'legend', () => A.choices.legend.map(titled)],
+    ['Title block', 'title', () => A.choices.title.map(titled)],
+    ['Footer line', 'footer', () => A.choices.footer.map(titled)]
+  ]],
   ['Page', [
     ['Page / artboard', 'page', () => A.choices.page.map(titled)],
     ['Width (px)', 'width', 'number', 400, 32000, 100],
@@ -822,7 +827,7 @@ function syncOptionInputs() {
     }
     if (input.type === 'checkbox') input.checked = !!v; else input.value = String(v);
     const caps = d && d.capabilities;
-    const locked = !!(caps && (caps.sequence || caps.graphControls === false) && !['theme', 'font', 'fontSize', 'look', 'mark', 'page', 'width', 'height', 'roughness', 'hachure'].includes(key));
+    const locked = !!(caps && (caps.sequence || caps.graphControls === false) && !['theme', 'font', 'fontSize', 'look', 'mark', 'page', 'width', 'height', 'roughness', 'hachure', 'legend', 'title', 'footer'].includes(key));
     input.disabled = locked;
     if (locked) input.title = 'Locked: this projection fixes coordinates and content.';
     else input.title = '';

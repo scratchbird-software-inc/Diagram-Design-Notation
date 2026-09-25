@@ -6,6 +6,20 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- View-level chrome options (B1-045; spec chapter 44): `legend: auto|on|off`,
+  `title: on|off` and `footer: on|off` as flat view keywords, a
+  `chrome { … }` view group, or named `chrome` declarations referencable from
+  bundles. Defaults reproduce the previous emission rules byte-for-byte (no
+  golden regeneration; use-cases manifest unchanged): graph relationship
+  keys, chart series colour keys, matrix encoding keys and geo choropleth/
+  symbol-size keys all come under `legend`; the header block and footer line
+  of every page compositor (graph, projections, geo, iso) come under
+  `title`/`footer`. `legend: off` with numbered relationships is `DDN047`;
+  invalid values are coded errors (`DDN-E018` flat, `DDN046` profile). The
+  unified tool's appearance drawer gains a Chrome section (As
+  authored/on/off) wired through the render-override channel (`LIVE002` /
+  `LIVE021` guards), and basics example 01 gains a minimal-chrome embedding
+  view.
 - Worker-based rendering in the unified tool (B1-043): `render()` no longer
   blocks the UI thread. The coarse boundary sits at `Engine.render` — the
   main thread compiles the view, applies overrides, measures text and

@@ -34,3 +34,13 @@ view print "Customer data / print rendition" {
     
     
 }
+view embedded "Customer data / minimal chrome for embedding" {
+    data: [@customer.model];
+    format: @shared.styles.technical;
+    select: [@customer.model.order, @customer.model.customer];
+    // B1-045: the relations already label themselves (legend mode text), so the
+    // key is redundant here; title/footer off give a chrome-free embed.
+    legend: off;
+    title: off;
+    footer: off;
+}
