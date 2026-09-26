@@ -6,7 +6,15 @@ function validate(ir,E){
  const fail=(c,m,n)=>{const e=new E(c,m,n?.source?.file||ir.view.source.file,n?.source?.start||ir.view.source.start);if(E===Error){e.code=c;e.message=m;}throw e;};
  const keys=(o,a,label,n)=>{if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).some(k=>!a.includes(k)))fail('DDN-PX001','Unknown or malformed '+label,n);};
  for(const n of ir.elements){
-  if(n.properties.x_state){keys(n.properties.x_state,['terminal'],'state metadata',n);if(n.properties.x_state.terminal!==undefined&&typeof n.properties.x_state.terminal!=='boolean')fail('DDN-PX001','terminal is boolean',n);if(!n.kind.startsWith('state.'))fail('DDN-PX001','x_state applies only to state kinds',n);}
+  if(n.properties.x_state){
+   /* B1-057 (RFC-121): closed x_state contract; DDN105 covers shape, these
+    * are the semantic owner/submachine rules. */
+   const x=n.properties.x_state;
+   if(!n.kind.startsWith('state.'))fail('DDN-PJ160','x_state applies only to state kinds; '+n.id+' is '+n.kind,n);
+   if(x.submachine!==undefined){const m=ns.get(x.submachine?.$ref);
+    if(!m||m.kind!=='state.state')fail('DDN-PJ160','Submachine reference on '+n.id+' must resolve to a declared state.state',n);
+    else if(m.id===n.id)fail('DDN-PJ160','Submachine state '+n.id+' cannot invoke itself',n);}
+  }
   if(n.properties.x_usecase){const x=n.properties.x_usecase;keys(x,['subjects','extension_points'],'use-case metadata',n);if(!['uml.usecase','uml.actor'].includes(n.kind))fail('DDN-PX002','Use-case metadata has an incompatible owner',n);if(x.subjects!==undefined&&(!Array.isArray(x.subjects)||x.subjects.some(r=>ns.get(r?.$ref)?.kind!=='uml.subject')||new Set(x.subjects.map(r=>r.$ref)).size!==x.subjects.length))fail('DDN-PX002','subjects must reference distinct uml.subject definitions',n);if(x.extension_points!==undefined&&(n.kind!=='uml.usecase'||!Array.isArray(x.extension_points)||x.extension_points.some(k=>typeof k!=='string'||!k.trim())||new Set(x.extension_points).size!==x.extension_points.length))fail('DDN-PX002','Extension points must be unique names on a use case',n);}
   if(n.properties.x_chen){const x=n.properties.x_chen;keys(x,['weak','owner'],'Chen entity metadata',n);if(n.kind!=='entity'||x.weak!==undefined&&typeof x.weak!=='boolean')fail('DDN-PX003','Invalid Chen entity metadata',n);if(x.weak){const owner=ns.get(x.owner?.$ref);if(!owner||owner.kind!=='entity'||owner.id===n.id)fail('DDN-PX003','Weak entity requires a distinct entity owner',n);if(!n.fields.some(f=>f.properties.x_chen?.partial_key))fail('DDN-PX003','Weak entity requires a declared partial key',n);}else if(x.owner)fail('DDN-PX003','Only weak entities declare identifying owner',n);}
   for(const f of n.fields){if(!f.properties.x_chen)continue;const x=f.properties.x_chen;keys(x,['key','partial_key','multivalued','derived','composite'],'Chen field metadata',f);if(n.kind!=='entity'||Object.values(x).some(v=>typeof v!=='boolean'))fail('DDN-PX003','Chen field flags are booleans on entity fields',f);if(x.partial_key&&!n.properties.x_chen?.weak||x.partial_key&&x.key)fail('DDN-PX003','A partial key belongs to a weak entity and is not a full key',f);if((x.key||x.partial_key)&&(x.derived||x.multivalued))fail('DDN-PX003','Key fields cannot be derived or multivalued',f);const child=n.fields.some(g=>g.parent===f.id);if(child&&!x.composite||x.composite&&!child)fail('DDN-PX003','Composite declaration must match actual child fields',f);}
@@ -50,11 +58,32 @@ function validate(ir,E){
    if(!ret&&dotted)fail('DDN-PJ111','Non-reply message '+r.id+' must carry a top-level number, got dotted '+seq,r);
   }
  }
- if(profile==='state.composite@1'){
+ if(profile==='state.composite@1'||profile==='uml.statemachine@1'){
   const frames=ir.view.frames||[],regions=frames.filter(f=>f.x_region===true);
   const collide=f=>{const initials=f.members.map(id=>ns.get(id)).filter(n=>n?.kind==='state.initial');if(initials.length>1)fail('DDN-PJ113','Frame '+(f.name||f.id)+' declares '+initials.length+' initial states ('+initials.map(n=>n.id).join(', ')+'); at most one initial state per region');};
   for(const f of regions)collide(f);
   for(const f of frames){if(f.x_region===true)continue;if(ns.get(f.scope)?.kind!=='state.state')continue;if(regions.some(r=>r.members.length&&r.members.every(id=>f.members.includes(id))))continue;collide(f);}
+ }
+ /* B1-057 (RFC-121): pseudostate endpoint/membership rules and transition
+  * label form. Endpoint rules are state-profile business; a pseudostate kind
+  * dropped into a plain graph view is just a marker there. */
+ if(profile==='uml.statemachine@1'||profile.startsWith('state.')){
+  const es=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='state.transition');
+  const PSEUDO=['state.history_shallow','state.history_deep','state.junction','state.choice','state.entrypoint','state.exitpoint','state.forkjoin','state.terminate'];
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&PSEUDO.includes(n.kind))){
+   const out=es.filter(r=>r.from.element===n.id),inc=es.filter(r=>r.to.element===n.id);
+   if(n.kind==='state.terminate'&&out.length)fail('DDN-PJ161','Terminate pseudostate '+n.id+' cannot have outgoing transitions',n);
+   if(n.kind==='state.choice'&&out.length<2)fail('DDN-PJ161','Choice pseudostate '+n.id+' needs at least two outgoing transitions',n);
+   if(n.kind==='state.junction'&&(!inc.length||!out.length))fail('DDN-PJ161','Junction pseudostate '+n.id+' is a pass-through and needs incoming and outgoing transitions',n);
+   if(['state.entrypoint','state.exitpoint'].includes(n.kind)&&profile==='uml.statemachine@1'){
+    const frames=ir.view.frames||[];
+    if(!frames.some(f=>f.members.includes(n.id)))fail('DDN-PJ161','Entry/exit point '+n.id+' must be a member of a composite-state frame',n);}
+   if(['state.history_shallow','state.history_deep'].includes(n.kind)&&profile==='uml.statemachine@1'){
+    const frames=ir.view.frames||[];
+    if(!frames.some(f=>f.members.includes(n.id)))fail('DDN-PJ161','History pseudostate '+n.id+' must be a member of a composite-state frame',n);}
+  }
+  for(const r of es){const ev=r.properties.x_transition?.event;
+   if(typeof ev==='string'&&/^(after|at|when)\b/.test(ev)&&!/^(after|at|when)\s*\(.+\)$/.test(ev))fail('DDN-PJ162','Time/change trigger '+JSON.stringify(ev)+' on '+r.id+' is malformed; use after(…), at(…) or when(…)',r);}
  }
  if(profile==='uml.activity@1'){
   const frames=ir.view.frames||[],lanes=new Set(frames.flatMap(f=>[f.id,f.name,String(f.id).split('::').pop().split('.').pop()]));

@@ -21,8 +21,8 @@ function placeholder(ir,kind){
  const scene={width:pageW,height:pageH,smallestText:11,scale:1,origin:[0,0],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:[],marks:[],projection:{kind,profile:p.projection?.profile||'',sourceIds:[],quantitative:false},drawingBounds:{x:bx,y:by,w:bw,h:bh},drawingArea:{x:margin,y:margin,w:pageW-2*margin,h:pageH-2*margin},textMeasurement:{mode:'estimated',requestedFont:p.style?.font||'sans'},placeholder:bundle};
  return{svg,scene,diagnostics:[...(ir.diagnostics||[]),diag],_ir:ir};
 }
-function render(ir,registry,glyphs,options={}){if(['state.flat@1','state.composite@1'].includes(ir.view.profiles.projection.profile)){
- const next={...ir,relations:ir.relations.map(r=>{const x=r.properties.x_transition;if(!x?.event)return r;const guard=x.guard?Object.entries(x.guard).map(([k,v])=>k+' '+(v.op==='eq'?'= '+JSON.stringify(v.value):v.op==='interval'?'['+v.min+','+v.max+']':v.op)).join(' and '):'';return{...r,name:x.event+(guard?' ['+guard+']':'')};})};ir=next;}
+function render(ir,registry,glyphs,options={}){if(['state.flat@1','state.composite@1','uml.statemachine@1'].includes(ir.view.profiles.projection.profile)){
+ const next={...ir,relations:ir.relations.map(r=>{const x=r.properties.x_transition;if(!x?.event)return r;const guard=typeof x.guard==='string'?x.guard:x.guard?Object.entries(x.guard).map(([k,v])=>k+' '+(v.op==='eq'?'= '+JSON.stringify(v.value):v.op==='interval'?'['+v.min+','+v.max+']':v.op)).join(' and '):'';return{...r,name:x.event+(guard?' ['+guard+']':'')+(x.effect?' / '+x.effect:'')};})};ir=next;}
  if(ir.view.profiles.projection.profile==='uml.communication@1'){
  const next={...ir,relations:ir.relations.map(r=>{const seq=r.properties.x_message?.seq;if(r.kind!=='uml.message'||!seq||!ir.view.relations.includes(r.id))return r;return{...r,name:seq+' · '+r.name};})};ir=next;}
  if(ir.view.profiles.projection.profile==='bpmn.basic@1'){

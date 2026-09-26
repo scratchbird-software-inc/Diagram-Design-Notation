@@ -378,6 +378,102 @@
       "defaults": {}
     },
     {
+      "keyword": "state.history_shallow",
+      "name": "Shallow history pseudostate",
+      "shape": "profile",
+      "silhouette": "history",
+      "fallback": "object",
+      "family": "concept",
+      "code": "HISTORY_S",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.history_deep",
+      "name": "Deep history pseudostate",
+      "shape": "profile",
+      "silhouette": "history",
+      "fallback": "object",
+      "family": "concept",
+      "code": "HISTORY_D",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.junction",
+      "name": "Junction pseudostate",
+      "shape": "profile",
+      "silhouette": "junction",
+      "fallback": "object",
+      "family": "concept",
+      "code": "JUNCTION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.choice",
+      "name": "Choice pseudostate",
+      "shape": "profile",
+      "silhouette": "choice",
+      "fallback": "object",
+      "family": "concept",
+      "code": "CHOICE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.entrypoint",
+      "name": "Entry point pseudostate",
+      "shape": "profile",
+      "silhouette": "entrypoint",
+      "fallback": "object",
+      "family": "concept",
+      "code": "ENTRYPT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.exitpoint",
+      "name": "Exit point pseudostate",
+      "shape": "profile",
+      "silhouette": "exitpoint",
+      "fallback": "object",
+      "family": "concept",
+      "code": "EXITPT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.forkjoin",
+      "name": "Fork/join synchronization bar",
+      "shape": "profile",
+      "silhouette": "forkbar",
+      "fallback": "object",
+      "family": "concept",
+      "code": "FORKJOIN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "state.terminate",
+      "name": "Terminate pseudostate",
+      "shape": "profile",
+      "silhouette": "terminate",
+      "fallback": "object",
+      "family": "concept",
+      "code": "TERMINATE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "rule.row",
       "name": "Decision rule",
       "shape": "profile",
@@ -1148,8 +1244,8 @@
     },
     {
       "keyword": "uml.include",
-      "name": "«include»",
-      "verb": "«include»",
+      "name": "\u00abinclude\u00bb",
+      "verb": "\u00abinclude\u00bb",
       "family": "dependency",
       "code": "INCLUDE",
       "start": "none",
@@ -1166,8 +1262,8 @@
     },
     {
       "keyword": "uml.extend",
-      "name": "«extend»",
-      "verb": "«extend»",
+      "name": "\u00abextend\u00bb",
+      "verb": "\u00abextend\u00bb",
       "family": "dependency",
       "code": "EXTEND",
       "start": "none",
@@ -1342,11 +1438,26 @@
       "glyph": "link",
       "source": [
         "state.initial",
-        "state.state"
+        "state.state",
+        "state.history_shallow",
+        "state.history_deep",
+        "state.junction",
+        "state.choice",
+        "state.entrypoint",
+        "state.exitpoint",
+        "state.forkjoin"
       ],
       "target": [
         "state.state",
-        "state.final"
+        "state.final",
+        "state.junction",
+        "state.choice",
+        "state.entrypoint",
+        "state.exitpoint",
+        "state.forkjoin",
+        "state.terminate",
+        "state.history_shallow",
+        "state.history_deep"
       ],
       "allow_self": true,
       "member_endpoints": false
@@ -1706,7 +1817,7 @@
       "id": "dfd.gane_sarson@1",
       "projection": "graph",
       "diagramFamilies": [
-        "Gane–Sarson DFD"
+        "Gane\u2013Sarson DFD"
       ],
       "scope": "Numbered three-compartment processes; open-ended stores and external entities.",
       "validation": [
@@ -1727,7 +1838,7 @@
       ],
       "scope": "Circular processes; parallel-line stores; rectangular external entities.",
       "validation": [
-        "same structural checks as Gane–Sarson"
+        "same structural checks as Gane\u2013Sarson"
       ],
       "unsupported": [
         "complete SSADM lifecycle",
@@ -2344,7 +2455,7 @@
       "diagramFamilies": [
         "Sankey/flow diagram"
       ],
-      "scope": "Explicit source→target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
+      "scope": "Explicit source\u2192target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
       "validation": [
         "target is a property binding, not a numeric reference (DDN-PJ030)",
         "categorical x only (DDN-PJ030)",
@@ -2424,7 +2535,7 @@
         "participants limited to organization, team, role, analysis.role (DDN-PF007)",
         "reports_to links only (DDN-PF007)",
         "reporting hierarchy is acyclic (DDN-PF004)",
-        "exactly one root — one node with no incoming reports_to edge (DDN-PJ102)",
+        "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
         "no node has multiple managers (DDN201, layout stage)"
       ],
       "unsupported": [
@@ -2444,7 +2555,7 @@
         "participants limited to analysis.task (DDN-PF007)",
         "analysis.decomposes links only (DDN-PF007)",
         "decomposition is acyclic (DDN-PF004)",
-        "exactly one root — one node with no incoming analysis.decomposes edge (DDN-PJ102)",
+        "exactly one root \u2014 one node with no incoming analysis.decomposes edge (DDN-PJ102)",
         "no node has multiple parents (DDN201, layout stage)"
       ],
       "unsupported": [
@@ -2465,7 +2576,7 @@
         "assoc links only (DDN-PF007)",
         "layout algorithm must be mindmap (DDN-PF007)",
         "branch hierarchy is acyclic (DDN-PF004)",
-        "exactly one root — one node with no incoming assoc edge (DDN-PJ102)",
+        "exactly one root \u2014 one node with no incoming assoc edge (DDN-PJ102)",
         "no node has multiple parents; declared root must be a hierarchy root (DDN201, DDN202, layout stage)"
       ],
       "unsupported": [
@@ -2673,7 +2784,7 @@
       "diagramFamilies": [
         "UML sequence diagram"
       ],
-      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (alt/opt/loop/break/par/neg/critical/seq/strict/ignore/consider/assert, nested, operands with guards — x_fragment), gates on fragment boundaries, «create» headers and ✕ destruction, synchronous/asynchronous arrowheads, explicit replies, lost/found messages, authorable execution occurrences (x_activation), time/duration constraints, state invariants (x_invariant).",
+      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (alt/opt/loop/break/par/neg/critical/seq/strict/ignore/consider/assert, nested, operands with guards \u2014 x_fragment), gates on fragment boundaries, \u00abcreate\u00bb headers and \u2715 destruction, synchronous/asynchronous arrowheads, explicit replies, lost/found messages, authorable execution occurrences (x_activation), time/duration constraints, state invariants (x_invariant).",
       "validation": [
         "message endpoints are selected participant objects (DDN-PJ110)",
         "participants without messages warn (DDN-PJW03)",
@@ -2737,6 +2848,26 @@
         "history pseudostates",
         "SCXML/UML conformance",
         "timers and executable actions"
+      ]
+    },
+    {
+      "id": "uml.statemachine@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML state machine diagram"
+      ],
+      "scope": "Full UML 2.5.1 state machines (RFC-121): state.flat@1/state.composite@1 vocabulary plus entry/exit/do activities and internal transitions (x_state), shallow/deep history, junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, trigger [guard] / effect transition labels, submachine states, after/at/when time events, composite states and parallel regions.",
+      "validation": [
+        "per-region single initial (DDN-PJ113)",
+        "x_state owner/submachine rules (DDN-PJ160)",
+        "pseudostate endpoint and membership rules (DDN-PJ161)",
+        "transition label and time-trigger form (DDN-PJ162)"
+      ],
+      "unsupported": [
+        "executable actions/behaviors",
+        "trace evaluation (state.flat@1 only)",
+        "SCXML exchange",
+        "formal UML conformance"
       ]
     },
     {
@@ -2879,7 +3010,7 @@
       ],
       "scope": "Fixed nine-kind business/application/technology vocabulary; family-palette layer colours; viewpoints as named views; serving links upward only. Profile-level coverage, not ArchiMate conformance.",
       "validation": [
-        "relation layer pair must be legal per the fixed 3×3 table (DDN-PJ123)"
+        "relation layer pair must be legal per the fixed 3\u00d73 table (DDN-PJ123)"
       ],
       "unsupported": [
         "ArchiMate exchange format",

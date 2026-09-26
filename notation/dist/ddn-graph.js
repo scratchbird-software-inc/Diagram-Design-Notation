@@ -280,6 +280,16 @@
     g.requirement=api$7.wrap(n.properties.x_diagram?.text||'',g.w-32*s,13*s,p.style.font);g.h=Math.max(g.h,(95+g.requirement.length*19)*s);
    }
    if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+   /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
+    * below; states with activities/internal transitions/submachine grow a
+    * compartment under the name. */
+   if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar'].includes(g.silhouette)){g.w=Math.max(110*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+   if(n.kind==='state.state'){const x=n.properties.x_state||{};
+    const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
+    if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
+     g.w=Math.max(g.w,220*s,...acts.map(a=>api$7.measure(a,12.5*s,p.style.font,400).width+40*s));
+     g.h=Math.max(g.h,(100+acts.length*20+(x.submachine?24:0))*s);}
+   }
    if(n.kind==='uml.usecase'&&n.properties.x_usecase?.extension_points?.length){g.extensionPoints=n.properties.x_usecase.extension_points;g.w=Math.max(g.w,320*s);g.h=Math.max(g.h,(110+g.extensionPoints.length*20)*s);}
    return g;
   }
@@ -354,6 +364,18 @@
     else out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${r*.65}" fill="${ink}"/>`;
     out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
    }
+   /* B1-057 (RFC-121): UML pseudostate markers. */
+   if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar'].includes(shape)){
+    const cx=x+w/2,cy=y+h/2-8,r=12*s;
+    if(shape==='junction')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(7*s)}" fill="${ink}"/>`;
+    else if(shape==='choice')out+=`<path d="M${f(cx)} ${f(cy-r)}L${f(cx+r)} ${f(cy)}L${f(cx)} ${f(cy+r)}L${f(cx-r)} ${f(cy)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    else if(shape==='entrypoint')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(9*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    else if(shape==='exitpoint')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(9*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/><path d="M${f(cx-4.5*s)} ${f(cy-4.5*s)}L${f(cx+4.5*s)} ${f(cy+4.5*s)}M${f(cx+4.5*s)} ${f(cy-4.5*s)}L${f(cx-4.5*s)} ${f(cy+4.5*s)}" stroke="${ink}" stroke-width="1.6"/>`;
+    else if(shape==='terminate')out+=`<path d="M${f(cx-8*s)} ${f(cy-8*s)}L${f(cx+8*s)} ${f(cy+8*s)}M${f(cx+8*s)} ${f(cy-8*s)}L${f(cx-8*s)} ${f(cy+8*s)}" stroke="${ink}" stroke-width="2.2"/>`;
+    else if(shape==='history')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`+text(cx,cy+4.5*s,k.keyword==='state.history_deep'?'H*':'H',13,650,'text-anchor="middle"');
+    else if(shape==='forkbar')out+=`<rect x="${f(cx-32*s)}" y="${f(cy-4*s)}" width="${f(64*s)}" height="${f(8*s)}" rx="${f(2*s)}" fill="${ink}"/>`;
+    out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+   }
    if(look==='neo'&&shape!=='actor')out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0]+4)+' '+f(v[1]+6)).join('')}Z" fill="#000" opacity=".14"/>`;
    if(shape==='actor'){
     const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
@@ -385,6 +407,12 @@
     for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
    }else if(n.kind==='req.requirement'){
     out+=text(x+14*s,y+21*s,'«requirement» '+n.properties.x_diagram.code,11,600)+lines(g.titleLines,x+14*s,y+45*s,16,650,'')+line(x,y+68*s,x+w,y+68*s)+lines(g.requirement,x+14*s,y+90*s,13,400,'');
+   }else if(n.kind==='state.state'&&(g.stateActs||g.submachine)){
+    /* B1-057 (RFC-121): state compartment — name header, then entry/exit/do and
+     * internal-transition lines, then the «submachine» binding. */
+    out+=lines(g.titleLines,x+w/2,y+31*s,16,650)+line(x,y+50*s,x+w,y+50*s);
+    let yy=y+72*s;for(const a of g.stateActs){out+=text(x+14*s,yy,a,12.5,400,'');yy+=20*s;}
+    if(g.submachine){const ref=String(g.submachine.$ref||g.submachine);out+=(g.stateActs.length?line(x,yy-12*s,x+w,yy-12*s):'')+text(x+14*s,yy+4*s,'«submachine» '+ref.split(/[.:]/).pop(),12,500,'');}
    }else if(g.fieldRows.length){
     out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
    }else {

@@ -69,6 +69,7 @@
     "decision.rules@1": "Decision table (DMN-like): inputs, outputs, x_rule rows, hit policy",
     "state.flat@1": "Flat state machine: one initial, terminals, guarded transitions, trace simulation",
     "state.composite@1": "Hierarchical state machine: composite states and parallel regions",
+    "uml.statemachine@1": "UML 2.5.1 state machine (RFC-121): entry/exit/do activities, internal transitions, history/junction/choice/entry-exit-point/fork-join/terminate pseudostates, trigger [guard] / effect, submachines, time events",
     "org.tree@1": "Org chart: single-rooted reports_to hierarchy",
     "wbs.tree@1": "Work breakdown structure: task decomposition tree",
     "mindmap.basic@1": "Mind map: radial assoc tree around one central topic",

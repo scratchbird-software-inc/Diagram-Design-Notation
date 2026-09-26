@@ -2508,6 +2508,26 @@
       ]
     },
     {
+      "id": "uml.statemachine@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML state machine diagram"
+      ],
+      "scope": "Full UML 2.5.1 state machines (RFC-121): state.flat@1/state.composite@1 vocabulary plus entry/exit/do activities and internal transitions (x_state), shallow/deep history, junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, trigger [guard] / effect transition labels, submachine states, after/at/when time events, composite states and parallel regions.",
+      "validation": [
+        "per-region single initial (DDN-PJ113)",
+        "x_state owner/submachine rules (DDN-PJ160)",
+        "pseudostate endpoint and membership rules (DDN-PJ161)",
+        "transition label and time-trigger form (DDN-PJ162)"
+      ],
+      "unsupported": [
+        "executable actions/behaviors",
+        "trace evaluation (state.flat@1 only)",
+        "SCXML exchange",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.activity@1",
       "projection": "graph",
       "diagramFamilies": [

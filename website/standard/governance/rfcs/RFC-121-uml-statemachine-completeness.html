@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 0121 — UML 2.5.1 state-machine completeness — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 0121 — UML 2.5.1 state-machine completeness</h1>
+<p>Status: implemented   Authors/reviewers: B1-057 work item   Language/registry impact: additive registry entries within the 0.7 draft; new profile <code>uml.statemachine@1</code>; no grammar change; runtime/specification 0.7 line.</p>
+<h2>Problem and motivating example</h2>
+<p><code>state.flat@1</code> (RFC-104 family, chapter 23) and <code>state.composite@1</code> (chapter 30) cover initial/final markers, simple states, composite frames and parallel regions with <code>event [guard]</code> labels. They cannot express the UML 2.5.1 state-machine surface: entry/exit/do activities, shallow/deep history, junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, transition effects (<code>trigger [guard] / effect</code>), submachine states with entry/exit-point binding, time events (<code>after</code>/<code>at</code>/<code>when</code>), and internal transitions.</p>
+<p>Motivating example (excerpt; full fixture in <code>website/examples/basics/77-uml-statemachine-complete.ddn</code>):</p>
+<pre><code>object running &quot;Running&quot; { kind: &quot;state.state&quot;; x_state: {
+    entry: &quot;startWatch()&quot;; exit: &quot;stopWatch()&quot;; do: &quot;tick()&quot;;
+    internal: [ &quot;help [guarded] / showHelp()&quot; ]; }; }
+relation timeout &quot;&quot; @running -&gt; @history { kind: &quot;state.transition&quot;;
+    x_transition: { event: &quot;after(30s)&quot;; effect: &quot;log()&quot; }; }</code></pre>
+<h2>Proposed syntax</h2>
+<p>No new grammar. New registered kinds (additive per VERSIONING rule 1), one new profile, extension-property growth (RFC-119/120 pattern):</p>
+<ol><li><strong>New kinds</strong>: <code>state.history_shallow</code> (H), <code>state.history_deep</code> (H*), <code>state.junction</code> (filled dot), <code>state.choice</code> (diamond), <code>state.entrypoint</code> (ring on a state border), <code>state.exitpoint</code> (ring with ✕), <code>state.forkjoin</code> (synchronization bar), <code>state.terminate</code> (✕).</li><li><strong><code>x_state</code> extended</strong> (now a closed contract): <code>{ terminal?, entry?, exit?, do?, internal?: [string], submachine?: @ref }</code>. Entry/exit/do and internal-transition lines render in a state compartment; <code>submachine</code> references the <code>state.state</code> that is the invoked machine's top state.</li><li><strong><code>x_transition</code> extended</strong> (closed contract): <code>{ event?, guard?: object|string, effect?, actions? }</code>. String guards render verbatim; object guards keep the lifecycle predicate rendering. The label is <code>trigger [guard] / effect</code>. Time events are ordinary trigger strings matching <code>after(…)</code>, <code>at(…)</code> or <code>when(…)</code>; anything that <em>starts</em> like one but is malformed is rejected (<code>DDN-PJ162</code>).</li><li><strong><code>state.transition</code> endpoint contract widened</strong> to admit the pseudostate kinds (additive).</li><li><strong>New profile <code>uml.statemachine@1</code></strong> (graph projection) covering the full surface, including the composite-frame/region machinery from <code>state.composite@1</code>. Trace evaluation (<code>traces</code>/<code>inputs</code>/<code>analysis_budget</code>) stays <code>state.flat@1</code>-only (<code>DDN-Q005</code>): lifecycle simulation semantics (<code>DDN-QL001…</code>) are incompatible with pseudostates and parallel regions.</li></ol>
+<h2>Semantic normalization and identity effects</h2>
+<p>None. Pseudostates are ordinary elements with registered kinds; activities/effects are annotation text; fingerprints unaffected.</p>
+<h2>Visual encoding and routing effects</h2>
+<ul><li>States with activities/internal transitions/submachine render as rounded rectangles with a name header and compartment lines (<code>entry / …</code>, <code>exit / …</code>, <code>do / …</code>, internal transitions verbatim, <code>«submachine»</code> marker); plain states keep the existing compact rounded form.</li><li>Pseudostate glyphs: H / H* circles; small filled junction dot; choice diamond; encircled entry-point; encircled-✕ exit-point; thick fork/join bar; ✕ terminate. All deterministic SVG with source-bound marks, contour anchors default to the bounding box.</li><li>Transition labels: <code>event [guard] / effect</code> via the engine relabel branch (now matching <code>uml.statemachine@1</code> too).</li></ul>
+<h2>Alternatives considered</h2>
+<ol><li><strong><code>state.flat@2</code> / <code>state.composite@2</code></strong>: rejected — the new surface spans both, and two parallel version bumps would duplicate every validator and doc section; a single <code>uml.statemachine@1</code> follows the registry's named-profile convention (<code>uml.sequence@2</code> covers one diagram family, but here the family is &quot;UML state machines&quot; as a whole).</li><li><strong>Internal transitions as flagged self-relations</strong>: rejected in favor of compartment lines (<code>x_state.internal</code>), which is the normative UML rendering and avoids arrow-compartment ambiguity.</li><li><strong>Pseudostates as <code>x_state</code> flags on <code>state.state</code></strong>: rejected — pseudostates are distinct vertices with distinct endpoint rules; kinds keep the endpoint contract enforceable through DDN102.</li></ol>
+<h2>Compatibility and migration</h2>
+<p>Fully additive. <code>state.flat@1</code> and <code>state.composite@1</code> remain installed and immutable; their fixtures render byte-identically. <code>x_state</code>/<code>x_transition</code> become closed contracts: previously they accepted arbitrary keys under the generic object contract. Every key used by shipped examples and tests (<code>terminal</code>, <code>event</code>, <code>guard</code>, <code>actions</code>) remains legal; any previously-tolerated unknown key now fails <code>DDN105</code>, which is the intended tightening (VERSIONING rule 2: new error coverage with fixtures).</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new input channels; schema contracts and bounded strings as before. Effects/activities are display text, never executed (trace evaluation explicitly rejects this profile). Glyphs carry <code>data-*</code> hooks and escaped labels.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li>Registry: +8 kinds, +1 profile, <code>state.transition</code> endpoint widening; regenerated assets.</li><li>Contracts: <code>x_state</code> and <code>x_transition</code> now closed schemas.</li><li>New error codes (ceilings checked: PJ159, PJW05 after B1-056): <code>DDN-PJ160</code> (x_state misuse: wrong owner kind, submachine self/foreign reference), <code>DDN-PJ161</code> (pseudostate endpoint rules: terminate/final outgoing, choice fan-out, entry/exit-point and history frame membership), <code>DDN-PJ162</code> (transition label/time-trigger form). Engine relabel extended with <code>/ effect</code> and string guards.</li></ul>
+<h2>Positive and negative fixtures</h2>
+<p><code>notation/tests/statemachine-compliance.js</code> covers every feature positively plus each rejection code and byte-compatibility of the existing state profiles. Gallery fixture: <code>website/examples/basics/77-uml-statemachine-complete.ddn</code>.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: <code>ddn-profiles.js</code> (contracts), <code>ddn-profile-quality.js</code> (PJ160–PJ162), <code>ddn-engine.js</code> (relabel), <code>ddn-shapes.js</code> (compartments + pseudostate silhouettes). Spec chapter 30 gains §30a; designer contracts (+8 kinds) and docs updated. Still outside scope: executable actions/behaviors, trace evaluation on this profile, SCXML exchange, formal OMG conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>Profile shape: <strong>decided</strong> — one <code>uml.statemachine@1</code> (see Alternatives).</li><li>Fork/join vs. the existing <code>flow.forkjoin</code> (activity profile): state-machine fork/join gets its own kind (<code>state.forkjoin</code>) so the <code>uml.activity@1</code> flow.reachability rules never leak into state machines.</li></ul>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

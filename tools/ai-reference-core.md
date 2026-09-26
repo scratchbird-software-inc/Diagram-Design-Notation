@@ -165,27 +165,27 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_record` | object, relation | object, additional properties allowed (record/metadata payload, e.g. `{month, value, unit}`) |
 | `x_story` | relation | object, requires `task`, additional properties allowed |
 | `x_rule` | object, relation | object (decision-table rule: `{when: {...}, then: {...}}`) |
-| `x_state` | object, relation | object (`{terminal: boolean}`; only on `state.*` kinds) |
-| `x_transition` | object, relation | object (`{event, guard, actions}`) |
+| `x_state` | object, relation | `{terminal?, entry?, exit?, do?, internal?: [string], submachine?: @ref}` (RFC-121; only on `state.*` kinds — DDN-PJ160) |
+| `x_transition` | object, relation | `{event?, guard?: object|string, effect?, actions?}` — label `trigger [guard] / effect`; time triggers `after(…)`/`at(…)`/`when(…)` (RFC-121; DDN-PJ162) |
 | `x_usecase` | object, relation | object (`subjects` refs / `extension_points` on objects; `extension_point`, `condition`\|`condition_ref` on `uml.extend` relations) |
 | `x_chen` | object, field, relation | object (Chen metadata; §10) |
 | `x_continuation` | object, relation | object (`{key, side: in|out, page?}`) |
 | `x_assignment` | relation | `{code: string(1..12)}` only |
 | `x_category` | object | `{axis: string, level: string}` exactly |
-| `x_member` | field | `{kind: attribute|operation|literal, visibility?, static?, abstract?, derived?, multiplicity?, modifiers?}` (RFC-119) |
+| `x_member` | field | `{kind: attribute|operation|literal, visibility?, static?, abstract?, derived?, multiplicity?, modifiers?}` |
 | `x_endlabels` | relation | `{source|target: {role?, multiplicity?, qualifier?}}` on `uml.association` (DDN-PJ149) |
-| `x_association_class` | relation | `{class: @ref}` to a `uml.class` on `uml.association` (DDN-PJ150) |
+| `x_association_class` | relation | `{class: @ref}` uml.class on an association (DDN-PJ150) |
 | `x_nary` | relation | `{ends: [{element: @ref, role?, multiplicity?}]}` — n-ary ends beyond the binary anchors (DDN-PJ151) |
-| `x_genset` | relation | `{name, disjoint?, complete?}` on `uml.generalization` (DDN-PJ152) |
-| `x_template` | object | `{parameters: [string]}` on `uml.class`/`uml.interface` (DDN-PJ153) |
+| `x_genset` | relation | `{name, disjoint?, complete?}` on uml.generalization (DDN-PJ152) |
+| `x_template` | object | `{parameters: [string]}` on uml.class/interface (DDN-PJ153) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
 | `x_return` | relation | boolean (sequence/communication reply) |
 | `x_message` | relation | `{seq?, sort?: synch|asynch|create|delete|reply|lost|found, gate?: source|target, time?, duration? ("{…}")}` (RFC-120; seq enforced by uml.communication@1 DDN-PJ111) |
-| `x_fragment` | relation | `{operator: alt|opt|loop|break|par|…|assert, operands: [{guard?, messages: [@msg…], fragments?}]}` on first covered uml.message (RFC-120; DDN-PJ155) |
-| `x_invariant` | object | `[{after: @msg, label}]` — state-invariant symbol on the lifeline (DDN-PJ157) |
-| `x_activation` | object | `[{from: @msg, to: @msg}]` — authorable execution occurrence bars (DDN-PJ158) |
+| `x_fragment` | relation | `{operator: alt|opt|loop|…|assert, operands: [{guard?, messages: [@msg…], fragments?}]}` on first covered uml.message (DDN-PJ155) |
+| `x_invariant` | object | `[{after: @msg, label}]` lifeline state invariant (DDN-PJ157) |
+| `x_activation` | object | `[{from: @msg, to: @msg}]` explicit execution bars (DDN-PJ158) |
 | `x_instance` | object | requires `classifier` (ref) |
 | `x_partition` | object | `{lane: string}` exactly |
 | `x_event` | object | `{type: none|message|timer|error}` |
@@ -248,7 +248,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | process map (BPMN) | graph | `bpmn.basic@1` | pools = frames `x_pool: true`, `x_gateway.type`, `bpmn.messageflow` across pools |
 | process chain (EPC) | graph | `epc.basic@1` | alternating `epk.event`/`epk.function`, `x_epc.operator` on connectors |
 | activity diagram / swimlanes | graph | `uml.activity@1` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars |
-| state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` | `state.*` kinds + `state.transition` with `x_transition.event`; regions = `x_region` frames |
+| state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `state.transition` with `x_transition.event`; regions = `x_region` frames; uml.statemachine@1 (RFC-121): activities/internal/submachines (`x_state`), 8 pseudostates, `trigger [guard] / effect`, time events |
 | sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines, `x_return` replies; @2 (RFC-120): `x_fragment`, gates, `x_message.sort`, `{…}` constraints, `x_invariant`, `x_activation` |
 | communication/collaboration | graph | `uml.communication@1` | `uml.message` + `x_message.seq` dotted-decimal |
 | class diagram | graph | `uml.structure@1` / `uml.structure@2` | `uml.class/interface/enumeration`, `x_member` on fields, acyclic generalization; @2 (RFC-119): `x_endlabels`, diamonds, `x_association_class`, `x_nary`, `x_genset`, `x_template`, provided/required |
@@ -357,32 +357,35 @@ Global (all profiles):
 - `req.requirement` elements need unique `x_diagram.code` and nonempty `x_diagram.text` (DDN-PF014).
 
 Per-profile:
-- **flow.basic@1 / flow.documented@2 / uml.activity@1**: participants only `flow.*` kinds (DDN-PF007). Links: flow.basic only `flow.next`; uml.activity only `uml.flow`; flow.documented allows `flow.next`, `flow.annotation`, `flow.continues` (DDN-PX008). At least one `flow.start` and one `flow.end`; start has no incoming control; end has no outgoing (DDN-PF008). Every `flow.decision` needs ≥2 outgoing control edges with explicit, distinct, nonempty `x_diagram.branch` names (DDN-PF009). Every non-annotation symbol must be reachable from a start and reach an end (DDN-PF010). flow.documented@2 additionally: `flow.offpage` nodes need valid `x_continuation {key, side: in|out, page?}`; each key is exactly one out + one in pair joined by exactly one `flow.continues` edge (DDN-PX008); every `flow.annotation` node needs an outgoing `flow.annotation` attachment.
-- **dfd.***: only `dfd.*` participants and `dfd.data` links (DDN-PF011); every `dfd.process` has unique nonempty `x_diagram.number` and at least one input and one output (DDN-PF012/013).
-- **org.tree@1**: participants `organization|team|role|analysis.role`; links only `reports_to`; acyclic (DDN-PF004); exactly one root (DDN-PJ102); multiple parents fail at layout (DDN201).
-- **wbs.tree@1**: participants only `analysis.task`; links only `analysis.decomposes`; acyclic; exactly one root (DDN-PJ102).
-- **mindmap.basic@1**: participants `object|entity|term|domain`; links only `assoc`; `layout.algorithm` MUST be `mindmap`; acyclic; exactly one root.
-- **concept.map@1**: participants `object|entity|term|domain`; links only `assoc|ref`; EVERY selected relation needs an explicit author-written label different from the verb default (DDN-PJ104). No root/cycle constraints.
-- **c4.context@1**: participants only `c4.person`, `c4.system`; links only `c4.rel`; no member (field/port) endpoints (DDN-PJ100). **c4.container@1**: participants `c4.person|c4.system|c4.container|c4.store|c4.queue`; links only `c4.rel`; requires EXACTLY ONE frame scoped to a selected `c4.system` boundary whose members cover every selected interior node (exterior: `c4.person`) (DDN-PJ101). **c4.component@1**: participants `c4.person|c4.system|c4.container|c4.store|c4.component`; same one-boundary rule with a `c4.container` frame (exterior: `c4.person`, `c4.system`, `c4.store`).
-- **epc.basic@1**: participants `epk.event|epk.function|epk.connector`; links only `epk.next`; events and functions must strictly alternate (no event→event or function→function; DDN-PJ105); `epk.connector` must carry `x_epc.operator` of `and|or|xor`, and `x_epc.operator` on anything else is rejected (DDN-PJ106).
-- **erd.crowfoot@1**: every visible relation must be `ref` or `assoc` and carry BOTH `source_mark` and `target_mark` from `one|zeroone|many|zeromany` (DDN-PJ087).
-- **uml.usecase@2**: every selected `uml.usecase` names its subject boundary via `x_usecase.subjects` (refs to distinct `uml.subject` elements); `uml.extend` needs `x_usecase {extension_point}` naming an extension point declared on the target use case plus a `condition` string or `condition_ref` (exactly one form); include/extend endpoints must share a declared subject; a view frame scoped to a `uml.subject` must not contradict model membership (DDN-PX002/PX004/PX006).
-- **chen.basic@1 / chen.binary@2**: entities only; weak entity (`x_chen.weak: true`) requires a distinct entity owner (`x_chen.owner`), a declared partial-key field, exactly one visible identifying relationship, and identifying relations must connect weak↔owner with the owner end at min 1/max 1; participation bounds `x_chen.from/to {min, max|many}` required on every relation under binary@2; composite attributes must match actual nested fields; key fields cannot be derived/multivalued; ownership must be acyclic (DDN-PX003/PX005/PX007).
-- **uml.object@1**: instance objects carry `x_instance.classifier`; declared slots must exist on the classifier's fields (DDN-PJ112).
-- **uml.communication@1**: every visible `uml.message` needs `x_message.seq` matching `^\d+(\.\d+)*$`; replies (`x_return: true`) must be dotted under their request (e.g. `2.1`); non-replies must be top-level numbers (DDN-PJ111).
-- **state.flat@1**: only `state.initial|state.state|state.final` elements and object-level `state.transition` relations; exactly ONE initial marker, ≥1 terminal (`state.final` or `x_state.terminal: true`); no fields on states; initial has no incoming and exactly one outgoing transition, which is unconditional/action-free; every non-initial transition requires `x_transition.event`; terminal states have no outgoing transitions; every state reachable from initial and able to reach a terminal; same-event branching from a state requires guard `inputs` domains; optional `traces` are simulated (≤100 traces × ≤1000 events; each step must match exactly one transition — DDN-QL006; final state must equal `expected` — DDN-QL007). Codes DDN-QL001..QL007.
-- **state.composite@1**: frames may be parallel regions (`x_region: true`); at most ONE `state.initial` per region, and per composite frame unless its members are fully covered by declared regions (DDN-PJ113). Transitions render event/guard labels from `x_transition`.
-- **uml.activity@1** (in addition to flow rules): partition lanes — `x_partition.lane` must name an existing frame id or name (DDN-PJ114); `flow.forkjoin` bars: fork count (≥2 outgoing) must equal join count (≥2 incoming) (DDN-PJ115).
-- **bpmn.basic@1**: pools are frames with `x_pool: true`; `bpmn.messageflow` only across pools, never inside one pool or with both endpoints outside all pools (DDN-PJ116); every `flow.gateway` needs `x_gateway.type` of `exclusive|parallel|inclusive` (DDN-PJ117); gateways render prefixed X/+/O markers.
+- **flow.basic@1 / flow.documented@2 / uml.activity@1**: `flow.*` participants only (DDN-PF007); links flow.basic `flow.next` / uml.activity `uml.flow` / flow.documented +`flow.annotation`,`flow.continues` (DDN-PX008). One `flow.start`+`flow.end`; start no incoming, end no outgoing (DDN-PF008); `flow.decision` ≥2 distinct named `x_diagram.branch` out-edges (DDN-PF009); all non-annotation symbols reachable start→end (DDN-PF010). flow.documented@2: `flow.offpage` needs valid `x_continuation {key, side, page?}`, each key one out+in pair via one `flow.continues` (DDN-PX008); annotations need an outgoing attachment.
+- **dfd.***: `dfd.*` + `dfd.data` only (DDN-PF011); each `dfd.process` unique `x_diagram.number`, ≥1 input and output (DDN-PF012/013).
+- **org.tree@1**: `organization|team|role|analysis.role` + `reports_to` only; acyclic; exactly one root (DDN-PJ102); multi-parent fails layout (DDN201).
+- **wbs.tree@1**: `analysis.task` + `analysis.decomposes` only; acyclic; one root (DDN-PJ102).
+- **mindmap.basic@1**: `object|entity|term|domain` + `assoc` only; `layout.algorithm: mindmap`; acyclic; one root.
+- **concept.map@1**: `object|entity|term|domain` + `assoc|ref` only; every selected relation needs an explicit label, not the verb default (DDN-PJ104).
+- **c4.***: `c4.rel` links only; context: `c4.person`+`c4.system` only, no member endpoints (DDN-PJ100); container/component: `c4.person|c4.system|c4.container|c4.store` + `c4.queue`/`c4.component`, and EXACTLY ONE frame scoped to the boundary (`c4.system` / `c4.container`) whose members cover every interior node (DDN-PJ101).
+- **epc.basic@1**: `epk.event|function|connector` + `epk.next` only; events/functions strictly alternate (DDN-PJ105); connectors carry `x_epc.operator` and|or|xor, forbidden elsewhere (DDN-PJ106).
+- **erd.crowfoot@1**: every visible relation `ref|assoc` with BOTH `source_mark`/`target_mark` in `one|zeroone|many|zeromany` (DDN-PJ087).
+- **uml.usecase@2**: every `uml.usecase` names subjects (`x_usecase.subjects` → distinct uml.subject refs); `uml.extend` names a declared extension point + condition or condition_ref (one form); include/extend share a declared subject; subject frames must match model membership (DDN-PX002/PX004/PX006).
+- **chen.basic@1 / chen.binary@2**: entities only; weak entity needs distinct owner, partial-key field, exactly one visible identifying relation connecting weak↔owner (owner end min1/max1); binary@2 requires `x_chen.from/to {min,max|many}` on every relation; composite flags match nested fields; keys not derived/multivalued; ownership acyclic (DDN-PX003/PX005/PX007).
+- **uml.object@1**: instances carry `x_instance.classifier`; slots must exist on classifier fields (DDN-PJ112).
+- **uml.communication@1**: every `uml.message` needs `x_message.seq` (`^\d+(\.\d+)*$`); replies dotted under the request, non-replies top-level (DDN-PJ111).
+- **state.flat@1**: `state.initial|state.state|state.final` + `state.transition` only; exactly one initial, ≥1 terminal (`state.final` or `x_state.terminal`); no fields; initial transition unconditional/action-free; non-initial transitions require `x_transition.event`; terminals have no outgoing; all states reach a terminal from initial; same-event branches need guard `inputs` domains; optional `traces` simulated, each step exactly one transition (DDN-QL001..QL007).
+- **state.composite@1**: `x_region: true` frames = parallel regions; at most one `state.initial` per region/composite (DDN-PJ113); labels from `x_transition`.
+- **uml.activity@1** (+ flow rules): `x_partition.lane` names an existing frame (DDN-PJ114); fork count = join count on `flow.forkjoin` bars (DDN-PJ115).
+- **bpmn.basic@1**: pools = frames `x_pool: true`; `bpmn.messageflow` only across pools (DDN-PJ116); every `flow.gateway` needs `x_gateway.type` exclusive|parallel|inclusive (DDN-PJ117).
 - **uml.interaction_overview@1**: nodes referencing sub-views via `x_subdiagram.view` must name an existing view (DDN-PJ119).
-- **sysml.***: only `sysml.block` elements may declare `ports` groups (DDN-PJ121). **sysml.parametric@1**: every `sysml.constraint` is touched by exactly two visible relations (DDN-PJ122).
-- **archimate.basic@1**: `archi.rel` endpoints must be among the nine registered `archi.*` kinds; layers business/application/technology; links go same-layer or upward (serving) only (DDN-PJ123).
-- **cmmn.basic@1**: every `cmmn.sentry` must be a member of a frame scoped to a `cmmn.stage` and carry `x_sentry.on` of `entry|exit` (DDN-PJ120).
-- **network.basic@1 / network.rack@1**: `network.attaches` must target a `network.bus` element or a port member (DDN-PJ127). Rack profile: within a frame scoped to a `network.rack`, member `x_rack.unit` must be an integer 1..`x_rack.units` of the rack and unique per rack (DDN-PJ127).
-- **fault.tree@1 / event.tree@1**: every `tree.gate` declares `x_gate.type` of `and|or` and has ≥2 visible outgoing `tree.input` edges (DDN-PJ126).
-- **family.tree@1**: `family.parent_of` edges acyclic (DDN-PJ129); a `family.person` has at most two distinct parents (DDN-PJ130); `x_birth`/`x_death` years render in labels.
+- **sysml.***: only `sysml.block` declares `ports` (DDN-PJ121); parametric: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122).
+- **archimate.basic@1**: `archi.rel` endpoints among the nine `archi.*` kinds; links same-layer or upward (DDN-PJ123).
+- **cmmn.basic@1**: `cmmn.sentry` inside a `cmmn.stage` frame with `x_sentry.on` entry|exit (DDN-PJ120).
+- **network.basic@1 / network.rack@1**: `network.attaches` targets a `network.bus` or port (DDN-PJ127); rack members carry unique integer `x_rack.unit` 1..`x_rack.units` (DDN-PJ127).
+- **fault.tree@1 / event.tree@1**: `tree.gate` declares `x_gate.type` and|or with ≥2 outgoing `tree.input` edges (DDN-PJ126).
+- **family.tree@1**: `family.parent_of` acyclic (DDN-PJ129); ≤2 distinct parents per person (DDN-PJ130).
 - **wireframe.ui@1**: `ui.*` controls outside any `ui.frame` frame → warning DDN-PJ128.
 - **pert.cpm@1**: tasks (`analysis.task`) need finite nonnegative `x_estimate` days (DDN-PJ125); `analysis.precedes` must be acyclic (DDN-PJ124); critical-path relations/labels are computed at render.
+- **uml.structure@2** (RFC-119): `x_endlabels` only on uml.association with UML multiplicity (DDN-PJ149); association class must resolve to a uml.class (PJ150); x_nary ≥3 distinct classifier ends (PJ151); genset shares one target per name (PJ152); x_template only on classifiers (PJ153); enumeration literals only on uml.enumeration members (PJ154).
+- **uml.sequence@2** (RFC-120): fragment operands contiguous, non-overlapping, strictly nested, anchored on first covered message (DDN-PJ155); sort/gate rules — create is the target's first message, delete ends the lifeline, lost/found self-anchored, gate needs an enclosing fragment (PJ156); invariant/activation refs must be incident (PJ157/158); time/duration in `{…}` (PJ159).
+- **uml.statemachine@1** (RFC-121): x_state only on state kinds; submachine references a distinct state.state (DDN-PJ160); choice fans out 2+, junction passes through, history/entry/exit points inside a composite frame (PJ161); after/at/when triggers need parentheses (PJ162); PJ113 per-region initial applies; traces stay state.flat@1-only (DDN-Q005).
 
 ## 11. Validation workflow (CLI)
 
@@ -1137,35 +1140,6 @@ view traces "Synthetic checkout / animated flow" {
 }
 ```
 
-### 13.24 Pipeline graph with numbered legend (plain `ddn@1` profile)
-
-```ddn
-ddn "0.5";
-module "ddn.examples.flow";
-
-import "shared.ddn" as shared;
-
-data model {
-    object source "Operational customer" { kind: table; workload: [oltp]; role: authoritative; }
-    object capture "Capture changes" { kind: activity; }
-    object events "customer.changed" { kind: topic; }
-    object history_job "Build history" { kind: activity; }
-    object history "Customer history" { kind: history; workload: [olap]; temporal: bitemporal; }
-    relation r1 @source -> @capture { kind: captures_changes_into; capture: cdc; }
-    relation r2 @capture -> @events { kind: publishes_to; transport: kafka; }
-    relation r3 @events -> @history_job { kind: delivers_to; scope: "history consumer"; }
-    relation r5 @history_job -> @history { kind: write; }
-}
-view flow "Capture, transport and transformation" {
-    data: [@model];
-    format: @shared.styles.technical;
-    display: @shared.styles.compact;
-    publication { width: 1550px; height: 1020px; }
-    // numbered callout legend: every visible relation needs a unique positive number (DDN061)
-    legend { mode: numbers; keys: { "r1": 1, "r2": 2, "r3": 3, "r5": 5 }; width: 300px; }
-}
-```
-
 ### 13.25 Self-contained multi-module file (no imports)
 
 ```ddn
@@ -1231,25 +1205,22 @@ view overview "Self-contained / overview" {
     format: @shop.model.styles.technical;
 }
 
-view compact "Self-contained / compact" {
-    data: [@shop.data.records];
-    format: @shop.model.styles.technical;
-    display { fields: none; }           // view-local override over the bundle's display
-}
 ```
 
-Check with an explicit view: `cli.js check main.ddn --workspace <dir> --view overview` (and `--view compact`). Without `--view`, the CLI builds the first view of the entry file's FIRST module — this file's first module (`shop.model`) declares no view, so a bare `check` fails with DDN040 even though the file is valid.
+View-local overrides stack over the bundle (e.g. add `display { fields: none; }` inside a view to compact it).
+
+Check with an explicit view: `cli.js check main.ddn --workspace <dir> --view overview`. Without `--view`, the CLI builds the first view of the entry file's FIRST module — `shop.model` declares no view, so a bare `check` fails with DDN040 even though the file is valid.
 
 ## 14. Embedding / runtime API summary
 
-Runtime modules (`notation/runtime/`, dependency-free ES modules wired through an explicit module registry, so script-tag/CJS/ESM/vm consumers share namespaces; assets under `notation/runtime/assets/` are generated — do not hand-edit):
+Runtime modules (`notation/runtime/`, dependency-free ES modules sharing namespaces via an explicit module registry; `notation/runtime/assets/` is generated — do not hand-edit):
 
 | module | global | contents |
 |---|---|---|
 | ddn-contracts.js | DDNContracts | semantic/property/extension validation — load before ddn-core |
 | ddn-profiles.js | DDNProfiles | profile catalogue merge + profile validators |
 | ddn-profile-quality.js | DDNProfileQuality | additive profile-completion validators |
-| ddn-core.js | DDN | lex/parse/bundle/createWorkspace/build, `DEFAULTS`, `CHOICES`, `PROPERTIES`, `quantity`, `semanticJSON`, `DDNError`, VERSION {{RUNTIME_VERSION}} |
+| ddn-core.js | DDN | lex/parse/bundle/createWorkspace/build, DEFAULTS/CHOICES/PROPERTIES, `quantity`, `semanticJSON`, `DDNError`, VERSION {{RUNTIME_VERSION}} |
 | ddn-text.js | DDNText | text measurement (`FONTS` roles, `setMetrics`, `setProvider`) |
 | ddn-shapes.js | DDNShapes | silhouettes/anchors |
 | ddn-sketch.js | DDNSketch | seeded hand-drawn strokes (needed for `look: handDrawn`) |
@@ -1267,11 +1238,11 @@ Runtime modules (`notation/runtime/`, dependency-free ES modules wired through a
 | ddn-export.js | DDNExport | allowlist export: `project(ir)`, `serialize(ir)` (JSON or SQL DDL) |
 | ddn-defaults.js | DDNDefaults | read-only per-kind defaults: `forKind(idOrKeyword)` → deep copy |
 
-Distribution bundles (`notation/dist/`): `ddn-core` (parse/build/validate/export, no rendering); `ddn-graph` (core + graph renderer, registers `graph`); `ddn-quality` (graph + quality renderers, registers `fishbone`/`decision`); `ddn-projections` (graph + chart/matrix/panels/timeline/table/sequence/timing/chen); `ddn-geo` (optional geographic module, registers `geo`, never in `ddn.global.js`); `ddn-iso` (optional isometric module, publishes `DDNIso`, registers no kind, never in `ddn.global.js`); `ddn.global.js` = everything except geo and iso. Each ships browser IIFE `.js`, minified `.min.js` + map, ESM build, and TypeScript declarations. `DDNEngine` maps projection kinds to bundles and throws DDN-E010 naming a missing bundle — except the optional geo/iso modules, which render visible coded placeholders (§5, §7.7). Geography data ships separately as `assets/geo/world-110m.json` (~96 KB, Natural Earth 110m): views name it via `geography: "assets/geo/world-110m.json"` (hosts register it first with `DDNGeo.registerGeography(name, geojson)`; the CLI pre-registers it) or bind inline GeoJSON via `geography: @data.record`.
+Distribution bundles (`notation/dist/`): `ddn-core` (parse/build/validate/export, no rendering); `ddn-graph` (+ graph renderer); `ddn-quality` (+ fishbone/decision); `ddn-projections` (+ chart/matrix/panels/timeline/table/sequence/timing/chen); `ddn-geo`/`ddn-iso` (optional, never in `ddn.global.js`); `ddn.global.js` = everything else. Each ships IIFE `.js`, minified `.min.js` + map, ESM, and TypeScript declarations. `DDNEngine` throws DDN-E010 naming a missing bundle — except geo/iso, which render coded placeholders (§5, §7.7). Geography data ships separately as `assets/geo/world-110m.json` (~96 KB, Natural Earth): name it via `geography: "assets/geo/world-110m.json"` (register first with `DDNGeo.registerGeography(name, geojson)`; the CLI pre-registers it) or bind inline GeoJSON via `geography: @data.record`.
 
-Core API essentials: `DDN.parse(text, name)` → parsed doc (throws `DDNError`); `DDN.build(files, entry, viewName, registry)` → `{ir, workspace}` (`files` = `{path: sourceText}`; runs all validators); `DDN.bundle(files, entry)` → `{text, diagnostics}`; `DDNExport.serialize(ir)` → JSON or SQL DDL; `DDN.semanticJSON(ir)` → canonical semantic payload (basis of `modelFingerprint`).
+Core API essentials: `DDN.parse(text, name)` → parsed doc (throws `DDNError`); `DDN.build(files, entry, viewName, registry)` → `{ir, workspace}` (`files` = `{path: sourceText}`; runs all validators); `DDN.bundle` → `{text, diagnostics}`; `DDNExport.serialize(ir)` → JSON or SQL DDL; `DDN.semanticJSON(ir)` → canonical payload (basis of `modelFingerprint`).
 
-Live API (`DDNLive`): `DDNLive.createWorkspace({filename: text})` → workspace with `entries()`, `views(entry)`, `analyze(file)`, `resolve(entry, view)`, `inspect(entry, view)`, `renderSync({entry, view, overrides, layoutState})` → `{svg, scene, diagnostics, layoutState, modelFingerprint, …}`, `render` (async alias), `exportModel`, `exportVegaLite`, `evaluateDecision`, `simulateLifecycle`, `projectionPlan`, `updateFiles`, `applyEdits`, `snapshot`, undo/redo, `subscribe`. Module-level: `parse`, `lex`, `bundle`, `registerWorkspace`, `fromSnapshot`, `defaults.forKind`, `kinds`/`relations`, `glyphs.forKind`.
+Live API (`DDNLive`): `createWorkspace({filename: text})` → `entries()`, `views(entry)`, `analyze`, `resolve`, `inspect`, `renderSync({entry, view, overrides, layoutState})` → `{svg, scene, diagnostics, layoutState, modelFingerprint, …}` (`render` async alias), `exportModel`, `exportVegaLite`, `evaluateDecision`, `simulateLifecycle`, `projectionPlan`, `updateFiles`, `applyEdits`, `snapshot`, undo/redo, `subscribe`. Module-level: `parse`, `lex`, `bundle`, `registerWorkspace`, `fromSnapshot`, `defaults.forKind`, `kinds`/`relations`, `glyphs.forKind`.
 
 **Data refresh (keyed transactional)** — `ws.replaceData(name, records)` → `{ committed, revision, added, removed, updated, diagnostics }`; the full contract is §7.4. Usage:
 
@@ -1282,7 +1253,7 @@ const out = ws.renderSync({ entry, view: "latency_chart" });
 host.innerHTML = out.svg;
 ```
 
-**Overrides channel** (`renderSync` `overrides` record; unknown keys → LIVE001, bad values → LIVE002/003): runtime render toggles keyed by concern — `placement`, `center`, `theme`, `look`, `font`, `routing`, `crossings`, `fields`, `domains`/`datatypes`, `labels`, `kind`, `page`, `mark` (chart only), `relationRouting` (per verb/relation), numeric `width`/`height` 400..32000, `roughness` 0..3, `fontSize` 8..64, `gridStep` 8..512, `depth` 0..64, `curveTension` 0..1, `curveRadius` 0..512, booleans `autoPlace`/`hachure`. Each takes `source` (as-authored) plus the enum the concern implies. Data-bound/chen projections reject graph controls (LIVE021). Live view limit: 128 elements / 384 relations (LIVE013); workspace limit 1,500 files / 12M chars (LIVE011).
+**Overrides channel** (`renderSync` `overrides`; unknown keys → LIVE001, bad values → LIVE002/003): toggles keyed by concern — `placement`, `center`, `theme`, `look`, `font`, `routing`, `crossings`, `fields`, `domains`/`datatypes`, `labels`, `kind`, `page`, `mark` (chart), `relationRouting`, numeric `width`/`height` 400..32000, `roughness` 0..3, `fontSize` 8..64, `gridStep` 8..512, `depth` 0..64, `curveTension` 0..1, `curveRadius` 0..512, booleans `autoPlace`/`hachure`. Data-bound/chen projections reject graph controls (LIVE021). Limits: 128 elements / 384 relations per live view (LIVE013); 1,500 files / 12M chars per workspace (LIVE011).
 
 CSS hooks on rendered SVG: root `ddn-svg ddn-view-<kind> ddn-profile-<slug>`; nodes `ddn-node ddn-kind-<code>` + `data-ddn-id`; relations `ddn-rel ddn-verb-<slug>`; `ddn-field`, `ddn-label`, `ddn-panel`, `ddn-frame`, `ddn-mark ddn-mark-<type>`. Slugs lowercase with non-alphanumeric runs collapsed to dashes.
 

@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 189,
+  "kindCount": 197,
   "kinds": [
     {
       "kind": "object",
@@ -6053,6 +6053,270 @@
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
       "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
       "default_expanded_control_count": 3
+    },
+    {
+      "kind": "state.history_shallow",
+      "name": "Shallow history",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.history_deep",
+      "name": "Deep history",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.junction",
+      "name": "Junction",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.choice",
+      "name": "Choice",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.entrypoint",
+      "name": "Entry point",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.exitpoint",
+      "name": "Exit point",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.forkjoin",
+      "name": "Fork/join bar",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "state.terminate",
+      "name": "Terminate",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "state",
+      "basic_controls": [
+        "name",
+        "kind",
+        "events",
+        "transitions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "state.flat@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
     },
     {
       "kind": "rule.row",

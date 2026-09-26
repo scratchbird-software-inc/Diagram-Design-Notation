@@ -14,7 +14,13 @@ function registry(base){
  const def=(schema,targets=['object'])=>({targets:Object.fromEntries(targets.map(t=>[t,schema]))});
  out.extension_contracts.x_record=def({type:'object',additionalProperties:true},['object','relation']);
  out.extension_contracts.x_story=def({type:'object',required:['task'],additionalProperties:true},['relation']);
- for(const key of ['x_rule','x_state','x_transition','x_usecase','x_chen','x_continuation'])out.extension_contracts[key]=def({type:'object',additionalProperties:true},key==='x_chen'?['object','field','relation']:['object','relation']);
+ for(const key of ['x_rule','x_usecase','x_chen','x_continuation'])out.extension_contracts[key]=def({type:'object',additionalProperties:true},key==='x_chen'?['object','field','relation']:['object','relation']);
+ /* B1-057 (RFC-121): closed x_state/x_transition contracts for UML 2.5.1 state
+  * machines. Keys used by shipped lifecycle fixtures (terminal, event, guard,
+  * actions) stay legal; string guards render verbatim; internal transitions
+  * and activities are compartment text; submachine references a state.state. */
+ out.extension_contracts.x_state=def({type:'object',properties:{terminal:{type:'boolean'},entry:{type:'string',minLength:1},exit:{type:'string',minLength:1},do:{type:'string',minLength:1},internal:{type:'array',minItems:1,maxItems:12,items:{type:'string',minLength:1}},submachine:{type:'object'}},additionalProperties:false},['object']);
+ out.extension_contracts.x_transition=def({type:'object',properties:{event:{type:'string',minLength:1},guard:{anyOf:[{type:'object'},{type:'string',minLength:1}]},effect:{type:'string',minLength:1},actions:{type:'array',maxItems:12}},additionalProperties:false},['relation']);
  out.extension_contracts.x_assignment=def({type:'object',required:['code'],properties:{code:{type:'string',minLength:1,maxLength:12}},additionalProperties:false},['relation']);
  out.extension_contracts.x_category=def({type:'object',required:['axis','level'],properties:{axis:{type:'string',minLength:1},level:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_member=def({type:'object',properties:{kind:{enum:['attribute','operation','literal']},visibility:{enum:['public','private','protected','package']},static:{type:'boolean'},abstract:{type:'boolean'},derived:{type:'boolean'},multiplicity:{type:'string',minLength:1},modifiers:{type:'array',items:{enum:['ordered','unique','readOnly']},uniqueItems:true,maxItems:3}},additionalProperties:false},['field']);

@@ -809,6 +809,13 @@
       "wiki": "Diagrams-Sequence",
       "svg": "profiles/uml-sequence-2.svg"
     },
+    "uml.statemachine@1": {
+      "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
+      "view": "pseudostates",
+      "title": "UML state machine / activities and pseudostates",
+      "kind": "graph",
+      "svg": "profiles/uml-statemachine-1.svg"
+    },
     "uml.structure@1": {
       "entry": "website/examples/projections/views.ddn",
       "view": "structure",
@@ -2952,6 +2959,24 @@
       "kind": "sequence",
       "wiki": "Diagrams-Sequence",
       "svg": "corpus/basics-76-uml-sequence-complete.svg"
+    },
+    {
+      "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
+      "view": "pseudostates",
+      "title": "UML state machine / activities and pseudostates",
+      "views": [
+        {
+          "id": "pseudostates",
+          "title": "UML state machine / activities and pseudostates"
+        },
+        {
+          "id": "composite",
+          "title": "UML state machine / composite, history, submachine"
+        }
+      ],
+      "profile": "uml.statemachine@1",
+      "kind": "graph",
+      "svg": "corpus/basics-77-uml-statemachine-complete.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

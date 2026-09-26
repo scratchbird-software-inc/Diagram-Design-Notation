@@ -119,6 +119,9 @@
     "DDN-PJ156": "x_message.sort rules: create = first message of target; delete ends the lifeline; lost/found self-anchored (@a -> @a); reply = x_return:true; gates need an enclosing fragment",
     "DDN-PJ157": "State invariant after: must reference a visible message incident to that participant",
     "DDN-PJ158": "Activation from:/to: must reference visible messages incident to the participant, earlier to later row",
-    "DDN-PJ159": "time/duration annotations use UML constraint form, wrapped in braces: \"{t..t+5}\""
+    "DDN-PJ159": "time/duration annotations use UML constraint form, wrapped in braces: \"{t..t+5}\"",
+    "DDN-PJ160": "x_state applies to state kinds only; submachine must reference a distinct declared state.state",
+    "DDN-PJ161": "Pseudostate rules: choice fans out 2+, junction passes through, terminate no outgoing, history/entry/exit points inside a composite frame",
+    "DDN-PJ162": "Time/change triggers use after(\u2026), at(\u2026) or when(\u2026) with parentheses \u2014 fix the event text or drop the time-trigger prefix"
   }
 }

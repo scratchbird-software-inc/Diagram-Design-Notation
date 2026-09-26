@@ -1,0 +1,77 @@
+ddn "0.5";
+module "ddn.examples.umlsm";
+
+// B1-057 (RFC-121): UML 2.5.1 state-machine completeness on uml.statemachine@1.
+// View 1: activities, internal transitions, full transition syntax, time events,
+// choice/junction/fork-join/terminate. View 2: composite state with parallel
+// regions, history pseudostates, entry/exit points and a submachine binding.
+// Minimal current-dialect style, no pinned layout.
+
+data player {
+    object start "" { kind: "state.initial"; }
+    object stopped "Stopped" { kind: "state.state"; }
+    object playing "Playing" { kind: "state.state";
+        x_state: { entry: "openDecoder()"; exit: "closeDecoder()"; do: "renderFrame()";
+                   internal: [ "log [verbose] / writeMetric()" ]; };
+    }
+    object choose_next "" { kind: "state.choice"; }
+    object wait_join "" { kind: "state.junction"; }
+    object sync "" { kind: "state.forkjoin"; }
+    object crashed "" { kind: "state.terminate"; }
+    object done "" { kind: "state.final"; }
+
+    relation e1 "" @start -> @stopped { kind: "state.transition"; }
+    relation e2 "play" @stopped -> @playing { kind: "state.transition";
+        x_transition: { event: "play"; guard: "mediaReady"; effect: "loadTrack()" }; }
+    relation e3 "buffer" @playing -> @wait_join { kind: "state.transition"; x_transition: { event: "bufferEmpty" }; }
+    relation e4 "" @wait_join -> @choose_next { kind: "state.transition"; x_transition: { event: "bufferFull" }; }
+    relation e5 "next" @choose_next -> @playing { kind: "state.transition"; x_transition: { event: "next"; guard: "hasNext" }; }
+    relation e6 "eject" @choose_next -> @sync { kind: "state.transition"; x_transition: { event: "after(30s)"; effect: "eject()" }; }
+    relation e7 "" @sync -> @stopped { kind: "state.transition"; x_transition: { event: "when(drained)" }; }
+    relation e8 "crash" @playing -> @crashed { kind: "state.transition"; x_transition: { event: "at(2027-01-01T00:00Z)" }; }
+    relation e9 "stop" @playing -> @done { kind: "state.transition"; x_transition: { event: "stop" }; }
+}
+
+data machine {
+    object mstart "" { kind: "state.initial"; }
+    object offline "Offline" { kind: "state.state"; }
+    object session "Session" { kind: "state.state"; x_state: { submachine: @machine.auth; }; }
+    object auth "Auth top" { kind: "state.state"; }
+    object mstop "" { kind: "state.final"; }
+    // Composite state with two parallel regions, history and boundary points.
+    object active "Active" { kind: "state.state"; }
+    object hist "" { kind: "state.history_shallow"; }
+    object deep_hist "" { kind: "state.history_deep"; }
+    object ep_in "" { kind: "state.entrypoint"; }
+    object ep_out "" { kind: "state.exitpoint"; }
+    object ui_idle "UI idle" { kind: "state.state"; }
+    object ui_busy "UI busy" { kind: "state.state"; }
+    object net_idle "Net idle" { kind: "state.state"; }
+    object net_sync "Net sync" { kind: "state.state"; }
+
+    relation m1 "" @mstart -> @offline { kind: "state.transition"; }
+    relation m2 "connect" @offline -> @ep_in { kind: "state.transition"; x_transition: { event: "connect"; effect: "dial()" }; }
+    relation m3 "" @ep_in -> @ui_idle { kind: "state.transition"; }
+    relation m4 "" @ep_in -> @net_idle { kind: "state.transition"; }
+    relation m5 "work" @ui_idle -> @ui_busy { kind: "state.transition"; x_transition: { event: "work" }; }
+    relation m6 "" @ui_busy -> @hist { kind: "state.transition"; x_transition: { event: "suspend" }; }
+    relation m7 "" @hist -> @ui_idle { kind: "state.transition"; x_transition: { event: "resume" }; }
+    relation m8 "" @net_idle -> @net_sync { kind: "state.transition"; x_transition: { event: "after(5s)" }; }
+    relation m9 "" @net_sync -> @deep_hist { kind: "state.transition"; x_transition: { event: "suspend" }; }
+    relation m10 "" @ui_busy -> @ep_out { kind: "state.transition"; x_transition: { event: "when(queue empty)" }; }
+    relation m11 "" @ep_out -> @session { kind: "state.transition"; }
+    relation m12 "logout" @session -> @mstop { kind: "state.transition"; x_transition: { event: "logout" }; }
+}
+
+view pseudostates "UML state machine / activities and pseudostates" {
+    data: [@player];
+    projection { profile: "uml.statemachine@1"; }
+    publication { size: content; fit: none; }
+}
+
+view composite "UML state machine / composite, history, submachine" {
+    data: [@machine];
+    projection { profile: "uml.statemachine@1"; }
+    frame boundary "Active" { scope: @machine.active; members: [@machine.hist, @machine.deep_hist, @machine.ep_in, @machine.ep_out, @machine.ui_idle, @machine.ui_busy, @machine.net_idle, @machine.net_sync]; }
+    publication { size: content; fit: none; }
+}
