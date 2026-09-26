@@ -1,0 +1,85 @@
+ddn "0.5";
+module "ddn.examples.umlclass";
+
+// B1-055 (RFC-119): UML 2.5.1 class-diagram completeness on uml.structure@2.
+// View 1 exercises every association-end feature; view 2 the classifier
+// features. Minimal current-dialect style, no pinned layout.
+
+data fleet {
+    object company "Company" { kind: "uml.class";
+        fields { field name { datatype: "string"; } }
+    }
+    object person "Person" { kind: "uml.class";
+        fields {
+            field name { datatype: "string"; }
+            field age { x_member: { kind: attribute; derived: true; visibility: private; }; }
+        }
+    }
+    object employment "Employment" { kind: "uml.class";
+        fields { field started { datatype: "date"; } field grade { datatype: "string"; } }
+    }
+    object vehicle "Vehicle" { kind: "uml.class"; }
+    object car "Car" { kind: "uml.class"; }
+    object van "Van" { kind: "uml.class"; }
+    object engine "Engine" { kind: "uml.class"; }
+    object shipment "Shipment" { kind: "uml.class"; }
+    object product "Product" { kind: "uml.class"; }
+    object warehouse "Warehouse" { kind: "uml.class"; }
+
+    // Aggregation (hollow diamond at the whole) + roles, multiplicity, qualifier.
+    relation employs "employs" @company -> @person { kind: "uml.association"; target_mark: hollow_diamond;
+        x_endlabels: { source: { role: "employer"; multiplicity: "1"; qualifier: "employeeId"; };
+                       target: { role: "employee"; multiplicity: "0..*"; }; };
+    }
+    // Composition (filled diamond at the whole) + navigability arrowhead.
+    relation powered "powered by" @car -> @engine { kind: "uml.association"; source_mark: diamond; target_mark: open; }
+    // Association class attached at the path midpoint.
+    relation works "works in" @person -> @warehouse { kind: "uml.association";
+        x_association_class: { class: @employment; };
+    }
+    // N-ary association: diamond junction over three classifier ends.
+    relation stocks "stocks" @shipment -> @product { kind: "uml.association";
+        x_nary: { ends: [ { element: @warehouse; role: "stocks"; multiplicity: "1..*"; } ] };
+    }
+    // Generalization set on a shared generalization target.
+    relation gen_car "" @car -> @vehicle { kind: "uml.generalization"; x_genset: { name: "body"; disjoint: true; complete: true; }; }
+    relation gen_van "" @van -> @vehicle { kind: "uml.generalization"; x_genset: { name: "body"; disjoint: true; complete: true; }; }
+}
+
+data library {
+    object catalog "Catalog" { kind: "uml.class"; x_template: { parameters: ["T", "N: int"]; };
+        fields {
+            field size { x_member: { kind: attribute; derived: true; }; }
+            field items { x_member: { kind: attribute; multiplicity: "0..*"; modifiers: ["ordered", "unique"]; }; }
+            field find { x_member: { kind: operation; visibility: public; }; }
+        }
+    }
+    object status "Loan status" { kind: "uml.enumeration";
+        fields {
+            field available { x_member: { kind: literal; }; }
+            field on_loan { x_member: { kind: literal; }; }
+            field lost { x_member: { kind: literal; }; }
+        }
+    }
+    object loans "Loan registry" { kind: "uml.interface"; }
+    object desk "Desk service" { kind: "uml.component"; }
+
+    relation tracks "tracks" @catalog -> @status { kind: "uml.association";
+        x_endlabels: { target: { role: "state"; multiplicity: "1"; }; };
+    }
+    // Provided interface (lollipop) and required interface (socket).
+    relation provides "provides" @desk -> @loans { kind: "uml.provided"; }
+    relation requires "requires" @catalog -> @loans { kind: "uml.required"; }
+}
+
+view associations "UML class diagram / association ends" {
+    data: [@fleet];
+    projection { profile: "uml.structure@2"; }
+    publication { size: content; fit: none; }
+}
+
+view classifiers "UML class diagram / classifiers" {
+    data: [@library];
+    projection { profile: "uml.structure@2"; }
+    publication { size: content; fit: none; }
+}

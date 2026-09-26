@@ -17,7 +17,17 @@ function registry(base){
  for(const key of ['x_rule','x_state','x_transition','x_usecase','x_chen','x_continuation'])out.extension_contracts[key]=def({type:'object',additionalProperties:true},key==='x_chen'?['object','field','relation']:['object','relation']);
  out.extension_contracts.x_assignment=def({type:'object',required:['code'],properties:{code:{type:'string',minLength:1,maxLength:12}},additionalProperties:false},['relation']);
  out.extension_contracts.x_category=def({type:'object',required:['axis','level'],properties:{axis:{type:'string',minLength:1},level:{type:'string',minLength:1}},additionalProperties:false},['object']);
- out.extension_contracts.x_member=def({type:'object',properties:{kind:{enum:['attribute','operation']},visibility:{enum:['public','private','protected','package']},static:{type:'boolean'},abstract:{type:'boolean'}},additionalProperties:false},['field']);
+ out.extension_contracts.x_member=def({type:'object',properties:{kind:{enum:['attribute','operation','literal']},visibility:{enum:['public','private','protected','package']},static:{type:'boolean'},abstract:{type:'boolean'},derived:{type:'boolean'},multiplicity:{type:'string',minLength:1},modifiers:{type:'array',items:{enum:['ordered','unique','readOnly']},uniqueItems:true,maxItems:3}},additionalProperties:false},['field']);
+ /* B1-055 (RFC-119): UML 2.5.1 class-diagram completeness. Endpoint labels
+  * (role/multiplicity/qualifier) on association ends; association-class
+  * attachment; n-ary ends beyond the binary anchors; generalization sets;
+  * template parameter boxes. */
+ const endLabel={type:'object',properties:{role:{type:'string',minLength:1},multiplicity:{type:'string',minLength:1},qualifier:{type:'string',minLength:1}},additionalProperties:false};
+ out.extension_contracts.x_endlabels=def({type:'object',properties:{source:endLabel,target:endLabel},additionalProperties:false},['relation']);
+ out.extension_contracts.x_association_class=def({type:'object',required:['class'],properties:{class:{type:'object'}},additionalProperties:false},['relation']);
+ out.extension_contracts.x_nary=def({type:'object',required:['ends'],properties:{ends:{type:'array',minItems:1,maxItems:6,items:{type:'object',required:['element'],properties:{element:{type:'object'},role:{type:'string',minLength:1},multiplicity:{type:'string',minLength:1}},additionalProperties:false}}},additionalProperties:false},['relation']);
+ out.extension_contracts.x_genset=def({type:'object',required:['name'],properties:{name:{type:'string',minLength:1},disjoint:{type:'boolean'},complete:{type:'boolean'}},additionalProperties:false},['relation']);
+ out.extension_contracts.x_template=def({type:'object',required:['parameters'],properties:{parameters:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  out.extension_contracts.x_diagram=def({type:'object',properties:{number:{type:'string',minLength:1},owner:{type:'string'},code:{type:'string'},text:{type:'string'},branch:{type:'string'},stereotype:{type:'string'}},additionalProperties:false},['object','relation']);
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
@@ -55,6 +65,48 @@ function validate(ir,reg,ErrorClass){
  for(const r of rels){const a=nodes.get(r.from.element),b=nodes.get(r.to.element);
   if(r.kind==='uml.generalization'&&a.kind!==b.kind)fail('DDN-PF005','Generalization endpoints must have the same declared classifier kind',r);
   if(r.kind==='dfd.data'&&a.kind!=='dfd.process'&&b.kind!=='dfd.process')fail('DDN-PF006','A DFD transfer must involve a process; store/external shortcuts are invalid',r);
+ }
+ /* B1-055 (RFC-119): UML class-diagram completeness validators. */
+ const MULT=/^(\d+|\*)(\.\.(\d+|\*))?$/;
+ for(const r of rels){
+  const el=r.properties.x_endlabels;
+  if(el!==undefined){
+   if(r.kind!=='uml.association')fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association only, not '+r.kind,r);
+   for(const side of ['source','target']){const e=el[side];if(!e)continue;
+    if(e.multiplicity!==undefined&&!MULT.test(e.multiplicity))fail('DDN-PJ149','Association-end multiplicity must be a UML multiplicity (1, 0..1, 0..*, 1..*, *); found "'+e.multiplicity+'"',r);}
+  }
+  const ac=r.properties.x_association_class;
+  if(ac!==undefined){
+   if(r.kind!=='uml.association')fail('DDN-PJ150','x_association_class applies to uml.association only, not '+r.kind,r);
+   const c=nodes.get(ac.class?.$ref);
+   if(!c)fail('DDN-PJ150','Association class reference does not resolve to a declared element',r);
+   else if(c.kind!=='uml.class')fail('DDN-PJ150','Association class must name a uml.class, not '+c.kind,r);
+   else if(c.id===r.from.element||c.id===r.to.element)fail('DDN-PJ150','Association class cannot be an endpoint of its own association',r);
+  }
+  const nary=r.properties.x_nary;
+  if(nary!==undefined){
+   if(r.kind!=='uml.association')fail('DDN-PJ151','x_nary applies to uml.association only, not '+r.kind,r);
+   else{
+    const seen=new Set([r.from.element,r.to.element]);
+    for(const end of nary.ends){const el2=nodes.get(end.element?.$ref);
+     if(!el2)fail('DDN-PJ151','N-ary association end does not resolve to a declared element',r);
+     else if(!['uml.class','uml.interface','uml.enumeration'].includes(el2.kind))fail('DDN-PJ151','N-ary association ends must be classifiers (uml.class/uml.interface/uml.enumeration), not '+el2.kind,r);
+     else if(seen.has(el2.id))fail('DDN-PJ151','N-ary association ends must be distinct; '+el2.id+' appears twice',r);
+     else seen.add(el2.id);
+     if(end.multiplicity!==undefined&&!MULT.test(end.multiplicity))fail('DDN-PJ151','N-ary end multiplicity must be a UML multiplicity; found "'+end.multiplicity+'"',r);}
+   }
+  }
+  const gs=r.properties.x_genset;
+  if(gs!==undefined){
+   if(r.kind!=='uml.generalization')fail('DDN-PJ152','x_genset applies to uml.generalization only, not '+r.kind,r);
+   else for(const other of rels)if(other!==r&&other.properties.x_genset?.name===gs.name&&other.to.element!==r.to.element)fail('DDN-PJ152','Generalization set "'+gs.name+'" must share one target; '+r.id+' and '+other.id+' disagree',r);
+  }
+ }
+ for(const n of ir.elements){
+  if(n.properties.x_template!==undefined&&!['uml.class','uml.interface'].includes(n.kind))fail('DDN-PJ153','x_template applies to uml.class/uml.interface only, not '+n.kind,n);
+  for(const f of n.fields){const kind=f.properties.x_member?.kind;
+   if(kind==='literal'&&n.kind!=='uml.enumeration')fail('DDN-PJ154','x_member kind literal applies to uml.enumeration members only; '+n.id+' is '+n.kind,f);
+   if(n.kind==='uml.enumeration'&&f.properties.x_member!==undefined&&kind!=='literal')fail('DDN-PJ154','uml.enumeration members must be x_member kind literal; '+f.id+' declares '+kind,f);}
  }
  if(ir.view.profiles.export.mode==='redacted'&&ir.elements.some(n=>n.kind.includes('.')))fail('DDN-PJ003','Profile-specific redacted projection is not qualified; provide a separately authorized workspace');
  const shown=new Set(ir.view.selected),ns=ir.elements.filter(n=>shown.has(n.id)),es=rels.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));

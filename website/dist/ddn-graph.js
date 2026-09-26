@@ -266,12 +266,13 @@
     if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
     g.fieldRows=[];
    }
-   if(['uml.class','uml.interface'].includes(n.kind)){
+   if(['uml.class','uml.interface','uml.enumeration'].includes(n.kind)){
     const list=g.fieldRows.slice().sort((a,b)=>(a.field.properties.x_member?.kind==='operation')-(b.field.properties.x_member?.kind==='operation'));
     let y=70*s,last=null;const div=[];
-    for(const row of list){const m=row.field.properties.x_member||{},type=m.kind||'attribute';if(type!==last){div.push({top:y,label:type==='operation'?'OPERATIONS':'ATTRIBUTES'});y+=25*s;last=type;}
+    for(const row of list){const m=row.field.properties.x_member||{},type=m.kind||(n.kind==='uml.enumeration'?'literal':'attribute');if(type!==last){div.push({top:y,label:type==='operation'?'OPERATIONS':type==='literal'?'LITERALS':'ATTRIBUTES'});y+=25*s;last=type;}
      const prefix={public:'+',private:'−',protected:'#',package:'~'}[m.visibility]||'';
-     row.labelLines=api$7.wrap((prefix?prefix+' ':'')+row.field.name,g.w-32*s,13.5*s,p.style.font,400);row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
+     const adorned=(m.derived?'/':'')+row.field.name+(m.multiplicity?' ['+m.multiplicity+']':'')+(m.modifiers?.length?' {'+m.modifiers.join(', ')+'}':'');
+     row.labelLines=api$7.wrap((prefix?prefix+' ':'')+adorned,g.w-32*s,13.5*s,p.style.font,400);row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
     }
     g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);g.headerH=70*s;
    }
@@ -378,8 +379,8 @@
    if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
    else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
     const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
-   }else if(['uml.class','uml.interface'].includes(n.kind)){
-    out+=text(x+w/2,y+20*s,n.kind==='uml.interface'?'«interface»':'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
+   }else if(['uml.class','uml.interface','uml.enumeration'].includes(n.kind)){
+    out+=text(x+w/2,y+20*s,n.kind==='uml.interface'?'«interface»':n.kind==='uml.enumeration'?'«enumeration»':'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
     for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
     for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
    }else if(n.kind==='req.requirement'){
@@ -392,6 +393,11 @@
    }
    if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,api$7.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
    if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
+   /* B1-055 (RFC-119): template signature box — dashed rect centred on the
+    * top-right corner, one parameter name per line. */
+   if(n.properties.x_template?.parameters?.length){const params=n.properties.x_template.parameters;
+    const pw=Math.max(...params.map(v=>api$7.measure(v,11*s,p.style.font,400).width))+18*s,ph=params.length*15*s+10*s,px=x+w-pw/2,py=y-ph/2;
+    out+=`<g class="ddn-template" data-template="${esc$2(params.join(','))}"><rect x="${f(px)}" y="${f(py)}" width="${f(pw)}" height="${f(ph)}" fill="${fill}" stroke="${ink}" stroke-width="1.2" stroke-dasharray="5 3"/>`+params.map((v,i)=>text(px+9*s,py+16*s+i*15*s,v,11,400)).join('')+'</g>';}
    return out+'</g>';
   }
   const api$5={VERSION:'0.7.0',measure,render: render$2,anchor,polygon,shapeOf,segmentInterior};
@@ -1225,7 +1231,10 @@
    if(type==='filled')s+=`<path d="M0 0L-10 -5L-10 5Z" fill="${esc$1(ink)}"/>`;
    else if(type==='open')s+='<path d="M-10 -5L0 0L-10 5"/>';
    else if(type==='diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$1(ink)}"/>`;
+   else if(type==='hollow_diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$1(surface)}"/>`;
    else if(type==='triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc$1(surface)}"/>`;
+   else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc$1(surface)}"/>`;
+   else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
    else if(['one','zeroone','many','zeromany'].includes(type)){
     if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
     else s+='<path d="M-4 -7V7"/>';
@@ -1234,6 +1243,10 @@
    return s+'</g>';
   }
   function midpoint(points){const seg=segments(points).sort((a,b)=>Math.hypot(b.b[0]-b.a[0],b.b[1]-b.a[1])-Math.hypot(a.b[0]-a.a[0],a.b[1]-a.a[1]))[0];return [(seg.a[0]+seg.b[0])/2,(seg.a[1]+seg.b[1])/2];}
+  /* B1-055: point where the ray from a box centre toward `toward` exits the box. */
+  function rectAnchor(g,toward){const cx=g.x+g.w/2,cy=g.y+g.h/2,dx=toward[0]-cx,dy=toward[1]-cy;let t=Infinity;
+   if(dx)t=Math.min(t,Math.abs((g.w/2)/dx));if(dy)t=Math.min(t,Math.abs((g.h/2)/dy));
+   if(!Number.isFinite(t)||!t)return [cx,cy];return [cx+dx*t,cy+dy*t];}
   function visibleRoutePieces(points,holes,radius=7){
    if(!holes.length)return [{points,distance:0}];
    const pieces=[];let current=[],distance=0,startDistance=0;
@@ -1322,7 +1335,29 @@
    let diagram='';
    for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$1(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
    const routeColours={};
+   const gensets=new Map();
    for(const a of routes){const colour=mono?'#383838':api$8.semantic(a.reg.colour,t);routeColours[a.id]=colour;
+    /* B1-055 (RFC-119): n-ary association — the binary route is suppressed and
+     * replaced by the UML diamond junction at the member centroid with one
+     * straight spoke per end, each carrying its role/multiplicity labels. */
+    const nary=a.r.properties.x_nary;
+    if(nary){const s=q$1(p.style.font_size,16)/16;
+     const el=a.r.properties.x_endlabels||{};
+     const ends=[{element:a.r.from.element,label:el.source},{element:a.r.to.element,label:el.target},...nary.ends.map(e=>({element:e.element?.$ref,label:{role:e.role,multiplicity:e.multiplicity}}))];
+     const gs2=ends.map(e=>byId.get(e.element)).filter(Boolean);
+     if(gs2.length>=3){
+      const j=[gs2.reduce((v,g)=>v+g.x+g.w/2,0)/gs2.length,gs2.reduce((v,g)=>v+g.y+g.h/2,0)/gs2.length];
+      diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-nary','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-id="${esc$1(a.id)}"><title>${esc$1(a.r.name)}</title>`;
+      for(const [i,g]of gs2.entries()){const pt=rectAnchor(g,j),ang=Math.atan2(j[1]-pt[1],j[0]-pt[0])*180/Math.PI,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad),nx=-dy,ny=dx,e=ends[i].label;
+       diagram+=`<path data-nary-spoke="${esc$1(ends[i].element)}" d="M${fmt(j[0])} ${fmt(j[1])}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="${a.reg.width}"/>`;
+       if(e?.role)diagram+=`<g class="ddn-endlabel ddn-endlabel-role">`+text$1(pt[0]+dx*22*s+nx*11*s,pt[1]+dy*22*s+ny*11*s,e.role,11*s,colour,500)+'</g>';
+       if(e?.multiplicity)diagram+=`<g class="ddn-endlabel ddn-endlabel-multiplicity">`+text$1(pt[0]+dx*22*s-nx*11*s,pt[1]+dy*22*s-ny*11*s+4*s,e.multiplicity,11*s,colour,500)+'</g>';}
+      diagram+=`<path data-nary-junction="true" d="M${fmt(j[0])} ${fmt(j[1]-9*s)}L${fmt(j[0]+9*s)} ${fmt(j[1])}L${fmt(j[0])} ${fmt(j[1]+9*s)}L${fmt(j[0]-9*s)} ${fmt(j[1])}Z" fill="${esc$1(colour)}"/>`;
+      diagram+='</g>';
+      continue;
+     }
+    }
+    if(a.r.properties.x_genset&&!gensets.has(a.r.properties.x_genset.name))gensets.set(a.r.properties.x_genset.name,{gs:a.r.properties.x_genset,pt:a.points.at(-1),ang:api$4.curveDirection(a)+180,colour});
     let mask='';const holes=crossings.filter(c=>p.layout.crossings==='gap'?c.under===a.id:c.over===a.id);if(holes.length){const mid='gap-'+hash(a.id);mask=` mask="url(#${mid})"`;diagram+=`<defs><mask id="${mid}" maskUnits="userSpaceOnUse" x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}"><rect x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}" fill="white"/>`+holes.map(h=>`<circle cx="${h.point[0]}" cy="${h.point[1]}" r="7" fill="black"/>`).join('')+'</mask></defs>';}
     diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc$1(a.id)}"><title>${esc$1(a.r.name)}</title>`;
     const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?api$4.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
@@ -1331,10 +1366,33 @@
     if(a.r.properties.x_critical){const s=q$1(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt(3*s)}"/>`).join('')+'</g>';}
     const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
     diagram+=endMark(a.points[0],api$4.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),api$4.curveDirection(a),endType,colour,t.surface);
+    /* B1-055 (RFC-119): UML endpoint label slots. Role text sits above the line
+     * near the endpoint, multiplicity below it; a qualifier is the small rect at
+     * the end. Angles point away from the endpoint along the route. */
+    const el=a.r.properties.x_endlabels;
+    if(el){const s=q$1(p.style.font_size,16)/16;
+     for(const [key,pt,ang]of [['source',a.points[0],api$4.curveDirection(a,true)+180],['target',a.points.at(-1),api$4.curveDirection(a)+180]]){
+      const e=el[key];if(!e)continue;
+      const rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad),nx=-dy,ny=dx;
+      if(e.role)diagram+=`<g class="ddn-endlabel ddn-endlabel-role" data-end="${key}">`+text$1(pt[0]+dx*24*s+nx*11*s,pt[1]+dy*24*s+ny*11*s,e.role,11*s,colour,500)+'</g>';
+      if(e.multiplicity)diagram+=`<g class="ddn-endlabel ddn-endlabel-multiplicity" data-end="${key}">`+text$1(pt[0]+dx*24*s-nx*11*s,pt[1]+dy*24*s-ny*11*s+4*s,e.multiplicity,11*s,colour,500)+'</g>';
+      if(e.qualifier){const qw=Math.max(24*s,e.qualifier.length*6.2*s+10*s),qh=17*s,cx=pt[0]+dx*(qw/2+2),cy=pt[1]+dy*(qh/2+2);
+       diagram+=`<g class="ddn-qualifier" data-end="${key}"><rect x="${fmt(cx-qw/2)}" y="${fmt(cy-qh/2)}" width="${fmt(qw)}" height="${fmt(qh)}" fill="${esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.2"/>`+text$1(cx-qw/2+5*s,cy+4*s,e.qualifier,10.5*s,colour,500)+'</g>';}
+     }
+    }
+    /* B1-055: association class — dashed connector from the path midpoint to the
+     * named class box border. */
+    const ac=a.r.properties.x_association_class;
+    if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
+     diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
     if(p.projection.profile?.startsWith('sysml.')){const s=q$1(p.style.font_size,16)/16;
      for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member))diagram+=`<rect data-port-square="${esc$1(ep.member)}" x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;}
     diagram+='</g>';
    }
+   // B1-055: generalization-set labels at the shared target end.
+   for(const [name,{gs,pt,ang,colour}] of gensets){const s=q$1(p.style.font_size,16)/16,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);
+    const str=name+' {'+(gs.disjoint===false?'overlapping':'disjoint')+', '+(gs.complete?'complete':'incomplete')+'}';
+    diagram+=`<g class="ddn-genset" data-genset="${esc$1(name)}">`+text$1(pt[0]+dx*36*s,pt[1]+dy*36*s-8*s,str,11*s,colour,500)+'</g>';}
    // Bridge geometry is explicit postprocessing. A rounded bridge is a local exception to orthogonality.
    if(p.layout.crossings!=='gap')for(const c of crossings){
     const col=routeColours[c.over];

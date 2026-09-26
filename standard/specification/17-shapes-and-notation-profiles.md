@@ -37,6 +37,19 @@ Payload names are relation labels. This subset does not prove transformation con
 
 Implemented links are association, generalization, realization and dependency. Generalization connects compatible classifier kinds and must be acyclic. Realization uses its declared endpoint contract and a hollow triangular marker. Package tabs and component indicators are actual silhouettes, but full package import/merge and component assembly/delegation semantics are not implemented.
 
+`uml.structure@2` (RFC-119) extends the same foundation to the UML 2.5.1 class-diagram surface:
+
+- **Association ends** carry role names, multiplicity (`1`, `0..1`, `0..*`, `1..*`, `*`) and qualifiers via `x_endlabels: { source: {…}, target: {…} }`. Aggregation uses the `hollow_diamond` end mark at the whole; composition reuses the filled `diamond` mark; navigability uses the `open` arrowhead mark. Endpoint decorations apply to `uml.association` only (`DDN-PJ149`).
+- **Association classes** attach a named `uml.class` to an association with a dashed connector from the path midpoint (`x_association_class: { class: @ref }`, `DDN-PJ150`).
+- **N-ary associations** declare ends beyond the binary anchors in `x_nary.ends`; the renderer draws the UML diamond junction at the member centroid with one spoke per end, each carrying its role and multiplicity. Ends must be three or more distinct classifiers (`DDN-PJ151`). The data model stays a binary relation plus declared extra ends — see RFC-119 for the decision record.
+- **Generalization sets** group `uml.generalization` relations by `x_genset.name` sharing one target and render the `{disjoint|overlapping, complete|incomplete}` constraint label at the shared target end (`DDN-PJ152`).
+- **Templates** draw the dashed parameter signature box on the top-right corner of a `uml.class`/`uml.interface` (`x_template: { parameters: […] }`, `DDN-PJ153`).
+- **Enumerations** use the `uml.enumeration` kind with a «enumeration» header and LITERALS compartment; members declare `x_member: { kind: literal }` (`DDN-PJ154`).
+- **Provided/required interfaces** are the `uml.provided` (lollipop at the interface end) and `uml.required` (socket at the class end) relations between classes/components and interfaces. Assembly ball-and-socket pairing across ports is component-diagram scope (B1-059), not claimed here.
+- **Member adornments**: `x_member` grows `derived` (leading `/`), `multiplicity` (`[0..*]`) and `modifiers` (`{ordered}`, `{unique}`, `{readOnly}` property strings).
+
+XMI/OCL exchange and the full UML type/parameter metamodel remain outside the profile, as declared in the registry.
+
 `uml.usecase@1` uses actor and use-case contours with participation, include and extend links. Include cycles are rejected. Full extension-point conditions, actor generalization, UML interaction semantics and XMI exchange are outside this subset.
 
 `requirements.basic@1` is a **DDN requirement-traceability profile**, not full SysML. Requirements have unique nonempty code and text, with satisfies/verifies/derives links to declared implementation/test records. The implementation rejects invalid endpoints and derivation cycles. A `verifies` relation is a statement of intended traceability, not proof a test ran or passed.

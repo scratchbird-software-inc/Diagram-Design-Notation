@@ -172,7 +172,12 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_continuation` | object, relation | object (`{key, side: in|out, page?}`) |
 | `x_assignment` | relation | `{code: string(1..12)}` only |
 | `x_category` | object | `{axis: string, level: string}` exactly |
-| `x_member` | field | `{kind: attribute|operation, visibility: public|private|protected|package, static: bool, abstract: bool}` |
+| `x_member` | field | `{kind: attribute|operation|literal, visibility: public|private|protected|package, static: bool, abstract: bool, derived: bool, multiplicity: string, modifiers: [ordered|unique|readOnly]}` (RFC-119) |
+| `x_endlabels` | relation | `{source|target: {role?, multiplicity?, qualifier?}}` on `uml.association` (RFC-119; DDN-PJ149) |
+| `x_association_class` | relation | `{class: @ref}` to a `uml.class` on `uml.association` (DDN-PJ150) |
+| `x_nary` | relation | `{ends: [{element: @ref, role?, multiplicity?}]}` — n-ary association ends beyond the binary anchors (DDN-PJ151) |
+| `x_genset` | relation | `{name, disjoint?, complete?}` on `uml.generalization` (DDN-PJ152) |
+| `x_template` | object | `{parameters: [string]}` on `uml.class`/`uml.interface` (DDN-PJ153) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
@@ -243,7 +248,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` | `state.*` kinds + `state.transition` with `x_transition.event`; regions = `x_region` frames |
 | sequence diagram | sequence | `uml.sequence@1` | lifelines in declaration order, `uml.message`, `x_return: true` for replies |
 | communication/collaboration | graph | `uml.communication@1` | `uml.message` + `x_message.seq` dotted-decimal |
-| class diagram | graph | `uml.structure@1` | `uml.class/interface`, `x_member` on fields, `uml.generalization` acyclic |
+| class diagram | graph | `uml.structure@1` / `uml.structure@2` | `uml.class/interface/enumeration`, `x_member` on fields, `uml.generalization` acyclic; @2 adds RFC-119: `x_endlabels` (roles/multiplicity/qualifiers), `hollow_diamond` aggregation + `diamond` composition marks, `open` navigability, `x_association_class`, `x_nary` junction, `x_genset`, `x_template`, `uml.provided`/`uml.required` (lollipop/socket) |
 | use cases | graph | `uml.usecase@1` / `uml.usecase@2` | `uml.subject` boundaries + `x_usecase` for @2 |
 | object/instance diagram | graph | `uml.object@1` | `x_instance.classifier` |
 | timing diagram | timing | `uml.timing@1` | `x_states` per participant |

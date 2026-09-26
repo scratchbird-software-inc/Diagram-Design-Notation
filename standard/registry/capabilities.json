@@ -1526,6 +1526,35 @@
       ]
     },
     {
+      "id": "uml.structure@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML class diagram",
+        "UML package subset",
+        "UML component subset"
+      ],
+      "scope": "uml.structure@1 plus UML 2.5.1 class-diagram notation (RFC-119): association-end multiplicity/role labels and qualifiers (x_endlabels), aggregation (hollow_diamond) and composition (diamond) marks, navigability arrowheads, association classes (x_association_class), n-ary associations (x_nary diamond junction), generalization sets (x_genset), templates (x_template), enumeration kind with literals, provided/required interfaces (uml.provided lollipop / uml.required socket), derived properties and property strings on members (x_member).",
+      "validation": [
+        "profile endpoint restrictions",
+        "acyclic generalization",
+        "same-kind generalization",
+        "operation/attribute visibility enumeration",
+        "x_endlabels only on uml.association with well-formed multiplicity (DDN-PJ149)",
+        "association class resolves to a uml.class (DDN-PJ150)",
+        "n-ary association has three or more distinct classifier ends (DDN-PJ151)",
+        "generalization sets share one name per target (DDN-PJ152)",
+        "x_template only on uml.class (DDN-PJ153)",
+        "enumeration literals only on uml.enumeration members (DDN-PJ154)"
+      ],
+      "unsupported": [
+        "XMI",
+        "OCL",
+        "full UML type/parameter model",
+        "assembly/delegation connectors (B1-059 scope)",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.usecase@1",
       "projection": "graph",
       "diagramFamilies": [

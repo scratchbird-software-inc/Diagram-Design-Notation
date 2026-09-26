@@ -137,7 +137,10 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  if(type==='filled')s+=`<path d="M0 0L-10 -5L-10 5Z" fill="${esc(ink)}"/>`;
  else if(type==='open')s+='<path d="M-10 -5L0 0L-10 5"/>';
  else if(type==='diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc(ink)}"/>`;
+ else if(type==='hollow_diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc(surface)}"/>`;
  else if(type==='triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc(surface)}"/>`;
+ else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc(surface)}"/>`;
+ else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
  else if(['one','zeroone','many','zeromany'].includes(type)){
   if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
   else s+='<path d="M-4 -7V7"/>';
@@ -146,6 +149,10 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  return s+'</g>';
 }
 function midpoint(points){const seg=segments(points).sort((a,b)=>Math.hypot(b.b[0]-b.a[0],b.b[1]-b.a[1])-Math.hypot(a.b[0]-a.a[0],a.b[1]-a.a[1]))[0];return[(seg.a[0]+seg.b[0])/2,(seg.a[1]+seg.b[1])/2];}
+/* B1-055: point where the ray from a box centre toward `toward` exits the box. */
+function rectAnchor(g,toward){const cx=g.x+g.w/2,cy=g.y+g.h/2,dx=toward[0]-cx,dy=toward[1]-cy;let t=Infinity;
+ if(dx)t=Math.min(t,Math.abs((g.w/2)/dx));if(dy)t=Math.min(t,Math.abs((g.h/2)/dy));
+ if(!Number.isFinite(t)||!t)return[cx,cy];return[cx+dx*t,cy+dy*t];}
 function visibleRoutePieces(points,holes,radius=7){
  if(!holes.length)return [{points,distance:0}];
  const pieces=[];let current=[],distance=0,startDistance=0;
@@ -234,7 +241,29 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  let diagram='';
  for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
  const routeColours={};
+ const gensets=new Map();
  for(const a of routes){const colour=mono?'#383838':Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
+  /* B1-055 (RFC-119): n-ary association — the binary route is suppressed and
+   * replaced by the UML diamond junction at the member centroid with one
+   * straight spoke per end, each carrying its role/multiplicity labels. */
+  const nary=a.r.properties.x_nary;
+  if(nary){const s=q(p.style.font_size,16)/16;
+   const el=a.r.properties.x_endlabels||{};
+   const ends=[{element:a.r.from.element,label:el.source},{element:a.r.to.element,label:el.target},...nary.ends.map(e=>({element:e.element?.$ref,label:{role:e.role,multiplicity:e.multiplicity}}))];
+   const gs2=ends.map(e=>byId.get(e.element)).filter(Boolean);
+   if(gs2.length>=3){
+    const j=[gs2.reduce((v,g)=>v+g.x+g.w/2,0)/gs2.length,gs2.reduce((v,g)=>v+g.y+g.h/2,0)/gs2.length];
+    diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-nary','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
+    for(const [i,g]of gs2.entries()){const pt=rectAnchor(g,j),ang=Math.atan2(j[1]-pt[1],j[0]-pt[0])*180/Math.PI,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad),nx=-dy,ny=dx,e=ends[i].label;
+     diagram+=`<path data-nary-spoke="${esc(ends[i].element)}" d="M${fmt(j[0])} ${fmt(j[1])}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc(colour)}" stroke-width="${a.reg.width}"/>`;
+     if(e?.role)diagram+=`<g class="ddn-endlabel ddn-endlabel-role">`+text(pt[0]+dx*22*s+nx*11*s,pt[1]+dy*22*s+ny*11*s,e.role,11*s,colour,500)+'</g>';
+     if(e?.multiplicity)diagram+=`<g class="ddn-endlabel ddn-endlabel-multiplicity">`+text(pt[0]+dx*22*s-nx*11*s,pt[1]+dy*22*s-ny*11*s+4*s,e.multiplicity,11*s,colour,500)+'</g>';}
+    diagram+=`<path data-nary-junction="true" d="M${fmt(j[0])} ${fmt(j[1]-9*s)}L${fmt(j[0]+9*s)} ${fmt(j[1])}L${fmt(j[0])} ${fmt(j[1]+9*s)}L${fmt(j[0]-9*s)} ${fmt(j[1])}Z" fill="${esc(colour)}"/>`;
+    diagram+='</g>';
+    continue;
+   }
+  }
+  if(a.r.properties.x_genset&&!gensets.has(a.r.properties.x_genset.name))gensets.set(a.r.properties.x_genset.name,{gs:a.r.properties.x_genset,pt:a.points.at(-1),ang:Layout.curveDirection(a)+180,colour});
   let mask='';const holes=crossings.filter(c=>p.layout.crossings==='gap'?c.under===a.id:c.over===a.id);if(holes.length){const mid='gap-'+hash(a.id);mask=` mask="url(#${mid})"`;diagram+=`<defs><mask id="${mid}" maskUnits="userSpaceOnUse" x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}"><rect x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}" fill="white"/>`+holes.map(h=>`<circle cx="${h.point[0]}" cy="${h.point[1]}" r="7" fill="black"/>`).join('')+'</mask></defs>';}
   diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
   const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?Layout.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
@@ -243,10 +272,33 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(a.r.properties.x_critical){const s=q(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt(3*s)}"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
   diagram+=endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface);
+  /* B1-055 (RFC-119): UML endpoint label slots. Role text sits above the line
+   * near the endpoint, multiplicity below it; a qualifier is the small rect at
+   * the end. Angles point away from the endpoint along the route. */
+  const el=a.r.properties.x_endlabels;
+  if(el){const s=q(p.style.font_size,16)/16;
+   for(const [key,pt,ang]of[['source',a.points[0],Layout.curveDirection(a,true)+180],['target',a.points.at(-1),Layout.curveDirection(a)+180]]){
+    const e=el[key];if(!e)continue;
+    const rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad),nx=-dy,ny=dx;
+    if(e.role)diagram+=`<g class="ddn-endlabel ddn-endlabel-role" data-end="${key}">`+text(pt[0]+dx*24*s+nx*11*s,pt[1]+dy*24*s+ny*11*s,e.role,11*s,colour,500)+'</g>';
+    if(e.multiplicity)diagram+=`<g class="ddn-endlabel ddn-endlabel-multiplicity" data-end="${key}">`+text(pt[0]+dx*24*s-nx*11*s,pt[1]+dy*24*s-ny*11*s+4*s,e.multiplicity,11*s,colour,500)+'</g>';
+    if(e.qualifier){const qw=Math.max(24*s,e.qualifier.length*6.2*s+10*s),qh=17*s,cx=pt[0]+dx*(qw/2+2),cy=pt[1]+dy*(qh/2+2);
+     diagram+=`<g class="ddn-qualifier" data-end="${key}"><rect x="${fmt(cx-qw/2)}" y="${fmt(cy-qh/2)}" width="${fmt(qw)}" height="${fmt(qh)}" fill="${esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.2"/>`+text(cx-qw/2+5*s,cy+4*s,e.qualifier,10.5*s,colour,500)+'</g>';}
+   }
+  }
+  /* B1-055: association class — dashed connector from the path midpoint to the
+   * named class box border. */
+  const ac=a.r.properties.x_association_class;
+  if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
+   diagram+=`<g class="ddn-association-class" data-class="${esc(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
   if(p.projection.profile?.startsWith('sysml.')){const s=q(p.style.font_size,16)/16;
    for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member))diagram+=`<rect data-port-square="${esc(ep.member)}" x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.5"/>`;}
   diagram+='</g>';
  }
+ // B1-055: generalization-set labels at the shared target end.
+ for(const [name,{gs,pt,ang,colour}] of gensets){const s=q(p.style.font_size,16)/16,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);
+  const str=name+' {'+(gs.disjoint===false?'overlapping':'disjoint')+', '+(gs.complete?'complete':'incomplete')+'}';
+  diagram+=`<g class="ddn-genset" data-genset="${esc(name)}">`+text(pt[0]+dx*36*s,pt[1]+dy*36*s-8*s,str,11*s,colour,500)+'</g>';}
  // Bridge geometry is explicit postprocessing. A rounded bridge is a local exception to orthogonality.
  if(p.layout.crossings!=='gap')for(const c of crossings){
   const col=routeColours[c.over];

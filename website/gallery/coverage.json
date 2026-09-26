@@ -809,6 +809,13 @@
       "combined": "website/examples/projections/views.combined.ddn",
       "svg": "profiles/uml-structure-1.svg"
     },
+    "uml.structure@2": {
+      "entry": "website/examples/basics/75-uml-class-complete.ddn",
+      "view": "associations",
+      "title": "UML class diagram / association ends",
+      "kind": "graph",
+      "svg": "profiles/uml-structure-2.svg"
+    },
     "uml.timing@1": {
       "entry": "website/examples/basics/47-timing-diagram.ddn",
       "view": "timing",
@@ -2900,6 +2907,24 @@
       "wiki": "Diagrams-Flowcharts",
       "combined": "website/examples/basics/74-reusable-presets.combined.ddn",
       "svg": "corpus/basics-74-reusable-presets.svg"
+    },
+    {
+      "entry": "website/examples/basics/75-uml-class-complete.ddn",
+      "view": "associations",
+      "title": "UML class diagram / association ends",
+      "views": [
+        {
+          "id": "associations",
+          "title": "UML class diagram / association ends"
+        },
+        {
+          "id": "classifiers",
+          "title": "UML class diagram / classifiers"
+        }
+      ],
+      "profile": "uml.structure@2",
+      "kind": "graph",
+      "svg": "corpus/basics-75-uml-class-complete.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

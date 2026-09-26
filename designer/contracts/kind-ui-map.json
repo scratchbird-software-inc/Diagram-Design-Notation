@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 188,
+  "kindCount": 189,
   "kinds": [
     {
       "kind": "object",
@@ -5375,6 +5375,7 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],
@@ -5410,6 +5411,43 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
+        "uml.usecase@1",
+        "uml.usecase@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "uml.enumeration",
+      "name": "Enumeration",
+      "source": "profile",
+      "palette_group": "Systems",
+      "inspector_template": "classifier",
+      "basic_controls": [
+        "name",
+        "kind",
+        "attributes",
+        "operations"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],
@@ -5444,6 +5482,7 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],
@@ -5478,6 +5517,7 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],
@@ -5512,6 +5552,7 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],
@@ -5547,6 +5588,7 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],
@@ -6072,6 +6114,7 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uml.structure@1",
+        "uml.structure@2",
         "uml.usecase@1",
         "uml.usecase@2"
       ],

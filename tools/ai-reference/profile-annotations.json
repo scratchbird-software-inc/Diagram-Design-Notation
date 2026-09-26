@@ -7,6 +7,7 @@
     "dfd.gane_sarson@1": "Data-flow diagram (Gane-Sarson): processes, stores, externals, data flows",
     "dfd.yourdon@1": "Data-flow diagram (Yourdon): same model, Yourdon silhouettes",
     "uml.structure@1": "UML class/structure diagram: classes, interfaces, inheritance, associations",
+    "uml.structure@2": "UML 2.5.1 class diagram (RFC-119): classes, enumerations, templates, association-end roles/multiplicity/qualifiers, aggregation/composition, navigability, association classes, n-ary associations, generalization sets, provided/required interfaces",
     "uml.usecase@1": "UML use-case diagram: actors, use cases, include/extend (basic)",
     "uml.usecase@2": "UML use-case with subject boundaries and extension-point contracts",
     "requirements.basic@1": "Requirements traceability: requirements, tests, implementations, derives/satisfies/verifies",

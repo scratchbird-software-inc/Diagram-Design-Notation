@@ -112,9 +112,9 @@ function validate(ir,registry,ErrorClass){
    if(contract.member_endpoints===false&&ep.member)fail('DDN102',rel.kind+' requires object endpoints',rel);
   }
   if(contract.allow_self===false&&a.id===b.id)fail('DDN102',rel.kind+' requires distinct object identities',rel);
-  const marks=['none','filled','open','diamond','triangle','one','zeroone','many','zeromany'];
+  const marks=['none','filled','open','diamond','hollow_diamond','triangle','lollipop','socket','one','zeroone','many','zeromany'];
   for(const side of ['source','target']){const mark=rel.properties[side+'_mark'];if(mark!==undefined&&!marks.includes(mark))fail('DDN114','Unknown endpoint mark '+mark,rel);
-   if(mark&&['one','zeroone','many','zeromany','diamond','triangle'].includes(mark)&&r.family!=='structural')fail('DDN114','Structural participation markers do not apply to '+r.family+' relations',rel);
+   if(mark&&['one','zeroone','many','zeromany','diamond','hollow_diamond','triangle','lollipop','socket'].includes(mark)&&r.family!=='structural')fail('DDN114','Structural participation markers do not apply to '+r.family+' relations',rel);
   }
   if(rel.kind==='domain'||rel.kind==='candidate'){if(!rel.from.member)warn('DDN-W108','Object-level domain association: no field binding inferred',rel);}
   if(rel.kind==='instance'){

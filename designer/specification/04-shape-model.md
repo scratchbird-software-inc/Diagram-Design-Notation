@@ -28,7 +28,9 @@ Appearance-only settings must not write semantic properties. Changing a type cal
 | Note/example | Text, Describes | Sample bindings, provenance, review state |
 | Analysis/view | Projection, Source, Template | Measures, rules, series, scales, child views |
 
-The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 188 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
+The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 189 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
+
+> Implementation status (B1-055, RFC-119): the palette now includes `uml.enumeration` (Meaning group, classifier inspector with a LITERALS compartment; members carry `x_member: { kind: literal }`) and the `uml.provided`/`uml.required` relations in the relation map. `uml.structure@2` is the hinted profile for UML classifier kinds. Template parameters (`x_template`) edit as a string list on the class inspector; association-end roles, multiplicities and qualifiers (`x_endlabels`), association-class attachment, n-ary ends and generalization-set membership edit on the relation inspector as structured records — never as free-form label text.
 
 > Implementation status (ED-001): the prototype palette now renders `contracts/kind-ui-map.json` directly (registry code plus map name per kind). Kind conversion remains the reviewed Change… dialog (the AUD-006 conversion path), not a dropdown.
 
