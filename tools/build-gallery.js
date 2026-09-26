@@ -360,6 +360,33 @@ function sheetEntry(sheet) {
   return sheet.entry || path.join('website/examples/gallery/src', sheet.file);
 }
 
+/* B1-053 addendum (D7): the example corpus. Every view-bearing example file the
+ * retired examples index listed — basics NN-*.ddn, the projections and quality
+ * entry files, use-cases, live labs — is represented in the gallery with the
+ * same detail treatment as profiles/sheets. Combined variants are covered by
+ * their original's detail block (not separate figures); gallery/src sheet
+ * sources are covered by the sheets above; view-less library files are listed
+ * by name only (nothing to render). */
+function corpusEntries() {
+  const out = [];
+  const push = rel => { if (!rel.endsWith('.combined.ddn')) out.push(rel); };
+  for (const f of fs.readdirSync(path.join(ROOT, 'website/examples/basics')).sort())
+    if (/^\d+-.*\.ddn$/.test(f)) push('website/examples/basics/' + f);
+  for (const dir of ['projections', 'quality']) {
+    for (const f of fs.readdirSync(path.join(ROOT, 'website/examples', dir)).sort())
+      if (f.endsWith('.ddn')) push('website/examples/' + dir + '/' + f);
+  }
+  for (const f of fs.readdirSync(path.join(ROOT, 'website/examples/use-cases')).sort())
+    if (f.endsWith('.ddn')) push('website/examples/use-cases/' + f);
+  for (const f of fs.readdirSync(path.join(ROOT, 'website/examples/live')).sort())
+    if (f.endsWith('.ddn')) push('website/examples/live/' + f);
+  return out;
+}
+
+function corpusSlug(entry) {
+  return slug(entry.replace(/^website\/examples\//, '').replace(/\.ddn$/, ''));
+}
+
 function sheetViews(sheet) {
   const entry = sheetEntry(sheet);
   const ws = A.createWorkspace(filesFor(entry));
@@ -381,6 +408,26 @@ function main() {
     for (const v of sheetViews(sheet)) {
       jobs.push({ section: sheet.id, entry: sheetEntry(sheet), view: v.id, title: v.title, relSvg: sheet.id + '/' + v.id.replace(/^mark_/, '') + '.svg' });
     }
+  }
+
+  /* Corpus: one figure per view-bearing example file (its first view). */
+  const corpus = []; // {entry, view, title, views:[{id,title}], profile, kind, wiki, relSvg}
+  for (const entry of corpusEntries()) {
+    let ws;
+    try { ws = A.createWorkspace(filesFor(entry)); } catch { continue; }
+    const views = ws.views(entry).map(v => ({ id: v.id, title: v.name }));
+    if (!views.length) { ws.destroy(); continue; } // library file — listed by name only
+    let resolved = null;
+    try { resolved = ws.resolve(entry, views[0].id).view.profiles.projection; } catch { /* keep null */ }
+    ws.destroy();
+    const profile = resolved ? resolved.profile : null;
+    corpus.push({
+      entry, view: views[0].id, title: views[0].title, views,
+      profile, kind: resolved ? resolved.kind : null,
+      wiki: profile ? wikiPageFor(profile) : null,
+      relSvg: 'corpus/' + corpusSlug(entry) + '.svg'
+    });
+    jobs.push({ section: 'corpus', entry, view: views[0].id, title: views[0].title, relSvg: 'corpus/' + corpusSlug(entry) + '.svg' });
   }
 
   /* Combined variants for every multi-file example (built before the render
@@ -412,7 +459,14 @@ function main() {
       const svg = s.id + '/' + v.id.replace(/^mark_/, '') + '.svg';
       const job = jobs.find(j => j.section === s.id && j.relSvg === svg);
       return { view: v.id, title: v.title, svg, ...(job && job.iso ? { iso: true } : {}) };
-    }) }]))
+    }) }])),
+    corpus: corpus.map(c => ({
+      entry: c.entry, view: c.view, title: c.title, views: c.views,
+      ...(c.profile ? { profile: c.profile } : {}), ...(c.kind ? { kind: c.kind } : {}),
+      ...(c.wiki ? { wiki: c.wiki } : {}),
+      ...(combined.has(c.entry) ? { combined: combined.get(c.entry) } : {}),
+      svg: c.relSvg, ...(jobs.find(j => j.section === 'corpus' && j.relSvg === c.relSvg && j.iso) ? { iso: true } : {})
+    }))
   };
   fs.writeFileSync(path.join(OUT, 'coverage.json'), JSON.stringify(coverageJson, null, 2) + '\n');
   fs.writeFileSync(path.join(OUT, 'index.html'), page(coverageJson, combined));
@@ -481,6 +535,30 @@ function page(cov, combined) {
     `<tr><td><code>${esc(id)}</code></td><td><a href="#profile-${esc(slug(id))}">${esc(c.title)}</a></td><td><code>${esc(c.kind)}</code></td><td><code>${esc(c.entry)}</code></td><td><a href="${esc(c.svg)}">SVG</a></td>${c.wiki ? `<td><a href="${WIKI_BASE}${esc(c.wiki)}">wiki</a></td>` : '<td></td>'}</tr>`).join('\n');
   const profileCount = Object.keys(cov.profiles).length;
   const sheetCount = Object.values(cov.sheets).reduce((n, s) => n + s.views.length, 0);
+  const corpusCount = cov.corpus.length;
+  const totalCount = profileCount + sheetCount + corpusCount;
+
+  /* Example corpus section (B1-053 addendum, D7): every view-bearing example
+   * file, rendered on its first view, with the full detail treatment. */
+  const corpusFigures = cov.corpus.map(c => {
+    const explanation = (c.profile ? explainProfile(c.profile) : 'Example view from ' + c.entry + '.') +
+      (c.views.length > 1 ? ' This file declares ' + c.views.length + ' views: ' + c.views.map(v => v.title + ' (' + v.id + ')').join(', ') + ' — the deep links open the first; switch views in the tool’s view picker.' : '');
+    return `<figure id="corpus-${esc(corpusSlug(c.entry))}"><a href="${esc(c.svg)}"><img src="${esc(c.svg)}" alt="${esc(c.entry)} — ${esc(c.title)}" loading="lazy"></a><figcaption><code>${esc(c.entry)}</code><br>${esc(c.title)}<br><small>view <code>${esc(c.view)}</code>${c.views.length > 1 ? ' of ' + c.views.length : ''}</small>${c.iso ? isoNote : ''}\n` +
+      detailHtml({ explanation, entry: c.entry, view: c.view, wiki: c.wiki || null, combined: c.combined || null }) +
+      `</figcaption></figure>`;
+  }).join('\n');
+  const libraryFiles = (() => {
+    const libs = [];
+    for (const entry of corpusEntries()) {
+      try {
+        const ws = A.createWorkspace(filesFor(entry));
+        const n = ws.views(entry).length;
+        ws.destroy();
+        if (!n) libs.push(entry);
+      } catch { /* unparseable — not a gallery concern */ }
+    }
+    return libs;
+  })();
 
   /* Projection-kind index (B1-053 D5): every projection kind the runtime
    * supports, with the profiles bound to it. */
@@ -494,7 +572,8 @@ function page(cov, combined) {
    * the combined single-file text as well. */
   const uniqueEntries = [...new Set([
     ...Object.values(cov.profiles).map(c => c.entry),
-    ...Object.values(cov.sheets).map(s => s.source)
+    ...Object.values(cov.sheets).map(s => s.source),
+    ...cov.corpus.map(c => c.entry)
   ])].sort();
   const sourceBlocks = uniqueEntries.map(entry => {
     const files = filesFor(entry);
@@ -511,7 +590,6 @@ function page(cov, combined) {
     ['index.html', 'Home', false],
     ['features/index.html', 'Features', false],
     ['gallery/index.html', 'Gallery', true],
-    ['examples/index.html', 'Examples', false],
     ['docs/index.html', 'Docs', false],
     ['standard/index.html', 'Standard', false],
     ['tools/index.html', 'Tools', false],
@@ -566,13 +644,14 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 </div></header>
 <div class="gallery-intro">
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation ${esc(cov.version)}: ${profileCount} installed profiles across ${PROJECTION_KINDS.length} projection kinds, plus ${sheetCount} variation renders — ${profileCount + sheetCount} SVGs, each produced by the reference CLI render path.</p>
+<p>Full notation coverage for Diagram Design Notation ${esc(cov.version)}: ${profileCount} installed profiles across ${PROJECTION_KINDS.length} projection kinds, ${sheetCount} variation renders, and the complete example corpus (${corpusCount} example files) — ${totalCount} SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>. Open <strong>Explanation, DDN source &amp; links</strong> under any figure for what the diagram shows, its browsable DDN source, a wiki page for the diagram type, and deep links that open the exact view in the unified tool (viewer or designer mode — multi-file examples open their verified combined single-file variant there). Flow animation is part of the live renders: open any flow view in the tool and use its animation drawer, for example the <a href="${toolLink('website/examples/live/adaptive-lab.ddn', 'automatic', 'explore')}">adaptive flow lab</a>.</p>
 </div>
 <nav class="sections">
 <strong>Sections:</strong>
 <a href="#profiles">Profiles</a>
 ${Object.keys(cov.sheets).map(id => `<a href="#sheet-${esc(id)}">${esc(cov.sheets[id].title)}</a>`).join('\n')}
+<a href="#corpus">Example corpus</a>
 <a href="#kinds">Projection kinds</a>
 <a href="#sources">DDN sources</a>
 <a href="#coverage">Coverage table</a>
@@ -583,6 +662,11 @@ ${Object.keys(cov.sheets).map(id => `<a href="#sheet-${esc(id)}">${esc(cov.sheet
 ${profileSections}
 <h2 id="sheets">Variation sheets</h2>
 ${sheetSections}
+<h2 id="corpus">Example corpus (${corpusCount})</h2>
+<p>Every view-bearing example file under <code>website/examples/</code> — the ${corpusCount} sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): ${libraryFiles.map(f => '<code>' + esc(f) + '</code>').join(' ')}.</p>
+<div class="grid">
+${corpusFigures}
+</div>
 <h2 id="kinds">Projection kinds (${PROJECTION_KINDS.length})</h2>
 <p>Every projection kind the runtime supports, with the profiles bound to each. The optional <code>geo</code> kind requires the <code>ddn-geo.js</code> module; isometric depth is a presentation variant of the <code>graph</code> and <code>chart</code> kinds via the optional <code>ddn-iso.js</code> module (see the iso sheets above).</p>
 <table>

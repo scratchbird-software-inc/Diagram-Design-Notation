@@ -1369,5 +1369,2274 @@
         }
       ]
     }
-  }
+  },
+  "corpus": [
+    {
+      "entry": "website/examples/basics/01-customer.ddn",
+      "view": "overview",
+      "title": "Customer data / a shared model",
+      "views": [
+        {
+          "id": "overview",
+          "title": "Customer data / a shared model"
+        },
+        {
+          "id": "compact",
+          "title": "Customer data / compact view"
+        },
+        {
+          "id": "print",
+          "title": "Customer data / print rendition"
+        },
+        {
+          "id": "embedded",
+          "title": "Customer data / minimal chrome for embedding"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/01-customer.combined.ddn",
+      "svg": "corpus/basics-01-customer.svg"
+    },
+    {
+      "entry": "website/examples/basics/02-elements.ddn",
+      "view": "classic",
+      "title": "Classic / fixed semantic notation",
+      "views": [
+        {
+          "id": "classic",
+          "title": "Classic / fixed semantic notation"
+        },
+        {
+          "id": "handDrawn",
+          "title": "Hand drawn / the same model"
+        },
+        {
+          "id": "neo",
+          "title": "Neo / the same model"
+        },
+        {
+          "id": "dark",
+          "title": "Dark canvas / fixed contrast palette"
+        },
+        {
+          "id": "neutral",
+          "title": "Neutral / print-safe symbols"
+        },
+        {
+          "id": "forest",
+          "title": "Forest canvas / hand-drawn treatment"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/02-elements.combined.ddn",
+      "svg": "corpus/basics-02-elements.svg"
+    },
+    {
+      "entry": "website/examples/basics/03-routing.ddn",
+      "view": "gap",
+      "title": "Orthogonal crossing / disconnected gap",
+      "views": [
+        {
+          "id": "gap",
+          "title": "Orthogonal crossing / disconnected gap"
+        },
+        {
+          "id": "bridge",
+          "title": "Orthogonal crossing / round bridge"
+        },
+        {
+          "id": "square_bridge",
+          "title": "Orthogonal crossing / square bridge"
+        },
+        {
+          "id": "straight",
+          "title": "Straight routing / relation family unchanged"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/03-routing.combined.ddn",
+      "svg": "corpus/basics-03-routing.svg"
+    },
+    {
+      "entry": "website/examples/basics/04-hybrid.ddn",
+      "view": "deployment",
+      "title": "Hybrid deployment / fragments are not copies",
+      "views": [
+        {
+          "id": "deployment",
+          "title": "Hybrid deployment / fragments are not copies"
+        },
+        {
+          "id": "namespaces",
+          "title": "Namespace / the same data, a different concern"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/04-hybrid.combined.ddn",
+      "svg": "corpus/basics-04-hybrid.svg"
+    },
+    {
+      "entry": "website/examples/basics/05-flow.ddn",
+      "view": "flow",
+      "title": "Capture, transport and transformation are different",
+      "views": [
+        {
+          "id": "flow",
+          "title": "Capture, transport and transformation are different"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/05-flow.combined.ddn",
+      "svg": "corpus/basics-05-flow.svg"
+    },
+    {
+      "entry": "website/examples/basics/06-temporal.ddn",
+      "view": "temporal",
+      "title": "Two time axes / not the same as recovery",
+      "views": [
+        {
+          "id": "temporal",
+          "title": "Two time axes / not the same as recovery"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/06-temporal.combined.ddn",
+      "svg": "corpus/basics-06-temporal.svg"
+    },
+    {
+      "entry": "website/examples/basics/07-documents.ddn",
+      "view": "documents",
+      "title": "Document structure / presence versus null",
+      "views": [
+        {
+          "id": "documents",
+          "title": "Document structure / presence versus null"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/07-documents.combined.ddn",
+      "svg": "corpus/basics-07-documents.svg"
+    },
+    {
+      "entry": "website/examples/basics/08-subdiagrams.ddn",
+      "view": "overview",
+      "title": "A view can link to another view",
+      "views": [
+        {
+          "id": "overview",
+          "title": "A view can link to another view"
+        },
+        {
+          "id": "detail",
+          "title": "Storage detail"
+        },
+        {
+          "id": "inline",
+          "title": "An embedded view retains its own composition"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/08-subdiagrams.combined.ddn",
+      "svg": "corpus/basics-08-subdiagrams.svg"
+    },
+    {
+      "entry": "website/examples/basics/09-look-comparison.ddn",
+      "view": "classic",
+      "title": "Classic / precise single strokes",
+      "views": [
+        {
+          "id": "classic",
+          "title": "Classic / precise single strokes"
+        },
+        {
+          "id": "handDrawn",
+          "title": "Hand drawn / organic pen strokes"
+        },
+        {
+          "id": "neo",
+          "title": "Neo / raised, precise cards"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/09-look-comparison.combined.ddn",
+      "svg": "corpus/basics-09-look-comparison.svg"
+    },
+    {
+      "entry": "website/examples/basics/10-handdrawn-routing.ddn",
+      "view": "gap",
+      "title": "Hand-drawn crossing / disconnected gap",
+      "views": [
+        {
+          "id": "gap",
+          "title": "Hand-drawn crossing / disconnected gap"
+        },
+        {
+          "id": "bridge",
+          "title": "Hand-drawn crossing / round bridge"
+        },
+        {
+          "id": "square_bridge",
+          "title": "Hand-drawn crossing / square bridge"
+        },
+        {
+          "id": "straight",
+          "title": "Hand-drawn straight routing / relation family unchanged"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/10-handdrawn-routing.combined.ddn",
+      "svg": "corpus/basics-10-handdrawn-routing.svg"
+    },
+    {
+      "entry": "website/examples/basics/11-native-layouts.ddn",
+      "view": "grid",
+      "title": "Native grid / no coordinates",
+      "views": [
+        {
+          "id": "grid",
+          "title": "Native grid / no coordinates"
+        },
+        {
+          "id": "layered",
+          "title": "Native layered / no coordinates"
+        },
+        {
+          "id": "tree",
+          "title": "Native tree / no coordinates"
+        },
+        {
+          "id": "mindmap",
+          "title": "Native mind-map / no coordinates"
+        },
+        {
+          "id": "grouped",
+          "title": "Native grouped / no coordinates"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/11-native-layouts.combined.ddn",
+      "svg": "corpus/basics-11-native-layouts.svg"
+    },
+    {
+      "entry": "website/examples/basics/12-nested-fields.ddn",
+      "view": "detailed",
+      "title": "Nested fields / domains and representations",
+      "views": [
+        {
+          "id": "detailed",
+          "title": "Nested fields / domains and representations"
+        },
+        {
+          "id": "large",
+          "title": "20px base / measured wrapping"
+        },
+        {
+          "id": "collapsed",
+          "title": "Hidden nested rows / preserved endpoint identities"
+        },
+        {
+          "id": "header",
+          "title": "One-line header / compact view declaration"
+        },
+        {
+          "id": "metrics_chart",
+          "title": "Order timings / keyed tabular records"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/12-nested-fields.combined.ddn",
+      "svg": "corpus/basics-12-nested-fields.svg"
+    },
+    {
+      "entry": "website/examples/basics/13-publication.ddn",
+      "view": "paper",
+      "title": "A4 / explicit minimum text",
+      "views": [
+        {
+          "id": "paper",
+          "title": "A4 / explicit minimum text"
+        },
+        {
+          "id": "screen",
+          "title": "Content-sized / same semantic model"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/13-publication.combined.ddn",
+      "svg": "corpus/basics-13-publication.svg"
+    },
+    {
+      "entry": "website/examples/basics/14-authorized-export.ddn",
+      "view": "private",
+      "title": "Private source / hiding is not redaction",
+      "views": [
+        {
+          "id": "private",
+          "title": "Private source / hiding is not redaction"
+        },
+        {
+          "id": "public",
+          "title": "Allowlisted publication"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/14-authorized-export.combined.ddn",
+      "svg": "corpus/basics-14-authorized-export.svg"
+    },
+    {
+      "entry": "website/examples/basics/15-process-contracts.ddn",
+      "view": "balanced",
+      "title": "Balanced interfaces / declared state and verification",
+      "views": [
+        {
+          "id": "balanced",
+          "title": "Balanced interfaces / declared state and verification"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/15-process-contracts.combined.ddn",
+      "svg": "corpus/basics-15-process-contracts.svg"
+    },
+    {
+      "entry": "website/examples/basics/16-enterprise-gates.ddn",
+      "view": "external",
+      "title": "External gates / required evidence",
+      "views": [
+        {
+          "id": "external",
+          "title": "External gates / required evidence"
+        },
+        {
+          "id": "software",
+          "title": "Software changes / independent review checklist"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/16-enterprise-gates.combined.ddn",
+      "svg": "corpus/basics-16-enterprise-gates.svg"
+    },
+    {
+      "entry": "website/examples/basics/17-curved-relations.ddn",
+      "view": "mindmap_classic",
+      "title": "Curved mind-map / classic",
+      "views": [
+        {
+          "id": "mindmap_classic",
+          "title": "Curved mind-map / classic"
+        },
+        {
+          "id": "mindmap_handdrawn",
+          "title": "Curved mind-map / handDrawn"
+        },
+        {
+          "id": "mindmap_neo",
+          "title": "Curved mind-map / neo"
+        },
+        {
+          "id": "mindmap_angular",
+          "title": "Same mind-map / orthogonal routes"
+        },
+        {
+          "id": "mindmap_rounded",
+          "title": "Same mind-map / rounded corridor corners"
+        },
+        {
+          "id": "mixed",
+          "title": "One view / independent per-relation route overrides"
+        },
+        {
+          "id": "crossing_gap",
+          "title": "Curved disconnected crossing / gap"
+        },
+        {
+          "id": "crossing_bridge",
+          "title": "Curved disconnected crossing / rounded jump"
+        },
+        {
+          "id": "crossing_square",
+          "title": "Curved disconnected crossing / local square jump"
+        },
+        {
+          "id": "obstacle",
+          "title": "Curved detour / no relation to the middle database"
+        },
+        {
+          "id": "bidirectional",
+          "title": "Curved request, response and internal action"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/17-curved-relations.combined.ddn",
+      "svg": "corpus/basics-17-curved-relations.svg"
+    },
+    {
+      "entry": "website/examples/basics/18-routing-comparison.ddn",
+      "view": "orthogonal",
+      "title": "Orthogonal / sharp corners",
+      "views": [
+        {
+          "id": "orthogonal",
+          "title": "Orthogonal / sharp corners"
+        },
+        {
+          "id": "straight",
+          "title": "Straight / direct segments"
+        },
+        {
+          "id": "bezier",
+          "title": "Curved / broad cubic branches"
+        },
+        {
+          "id": "rounded",
+          "title": "Curved / softened route corners"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/18-routing-comparison.combined.ddn",
+      "svg": "corpus/basics-18-routing-comparison.svg"
+    },
+    {
+      "entry": "website/examples/basics/19-radar-chart.ddn",
+      "view": "radar",
+      "title": "Product comparison / radar",
+      "views": [
+        {
+          "id": "radar",
+          "title": "Product comparison / radar"
+        }
+      ],
+      "profile": "chart.radar@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "svg": "corpus/basics-19-radar-chart.svg"
+    },
+    {
+      "entry": "website/examples/basics/20-funnel-chart.ddn",
+      "view": "funnel",
+      "title": "Synthetic sales pipeline / funnel",
+      "views": [
+        {
+          "id": "funnel",
+          "title": "Synthetic sales pipeline / funnel"
+        }
+      ],
+      "profile": "chart.funnel@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "combined": "website/examples/basics/20-funnel-chart.combined.ddn",
+      "svg": "corpus/basics-20-funnel-chart.svg"
+    },
+    {
+      "entry": "website/examples/basics/21-gauge-chart.ddn",
+      "view": "gauge",
+      "title": "Synthetic SLA attainment / gauge",
+      "views": [
+        {
+          "id": "gauge",
+          "title": "Synthetic SLA attainment / gauge"
+        }
+      ],
+      "profile": "chart.gauge@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "combined": "website/examples/basics/21-gauge-chart.combined.ddn",
+      "svg": "corpus/basics-21-gauge-chart.svg"
+    },
+    {
+      "entry": "website/examples/basics/22-candlestick-chart.ddn",
+      "view": "candlestick",
+      "title": "Synthetic trading sessions / candlestick",
+      "views": [
+        {
+          "id": "candlestick",
+          "title": "Synthetic trading sessions / candlestick"
+        }
+      ],
+      "profile": "chart.candlestick@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "combined": "website/examples/basics/22-candlestick-chart.combined.ddn",
+      "svg": "corpus/basics-22-candlestick-chart.svg"
+    },
+    {
+      "entry": "website/examples/basics/23-treemap.ddn",
+      "view": "treemap",
+      "title": "Synthetic storage by domain and table / treemap",
+      "views": [
+        {
+          "id": "treemap",
+          "title": "Synthetic storage by domain and table / treemap"
+        }
+      ],
+      "profile": "chart.treemap@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Trees-Packed",
+      "combined": "website/examples/basics/23-treemap.combined.ddn",
+      "svg": "corpus/basics-23-treemap.svg"
+    },
+    {
+      "entry": "website/examples/basics/24-sankey.ddn",
+      "view": "sankey",
+      "title": "Synthetic energy spend across three stages / sankey",
+      "views": [
+        {
+          "id": "sankey",
+          "title": "Synthetic energy spend across three stages / sankey"
+        }
+      ],
+      "profile": "chart.sankey@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "combined": "website/examples/basics/24-sankey.combined.ddn",
+      "svg": "corpus/basics-24-sankey.svg"
+    },
+    {
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "context",
+      "title": "Synthetic shop / C4 context",
+      "views": [
+        {
+          "id": "context",
+          "title": "Synthetic shop / C4 context"
+        },
+        {
+          "id": "container",
+          "title": "Synthetic shop / C4 container"
+        },
+        {
+          "id": "component",
+          "title": "Synthetic shop / C4 component"
+        }
+      ],
+      "profile": "c4.context@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Architecture",
+      "combined": "website/examples/basics/25-c4-views.combined.ddn",
+      "svg": "corpus/basics-25-c4-views.svg"
+    },
+    {
+      "entry": "website/examples/basics/26-org-chart.ddn",
+      "view": "org",
+      "title": "Synthetic organisation / org chart",
+      "views": [
+        {
+          "id": "org",
+          "title": "Synthetic organisation / org chart"
+        }
+      ],
+      "profile": "org.tree@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Trees",
+      "combined": "website/examples/basics/26-org-chart.combined.ddn",
+      "svg": "corpus/basics-26-org-chart.svg"
+    },
+    {
+      "entry": "website/examples/basics/27-wbs.ddn",
+      "view": "wbs",
+      "title": "Synthetic project / work breakdown structure",
+      "views": [
+        {
+          "id": "wbs",
+          "title": "Synthetic project / work breakdown structure"
+        }
+      ],
+      "profile": "wbs.tree@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Trees",
+      "combined": "website/examples/basics/27-wbs.combined.ddn",
+      "svg": "corpus/basics-27-wbs.svg"
+    },
+    {
+      "entry": "website/examples/basics/28-mind-map.ddn",
+      "view": "mindmap",
+      "title": "Synthetic brainstorm / mind map",
+      "views": [
+        {
+          "id": "mindmap",
+          "title": "Synthetic brainstorm / mind map"
+        }
+      ],
+      "profile": "mindmap.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Trees",
+      "combined": "website/examples/basics/28-mind-map.combined.ddn",
+      "svg": "corpus/basics-28-mind-map.svg"
+    },
+    {
+      "entry": "website/examples/basics/29-concept-map.ddn",
+      "view": "concepts",
+      "title": "Synthetic order-to-cash concepts / concept map",
+      "views": [
+        {
+          "id": "concepts",
+          "title": "Synthetic order-to-cash concepts / concept map"
+        }
+      ],
+      "profile": "concept.map@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/29-concept-map.combined.ddn",
+      "svg": "corpus/basics-29-concept-map.svg"
+    },
+    {
+      "entry": "website/examples/basics/30-epc.ddn",
+      "view": "epc",
+      "title": "Synthetic order-to-cash / EPC",
+      "views": [
+        {
+          "id": "epc",
+          "title": "Synthetic order-to-cash / EPC"
+        }
+      ],
+      "profile": "epc.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/30-epc.combined.ddn",
+      "svg": "corpus/basics-30-epc.svg"
+    },
+    {
+      "entry": "website/examples/basics/31-canvas-pack-a.ddn",
+      "view": "bmc",
+      "title": "Coffee cart / business model canvas",
+      "views": [
+        {
+          "id": "bmc",
+          "title": "Coffee cart / business model canvas"
+        },
+        {
+          "id": "lean",
+          "title": "Coffee cart / lean canvas"
+        }
+      ],
+      "profile": "canvas.bmc@1",
+      "kind": "panels",
+      "combined": "website/examples/basics/31-canvas-pack-a.combined.ddn",
+      "svg": "corpus/basics-31-canvas-pack-a.svg"
+    },
+    {
+      "entry": "website/examples/basics/32-canvas-pack-b.ddn",
+      "view": "pest",
+      "title": "Fizzberry in Aurelia / PEST scan",
+      "views": [
+        {
+          "id": "pest",
+          "title": "Fizzberry in Aurelia / PEST scan"
+        },
+        {
+          "id": "pestle",
+          "title": "Fizzberry in Aurelia / PESTLE scan"
+        },
+        {
+          "id": "porter5",
+          "title": "Fizzberry in Aurelia / five forces"
+        }
+      ],
+      "profile": "canvas.pest@1",
+      "kind": "panels",
+      "combined": "website/examples/basics/32-canvas-pack-b.combined.ddn",
+      "svg": "corpus/basics-32-canvas-pack-b.svg"
+    },
+    {
+      "entry": "website/examples/basics/33-matrix-pack.ddn",
+      "view": "bcg",
+      "title": "Synthetic portfolio / BCG",
+      "views": [
+        {
+          "id": "bcg",
+          "title": "Synthetic portfolio / BCG"
+        },
+        {
+          "id": "ansoff",
+          "title": "Synthetic portfolio / Ansoff"
+        },
+        {
+          "id": "tows",
+          "title": "Synthetic portfolio / TOWS"
+        }
+      ],
+      "profile": "matrix.bcg@1",
+      "kind": "matrix",
+      "wiki": "Diagrams-Matrices",
+      "combined": "website/examples/basics/33-matrix-pack.combined.ddn",
+      "svg": "corpus/basics-33-matrix-pack.svg"
+    },
+    {
+      "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+      "view": "empathy",
+      "title": "Support team / empathy map",
+      "views": [
+        {
+          "id": "empathy",
+          "title": "Support team / empathy map"
+        },
+        {
+          "id": "scorecard",
+          "title": "Department / balanced scorecard"
+        }
+      ],
+      "profile": "canvas.empathy@1",
+      "kind": "panels",
+      "combined": "website/examples/basics/34-empathy-scorecard.combined.ddn",
+      "svg": "corpus/basics-34-empathy-scorecard.svg"
+    },
+    {
+      "entry": "website/examples/basics/35-journey-map.ddn",
+      "view": "returns",
+      "title": "Returns journey / synthetic",
+      "views": [
+        {
+          "id": "returns",
+          "title": "Returns journey / synthetic"
+        }
+      ],
+      "profile": "panels.journey@1",
+      "kind": "panels",
+      "wiki": "Diagrams-Dashboards",
+      "combined": "website/examples/basics/35-journey-map.combined.ddn",
+      "svg": "corpus/basics-35-journey-map.svg"
+    },
+    {
+      "entry": "website/examples/basics/36-story-map.ddn",
+      "view": "storymap",
+      "title": "Shop rebuild / story map",
+      "views": [
+        {
+          "id": "storymap",
+          "title": "Shop rebuild / story map"
+        }
+      ],
+      "profile": "matrix.storymap@1",
+      "kind": "matrix",
+      "wiki": "Diagrams-Matrices",
+      "combined": "website/examples/basics/36-story-map.combined.ddn",
+      "svg": "corpus/basics-36-story-map.svg"
+    },
+    {
+      "entry": "website/examples/basics/37-crows-foot-erd.ddn",
+      "view": "erd",
+      "title": "Synthetic sales / crow's-foot ERD",
+      "views": [
+        {
+          "id": "erd",
+          "title": "Synthetic sales / crow's-foot ERD"
+        }
+      ],
+      "profile": "erd.crowfoot@1",
+      "kind": "graph",
+      "wiki": "Diagrams-ERD",
+      "combined": "website/examples/basics/37-crows-foot-erd.combined.ddn",
+      "svg": "corpus/basics-37-crows-foot-erd.svg"
+    },
+    {
+      "entry": "website/examples/basics/38-sql-ddl-export.ddn",
+      "view": "publish",
+      "title": "Synthetic shop / approved SQL DDL",
+      "views": [
+        {
+          "id": "publish",
+          "title": "Synthetic shop / approved SQL DDL"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/38-sql-ddl-export.combined.ddn",
+      "svg": "corpus/basics-38-sql-ddl-export.svg"
+    },
+    {
+      "entry": "website/examples/basics/39-pyramid.ddn",
+      "view": "tiers",
+      "title": "Support tiers / pyramid",
+      "views": [
+        {
+          "id": "tiers",
+          "title": "Support tiers / pyramid"
+        }
+      ],
+      "profile": "panels.pyramid@1",
+      "kind": "panels",
+      "combined": "website/examples/basics/39-pyramid.combined.ddn",
+      "svg": "corpus/basics-39-pyramid.svg"
+    },
+    {
+      "entry": "website/examples/basics/40-venn.ddn",
+      "view": "overlap",
+      "title": "Feature overlap / venn",
+      "views": [
+        {
+          "id": "overlap",
+          "title": "Feature overlap / venn"
+        }
+      ],
+      "profile": "panels.venn@1",
+      "kind": "panels",
+      "combined": "website/examples/basics/40-venn.combined.ddn",
+      "svg": "corpus/basics-40-venn.svg"
+    },
+    {
+      "entry": "website/examples/basics/41-sequence-diagram.ddn",
+      "view": "sequence",
+      "title": "Synthetic order flow / sequence",
+      "views": [
+        {
+          "id": "sequence",
+          "title": "Synthetic order flow / sequence"
+        }
+      ],
+      "profile": "uml.sequence@1",
+      "kind": "sequence",
+      "wiki": "Diagrams-Sequence",
+      "combined": "website/examples/basics/41-sequence-diagram.combined.ddn",
+      "svg": "corpus/basics-41-sequence-diagram.svg"
+    },
+    {
+      "entry": "website/examples/basics/42-communication-diagram.ddn",
+      "view": "communication",
+      "title": "Synthetic order flow / communication",
+      "views": [
+        {
+          "id": "communication",
+          "title": "Synthetic order flow / communication"
+        }
+      ],
+      "profile": "uml.communication@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/42-communication-diagram.combined.ddn",
+      "svg": "corpus/basics-42-communication-diagram.svg"
+    },
+    {
+      "entry": "website/examples/basics/43-object-diagram.ddn",
+      "view": "objects",
+      "title": "Synthetic snapshot / objects",
+      "views": [
+        {
+          "id": "objects",
+          "title": "Synthetic snapshot / objects"
+        }
+      ],
+      "profile": "uml.object@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/43-object-diagram.combined.ddn",
+      "svg": "corpus/basics-43-object-diagram.svg"
+    },
+    {
+      "entry": "website/examples/basics/44-hierarchical-state.ddn",
+      "view": "lifecycle",
+      "title": "Order lifecycle / composite states",
+      "views": [
+        {
+          "id": "lifecycle",
+          "title": "Order lifecycle / composite states"
+        }
+      ],
+      "profile": "state.composite@1",
+      "kind": "graph",
+      "wiki": "Diagrams-States",
+      "combined": "website/examples/basics/44-hierarchical-state.combined.ddn",
+      "svg": "corpus/basics-44-hierarchical-state.svg"
+    },
+    {
+      "entry": "website/examples/basics/45-activity-diagram.ddn",
+      "view": "fulfilment",
+      "title": "Order fulfilment activity",
+      "views": [
+        {
+          "id": "fulfilment",
+          "title": "Order fulfilment activity"
+        }
+      ],
+      "profile": "uml.activity@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/45-activity-diagram.combined.ddn",
+      "svg": "corpus/basics-45-activity-diagram.svg"
+    },
+    {
+      "entry": "website/examples/basics/46-bpmn.ddn",
+      "view": "collaboration",
+      "title": "Buyer / seller collaboration",
+      "views": [
+        {
+          "id": "collaboration",
+          "title": "Buyer / seller collaboration"
+        }
+      ],
+      "profile": "bpmn.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/46-bpmn.combined.ddn",
+      "svg": "corpus/basics-46-bpmn.svg"
+    },
+    {
+      "entry": "website/examples/basics/47-timing-diagram.ddn",
+      "view": "timing",
+      "title": "Synthetic traffic lights / timing (seconds)",
+      "views": [
+        {
+          "id": "timing",
+          "title": "Synthetic traffic lights / timing (seconds)"
+        }
+      ],
+      "profile": "uml.timing@1",
+      "kind": "timing",
+      "wiki": "Diagrams-Sequence",
+      "combined": "website/examples/basics/47-timing-diagram.combined.ddn",
+      "svg": "corpus/basics-47-timing-diagram.svg"
+    },
+    {
+      "entry": "website/examples/basics/48-interaction-overview.ddn",
+      "view": "overview",
+      "title": "Checkout interaction overview",
+      "views": [
+        {
+          "id": "overview",
+          "title": "Checkout interaction overview"
+        },
+        {
+          "id": "payment_flow",
+          "title": "Payment flow detail"
+        },
+        {
+          "id": "stock_flow",
+          "title": "Stock flow detail"
+        }
+      ],
+      "profile": "uml.interaction_overview@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/48-interaction-overview.combined.ddn",
+      "svg": "corpus/basics-48-interaction-overview.svg"
+    },
+    {
+      "entry": "website/examples/basics/49-cmmn.ddn",
+      "view": "case",
+      "title": "Claim handling",
+      "views": [
+        {
+          "id": "case",
+          "title": "Claim handling"
+        }
+      ],
+      "profile": "cmmn.basic@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/49-cmmn.combined.ddn",
+      "svg": "corpus/basics-49-cmmn.svg"
+    },
+    {
+      "entry": "website/examples/basics/50-sysml.ddn",
+      "view": "bdd",
+      "title": "Pump station block definition",
+      "views": [
+        {
+          "id": "bdd",
+          "title": "Pump station block definition"
+        },
+        {
+          "id": "ibd",
+          "title": "Pump station internal block"
+        },
+        {
+          "id": "parametric",
+          "title": "Pump station flow balance"
+        }
+      ],
+      "profile": "sysml.bdd@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/50-sysml.combined.ddn",
+      "svg": "corpus/basics-50-sysml.svg"
+    },
+    {
+      "entry": "website/examples/basics/51-archimate.ddn",
+      "view": "landscape",
+      "title": "Order platform landscape",
+      "views": [
+        {
+          "id": "landscape",
+          "title": "Order platform landscape"
+        },
+        {
+          "id": "business_viewpoint",
+          "title": "Order platform business viewpoint"
+        }
+      ],
+      "profile": "archimate.basic@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/51-archimate.combined.ddn",
+      "svg": "corpus/basics-51-archimate.svg"
+    },
+    {
+      "entry": "website/examples/basics/52-pert-cpm.ddn",
+      "view": "plan",
+      "title": "Release plan",
+      "views": [
+        {
+          "id": "plan",
+          "title": "Release plan"
+        }
+      ],
+      "profile": "pert.cpm@1",
+      "kind": "graph",
+      "combined": "website/examples/basics/52-pert-cpm.combined.ddn",
+      "svg": "corpus/basics-52-pert-cpm.svg"
+    },
+    {
+      "entry": "website/examples/basics/53-fault-event-tree.ddn",
+      "view": "fault",
+      "title": "Service outage fault tree",
+      "views": [
+        {
+          "id": "fault",
+          "title": "Service outage fault tree"
+        },
+        {
+          "id": "event",
+          "title": "Alarm event tree"
+        }
+      ],
+      "profile": "fault.tree@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Trees",
+      "combined": "website/examples/basics/53-fault-event-tree.combined.ddn",
+      "svg": "corpus/basics-53-fault-event-tree.svg"
+    },
+    {
+      "entry": "website/examples/basics/54-network-diagram.ddn",
+      "view": "lan",
+      "title": "Office LAN",
+      "views": [
+        {
+          "id": "lan",
+          "title": "Office LAN"
+        },
+        {
+          "id": "rack",
+          "title": "Rack A elevation"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "combined": "website/examples/basics/54-network-diagram.combined.ddn",
+      "svg": "corpus/basics-54-network-diagram.svg"
+    },
+    {
+      "entry": "website/examples/basics/55-wireframe.ddn",
+      "view": "settings",
+      "title": "Settings screen",
+      "views": [
+        {
+          "id": "settings",
+          "title": "Settings screen"
+        }
+      ],
+      "profile": "wireframe.ui@1",
+      "kind": "graph",
+      "svg": "corpus/basics-55-wireframe.svg"
+    },
+    {
+      "entry": "website/examples/basics/56-family-tree.ddn",
+      "view": "family",
+      "title": "Three generations",
+      "views": [
+        {
+          "id": "family",
+          "title": "Three generations"
+        }
+      ],
+      "profile": "family.tree@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Trees",
+      "svg": "corpus/basics-56-family-tree.svg"
+    },
+    {
+      "entry": "website/examples/basics/57-element-defaults.ddn",
+      "view": "defaults",
+      "title": "Element defaults / bare versus explicit",
+      "views": [
+        {
+          "id": "defaults",
+          "title": "Element defaults / bare versus explicit"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/57-element-defaults.combined.ddn",
+      "svg": "corpus/basics-57-element-defaults.svg"
+    },
+    {
+      "entry": "website/examples/basics/58-css-hooks.ddn",
+      "view": "hooks",
+      "title": "CSS hooks / page styling",
+      "views": [
+        {
+          "id": "hooks",
+          "title": "CSS hooks / page styling"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-58-css-hooks.svg"
+    },
+    {
+      "entry": "website/examples/basics/59-data-refresh.ddn",
+      "view": "latency_chart",
+      "title": "Latency / chart",
+      "views": [
+        {
+          "id": "latency_chart",
+          "title": "Latency / chart"
+        },
+        {
+          "id": "dependency_graph",
+          "title": "Latency / dependency graph"
+        }
+      ],
+      "profile": "chart.basic@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "svg": "corpus/basics-59-data-refresh.svg"
+    },
+    {
+      "entry": "website/examples/basics/60-spacing-hints.ddn",
+      "view": "tight",
+      "title": "Spacing / tight",
+      "views": [
+        {
+          "id": "tight",
+          "title": "Spacing / tight"
+        },
+        {
+          "id": "normal",
+          "title": "Spacing / normal (default)"
+        },
+        {
+          "id": "loose",
+          "title": "Spacing / loose"
+        },
+        {
+          "id": "expanded",
+          "title": "Spacing / expanded"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/60-spacing-hints.combined.ddn",
+      "svg": "corpus/basics-60-spacing-hints.svg"
+    },
+    {
+      "entry": "website/examples/basics/61-self-contained.ddn",
+      "view": "overview",
+      "title": "Self-contained / overview",
+      "views": [
+        {
+          "id": "overview",
+          "title": "Self-contained / overview"
+        },
+        {
+          "id": "compact",
+          "title": "Self-contained / compact"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-61-self-contained.svg"
+    },
+    {
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "histogram",
+      "title": "Response times / histogram",
+      "views": [
+        {
+          "id": "histogram",
+          "title": "Response times / histogram"
+        },
+        {
+          "id": "density",
+          "title": "Response times / probability density"
+        },
+        {
+          "id": "qq",
+          "title": "Response times / normal Q-Q"
+        },
+        {
+          "id": "quantiledot",
+          "title": "Response times / quantile dotplot"
+        },
+        {
+          "id": "dotplot",
+          "title": "Response times by service / dot plot"
+        },
+        {
+          "id": "boxplot",
+          "title": "Response times by service / box plot"
+        },
+        {
+          "id": "violin",
+          "title": "Response times by service / violin"
+        },
+        {
+          "id": "beeswarm",
+          "title": "Response times by service / beeswarm"
+        },
+        {
+          "id": "topk",
+          "title": "Slowest services / top-K"
+        }
+      ],
+      "profile": "chart.histogram@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts-Statistical",
+      "svg": "corpus/basics-62-distribution-charts.svg"
+    },
+    {
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "tidytree",
+      "title": "Sales hierarchy / tidy tree",
+      "views": [
+        {
+          "id": "tidytree",
+          "title": "Sales hierarchy / tidy tree"
+        },
+        {
+          "id": "radialtree",
+          "title": "Sales hierarchy / radial tree"
+        },
+        {
+          "id": "circlepack",
+          "title": "Sales hierarchy / circle packing"
+        },
+        {
+          "id": "sunburst",
+          "title": "Sales hierarchy / sunburst"
+        },
+        {
+          "id": "packedbubble",
+          "title": "Sales by region / packed bubbles"
+        }
+      ],
+      "profile": "chart.tidytree@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Trees",
+      "svg": "corpus/basics-63-tree-charts.svg"
+    },
+    {
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "heatmap",
+      "title": "Requests by hour and endpoint / heatmap",
+      "views": [
+        {
+          "id": "heatmap",
+          "title": "Requests by hour and endpoint / heatmap"
+        },
+        {
+          "id": "densityheatmap",
+          "title": "Latency vs payload / density heatmap"
+        },
+        {
+          "id": "calendar",
+          "title": "Deploys per day / calendar"
+        },
+        {
+          "id": "parallelcoords",
+          "title": "Service metric vectors / parallel coordinates"
+        },
+        {
+          "id": "wordcloud",
+          "title": "Incident tags / word cloud"
+        }
+      ],
+      "profile": "chart.heatmap@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts-Statistical",
+      "svg": "corpus/basics-64-grid-charts.svg"
+    },
+    {
+      "entry": "website/examples/basics/65-network-charts.ddn",
+      "view": "arc",
+      "title": "Service calls / arc diagram",
+      "views": [
+        {
+          "id": "arc",
+          "title": "Service calls / arc diagram"
+        },
+        {
+          "id": "force",
+          "title": "Service calls / force-directed"
+        },
+        {
+          "id": "edgebundle",
+          "title": "Deployment routes / edge bundling"
+        }
+      ],
+      "profile": "chart.arc@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-65-network-charts.svg"
+    },
+    {
+      "entry": "website/examples/basics/66-chart-overlays.ddn",
+      "view": "errorbars",
+      "title": "Stage timings with measurement error / bar + error bars",
+      "views": [
+        {
+          "id": "errorbars",
+          "title": "Stage timings with measurement error / bar + error bars"
+        },
+        {
+          "id": "regression",
+          "title": "Payload vs latency / point + least-squares trend"
+        },
+        {
+          "id": "loess",
+          "title": "Payload vs latency / point + loess trend"
+        }
+      ],
+      "profile": "chart.basic@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "svg": "corpus/basics-66-chart-overlays.svg"
+    },
+    {
+      "entry": "website/examples/basics/67-geo-choropleth.ddn",
+      "view": "choropleth",
+      "title": "Synthetic adoption index / world choropleth",
+      "views": [
+        {
+          "id": "choropleth",
+          "title": "Synthetic adoption index / world choropleth"
+        }
+      ],
+      "profile": "geo.choropleth@1",
+      "kind": "geo",
+      "wiki": "Diagrams-Maps",
+      "combined": "website/examples/basics/67-geo-choropleth.combined.ddn",
+      "svg": "corpus/basics-67-geo-choropleth.svg"
+    },
+    {
+      "entry": "website/examples/basics/68-geo-symbols.ddn",
+      "view": "symbols",
+      "title": "Synthetic seismic catalog / symbol map",
+      "views": [
+        {
+          "id": "symbols",
+          "title": "Synthetic seismic catalog / symbol map"
+        }
+      ],
+      "profile": "geo.symbols@1",
+      "kind": "geo",
+      "wiki": "Diagrams-Maps",
+      "combined": "website/examples/basics/68-geo-symbols.combined.ddn",
+      "svg": "corpus/basics-68-geo-symbols.svg"
+    },
+    {
+      "entry": "website/examples/basics/69-geo-projections.ddn",
+      "view": "mercator",
+      "title": "World outline / mercator",
+      "views": [
+        {
+          "id": "mercator",
+          "title": "World outline / mercator"
+        },
+        {
+          "id": "equirectangular",
+          "title": "World outline / equirectangular"
+        },
+        {
+          "id": "albers",
+          "title": "World outline / albers"
+        },
+        {
+          "id": "equalearth",
+          "title": "World outline / equal-earth"
+        }
+      ],
+      "profile": "geo.outline@1",
+      "kind": "geo",
+      "wiki": "Diagrams-Maps",
+      "combined": "website/examples/basics/69-geo-projections.combined.ddn",
+      "svg": "corpus/basics-69-geo-projections.svg"
+    },
+    {
+      "entry": "website/examples/basics/70-motion-relations.ddn",
+      "view": "animated",
+      "title": "Order pipeline / motion showcase",
+      "views": [
+        {
+          "id": "animated",
+          "title": "Order pipeline / motion showcase"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/70-motion-relations.combined.ddn",
+      "svg": "corpus/basics-70-motion-relations.svg"
+    },
+    {
+      "entry": "website/examples/basics/71-flow-traces.ddn",
+      "view": "traces",
+      "title": "Checkout / multi-hop flow traces",
+      "views": [
+        {
+          "id": "traces",
+          "title": "Checkout / multi-hop flow traces"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/71-flow-traces.combined.ddn",
+      "svg": "corpus/basics-71-flow-traces.svg"
+    },
+    {
+      "entry": "website/examples/basics/72-iso-charts.ddn",
+      "view": "iso_bar",
+      "title": "Synthetic tier throughput / iso bar",
+      "views": [
+        {
+          "id": "iso_bar",
+          "title": "Synthetic tier throughput / iso bar"
+        },
+        {
+          "id": "iso_pie",
+          "title": "Synthetic tier share / iso pie"
+        },
+        {
+          "id": "iso_donut",
+          "title": "Synthetic tier share / iso donut"
+        },
+        {
+          "id": "iso_area",
+          "title": "Synthetic tier throughput / iso area ribbon"
+        },
+        {
+          "id": "iso_treemap",
+          "title": "Synthetic tier throughput / iso treemap blocks"
+        },
+        {
+          "id": "iso_multiseries_bar",
+          "title": "Synthetic line throughput / iso multi-series bar"
+        }
+      ],
+      "profile": "chart.basic@1",
+      "kind": "chart",
+      "wiki": "Diagrams-Charts",
+      "combined": "website/examples/basics/72-iso-charts.combined.ddn",
+      "svg": "corpus/basics-72-iso-charts.svg",
+      "iso": true
+    },
+    {
+      "entry": "website/examples/basics/73-iso-architecture.ddn",
+      "view": "iso_map",
+      "title": "Synthetic platform tiers / isometric",
+      "views": [
+        {
+          "id": "iso_map",
+          "title": "Synthetic platform tiers / isometric"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/73-iso-architecture.combined.ddn",
+      "svg": "corpus/basics-73-iso-architecture.svg",
+      "iso": true
+    },
+    {
+      "entry": "website/examples/basics/74-reusable-presets.ddn",
+      "view": "reuse",
+      "title": "Reusable presets / customer orders",
+      "views": [
+        {
+          "id": "reuse",
+          "title": "Reusable presets / customer orders"
+        },
+        {
+          "id": "traced",
+          "title": "Reusable presets / event trace"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/74-reusable-presets.combined.ddn",
+      "svg": "corpus/basics-74-reusable-presets.svg"
+    },
+    {
+      "entry": "website/examples/projections/views.ddn",
+      "view": "flowchart",
+      "title": "01 / Purchasing control flow",
+      "views": [
+        {
+          "id": "flowchart",
+          "title": "01 / Purchasing control flow"
+        },
+        {
+          "id": "responsibility_graph",
+          "title": "02 / Shared responsibility assignments"
+        },
+        {
+          "id": "raci",
+          "title": "03 / Model-derived RACI"
+        },
+        {
+          "id": "crud",
+          "title": "04 / Model-derived CRUD"
+        },
+        {
+          "id": "dfd_gane",
+          "title": "05 / Numbered Gane–Sarson-style DFD"
+        },
+        {
+          "id": "dfd_yourdon",
+          "title": "06 / Yourdon-style DFD"
+        },
+        {
+          "id": "structure",
+          "title": "07 / Declared class / interface subset"
+        },
+        {
+          "id": "usecases",
+          "title": "08 / Actor and use-case subset"
+        },
+        {
+          "id": "requirements",
+          "title": "09 / Requirement traceability"
+        },
+        {
+          "id": "erd",
+          "title": "10 / Entity-field representation"
+        },
+        {
+          "id": "chen",
+          "title": "11 / Chen binary projection"
+        },
+        {
+          "id": "chart_bar",
+          "title": "12 / Synthetic monthly value — bar"
+        },
+        {
+          "id": "chart_line",
+          "title": "13 / Synthetic monthly value — line"
+        },
+        {
+          "id": "chart_area",
+          "title": "14 / Synthetic monthly value — area"
+        },
+        {
+          "id": "chart_pie",
+          "title": "15 / Synthetic monthly value — pie"
+        },
+        {
+          "id": "chart_donut",
+          "title": "16 / Synthetic monthly value — donut"
+        },
+        {
+          "id": "scatter",
+          "title": "17 / Cost versus recorded value"
+        },
+        {
+          "id": "time_series",
+          "title": "18 / UTC monthly observations"
+        },
+        {
+          "id": "record_table",
+          "title": "19 / Shared observation table"
+        },
+        {
+          "id": "decision_table",
+          "title": "20 / Declarative decision-table presentation"
+        },
+        {
+          "id": "gantt",
+          "title": "21 / Supplied-date procurement schedule"
+        },
+        {
+          "id": "schedule_table",
+          "title": "22 / Schedule source records"
+        },
+        {
+          "id": "swot",
+          "title": "23 / Reusable SWOT panel template"
+        },
+        {
+          "id": "sipoc",
+          "title": "24 / SIPOC from shared notes"
+        },
+        {
+          "id": "journey",
+          "title": "25 / Service journey with spanning panels"
+        },
+        {
+          "id": "matrix_general",
+          "title": "26 / General relationship matrix"
+        },
+        {
+          "id": "shape_atlas",
+          "title": "27 / Composable semantic silhouettes"
+        }
+      ],
+      "profile": "flow.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/projections/views.combined.ddn",
+      "svg": "corpus/projections-views.svg"
+    },
+    {
+      "entry": "website/examples/quality/views.ddn",
+      "view": "fishbone",
+      "title": "01 / Possible causes",
+      "views": [
+        {
+          "id": "fishbone",
+          "title": "01 / Possible causes"
+        },
+        {
+          "id": "fishbone_sketch",
+          "title": "01 / Possible causes — sketch"
+        },
+        {
+          "id": "heat_numeric",
+          "title": "02 / Review score — numeric"
+        },
+        {
+          "id": "heat_bands",
+          "title": "02 / Review score — bands"
+        },
+        {
+          "id": "heat_categories",
+          "title": "02 / Review score — categories"
+        },
+        {
+          "id": "raci",
+          "title": "03 / Quality responsibility assignments"
+        },
+        {
+          "id": "crud",
+          "title": "04 / Inspection data access"
+        },
+        {
+          "id": "responsibility_graph",
+          "title": "05 / Same assignments as a graph"
+        },
+        {
+          "id": "grouped_bars",
+          "title": "06 / Defects — grouped bars"
+        },
+        {
+          "id": "stacked_bars",
+          "title": "06 / Defects — stacked bars"
+        },
+        {
+          "id": "percent_bars",
+          "title": "06 / Defects — percent bars"
+        },
+        {
+          "id": "multiseries_line",
+          "title": "06 / Defects — multiseries line"
+        },
+        {
+          "id": "multiseries_area",
+          "title": "06 / Defects — multiseries area"
+        },
+        {
+          "id": "actual_target",
+          "title": "07 / Actual versus target"
+        },
+        {
+          "id": "histogram",
+          "title": "08 / Dimension measurements — count"
+        },
+        {
+          "id": "histogram_density",
+          "title": "08 / Dimension measurements — density"
+        },
+        {
+          "id": "pareto",
+          "title": "09 / Defect priorities"
+        },
+        {
+          "id": "waterfall",
+          "title": "10 / Cost-of-quality reconciliation"
+        },
+        {
+          "id": "boxplot",
+          "title": "11 / Machine variation — tukey_1_5"
+        },
+        {
+          "id": "boxplot_minmax",
+          "title": "11 / Machine variation — minmax"
+        },
+        {
+          "id": "lifecycle",
+          "title": "12 / Corrective-action lifecycle"
+        },
+        {
+          "id": "lifecycle_trace",
+          "title": "13 / Corrective-action retry trace"
+        },
+        {
+          "id": "decision_unique",
+          "title": "14 / Disposition policy — unique"
+        },
+        {
+          "id": "decision_first",
+          "title": "14 / Disposition policy — first"
+        },
+        {
+          "id": "decision_collect",
+          "title": "14 / Disposition policy — collect"
+        },
+        {
+          "id": "measurement_table",
+          "title": "15 / Shared measurement observations"
+        },
+        {
+          "id": "defect_table",
+          "title": "16 / Shared defect counts"
+        },
+        {
+          "id": "dashboard_quality",
+          "title": "17 / Dashboard Quality"
+        },
+        {
+          "id": "dashboard_operations",
+          "title": "17 / Dashboard Operations"
+        },
+        {
+          "id": "dashboard_repeated",
+          "title": "17 / Dashboard Repeated"
+        },
+        {
+          "id": "chen_extended",
+          "title": "18 / Binary Chen details"
+        },
+        {
+          "id": "erd_shared",
+          "title": "19 / Same entity definitions as cards"
+        },
+        {
+          "id": "usecases_extended",
+          "title": "20 / Use-case subjects and extension points"
+        },
+        {
+          "id": "flow_documented",
+          "title": "21 / Documented cross-sheet control flow"
+        }
+      ],
+      "profile": "fishbone.basic@1",
+      "kind": "fishbone",
+      "wiki": "Diagrams-Fishbone",
+      "combined": "website/examples/quality/views.combined.ddn",
+      "svg": "corpus/quality-views.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/01-whiteboard.ddn",
+      "view": "diagram",
+      "title": "01 / Whiteboard sketch",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "01 / Whiteboard sketch"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/01-whiteboard.combined.ddn",
+      "svg": "corpus/use-cases-01-whiteboard.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/02-business-erd.ddn",
+      "view": "diagram",
+      "title": "02 / Business concepts",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "02 / Business concepts"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/02-business-erd.combined.ddn",
+      "svg": "corpus/use-cases-02-business-erd.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/03-relational.ddn",
+      "view": "diagram",
+      "title": "03 / Logical relational schema",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "03 / Logical relational schema"
+        },
+        {
+          "id": "compact",
+          "title": "03b / Same schema, compact sketch"
+        },
+        {
+          "id": "neo",
+          "title": "03c / Same schema, precise neo look"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/03-relational.combined.ddn",
+      "svg": "corpus/use-cases-03-relational.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+      "view": "diagram",
+      "title": "04 / SQL object dependencies",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "04 / SQL object dependencies"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/04-sql-dependencies.combined.ddn",
+      "svg": "corpus/use-cases-04-sql-dependencies.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/05-documents.ddn",
+      "view": "diagram",
+      "title": "05 / Nested document structure",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "05 / Nested document structure"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/05-documents.combined.ddn",
+      "svg": "corpus/use-cases-05-documents.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/06-graph-schema.ddn",
+      "view": "diagram",
+      "title": "06 / Property-graph schema",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "06 / Property-graph schema"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/06-graph-schema.combined.ddn",
+      "svg": "corpus/use-cases-06-graph-schema.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+      "view": "diagram",
+      "title": "07 / Key-value design",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "07 / Key-value design"
+        },
+        {
+          "id": "wide_column",
+          "title": "07b / Wide-column access pattern"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/07-keyed-storage.combined.ddn",
+      "svg": "corpus/use-cases-07-keyed-storage.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/08-domains.ddn",
+      "view": "diagram",
+      "title": "08 / Domain discovery and binding",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "08 / Domain discovery and binding"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/08-domains.combined.ddn",
+      "svg": "corpus/use-cases-08-domains.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/09-namespaces.ddn",
+      "view": "diagram",
+      "title": "09 / Namespace organization",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "09 / Namespace organization"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/09-namespaces.combined.ddn",
+      "svg": "corpus/use-cases-09-namespaces.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+      "view": "diagram",
+      "title": "10 / Shards, copies and placement",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "10 / Shards, copies and placement"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/10-hybrid-deployment.combined.ddn",
+      "svg": "corpus/use-cases-10-hybrid-deployment.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/11-data-flow.ddn",
+      "view": "diagram",
+      "title": "11 / Data-flow diagram",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "11 / Data-flow diagram"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/11-data-flow.combined.ddn",
+      "svg": "corpus/use-cases-11-data-flow.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/12-streaming.ddn",
+      "view": "diagram",
+      "title": "12 / Event publication and consumers",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "12 / Event publication and consumers"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/12-streaming.combined.ddn",
+      "svg": "corpus/use-cases-12-streaming.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/13-lineage.ddn",
+      "view": "diagram",
+      "title": "13 / Dataset lineage",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "13 / Dataset lineage"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/13-lineage.combined.ddn",
+      "svg": "corpus/use-cases-13-lineage.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/14-temporal.ddn",
+      "view": "diagram",
+      "title": "14 / Valid time and recorded time",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "14 / Valid time and recorded time"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/14-temporal.combined.ddn",
+      "svg": "corpus/use-cases-14-temporal.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/15-warehouse.ddn",
+      "view": "diagram",
+      "title": "15 / Dimensional warehouse",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "15 / Dimensional warehouse"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/15-warehouse.combined.ddn",
+      "svg": "corpus/use-cases-15-warehouse.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/16-vector-lineage.ddn",
+      "view": "diagram",
+      "title": "16 / Vector and embedding lineage",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "16 / Vector and embedding lineage"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/16-vector-lineage.combined.ddn",
+      "svg": "corpus/use-cases-16-vector-lineage.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/17-governance.ddn",
+      "view": "diagram",
+      "title": "17 / Data products and contracts",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "17 / Data products and contracts"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/17-governance.combined.ddn",
+      "svg": "corpus/use-cases-17-governance.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/18-security.ddn",
+      "view": "diagram",
+      "title": "18 / Data handling boundaries",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "18 / Data handling boundaries"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/18-security.combined.ddn",
+      "svg": "corpus/use-cases-18-security.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/19-recovery.ddn",
+      "view": "diagram",
+      "title": "19 / Backup and restore design",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "19 / Backup and restore design"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/19-recovery.combined.ddn",
+      "svg": "corpus/use-cases-19-recovery.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/20-migration.ddn",
+      "view": "diagram",
+      "title": "20 / Migration and target design",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "20 / Migration and target design"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/20-migration.combined.ddn",
+      "svg": "corpus/use-cases-20-migration.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/21-quality.ddn",
+      "view": "diagram",
+      "title": "21 / Example-driven data quality",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "21 / Example-driven data quality"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/21-quality.combined.ddn",
+      "svg": "corpus/use-cases-21-quality.svg"
+    },
+    {
+      "entry": "website/examples/use-cases/22-linked-documentation.ddn",
+      "view": "diagram",
+      "title": "22 / Navigable design documentation",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "22 / Navigable design documentation"
+        },
+        {
+          "id": "logical_detail",
+          "title": "22b / Logical detail"
+        },
+        {
+          "id": "business_detail",
+          "title": "22c / Business concepts"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/use-cases/22-linked-documentation.combined.ddn",
+      "svg": "corpus/use-cases-22-linked-documentation.svg"
+    },
+    {
+      "entry": "website/examples/live/adaptive-lab.ddn",
+      "view": "automatic",
+      "title": "Adaptive order flow / no positional coordinates",
+      "views": [
+        {
+          "id": "automatic",
+          "title": "Adaptive order flow / no positional coordinates"
+        },
+        {
+          "id": "ports_first",
+          "title": "1 / Move connection points before moving boxes"
+        },
+        {
+          "id": "move_unpinned",
+          "title": "2 / Move unpinned nodes after connection-point trials"
+        },
+        {
+          "id": "pinned_crossing",
+          "title": "3 / Short pinned routes with explicit nonconnection marks"
+        },
+        {
+          "id": "obstacle",
+          "title": "Named field endpoints / route around an unrelated box"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/live-adaptive-lab.svg"
+    },
+    {
+      "entry": "website/examples/live/pinned-patterns.ddn",
+      "view": "circular",
+      "title": "Circular / two fixed pins",
+      "views": [
+        {
+          "id": "circular",
+          "title": "Circular / two fixed pins"
+        },
+        {
+          "id": "fit_grid",
+          "title": "Fit to grid / around two pins"
+        },
+        {
+          "id": "radial",
+          "title": "Radial / graph-distance rings"
+        },
+        {
+          "id": "layered",
+          "title": "Hierarchical / directed layers"
+        },
+        {
+          "id": "tree",
+          "title": "Tree / breadth levels from fixed pins"
+        },
+        {
+          "id": "organic",
+          "title": "Organic / movable neighbours, fixed core"
+        },
+        {
+          "id": "single_pin",
+          "title": "One pin / circular neighbours"
+        },
+        {
+          "id": "no_pins",
+          "title": "No pins / deterministic radial root"
+        },
+        {
+          "id": "paused",
+          "title": "Pause placement / retain the current scene"
+        },
+        {
+          "id": "sketch_night",
+          "title": "Same anchored circle / hand-drawn night"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/live-pinned-patterns.svg"
+    },
+    {
+      "entry": "website/examples/live/routing-lab.ddn",
+      "view": "diagram",
+      "title": "Order acceptance / illustration",
+      "views": [
+        {
+          "id": "diagram",
+          "title": "Order acceptance / illustration"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/live-routing-lab.svg"
+    }
+  ]
 }

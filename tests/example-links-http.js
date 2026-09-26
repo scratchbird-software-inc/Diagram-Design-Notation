@@ -25,9 +25,11 @@ const BIN = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-
 const PORT = 8141;
 const BASE = 'http://127.0.0.1:' + PORT;
 
-/* Pages scanned for "Open in" (?src=/entry=) links, repo-relative. */
+/* Pages scanned for "Open in" (?src=/entry=) links, repo-relative.
+ * B1-053 (D7): the examples index is retired (redirect stub to the gallery —
+ * checked in tests/website-links.js); the gallery pages carry every deep link
+ * now, including the complete example corpus. */
 const PAGES = [
-  'website/examples/index.html',
   'website/gallery/index.html',
   'website/examples/gallery/index.html',
 ];

@@ -34,12 +34,10 @@ const PROFILE_CATALOGUE = readJson('standard/registry/profiles/catalogue.json');
 const PROFILE_COUNT = PROFILE_CATALOGUE.profiles.length;
 const PROJECTION_KIND_COUNT = new Set(PROFILE_CATALOGUE.profiles.map(p => p.projection)).size;
 const SPEC_CHAPTER_COUNT = fs.readdirSync(path.join(REPO, 'standard/specification')).filter(f => f.endsWith('.md')).length;
-const countDdn = abs => [...walk(abs)].filter(p => p.endsWith('.ddn') && !p.endsWith('.combined.ddn')).length;
 const GALLERY_COVERAGE = readJson('website/examples/gallery/coverage.json');
-const BASICS_COUNT = countDdn(path.join(REPO, 'website/examples/basics'));
-const USE_CASE_COUNT = countDdn(path.join(REPO, 'website/examples/use-cases'));
 const GALLERY_SVG_COUNT = Object.keys(GALLERY_COVERAGE.profiles).length +
-  Object.values(GALLERY_COVERAGE.sheets).reduce((n, s) => n + s.views.length, 0);
+  Object.values(GALLERY_COVERAGE.sheets).reduce((n, s) => n + s.views.length, 0) +
+  (GALLERY_COVERAGE.corpus ? GALLERY_COVERAGE.corpus.length : 0);
 
 const written = []; // paths relative to OUT, for the manifest
 function writeOut(rel, content) {
@@ -152,7 +150,6 @@ const NAV = [
   ['Home', 'index.html', 'home'],
   ['Features', 'features/index.html', 'features'],
   ['Gallery', 'gallery/index.html', 'gallery'],
-  ['Examples', 'examples/index.html', 'examples'],
   ['Docs', 'docs/index.html', 'docs'],
   ['Standard', 'standard/index.html', 'standard'],
   ['Tools', 'tools/index.html', 'tools'],
@@ -321,7 +318,7 @@ addMdTree(path.join(REPO, 'website/docs'), 'docs', 'docs');
 addMdTree(path.join(REPO, 'standard/specification'), 'standard/specification', 'standard');
 addMdTree(path.join(REPO, 'standard/governance'), 'standard/governance', 'standard');
 addMdTree(path.join(REPO, 'notation/studio/docs'), 'tools/studio/docs', 'tools');
-mdJobs.push({ absSource: path.join(REPO, 'website/examples/README.md'), outRel: 'examples/README.html', active: 'examples' });
+mdJobs.push({ absSource: path.join(REPO, 'website/examples/README.md'), outRel: 'examples/README.html', active: 'gallery' });
 
 const mdHtmlMap = new Map(mdJobs.map(j => [j.absSource, j.outRel]));
 for (const j of mdJobs) {
@@ -396,11 +393,10 @@ const demoScript = '(function(){\n' +
   '})();';
 
 const homeCards = [
-  ['gallery/index.html', 'Gallery — full notation coverage', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + ') plus variation sheets: every chart mark (flat and isometric, incl. multi-series iso), look × palette, routing × style, layout algorithm, spacing level, and the isometric chart/graph plates — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
+  ['gallery/index.html', 'Gallery — full notation coverage and every example', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + '), variation sheets (every chart mark flat and isometric, look × palette, routing × style, layout algorithm, spacing level), and the complete example corpus — every runnable .ddn the project ships — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
   ['tools/index.html?mode=design', 'Designer — the tool in design mode', 'The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.', 'standalone · no server'],
   ['tools/index.html', 'Unified diagram tool', 'One page for viewing, exploring, editing and designing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets — view, explore, edit, design), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.', 'standalone · no server'],
   ['standard/index.html', 'The open standard', SPEC_CHAPTER_COUNT + ' specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.', 'rendered from Markdown'],
-  ['examples/index.html', 'Examples', BASICS_COUNT + ' basics, projection and quality corpora, and ' + USE_CASE_COUNT + ' use-case scenarios as runnable .ddn sources — served raw for download.', 'browser + raw files'],
 ];
 
 writeOut('index.html', shell({
@@ -451,7 +447,7 @@ writeOut('features/index.html', page('../', 'features', 'Features — DDN',
   '<div class="grid">\n' +
   FEATURES.map(([h, p]) => '  <div class="card"><h3>' + h + '</h3><p>' + p + '</p></div>').join('\n') +
   '\n</div>\n' +
-  '<p><a class="cta primary" href="../tools/index.html?mode=design">Open the designer</a> <a class="cta secondary" href="../examples/index.html">Browse the examples</a></p>'));
+  '<p><a class="cta primary" href="../tools/index.html?mode=design">Open the designer</a> <a class="cta secondary" href="../gallery/index.html#corpus">Browse the examples in the gallery</a></p>'));
 
 // Tools landing: the unified tool itself is served at /tools/index.html (B1-027
 // D6); sister tools are linked from the homepage cards and this jump strip is
@@ -486,50 +482,25 @@ writeOut('standard/index.html', page('../', 'standard', 'The DDN standard — DD
   '<h2>RFCs</h2>\n' + docList(path.join(REPO, 'standard/governance/rfcs'), 'standard/governance/rfcs', 'governance/rfcs/') +
   '<h2>Notation plates</h2>\n<p><a href="../plates/index.html">SVG plates of the full vocabulary</a> — object kinds, facets, relationship families, looks, and routing.</p>'));
 
-// Examples browser: intro + raw .ddn listing grouped by directory.
-const examplesRoot = path.join(REPO, 'website/examples');
-const ddnFiles = [...walk(examplesRoot)].filter(p => p.endsWith('.ddn'))
-  .map(p => path.relative(examplesRoot, p).split(path.sep).join('/')).sort();
-const groups = new Map();
-for (const f of ddnFiles) {
-  const dir = f.includes('/') ? f.slice(0, f.indexOf('/')) : '.';
-  if (!groups.has(dir)) groups.set(dir, []);
-  groups.get(dir).push(f);
-}
-/* B1-023 (D2) + B1-051 (D3): per-example "open in" links. The Designer column
- * is the same unified tool in design mode (?mode=design); a file with
- * `import "..." as …;` lines is multi-file and keeps the explore-mode link
- * plus a note (deep-linked multi-file sources open in explore). Detection is a
- * line-anchored grep — imports are top-level line statements in the grammar,
- * so scanning the source text is exact and keeps the site builder free of a
- * runtime load. */
-const hasImports = f => /^[ \t]*import[ \t]+"/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
-/* B1-048 (D6): a file with no top-level `view` declaration is a library file
- * (shared model/data/formats imported by other examples). No mode can render
- * it — the tool loads it with "no source loaded" — so the index must not offer
- * an "Open in" link for it. Line-anchored grep, exact for the same reason as
- * hasImports. */
-const hasViews = f => /^[ \t]*view[ \t]/m.test(fs.readFileSync(path.join(examplesRoot, f), 'utf8'));
-const srcParam = f => '../examples/' + f.split('/').map(encodeURIComponent).join('/');
-writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
-  '<h1 class="page-title">Examples</h1>\n' +
-  '<p class="lede">' + ddnFiles.length + ' runnable <code>.ddn</code> sources — served raw for download. ' +
-  'Open any of them one click in the unified diagram tool — <strong>Tool</strong> is explore mode, <strong>Designer</strong> the same page in design mode (<code>?mode=design</code>) — via the links below, or render with the CLI: ' +
-  '<code>node notation/cli/cli.js render website/examples/basics/01-customer.ddn --workspace website/examples/basics --out out.svg</code>. ' +
-  'The tool takes a <code>?src=</code> relative-path deep link (<code>tools/index.html?src=../examples/basics/01-customer.ddn&amp;mode=explore</code>) — serve the site over HTTP (<code>npm run serve</code>) for browser fetches. ' +
-  'Files ending in <code>.combined.ddn</code> are the combined single-file variants of the multi-file examples (data/format/view split across files); the gallery build verifies each renders byte-identical to its multi-file original — both styles are kept side by side. ' +
-  'See the <a href="README.html">examples README</a> and the <a href="../gallery/index.html">rendered gallery</a>.</p>\n' +
-  [...groups.entries()].map(([dir, files]) =>
-    '<h2>' + esc(dir === '.' ? 'Top level' : dir + '/') + ' <small>(' + files.length + ')</small></h2>\n<table>\n<thead><tr><th>File</th><th>Bytes</th><th>Open in</th></tr></thead><tbody>\n' +
-    files.map(f => {
-      const size = fs.statSync(path.join(examplesRoot, f)).size;
-      const open = !hasViews(f)
-        ? '<small>library file — imported by other examples</small>'
-        : hasImports(f)
-        ? '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> <small>(multi-file — explore mode)</small>'
-        : '<a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=explore">Tool</a> · <a href="../tools/index.html?src=' + srcParam(f) + '&amp;mode=design">Designer</a>';
-      return '<tr><td><a href="' + f.split('/').map(encodeURIComponent).join('/') + '"><code>' + esc(f) + '</code></a></td><td>' + size + '</td><td>' + open + '</td></tr>';
-    }).join('\n') + '\n</tbody></table>').join('\n')));
+/* B1-053 addendum (D7): the examples browser is retired — the gallery now
+ * carries the complete example corpus with explanations, browsable sources and
+ * viewer/designer deep links, making a separate index redundant. The URL stays
+ * working for external links as a redirect stub to the gallery, matching the
+ * retired viewer/studio/designer stubs. The raw .ddn files themselves are
+ * still served (the gallery links them), and examples/README.html keeps
+ * documenting them. */
+writeOut('examples/index.html',
+  '<!doctype html>\n<!-- SPDX-License-Identifier: GPL-2.0-or-later. B1-053 (D7): the examples index was\n' +
+  '     folded into the gallery, which now renders the complete example corpus with\n' +
+  '     explanations, DDN sources and viewer/designer deep links. Generated by\n' +
+  '     website/build-site.mjs. -->\n' +
+  '<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Moved — ScratchWeaver examples are in the gallery</title>\n' +
+  '<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">\n' +
+  '<meta http-equiv="refresh" content="0; url=../gallery/index.html#corpus">\n</head>\n<body>\n' +
+  '<p>The examples index moved: every example is now rendered in the gallery with its explanation, DDN source and tool links.\n' +
+  'Open the <a id="ddn-redirect-target" href="../gallery/index.html#corpus">example corpus in the gallery</a>.</p>\n' +
+  '<script>location.replace("../gallery/index.html#corpus");</' + 'script>\n' +
+  '</body>\n</html>\n');
 
 // Download page: clone/npm instructions + dist bundle table with byte sizes.
 const distRows = fs.readdirSync(path.join(REPO, 'notation/dist')).sort()

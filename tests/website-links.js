@@ -63,45 +63,51 @@ test('no link escapes above website/ and no absolute local paths in website/', (
   assert.deepEqual(escapes, [], escapes.slice(0, 40).join('\n'));
 });
 
-/* B1-023 (D2/D5) + B1-027 (D8) + B1-048 (D6) + B1-051 (D3): every examples-page
- * row for a view-bearing file links the unified tool with a ?src= deep link
- * whose target exists; single-file rows (no `import "..."` lines) also link
- * the same tool in design mode (?mode=design — the retired designer prototype
- * URL is now a redirect stub), import-bearing rows stay explore-only with the
- * note. Files with no top-level `view` declaration are library files: no mode
- * can render them, so they carry the library note and NO "Open in" link. */
-test('examples page: per-row tool/designer ?src= links match the D2 rule and resolve on disk', () => {
-  const pagePath = path.join(site, 'examples/index.html');
-  const html = fs.readFileSync(pagePath, 'utf8');
+/* B1-053 (D7): the examples index is retired — a redirect stub to the gallery
+ * (matching the retired viewer/studio/designer stubs), because the gallery now
+ * renders the complete example corpus with the full detail treatment. */
+test('retired examples index is a redirect stub to the gallery corpus', () => {
+  const stub = fs.readFileSync(path.join(site, 'examples', 'index.html'), 'utf8');
+  assert.ok(stub.includes('url=../gallery/index.html#corpus'), 'meta refresh to the gallery missing');
+  assert.ok(stub.includes('ddn-redirect-target'), 'redirect target anchor missing');
+  assert.ok(!stub.includes('<table>'), 'stub still ships the retired examples table');
+});
+
+/* B1-053 (D7): every view-bearing example file the retired index listed must
+ * carry tool deep links on the gallery page (?entry=&view= links, opened in
+ * the crawl in tests/example-links-http.js). Library files (no views) must NOT
+ * be linked. Detection mirrors tools/build-gallery.js corpusEntries(): basics
+ * NN-*.ddn, projections/quality entries, top-level use-cases, live labs;
+ * combined variants and gallery/src sheet sources are covered elsewhere. */
+test('gallery page deep-links every view-bearing example file', () => {
+  const html = fs.readFileSync(path.join(site, 'gallery', 'index.html'), 'utf8');
   const examplesRoot = path.join(site, 'examples');
-  const ddnFiles = [...walk(examplesRoot)].filter(p => p.endsWith('.ddn'))
-    .map(p => path.relative(examplesRoot, p).split(path.sep).join('/')).sort();
+  const entries = [];
+  const push = rel => { if (!rel.endsWith('.combined.ddn')) entries.push(rel); };
+  for (const f of fs.readdirSync(path.join(examplesRoot, 'basics')).sort())
+    if (/^\d+-.*\.ddn$/.test(f)) push('basics/' + f);
+  for (const dir of ['projections', 'quality', 'use-cases', 'live'])
+    for (const f of fs.readdirSync(path.join(examplesRoot, dir)).sort())
+      if (f.endsWith('.ddn')) push(dir + '/' + f);
+  const hasViews = rel => /^[ \t]*view[ \t]/m.test(fs.readFileSync(path.join(examplesRoot, rel), 'utf8'));
   const errors = [];
-  let viewBearing = 0, libraries = 0;
-  for (const f of ddnFiles) {
-    const enc = f.split('/').map(encodeURIComponent).join('/');
-    const tool = '../tools/index.html?src=../examples/' + enc + '&amp;mode=explore';
-    const designer = '../tools/index.html?src=../examples/' + enc + '&amp;mode=design';
-    const src = fs.readFileSync(path.join(examplesRoot, f), 'utf8');
-    const imports = /^[ \t]*import[ \t]+"/m.test(src);
-    const views = /^[ \t]*view[ \t]/m.test(src);
-    if (!views) {
+  let linked = 0, libraries = 0;
+  for (const rel of entries) {
+    const enc = rel.split('/').map(encodeURIComponent).join('/');
+    const encCombined = rel.replace(/\.ddn$/, '.combined.ddn').split('/').map(encodeURIComponent).join('/');
+    /* Multi-file examples are deep-linked via their verified combined
+     * single-file variant (the gallery detail block names both). */
+    const linked_here = html.includes('entry=../examples/' + enc + '&amp;view=') ||
+      html.includes('entry=../examples/' + encCombined + '&amp;view=');
+    if (!hasViews(rel)) {
       libraries++;
-      if (html.includes('src=../examples/' + enc)) errors.push(f + ': view-less library file must not carry an Open-in link');
+      if (linked_here) errors.push(rel + ': view-less library file must not carry a tool deep link');
       continue;
     }
-    viewBearing++;
-    if (!html.includes('href="' + tool + '"')) errors.push(f + ': tool link missing');
-    const hasDesigner = html.includes('href="' + designer + '"');
-    if (imports && hasDesigner) errors.push(f + ': import-bearing example must be explore-only');
-    if (!imports && !hasDesigner) errors.push(f + ': single-file example must link design mode');
-    const abs = path.resolve(path.dirname(pagePath), tool.split('?')[0]);
-    if (!fs.existsSync(abs)) errors.push(f + ': tool page missing at ' + abs);
+    if (!linked_here) errors.push(rel + ': no tool deep link on the gallery page');
+    else linked++;
   }
-  const toolLinks = (html.match(/href="\.\.\/tools\/index\.html\?src=[^"]*&amp;mode=explore"/g) || []).length;
-  const designerLinks = (html.match(/href="\.\.\/tools\/index\.html\?src=[^"]*&amp;mode=design"/g) || []).length;
-  assert.strictEqual(toolLinks, viewBearing, 'one explore link per view-bearing example');
-  console.log('  examples: ' + ddnFiles.length + ' files · ' + toolLinks + ' tool links · ' + designerLinks + ' design-mode links · ' + (viewBearing - designerLinks) + ' explore-only (multi-file) · ' + libraries + ' library files (no link)');
+  console.log('  corpus: ' + entries.length + ' example files · ' + linked + ' deep-linked on the gallery page · ' + libraries + ' library files (no link)');
   assert.deepEqual(errors, [], errors.slice(0, 20).join('\n'));
 });
 

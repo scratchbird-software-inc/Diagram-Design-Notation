@@ -79,6 +79,48 @@ test('iso plates exist for every extrudable mark plus the iso graph', () => {
   assert.ok(captions.length >= isoViews.length, 'each iso plate must caption the live ddn-iso.js requirement');
 });
 
+/* B1-053 (D7): the retired examples index folded into the gallery — every
+ * view-bearing example file it listed must appear in coverage.json's corpus
+ * (one figure per file) and its SVG must exist. Library files (no views) are
+ * excluded by construction. Detection mirrors tools/build-gallery.js
+ * corpusEntries() exactly, using the workspace API for view detection. */
+test('corpus covers every view-bearing example file', () => {
+  const A = require(path.join(root, 'notation/dist/ddn.global.js'));
+  const cov = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+  assert.ok(Array.isArray(cov.corpus), 'coverage.json has no corpus array — run npm run build:gallery');
+  const covered = new Set(cov.corpus.map(c => c.entry));
+  const exRoot = path.join(root, 'website/examples');
+  const entries = [];
+  const push = rel => { if (!rel.endsWith('.combined.ddn')) entries.push(rel); };
+  for (const f of fs.readdirSync(path.join(exRoot, 'basics')).sort())
+    if (/^\d+-.*\.ddn$/.test(f)) push('website/examples/basics/' + f);
+  for (const dir of ['projections', 'quality', 'use-cases', 'live'])
+    for (const f of fs.readdirSync(path.join(exRoot, dir)).sort())
+      if (f.endsWith('.ddn')) push('website/examples/' + dir + '/' + f);
+  const missing = [];
+  for (const entry of entries) {
+    let views = 0;
+    try {
+      const files = {};
+      const visit = name => {
+        if (Object.hasOwn(files, name)) return;
+        files[name] = fs.readFileSync(path.join(root, name), 'utf8');
+        for (const imp of A.parse(files[name], name).imports) visit(A.resolvePath(name, imp.path));
+      };
+      visit(entry);
+      const ws = A.createWorkspace(files);
+      views = ws.views(entry).length;
+      ws.destroy();
+    } catch { /* unparseable — not a corpus entry */ }
+    if (views && !covered.has(entry)) missing.push(entry);
+    if (views) {
+      const c = cov.corpus.find(x => x.entry === entry);
+      if (c) assert.ok(fs.existsSync(path.join(galleryDir, c.svg)), entry + ': missing corpus SVG ' + c.svg);
+    }
+  }
+  assert.deepEqual(missing, [], 'example files missing from the gallery corpus: ' + missing.join(', '));
+});
+
 test('every method named in api-reference.md exists in public.d.ts', () => {
   const doc = fs.readFileSync(path.join(docsDir, 'api-reference.md'), 'utf8');
   const dts = fs.readFileSync(path.join(root, 'notation/studio/src/public.d.ts'), 'utf8');
