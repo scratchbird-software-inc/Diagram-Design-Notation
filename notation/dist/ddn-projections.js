@@ -570,11 +570,20 @@
     const gap=Math.max(230*s,labelW+100*s),left=110*s;
     parts.forEach((n,i)=>px.set(n.id,left+i*gap));
     const bottom=firstRow+Math.max(msgs.length,1)*pitch-20*s;H=bottom+64*s;W=Math.max(W,left*2+(parts.length-1)*gap);
+    /* B1-056 (RFC-120): feature flags — every rule below is opt-in by property,
+     * so uml.sequence@1 fixtures render byte-identically. */
+    const fragments=plan.fragments||[];
+    const sortOf=r=>r.properties.x_message?.sort;
+    const createdRow=new Map(),destroyedRow=new Map();
+    msgs.forEach((r,i)=>{if(sortOf(r)==='create'&&!createdRow.has(r.to.element))createdRow.set(r.to.element,i);if(sortOf(r)==='delete')destroyedRow.set(r.to.element,i);});
     for(const n of parts){
      const x=px.get(n.id),hw=Math.max(130*s,Text.measure(n.name,13*s,p.style.font,600).width+36*s);
      const used=msgs.some(r=>r.from.element===n.id||r.to.element===n.id);
      if(!used)diagnostics.push({code:'DDN-PJW03',severity:'warning',message:'Sequence participant '+n.name+' has no incident messages; it is drawn with an empty lifeline.'});
-     body+=group(n.id,[n.id],rect(x-hw/2,0,hw,headH,t.surface,t.ink)+lines(wrap(n.name,hw-20*s,13,600),x,headH/2+5*s,13,600,'middle')+line(x,headH,x,bottom,t.rule,1.2,'5 5'),{x:x-hw/2,y:0,w:hw,h:bottom});
+     const cr=createdRow.get(n.id),dr=destroyedRow.get(n.id);
+     const headY=cr!==undefined?firstRow+cr*pitch-headH/2:0,lifeEnd=dr!==undefined?firstRow+dr*pitch:bottom;
+     body+=group(n.id,[n.id],rect(x-hw/2,headY,hw,headH,t.surface,t.ink)+lines(wrap(n.name,hw-20*s,13,600),x,headY+headH/2+5*s,13,600,'middle')+line(x,headY+headH,x,lifeEnd,t.rule,1.2,'5 5'),{x:x-hw/2,y:headY,w:hw,h:lifeEnd-headY});
+     if(dr!==undefined){const dy=firstRow+dr*pitch;body+=group(n.id,[n.id],`<g class="ddn-destruction" data-participant="${esc(n.id)}"><path d="M${f(x-7*s)} ${f(dy-7*s)}L${f(x+7*s)} ${f(dy+7*s)}M${f(x+7*s)} ${f(dy-7*s)}L${f(x-7*s)} ${f(dy+7*s)}" stroke="${t.ink}" stroke-width="2.2"/></g>`,{x:x-7*s,y:dy-7*s,w:14*s,h:14*s});}
     }
     const bars=new Map();
     msgs.forEach((r,i)=>{
@@ -583,16 +592,63 @@
     });
     for(const a of bars.values()){const x=px.get(a.id),y0=firstRow+a.from*pitch-16*s,y1=firstRow+a.to*pitch+16*s;
      body+=group(a.id,[a.id],`<rect x="${f(x-5*s)}" y="${f(y0)}" width="${f(10*s)}" height="${f(y1-y0)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`,{x:x-5*s,y:y0,w:10*s,h:y1-y0});}
+    // B1-056: authorable execution occurrences (x_activation) — same bar glyph, declared rows.
+    for(const n of parts)for(const [ai,a]of (n.properties.x_activation||[]).entries()){
+     const from=msgs.findIndex(m=>m.id===(a.from.$ref||a.from)),to=msgs.findIndex(m=>m.id===(a.to.$ref||a.to));
+     if(from<0||to<0)continue;
+     const x=px.get(n.id),y0=firstRow+from*pitch-16*s,y1=firstRow+to*pitch+16*s;
+     body+=group(n.id,[n.id],`<rect class="ddn-activation" data-explicit="${ai}" x="${f(x-5*s)}" y="${f(y0)}" width="${f(10*s)}" height="${f(y1-y0)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`,{x:x-5*s,y:y0,w:10*s,h:y1-y0});}
+    const fragRect=(f2,depth)=>{
+     const involved=new Set();for(let i=f2.from;i<=f2.to;i++){involved.add(msgs[i].from.element);involved.add(msgs[i].to.element);}
+     const xs2=[...involved].map(id=>px.get(id)),pad=(34+depth*12)*s;
+     return {x0:Math.max(8*s,Math.min(...xs2)-pad),x1:Math.min(W-8*s,Math.max(...xs2)+pad),y0:firstRow+f2.from*pitch-40*s,y1:firstRow+f2.to*pitch+30*s};
+    };
+    const innermost=i=>{let best=null;const walk=(f2,depth)=>{if(i>=f2.from&&i<=f2.to){if(!best||depth>best.depth)best={f:f2,depth};for(const op of f2.operands)for(const nf of op.fragments||[])walk(nf,depth+1);}};for(const f2 of fragments)walk(f2,0);return best;};
     msgs.forEach((r,i)=>{
-     const y=firstRow+i*pitch,ret=r.properties.x_return===true,xs=px.get(r.from.element),xt=px.get(r.to.element),num=(i+1)+'. ';
-     if(r.from.element===r.to.element){
-      const lw=48*s,lh=26*s,d=`M${f(xs)} ${f(y)}H${f(xs+lw)}V${f(y+lh)}H${f(xs+9*s)}`;
-      body+=group(r.id,[r.id],`<path d="${d}" stroke="${ret?t.rule:t.ink}" stroke-width="1.4" fill="none"${ret?' stroke-dasharray="5 4"':''}/>`+R.endMark([xs+9*s,y+lh],90,'open',ret?t.rule:t.ink,t.surface)+text(xs+lw/2+12*s,y-10*s,num+r.name,12,400,'middle'),{x:xs,y:y-20*s,w:lw+14*s,h:lh+22*s});
-     }else {
-      const dir=xt>xs?0:180,ex=xt+(xt>xs?-2:2)*s;
-      body+=group(r.id,[r.id],line(xs,y,ex,y,ret?t.rule:t.ink,1.4,ret?'5 4':'')+R.endMark([ex,y],dir,ret?'open':'filled',ret?t.rule:t.ink,t.surface)+text((xs+xt)/2,y-10*s,num+r.name,12,400,'middle'),{x:Math.min(xs,xt),y:y-20*s,w:Math.abs(xt-xs),h:24*s});
+     const y=firstRow+i*pitch,xm=r.properties.x_message||{},sort=xm.sort,ret=r.properties.x_return===true||sort==='reply',xs=px.get(r.from.element),xt=px.get(r.to.element),num=(i+1)+'. ';
+     const head=sort==='asynch'||ret?'open':'filled';
+     const label=num+(sort==='create'?'«create» ':'')+r.name;
+     if(sort==='lost'||sort==='found'){
+      const cx=xs+(sort==='lost'?56:-56)*s;
+      const content=sort==='lost'
+       ?line(xs,y,cx-6*s,y,t.ink,1.4)+`<circle class="ddn-lost" cx="${f(cx)}" cy="${f(y)}" r="${f(4.5*s)}" fill="${t.ink}"/>`
+       :`<circle class="ddn-found" cx="${f(cx)}" cy="${f(y)}" r="${f(4.5*s)}" fill="${t.ink}"/>`+line(cx+6*s,y,xs-2*s,y,t.ink,1.4)+R.endMark([xs-2*s,y],0,'filled',t.ink,t.surface);
+      body+=group(r.id,[r.id],content+text(xs+(sort==='lost'?28:-28)*s,y-10*s,label,12,400,'middle'),{x:Math.min(xs,cx),y:y-20*s,w:Math.abs(cx-xs)+10*s,h:24*s});
+      return;
      }
+     let sx=xs,ex2=xt,gateMark='';
+     if(xm.gate&&fragments.length){const enc=innermost(i);
+      if(enc){const fr=fragRect(enc.f,enc.depth);
+       if(xm.gate==='source'){sx=xt>xs?fr.x1:fr.x0;gateMark=`<rect class="ddn-gate" x="${f(sx-4*s)}" y="${f(y-4*s)}" width="${f(8*s)}" height="${f(8*s)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`;}
+       else {ex2=xt>xs?fr.x1:fr.x0;gateMark=`<rect class="ddn-gate" x="${f(ex2-4*s)}" y="${f(y-4*s)}" width="${f(8*s)}" height="${f(8*s)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`;}}}
+     if(r.from.element===r.to.element&&!xm.gate){
+      const lw=48*s,lh=26*s,d=`M${f(xs)} ${f(y)}H${f(xs+lw)}V${f(y+lh)}H${f(xs+9*s)}`;
+      body+=group(r.id,[r.id],`<path d="${d}" stroke="${ret?t.rule:t.ink}" stroke-width="1.4" fill="none"${ret?' stroke-dasharray="5 4"':''}/>`+R.endMark([xs+9*s,y+lh],90,'open',ret?t.rule:t.ink,t.surface)+text(xs+lw/2+12*s,y-10*s,label,12,400,'middle'),{x:xs,y:y-20*s,w:lw+14*s,h:lh+22*s});
+     }else {
+      const dir=ex2>sx?0:180,ex=ex2+(ex2>sx?-2:2)*s;
+      body+=group(r.id,[r.id],line(sx,y,ex,y,ret?t.rule:t.ink,1.4,ret?'5 4':'')+R.endMark([ex,y],dir,ret?'open':head,ret?t.rule:t.ink,t.surface)+gateMark+text((sx+ex2)/2,y-10*s,label,12,400,'middle'),{x:Math.min(sx,ex2),y:y-20*s,w:Math.abs(ex2-sx),h:24*s});
+     }
+     if(xm.time)body+=text(Math.max(sx,ex2)+12*s,y-10*s,xm.time,11,500);
+     if(xm.duration)body+=text(Math.max(sx,ex2)+12*s,y+18*s,xm.duration,11,500);
     });
+    // B1-056: state invariants — stadium symbol on the lifeline below the row.
+    for(const n of parts)for(const inv of n.properties.x_invariant||[]){
+     const ai=msgs.findIndex(m=>m.id===(inv.after.$ref||inv.after));if(ai<0)continue;
+     const x=px.get(n.id),y=firstRow+ai*pitch+pitch/2,iw=Math.max(60*s,Text.measure(inv.label,11*s,p.style.font,500).width+22*s);
+     body+=group(n.id,[n.id],`<g class="ddn-invariant"><rect x="${f(x-iw/2)}" y="${f(y-11*s)}" width="${f(iw)}" height="${f(22*s)}" rx="${f(11*s)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.4"/>`+text(x,y+4*s,inv.label,11,500,'middle')+'</g>',{x:x-iw/2,y:y-11*s,w:iw,h:22*s},'x_invariant');}
+    // B1-056: combined fragments — frame, operator pentagon, guards, separators.
+    function renderFragment(f2,depth){
+     const fr=fragRect(f2,depth),opw=Math.max(54*s,Text.measure(f2.operator,11*s,p.style.font,650).width+22*s);
+     let out=`<g class="ddn-fragment ddn-fragment-${esc(f2.operator)}" data-operator="${esc(f2.operator)}" data-owner="${esc(f2.owner||'')}"><rect x="${f(fr.x0)}" y="${f(fr.y0)}" width="${f(fr.x1-fr.x0)}" height="${f(fr.y1-fr.y0)}" fill="none" stroke="${t.ink}" stroke-width="1.4"/>`;
+     out+=`<path d="M${f(fr.x0)} ${f(fr.y0)}H${f(fr.x0+opw)}V${f(fr.y0+12*s)}L${f(fr.x0+opw-10*s)} ${f(fr.y0+22*s)}H${f(fr.x0)}Z" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`+text(fr.x0+11*s,fr.y0+15*s,f2.operator,11,650);
+     f2.operands.forEach((op,oi)=>{
+      if(oi>0){const sy=firstRow+op.from*pitch-pitch/2;out+=`<path class="ddn-operand-separator" d="M${f(fr.x0)} ${f(sy)}H${f(fr.x1)}" stroke="${t.ink}" stroke-width="1" stroke-dasharray="7 5" fill="none"/>`;}
+      if(op.guard)out+=text(fr.x0+(oi?10*s:opw+10*s),firstRow+op.from*pitch-(oi?pitch/2-16*s:24*s),'['+op.guard+']',11,500);
+      for(const nf of op.fragments||[])out+=renderFragment(nf,depth+1);
+     });
+     return out+'</g>';
+    }
+    for(const f2 of fragments)body+=renderFragment(f2,0);
     body+=text(0,H-15*s,'Declaration order, not a verified protocol · '+parts.length+' participants · '+msgs.length+' messages · dashed arrows are x_return replies · bars are receiver activations.',11);
    }
    if(plan.kind==='timing'){

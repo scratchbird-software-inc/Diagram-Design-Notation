@@ -75,8 +75,77 @@ declared element or relation.
   settings), graph place/route/frame geometry `DDN-PJ002`, page/extent guards
   `DDN-PJ060/061`, Vega-Lite export `DDN-PJ070`.
 
-## Unsupported
+## Unsupported (uml.sequence@1)
 
 Combined fragments (alt/loop/opt); gates, creation/destruction and execution
 specifications; full UML conformance. Ordering is author-declared, never
 inferred from geometry or timestamps.
+
+# 27a. Sequence diagrams at uml.sequence@2 (RFC-120)
+
+Status: implemented in runtime 0.7.0, governed by RFC-120
+(`standard/governance/rfcs/RFC-120-uml-sequence-completeness.md`).
+`uml.sequence@1` stays installed and immutable; @2 is the UML 2.5.1
+interaction surface. Every rule is opt-in by property: a view using none of
+the extensions below renders byte-identically to @1.
+
+## Combined fragments — `x_fragment`
+
+A combined fragment anchors on its first covered `uml.message`:
+
+```ddn
+relation charge "Charge card" @checkout -> @payments { kind: "uml.message";
+    x_fragment: { operator: alt; operands: [
+        { guard: "card valid"; messages: [@flow.charge, @flow.capture]; },
+        { guard: "else"; messages: [@flow.declined]; } ] };
+}
+```
+
+- Operators: `alt`, `opt`, `loop`, `break`, `par`, `neg`, `critical`, `seq`,
+  `strict`, `ignore`, `consider`, `assert` (contract enum; anything else is
+  `DDN105`).
+- Operand message lists must be contiguous in declaration order; sibling
+  operands partition one contiguous span; `x_fragment` must anchor on the
+  span's first message. Violations are `DDN-PJ155`.
+- Nesting: an operand may carry `fragments: [ … ]` inline; nested spans must
+  sit strictly inside their operand (max depth 8). Relation-level sibling
+  fragments must be disjoint (`DDN-PJ155`).
+- Rendering: frame over the covered lifelines/rows, operator pentagon
+  top-left, `[guard]` at each operand's first row, dashed operand separators.
+- `par` operands are message groups over the shared lifelines; region-local
+  independent lifelines are a declared exclusion (RFC-120 decision).
+
+## Message sorts, gates and constraints — `x_message`
+
+`x_message` gains `sort`, `gate`, `time`, `duration` (seq unchanged; still
+enforced only by `uml.communication@1` via DDN-PJ111):
+
+- `sort: synch` filled arrowhead (default) · `asynch` open arrowhead ·
+  `reply` dashed open (equivalent to `x_return:true`; a conflicting
+  `x_return:false` is `DDN-PJ156`).
+- `sort: create` — «create» label; the target participant's header is drawn
+  at the create row and its lifeline starts there. A create must be the first
+  message incident to its target (`DDN-PJ156`).
+- `sort: delete` — ✕ destruction marker on the target lifeline at that row;
+  the lifeline stops there and any later message incident to the destroyed
+  participant is `DDN-PJ156`.
+- `sort: lost|found` — filled-circle free end; the message is self-anchored
+  (`@a -> @a`) because the data model is a binary relation (RFC-120).
+- `gate: source|target` — the named endpoint attaches to the innermost
+  enclosing fragment's frame edge with a small square connection point; a
+  gate without an enclosing fragment is `DDN-PJ156`.
+- `time` / `duration` — observation/constraint text in `{…}` form, rendered
+  beside the message row; any other form is `DDN-PJ159`.
+
+## State invariants and authorable activations
+
+- `x_invariant: [ { after: @msg, label } ]` on a participant draws the
+  stadium-shaped state-invariant symbol on its lifeline just below that
+  message row; the reference must be a visible message incident to the
+  participant (`DDN-PJ157`).
+- `x_activation: [ { from: @msg, to: @msg } ]` on a participant draws an
+  explicit execution occurrence (same bar glyph as the derived ones);
+  references must be incident and ordered (`DDN-PJ158`).
+
+Fixture: `website/examples/basics/76-uml-sequence-complete.ddn` (both views),
+tests in `notation/tests/uml-sequence-compliance.js`.

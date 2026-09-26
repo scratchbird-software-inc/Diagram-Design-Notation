@@ -437,7 +437,58 @@ function plan(ir,ErrorClass=Error){
    const n=byId.get(ep.element);
    if(!n||n.type!=='object'||!byParticipant.has(n.id))fail('DDN-PJ110','Sequence message '+(r.name||r.id)+' has a '+label+' endpoint that is not a selected object declaration: '+ep.element,r);
   }
-  return{kind,profile:p.profile,participants,messages,sourceIds:participants.map(n=>n.id).concat(messages.map(r=>r.id))};
+  /* B1-056 (RFC-120): UML 2.5.1 sequence completeness. Message sorts,
+   * combined fragments (contiguous, strictly nested operand spans), gates,
+   * state invariants and authorable activations. Validators run for every
+   * sequence profile when the new extensions are present; sources without
+   * them plan exactly as uml.sequence@1. */
+  const mIndex=new Map(messages.map((r,i)=>[r.id,i]));
+  const msgRef=(x,code,what,owner)=>{const id=ref(x),r=byRel.get(id);if(!r||!mIndex.has(id))fail(code,what+' must reference a visible uml.message of this view: '+id,owner);return r;};
+  const destroyed=new Map();
+  for(const r of messages){
+   const xm=r.properties.x_message||{};
+   const sort=xm.sort;
+   if(sort!==undefined){
+    if(sort==='reply'&&r.properties.x_return===false)fail('DDN-PJ156','Message '+r.id+' declares sort reply but x_return:false; reply and x_return are equivalent',r);
+    if(['lost','found'].includes(sort)&&r.from.element!==r.to.element)fail('DDN-PJ156','Lost/found message '+r.id+' must be self-anchored (@a -> @a); the free end carries the filled circle',r);
+    if(sort==='create'){const first=Math.min(...messages.filter(m=>m.from.element===r.to.element||m.to.element===r.to.element).map(m=>mIndex.get(m.id)));if(mIndex.get(r.id)!==first)fail('DDN-PJ156','Create message '+r.id+' must be the first message incident to its target participant',r);}
+    if(sort==='delete'){if(destroyed.has(r.to.element))fail('DDN-PJ156','Participant '+r.to.element+' is destroyed twice',r);destroyed.set(r.to.element,mIndex.get(r.id));}
+   }
+   for(const key of ['time','duration'])if(xm[key]!==undefined&&!/^\{[^{}]+\}$/.test(xm[key]))fail('DDN-PJ159','Message '+r.id+' '+key+' must use constraint form {…}; found '+JSON.stringify(xm[key]),r);
+  }
+  for(const r of messages)for(const side of ['from','to']){const row=destroyed.get(r[side].element);
+   if(row!==undefined&&mIndex.get(r.id)>row&&r.properties.x_message?.sort!=='delete')fail('DDN-PJ156','Message '+r.id+' reaches '+r[side].element+' after its destruction at message row '+(row+1),r);}
+  const fragments=[],topSpans=[];
+  function buildFragment(owner,fx,depth){
+   if(depth>8)fail('DDN-PJ155','Combined fragment nesting exceeds 8 levels at '+owner.id,owner);
+   const ops=fx.operands.map((op,oi)=>{
+    const idxs=op.messages.map(x=>mIndex.get(msgRef(x,'DDN-PJ155','Fragment operand',owner).id));
+    for(let k=1;k<idxs.length;k++)if(idxs[k]!==idxs[k-1]+1)fail('DDN-PJ155','Fragment '+owner.id+' operand '+oi+' messages are not contiguous in declaration order',owner);
+    const from=idxs[0],to=idxs[idxs.length-1];
+    return{guard:op.guard,from,to,fragments:(op.fragments||[]).map(nf=>buildFragment(owner,nf,depth+1))};
+   });
+   for(let k=1;k<ops.length;k++)if(ops[k].from<=ops[k-1].to)fail('DDN-PJ155','Fragment '+owner.id+' operands overlap in declaration order',owner);
+   for(let k=1;k<ops.length;k++)if(ops[k].from!==ops[k-1].to+1)fail('DDN-PJ155','Fragment '+owner.id+' operands must partition one contiguous span',owner);
+   const from=ops[0].from,to=ops[ops.length-1].to;
+   if(depth===0&&from!==mIndex.get(owner.id))fail('DDN-PJ155','x_fragment must anchor on the fragment\'s first covered message; '+owner.id+' starts at row '+(from+1),owner);
+   for(const op of ops)for(const nf of op.fragments){if(nf.from<op.from||nf.to>op.to)fail('DDN-PJ155','Nested fragment at '+owner.id+' escapes its operand span',owner);}
+   return{operator:fx.operator,owner:owner.id,from,to,operands:ops};
+  }
+  for(const r of messages)if(r.properties.x_fragment!==undefined){const f=buildFragment(r,r.properties.x_fragment,0);
+   for(const span of topSpans)if(f.from<=span.to&&f.to>=span.from)fail('DDN-PJ155','Fragment at '+r.id+' overlaps a sibling fragment span; nest strictly (inside one operand) or keep disjoint',r);
+   topSpans.push({from:f.from,to:f.to});fragments.push(f);}
+  const covered=i=>fragments.some(function walk(f){return(i>=f.from&&i<=f.to)||f.operands.some(op=>(op.fragments||[]).some(walk));});
+  for(const r of messages){const gate=r.properties.x_message?.gate;
+   if(gate!==undefined&&!covered(mIndex.get(r.id)))fail('DDN-PJ156','Gate on message '+r.id+' has no enclosing combined fragment; gates attach to a fragment frame',r);}
+  for(const n of participants){
+   const incident=i=>messages[i].from.element===n.id||messages[i].to.element===n.id;
+   for(const [xi,e]of (n.properties.x_invariant||[]).entries()){const m=msgRef(e.after,'DDN-PJ157','State invariant on '+n.id,n);if(!incident(mIndex.get(m.id)))fail('DDN-PJ157','State invariant '+xi+' on '+n.id+' must follow a message incident to that participant',n);}
+   for(const [xi,e]of (n.properties.x_activation||[]).entries()){
+    const a=msgRef(e.from,'DDN-PJ158','Activation on '+n.id,n),b=msgRef(e.to,'DDN-PJ158','Activation on '+n.id,n),ai=mIndex.get(a.id),bi=mIndex.get(b.id);
+    if(!incident(ai)||!incident(bi))fail('DDN-PJ158','Activation '+xi+' on '+n.id+' must span messages incident to that participant',n);
+    if(ai>=bi)fail('DDN-PJ158','Activation '+xi+' on '+n.id+' must span from an earlier to a later message row',n);}
+  }
+  return{kind,profile:p.profile,participants,messages,fragments,sourceIds:participants.map(n=>n.id).concat(messages.map(r=>r.id))};
  }
  if(kind==='timing'){
   const participants=orderedParticipants(ir,shown).map(n=>{

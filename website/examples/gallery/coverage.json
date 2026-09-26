@@ -801,6 +801,14 @@
       "wiki": "Diagrams-Sequence",
       "svg": "profiles/uml-sequence-1.svg"
     },
+    "uml.sequence@2": {
+      "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+      "view": "fragments",
+      "title": "UML sequence / fragments and gates",
+      "kind": "sequence",
+      "wiki": "Diagrams-Sequence",
+      "svg": "profiles/uml-sequence-2.svg"
+    },
     "uml.structure@1": {
       "entry": "website/examples/projections/views.ddn",
       "view": "structure",
@@ -2925,6 +2933,25 @@
       "profile": "uml.structure@2",
       "kind": "graph",
       "svg": "corpus/basics-75-uml-class-complete.svg"
+    },
+    {
+      "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+      "view": "fragments",
+      "title": "UML sequence / fragments and gates",
+      "views": [
+        {
+          "id": "fragments",
+          "title": "UML sequence / fragments and gates"
+        },
+        {
+          "id": "states",
+          "title": "UML sequence / lifecycle and annotations"
+        }
+      ],
+      "profile": "uml.sequence@2",
+      "kind": "sequence",
+      "wiki": "Diagrams-Sequence",
+      "svg": "corpus/basics-76-uml-sequence-complete.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

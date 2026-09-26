@@ -1,0 +1,57 @@
+ddn "0.5";
+module "ddn.examples.umlseq";
+
+// B1-056 (RFC-120): UML 2.5.1 sequence-diagram completeness on uml.sequence@2.
+// View 1: combined fragments, gates, replies. View 2: creation/destruction,
+// lost/found, invariants, authorable activations, time/duration constraints.
+// Minimal current-dialect style, no pinned layout.
+
+data ordering {
+    object customer "Customer" { kind: application; }
+    object checkout "Checkout" { kind: service; }
+    object payments "Payments" { kind: service; }
+
+    relation submit "Submit order" @customer -> @checkout { kind: "uml.message"; }
+    relation charge "Charge card" @checkout -> @payments { kind: "uml.message"; x_message: { sort: synch; duration: "{0..5s}"; };
+        x_fragment: { operator: alt; operands: [
+            { guard: "card valid"; messages: [@ordering.charge, @ordering.capture]; },
+            { guard: "else"; messages: [@ordering.declined]; } ] };
+    }
+    relation capture "Capture" @payments -> @payments { kind: "uml.message"; }
+    relation declined "Declined" @checkout -> @customer { kind: "uml.message"; x_message: { sort: reply; }; }
+    relation confirm "Confirmation" @checkout -> @customer { kind: "uml.message"; x_return: true; }
+    relation notify "Notify warehouse" @checkout -> @payments { kind: "uml.message"; x_message: { sort: asynch; gate: target; };
+        x_fragment: { operator: loop; operands: [
+            { guard: "per batch"; messages: [@ordering.notify, @ordering.ack]; fragments: [
+                { operator: opt; operands: [ { guard: "stock low"; messages: [@ordering.ack]; } ] } ] } ] };
+    }
+    relation ack "Ack" @payments -> @checkout { kind: "uml.message"; }
+}
+
+data lifeline {
+    object scheduler "Scheduler" { kind: application; }
+    object agent "Agent" { kind: service;
+        x_invariant: [ { after: @lifeline.poll; label: "idle"; } ];
+        x_activation: [ { from: @lifeline.spawn; to: @lifeline.stop; } ];
+    }
+    object audit "Audit sink" { kind: service; }
+
+    relation spawn "Spawn" @scheduler -> @agent { kind: "uml.message"; x_message: { sort: create; }; }
+    relation poll "Poll" @agent -> @agent { kind: "uml.message"; x_message: { sort: asynch; time: "{t}"; }; }
+    relation report "Report" @agent -> @scheduler { kind: "uml.message"; x_message: { sort: synch; duration: "{1..3s}"; }; }
+    relation lostm "Metric" @audit -> @audit { kind: "uml.message"; x_message: { sort: lost; }; }
+    relation foundm "Late event" @agent -> @agent { kind: "uml.message"; x_message: { sort: found; }; }
+    relation stop "Stop" @scheduler -> @agent { kind: "uml.message"; x_message: { sort: delete; }; }
+}
+
+view fragments "UML sequence / fragments and gates" {
+    data: [@ordering];
+    projection { kind: sequence; profile: "uml.sequence@2"; }
+    publication { size: content; fit: none; }
+}
+
+view states "UML sequence / lifecycle and annotations" {
+    data: [@lifeline];
+    projection { kind: sequence; profile: "uml.sequence@2"; }
+    publication { size: content; fit: none; }
+}

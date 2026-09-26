@@ -66,8 +66,47 @@
 <p>  no incident messages; the diagram still renders with an empty lifeline.</p>
 <ul><li>Unchanged existing guards apply as to every data-bound projection: unknown</li></ul>
 <p>  kind <code>DDN-PJ001</code>, unknown projection property <code>DDN-PJ005</code> (no silent ignored   settings), graph place/route/frame geometry <code>DDN-PJ002</code>, page/extent guards   <code>DDN-PJ060/061</code>, Vega-Lite export <code>DDN-PJ070</code>.</p>
-<h2>Unsupported</h2>
+<h2>Unsupported (uml.sequence@1)</h2>
 <p>Combined fragments (alt/loop/opt); gates, creation/destruction and execution specifications; full UML conformance. Ordering is author-declared, never inferred from geometry or timestamps.</p>
+<h1>27a. Sequence diagrams at uml.sequence@2 (RFC-120)</h1>
+<p>Status: implemented in runtime 0.7.0, governed by RFC-120 (<code>standard/governance/rfcs/RFC-120-uml-sequence-completeness.md</code>). <code>uml.sequence@1</code> stays installed and immutable; @2 is the UML 2.5.1 interaction surface. Every rule is opt-in by property: a view using none of the extensions below renders byte-identically to @1.</p>
+<h2>Combined fragments — <code>x_fragment</code></h2>
+<p>A combined fragment anchors on its first covered <code>uml.message</code>:</p>
+<pre><code>relation charge &quot;Charge card&quot; @checkout -&gt; @payments { kind: &quot;uml.message&quot;;
+    x_fragment: { operator: alt; operands: [
+        { guard: &quot;card valid&quot;; messages: [@flow.charge, @flow.capture]; },
+        { guard: &quot;else&quot;; messages: [@flow.declined]; } ] };
+}</code></pre>
+<ul><li>Operators: <code>alt</code>, <code>opt</code>, <code>loop</code>, <code>break</code>, <code>par</code>, <code>neg</code>, <code>critical</code>, <code>seq</code>,</li></ul>
+<p>  <code>strict</code>, <code>ignore</code>, <code>consider</code>, <code>assert</code> (contract enum; anything else is   <code>DDN105</code>).</p>
+<ul><li>Operand message lists must be contiguous in declaration order; sibling</li></ul>
+<p>  operands partition one contiguous span; <code>x_fragment</code> must anchor on the   span's first message. Violations are <code>DDN-PJ155</code>.</p>
+<ul><li>Nesting: an operand may carry <code>fragments: [ … ]</code> inline; nested spans must</li></ul>
+<p>  sit strictly inside their operand (max depth 8). Relation-level sibling   fragments must be disjoint (<code>DDN-PJ155</code>).</p>
+<ul><li>Rendering: frame over the covered lifelines/rows, operator pentagon</li></ul>
+<p>  top-left, <code>[guard]</code> at each operand's first row, dashed operand separators.</p>
+<ul><li><code>par</code> operands are message groups over the shared lifelines; region-local</li></ul>
+<p>  independent lifelines are a declared exclusion (RFC-120 decision).</p>
+<h2>Message sorts, gates and constraints — <code>x_message</code></h2>
+<p><code>x_message</code> gains <code>sort</code>, <code>gate</code>, <code>time</code>, <code>duration</code> (seq unchanged; still enforced only by <code>uml.communication@1</code> via DDN-PJ111):</p>
+<ul><li><code>sort: synch</code> filled arrowhead (default) · <code>asynch</code> open arrowhead ·</li></ul>
+<p>  <code>reply</code> dashed open (equivalent to <code>x_return:true</code>; a conflicting   <code>x_return:false</code> is <code>DDN-PJ156</code>).</p>
+<ul><li><code>sort: create</code> — «create» label; the target participant's header is drawn</li></ul>
+<p>  at the create row and its lifeline starts there. A create must be the first   message incident to its target (<code>DDN-PJ156</code>).</p>
+<ul><li><code>sort: delete</code> — ✕ destruction marker on the target lifeline at that row;</li></ul>
+<p>  the lifeline stops there and any later message incident to the destroyed   participant is <code>DDN-PJ156</code>.</p>
+<ul><li><code>sort: lost|found</code> — filled-circle free end; the message is self-anchored</li></ul>
+<p>  (<code>@a -&gt; @a</code>) because the data model is a binary relation (RFC-120).</p>
+<ul><li><code>gate: source|target</code> — the named endpoint attaches to the innermost</li></ul>
+<p>  enclosing fragment's frame edge with a small square connection point; a   gate without an enclosing fragment is <code>DDN-PJ156</code>.</p>
+<ul><li><code>time</code> / <code>duration</code> — observation/constraint text in <code>{…}</code> form, rendered</li></ul>
+<p>  beside the message row; any other form is <code>DDN-PJ159</code>.</p>
+<h2>State invariants and authorable activations</h2>
+<ul><li><code>x_invariant: [ { after: @msg, label } ]</code> on a participant draws the</li></ul>
+<p>  stadium-shaped state-invariant symbol on its lifeline just below that   message row; the reference must be a visible message incident to the   participant (<code>DDN-PJ157</code>).</p>
+<ul><li><code>x_activation: [ { from: @msg, to: @msg } ]</code> on a participant draws an</li></ul>
+<p>  explicit execution occurrence (same bar glyph as the derived ones);   references must be incident and ordered (<code>DDN-PJ158</code>).</p>
+<p>Fixture: <code>website/examples/basics/76-uml-sequence-complete.ddn</code> (both views), tests in <code>notation/tests/uml-sequence-compliance.js</code>.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

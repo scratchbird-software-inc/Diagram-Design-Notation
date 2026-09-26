@@ -32,7 +32,18 @@ function registry(base){
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
  out.extension_contracts.x_return=def({type:'boolean'},['relation']);
- out.extension_contracts.x_message=def({type:'object',required:['seq'],properties:{seq:{type:'string',minLength:1}},additionalProperties:false},['relation']);
+ /* B1-056 (RFC-120): UML 2.5.1 sequence diagrams. x_message grows the UML
+  * message sort, gate and time/duration annotations (seq stays optional at
+  * contract level; uml.communication@1 enforces it via DDN-PJ111). x_fragment
+  * anchors a combined fragment to its first covered message; operands carry
+  * guards and message refs and nest recursively. */
+ out.extension_contracts.x_message=def({type:'object',properties:{seq:{type:'string',minLength:1},sort:{enum:['synch','asynch','create','delete','reply','lost','found']},gate:{enum:['source','target']},time:{type:'string',minLength:1},duration:{type:'string',minLength:1}},additionalProperties:false},['relation']);
+ const ref={type:'object'},msgList={type:'array',minItems:1,items:ref};
+ const fragment={type:'object',required:['operator','operands'],properties:{operator:{enum:['alt','opt','loop','break','par','neg','critical','seq','strict','ignore','consider','assert']},operands:{type:'array',minItems:1,maxItems:12}},additionalProperties:false};
+ fragment.properties.operands.items={type:'object',required:['messages'],properties:{guard:{type:'string',minLength:1},messages:msgList,fragments:{type:'array',minItems:1,items:fragment}},additionalProperties:false};
+ out.extension_contracts.x_fragment=def(fragment,['relation']);
+ out.extension_contracts.x_invariant=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['after','label'],properties:{after:ref,label:{type:'string',minLength:1}},additionalProperties:false}},['object']);
+ out.extension_contracts.x_activation=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['from','to'],properties:{from:ref,to:ref},additionalProperties:false}},['object']);
  out.extension_contracts.x_instance=def({type:'object',required:['classifier'],additionalProperties:true},['object']);
  out.extension_contracts.x_partition=def({type:'object',required:['lane'],properties:{lane:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','error']}},additionalProperties:false},['object']);

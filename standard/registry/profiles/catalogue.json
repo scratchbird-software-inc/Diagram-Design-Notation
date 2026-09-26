@@ -2668,6 +2668,28 @@
       ]
     },
     {
+      "id": "uml.sequence@2",
+      "projection": "sequence",
+      "diagramFamilies": [
+        "UML sequence diagram"
+      ],
+      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (alt/opt/loop/break/par/neg/critical/seq/strict/ignore/consider/assert, nested, operands with guards — x_fragment), gates on fragment boundaries, «create» headers and ✕ destruction, synchronous/asynchronous arrowheads, explicit replies, lost/found messages, authorable execution occurrences (x_activation), time/duration constraints, state invariants (x_invariant).",
+      "validation": [
+        "message endpoints are selected participant objects (DDN-PJ110)",
+        "participants without messages warn (DDN-PJW03)",
+        "fragment operands are contiguous, non-overlapping, strictly nested message spans (DDN-PJ155)",
+        "message sort/gate semantics (DDN-PJ156)",
+        "state invariants reference incident view messages (DDN-PJ157)",
+        "explicit activations reference incident, ordered view messages (DDN-PJ158)",
+        "time/duration annotations use {constraint} form (DDN-PJ159)"
+      ],
+      "unsupported": [
+        "region-local independent lifelines inside par operands (RFC-120 decision)",
+        "protocol verification",
+        "full UML conformance"
+      ]
+    },
+    {
       "id": "uml.communication@1",
       "projection": "graph",
       "diagramFamilies": [

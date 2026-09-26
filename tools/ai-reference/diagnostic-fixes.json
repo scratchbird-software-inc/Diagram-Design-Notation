@@ -109,11 +109,16 @@
     "DDN-E013": "Flow steps must follow existing visible relations in declared direction: add the missing relation or reorder steps (@a -> @b -> @c).",
     "DDN-E014": "Fix the motion property: motion flow|pulse|none; marker circle|square|rect; marker_size <=128px; speed <=10000; rate positive integer.",
     "DDN-E016": "records row width must equal the columns count; the message names the row and expected/actual counts \u2014 fix the row's values.",
-    "DDN-PJ149": "x_endlabels (role/multiplicity/qualifier) is legal on uml.association only; multiplicity must be a UML form (1, 0..1, 0..*, 1..*, *) \u2014 fix the kind or the multiplicity string",
-    "DDN-PJ150": "x_association_class needs a class reference resolving to a declared uml.class that is not an endpoint of its own association",
-    "DDN-PJ151": "x_nary needs ends resolving to at least three distinct classifiers (uml.class/interface/enumeration) across the binary anchors and x_nary.ends, each with a UML multiplicity",
-    "DDN-PJ152": "x_genset is legal on uml.generalization only, and every relation in a set (same name) must point at the same target classifier",
+    "DDN-PJ149": "x_endlabels is legal on uml.association only; multiplicity must be a UML form (1, 0..1, 0..*, 1..*, *)",
+    "DDN-PJ150": "x_association_class needs a reference to a declared uml.class that is not an endpoint of its own association",
+    "DDN-PJ151": "x_nary needs at least three distinct classifier ends (uml.class/interface/enumeration) across anchors and x_nary.ends, each a UML multiplicity",
+    "DDN-PJ152": "x_genset is legal on uml.generalization only; all relations of a set (same name) must share one target classifier",
     "DDN-PJ153": "x_template applies to uml.class/uml.interface only; move the parameter list to a classifier kind",
-    "DDN-PJ154": "x_member kind literal belongs on uml.enumeration members only, and enumeration members must be literals (or plain fields)"
+    "DDN-PJ154": "x_member kind literal belongs on uml.enumeration members only, and enumeration members must be literals (or plain fields)",
+    "DDN-PJ155": "Fragment operands must be contiguous, non-overlapping, one span, anchored on the first covered message; nest strictly inside one operand",
+    "DDN-PJ156": "x_message.sort rules: create = first message of target; delete ends the lifeline; lost/found self-anchored (@a -> @a); reply = x_return:true; gates need an enclosing fragment",
+    "DDN-PJ157": "State invariant after: must reference a visible message incident to that participant",
+    "DDN-PJ158": "Activation from:/to: must reference visible messages incident to the participant, earlier to later row",
+    "DDN-PJ159": "time/duration annotations use UML constraint form, wrapped in braces: \"{t..t+5}\""
   }
 }
