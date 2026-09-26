@@ -1,0 +1,52 @@
+ddn "0.5";
+
+module "ddn.examples.venn";
+// Synthetic feature overlap of three invented products (all data invented)
+// demonstrating the panels.venn@1 profile: three set circles in a fixed
+// triangle arrangement, set names outside, and declared membership counts at
+// fixed region positions (counts only in v1).
+data features {
+    object f_offline "Offline sync" { kind: note; description: "Synthetic: works without connectivity."; x_sets: ["atlas"]; }
+    object f_sso "SSO login" { kind: note; description: "Synthetic: single sign-on for teams."; x_sets: ["beacon"]; }
+    object f_sdk "Public SDK" { kind: note; description: "Synthetic: embeddable developer kit."; x_sets: ["cipher"]; }
+    object f_audit "Audit log" { kind: note; description: "Synthetic: immutable activity trail."; x_sets: ["atlas", "beacon"]; }
+    object f_share "Shared workspaces" { kind: note; description: "Synthetic: multi-team spaces."; x_sets: ["atlas", "beacon"]; }
+    object f_embed "Embeddable widget" { kind: note; description: "Synthetic: drop-in UI component."; x_sets: ["atlas", "cipher"]; }
+    object f_export "CSV export" { kind: note; description: "Synthetic: one-click data export."; x_sets: ["beacon", "cipher"]; }
+    object f_search "Full-text search" { kind: note; description: "Synthetic: ranked search across content."; x_sets: ["atlas", "beacon", "cipher"]; }
+}
+
+view overlap "Feature overlap / venn" {
+    data: [@features];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:panels; profile:"panels.venn@1"; columns:1; panels:[
+        {id:"atlas",title:"ATLAS",row:0,column:0,rowspan:1,colspan:1,items:[@features.f_offline, @features.f_audit, @features.f_share, @features.f_embed, @features.f_search]},
+        {id:"beacon",title:"BEACON",row:1,column:0,rowspan:1,colspan:1,items:[@features.f_sso, @features.f_audit, @features.f_share, @features.f_export, @features.f_search]},
+        {id:"cipher",title:"CIPHER",row:2,column:0,rowspan:1,colspan:1,items:[@features.f_sdk, @features.f_embed, @features.f_export, @features.f_search]}]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

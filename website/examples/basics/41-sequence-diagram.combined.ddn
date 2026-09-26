@@ -1,0 +1,50 @@
+ddn "0.5";
+
+module "ddn.examples.sequence";
+// Synthetic three-party order flow for the uml.sequence@1 profile.
+// Participants are lifelines in declaration order; uml.message relations are
+// numbered messages top-to-bottom in declaration order. reserve_stock_reply is
+// a dashed return (x_return); audit_log is a self-message on checkout.
+// All data is synthetic. This is profile-level coverage, not UML conformance.
+data flow {
+    object customer_app "Customer app" { kind: "application"; }
+    object checkout "Checkout" { kind: "service"; }
+    object inventory "Inventory" { kind: "service"; }
+    relation submit_order "Submit order" @customer_app -> @checkout { kind: "uml.message"; }
+    relation reserve_stock "Reserve stock" @checkout -> @inventory { kind: "uml.message"; }
+    relation reserve_stock_reply "Stock reserved" @inventory -> @checkout { kind: "uml.message"; x_return: true; }
+    relation audit_log "Audit log" @checkout -> @checkout { kind: "uml.message"; }
+    relation confirm "Confirm order" @checkout -> @customer_app { kind: "uml.message"; }
+}
+
+view sequence "Synthetic order flow / sequence" {
+    data: [@flow]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: sequence; profile: "uml.sequence@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,50 @@
+ddn "0.5";
+
+module "ddn.examples.flow";
+data model {
+    object source "Operational customer" { kind: table; workload: [oltp]; role: authoritative; }
+    object capture "Capture changes" { kind: activity; }
+    object events "customer.changed" { kind: topic; }
+    object history_job "Build valid + recorded history" { kind: activity; }
+    object search_job "Build search projection" { kind: activity; }
+    object history "Customer history" { kind: history; workload: [olap]; temporal: bitemporal; }
+    object search "Customer search" { kind: search_index; role: derived; }
+    relation r1 @source -> @capture { kind: captures_changes_into; capture: cdc; }
+    relation r2 @capture -> @events { kind: publishes_to; transport: kafka; }
+    relation r3 @events -> @history_job { kind: delivers_to; scope: "history consumer"; }
+    relation r4 @events -> @search_job { kind: delivers_to; scope: "search consumer"; }
+    relation r5 @history_job -> @history { kind: write; }
+    relation r6 @search_job -> @search { kind: write; }
+}
+view flow "Capture, transport and transformation are different" {
+    data: [@model]; format: @ddn.examples.shared.styles.technical; display: @ddn.examples.shared.styles.compact;
+    publication { width: 1550px; height: 1020px; }
+    legend { mode: numbers; keys: { "r1":1, "r2":2, "r3":3, "r4":4, "r5":5, "r6":6 }; width: 300px; }
+
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

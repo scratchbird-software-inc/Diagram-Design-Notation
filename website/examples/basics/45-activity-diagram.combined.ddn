@@ -1,0 +1,63 @@
+ddn "0.5";
+
+module "ddn.examples.activitydiagram";
+// Synthetic activity-style flow for the uml.activity@1 profile.
+// An order-fulfilment activity with two swimlane partitions (webshop,
+// warehouse) drawn as view frames; lane membership is declared per node with
+// x_partition:{lane:"..."}. A flow.forkjoin fork splits the flow into
+// pick_items, take_payment and the order object node; a matching join
+// reunites them before end. All edges are uml.flow. All data is synthetic.
+// This is profile-level coverage, not UML conformance.
+data order {
+    object start "Start" { kind: "flow.start"; x_partition: { "lane": "webshop" }; }
+    object fork "Fork" { kind: "flow.forkjoin"; x_partition: { "lane": "warehouse" }; }
+    object pick_items "Pick items" { kind: "flow.process"; x_partition: { "lane": "warehouse" }; }
+    object take_payment "Take payment" { kind: "flow.process"; x_partition: { "lane": "webshop" }; }
+    object order_obj "Order" { kind: "flow.objectnode"; x_partition: { "lane": "warehouse" }; }
+    object join "Join" { kind: "flow.forkjoin"; x_partition: { "lane": "warehouse" }; }
+    object end "End" { kind: "flow.end"; x_partition: { "lane": "webshop" }; }
+
+    relation begin "begin" @start -> @fork { kind: "uml.flow"; }
+    relation to_pick "to pick" @fork -> @pick_items { kind: "uml.flow"; }
+    relation to_pay "to pay" @fork -> @take_payment { kind: "uml.flow"; }
+    relation to_order "to order" @fork -> @order_obj { kind: "uml.flow"; }
+    relation picked "picked" @pick_items -> @join { kind: "uml.flow"; }
+    relation paid "paid" @take_payment -> @join { kind: "uml.flow"; }
+    relation order_ready "order ready" @order_obj -> @join { kind: "uml.flow"; }
+    relation finish "finish" @join -> @end { kind: "uml.flow"; }
+}
+
+view fulfilment "Order fulfilment activity" {
+    data: [@order]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "uml.activity@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame webshop "Webshop" { members: [@order.start, @order.take_payment, @order.end]; }
+    frame warehouse "Warehouse" { members: [@order.fork, @order.pick_items, @order.order_obj, @order.join]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

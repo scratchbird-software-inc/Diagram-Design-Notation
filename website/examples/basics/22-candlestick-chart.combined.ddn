@@ -1,0 +1,47 @@
+ddn "0.5";
+
+module "ddn.examples.candlestick-chart";
+// Synthetic trading-week-plus dataset: eight sessions of OHLC values.
+// All data is synthetic; not financial data or advice.
+data trading {
+    object d1 "Session 2026-03-02" { kind: record; x_record: {"day": "2026-03-02", "open": 50, "high": 52, "low": 49, "close": 51.5, "unit": "CAD"}; }
+    object d2 "Session 2026-03-03" { kind: record; x_record: {"day": "2026-03-03", "open": 51.5, "high": 53, "low": 50.5, "close": 50.75, "unit": "CAD"}; }
+    object d3 "Session 2026-03-04" { kind: record; x_record: {"day": "2026-03-04", "open": 50.75, "high": 52.5, "low": 50, "close": 52.25, "unit": "CAD"}; }
+    object d4 "Session 2026-03-05" { kind: record; x_record: {"day": "2026-03-05", "open": 52.25, "high": 54, "low": 51.75, "close": 53.5, "unit": "CAD"}; }
+    object d5 "Session 2026-03-06" { kind: record; x_record: {"day": "2026-03-06", "open": 53.5, "high": 54.25, "low": 52, "close": 52.5, "unit": "CAD"}; }
+    object d6 "Session 2026-03-09" { kind: record; x_record: {"day": "2026-03-09", "open": 52.5, "high": 55, "low": 52.25, "close": 54.75, "unit": "CAD"}; }
+    object d7 "Session 2026-03-10" { kind: record; x_record: {"day": "2026-03-10", "open": 54.75, "high": 56.5, "low": 54, "close": 55.5, "unit": "CAD"}; }
+    object d8 "Session 2026-03-11" { kind: record; x_record: {"day": "2026-03-11", "open": 55.5, "high": 57, "low": 54.5, "close": 55, "unit": "CAD"}; }
+}
+
+view candlestick "Synthetic trading sessions / candlestick" {
+    data: [@trading]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.candlestick@1"; records:[@trading.d1, @trading.d2, @trading.d3, @trading.d4, @trading.d5, @trading.d6, @trading.d7, @trading.d8]; mark:candlestick; x:"x_record.day"; x_type:date; open:"x_record.open"; high:"x_record.high"; low:"x_record.low"; close:"x_record.close"; unit:"CAD"; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

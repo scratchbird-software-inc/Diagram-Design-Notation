@@ -28,7 +28,7 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
   background: #fff; border-bottom: 1px solid #dbe3ed; flex: none;
 }
 #ddn-toolbar[hidden] { display: none; }
-.ddn-brand { display: inline-flex; width: 22px; height: 22px; }
+.ddn-brand { display: inline-flex; width: 22px; height: 22px; text-decoration: none; color: inherit; }
 .ddn-brand svg { width: 22px; height: 22px; }
 .ddn-icon { padding: 5px; line-height: 0; }
 .ddn-icon svg { width: 16px; height: 16px; display: block; }

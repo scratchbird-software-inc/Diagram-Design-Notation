@@ -1,0 +1,85 @@
+ddn "0.5";
+
+module "ddn.usecases.views.warehouse";
+// What is the fact grain and which dimensions describe it?
+// Fixed teaching layout: coordinates belong to this view only.
+view diagram "15 / Dimensional warehouse" {
+    data: [@ddn.usecases.warehouse.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.teaching;
+    select: [@ddn.usecases.warehouse.model.fact, @ddn.usecases.warehouse.model.customer, @ddn.usecases.warehouse.model.product, @ddn.usecases.warehouse.model.date, @ddn.usecases.warehouse.model.grain];
+    publication { width: 1680px; height: 1050px; }
+    legend { keys: { "model.r_c": 1, "model.r_p": 2, "model.r_d": 3 }; }
+
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.warehouse";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object fact "Order line fact" {
+        kind: fact;
+        workload: [olap];
+        description: "Grain: one row per order line.";
+        fields {
+            field order_id;
+            field line_id;
+            field customer_key;
+            field product_key;
+            field date_key;
+            field net_amount;
+        }
+    }
+    object customer "Customer dimension" {
+        kind: dimension;
+        fields {
+            field customer_key;
+            field display_name;
+        }
+    }
+    object product "Product dimension" {
+        kind: dimension;
+        fields {
+            field product_key;
+            field product_name;
+        }
+    }
+    object date "Date dimension" {
+        kind: dimension;
+        fields {
+            field date_key;
+            field calendar_date;
+        }
+    }
+    object grain "Declare the grain" {
+        kind: note;
+        description: "One fact row per order line. Order totals must not be repeated as additive line measures.";
+    }
+    relation r_c @fact.customer_key -> @customer.customer_key { kind: ref; source_mark: zeromany; target_mark: one; }
+    relation r_p @fact.product_key -> @product.product_key { kind: ref; source_mark: zeromany; target_mark: one; }
+    relation r_d @fact.date_key -> @date.date_key { kind: ref; source_mark: zeromany; target_mark: one; }
+}

@@ -1,0 +1,97 @@
+ddn "0.5";
+
+module "ddn.examples.elements";
+data model {
+    object customer "Customer" { kind: table; maturity: draft; workload: [oltp]; fields { field customer_id { key: primary; } field display_name; field status; } }
+    object history "Customer history" { kind: history; workload: [olap]; temporal: bitemporal; fields { field customer_id; field valid_from; field recorded_from; } }
+    object profile "Profile document" { kind: collection; fields { field customer_id; field address { shape: object; } field tags { shape: array; } } }
+    object events "Customer events" { kind: topic; fields { field event_id; field occurred_at; field payload; } }
+    object transform "Build history" { kind: activity; }
+    object procedure "Reconcile customers" { kind: procedure; fields { field tenant_id; field batch_id; } }
+    domain identifier "Customer identifier" { meaning: "Stable registry identity"; representation: undecided; }
+    object schema "SQL namespace" { kind: schema; }
+    object server "Cloud SQL service" { kind: service; location: cloud; }
+    object cloud "Cloud scope" { kind: cloud; }
+    object note "Design decision" { kind: note; description: "Examples illustrate intent; the data model remains independent of its look."; }
+    sample example "Synthetic rows" { mode: synthetic; columns: [@customer.customer_id, @customer.status]; rows: [["C001", "Active"], ["C002", "Suspended"]]; }
+}
+
+view classic "Classic / fixed semantic notation" {
+    data: [@model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.classic;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+
+}
+
+view handDrawn "Hand drawn / the same model" {
+    data: [@model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.hand;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+
+}
+
+view neo "Neo / the same model" {
+    data: [@model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.neo;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+
+}
+
+view dark "Dark canvas / fixed contrast palette" {
+    data: [@model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.dark;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+
+}
+
+view neutral "Neutral / print-safe symbols" {
+    data: [@model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.neutral;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+
+}
+
+view forest "Forest canvas / hand-drawn treatment" {
+    data: [@model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.forest;
+    publication { width: 1600px; height: 1050px; minimum_text: 8pt; }
+    legend { mode: text; placement: none; }
+
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

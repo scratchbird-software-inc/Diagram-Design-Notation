@@ -1,0 +1,89 @@
+ddn "0.5";
+
+module "ddn.usecases.views.keyed-storage";
+// What is the key, and what shape is its value?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "07 / Key-value design" {
+    data: [@ddn.usecases.keyed.kv];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.keyed.kv.key, @ddn.usecases.keyed.kv.sessions, @ddn.usecases.keyed.kv.value];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "kv.r_a": 1, "kv.r_b": 2 }; }
+}
+
+view wide_column "07b / Wide-column access pattern" {
+    data: [@ddn.usecases.keyed.wide]; format: @ddn.usecases.formats.shared.technical;
+    select: [@ddn.usecases.keyed.wide.query, @ddn.usecases.keyed.wide.readings, @ddn.usecases.keyed.wide.key];
+    legend { keys: { "wide.r_a": 1, "wide.r_b": 2 }; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.keyed";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data kv {
+    object key "Session key" {
+        kind: identity;
+        description: "Scope: one active login session.";
+    }
+    object sessions "Session store" {
+        kind: key_value;
+    }
+    object value "Session value" {
+        kind: record;
+        fields {
+            field user_id;
+            field expires_at;
+            field cart_id;
+        }
+    }
+    relation r_a @key -> @sessions { kind: ident; }
+    relation r_b "value shape" @sessions -> @value { kind: mem; }
+}
+
+data wide {
+    domain key "Device identifier" {
+        kind: domain;
+        meaning: "Identifies the producing sensor.";
+        representation: undecided;
+    }
+    object readings "Readings by device" {
+        kind: wide_column;
+        workload: [streaming];
+        fields {
+            field device_id { key: partition; }
+            field measured_at { key: clustering; }
+            field value;
+        }
+    }
+    object query "Latest device readings" {
+        kind: qry;
+        description: "Access pattern; not a claim that a database query has been executed.";
+    }
+    relation r_a @readings.device_id -> @key { kind: domain; }
+    relation r_b @query -> @readings { kind: depends; }
+}

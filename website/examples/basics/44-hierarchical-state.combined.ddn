@@ -1,0 +1,78 @@
+ddn "0.5";
+
+module "ddn.examples.hierarchicalstate";
+// Synthetic hierarchical state machine for the state.composite@1 profile.
+// An order lifecycle with top-level states draft and closed, plus a composite
+// state fulfillment drawn as a frame containing substates. Two parallel regions
+// (payment, packing) are dashed frames inside the composite; each region has
+// its own initial/final pair. Transitions are ordinary state.transition
+// relations with event labels; one crosses the composite boundary
+// (paid -> closed). All data is synthetic. This is profile-level coverage,
+// not UML/SCXML conformance.
+data order {
+    object start "Start" { kind: "state.initial"; }
+    object draft "Draft" { kind: "state.state"; }
+    object fulfillment "Fulfillment" { kind: "state.state"; }
+    object closed "Closed" { kind: "state.state"; }
+    object done "Done" { kind: "state.final"; }
+
+    object payment_initial "Payment start" { kind: "state.initial"; }
+    object awaiting "Awaiting payment" { kind: "state.state"; }
+    object paid "Paid" { kind: "state.state"; }
+    object payment_final "Payment done" { kind: "state.final"; }
+
+    object packing_initial "Packing start" { kind: "state.initial"; }
+    object open "Open box" { kind: "state.state"; }
+    object packed "Packed" { kind: "state.state"; }
+    object packing_final "Packing done" { kind: "state.final"; }
+
+    relation begin "begin" @start -> @draft { kind: "state.transition"; }
+    relation submit "submit" @draft -> @fulfillment { kind: "state.transition"; x_transition: { "event": "submit" }; }
+    relation pay "pay" @payment_initial -> @awaiting { kind: "state.transition"; }
+    relation paid_ev "paid" @awaiting -> @paid { kind: "state.transition"; x_transition: { "event": "payment_received" }; }
+    relation payment_end "payment end" @paid -> @payment_final { kind: "state.transition"; x_transition: { "event": "reconcile" }; }
+    relation pack_start "pack start" @packing_initial -> @open { kind: "state.transition"; }
+    relation packed_ev "packed" @open -> @packed { kind: "state.transition"; x_transition: { "event": "box_sealed" }; }
+    relation packing_end "packing end" @packed -> @packing_final { kind: "state.transition"; x_transition: { "event": "label_printed" }; }
+    relation ship "ship" @paid -> @closed { kind: "state.transition"; x_transition: { "event": "shipped" }; }
+    relation finish "finish" @closed -> @done { kind: "state.transition"; x_transition: { "event": "archive" }; }
+}
+
+view lifecycle "Order lifecycle / composite states" {
+    data: [@order]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "state.composite@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame fulfillment "FULFILLMENT" { scope: @order.fulfillment;
+        members: [@order.fulfillment, @order.awaiting, @order.paid, @order.open, @order.packed]; }
+    frame payment "PAYMENT" { x_region: true;
+        members: [@order.payment_initial, @order.awaiting, @order.paid, @order.payment_final]; }
+    frame packing "PACKING" { x_region: true;
+        members: [@order.packing_initial, @order.open, @order.packed, @order.packing_final]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

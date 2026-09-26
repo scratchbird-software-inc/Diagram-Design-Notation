@@ -1,0 +1,62 @@
+ddn "0.5";
+
+module "ddn.examples.process";
+data model {
+ object request "Stock-transfer command" {kind: message;fields {field command_id;field source_id;field target_id;}}
+ object result "Transfer decision" {kind: message;fields {field command_id;field state;}}
+ object transfer "Transfer boundary" {kind: pipeline;
+  ports {port input {direction: in;payload: @request;} port output {direction: out;payload: @result;}}
+  x_boundary: {ports:[@transfer.input,@transfer.output],bindings:[{external:@transfer.input,internal:@validate.input},{external:@transfer.output,internal:@validate.output}]};
+ }
+ object validate "Validate and reserve" {kind: activity;
+  ports {port input {direction: in;payload: @request;} port output {direction: out;payload: @result;}}
+  x_workflow: {
+   states:[pending,accepted,rejected,compensated],initial:pending,terminal:[rejected,compensated],
+   transitions:[
+    {id:approve,from:pending,to:accepted,event:decide,guard:{field:"approved",op:eq,value:true}},
+    {id:deny,from:pending,to:rejected,event:decide,guard:{field:"approved",op:eq,value:false}},
+    {id:cancel,from:accepted,to:compensated,event:cancel,guard:true}
+   ]
+  };
+  x_reconciliation: {owner:"Inventory command service",idempotency_key:"command_id",states:[pending,accepted,rejected,compensated],timeout:"PT5M",compensation:"release allocation once",evidence:"durable decision and recovery checkpoint"};
+ }
+ object deployment_gate "Operational verification pending" {kind: rule;
+  x_requirement: {id:"R-OPS",owner:"SRE reviewer",acceptance:"Run outage, duplicate delivery and replay tests against real infrastructure",state:required};
+ }
+ relation input @request -> @transfer.input {kind: flow;}
+ relation internal @transfer -> @validate {kind: depends;}
+ relation output @transfer.output -> @result {kind: flow;}
+ relation gate @validate -> @deployment_gate {kind: depends;}
+}
+view balanced "Balanced interfaces / declared state and verification" {
+ data: [@model];format:@ddn.examples.shared.styles.technical;
+ layout {algorithm: layered;}
+ legend {mode:numbers;keys:{input:1,internal:2,output:3,gate:4};}
+ publication {size:content;fit:none;overflow:error;}
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

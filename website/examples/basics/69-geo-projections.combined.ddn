@@ -1,0 +1,58 @@
+ddn "0.5";
+
+module "ddn.examples.geo-projections";
+// One world outline rendered through every projection method ddn-geo ships,
+// with the 10° graticule on. Data: the registered world-110m asset.
+data geo {
+    object note "Projection comparison" { kind: record; x_record: {"plate": "world outline, four methods"}; }
+}
+
+view mercator "World outline / mercator" {
+    data: [@geo]; select: [@geo.note]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:mercator; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view equirectangular "World outline / equirectangular" {
+    data: [@geo]; select: [@geo.note]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:equirectangular; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view albers "World outline / albers" {
+    data: [@geo]; select: [@geo.note]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:albers; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view equalearth "World outline / equal-earth" {
+    data: [@geo]; select: [@geo.note]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:geo; profile:"geo.outline@1"; mark:outline; geography:"assets/geo/world-110m.json"; method:equalEarth; graticule:true; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

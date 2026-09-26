@@ -127,8 +127,8 @@ view sketch "Orders / workshop sketch" {
 
 `projection { kind: …; profile: "…"; … }` turns a view into a specific
 diagram family: `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`,
-`fishbone`, `decision`, `sequence`, `timing`, or a specialised `graph`
-profile. All 95 installed profiles are listed in
+`fishbone`, `decision`, `sequence`, `timing`, `geo`, or a specialised `graph`
+profile. All 98 installed profiles (12 projection kinds) are listed in
 `standard/registry/profiles/catalogue.json` and each has a rendered example
 in the gallery (`website/examples/gallery/index.html`). The projection chapters:
 `16-profiles-and-projections.md` through `42-family-trees.md` (matrices and

@@ -27,6 +27,20 @@ const outIdx = process.argv.indexOf('--out');
 const OUT = outIdx >= 0 ? path.resolve(process.argv[outIdx + 1]) : path.join(REPO, 'website');
 const VERSION = JSON.parse(fs.readFileSync(path.join(REPO, 'notation/package.json'), 'utf8')).version;
 
+/* B1-053 (D6): every count the site quotes is generated from the source of
+ * truth at build time so the numbers stop drifting. */
+const readJson = rel => JSON.parse(fs.readFileSync(path.join(REPO, rel), 'utf8'));
+const PROFILE_CATALOGUE = readJson('standard/registry/profiles/catalogue.json');
+const PROFILE_COUNT = PROFILE_CATALOGUE.profiles.length;
+const PROJECTION_KIND_COUNT = new Set(PROFILE_CATALOGUE.profiles.map(p => p.projection)).size;
+const SPEC_CHAPTER_COUNT = fs.readdirSync(path.join(REPO, 'standard/specification')).filter(f => f.endsWith('.md')).length;
+const countDdn = abs => [...walk(abs)].filter(p => p.endsWith('.ddn') && !p.endsWith('.combined.ddn')).length;
+const GALLERY_COVERAGE = readJson('website/examples/gallery/coverage.json');
+const BASICS_COUNT = countDdn(path.join(REPO, 'website/examples/basics'));
+const USE_CASE_COUNT = countDdn(path.join(REPO, 'website/examples/use-cases'));
+const GALLERY_SVG_COUNT = Object.keys(GALLERY_COVERAGE.profiles).length +
+  Object.values(GALLERY_COVERAGE.sheets).reduce((n, s) => n + s.views.length, 0);
+
 const written = []; // paths relative to OUT, for the manifest
 function writeOut(rel, content) {
   const target = path.join(OUT, rel);
@@ -208,22 +222,44 @@ const gallerySrc = path.join(REPO, 'website/examples/gallery');
 for (const p of walk(gallerySrc)) {
   const rel = path.posix.join('gallery', path.relative(gallerySrc, p).split(path.sep).join('/'));
   if (p.endsWith('.html')) {
-    // The gallery source lives two levels deeper than the mirror; retarget its
-    // favicon hrefs to the mirror's depth, then inject favicons if it has none.
-    const html = fs.readFileSync(p, 'utf8').split('href="../../assets/brand/').join('href="../assets/brand/');
+    /* The gallery source lives two levels deeper than the mirror; its
+     * site-root-relative links ('<attr>="../../…"') are retargeted one level up.
+     * Query-string values (e.g. ?entry=../examples/…) are resolved by the tool
+     * against its own page and never start with "../../" right after a quote. */
+    const html = fs.readFileSync(p, 'utf8').split('"../../').join('"../');
     writeOut(rel, withFavicons(html, rel));
   }
   else copyOut(rel, p);
 }
 
 // Notation plates browser (already a single self-contained page with inlined SVGs).
-// Its template links are repo-relative; retarget them to site pages for the mirror.
+// Its template links are repo-relative; retarget them to site pages for the mirror,
+// then wrap it in the same site navigator as every other page (B1-053 D1).
+function withSiteChrome(html, base, active) {
+  const header = shell({ base, title: '', active, body: '', description: null })
+    .match(/<header class="site-header">[\s\S]*?<\/header>/)[0];
+  const footer = '<footer class="site-footer"><div class="inner">\n' +
+    '  <span>ScratchWeaver ' + VERSION + ' — the DDN toolkit · proposed standard, pre-1.0</span>\n' +
+    '  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>\n' +
+    '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
+    '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
+    '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
+    '  <a href="' + base + 'download/index.html">Download</a>\n' +
+    '  <span class="spacer"></span>\n' +
+    '  <span>All processing is local to this page.</span>\n</div></footer>\n';
+  return html
+    .replace('</head>', '<link rel="stylesheet" href="' + base + 'assets/site.css">\n</head>')
+    .replace(/<body>/, '<body>\n' + header)
+    .replace(/<\/body>/, footer + '<script src="' + base + 'assets/site.js"></script>\n</body>');
+}
 writeOut('plates/index.html',
-  withFavicons(readRepo('standard/plates/index.html')
-    .split('href="../../index.html"').join('href="../index.html"')
-    .split('href="../../website/index.html"').join('href="../index.html"')
-    .split('href="../registry/catalogue.json"').join('href="../standard/index.html"')
-    .split('href="../specification/04-notation-and-looks.md"').join('href="../standard/specification/04-notation-and-looks.html"'), 'plates/index.html'));
+  withSiteChrome(
+    withFavicons(readRepo('standard/plates/index.html')
+      .split('href="../../index.html"').join('href="../index.html"')
+      .split('href="../../website/index.html"').join('href="../index.html"')
+      .split('href="../registry/catalogue.json"').join('href="../standard/index.html"')
+      .split('href="../specification/04-notation-and-looks.md"').join('href="../standard/specification/04-notation-and-looks.html"'), 'plates/index.html'),
+    '../', 'standard'));
 
 // License texts.
 copyOut('license/LICENSE', path.join(REPO, 'LICENSE'));
@@ -360,11 +396,11 @@ const demoScript = '(function(){\n' +
   '})();';
 
 const homeCards = [
-  ['gallery/index.html', 'Gallery — full notation coverage', 'One pre-rendered SVG per installed profile (all 98) plus variation sheets: every chart mark (flat and isometric, incl. multi-series iso), look × palette, routing × style, layout algorithm, spacing level, and the isometric chart/graph plates — 190 CLI renders.', 'static · file:// safe'],
+  ['gallery/index.html', 'Gallery — full notation coverage', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + ') plus variation sheets: every chart mark (flat and isometric, incl. multi-series iso), look × palette, routing × style, layout algorithm, spacing level, and the isometric chart/graph plates — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
   ['tools/index.html?mode=design', 'Designer — the tool in design mode', 'The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.', 'standalone · no server'],
   ['tools/index.html', 'Unified diagram tool', 'One page for viewing, exploring, editing and designing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets — view, explore, edit, design), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.', 'standalone · no server'],
-  ['standard/index.html', 'The open standard', '44 specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.', 'rendered from Markdown'],
-  ['examples/index.html', 'Examples', '61 basics, projection and quality corpora, and 22 use-case scenarios as runnable .ddn sources — served raw for download.', 'browser + raw files'],
+  ['standard/index.html', 'The open standard', SPEC_CHAPTER_COUNT + ' specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.', 'rendered from Markdown'],
+  ['examples/index.html', 'Examples', BASICS_COUNT + ' basics, projection and quality corpora, and ' + USE_CASE_COUNT + ' use-case scenarios as runnable .ddn sources — served raw for download.', 'browser + raw files'],
 ];
 
 writeOut('index.html', shell({
@@ -403,7 +439,7 @@ writeOut('index.html', shell({
 // Features page.
 const FEATURES = [
   ['Model-first authoring', 'Data, format, and view declarations live in separate, composable sections of plain-text .ddn files. One semantic model projects into many diagram types — edit the model once, every view follows.'],
-  ['95 installed profiles', 'ERDs (Chen and crow’s-foot), DFDs, flowcharts, C4 views, RACI/CRUD matrices, bar/line/pie/radar/funnel/gauge/candlestick charts, treemaps, Sankey, Gantt, fishbones, decision tables, org charts, WBS, mind maps, concept maps, EPC chains, strategy canvases, journey and story maps, pyramids, Venn, sequence, communication, object, state machine, activity, BPMN-style, timing, interaction overview, CMMN-style, SysML-style, ArchiMate-style, PERT/CPM, fault/event trees, network diagrams, wireframes, family trees — plus the Category-2 chart pack: histograms, density/Q-Q/quantile-dot/box/violin/beeswarm/top-K distributions, tidy and radial trees, circle packing, sunbursts, packed bubbles, heatmaps, calendars, parallel coordinates, word clouds, arc diagrams, seeded force networks and hierarchical edge bundling, with error-bar and regression/loess overlays — see the <a href="../gallery/index.html">gallery</a>.'],
+  [PROFILE_COUNT + ' installed profiles, ' + PROJECTION_KIND_COUNT + ' projection kinds', 'ERDs (Chen and crow’s-foot), DFDs, flowcharts, C4 views, RACI/CRUD matrices, bar/line/pie/radar/funnel/gauge/candlestick charts, treemaps, Sankey, Gantt, fishbones, decision tables, org charts, WBS, mind maps, concept maps, EPC chains, strategy canvases, journey and story maps, pyramids, Venn, sequence, communication, object, state machine, activity, BPMN-style, timing, interaction overview, CMMN-style, SysML-style, ArchiMate-style, PERT/CPM, fault/event trees, network diagrams, wireframes, family trees, geographic maps — plus the Category-2 chart pack: histograms, density/Q-Q/quantile-dot/box/violin/beeswarm/top-K distributions, tidy and radial trees, circle packing, sunbursts, packed bubbles, heatmaps, calendars, parallel coordinates, word clouds, arc diagrams, seeded force networks and hierarchical edge bundling, with error-bar and regression/loess overlays — see the <a href="../gallery/index.html">gallery</a>.'],
   ['Deterministic rendering', 'Same source → same SVG bytes, every time. No randomness, no wall-clock in layout or render paths. Golden tests byte-compare the corpus.'],
   ['Zero dependencies', 'Pure JavaScript runtime (browser and Node 22+). No build step, no framework, no external fonts or CDNs — every page of this site works from file://.'],
   ['Workspace bundling & self-contained files', 'A full design can live in one .ddn file — model, data, views, and formats as marked module sections — with workspace bundling that renders byte-identical to the original multi-file workspace.'],
@@ -443,7 +479,7 @@ writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
 writeOut('standard/index.html', page('../', 'standard', 'The DDN standard — DDN',
   '<h1 class="page-title">The Diagram Design Notation standard</h1>\n' +
   '<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families and claims no UML/BPMN/DMN conformance certification.</p>\n' +
-  '<h2>Specification (' + fs.readdirSync(path.join(REPO, 'standard/specification')).filter(f => f.endsWith('.md')).length + ' chapters)</h2>\n' +
+  '<h2>Specification (' + SPEC_CHAPTER_COUNT + ' chapters)</h2>\n' +
   docList(path.join(REPO, 'standard/specification'), 'standard/specification', 'specification/') +
   '<h2>Governance</h2>\n' +
   '<ul>\n  <li><a href="governance/VERSIONING.html">Versioning policy</a></li>\n  <li><a href="governance/RFC-TEMPLATE.html">RFC template</a></li>\n</ul>\n' +
@@ -481,6 +517,7 @@ writeOut('examples/index.html', page('../', 'examples', 'Examples — DDN',
   'Open any of them one click in the unified diagram tool — <strong>Tool</strong> is explore mode, <strong>Designer</strong> the same page in design mode (<code>?mode=design</code>) — via the links below, or render with the CLI: ' +
   '<code>node notation/cli/cli.js render website/examples/basics/01-customer.ddn --workspace website/examples/basics --out out.svg</code>. ' +
   'The tool takes a <code>?src=</code> relative-path deep link (<code>tools/index.html?src=../examples/basics/01-customer.ddn&amp;mode=explore</code>) — serve the site over HTTP (<code>npm run serve</code>) for browser fetches. ' +
+  'Files ending in <code>.combined.ddn</code> are the combined single-file variants of the multi-file examples (data/format/view split across files); the gallery build verifies each renders byte-identical to its multi-file original — both styles are kept side by side. ' +
   'See the <a href="README.html">examples README</a> and the <a href="../gallery/index.html">rendered gallery</a>.</p>\n' +
   [...groups.entries()].map(([dir, files]) =>
     '<h2>' + esc(dir === '.' ? 'Top level' : dir + '/') + ' <small>(' + files.length + ')</small></h2>\n<table>\n<thead><tr><th>File</th><th>Bytes</th><th>Open in</th></tr></thead><tbody>\n' +

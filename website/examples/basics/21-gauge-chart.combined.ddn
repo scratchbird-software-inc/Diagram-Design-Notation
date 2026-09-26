@@ -1,0 +1,40 @@
+ddn "0.5";
+
+module "ddn.examples.gauge-chart";
+// Synthetic SLA dataset: one KPI record for the gauge dial.
+// All data is synthetic.
+data sla {
+    object q1 "SLA attainment" { kind: record; x_record: {"kpi": "SLA attainment", "value": 87, "unit": "%"}; }
+}
+
+view gauge "Synthetic SLA attainment / gauge" {
+    data: [@sla]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.gauge@1"; records:[@sla.q1]; mark:gauge; x:"x_record.kpi"; y:"x_record.value"; unit:"%"; target:95; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,114 @@
+ddn "0.5";
+
+module "ddn.examples.nested";
+// Teaching example for compact authoring (phases 1–3): kind keywords act as
+// declaration keywords, field/port keywords may be omitted inside
+// fields {}/ports {} blocks, relationship keywords act as relation verbs with
+// optional [mark] brackets, `relations <kind> { … }` batches expand to one
+// relation per entry, and one-line view headers expand to canonical
+// data + projection. All forms desugar to the identical canonical
+// declarations — the verbose equivalents are shown in comments.
+data model {
+ domain identifier "Customer identifier" { meaning: "Opaque identifier within the customer registry"; }
+ domain postal "Postal code" {meaning:"Postal routing code, with country context required";}
+ // verbose: object customer "Customer profile / nested structure" { kind: collection; … }
+ collection customer "Customer profile / nested structure" {
+  fields {
+   // verbose: field customer_id {…} — explicit field/port stays valid and mixes freely
+   customer_id {domain: @identifier; datatype: "string"; key: true; nullable: false;}
+   address {shape: object; presence: optional; nullable: false;
+    fields { street; city; postal_code {datatype: "string";} }
+   }
+   contacts {shape: array; presence: optional;
+    fields {kind {datatype: "string";} value {datatype: "string";nullable: true;} }
+   }
+   delivery {shape: variant; discriminator: "method"; variants: [pickup, courier];
+    fields {method; location {presence: optional;} }
+   }
+  }
+ }
+ // verbose: object order "Order" { kind: table; fields { field order_id; field customer_id {…} } }
+ table order "Order" {fields {order_id; customer_id {domain: @identifier;}}}
+ // verbose: relation owner @order.customer_id -> @customer.customer_id {kind: ref; source_mark: one; target_mark: one; enforcement: undecided;}
+ ref owner @order.customer_id [one] -> @customer.customer_id [one] {enforcement: undecided;}
+ // verbose: relation address_note @customer.address.postal_code -> @postal {kind: candidate;}
+ //          relation id_match @order.customer_id -> @identifier {kind: candidate;}
+ relations candidate {
+  address_note @customer.address.postal_code -> @postal;
+  id_match @order.customer_id -> @identifier;
+ }
+}
+view detailed "Nested fields / domains and representations" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
+ layout {algorithm: layered;}
+ display {domains: show; datatypes: show; depth: 8;}
+ legend {mode: numbers; keys: {owner: 7,address_note: 12};}
+ publication {size: content;fit: none;overflow: error;}
+}
+view large "20px base / measured wrapping" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; select: [@model.customer];
+ style {font_size: 20px;}
+ display {domains: show;datatypes: show;}
+ publication {size: content;fit: none;overflow: error;}
+}
+view collapsed "Hidden nested rows / preserved endpoint identities" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; select: [@model.order,@model.customer,@model.postal];
+ display {depth: 0;fields: names;}
+ layout {algorithm: layered;}
+ publication {size: content;fit: none;overflow: error;}
+}
+// verbose: view header "One-line header / compact view declaration" {
+//   data: [@model]; projection { kind: graph; profile: "ddn@1"; }
+//   select: [@model.order,@model.customer]; … }
+view header "One-line header / compact view declaration": @model as "ddn@1" {
+ format: @ddn.examples.shared.styles.technical; select: [@model.order,@model.customer];
+ publication {size: content;fit: none;overflow: error;}
+}
+// verbose:
+//   data metrics {
+//    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+//    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
+//    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
+//    object m4 "Delta" { kind: record; x_record: { label: "Delta", value: 25, unit: "ms" }; }
+//    object m5 "m5" { kind: record; x_record: { label: missing, value: null, unit: "ms" }; note: "awaiting measurement"; }
+//   }
+records metrics {
+ columns: label, value, unit;
+ label_column: label;
+ row m1: "Alpha", 10, "ms";
+ row m2: "Beta", 20, "ms";
+ row m3: "Gamma", 15, "ms";
+ row m4: "Delta", 25, "ms";
+ row m5: missing, null, "ms" { note: "awaiting measurement"; };
+}
+view metrics_chart "Order timings / keyed tabular records" {
+ data: [@metrics];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@metrics.m1, @metrics.m2, @metrics.m3, @metrics.m4]; mark: bar; x: "x_record.label"; y: "x_record.value"; unit: "ms"; width: 900px; height: 560px; }
+ publication {size: content;fit: none;}
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

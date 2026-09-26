@@ -1,0 +1,45 @@
+ddn "0.5";
+
+module "ddn.examples.treemap";
+// Synthetic storage dataset: six tables grouped by dotted domain paths.
+// All data is synthetic.
+data storage {
+    object r1 "analytics.events" { kind: record; x_record: {"path": "analytics.events", "value": 55, "unit": "GB"}; }
+    object r2 "analytics.sessions" { kind: record; x_record: {"path": "analytics.sessions", "value": 25, "unit": "GB"}; }
+    object r3 "core.orders" { kind: record; x_record: {"path": "core.orders", "value": 40, "unit": "GB"}; }
+    object r4 "core.customers" { kind: record; x_record: {"path": "core.customers", "value": 20, "unit": "GB"}; }
+    object r5 "ops.logs" { kind: record; x_record: {"path": "ops.logs", "value": 30, "unit": "GB"}; }
+    object r6 "ops.metrics" { kind: record; x_record: {"path": "ops.metrics", "value": 10, "unit": "GB"}; }
+}
+
+view treemap "Synthetic storage by domain and table / treemap" {
+    data: [@storage]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.treemap@1"; records:[@storage.r1, @storage.r2, @storage.r3, @storage.r4, @storage.r5, @storage.r6]; mark:treemap; x:"x_record.path"; y:"x_record.value"; unit:"GB"; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,120 @@
+ddn "0.5";
+
+module "ddn.usecases.views.relational";
+// Which fields reference which identifiers?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "03 / Logical relational schema" {
+    data: [@ddn.usecases.commerce.tables, @ddn.usecases.commerce.domains];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.commerce.tables.line, @ddn.usecases.commerce.tables.orders, @ddn.usecases.commerce.tables.customer];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "tables.r_line_order": 1, "tables.r_order_customer": 2 }; }
+}
+
+// Same model and relationship keys; only the display and look change.
+view compact "03b / Same schema, compact sketch" {
+    data: [@ddn.usecases.commerce.tables, @ddn.usecases.commerce.domains]; format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.sketch;
+    display: @ddn.usecases.formats.shared.compact;
+    select: [@ddn.usecases.commerce.tables.line, @ddn.usecases.commerce.tables.orders, @ddn.usecases.commerce.tables.customer];
+    legend { keys: { "tables.r_line_order": 1, "tables.r_order_customer": 2 }; }
+}
+view neo "03c / Same schema, precise neo look" {
+    data: [@ddn.usecases.commerce.tables, @ddn.usecases.commerce.domains]; format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.neo;
+    select: [@ddn.usecases.commerce.tables.line, @ddn.usecases.commerce.tables.orders, @ddn.usecases.commerce.tables.customer];
+    legend { keys: { "tables.r_line_order": 1, "tables.r_order_customer": 2 }; }
+}
+
+module "ddn.usecases.commerce";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data concepts {
+    object customer "Customer" {
+        kind: entity;
+    }
+    object order "Order" {
+        kind: entity;
+    }
+    object shipment "Shipment" {
+        kind: entity;
+    }
+    relation r_places "places" @customer -> @order { kind: assoc; source_mark: one; target_mark: zeromany; }
+    relation r_ships "fulfilled by" @order -> @shipment { kind: assoc; source_mark: one; target_mark: zeromany; }
+}
+
+data domains {
+    domain customer_id "Customer identifier" {
+        kind: domain;
+        meaning: "Identifies a customer in the registry.";
+        representation: undecided;
+    }
+    domain order_id "Order identifier" {
+        kind: domain;
+        meaning: "Identifies an order in the order book.";
+        representation: undecided;
+    }
+}
+
+data tables {
+    object customer "Customer" {
+        kind: table;
+        level: definition;
+        workload: [oltp];
+        role: authoritative;
+        description: "Authority for the customer registry, not for every customer attribute in all systems.";
+        fields {
+            field customer_id { key: primary; domain: @domains.customer_id; }
+            field display_name;
+            field status;
+        }
+    }
+    object orders "Orders" {
+        kind: table;
+        level: definition;
+        workload: [oltp];
+        fields {
+            field order_id { key: primary; domain: @domains.order_id; }
+            field customer_id { domain: @domains.customer_id; }
+            field ordered_at;
+        }
+    }
+    object line "Order line" {
+        kind: table;
+        level: definition;
+        workload: [oltp];
+        fields {
+            field line_id { key: primary; }
+            field order_id;
+            field sku;
+            field quantity;
+        }
+    }
+    relation r_line_order @line.order_id -> @orders.order_id { kind: ref; source_mark: many; target_mark: one; enforcement: undecided; }
+    relation r_order_customer @orders.customer_id -> @customer.customer_id { kind: ref; source_mark: zeromany; target_mark: one; enforcement: undecided; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}

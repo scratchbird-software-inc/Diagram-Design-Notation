@@ -1,0 +1,72 @@
+ddn "0.5";
+
+module "ddn.usecases.views.security";
+// What must happen before data leaves a restricted context?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "18 / Data handling boundaries" {
+    data: [@ddn.usecases.security.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.security.model.source, @ddn.usecases.security.model.mask, @ddn.usecases.security.model.export];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_input": 1, "model.r_output": 2 }; }
+    frame restricted "RESTRICTED / view scope" { scope: @ddn.usecases.security.model.restricted; members: [@ddn.usecases.security.model.source]; }
+    frame review "REVIEW BEFORE RELEASE / view scope" { scope: @ddn.usecases.security.model.egress; members: [@ddn.usecases.security.model.export]; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.security";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object source "Contact records" {
+        kind: dataset;
+        level: instance;
+        fields {
+            field customer_id;
+            field email;
+        }
+    }
+    object mask "Aggregate + remove IDs" {
+        kind: activity;
+    }
+    object export "Proposed cohort export" {
+        kind: dataset;
+        level: instance;
+        fields {
+            field cohort_id;
+            field count;
+        }
+    }
+    object restricted "Restricted processing" {
+        kind: security_zone;
+    }
+    object egress "Review before release" {
+        kind: security_zone;
+    }
+    relation r_input @source -> @mask { kind: read; }
+    relation r_output @mask -> @export { kind: write; }
+}

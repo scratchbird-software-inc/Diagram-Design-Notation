@@ -1,0 +1,54 @@
+ddn "0.5";
+
+module "ddn.examples.spacing-hints";
+data model {
+ object orders "Order capture" { kind: application; role: authoritative; }
+ object ledger "Ledger posting" { kind: application; role: authoritative; }
+ object journal "Posted journals" { kind: table; role: authoritative; fields { field journal_id; field period_id; } }
+ object analytics "Margin analytics" { kind: dataset; role: derived; }
+ relation posts "Posts every approved order into the ledger for reconciliation" @orders -> @ledger { kind: flow; }
+ relation records @ledger -> @journal { kind: assoc; }
+ relation feeds @journal -> @analytics { kind: assoc; }
+}
+view tight "Spacing / tight" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; spacing: tight;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view normal "Spacing / normal (default)" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view loose "Spacing / loose" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; spacing: loose;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view expanded "Spacing / expanded" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; spacing: expanded;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

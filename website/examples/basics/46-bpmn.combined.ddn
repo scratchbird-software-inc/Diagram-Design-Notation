@@ -1,0 +1,64 @@
+ddn "0.5";
+
+module "ddn.examples.bpmn";
+// Synthetic BPMN-style collaboration for the bpmn.basic@1 profile.
+// Two pools (buyer, seller) are view frames with x_pool:true. Sequence flow
+// inside each pool uses uml.flow (RT-105); start/end events carry
+// x_event:{type:...}; the gateway carries x_gateway:{type:"exclusive"} and
+// renders with an "X" name marker. One dashed bpmn.messageflow crosses the
+// pools from request_quote to prepare_quote. All data is synthetic.
+// This is profile-level coverage, not BPMN conformance.
+data quote {
+    object start "Start" { kind: "flow.start"; x_event: { "type": "none" }; }
+    object request_quote "Request quote" { kind: "flow.process"; }
+    object decide "Quote acceptable?" { kind: "flow.gateway"; x_gateway: { "type": "exclusive" }; }
+    object failed "Quote rejected" { kind: "flow.end"; x_event: { "type": "error" }; }
+
+    object receive "Request received" { kind: "flow.start"; x_event: { "type": "message" }; }
+    object prepare_quote "Prepare quote" { kind: "flow.process"; }
+    object sent "Quote sent" { kind: "flow.end"; x_event: { "type": "message" }; }
+
+    relation begin "begin" @start -> @request_quote { kind: "uml.flow"; }
+    relation review "review" @request_quote -> @decide { kind: "uml.flow"; }
+    relation reject "reject" @decide -> @failed { kind: "uml.flow"; }
+
+    relation intake "intake" @receive -> @prepare_quote { kind: "uml.flow"; }
+    relation deliver "deliver" @prepare_quote -> @sent { kind: "uml.flow"; }
+
+    relation request "quote request" @request_quote -> @prepare_quote { kind: "bpmn.messageflow"; }
+}
+
+view collaboration "Buyer / seller collaboration" {
+    data: [@quote]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "bpmn.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame buyer "Buyer" { x_pool: true; members: [@quote.start, @quote.request_quote, @quote.decide, @quote.failed]; }
+    frame seller "Seller" { x_pool: true; members: [@quote.receive, @quote.prepare_quote, @quote.sent]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,472 @@
+ddn "0.5";
+
+module "meridian.quality.views";
+view fishbone "01 / Possible causes" {
+    data: [@meridian.quality.review.causes];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @meridian.quality.review.causes.effect; relation: "quality.cause"; }
+
+}
+
+view fishbone_sketch "01 / Possible causes — sketch" {
+    data: [@meridian.quality.review.causes];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "fishbone"; profile: "fishbone.basic@1"; effect: @meridian.quality.review.causes.effect; relation: "quality.cause"; }
+    style { look:handDrawn; theme:night; }
+}
+
+view heat_numeric "02 / Review score — numeric" {
+    data: [@meridian.quality.review.responsibilities];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.heatmap@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "numeric", "domain": [0, 10], "palette": "blue" }; }
+    select: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct, @meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c];
+
+}
+
+view heat_bands "02 / Review score — bands" {
+    data: [@meridian.quality.review.responsibilities];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.heatmap@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: "assoc"; value: "x_record.score"; encoding: { "mode": "bands", "boundaries": [0, 3, 7, 11], "labels": ["Low", "Watch", "Action"], "palette": "blue" }; }
+    select: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct, @meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c];
+
+}
+
+view heat_categories "02 / Review score — categories" {
+    data: [@meridian.quality.review.responsibilities];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.heatmap@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c]; relation: "assoc"; value: "x_record.status"; encoding: { "mode": "category", "values": ["Good", "Monitor", "Action"], "labels": ["Good", "Monitor", "Action"], "palette": "blue" }; }
+    select: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct, @meridian.quality.review.responsibilities.plant_a, @meridian.quality.review.responsibilities.plant_b, @meridian.quality.review.responsibilities.plant_c];
+
+}
+
+view raci "03 / Quality responsibility assignments" {
+    data: [@meridian.quality.review.responsibilities];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.raci@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.inspector, @meridian.quality.review.responsibilities.engineer, @meridian.quality.review.responsibilities.manager]; relation: "analysis.assignment"; value: "x_assignment.code"; }
+    select: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct, @meridian.quality.review.responsibilities.inspector, @meridian.quality.review.responsibilities.engineer, @meridian.quality.review.responsibilities.manager];
+
+}
+
+view crud "04 / Inspection data access" {
+    data: [@meridian.quality.review.responsibilities];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "matrix"; write_data: @meridian.quality.review.responsibilities; profile: "matrix.crud@1"; rows: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct]; columns: [@meridian.quality.review.responsibilities.lot, @meridian.quality.review.responsibilities.check, @meridian.quality.review.responsibilities.action]; relation: "analysis.access"; value: "x_assignment.code"; }
+    select: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct, @meridian.quality.review.responsibilities.lot, @meridian.quality.review.responsibilities.check, @meridian.quality.review.responsibilities.action];
+
+}
+
+view responsibility_graph "05 / Same assignments as a graph" {
+    data: [@meridian.quality.review.responsibilities];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "graph"; profile: "ddn@1"; }
+    select: [@meridian.quality.review.responsibilities.inspect, @meridian.quality.review.responsibilities.contain, @meridian.quality.review.responsibilities.correct, @meridian.quality.review.responsibilities.inspector, @meridian.quality.review.responsibilities.engineer, @meridian.quality.review.responsibilities.manager];
+
+}
+
+view grouped_bars "06 / Defects — grouped bars" {
+    data: [@meridian.quality.review.series];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.series.s0_0, @meridian.quality.review.series.s0_1, @meridian.quality.review.series.s0_2, @meridian.quality.review.series.s1_0, @meridian.quality.review.series.s1_1, @meridian.quality.review.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "group"; }
+
+}
+
+view stacked_bars "06 / Defects — stacked bars" {
+    data: [@meridian.quality.review.series];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.series.s0_0, @meridian.quality.review.series.s0_1, @meridian.quality.review.series.s0_2, @meridian.quality.review.series.s1_0, @meridian.quality.review.series.s1_1, @meridian.quality.review.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "stack"; }
+
+}
+
+view percent_bars "06 / Defects — percent bars" {
+    data: [@meridian.quality.review.series];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.series.s0_0, @meridian.quality.review.series.s0_1, @meridian.quality.review.series.s0_2, @meridian.quality.review.series.s1_0, @meridian.quality.review.series.s1_1, @meridian.quality.review.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "percent"; }
+
+}
+
+view multiseries_line "06 / Defects — multiseries line" {
+    data: [@meridian.quality.review.series];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.series.s0_0, @meridian.quality.review.series.s0_1, @meridian.quality.review.series.s0_2, @meridian.quality.review.series.s1_0, @meridian.quality.review.series.s1_1, @meridian.quality.review.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "line"; arrangement: "overlay"; }
+
+}
+
+view multiseries_area "06 / Defects — multiseries area" {
+    data: [@meridian.quality.review.series];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.series.s0_0, @meridian.quality.review.series.s0_1, @meridian.quality.review.series.s0_2, @meridian.quality.review.series.s1_0, @meridian.quality.review.series.s1_1, @meridian.quality.review.series.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "area"; arrangement: "stack"; }
+
+}
+
+view actual_target "07 / Actual versus target" {
+    data: [@meridian.quality.review.targets];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.targets.s0_0, @meridian.quality.review.targets.s0_1, @meridian.quality.review.targets.s0_2, @meridian.quality.review.targets.s1_0, @meridian.quality.review.targets.s1_1, @meridian.quality.review.targets.s1_2]; x: "x_record.stage"; y: "x_record.count"; series: "x_record.series"; unit: "defects"; mark: "bar"; arrangement: "overlay"; layers: [{ "series": "Actual", "mark": "bar" }, { "series": "Target", "mark": "line" }]; }
+
+}
+
+view histogram "08 / Dimension measurements — count" {
+    data: [@meridian.quality.review.measurements];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.measurements.m0_0, @meridian.quality.review.measurements.m0_1, @meridian.quality.review.measurements.m0_2, @meridian.quality.review.measurements.m0_3, @meridian.quality.review.measurements.m0_4, @meridian.quality.review.measurements.m0_5, @meridian.quality.review.measurements.m0_6, @meridian.quality.review.measurements.m0_7, @meridian.quality.review.measurements.m0_8, @meridian.quality.review.measurements.m0_9, @meridian.quality.review.measurements.m0_10, @meridian.quality.review.measurements.m0_11, @meridian.quality.review.measurements.m1_0, @meridian.quality.review.measurements.m1_1, @meridian.quality.review.measurements.m1_2, @meridian.quality.review.measurements.m1_3, @meridian.quality.review.measurements.m1_4, @meridian.quality.review.measurements.m1_5, @meridian.quality.review.measurements.m1_6, @meridian.quality.review.measurements.m1_7, @meridian.quality.review.measurements.m1_8, @meridian.quality.review.measurements.m1_9, @meridian.quality.review.measurements.m1_10, @meridian.quality.review.measurements.m1_11]; transform: "histogram"; mark: "bar"; y: "x_record.value"; unit: "mm"; bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3]; normalize: "count"; }
+
+}
+
+view histogram_density "08 / Dimension measurements — density" {
+    data: [@meridian.quality.review.measurements];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.measurements.m0_0, @meridian.quality.review.measurements.m0_1, @meridian.quality.review.measurements.m0_2, @meridian.quality.review.measurements.m0_3, @meridian.quality.review.measurements.m0_4, @meridian.quality.review.measurements.m0_5, @meridian.quality.review.measurements.m0_6, @meridian.quality.review.measurements.m0_7, @meridian.quality.review.measurements.m0_8, @meridian.quality.review.measurements.m0_9, @meridian.quality.review.measurements.m0_10, @meridian.quality.review.measurements.m0_11, @meridian.quality.review.measurements.m1_0, @meridian.quality.review.measurements.m1_1, @meridian.quality.review.measurements.m1_2, @meridian.quality.review.measurements.m1_3, @meridian.quality.review.measurements.m1_4, @meridian.quality.review.measurements.m1_5, @meridian.quality.review.measurements.m1_6, @meridian.quality.review.measurements.m1_7, @meridian.quality.review.measurements.m1_8, @meridian.quality.review.measurements.m1_9, @meridian.quality.review.measurements.m1_10, @meridian.quality.review.measurements.m1_11]; transform: "histogram"; mark: "bar"; y: "x_record.value"; unit: "mm"; bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3]; normalize: "density"; }
+
+}
+
+view pareto "09 / Defect priorities" {
+    data: [@meridian.quality.review.defects];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.defects.d0, @meridian.quality.review.defects.d1, @meridian.quality.review.defects.d2, @meridian.quality.review.defects.d3]; transform: "pareto"; mark: "bar"; x: "x_record.category"; y: "x_record.count"; unit: "defects"; }
+
+}
+
+view waterfall "10 / Cost-of-quality reconciliation" {
+    data: [@meridian.quality.review.cost];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.cost.cost0, @meridian.quality.review.cost.cost1, @meridian.quality.review.cost.cost2, @meridian.quality.review.cost.cost3, @meridian.quality.review.cost.cost4, @meridian.quality.review.cost.cost5]; transform: "waterfall"; mark: "bar"; x: "x_record.label"; y: "x_record.amount"; step: "x_record.step"; unit: "CAD"; }
+
+}
+
+view boxplot "11 / Machine variation — tukey_1_5" {
+    data: [@meridian.quality.review.measurements];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.measurements.m0_0, @meridian.quality.review.measurements.m0_1, @meridian.quality.review.measurements.m0_2, @meridian.quality.review.measurements.m0_3, @meridian.quality.review.measurements.m0_4, @meridian.quality.review.measurements.m0_5, @meridian.quality.review.measurements.m0_6, @meridian.quality.review.measurements.m0_7, @meridian.quality.review.measurements.m0_8, @meridian.quality.review.measurements.m0_9, @meridian.quality.review.measurements.m0_10, @meridian.quality.review.measurements.m0_11, @meridian.quality.review.measurements.m1_0, @meridian.quality.review.measurements.m1_1, @meridian.quality.review.measurements.m1_2, @meridian.quality.review.measurements.m1_3, @meridian.quality.review.measurements.m1_4, @meridian.quality.review.measurements.m1_5, @meridian.quality.review.measurements.m1_6, @meridian.quality.review.measurements.m1_7, @meridian.quality.review.measurements.m1_8, @meridian.quality.review.measurements.m1_9, @meridian.quality.review.measurements.m1_10, @meridian.quality.review.measurements.m1_11]; transform: "boxplot"; mark: "box"; x: "x_record.machine"; y: "x_record.value"; unit: "mm"; quartiles: "linear_r7"; whiskers: "tukey_1_5"; }
+
+}
+
+view boxplot_minmax "11 / Machine variation — minmax" {
+    data: [@meridian.quality.review.measurements];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chart"; profile: "chart.quality@1"; records: [@meridian.quality.review.measurements.m0_0, @meridian.quality.review.measurements.m0_1, @meridian.quality.review.measurements.m0_2, @meridian.quality.review.measurements.m0_3, @meridian.quality.review.measurements.m0_4, @meridian.quality.review.measurements.m0_5, @meridian.quality.review.measurements.m0_6, @meridian.quality.review.measurements.m0_7, @meridian.quality.review.measurements.m0_8, @meridian.quality.review.measurements.m0_9, @meridian.quality.review.measurements.m0_10, @meridian.quality.review.measurements.m0_11, @meridian.quality.review.measurements.m1_0, @meridian.quality.review.measurements.m1_1, @meridian.quality.review.measurements.m1_2, @meridian.quality.review.measurements.m1_3, @meridian.quality.review.measurements.m1_4, @meridian.quality.review.measurements.m1_5, @meridian.quality.review.measurements.m1_6, @meridian.quality.review.measurements.m1_7, @meridian.quality.review.measurements.m1_8, @meridian.quality.review.measurements.m1_9, @meridian.quality.review.measurements.m1_10, @meridian.quality.review.measurements.m1_11]; transform: "boxplot"; mark: "box"; x: "x_record.machine"; y: "x_record.value"; unit: "mm"; quartiles: "linear_r7"; whiskers: "minmax"; }
+
+}
+
+view lifecycle "12 / Corrective-action lifecycle" {
+    data: [@meridian.quality.review.lifecycle];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "graph"; profile: "state.flat@1"; inputs: [{ "key": "passed", "type": "boolean", "optional": true }]; }
+
+}
+
+view lifecycle_trace "13 / Corrective-action retry trace" {
+    data: [@meridian.quality.review.lifecycle];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "graph"; profile: "state.flat@1"; inputs: [{ "key": "passed", "type": "boolean", "optional": true }]; traces: [{ "events": [{ "event": "submit" }, { "event": "accept" }, { "event": "investigated" }, { "event": "verify", "data": { "passed": false } }, { "event": "investigated" }, { "event": "verify", "data": { "passed": true } }, { "event": "close" }], "expected": @meridian.quality.review.lifecycle.closed }]; }
+    style { look:neo; }
+}
+
+view decision_unique "14 / Disposition policy — unique" {
+    data: [@meridian.quality.review.rules];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "decision"; profile: "decision.rules@1"; records: [@meridian.quality.review.rules.high, @meridian.quality.review.rules.low_pass, @meridian.quality.review.rules.low_review]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }, { "key": "score", "type": "number", "min": 0, "max": 10 }]; outputs: ["route", "audit"]; hit_policy: "unique"; coverage: "complete"; analysis_budget: 4096; }
+    select: [@meridian.quality.review.rules.high, @meridian.quality.review.rules.low_pass, @meridian.quality.review.rules.low_review];
+
+}
+
+view decision_first "14 / Disposition policy — first" {
+    data: [@meridian.quality.review.rules];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "decision"; profile: "decision.rules@1"; records: [@meridian.quality.review.rules.high, @meridian.quality.review.rules.default, @meridian.quality.review.rules.low_pass]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }, { "key": "score", "type": "number", "min": 0, "max": 10 }]; outputs: ["route", "audit"]; hit_policy: "first"; coverage: "complete"; analysis_budget: 4096; }
+    select: [@meridian.quality.review.rules.high, @meridian.quality.review.rules.default, @meridian.quality.review.rules.low_pass];
+
+}
+
+view decision_collect "14 / Disposition policy — collect" {
+    data: [@meridian.quality.review.rules];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "decision"; profile: "decision.rules@1"; records: [@meridian.quality.review.rules.high, @meridian.quality.review.rules.check, @meridian.quality.review.rules.audit]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }, { "key": "score", "type": "number", "min": 0, "max": 10 }]; outputs: ["route", "audit"]; hit_policy: "collect"; coverage: "complete"; analysis_budget: 4096; }
+    select: [@meridian.quality.review.rules.high, @meridian.quality.review.rules.check, @meridian.quality.review.rules.audit];
+
+}
+
+view measurement_table "15 / Shared measurement observations" {
+    data: [@meridian.quality.review.measurements];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "table"; profile: "table.records@1"; records: [@meridian.quality.review.measurements.m0_0, @meridian.quality.review.measurements.m0_1, @meridian.quality.review.measurements.m0_2, @meridian.quality.review.measurements.m0_3, @meridian.quality.review.measurements.m0_4, @meridian.quality.review.measurements.m0_5, @meridian.quality.review.measurements.m0_6, @meridian.quality.review.measurements.m0_7, @meridian.quality.review.measurements.m0_8, @meridian.quality.review.measurements.m0_9, @meridian.quality.review.measurements.m0_10, @meridian.quality.review.measurements.m0_11, @meridian.quality.review.measurements.m1_0, @meridian.quality.review.measurements.m1_1, @meridian.quality.review.measurements.m1_2, @meridian.quality.review.measurements.m1_3, @meridian.quality.review.measurements.m1_4, @meridian.quality.review.measurements.m1_5, @meridian.quality.review.measurements.m1_6, @meridian.quality.review.measurements.m1_7, @meridian.quality.review.measurements.m1_8, @meridian.quality.review.measurements.m1_9, @meridian.quality.review.measurements.m1_10, @meridian.quality.review.measurements.m1_11]; columns: [{ "key": "name", "label": "Observation" }, { "key": "x_record.machine", "label": "Machine" }, { "key": "x_record.value", "label": "Diameter / mm" }]; }
+
+}
+
+view defect_table "16 / Shared defect counts" {
+    data: [@meridian.quality.review.defects];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "table"; profile: "table.records@1"; records: [@meridian.quality.review.defects.d0, @meridian.quality.review.defects.d1, @meridian.quality.review.defects.d2, @meridian.quality.review.defects.d3]; columns: [{ "key": "x_record.category", "label": "Defect category" }, { "key": "x_record.count", "label": "Count" }]; }
+
+}
+
+view dashboard_quality "17 / Dashboard Quality" {
+    data: [@meridian.quality.review.notes];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "panels"; profile: "panels.composed@1"; columns: 2; panels: [{ "id": "slot0", "title": "Pareto", "row": 0, "column": 0, "view": @pareto }, { "id": "slot1", "title": "Histogram", "row": 0, "column": 1, "view": @histogram }, { "id": "slot2", "title": "Heat Bands", "row": 1, "column": 0, "view": @heat_bands }, { "id": "slot3", "title": "Lifecycle", "row": 1, "column": 1, "view": @lifecycle }]; }
+
+}
+
+view dashboard_operations "17 / Dashboard Operations" {
+    data: [@meridian.quality.review.notes];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "panels"; profile: "panels.composed@1"; columns: 2; panels: [{ "id": "slot0", "title": "Grouped Bars", "row": 0, "column": 0, "view": @grouped_bars }, { "id": "slot1", "title": "Waterfall", "row": 0, "column": 1, "view": @waterfall }, { "id": "slot2", "title": "Raci", "row": 1, "column": 0, "view": @raci }, { "id": "slot3", "title": "Decision Unique", "row": 1, "column": 1, "view": @decision_unique }]; }
+
+}
+
+view dashboard_repeated "17 / Dashboard Repeated" {
+    data: [@meridian.quality.review.notes];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "panels"; profile: "panels.composed@1"; columns: 2; panels: [{ "id": "slot0", "title": "Pareto", "row": 0, "column": 0, "view": @pareto }, { "id": "slot1", "title": "Pareto", "row": 0, "column": 1, "view": @pareto }]; }
+
+}
+
+view chen_extended "18 / Binary Chen details" {
+    data: [@meridian.quality.notations.chen];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "chen"; profile: "chen.binary@2"; }
+
+}
+
+view erd_shared "19 / Same entity definitions as cards" {
+    data: [@meridian.quality.notations.chen];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "graph"; profile: "ddn@1"; }
+
+}
+
+view usecases_extended "20 / Use-case subjects and extension points" {
+    data: [@meridian.quality.notations.usecases];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "graph"; profile: "uml.usecase@2"; }
+    select: [@meridian.quality.notations.usecases.inspector, @meridian.quality.notations.usecases.senior, @meridian.quality.notations.usecases.review, @meridian.quality.notations.usecases.record, @meridian.quality.notations.usecases.escalate];
+    layout { algorithm:grouped; group_by:"kind"; columns:1; gap:130px; }
+    frame subject { scope:@meridian.quality.notations.usecases.subject; members:[@meridian.quality.notations.usecases.review,@meridian.quality.notations.usecases.record,@meridian.quality.notations.usecases.escalate]; dimension:context; }
+}
+
+view flow_documented "21 / Documented cross-sheet control flow" {
+    data: [@meridian.quality.notations.flow];
+    format: @meridian.quality.formats.shared.common;
+    projection { kind: "graph"; profile: "flow.documented@2"; }
+
+}
+
+module "meridian.quality.formats";
+format shared {
+    style standard;
+    layout adaptive { algorithm:layered; gap:90px; }
+    publication reading { size:content; fit:none; }
+    legend compact { placement:none; }
+    bundle common { style:@standard; layout:@adaptive; publication:@reading; legend:@compact; }
+}
+
+module "meridian.quality.notations";
+data chen {
+    object order "Order" { kind: "entity"; fields { field order_id { x_chen:{key:true}; } field address { x_chen:{composite:true}; fields { field street; field city; } } field tags { x_chen:{multivalued:true}; } field calculated_total { x_chen:{derived:true}; } } }
+    object line "Order line" { kind: "entity"; x_chen: { "weak": true, "owner": @order }; fields { field line_no { x_chen:{partial_key:true}; } field quantity; } }
+    relation contains "Identifies line" @order -> @line { kind: "assoc"; x_chen: { "identifying": true, "owner": @order, "weak": @line, "from": { "min": 1, "max": 1 }, "to": { "min": 0, "max": "many" } }; }
+}
+
+data usecases {
+    object subject "Quality control system" { kind: "uml.subject"; }
+    object inspector "Inspector" { kind: "uml.actor"; }
+    object senior "Senior inspector" { kind: "uml.actor"; }
+    object review "Review lot" { kind: "uml.usecase"; x_usecase: { "subjects": [@subject], "extension_points": ["before disposition"] }; }
+    object record "Record evidence" { kind: "uml.usecase"; x_usecase: { "subjects": [@subject] }; }
+    object escalate "Escalate issue" { kind: "uml.usecase"; x_usecase: { "subjects": [@subject] }; }
+    relation uses "Reviews" @inspector -> @review { kind: "uml.uses"; }
+    relation generalizes "Specializes" @senior -> @inspector { kind: "uml.generalization"; }
+    relation includes "Includes evidence" @review -> @record { kind: "uml.include"; }
+    relation extends "Escalates when necessary" @escalate -> @review { kind: "uml.extend"; x_usecase: { "extension_point": "before disposition", "condition": "The declared review policy requires escalation." }; }
+}
+
+data flow {
+    object start "Inspection received" { kind: "flow.start"; }
+    object inspect "Inspect evidence" { kind: "flow.process"; }
+    object decision "Within limits?" { kind: "flow.decision"; }
+    object store "Record audit outcome" { kind: "flow.storage"; }
+    object reject "Nonconformance record" { kind: "flow.document"; }
+    object out "To closure sheet" { kind: "flow.offpage"; x_continuation: { "key": "QC-A", "side": "out", "page": "2" }; }
+    object in "From inspection sheet" { kind: "flow.offpage"; x_continuation: { "key": "QC-A", "side": "in", "page": "1" }; }
+    object connector "A" { kind: "flow.connector"; }
+    object end "Review complete" { kind: "flow.end"; }
+    object note "Keep evidence independent of approvals" { kind: "flow.annotation"; }
+    relation a "Receive" @start -> @inspect { kind: "flow.next"; }
+    relation b "Evaluate" @inspect -> @decision { kind: "flow.next"; }
+    relation pass "Accept" @decision -> @store { kind: "flow.next"; x_diagram: { "branch": "accept" }; }
+    relation fail "Reject" @decision -> @reject { kind: "flow.next"; x_diagram: { "branch": "reject" }; }
+    relation c "Continue" @store -> @out { kind: "flow.next"; }
+    relation d "Continue" @reject -> @out { kind: "flow.next"; }
+    relation e "Resume" @in -> @connector { kind: "flow.next"; }
+    relation f "Close" @connector -> @end { kind: "flow.next"; }
+    relation continuation "QC-A continuation" @out -> @in { kind: "flow.continues"; }
+    relation annotation "Evidence note" @note -> @store { kind: "flow.annotation"; }
+}
+
+module "meridian.quality.review";
+// Shared synthetic observations and requirements. No remote service is called.
+
+data causes {
+    object effect "Dimensional inspection failures" { kind: "quality.effect"; }
+    object cat0 "Equipment" { kind: "quality.category"; }
+    relation cat_to_effect0 "Possible cause category" @cat0 -> @effect { kind: "quality.cause"; }
+    object cat1 "Materials" { kind: "quality.category"; }
+    relation cat_to_effect1 "Possible cause category" @cat1 -> @effect { kind: "quality.cause"; }
+    object cat2 "Method" { kind: "quality.category"; }
+    relation cat_to_effect2 "Possible cause category" @cat2 -> @effect { kind: "quality.cause"; }
+    object cat3 "Measurement" { kind: "quality.category"; }
+    relation cat_to_effect3 "Possible cause category" @cat3 -> @effect { kind: "quality.cause"; }
+    object cat4 "People" { kind: "quality.category"; }
+    relation cat_to_effect4 "Possible cause category" @cat4 -> @effect { kind: "quality.cause"; }
+    object cat5 "Environment" { kind: "quality.category"; }
+    relation cat_to_effect5 "Possible cause category" @cat5 -> @effect { kind: "quality.cause"; }
+    object calibration "Calibration drift" { kind: "quality.cause"; }
+    relation c_calibration "Possible contributing cause" @calibration -> @cat0 { kind: "quality.cause"; }
+    object wear "Tool wear" { kind: "quality.cause"; }
+    relation c_wear "Possible contributing cause" @wear -> @cat0 { kind: "quality.cause"; }
+    object variation "Incoming material variation" { kind: "quality.cause"; }
+    relation c_variation "Possible contributing cause" @variation -> @cat1 { kind: "quality.cause"; }
+    object storage "Humidity during storage" { kind: "quality.cause"; }
+    relation c_storage "Possible contributing cause" @storage -> @cat1 { kind: "quality.cause"; }
+    object setup "Setup instructions unclear" { kind: "quality.cause"; }
+    relation c_setup "Possible contributing cause" @setup -> @cat2 { kind: "quality.cause"; }
+    object schedule "Calibration interval too long" { kind: "quality.cause"; }
+    relation c_schedule "Possible contributing cause" @schedule -> @cat2 { kind: "quality.cause"; }
+    object gauge "Gauge repeatability" { kind: "quality.cause"; }
+    relation c_gauge "Possible contributing cause" @gauge -> @cat3 { kind: "quality.cause"; }
+    object sample "Sample identification errors" { kind: "quality.cause"; }
+    relation c_sample "Possible contributing cause" @sample -> @cat3 { kind: "quality.cause"; }
+    object training "Training not current" { kind: "quality.cause"; }
+    relation c_training "Possible contributing cause" @training -> @cat4 { kind: "quality.cause"; }
+    object handover "Shift handover incomplete" { kind: "quality.cause"; }
+    relation c_handover "Possible contributing cause" @handover -> @cat4 { kind: "quality.cause"; }
+    object temperature "Temperature variation" { kind: "quality.cause"; }
+    relation c_temperature "Possible contributing cause" @temperature -> @cat5 { kind: "quality.cause"; }
+    object vibration "Nearby equipment vibration" { kind: "quality.cause"; }
+    relation c_vibration "Possible contributing cause" @vibration -> @cat5 { kind: "quality.cause"; }
+    relation calibration_measurement "Same cause, second appearance" @calibration -> @cat3 { kind: "quality.cause"; }
+    relation schedule_calibration "Possible underlying cause" @schedule -> @calibration { kind: "quality.cause"; }
+}
+
+data responsibilities {
+    object inspect "Inspect incoming lots" { kind: "analysis.task"; }
+    object contain "Contain nonconforming lots" { kind: "analysis.task"; }
+    object correct "Implement corrective action" { kind: "analysis.task"; }
+    object inspector "Quality inspector" { kind: "analysis.role"; }
+    object engineer "Process engineer" { kind: "analysis.role"; }
+    object manager "Quality manager" { kind: "analysis.role"; }
+    object plant_a "Plant A" { kind: "team"; }
+    object plant_b "Plant B" { kind: "team"; }
+    object plant_c "Warehouse C" { kind: "team"; }
+    object lot "Inspection lot" { kind: "table"; fields { field id; field status; } }
+    object check "Inspection result" { kind: "table"; fields { field id; field status; } }
+    object action "Corrective action" { kind: "table"; fields { field id; field status; } }
+    relation assign_inspect_inspector "Responsibility" @inspect -> @inspector { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
+    relation assign_inspect_manager "Responsibility" @inspect -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
+    relation assign_contain_inspector "Responsibility" @contain -> @inspector { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
+    relation assign_contain_manager "Responsibility" @contain -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
+    relation assign_correct_engineer "Responsibility" @correct -> @engineer { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
+    relation assign_correct_manager "Responsibility" @correct -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
+    relation access_inspect_lot "Data access" @inspect -> @lot { kind: "analysis.access"; x_assignment: { "code": "R" }; }
+    relation access_inspect_check "Data access" @inspect -> @check { kind: "analysis.access"; x_assignment: { "code": "CR" }; }
+    relation access_contain_lot "Data access" @contain -> @lot { kind: "analysis.access"; x_assignment: { "code": "RU" }; }
+    relation access_correct_action "Data access" @correct -> @action { kind: "analysis.access"; x_assignment: { "code": "CRUD" }; }
+    relation score_inspect_plant_a "Supplied review score" @inspect -> @plant_a { kind: "assoc"; x_record: { "score": 1, "status": "Good" }; }
+    relation score_inspect_plant_b "Supplied review score" @inspect -> @plant_b { kind: "assoc"; x_record: { "score": 5, "status": "Monitor" }; }
+    relation score_inspect_plant_c "Supplied review score" @inspect -> @plant_c { kind: "assoc"; x_record: { "score": 8, "status": "Action" }; }
+    relation score_contain_plant_a "Supplied review score" @contain -> @plant_a { kind: "assoc"; x_record: { "score": 2, "status": "Good" }; }
+    relation score_contain_plant_b "Supplied review score" @contain -> @plant_b { kind: "assoc"; x_record: { "score": 7, "status": "Action" }; }
+    relation score_contain_plant_c "Supplied review score" @contain -> @plant_c { kind: "assoc"; x_record: { "score": 4, "status": "Monitor" }; }
+    relation score_correct_plant_a "Supplied review score" @correct -> @plant_a { kind: "assoc"; x_record: { "score": 0, "status": "Good" }; }
+    relation score_correct_plant_b "Supplied review score" @correct -> @plant_b { kind: "assoc"; x_record: { "score": 3, "status": "Monitor" }; }
+}
+
+data defects {
+    object d0 "Dimension" { kind: "record"; x_record: { "category": "Dimension", "count": 22, "unit": "defects" }; }
+    object d1 "Surface" { kind: "record"; x_record: { "category": "Surface", "count": 12, "unit": "defects" }; }
+    object d2 "Packaging" { kind: "record"; x_record: { "category": "Packaging", "count": 6, "unit": "defects" }; }
+    object d3 "Label" { kind: "record"; x_record: { "category": "Label", "count": 4, "unit": "defects" }; }
+}
+
+data measurements {
+    object m0_0 "Machine A observation 1" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.82, "unit": "mm" }; }
+    object m0_1 "Machine A observation 2" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.88, "unit": "mm" }; }
+    object m0_2 "Machine A observation 3" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.95, "unit": "mm" }; }
+    object m0_3 "Machine A observation 4" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.98, "unit": "mm" }; }
+    object m0_4 "Machine A observation 5" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.0, "unit": "mm" }; }
+    object m0_5 "Machine A observation 6" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.01, "unit": "mm" }; }
+    object m0_6 "Machine A observation 7" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.04, "unit": "mm" }; }
+    object m0_7 "Machine A observation 8" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.06, "unit": "mm" }; }
+    object m0_8 "Machine A observation 9" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.09, "unit": "mm" }; }
+    object m0_9 "Machine A observation 10" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.12, "unit": "mm" }; }
+    object m0_10 "Machine A observation 11" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.15, "unit": "mm" }; }
+    object m0_11 "Machine A observation 12" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.18, "unit": "mm" }; }
+    object m1_0 "Machine B observation 1" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.9, "unit": "mm" }; }
+    object m1_1 "Machine B observation 2" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.94, "unit": "mm" }; }
+    object m1_2 "Machine B observation 3" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.99, "unit": "mm" }; }
+    object m1_3 "Machine B observation 4" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.02, "unit": "mm" }; }
+    object m1_4 "Machine B observation 5" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.03, "unit": "mm" }; }
+    object m1_5 "Machine B observation 6" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.05, "unit": "mm" }; }
+    object m1_6 "Machine B observation 7" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.07, "unit": "mm" }; }
+    object m1_7 "Machine B observation 8" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.11, "unit": "mm" }; }
+    object m1_8 "Machine B observation 9" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.16, "unit": "mm" }; }
+    object m1_9 "Machine B observation 10" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.19, "unit": "mm" }; }
+    object m1_10 "Machine B observation 11" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.24, "unit": "mm" }; }
+    object m1_11 "Machine B observation 12" { kind: "record"; x_record: { "machine": "Machine B", "value": 11.2, "unit": "mm" }; }
+}
+
+data series {
+    object s0_0 "Plant A / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Plant A", "count": 8, "unit": "defects" }; }
+    object s0_1 "Plant A / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Plant A", "count": 14, "unit": "defects" }; }
+    object s0_2 "Plant A / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Plant A", "count": 6, "unit": "defects" }; }
+    object s1_0 "Plant B / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Plant B", "count": 6, "unit": "defects" }; }
+    object s1_1 "Plant B / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Plant B", "count": 9, "unit": "defects" }; }
+    object s1_2 "Plant B / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Plant B", "count": 5, "unit": "defects" }; }
+}
+
+data targets {
+    object s0_0 "Actual / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Actual", "count": 8, "unit": "defects" }; }
+    object s0_1 "Actual / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Actual", "count": 14, "unit": "defects" }; }
+    object s0_2 "Actual / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Actual", "count": 6, "unit": "defects" }; }
+    object s1_0 "Target / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Target", "count": 7, "unit": "defects" }; }
+    object s1_1 "Target / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Target", "count": 9, "unit": "defects" }; }
+    object s1_2 "Target / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Target", "count": 5, "unit": "defects" }; }
+}
+
+data cost {
+    object cost0 "Inspection" { kind: "record"; x_record: { "label": "Inspection", "amount": 120, "step": "delta", "unit": "CAD" }; }
+    object cost1 "Rework" { kind: "record"; x_record: { "label": "Rework", "amount": 180, "step": "delta", "unit": "CAD" }; }
+    object cost2 "Subtotal" { kind: "record"; x_record: { "label": "Subtotal", "amount": 300, "step": "subtotal", "unit": "CAD" }; }
+    object cost3 "Scrap" { kind: "record"; x_record: { "label": "Scrap", "amount": 70, "step": "delta", "unit": "CAD" }; }
+    object cost4 "Recovery" { kind: "record"; x_record: { "label": "Recovery", "amount": -40, "step": "delta", "unit": "CAD" }; }
+    object cost5 "Total" { kind: "record"; x_record: { "label": "Total", "amount": 330, "step": "total", "unit": "CAD" }; }
+}
+
+data lifecycle {
+    object initial "Start" { kind: "state.initial"; x_record: { "stage": "Start" }; }
+    object open "Open" { kind: "state.state"; x_record: { "stage": "Open" }; }
+    object triage "Triage" { kind: "state.state"; x_record: { "stage": "Triage" }; }
+    object investigate "Investigating" { kind: "state.state"; x_record: { "stage": "Investigating" }; }
+    object correct "Correcting" { kind: "state.state"; x_record: { "stage": "Correcting" }; }
+    object verified "Verified" { kind: "state.state"; x_record: { "stage": "Verified" }; }
+    object closed "Closed" { kind: "state.final"; x_record: { "stage": "Closed" }; }
+    relation begin "begin" @initial -> @open { kind: "state.transition"; }
+    relation submit "submit" @open -> @triage { kind: "state.transition"; x_transition: { "event": "submit" }; }
+    relation accept "accept" @triage -> @investigate { kind: "state.transition"; x_transition: { "event": "accept" }; }
+    relation investigated "investigated" @investigate -> @correct { kind: "state.transition"; x_transition: { "event": "investigated" }; }
+    relation verify_ok "verify ok" @correct -> @verified { kind: "state.transition"; x_transition: { "event": "verify", "guard": { "passed": { "op": "eq", "value": true } } }; }
+    relation verify_fail "verify fail" @correct -> @investigate { kind: "state.transition"; x_transition: { "event": "verify", "guard": { "passed": { "op": "eq", "value": false } } }; }
+    relation close "close" @verified -> @closed { kind: "state.transition"; x_transition: { "event": "close" }; }
+}
+
+data rules {
+    object high "High severity" { kind: "rule.row"; x_rule: { "when": { "severity": { "op": "eq", "value": "high" } }, "then": { "route": "quarantine", "audit": true } }; }
+    object low_pass "Low severity within tolerance" { kind: "rule.row"; x_rule: { "when": { "severity": { "op": "eq", "value": "low" }, "score": { "op": "interval", "min": 0, "max": 5, "upper_closed": false } }, "then": { "route": "release", "audit": false } }; }
+    object low_review "Low severity outside tolerance" { kind: "rule.row"; x_rule: { "when": { "severity": { "op": "eq", "value": "low" }, "score": { "op": "interval", "min": 5, "max": 10 } }, "then": { "route": "inspect", "audit": true } }; }
+    object default "Default review" { kind: "rule.row"; x_rule: { "when": {  }, "then": { "route": "review", "audit": true } }; }
+    object audit "All cases audited" { kind: "rule.row"; x_rule: { "when": {  }, "then": { "route": "audit", "audit": true } }; }
+    object check "Score requires inspection" { kind: "rule.row"; x_rule: { "when": { "score": { "op": "interval", "min": 5, "max": 10 } }, "then": { "route": "inspect", "audit": true } }; }
+}
+
+data notes {
+    object note "Quality review assumptions" { kind: "note"; description: "Synthetic data: scores are supplied review policy values, not ordinal arithmetic. Possible causes require investigation. The chart library is not an authoritative accounting engine."; }
+}

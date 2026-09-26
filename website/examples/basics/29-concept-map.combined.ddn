@@ -1,0 +1,53 @@
+ddn "0.5";
+
+module "ddn.examples.concept-map";
+// Synthetic order-to-cash domain concepts for the concept.map@1 profile.
+// Every relation carries an explicit author-written label — verb defaults are rejected (DDN-PJ104).
+data domain {
+    object order "Order" { kind: entity; }
+    object invoice "Invoice" { kind: entity; }
+    object payment "Payment" { kind: entity; }
+    object ledger "Ledger" { kind: entity; }
+    object shipment "Shipment" { kind: entity; }
+    relation r1 "bills" @order -> @invoice { kind: assoc; }
+    relation r2 "settles" @payment -> @invoice { kind: assoc; }
+    relation r3 "posts to" @invoice -> @ledger { kind: assoc; }
+    relation r4 "fulfilled by" @order -> @shipment { kind: assoc; }
+    relation r5 "books freight to" @shipment -> @ledger { kind: assoc; }
+}
+
+format options {
+    layout cmap { algorithm: layered; routing: curved; }
+}
+
+view concepts "Synthetic order-to-cash concepts / concept map" {
+    data: [@domain]; format: @ddn.examples.shared.styles.technical; layout: @options.cmap; spacing: loose;
+    projection { kind: graph; profile: "concept.map@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

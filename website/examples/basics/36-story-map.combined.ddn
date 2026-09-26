@@ -1,0 +1,68 @@
+ddn "0.5";
+
+module "ddn.examples.story-map";
+// Synthetic shop-rebuild story map (all data invented): five ordered backbone
+// activities as columns and two releases as rows (top = first release). Cells are
+// declared analysis.task story objects carried by assoc relations with x_story.task;
+// two stories share the r1 × checkout cell, exercising duplicates:join.
+data shop {
+    object browse "Browse catalogue" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper explores the catalogue."; }
+    object configure "Configure item" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper configures the chosen item."; }
+    object checkout "Check out" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper completes the order."; }
+    object pay "Pay" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper pays for the order."; }
+    object fulfil "Fulfil order" { kind: "analysis.task"; description: "Synthetic backbone activity: the shop fulfils the order."; }
+    object r1 "Release 1 · walkable skeleton" { kind: record; description: "Synthetic first release: the thinnest end-to-end purchase path."; }
+    object r2 "Release 2 · polish" { kind: record; description: "Synthetic second release: convenience and polish stories."; }
+    object s_list "List products" { kind: "analysis.task"; description: "Synthetic story: show a plain product list."; }
+    object s_search "Search by name" { kind: "analysis.task"; description: "Synthetic story: find products by name."; }
+    object s_photo "Photo gallery" { kind: "analysis.task"; description: "Synthetic story: browse item photos."; }
+    object s_cart "Cart" { kind: "analysis.task"; description: "Synthetic story: keep items in a cart."; }
+    object s_guest "Guest checkout" { kind: "analysis.task"; description: "Synthetic story: check out without an account."; }
+    object s_account "Account checkout" { kind: "analysis.task"; description: "Synthetic story: check out with a saved account."; }
+    object s_card "Card payment" { kind: "analysis.task"; description: "Synthetic story: pay by card."; }
+    object s_wallet "Wallet payment" { kind: "analysis.task"; description: "Synthetic story: pay with a wallet balance."; }
+    object s_pick "Picking list" { kind: "analysis.task"; description: "Synthetic story: warehouse picking list for the order."; }
+    object s_track "Tracking page" { kind: "analysis.task"; description: "Synthetic story: shipment tracking page."; }
+    relation r1_list @r1 -> @browse { kind: assoc; x_story: { task: @s_list }; }
+    relation r1_cart @r1 -> @configure { kind: assoc; x_story: { task: @s_cart }; }
+    relation r1_guest @r1 -> @checkout { kind: assoc; x_story: { task: @s_guest }; }
+    relation r1_account @r1 -> @checkout { kind: assoc; x_story: { task: @s_account }; }
+    relation r1_card @r1 -> @pay { kind: assoc; x_story: { task: @s_card }; }
+    relation r1_pick @r1 -> @fulfil { kind: assoc; x_story: { task: @s_pick }; }
+    relation r2_search @r2 -> @browse { kind: assoc; x_story: { task: @s_search }; }
+    relation r2_photo @r2 -> @configure { kind: assoc; x_story: { task: @s_photo }; }
+    relation r2_wallet @r2 -> @pay { kind: assoc; x_story: { task: @s_wallet }; }
+    relation r2_track @r2 -> @fulfil { kind: assoc; x_story: { task: @s_track }; }
+}
+
+view storymap "Shop rebuild / story map" {
+    data: [@shop];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:matrix; profile:"matrix.storymap@1"; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:"assoc"; value:"x_story.task"; duplicates:join; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,46 @@
+ddn "0.5";
+
+module "ddn.examples.sankey";
+// Synthetic energy-spend dataset: seven flows across three stages.
+// All data is synthetic.
+data energy {
+    object f1 "grid → heating" { kind: record; x_record: {"source": "grid", "target": "heating", "value": 40, "unit": "MWh"}; }
+    object f2 "grid → it" { kind: record; x_record: {"source": "grid", "target": "it", "value": 30, "unit": "MWh"}; }
+    object f3 "gas → heating" { kind: record; x_record: {"source": "gas", "target": "heating", "value": 35, "unit": "MWh"}; }
+    object f4 "solar → it" { kind: record; x_record: {"source": "solar", "target": "it", "value": 15, "unit": "MWh"}; }
+    object f5 "heating → building_a" { kind: record; x_record: {"source": "heating", "target": "building_a", "value": 45, "unit": "MWh"}; }
+    object f6 "heating → building_b" { kind: record; x_record: {"source": "heating", "target": "building_b", "value": 30, "unit": "MWh"}; }
+    object f7 "it → building_a" { kind: record; x_record: {"source": "it", "target": "building_a", "value": 45, "unit": "MWh"}; }
+}
+
+view sankey "Synthetic energy spend across three stages / sankey" {
+    data: [@energy]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.sankey@1"; records:[@energy.f1, @energy.f2, @energy.f3, @energy.f4, @energy.f5, @energy.f6, @energy.f7]; mark:sankey; x:"x_record.source"; target:"x_record.target"; y:"x_record.value"; unit:"MWh"; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

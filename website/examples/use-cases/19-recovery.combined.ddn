@@ -1,0 +1,56 @@
+ddn "0.5";
+
+module "ddn.usecases.views.recovery";
+// Which artifact is used to construct a recovery target?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "19 / Backup and restore design" {
+    data: [@ddn.usecases.recovery.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.recovery.model.backup, @ddn.usecases.recovery.model.restore, @ddn.usecases.recovery.model.target];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_restore": 1, "model.r_output": 2 }; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.recovery";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object backup "Full backup artifact" {
+        kind: backup;
+        description: "A synthetic backup-artifact definition; test evidence would be a separate assertion.";
+    }
+    object restore "Restore into isolation" {
+        kind: activity;
+    }
+    object target "Restored database" {
+        kind: database;
+        level: instance;
+    }
+    relation r_restore @backup -> @restore { kind: restore; }
+    relation r_output @restore -> @target { kind: write; }
+}

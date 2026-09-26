@@ -1,0 +1,94 @@
+ddn "0.5";
+
+module "ddn.examples.iso-charts";
+// Isometric depth (B1-034): the optional ddn-iso module extrudes chart marks
+// when a view declares iso: true or a depth. `depth: "x_record.load"` binds the
+// extrusion thickness to the record payload (the chart binding idiom), so a
+// host driving ws.replaceData(...) grows/shrinks the 3D depth on refresh
+// (see examples/embed/iso-load-monitor.html). All data is synthetic.
+// Without ddn-iso.js the same views render flat with a coded diagnostic —
+// an iso:true view degrades to a visible placeholder plus DDN-E010.
+
+data capacity {
+    object web "Web tier" { kind: record; x_record: { tier: "Web", value: 420, load: 26, unit: "req/s" }; }
+    object api "API tier" { kind: record; x_record: { tier: "API", value: 610, load: 34, unit: "req/s" }; }
+    object db "Database tier" { kind: record; x_record: { tier: "Database", value: 380, load: 18, unit: "req/s" }; }
+    object cache "Cache tier" { kind: record; x_record: { tier: "Cache", value: 240, load: 12, unit: "req/s" }; }
+}
+
+view iso_bar "Synthetic tier throughput / iso bar" {
+    data: [@capacity]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:bar; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:"x_record.load"; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view iso_pie "Synthetic tier share / iso pie" {
+    data: [@capacity]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:pie; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:22px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view iso_donut "Synthetic tier share / iso donut" {
+    data: [@capacity]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:donut; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:22px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view iso_area "Synthetic tier throughput / iso area ribbon" {
+    data: [@capacity]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.basic@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:area; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:16px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view iso_treemap "Synthetic tier throughput / iso treemap blocks" {
+    data: [@capacity]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.treemap@1"; records:[@capacity.web, @capacity.api, @capacity.db, @capacity.cache]; mark:treemap; x:"x_record.tier"; y:"x_record.value"; unit:"req/s"; iso:true; depth:20px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+// Multi-series iso (B1-036): series:/arrangement: views plan through the quality
+// renderer (chart.quality@1), which extrudes with the same ddn-iso primitives —
+// one column per series point, each series on its own depth plane so faces never
+// z-fight. Without ddn-iso.js this view degrades exactly like the others.
+data throughput {
+    object a_q1 "Line A / Q1" { kind: record; x_record: { quarter: "Q1", line: "Line A", value: 420, unit: "req/s" }; }
+    object a_q2 "Line A / Q2" { kind: record; x_record: { quarter: "Q2", line: "Line A", value: 510, unit: "req/s" }; }
+    object a_q3 "Line A / Q3" { kind: record; x_record: { quarter: "Q3", line: "Line A", value: 460, unit: "req/s" }; }
+    object a_q4 "Line A / Q4" { kind: record; x_record: { quarter: "Q4", line: "Line A", value: 610, unit: "req/s" }; }
+    object b_q1 "Line B / Q1" { kind: record; x_record: { quarter: "Q1", line: "Line B", value: 300, unit: "req/s" }; }
+    object b_q2 "Line B / Q2" { kind: record; x_record: { quarter: "Q2", line: "Line B", value: 360, unit: "req/s" }; }
+    object b_q3 "Line B / Q3" { kind: record; x_record: { quarter: "Q3", line: "Line B", value: 330, unit: "req/s" }; }
+    object b_q4 "Line B / Q4" { kind: record; x_record: { quarter: "Q4", line: "Line B", value: 410, unit: "req/s" }; }
+}
+
+view iso_multiseries_bar "Synthetic line throughput / iso multi-series bar" {
+    data: [@throughput]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.quality@1"; records:[@throughput.a_q1, @throughput.a_q2, @throughput.a_q3, @throughput.a_q4, @throughput.b_q1, @throughput.b_q2, @throughput.b_q3, @throughput.b_q4]; mark:bar; x:"x_record.quarter"; y:"x_record.value"; series:"x_record.line"; arrangement:group; unit:"req/s"; iso:true; depth:18px; width:1120px; height:640px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,75 @@
+ddn "0.5";
+
+module "ddn.examples.faulteventtree";
+// Synthetic fault tree and event tree for the fault.tree@1 / event.tree@1
+// profiles. Gates are tree.gate diamonds with a declared x_gate.type
+// (and/or); basic events are tree.event circles; tree.input edges point from
+// a gate to each of its inputs. Fault view: an OR top gate "outage" with one
+// AND gate "power_cut" (UPS failed AND grid failed) plus switch, cable and
+// operator-error events. Event view: a small OR gate "alarm" followed
+// forward to smoke-detection and sprinkler-trip outcomes. All data is
+// synthetic.
+data m {
+    object outage "OR outage" { kind: "tree.gate"; x_gate: { type: "or" }; }
+    object power_cut "AND power_cut" { kind: "tree.gate"; x_gate: { type: "and" }; }
+    object ups_failed "UPS failed" { kind: "tree.event"; }
+    object grid_failed "Grid failed" { kind: "tree.event"; }
+    object switch_failed "Switch failed" { kind: "tree.event"; }
+    object cable_cut "Cable cut" { kind: "tree.event"; }
+    object operator_error "Operator error" { kind: "tree.event"; }
+
+    relation i1 "has input" @outage -> @power_cut { kind: "tree.input"; }
+    relation i2 "has input" @outage -> @switch_failed { kind: "tree.input"; }
+    relation i3 "has input" @outage -> @cable_cut { kind: "tree.input"; }
+    relation i4 "has input" @power_cut -> @ups_failed { kind: "tree.input"; }
+    relation i5 "has input" @power_cut -> @grid_failed { kind: "tree.input"; }
+
+    object alarm "OR alarm" { kind: "tree.gate"; x_gate: { type: "or" }; }
+    object smoke_detected "Smoke detected" { kind: "tree.event"; }
+    object sprinkler_trip "Sprinkler trip" { kind: "tree.event"; }
+
+    relation e1 "has input" @alarm -> @smoke_detected { kind: "tree.input"; }
+    relation e2 "has input" @alarm -> @sprinkler_trip { kind: "tree.input"; }
+}
+
+view fault "Service outage fault tree" {
+    data: [@m]; format: @ddn.examples.shared.styles.technical;
+    select: [@m.outage, @m.power_cut, @m.ups_failed, @m.grid_failed, @m.switch_failed, @m.cable_cut, @m.operator_error];
+    projection { kind: graph; profile: "fault.tree@1"; }
+    layout { algorithm: tree; direction: down; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view event "Alarm event tree" {
+    data: [@m]; format: @ddn.examples.shared.styles.technical;
+    select: [@m.alarm, @m.smoke_detected, @m.sprinkler_trip];
+    projection { kind: graph; profile: "event.tree@1"; }
+    layout { algorithm: tree; direction: down; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

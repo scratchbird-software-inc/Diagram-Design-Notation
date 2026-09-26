@@ -1,0 +1,67 @@
+ddn "0.5";
+
+module "ddn.examples.lookcomparison";
+// One model, three renderings. No at coordinates or manual route waypoints.
+data model {
+    object customer "Customer" {
+        kind: table; maturity: draft; workload: [oltp];
+        fields { field customer_id { key: primary; } field status; }
+    }
+    object builder "Build history" { kind: activity; }
+    object history "Customer history" {
+        kind: history; workload: [olap]; temporal: bitemporal;
+        fields { field customer_id; field valid_from; field recorded_from; }
+    }
+    relation capture @customer -> @builder { kind: captures_changes_into; capture: cdc; }
+    relation load @builder -> @history { kind: write; }
+}
+
+view classic "Classic / precise single strokes" {
+    data: [@model]; format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.classic;
+    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
+    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
+    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
+}
+
+view handDrawn "Hand drawn / organic pen strokes" {
+    data: [@model]; format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.hand;
+    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
+    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
+    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
+}
+
+view neo "Neo / raised, precise cards" {
+    data: [@model]; format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.neo;
+    layout { algorithm: grid; columns: 3; gap: 95px; routing: orthogonal; direction: right; }
+    publication { width: 1500px; height: 440px; minimum_text: 8pt; }
+    legend { mode: numbers; keys: { "capture": 1, "load": 2 }; width: 300px; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

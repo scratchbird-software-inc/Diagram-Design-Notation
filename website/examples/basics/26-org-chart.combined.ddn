@@ -1,0 +1,57 @@
+ddn "0.5";
+
+module "ddn.examples.org-chart";
+// Synthetic 8-person organisation for the org.tree@1 profile. All people are fictional.
+data people {
+    object ceo "A. Rivera — CEO" { kind: "analysis.role"; }
+    object vp_eng "B. Okafor — VP Engineering" { kind: "analysis.role"; }
+    object vp_fin "C. Novak — VP Finance" { kind: "analysis.role"; }
+    object vp_ops "D. Sato — VP Operations" { kind: "analysis.role"; }
+    object lead_plat "E. Mbeki — Platform lead" { kind: "analysis.role"; }
+    object lead_qa "F. Costa — QA lead" { kind: "analysis.role"; }
+    object lead_ar "G. Lund — AR lead" { kind: "analysis.role"; }
+    object lead_fleet "H. Petit — Fleet lead" { kind: "analysis.role"; }
+    relation r1 @ceo -> @vp_eng { kind: reports_to; }
+    relation r2 @ceo -> @vp_fin { kind: reports_to; }
+    relation r3 @ceo -> @vp_ops { kind: reports_to; }
+    relation r4 @vp_eng -> @lead_plat { kind: reports_to; }
+    relation r5 @vp_eng -> @lead_qa { kind: reports_to; }
+    relation r6 @vp_fin -> @lead_ar { kind: reports_to; }
+    relation r7 @vp_ops -> @lead_fleet { kind: reports_to; }
+}
+
+format options {
+    layout org { algorithm: tree; direction: down; root: @people.ceo; hierarchy: [reports_to]; }
+}
+
+view org "Synthetic organisation / org chart" {
+    data: [@people]; format: @ddn.examples.shared.styles.technical; layout: @options.org;
+    projection { kind: graph; profile: "org.tree@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

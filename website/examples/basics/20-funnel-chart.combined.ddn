@@ -1,0 +1,44 @@
+ddn "0.5";
+
+module "ddn.examples.funnel-chart";
+// Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
+// All data is synthetic.
+data pipeline {
+    object s1 "Visits" { kind: record; x_record: {"stage": "Visits", "value": 1200, "unit": "deals"}; }
+    object s2 "Signups" { kind: record; x_record: {"stage": "Signups", "value": 480, "unit": "deals"}; }
+    object s3 "Trials" { kind: record; x_record: {"stage": "Trials", "value": 210, "unit": "deals"}; }
+    object s4 "Qualified" { kind: record; x_record: {"stage": "Qualified", "value": 96, "unit": "deals"}; }
+    object s5 "Closed" { kind: record; x_record: {"stage": "Closed", "value": 42, "unit": "deals"}; }
+}
+
+view funnel "Synthetic sales pipeline / funnel" {
+    data: [@pipeline]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:chart; profile:"chart.funnel@1"; records:[@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5]; mark:funnel; x:"x_record.stage"; y:"x_record.value"; unit:"deals"; width:1120px; height:620px; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

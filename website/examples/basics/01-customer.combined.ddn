@@ -1,0 +1,105 @@
+ddn "0.5";
+
+module "ddn.examples.customer-views";
+view overview "Customer data / a shared model" {
+    data: [@ddn.examples.customer-data.model];
+    format: @ddn.examples.shared.styles.technical;
+    legend: @ddn.examples.shared.styles.numbers;
+    select: [@ddn.examples.customer-data.model.customer, @ddn.examples.customer-data.model.order, @ddn.examples.customer-data.model.customer_identifier, @ddn.examples.customer-data.model.customers];
+    legend { keys: { "model.order_customer": 7, "model.customer_domain": 12, "model.order_domain": 18 }; }
+
+}
+view compact "Customer data / compact view" {
+    data: [@ddn.examples.customer-data.model];
+    format: @ddn.examples.shared.styles.technical;
+    display: @ddn.examples.shared.styles.compact;
+    select: [@ddn.examples.customer-data.model.order, @ddn.examples.customer-data.model.customer];
+
+}
+view print "Customer data / print rendition" {
+    data: [@ddn.examples.customer-data.model];
+    format: @ddn.examples.shared.styles.technical;
+    style: @ddn.examples.shared.styles.neutral;
+    publication: @ddn.examples.shared.styles.paper;
+    select: [@ddn.examples.customer-data.model.order, @ddn.examples.customer-data.model.customer];
+
+}
+view embedded "Customer data / minimal chrome for embedding" {
+    data: [@ddn.examples.customer-data.model];
+    format: @ddn.examples.shared.styles.technical;
+    select: [@ddn.examples.customer-data.model.order, @ddn.examples.customer-data.model.customer];
+    // B1-045: the relations already label themselves (legend mode text), so the
+    // key is redundant here; title/footer off give a chrome-free embed.
+    legend: off;
+    title: off;
+    footer: off;
+}
+
+module "ddn.examples.customer-data";
+data model {
+    object customer "Customer" {
+        uid: "urn:ddn:example:customer";
+        kind: table;
+        maturity: draft;
+        workload: [oltp];
+        role: authoritative;
+        fields {
+            field customer_id { key: primary; domain: @customer_identifier; }
+            field display_name;
+            field status;
+        }
+    }
+    object order "Order" {
+        kind: table;
+        maturity: draft;
+        workload: [oltp];
+        fields {
+            field order_id { key: primary; }
+            field customer_id { domain: @customer_identifier; }
+            field ordered_at;
+        }
+    }
+    domain customer_identifier "Customer identifier" {
+        meaning: "Identifies a customer in the registry";
+        representation: undecided;
+    }
+    sample customers "Synthetic customer records" {
+        mode: synthetic;
+        columns: [@customer.customer_id, @customer.display_name, @customer.status];
+        rows: [["C001", "Customer A", "Active"], ["C002", "Customer B", "Suspended"]];
+    }
+    relation order_customer @order.customer_id -> @customer.customer_id {
+        kind: references;
+        source_mark: zeromany;
+        target_mark: one;
+        enforcement: undecided;
+    }
+    relation customer_domain @customer.customer_id -> @customer_identifier { kind: uses_domain; }
+    relation order_domain @order.customer_id -> @customer_identifier { kind: uses_domain; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

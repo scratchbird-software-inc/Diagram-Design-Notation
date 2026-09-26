@@ -1,0 +1,69 @@
+ddn "0.5";
+
+module "ddn.examples.empathy-scorecard";
+// Two synthetic studies in one file (all data invented): a support-team empathy
+// study for the canvas.empathy@1 profile and a department balanced scorecard for
+// the canvas.scorecard@1 profile.
+data research {
+    object persona "Persona" { kind: note; description: "Synthetic persona: a support agent on the night shift."; }
+    object says_a "Says (1)" { kind: note; description: "Synthetic: \"I spend half the shift retyping ticket details into the billing tool.\""; }
+    object says_b "Says (2)" { kind: note; description: "Synthetic: \"Customers forgive an outage when we call them back before they notice.\""; }
+    object thinks "Thinks" { kind: note; description: "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."; }
+    object does "Does" { kind: note; description: "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."; }
+    object feels "Feels" { kind: note; description: "Synthetic: proud of calm incident handling but drained by the duplicated data entry."; }
+    object fin_1 "Financial objective 1" { kind: note; description: "Synthetic objective: cut cost per resolved ticket by twelve percent this year."; }
+    object fin_2 "Financial objective 2" { kind: note; description: "Synthetic objective: grow renewal revenue from the existing customer base."; }
+    object cus_1 "Customer objective 1" { kind: note; description: "Synthetic objective: raise first-contact resolution above seventy percent."; }
+    object cus_2 "Customer objective 2" { kind: note; description: "Synthetic objective: answer every chat within ninety seconds during business hours."; }
+    object int_1 "Internal process objective 1" { kind: note; description: "Synthetic objective: automate the ticket-to-billing rekeying step."; }
+    object int_2 "Internal process objective 2" { kind: note; description: "Synthetic objective: publish a weekly workaround digest from the shift handover notes."; }
+    object lrn_1 "Learning & growth objective 1" { kind: note; description: "Synthetic objective: certify every agent on the new incident playbook by quarter end."; }
+    object lrn_2 "Learning & growth objective 2" { kind: note; description: "Synthetic objective: pair each night-shift agent with a day-shift mentor."; }
+}
+
+view empathy "Support team / empathy map" {
+    data: [@research];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:panels; profile:"canvas.empathy@1"; columns:2; panels:[
+        {id:"says",title:"SAYS",row:0,column:0,rowspan:1,colspan:1,items:[@research.says_a, @research.says_b]},
+        {id:"thinks",title:"THINKS",row:0,column:1,rowspan:1,colspan:1,items:[@research.thinks]},
+        {id:"persona",title:"PERSONA",row:1,column:0,rowspan:1,colspan:2,items:[@research.persona]},
+        {id:"does",title:"DOES",row:2,column:0,rowspan:1,colspan:1,items:[@research.does]},
+        {id:"feels",title:"FEELS",row:2,column:1,rowspan:1,colspan:1,items:[@research.feels]}]; }
+}
+
+view scorecard "Department / balanced scorecard" {
+    data: [@research];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:panels; profile:"canvas.scorecard@1"; columns:2; panels:[
+        {id:"financial",title:"FINANCIAL",row:0,column:0,rowspan:1,colspan:1,items:[@research.fin_1, @research.fin_2]},
+        {id:"customer",title:"CUSTOMER",row:0,column:1,rowspan:1,colspan:1,items:[@research.cus_1, @research.cus_2]},
+        {id:"internal",title:"INTERNAL PROCESS",row:1,column:0,rowspan:1,colspan:1,items:[@research.int_1, @research.int_2]},
+        {id:"learning",title:"LEARNING & GROWTH",row:1,column:1,rowspan:1,colspan:1,items:[@research.lrn_1, @research.lrn_2]}]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

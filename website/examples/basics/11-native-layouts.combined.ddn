@@ -1,0 +1,70 @@
+ddn "0.5";
+
+module "ddn.examples.native-layouts";
+data model {
+ object enterprise "Meridian Works" { kind: context; role: authoritative; }
+ object finance "Finance" { kind: application; role: authoritative; }
+ object plant "Plant operations" { kind: application; role: authoritative; }
+ object journal "Posted journals" { kind: table; role: authoritative; fields { field journal_id; field period_id; } }
+ object stock "Stock movements" { kind: table; role: authoritative; fields { field movement_id; field lot_id; } }
+ object analytics "Warehouse projection" { kind: dataset; role: derived; }
+ relation f1 @enterprise -> @finance { kind: assoc; }
+ relation f2 @enterprise -> @plant { kind: assoc; }
+ relation f3 @finance -> @journal { kind: assoc; }
+ relation f4 @plant -> @stock { kind: assoc; }
+ relation f5 @plant -> @analytics { kind: assoc; }
+}
+format options {
+ layout grid { algorithm: grid; columns: 3; }
+ layout layered { algorithm: layered; direction: right; }
+ layout tree { algorithm: tree; root: @model.enterprise; hierarchy: [assoc]; }
+ layout mindmap { algorithm: mindmap; routing: curved; root: @model.enterprise; hierarchy: [assoc]; }
+ layout groups { algorithm: grouped; group_by: role; columns: 2; }
+ legend keys { mode: numbers; keys: { f1: 1, f2: 2, f3: 3, f4: 4, f5: 5 }; width: 330px; }
+}
+view grid "Native grid / no coordinates" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; layout: @options.grid; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view layered "Native layered / no coordinates" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; layout: @options.layered; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view tree "Native tree / no coordinates" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; layout: @options.tree; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view mindmap "Native mind-map / no coordinates" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; layout: @options.mindmap; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+view grouped "Native grouped / no coordinates" {
+ data: [@model]; format: @ddn.examples.shared.styles.technical; layout: @options.groups; legend: @options.keys;
+ publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

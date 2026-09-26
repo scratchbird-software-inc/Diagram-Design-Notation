@@ -1,0 +1,80 @@
+ddn "0.5";
+
+module "ddn.examples.canvas-pack-a";
+// Synthetic coffee-cart business (all data invented) for the canvas.bmc@1 and canvas.lean@1 profiles.
+data canvas {
+    object bmc_kp "Key partners" { kind: note; description: "Synthetic: the bean roaster cooperative and the cart maintenance contractor."; }
+    object bmc_ka "Key activities" { kind: note; description: "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."; }
+    object bmc_kr "Key resources" { kind: note; description: "Synthetic: the cart, the espresso machine, and the two trained baristas."; }
+    object bmc_vp "Value propositions" { kind: note; description: "Synthetic: a fast specialty coffee at the commuter corner before the first train."; }
+    object bmc_cr "Customer relationships" { kind: note; description: "Synthetic: remembered orders and a stamp-card loyalty scheme."; }
+    object bmc_ch "Channels" { kind: note; description: "Synthetic: the physical cart plus pre-orders through a simple chat channel."; }
+    object bmc_cs "Customer segments" { kind: note; description: "Synthetic: morning commuters and nearby office workers on breaks."; }
+    object bmc_cost "Cost structure" { kind: note; description: "Synthetic: beans and milk, pitch rent, machine servicing, and wages."; }
+    object bmc_rev "Revenue streams" { kind: note; description: "Synthetic: per-cup sales and pre-paid weekly commuter bundles."; }
+    object lean_problem "Problem" { kind: note; description: "Synthetic: commuters queue too long at the station kiosk and miss their train."; }
+    object lean_solution "Solution" { kind: note; description: "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."; }
+    object lean_keymetrics "Key metrics" { kind: note; description: "Synthetic: cups served per morning hour and pre-order pickup rate."; }
+    object lean_uvp "Unique value proposition" { kind: note; description: "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."; }
+    object lean_unfair "Unfair advantage" { kind: note; description: "Synthetic: an exclusive pitch licence for the busiest commuter corner."; }
+    object lean_channels "Channels" { kind: note; description: "Synthetic: the cart itself and the pre-order chat channel."; }
+    object lean_segments "Customer segments" { kind: note; description: "Synthetic: daily commuters and nearby office workers."; }
+    object lean_cost "Cost structure" { kind: note; description: "Synthetic: supplies, pitch licence, servicing, and staffing."; }
+    object lean_revenue "Revenue streams" { kind: note; description: "Synthetic: walk-up sales and weekly subscription bundles."; }
+}
+
+view bmc "Coffee cart / business model canvas" {
+    data: [@canvas];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:panels; profile:"canvas.bmc@1"; columns:10; panels:[
+        {id:"kp",title:"KEY PARTNERS",row:0,column:0,rowspan:2,colspan:2,items:[@canvas.bmc_kp]},
+        {id:"ka",title:"KEY ACTIVITIES",row:0,column:2,rowspan:1,colspan:2,items:[@canvas.bmc_ka]},
+        {id:"kr",title:"KEY RESOURCES",row:1,column:2,rowspan:1,colspan:2,items:[@canvas.bmc_kr]},
+        {id:"vp",title:"VALUE PROPOSITIONS",row:0,column:4,rowspan:2,colspan:2,items:[@canvas.bmc_vp]},
+        {id:"cr",title:"CUSTOMER RELATIONSHIPS",row:0,column:6,rowspan:1,colspan:2,items:[@canvas.bmc_cr]},
+        {id:"ch",title:"CHANNELS",row:1,column:6,rowspan:1,colspan:2,items:[@canvas.bmc_ch]},
+        {id:"cs",title:"CUSTOMER SEGMENTS",row:0,column:8,rowspan:2,colspan:2,items:[@canvas.bmc_cs]},
+        {id:"cost",title:"COST STRUCTURE",row:2,column:0,rowspan:1,colspan:5,items:[@canvas.bmc_cost]},
+        {id:"rev",title:"REVENUE STREAMS",row:2,column:5,rowspan:1,colspan:5,items:[@canvas.bmc_rev]}]; }
+}
+
+view lean "Coffee cart / lean canvas" {
+    data: [@canvas];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:panels; profile:"canvas.lean@1"; columns:10; panels:[
+        {id:"problem",title:"PROBLEM",row:0,column:0,rowspan:2,colspan:2,items:[@canvas.lean_problem]},
+        {id:"solution",title:"SOLUTION",row:0,column:2,rowspan:1,colspan:2,items:[@canvas.lean_solution]},
+        {id:"keymetrics",title:"KEY METRICS",row:1,column:2,rowspan:1,colspan:2,items:[@canvas.lean_keymetrics]},
+        {id:"uvp",title:"UNIQUE VALUE PROPOSITION",row:0,column:4,rowspan:2,colspan:2,items:[@canvas.lean_uvp]},
+        {id:"unfair",title:"UNFAIR ADVANTAGE",row:0,column:6,rowspan:1,colspan:2,items:[@canvas.lean_unfair]},
+        {id:"channels",title:"CHANNELS",row:1,column:6,rowspan:1,colspan:2,items:[@canvas.lean_channels]},
+        {id:"segments",title:"CUSTOMER SEGMENTS",row:0,column:8,rowspan:2,colspan:2,items:[@canvas.lean_segments]},
+        {id:"cost",title:"COST STRUCTURE",row:2,column:0,rowspan:1,colspan:5,items:[@canvas.lean_cost]},
+        {id:"revenue",title:"REVENUE STREAMS",row:2,column:5,rowspan:1,colspan:5,items:[@canvas.lean_revenue]}]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

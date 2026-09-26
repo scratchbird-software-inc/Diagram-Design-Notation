@@ -1,0 +1,61 @@
+ddn "0.5";
+
+module "ddn.usecases.views.vector-lineage";
+// Which source and transformation produced these vectors?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "16 / Vector and embedding lineage" {
+    data: [@ddn.usecases.vectors.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.neo;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.vectors.model.source, @ddn.usecases.vectors.model.embedding, @ddn.usecases.vectors.model.index];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_input": 1, "model.r_output": 2 }; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.vectors";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object source "Product descriptions" {
+        kind: dataset;
+    }
+    object embedding "Build embeddings" {
+        kind: activity;
+        description: "Record the embedding model and preprocessing version before implementation approval.";
+    }
+    object index "Product vectors" {
+        kind: vector;
+        role: derived;
+        fields {
+            field product_id;
+            field embedding;
+            field model_version;
+        }
+    }
+    relation r_input @source -> @embedding { kind: consumed; }
+    relation r_output @embedding -> @index { kind: generates; }
+}

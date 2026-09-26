@@ -1,0 +1,77 @@
+ddn "0.5";
+
+module "ddn.examples.journey-map";
+// Synthetic product-returns journey (all data invented): four phases, three lanes
+// (actions, touchpoints, opportunities) and one full-width emotions band whose
+// declared 1..5 values render as a straight-segment polyline (panels.journey@1).
+data journey {
+    object ph_receive "Receive phase" { kind: note; description: "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."; }
+    object ph_inspect "Inspect phase" { kind: note; description: "Synthetic phase goal: the returned item is checked and triaged quickly."; }
+    object ph_decide "Decide phase" { kind: note; description: "Synthetic phase goal: a fair refund-or-replace decision is made transparently."; }
+    object ph_refund "Refund phase" { kind: note; description: "Synthetic phase goal: money or a replacement reaches the customer without chasing."; }
+    object act_receive "Action / receive" { kind: note; description: "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."; }
+    object act_inspect "Action / inspect" { kind: note; description: "Synthetic: customer waits while the warehouse scans and grades the returned item."; }
+    object act_decide "Action / decide" { kind: note; description: "Synthetic: customer reads the decision email and accepts the proposed refund."; }
+    object act_refund "Action / refund" { kind: note; description: "Synthetic: customer sees the refund land on the original card and archives the receipt."; }
+    object tp_receive "Touchpoint / receive" { kind: note; description: "Synthetic: returns portal with order lookup and a QR code for the drop-off point."; }
+    object tp_inspect "Touchpoint / inspect" { kind: note; description: "Synthetic: tracking page shows the parcel arrived and inspection has started."; }
+    object tp_decide "Touchpoint / decide" { kind: note; description: "Synthetic: decision email explains the outcome with photos from the inspection."; }
+    object tp_refund "Touchpoint / refund" { kind: note; description: "Synthetic: bank statement line and a closing confirmation message in the portal."; }
+    object opp_receive "Opportunity / receive" { kind: note; description: "Synthetic opportunity: prefill the returns form from the order history to cut retyping."; }
+    object opp_inspect "Opportunity / inspect" { kind: note; description: "Synthetic opportunity: publish typical inspection times so waiting feels predictable."; }
+    object opp_decide "Opportunity / decide" { kind: note; description: "Synthetic opportunity: offer a one-click appeal path when a refund is declined."; }
+    object opp_refund "Opportunity / refund" { kind: note; description: "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."; }
+    object em_receive "Emotion / receive" { kind: record; x_record: {"phase": "receive", "value": 2, "description": "Synthetic: annoyed that the item failed, mildly relieved the return label was easy."}; }
+    object em_inspect "Emotion / inspect" { kind: record; x_record: {"phase": "inspect", "value": 3, "description": "Synthetic: neutral while waiting, reassured by the visible tracking updates."}; }
+    object em_decide "Emotion / decide" { kind: record; x_record: {"phase": "decide", "value": 4, "description": "Synthetic: pleased the decision arrived with clear evidence and no argument."}; }
+    object em_refund "Emotion / refund" { kind: record; x_record: {"phase": "refund", "value": 5, "description": "Synthetic: delighted the refund landed ahead of the promised date."}; }
+}
+
+view returns "Returns journey / synthetic" {
+    data: [@journey];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:panels; profile:"panels.journey@1"; columns:4; panels:[
+        {id:"phase-receive",title:"RECEIVE",row:0,column:0,rowspan:1,colspan:1,items:[@journey.ph_receive]},
+        {id:"phase-inspect",title:"INSPECT",row:0,column:1,rowspan:1,colspan:1,items:[@journey.ph_inspect]},
+        {id:"phase-decide",title:"DECIDE",row:0,column:2,rowspan:1,colspan:1,items:[@journey.ph_decide]},
+        {id:"phase-refund",title:"REFUND",row:0,column:3,rowspan:1,colspan:1,items:[@journey.ph_refund]},
+        {id:"actions-receive",title:"ACTIONS",row:1,column:0,rowspan:1,colspan:1,items:[@journey.act_receive]},
+        {id:"actions-inspect",title:"ACTIONS",row:1,column:1,rowspan:1,colspan:1,items:[@journey.act_inspect]},
+        {id:"actions-decide",title:"ACTIONS",row:1,column:2,rowspan:1,colspan:1,items:[@journey.act_decide]},
+        {id:"actions-refund",title:"ACTIONS",row:1,column:3,rowspan:1,colspan:1,items:[@journey.act_refund]},
+        {id:"touchpoints-receive",title:"TOUCHPOINTS",row:2,column:0,rowspan:1,colspan:1,items:[@journey.tp_receive]},
+        {id:"touchpoints-inspect",title:"TOUCHPOINTS",row:2,column:1,rowspan:1,colspan:1,items:[@journey.tp_inspect]},
+        {id:"touchpoints-decide",title:"TOUCHPOINTS",row:2,column:2,rowspan:1,colspan:1,items:[@journey.tp_decide]},
+        {id:"touchpoints-refund",title:"TOUCHPOINTS",row:2,column:3,rowspan:1,colspan:1,items:[@journey.tp_refund]},
+        {id:"opportunities-receive",title:"OPPORTUNITIES",row:3,column:0,rowspan:1,colspan:1,items:[@journey.opp_receive]},
+        {id:"opportunities-inspect",title:"OPPORTUNITIES",row:3,column:1,rowspan:1,colspan:1,items:[@journey.opp_inspect]},
+        {id:"opportunities-decide",title:"OPPORTUNITIES",row:3,column:2,rowspan:1,colspan:1,items:[@journey.opp_decide]},
+        {id:"opportunities-refund",title:"OPPORTUNITIES",row:3,column:3,rowspan:1,colspan:1,items:[@journey.opp_refund]},
+        {id:"emotions",title:"EMOTIONS (1..5)",row:4,column:0,rowspan:1,colspan:4,items:[@journey.em_receive, @journey.em_inspect, @journey.em_decide, @journey.em_refund]}]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

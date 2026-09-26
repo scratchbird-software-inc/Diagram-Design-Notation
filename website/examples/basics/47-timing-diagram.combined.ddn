@@ -1,0 +1,48 @@
+ddn "0.5";
+
+module "ddn.examples.timing";
+// Synthetic traffic-light timing for the uml.timing@1 profile.
+// One band per participant in declaration order; x_states entries are
+// {at, state} time points — "from `at` onward the participant is in `state`
+// until the next entry". Time is an abstract numeric axis (seconds here).
+// All data is synthetic. This is profile-level coverage, not UML conformance.
+data signals {
+    object controller "Controller" { kind: "application";
+        x_states: [{at: 0, state: "red"}, {at: 25, state: "green"}, {at: 55, state: "amber"}];
+    }
+    object pedestrian_signal "Pedestrian signal" { kind: "application";
+        x_states: [{at: 0, state: "wait"}, {at: 25, state: "walk"}, {at: 45, state: "wait"}];
+    }
+}
+
+view timing "Synthetic traffic lights / timing (seconds)" {
+    data: [@signals]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: timing; profile: "uml.timing@1"; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

@@ -1,0 +1,99 @@
+ddn "0.5";
+
+module "ddn.examples.crows-foot";
+// Synthetic orders/customers/invoices schema (all data invented) demonstrating the
+// erd.crowfoot@1 profile: every ref relation carries obligatory crow's-foot
+// source_mark/target_mark cardinality drawn from one, zeroone, many, zeromany.
+
+data sales {
+    object customer "Customer" {
+        kind: table;
+        fields {
+            field customer_id { key: primary; }
+            field display_name;
+        }
+    }
+    object purchase "Purchase" {
+        kind: table;
+        fields {
+            field purchase_id { key: primary; }
+            field customer_id;
+        }
+    }
+    object invoice "Invoice" {
+        kind: table;
+        fields {
+            field invoice_id { key: primary; }
+            field purchase_id;
+        }
+    }
+    object line "Invoice line" {
+        kind: table;
+        fields {
+            field line_id { key: primary; }
+            field invoice_id;
+        }
+    }
+    relation r_places "places" @customer -> @purchase {
+        kind: ref;
+        source_mark: one;
+        target_mark: zeromany;
+        enforcement: database;
+    }
+    relation r_billed "billed as" @purchase -> @invoice {
+        kind: ref;
+        source_mark: one;
+        target_mark: zeroone;
+        enforcement: database;
+    }
+    relation r_lists "lists" @invoice -> @line {
+        kind: ref;
+        source_mark: one;
+        target_mark: many;
+        enforcement: database;
+    }
+    relation r_customer_fk "purchase customer" @purchase.customer_id -> @customer.customer_id {
+        kind: ref;
+        source_mark: zeromany;
+        target_mark: one;
+        enforcement: database;
+    }
+}
+
+view erd "Synthetic sales / crow's-foot ERD" {
+    data: [@sales];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind:graph; profile:"erd.crowfoot@1"; }
+    // Organic placement spreads the four tables around the relation flow; the
+    // crow's-foot marks and relation labels carry the semantics, so the legend
+    // is switched off.
+    layout { algorithm: organic; }
+    chrome { legend: off; }
+    publication {size: content; fit: none; overflow: error;}
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

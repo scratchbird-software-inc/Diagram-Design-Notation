@@ -7,7 +7,7 @@ node ../../notation/cli/cli.js render basics/05-flow.ddn --workspace . --out /tm
 node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view raci --out /tmp/raci.svg
 ```
 
-- `basics/` — 73 numbered examples (01-customer … 73-iso-architecture)
+- `basics/` — 74 numbered examples (01-customer … 74-reusable-presets)
   plus shared modules (`shared.ddn`, `customer-data.ddn`). (The import-era
   `manifest.json` was removed in B1-010: it covered only examples 01–18,
   pointed at nonexistent `website/examples/rendered/` paths, was stamped
@@ -49,7 +49,14 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
   via the optional ddn-iso module (B1-034): extruded bar/donut/area/treemap
   charts with data-bound depth (`72-iso-charts.ddn`) and iso graph prisms with
   per-object heights (`73-iso-architecture.ddn`; hosts without ddn-iso.js render
-  the visible "Isometric view requires ddn-iso.js" placeholder).
+  the visible "Isometric view requires ddn-iso.js" placeholder), and reusable
+  named presets shared across views (`74-reusable-presets.ddn`).
+
+Files ending in `.combined.ddn` are generated combined single-file variants
+of the multi-file examples (B1-053): each is produced by the CLI `bundle`
+path from the original workspace, and the gallery build
+(`npm run build:gallery`) verifies it renders byte-identical SVG for every
+view the entry declares. Both authoring styles are kept side by side.
 - `projections/` — one model projected into RACI/CRUD/DFD/ERD/Chen/UML/etc.
   views (`model.ddn`, `views.ddn`, `formats.ddn`, `catalogue.json`).
 - `quality/` — quality/lifecycle/reporting examples (`model.ddn`,

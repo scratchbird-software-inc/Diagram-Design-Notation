@@ -1,0 +1,42 @@
+ddn "0.5";
+
+module "ddn.examples.documents";
+data model {
+    object profiles "Customer profiles" { kind: collection; fields { field customer_id; field address; field status { presence: optional; nullable: true; } } }
+    object address "Embedded address" { kind: document; fields { field street; field city; field postal_code; } }
+    object contacts "Contact array" { kind: array; fields { field kind; field value; } }
+    sample example "Absent is not null" { mode: synthetic; columns: [@profiles.customer_id, @profiles.status]; rows: [["C001", null], ["C002", missing]]; }
+    relation nested @profiles -> @address { kind: embeds; }
+    relation repeated @profiles -> @contacts { kind: embeds; }
+}
+view documents "Document structure / presence versus null" {
+    data: [@model]; format: @ddn.examples.shared.styles.technical;
+    legend { mode: numbers; keys: { "nested": 1, "repeated": 2 }; }
+
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

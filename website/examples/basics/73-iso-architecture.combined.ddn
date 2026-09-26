@@ -1,0 +1,52 @@
+ddn "0.5";
+
+module "ddn.examples.iso-architecture";
+// Isometric diagram nodes (B1-034, stage 2): iso: true on a graph view renders
+// every node as an extruded prism on an isometric ground plane; per-object
+// `depth` overrides the view depth (building heights differ). Relations are
+// routed flat by the ordinary engine and then projected onto the ground
+// plane — routing is never computed in 3D. All systems are synthetic.
+
+data platform {
+    object client "Client app" { kind: activity; depth: 14px; workload: "interactive"; }
+    object cdn "Edge CDN" { kind: queue; depth: 22px; workload: "edge"; }
+    object gateway "API gateway" { kind: topic; depth: 34px; workload: "serving"; }
+    object orders "Orders service" { kind: activity; depth: 46px; workload: "serving"; }
+    object ledger "Ledger store" { kind: table; depth: 58px; workload: "system-of-record"; }
+    relation r1 "HTTPS" @client -> @cdn { kind: flow; }
+    relation r2 "forwards" @cdn -> @gateway { kind: flow; }
+    relation r3 "routes" @gateway -> @orders { kind: flow; }
+    relation r4 "persists" @orders -> @ledger { kind: flow; }
+}
+
+view iso_map "Synthetic platform tiers / isometric" {
+    data: [@platform]; format: @ddn.examples.shared.styles.technical;
+    projection { kind:graph; profile:"ddn@1"; iso:true; depth:18px; }
+    publication { size: content; fit: none; overflow: warn; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

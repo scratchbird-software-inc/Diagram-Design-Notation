@@ -1,0 +1,66 @@
+ddn "0.5";
+
+module "ddn.usecases.views.migration";
+// How will the old representation become the new one?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "20 / Migration and target design" {
+    data: [@ddn.usecases.migration.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.migration.model.legacy, @ddn.usecases.migration.model.convert, @ddn.usecases.migration.model.target];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_extract": 1, "model.r_load": 2 }; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.migration";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object legacy "Customer / legacy" {
+        kind: table;
+        level: instance;
+        maturity: deprecated;
+        fields {
+            field id;
+            field full_name;
+        }
+    }
+    object convert "Map and reconcile" {
+        kind: activity;
+    }
+    object target "Customer / target" {
+        kind: table;
+        level: instance;
+        maturity: draft;
+        fields {
+            field customer_id;
+            field display_name;
+        }
+    }
+    relation r_extract @legacy -> @convert { kind: extract; }
+    relation r_load @convert -> @target { kind: load; }
+}

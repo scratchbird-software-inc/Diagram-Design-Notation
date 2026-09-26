@@ -1,0 +1,66 @@
+ddn "0.5";
+
+module "ddn.usecases.views.graph-schema";
+// Can a relationship have properties of its own?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "06 / Property-graph schema" {
+    data: [@ddn.usecases.graph.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.neo;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.graph.model.customer, @ddn.usecases.graph.model.purchased, @ddn.usecases.graph.model.product];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_source": 1, "model.r_target": 2 }; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.graph";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object customer "Customer node" {
+        kind: graph_node;
+        fields {
+            field customer_id;
+            field name;
+        }
+    }
+    object purchased "PURCHASED edge" {
+        kind: graph_edge;
+        fields {
+            field purchased_at;
+            field quantity;
+        }
+    }
+    object product "Product node" {
+        kind: graph_node;
+        fields {
+            field sku;
+            field title;
+        }
+    }
+    relation r_source "source node type" @customer -> @purchased { kind: assoc; }
+    relation r_target "target node type" @purchased -> @product { kind: assoc; }
+}

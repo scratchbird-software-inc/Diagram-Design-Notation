@@ -1,0 +1,54 @@
+ddn "0.5";
+
+module "ddn.usecases.views.governance";
+// Which contract applies, and who stewards it?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "17 / Data products and contracts" {
+    data: [@ddn.usecases.governance.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.governance.model.product, @ddn.usecases.governance.model.contract, @ddn.usecases.governance.model.team];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_contract": 1, "model.r_owner": 2 }; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}
+
+module "ddn.usecases.governance";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object product "Customer data product" {
+        kind: data_product;
+    }
+    object contract "Customer export contract" {
+        kind: dct;
+    }
+    object team "Customer data team" {
+        kind: team;
+    }
+    relation r_contract @product -> @contract { kind: contract; }
+    relation r_owner @contract -> @team { kind: steward; scope: "contract stewardship"; }
+}

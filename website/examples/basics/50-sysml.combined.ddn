@@ -1,0 +1,75 @@
+ddn "0.5";
+
+module "ddn.examples.sysml";
+// Synthetic SysML-style block views for the sysml.bdd@1 / sysml.ibd@1 /
+// sysml.parametric@1 profiles. Blocks are sysml.block objects; under the ibd
+// view they declare a ports {} group and a sysml.flow relation carries the
+// item ("water") between the typed ports pump.out and reservoir.in — the
+// renderer draws a small square at each port attachment on the block border.
+// The parametric view shows a sysml.constraint whose label carries the
+// formula text, bound to exactly two endpoints (the two blocks) via assoc
+// relations. All data is synthetic. This is profile-level coverage, not
+// SysML conformance.
+data m {
+    object pump "Pump" { kind: "sysml.block";
+        ports { port out { direction: out; } }
+    }
+    object reservoir "Reservoir" { kind: "sysml.block";
+        ports { port in { direction: in; } }
+    }
+    object flow_balance "{flow = pressure × area}" { kind: "sysml.constraint"; }
+
+    relation feeds "feeds" @pump -> @reservoir { kind: "assoc"; }
+    relation water "water" @pump.out -> @reservoir.in { kind: "sysml.flow"; }
+    relation bind_pump "binds pump" @flow_balance -> @pump { kind: "assoc"; }
+    relation bind_reservoir "binds reservoir" @flow_balance -> @reservoir { kind: "assoc"; }
+}
+
+view bdd "Pump station block definition" {
+    data: [@m]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "sysml.bdd@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    exclude: [@m.flow_balance];
+}
+
+view ibd "Pump station internal block" {
+    data: [@m]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "sysml.ibd@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    exclude: [@m.flow_balance];
+}
+
+view parametric "Pump station flow balance" {
+    data: [@m]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "sysml.parametric@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

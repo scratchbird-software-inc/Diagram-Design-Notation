@@ -1,0 +1,64 @@
+ddn "0.5";
+
+module "ddn.usecases.views.documents";
+// What is embedded rather than independently stored?
+// Automatic grid placement: no absolute positions or waypoints.
+view diagram "05 / Nested document structure" {
+    data: [@ddn.usecases.documents.model];
+    format: @ddn.usecases.formats.shared.technical;
+    style: @ddn.usecases.formats.shared.classic;
+    layout: @ddn.usecases.formats.shared.row;
+    select: [@ddn.usecases.documents.model.profiles, @ddn.usecases.documents.model.contacts, @ddn.usecases.documents.model.contact];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { "model.r_a": 1, "model.r_b": 2 }; }
+}
+
+module "ddn.usecases.documents";
+// All names, records and architectures in this catalogue are synthetic teaching examples.
+
+data model {
+    object profiles "Customer profile" {
+        kind: collection;
+        fields {
+            field customer_id;
+            field contacts { shape: array; }
+        }
+    }
+    object contacts "Contacts array" {
+        kind: array;
+        description: "Embedded collection value, not an independently stored table.";
+    }
+    object contact "Contact item" {
+        kind: document;
+        fields {
+            field kind;
+            field value;
+            field preferred { presence: optional; nullable: false; }
+        }
+    }
+    relation r_a @profiles -> @contacts { kind: emb; }
+    relation r_b "item shape" @contacts -> @contact { kind: mem; }
+}
+
+module "ddn.usecases.formats";
+format shared {
+    notation core;
+    style classic;
+    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    layout row { algorithm: grid; gap: 120px; }
+    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }
+    layout teaching { algorithm: manual; gap: 120px; }
+    display full;
+    display compact { fields: none; maturity: none; }
+    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }
+    legend numbered { mode: numbers; width: 340px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @row;
+        display: @full;
+        publication: @figure;
+        legend: @numbered;
+    }
+}

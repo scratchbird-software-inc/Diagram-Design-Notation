@@ -1,0 +1,46 @@
+ddn "0.5";
+
+module "ddn.examples.publication";
+data model {
+ object source "Order input" {kind: record; fields {field order_id;field amount;}}
+ object validated "Accepted order" {kind: record;fields {field order_id;field amount;}}
+ relation check "Validated input" @source -> @validated {kind: flow;}
+}
+view paper "A4 / explicit minimum text" {
+ data:[@model];format:@ddn.examples.shared.styles.technical;
+ layout {algorithm: layered;}
+ display {fields: none;}
+ legend {mode: numbers;keys: {check: 1};placement: bottom;}
+ publication {size: a4;orientation: landscape;fit: reflow;margin: 8mm;minimum_text: 7pt;overflow: error;}
+}
+view screen "Content-sized / same semantic model" {
+ data:[@model];format:@ddn.examples.shared.styles.technical;
+ layout {algorithm: layered;}
+ publication {size: content;fit: none;overflow: error;}
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

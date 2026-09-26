@@ -1,0 +1,350 @@
+ddn "0.5";
+
+module "meridian.procurement.views";
+view flowchart "01 / Purchasing control flow" {
+    data: [@meridian.procurement.review.process];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"flow.basic@1"; }
+
+}
+
+view responsibility_graph "02 / Shared responsibility assignments" {
+    data: [@meridian.procurement.review.process, @meridian.procurement.review.roles, @meridian.procurement.review.responsibilities];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"ddn@1"; }
+    select: [@meridian.procurement.review.process.order, @meridian.procurement.review.process.receive, @meridian.procurement.review.process.post, @meridian.procurement.review.roles.buyer, @meridian.procurement.review.roles.manager, @meridian.procurement.review.roles.warehouse, @meridian.procurement.review.roles.controller];
+
+}
+
+view raci "03 / Model-derived RACI" {
+    data: [@meridian.procurement.review.process, @meridian.procurement.review.roles, @meridian.procurement.review.responsibilities];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:matrix;profile:"matrix.raci@1";rows:[@meridian.procurement.review.process.order, @meridian.procurement.review.process.receive, @meridian.procurement.review.process.post];columns:[@meridian.procurement.review.roles.buyer, @meridian.procurement.review.roles.manager, @meridian.procurement.review.roles.warehouse, @meridian.procurement.review.roles.controller];relation:"analysis.assignment";value:"x_assignment.code"; }
+
+}
+
+view crud "04 / Model-derived CRUD" {
+    data: [@meridian.procurement.review.process, @meridian.procurement.review.schema, @meridian.procurement.review.access];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:matrix;profile:"matrix.crud@1";rows:[@meridian.procurement.review.process.order, @meridian.procurement.review.process.receive, @meridian.procurement.review.process.post];columns:[@meridian.procurement.review.schema.supplier, @meridian.procurement.review.schema.po, @meridian.procurement.review.schema.receipt];relation:"analysis.access";value:"x_assignment.code"; }
+
+}
+
+view dfd_gane "05 / Numbered Gane\u2013Sarson-style DFD" {
+    data: [@meridian.procurement.review.dfd];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"dfd.gane_sarson@1"; }
+
+}
+
+view dfd_yourdon "06 / Yourdon-style DFD" {
+    data: [@meridian.procurement.review.dfd];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"dfd.yourdon@1"; }
+
+}
+
+view structure "07 / Declared class / interface subset" {
+    data: [@meridian.procurement.review.classes];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"uml.structure@1"; }
+
+}
+
+view usecases "08 / Actor and use-case subset" {
+    data: [@meridian.procurement.review.usecases];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"uml.usecase@1"; }
+
+}
+
+view requirements "09 / Requirement traceability" {
+    data: [@meridian.procurement.review.requirements];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"requirements.basic@1"; }
+
+}
+
+view erd "10 / Entity-field representation" {
+    data: [@meridian.procurement.review.schema];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"ddn@1"; }
+
+}
+
+view chen "11 / Chen binary projection" {
+    data: [@meridian.procurement.review.schema];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chen;profile:"chen.basic@1"; }
+
+}
+
+view chart_bar "12 / Synthetic monthly value \u2014 bar" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:bar;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_line "13 / Synthetic monthly value \u2014 line" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:line;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_area "14 / Synthetic monthly value \u2014 area" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:area;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_pie "15 / Synthetic monthly value \u2014 pie" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:pie;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view chart_donut "16 / Synthetic monthly value \u2014 donut" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:donut;x:"x_record.month";y:"x_record.value";unit:"CAD";width:1120px;height:620px; }
+
+}
+
+view scatter "17 / Cost versus recorded value" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:point;x:"x_record.cost";x_type:number;y:"x_record.value";size:"x_record.count";unit:"CAD"; }
+
+}
+
+view time_series "18 / UTC monthly observations" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:chart;profile:"chart.basic@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];mark:line;x:"x_record.date";x_type:date;y:"x_record.value";unit:"CAD"; }
+
+}
+
+view record_table "19 / Shared observation table" {
+    data: [@meridian.procurement.review.facts];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:table;profile:"table.records@1";records:[@meridian.procurement.review.facts.m1, @meridian.procurement.review.facts.m2, @meridian.procurement.review.facts.m3, @meridian.procurement.review.facts.m4, @meridian.procurement.review.facts.m5, @meridian.procurement.review.facts.m6];columns:[{key:"x_record.month",label:"Month"},{key:"x_record.value",label:"Recorded value (CAD)"},{key:"x_record.cost",label:"Illustrative cost (CAD)"},{key:"x_record.count",label:"Count"}]; }
+
+}
+
+view decision_table "20 / Declarative decision-table presentation" {
+    data: [@meridian.procurement.review.rules];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:table;profile:"table.records@1";records:[@meridian.procurement.review.rules.rule1, @meridian.procurement.review.rules.rule2, @meridian.procurement.review.rules.rule3, @meridian.procurement.review.rules.rule4];columns:[{key:"x_record.priority",label:"Priority"},{key:"x_record.condition",label:"Condition"},{key:"x_record.action",label:"Expected action"}];width:1200px; }
+
+}
+
+view gantt "21 / Supplied-date procurement schedule" {
+    data: [@meridian.procurement.review.process, @meridian.procurement.review.schedule];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:timeline;profile:"timeline.basic@1";records:[@meridian.procurement.review.process.order, @meridian.procurement.review.process.receive, @meridian.procurement.review.process.post];start:"x_record.start";end:"x_record.end";dependencies:[@meridian.procurement.review.schedule.order_before_receive, @meridian.procurement.review.schedule.receive_before_post];width:1250px; }
+
+}
+
+view schedule_table "22 / Schedule source records" {
+    data: [@meridian.procurement.review.process];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:table;profile:"table.records@1";records:[@meridian.procurement.review.process.order, @meridian.procurement.review.process.receive, @meridian.procurement.review.process.post];columns:[{key:"name",label:"Task"},{key:"x_record.start",label:"Start UTC"},{key:"x_record.end",label:"End exclusive UTC"},{key:"x_record.status",label:"Status"}]; }
+
+}
+
+view swot "23 / Reusable SWOT panel template" {
+    data: [@meridian.procurement.review.notes];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:panels;profile:"panels.basic@1";columns:2;panels:[{id:"s",title:"STRENGTHS",row:0,column:0,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.strength]}, {id:"w",title:"WEAKNESSES",row:0,column:1,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.weakness]}, {id:"o",title:"OPPORTUNITIES",row:1,column:0,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.opportunity]}, {id:"t",title:"THREATS",row:1,column:1,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.threat]}]; }
+
+}
+
+view sipoc "24 / SIPOC from shared notes" {
+    data: [@meridian.procurement.review.notes];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:panels;profile:"panels.basic@1";columns:5;width:1650px;panels:[{id:"supplier",title:"SUPPLIER",row:0,column:0,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.supplier]}, {id:"inputs",title:"INPUTS",row:0,column:1,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.inputs]}, {id:"process",title:"PROCESS",row:0,column:2,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.process]}, {id:"outputs",title:"OUTPUTS",row:0,column:3,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.outputs]}, {id:"customers",title:"CUSTOMERS",row:0,column:4,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.customers]}]; }
+
+}
+
+view journey "25 / Service journey with spanning panels" {
+    data: [@meridian.procurement.review.notes];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:panels;profile:"panels.basic@1";columns:3;panels:[{id:"input",title:"INPUT AND EXPECTATION",row:0,column:0,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.inputs]}, {id:"p",title:"PROCESS",row:0,column:1,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.process]}, {id:"out",title:"OUTPUT",row:0,column:2,rowspan:1,colspan:1,items:[@meridian.procurement.review.notes.outputs]}, {id:"actor",title:"ACTOR EXPERIENCE",row:1,column:0,rowspan:1,colspan:3,items:[@meridian.procurement.review.notes.journey]}, {id:"verify",title:"VERIFICATION AND REVIEW",row:2,column:0,rowspan:1,colspan:3,items:[@meridian.procurement.review.notes.verification, @meridian.procurement.review.notes.review]}]; }
+
+}
+
+view matrix_general "26 / General relationship matrix" {
+    data: [@meridian.procurement.review.process, @meridian.procurement.review.roles, @meridian.procurement.review.responsibilities];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:matrix;profile:"matrix.relations@1";rows:[@meridian.procurement.review.process.order, @meridian.procurement.review.process.receive, @meridian.procurement.review.process.post];columns:[@meridian.procurement.review.roles.buyer, @meridian.procurement.review.roles.manager, @meridian.procurement.review.roles.warehouse, @meridian.procurement.review.roles.controller];relation:"analysis.assignment";value:"name"; }
+
+}
+
+view shape_atlas "27 / Composable semantic silhouettes" {
+    data: [@meridian.procurement.review.process, @meridian.procurement.review.usecases, @meridian.procurement.review.classes, @meridian.procurement.review.dfd];
+    format: @meridian.procurement.formats.shared.common;
+    projection { kind:graph;profile:"ddn@1"; }
+    select: [@meridian.procurement.review.process.start, @meridian.procurement.review.process.capture, @meridian.procurement.review.process.approve, @meridian.procurement.review.process.order, @meridian.procurement.review.process.invoice, @meridian.procurement.review.process.post, @meridian.procurement.review.usecases.buyer, @meridian.procurement.review.usecases.create, @meridian.procurement.review.classes.package, @meridian.procurement.review.classes.component, @meridian.procurement.review.dfd.match, @meridian.procurement.review.dfd.receipts];
+    layout {algorithm:grid;columns:3;gap:120px;row_gap:100px;}
+    display {relations:none;}
+
+}
+
+module "meridian.procurement.formats";
+format shared {
+    style standard;
+    layout logical {algorithm: layered;gap:140px;row_gap:130px;}
+    display readable {kind: none;badges:none;maturity:none;}
+    publication screen {size:content;fit:none;}
+    legend key {placement:none;}
+    bundle common {style:@standard;layout:@logical;display:@readable;publication:@screen;legend:@key;}
+}
+
+module "meridian.procurement.review";
+// One synthetic procurement model, reused by graph, matrix and time projections.
+data process {
+    object start "Purchase request" { kind: "flow.start"; }
+    object capture "Capture requested items" { kind: "flow.io"; }
+    object approve "Approval granted?" { kind: "flow.decision"; }
+    object order "Issue purchase order" {
+        kind: "flow.process";
+        x_record: { start: "2026-01-05", end: "2026-01-07", status: "Complete" };
+    }
+    object receive "Receive and inspect" {
+        kind: "flow.process";
+        x_record: { start: "2026-01-08", end: "2026-01-12", status: "Complete" };
+    }
+    object invoice "Matched supplier invoice" { kind: "flow.document"; }
+    object post "Post authorized liability" {
+        kind: "flow.subprocess";
+        x_record: { start: "2026-01-13", end: "2026-01-16", status: "Planned" };
+    }
+    object reject "Return for correction" { kind: "flow.process"; }
+    object close "Request closed" { kind: "flow.end"; }
+    relation p01 "Request" @start -> @capture { kind: "flow.next"; }
+    relation p02 "Submit" @capture -> @approve { kind: "flow.next"; }
+    relation p03 "Approved" @approve -> @order { kind: "flow.next"; x_diagram: { branch: "approved" }; }
+    relation p04 "Rejected" @approve -> @reject { kind: "flow.next"; x_diagram: { branch: "rejected" }; }
+    relation p05 "Receive" @order -> @receive { kind: "flow.next"; }
+    relation p06 "Match" @receive -> @invoice { kind: "flow.next"; }
+    relation p07 "Authorize" @invoice -> @post { kind: "flow.next"; }
+    relation p08 "Complete" @post -> @close { kind: "flow.next"; }
+    relation p09 "Notify requester" @reject -> @close { kind: "flow.next"; }
+}
+data roles {
+    object buyer "Buyer" { kind: "analysis.role"; }
+    object manager "Purchasing manager" { kind: "analysis.role"; }
+    object warehouse "Warehouse supervisor" { kind: "analysis.role"; }
+    object controller "Financial controller" { kind: "analysis.role"; }
+}
+data responsibilities {
+    relation order_r "Prepare order" @process.order -> @roles.buyer { kind: "analysis.assignment"; x_assignment: {code:"R"}; }
+    relation order_a "Approve purchase" @process.order -> @roles.manager { kind: "analysis.assignment"; x_assignment: {code:"A"}; }
+    relation receive_r "Accept goods" @process.receive -> @roles.warehouse { kind: "analysis.assignment"; x_assignment: {code:"R"}; }
+    relation receive_a "Own acceptance" @process.receive -> @roles.manager { kind: "analysis.assignment"; x_assignment: {code:"A"}; }
+    relation post_r "Prepare posting" @process.post -> @roles.buyer { kind: "analysis.assignment"; x_assignment: {code:"R"}; }
+    relation post_c "Provide receipt evidence" @process.post -> @roles.warehouse { kind: "analysis.assignment"; x_assignment: {code:"C"}; }
+    relation post_a "Own financial effect" @process.post -> @roles.controller { kind: "analysis.assignment"; x_assignment: {code:"A"}; }
+}
+data schedule {
+    relation order_before_receive "Order precedes receipt" @process.order -> @process.receive { kind: "analysis.precedes"; }
+    relation receive_before_post "Receipt precedes posting" @process.receive -> @process.post { kind: "analysis.precedes"; }
+}
+data schema {
+    object supplier "Supplier" { kind: entity; fields { field supplier_id { key: primary; } field name; } }
+    object po "Purchase order" { kind: entity; fields { field order_id { key: primary; } field approved_on; field total; } }
+    object receipt "Goods receipt" { kind: entity; fields { field receipt_id { key: primary; } field received_on; } }
+    relation supplied_by "Placed with" @po -> @supplier { kind: assoc; }
+    relation receipts_for "Fulfils" @receipt -> @po { kind: assoc; }
+}
+data access {
+    relation access_po "Create and read orders" @process.order -> @schema.po { kind: "analysis.access"; x_assignment: {code:"CR"}; }
+    relation access_supplier "Read suppliers" @process.order -> @schema.supplier { kind: "analysis.access"; x_assignment: {code:"R"}; }
+    relation access_receipt "Create receipts" @process.receive -> @schema.receipt { kind: "analysis.access"; x_assignment: {code:"C"}; }
+    relation access_match "Read receipts" @process.post -> @schema.receipt { kind: "analysis.access"; x_assignment: {code:"R"}; }
+    relation access_post "Read and update orders" @process.post -> @schema.po { kind: "analysis.access"; x_assignment: {code:"RU"}; }
+}
+data dfd {
+    object supplier "Supplier" { kind: "dfd.external"; }
+    object match "Match invoice" { kind: "dfd.process"; x_diagram: {number:"1.0",owner:"Accounts payable"}; }
+    object receipts "Accepted receipts" { kind: "dfd.store"; x_diagram: {number:"D1"}; }
+    object post "Post payable" { kind: "dfd.process"; x_diagram: {number:"2.0",owner:"Financial control"}; }
+    object ledger "Payables ledger" { kind: "dfd.store"; x_diagram: {number:"D2"}; }
+    object treasury "Treasury" { kind: "dfd.external"; }
+    relation a "Invoice" @supplier -> @match { kind: "dfd.data"; }
+    relation b "Receipt evidence" @receipts -> @match { kind: "dfd.data"; }
+    relation c "Matched obligation" @match -> @post { kind: "dfd.data"; }
+    relation d "Authorized posting" @post -> @ledger { kind: "dfd.data"; }
+    relation e "Payment request" @post -> @treasury { kind: "dfd.data"; }
+}
+data classes {
+    object order "PurchaseOrder" {
+        kind: "uml.class";
+        fields {
+            field id "id: OrderIdentifier" { x_member: {kind:"attribute",visibility:"private"}; }
+            field total "total: Money" { x_member: {kind:"attribute",visibility:"private"}; }
+            field approve "approve(actor): Decision" { x_member: {kind:"operation",visibility:"public"}; }
+            field cancel "cancel(reason): void" { x_member: {kind:"operation",visibility:"public"}; }
+        }
+    }
+    object audited "AuditedRecord" { kind: "uml.class"; fields {field version "version: Integer" { x_member:{kind:"attribute",visibility:"protected"}; }} }
+    object repo "OrderRepository" { kind: "uml.interface"; fields {field save "save(order): Result" {x_member:{kind:"operation",visibility:"public",abstract:true};}} }
+    object adapter "SqlOrderRepository" { kind: "uml.class"; fields {field save "save(order): Result" {x_member:{kind:"operation",visibility:"public"};}} }
+    object component "Purchasing service" { kind: "uml.component"; }
+    object package "Procurement" { kind: "uml.package"; }
+    relation base "Generalizes to" @order -> @audited { kind: "uml.generalization"; }
+    relation realization "Implements" @adapter -> @repo { kind: "uml.realization"; }
+    relation uses "Persists" @component -> @repo { kind: "uml.dependency"; }
+    relation dep "Depends on" @package -> @component { kind: "uml.dependency"; }
+}
+data usecases {
+    object buyer "Buyer" { kind: "uml.actor"; }
+    object create "Create purchase order" { kind: "uml.usecase"; }
+    object validate "Validate supplier" { kind: "uml.usecase"; }
+    object expedite "Expedite delivery" { kind: "uml.usecase"; }
+    relation uses "Participates" @buyer -> @create { kind: "uml.uses"; }
+    relation include "«include»" @create -> @validate { kind: "uml.include"; }
+    relation extend "«extend»" @expedite -> @create { kind: "uml.extend"; }
+}
+data requirements {
+    object approval "Authorized purchasing" { kind: "req.requirement"; x_diagram: {code:"REQ-01",text:"A purchase order must be approved by an authorized actor before issue."}; }
+    object matching "Evidence-backed posting" { kind: "req.requirement"; x_diagram: {code:"REQ-02",text:"Posting requires matched receipt and invoice evidence at an approved cutoff."}; }
+    object service "Purchasing command service" { kind: "req.implementation"; }
+    object test "Reject unapproved order" { kind: "req.test"; }
+    relation sat "Satisfies" @service -> @approval { kind: "req.satisfies"; }
+    relation verify "Verifies" @test -> @approval { kind: "req.verifies"; }
+    relation derive "Derived from" @matching -> @approval { kind: "req.derives"; }
+}
+
+data facts {
+    object m1 "Jan observation" { kind: record; x_record: {"month": "Jan", "date": "2026-01-01", "value": 420, "cost": 270, "count": 8, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m2 "Feb observation" { kind: record; x_record: {"month": "Feb", "date": "2026-02-01", "value": 570, "cost": 320, "count": 10, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m3 "Mar observation" { kind: record; x_record: {"month": "Mar", "date": "2026-03-01", "value": 510, "cost": 350, "count": 9, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m4 "Apr observation" { kind: record; x_record: {"month": "Apr", "date": "2026-04-01", "value": 690, "cost": 390, "count": 12, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m5 "May observation" { kind: record; x_record: {"month": "May", "date": "2026-05-01", "value": 810, "cost": 460, "count": 15, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+    object m6 "Jun observation" { kind: record; x_record: {"month": "Jun", "date": "2026-06-01", "value": 750, "cost": 480, "count": 14, "unit": "CAD", "description": "Synthetic monthly procurement value"}; }
+}
+data rules {
+    object rule1 "Rule 1" { kind: record; x_record: {"condition": "supplier inactive", "action": "Reject with supplier status message", "priority": 1}; }
+    object rule2 "Rule 2" { kind: record; x_record: {"condition": "approval absent", "action": "Request authorized approval", "priority": 2}; }
+    object rule3 "Rule 3" { kind: record; x_record: {"condition": "quantity exceeds tolerance", "action": "Hold for matching review", "priority": 3}; }
+    object rule4 "Rule 4" { kind: record; x_record: {"condition": "all guards pass", "action": "Post with immutable evidence reference", "priority": 4}; }
+}
+data notes {
+    object supplier "SUPPLIERS" { kind: note; description: "Approved suppliers provide invoice and delivery evidence."; }
+    object inputs "INPUTS" { kind: note; description: "Purchase authorization, item quantities and expected receipt."; }
+    object process "PROCESS" { kind: note; description: "Issue order; receive goods; match invoice; post liability."; }
+    object outputs "OUTPUTS" { kind: note; description: "Accepted receipt, approved obligation and audit reference."; }
+    object customers "CUSTOMERS" { kind: note; description: "Warehouse, accounts payable and the treasury team."; }
+    object strength "STRENGTHS" { kind: note; description: "Shared identifiers connect acceptance evidence to accounting."; }
+    object weakness "WEAKNESSES" { kind: note; description: "Supplier outages can delay acknowledgement and matching."; }
+    object opportunity "OPPORTUNITIES" { kind: note; description: "Publish purpose-scoped events for reconciliation."; }
+    object threat "THREATS" { kind: note; description: "Duplicate delivery, stale approval and unknown payment outcomes."; }
+    object journey "ACTOR EXPERIENCE" { kind: note; description: "Clear validation feedback and an actionable recovery path."; }
+    object verification "VERIFY" { kind: note; description: "Reconcile quantities and values at a named source cutoff."; }
+    object review "REVIEW NOTE" { kind: note; description: "This sample is a diagram/contract demonstration, not an implemented purchasing application."; }
+}

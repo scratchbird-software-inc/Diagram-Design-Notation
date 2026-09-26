@@ -40,7 +40,7 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
   background: #fff; border-bottom: 1px solid #dbe3ed; flex: none;
 }
 #ddn-toolbar[hidden] { display: none; }
-.ddn-brand { display: inline-flex; width: 22px; height: 22px; }
+.ddn-brand { display: inline-flex; width: 22px; height: 22px; text-decoration: none; color: inherit; }
 .ddn-brand svg { width: 22px; height: 22px; }
 .ddn-icon { padding: 5px; line-height: 0; }
 .ddn-icon svg { width: 16px; height: 16px; display: block; }
@@ -183,7 +183,7 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 </head>
 <body>
 <header id="ddn-toolbar">
-  <span class="ddn-brand" title="ScratchWeaver — DDN unified tool"><svg xmlns="http://www.w3.org/2000/svg" viewBox="1903.53 18.5 1169.15 1238.48">
+  <a class="ddn-brand" href="../index.html" title="ScratchWeaver — back to the project site"><svg xmlns="http://www.w3.org/2000/svg" viewBox="1903.53 18.5 1169.15 1238.48">
 <g
        id="g3989"><path
          style="fill:#0c75bd;fill-opacity:1;stroke-width:1"
@@ -228,7 +228,7 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
          style="fill:#ffffff;stroke:#ffffff;stroke-width:1"
          d="m 2875.3048,301.10117 c 4.9508,-2.56017 9.1982,-9.30276 9.1982,-14.60193 0,-5.40456 -4.2766,-12.05691 -9.4814,-14.74839 -10.3673,-5.36116 -23.842,2.65837 -23.842,14.18975 0,13.28825 12.5252,21.1592 24.1252,15.16057 z"
          id="path406" /></g>
-</svg></span>
+</svg></a>
   <select id="ddn-view-picker" aria-label="View"></select>
   <span class="ddn-sep" data-drawer-icons></span>
   <button id="ddn-icon-files" class="ddn-icon" type="button" data-drawer="files" title="Files drawer — open, catalogue, workspace I/O (left)">

@@ -1,0 +1,82 @@
+ddn "0.5";
+
+module "ddn.examples.c4-views";
+// Synthetic online-shop workspace for the C4-style profiles. All data is synthetic.
+data shop {
+    object customer "Customer" { kind: "c4.person"; }
+    object site "Online shop" { kind: "c4.system"; }
+    object mailer "Notification service" { kind: "c4.system"; }
+    object web "Web application" { kind: "c4.container"; }
+    object db "Orders database" { kind: "c4.store"; }
+    object events "Order events" { kind: "c4.queue"; }
+    object checkout "Checkout component" { kind: "c4.component"; }
+    object cart "Cart component" { kind: "c4.component"; }
+    relation browses "Browses and buys" @customer -> @site { kind: "c4.rel"; }
+    relation notifies "Sends notifications" @site -> @mailer { kind: "c4.rel"; }
+    relation visits @customer -> @web { kind: "c4.rel"; }
+    relation orders "Reads/writes orders" @web -> @db { kind: "c4.rel"; }
+    relation publishes "Publishes order events" @web -> @events { kind: "c4.rel"; }
+    relation persists @checkout -> @db { kind: "c4.rel"; }
+    relation uses "Uses" @cart -> @checkout { kind: "c4.rel"; }
+}
+
+format options {
+    layout c4ctx { algorithm: layered; }
+    layout c4grid { algorithm: grid; }
+    layout c4layered { algorithm: layered; }
+}
+
+view context "Synthetic shop / C4 context" {
+    data: [@shop]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "c4.context@1"; }
+    select: [@shop.customer, @shop.site, @shop.mailer];
+    display { fields: none; }
+    layout: @options.c4ctx;
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view container "Synthetic shop / C4 container" {
+    data: [@shop]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "c4.container@1"; }
+    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];
+    display { fields: none; }
+    layout: @options.c4grid;
+    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view component "Synthetic shop / C4 component" {
+    data: [@shop]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "c4.component@1"; }
+    select: [@shop.customer, @shop.web, @shop.checkout, @shop.cart, @shop.db];
+    display { fields: none; }
+    layout: @options.c4layered;
+    frame container_boundary { scope: @shop.web; members: [@shop.checkout, @shop.cart]; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

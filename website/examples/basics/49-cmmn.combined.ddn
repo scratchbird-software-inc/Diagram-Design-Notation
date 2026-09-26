@@ -1,0 +1,54 @@
+ddn "0.5";
+
+module "ddn.examples.cmmn";
+// Synthetic CMMN-style case diagram for the cmmn.basic@1 profile.
+// A stage is a cmmn.stage object plus a view frame whose scope resolves to it
+// and whose members are the stage's plan items. Sentries are cmmn.sentry
+// diamonds declared as members of the stage frame, typed by
+// x_sentry:{on:"entry"|"exit"}. Milestones are rounded cmmn.milestone nodes;
+// tasks reuse analysis.task; ordering uses analysis.precedes. All data is
+// synthetic. This is profile-level coverage, not CMMN conformance.
+data claim {
+    object review "Review" { kind: "cmmn.stage"; }
+    object gather_documents "Gather documents" { kind: "analysis.task"; }
+    object assess_claim "Assess claim" { kind: "analysis.task"; }
+    object docs_received "Docs received?" { kind: "cmmn.sentry"; x_sentry: { "on": "entry" }; }
+    object claim_decided "Claim decided" { kind: "cmmn.milestone"; }
+
+    relation order "order" @gather_documents -> @assess_claim { kind: "analysis.precedes"; }
+    relation done "done" @assess_claim -> @claim_decided { kind: "assoc"; }
+}
+
+view case "Claim handling" {
+    data: [@claim]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "cmmn.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    frame review_frame "Review" { scope: @claim.review; members: [@claim.gather_documents, @claim.assess_claim, @claim.docs_received]; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

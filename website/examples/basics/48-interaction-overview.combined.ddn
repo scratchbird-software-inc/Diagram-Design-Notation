@@ -1,0 +1,81 @@
+ddn "0.5";
+
+module "ddn.examples.interactionoverview";
+// Synthetic checkout interaction overview for the uml.interaction_overview@1
+// profile. The `overview` view is a flowchart whose `pay` and `ship` steps
+// reference the detail views `payment_flow` and `stock_flow` declared in the
+// same file, via x_subdiagram:{view:"<local view id>"} — a plain string, not
+// a @-reference. Referenced views are not expanded inline (reference
+// semantics only). All edges are flow.next. All data is synthetic.
+// This is profile-level coverage, not UML conformance.
+data checkout {
+    object start "Start" { kind: "flow.start"; }
+    object browse "Browse catalogue" { kind: "flow.process"; }
+    object pay "Pay" { kind: "flow.process"; x_subdiagram: { view: "payment_flow" }; }
+    object ship "Ship order" { kind: "flow.process"; x_subdiagram: { view: "stock_flow" }; }
+    object end "End" { kind: "flow.end"; }
+
+    relation to_browse "to browse" @start -> @browse { kind: "flow.next"; }
+    relation to_pay "to pay" @browse -> @pay { kind: "flow.next"; }
+    relation to_ship "to ship" @pay -> @ship { kind: "flow.next"; }
+    relation to_end "to end" @ship -> @end { kind: "flow.next"; }
+}
+
+data payment {
+    object authorize "Authorize card" { kind: "flow.process"; }
+    object capture "Capture funds" { kind: "flow.process"; }
+    relation authorized "authorized" @authorize -> @capture { kind: "flow.next"; }
+}
+
+data stock {
+    object reserve "Reserve stock" { kind: "flow.process"; }
+    object dispatch "Dispatch parcel" { kind: "flow.process"; }
+    relation reserved "reserved" @reserve -> @dispatch { kind: "flow.next"; }
+}
+
+view overview "Checkout interaction overview" {
+    data: [@checkout]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "uml.interaction_overview@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view payment_flow "Payment flow detail" {
+    data: [@payment]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "ddn@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+view stock_flow "Stock flow detail" {
+    data: [@stock]; format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "ddn@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}
