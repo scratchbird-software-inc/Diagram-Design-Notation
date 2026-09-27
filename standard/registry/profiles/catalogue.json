@@ -2299,7 +2299,6 @@
         "XMI",
         "OCL",
         "full UML type/parameter model",
-        "assembly/delegation connectors (B1-059 scope)",
         "formal UML conformance"
       ]
     },
@@ -2318,6 +2317,7 @@
         "middleware-specific deployment models",
         "artifact content descriptors",
         "topology discovery",
+        "communication-path protocol vocabulary",
         "formal UML conformance"
       ]
     },
@@ -3395,6 +3395,7 @@
         "activity execution semantics",
         "object-flow type checking",
         "expansion-region collections",
+        "parameter-set boxing (cosmetic grouping)",
         "formal UML conformance"
       ]
     },

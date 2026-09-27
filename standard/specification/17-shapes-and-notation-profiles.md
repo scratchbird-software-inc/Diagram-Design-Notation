@@ -45,7 +45,7 @@ Implemented links are association, generalization, realization and dependency. G
 - **Generalization sets** group `uml.generalization` relations by `x_genset.name` sharing one target and render the `{disjoint|overlapping, complete|incomplete}` constraint label at the shared target end (`DDN-PJ152`).
 - **Templates** draw the dashed parameter signature box on the top-right corner of a `uml.class`/`uml.interface` (`x_template: { parameters: […] }`, `DDN-PJ153`).
 - **Enumerations** use the `uml.enumeration` kind with a «enumeration» header and LITERALS compartment; members declare `x_member: { kind: literal }` (`DDN-PJ154`).
-- **Provided/required interfaces** are the `uml.provided` (lollipop at the interface end) and `uml.required` (socket at the class end) relations between classes/components and interfaces. Assembly ball-and-socket pairing across ports is component-diagram scope (B1-059), not claimed here.
+- **Provided/required interfaces** are the `uml.provided` (lollipop at the interface end) and `uml.required` (socket at the class end) relations between classes/components and interfaces. Assembly ball-and-socket connectors across ports are covered by `uml.composite@1` (§17.9).
 - **Member adornments**: `x_member` grows `derived` (leading `/`), `multiplicity` (`[0..*]`) and `modifiers` (`{ordered}`, `{unique}`, `{readOnly}` property strings).
 
 XMI/OCL exchange and the full UML type/parameter metamodel remain outside the profile, as declared in the registry.

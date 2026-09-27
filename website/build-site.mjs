@@ -426,7 +426,7 @@ writeOut('index.html', shell({
     homeCards.map(([href, h, p, small]) =>
       '    <a class="card" href="' + href + '"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p><small>' + esc(small) + '</small></a>').join('\n') +
     '\n  </div>\n</section>\n' +
-    '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families (RFC-119…125) with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>\n' +
+    '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>\n' +
     '</main>\n' +
     '<script>\n' + runtime + '\n</' + 'script>\n' +
     '<script>\n' + demoScript + '\n</' + 'script>\n',
@@ -447,7 +447,7 @@ writeOut('features/index.html', page('../', 'features', 'Features — DDN',
   '<div class="grid">\n' +
   FEATURES.map(([h, p]) => '  <div class="card"><h3>' + h + '</h3><p>' + p + '</p></div>').join('\n') +
   '\n</div>\n' +
-  '<p><a class="cta primary" href="../tools/index.html?mode=design">Open the designer</a> <a class="cta secondary" href="../gallery/index.html#corpus">Browse the examples in the gallery</a></p>'));
+  '<p><a class="cta primary" href="uml.html">UML 2.5.1: all fourteen diagram families</a> <a class="cta secondary" href="../tools/index.html?mode=design">Open the designer</a> <a class="cta secondary" href="../gallery/index.html#corpus">Browse the examples in the gallery</a></p>'));
 
 // Tools landing: the unified tool itself is served at /tools/index.html (B1-027
 // D6); sister tools are linked from the homepage cards and this jump strip is
@@ -465,6 +465,32 @@ function docList(absDir, outDir, base) {
   }
   return '<ul>\n' + items.map(([rel, t]) => '  <li><a href="' + base + rel + '">' + esc(t) + '</a></li>').join('\n') + '\n</ul>';
 }
+// UML support page (B1-062): per-family detail, generated profile counts.
+const UML_FAMILIES = [
+  ['Class', 'uml.structure@2', 'uml-structure-2', 'basics-75-uml-class-complete', 'Types, attributes and operations with visibility, multiplicity and role names on association ends, aggregation and composition diamonds, navigability arrows, qualifiers, association classes, n-ary associations, generalization sets, templates, enumerations, derived members, and provided/required interfaces.'],
+  ['Object', 'uml.object@2', 'uml-object-2', 'basics-81-uml-remainder', 'Instances with underlined name : Classifier titles, slot values checked against the classifier\u2019s datatypes, and instance links with multiplicity labels.'],
+  ['Package', 'uml.structure@2', 'uml-structure-2', 'basics-81-uml-remainder', 'Package boxes with nesting, «import» / «access» / «merge» dependencies, and +/\u2212 visibility on packaged elements.'],
+  ['Deployment', 'uml.deployment@1', 'uml-deployment-1', 'basics-78-uml-deployment', 'Nodes, devices and execution environments as 3D boxes, artifacts as document icons, «deploy» and «manifest» dependencies, and communication paths with multiplicity.'],
+  ['Composite structure', 'uml.composite@1', 'uml-composite-1', 'basics-79-uml-composite', 'Parts inside classifiers (role: Type [multiplicity] rows), ports on boundaries, and connectors with role names and multiplicity.'],
+  ['Component', 'uml.composite@1', 'uml-composite-1', 'basics-79-uml-composite', 'Components with ports, assembly ball-and-socket connectors, delegation connectors, and provided/required lollipop-and-socket interfaces.'],
+  ['Use case', 'uml.usecase@3', 'uml-usecase-3', 'basics-81-uml-remainder', 'Actors, use-case ellipses with extension points, subject boundaries, include/extend/generalization, and extend conditions on the edge label.'],
+  ['Activity', 'uml.activity@2', 'uml-activity-2', 'basics-80-uml-activity', 'Actions, decisions vs merges, fork/join bars, object nodes, swimlanes, pins with parameter sets and streaming, send/accept signal pentagons, time events, flow final, interruptible and structured regions, exception handlers, and connector circles.'],
+  ['State machine', 'uml.statemachine@1', 'uml-statemachine-1', 'basics-77-uml-statemachine-complete', 'States with entry/exit/do activities and internal transitions, history (H/H*), junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, trigger [guard] / effect transitions, submachines, time events, composite states and parallel regions.'],
+  ['Sequence', 'uml.sequence@2', 'uml-sequence-2', 'basics-76-uml-sequence-complete', 'Lifelines with combined fragments (alt/opt/loop/break/par and friends, nested, with guards), gates, creation and destruction, synchronous/asynchronous arrowheads, replies, lost/found messages, execution bars, time/duration constraints, and state invariants.'],
+  ['Communication', 'uml.communication@2', 'uml-communication-2', 'basics-81-uml-remainder', 'Numbered messages on a graph layout, combined fragments around message groups, and {time}/{duration} constraints.'],
+  ['Timing', 'uml.timing@2', 'uml-timing-2', 'basics-81-uml-remainder', 'State bands per lifeline with duration/slew annotations, time/duration constraints, state compaction, and messages between lifelines.'],
+  ['Interaction overview', 'uml.interaction_overview@2', 'uml-interaction-overview-2', 'basics-81-uml-remainder', 'A flowchart of whole interactions: referenced interactions expand inline inside their node, with interaction-use gates and arguments.'],
+  ['Profile', 'uml.profile@1', 'uml-profile-1', 'basics-81-uml-remainder', 'Metaclasses and stereotypes with compartments, the filled-triangle extension arrow, and «apply» profile application between packages.'],
+];
+const umlCards = UML_FAMILIES.map(([name, profile, plate, corpus, blurb]) =>
+  '  <div class="card"><h3>' + name + ' <small><code>' + profile + '</code></small></h3><p>' + blurb + '</p>' +
+  '<p><a href="../gallery/profiles/' + plate + '.svg">Profile plate</a> · <a href="../gallery/corpus/' + corpus + '.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>').join('\n');
+writeOut('features/uml.html', page('../', 'features', 'UML 2.5.1 diagram support — DDN',
+  '<h1 class="page-title">UML 2.5.1 — all fourteen diagram families</h1>\n' +
+  '<p class="lede">Every UML 2.5.1 diagram family ships as a named, tested DDN profile. One end-to-end example per family is checked and rendered by the test suite. The known exclusions — no XMI/OCL exchange, no executable behavior, no conformance certification — are listed in plain language on the <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/UML-not-supported">wiki exclusions page</a>.</p>\n' +
+  '<div class="grid">\n' + umlCards + '\n</div>\n' +
+  '<p><a class="cta primary" href="../tools/index.html?mode=design">Open the designer</a> <a class="cta secondary" href="../gallery/index.html">Browse the gallery</a></p>'));
+
 writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
   '<h1 class="page-title">Documentation</h1>\n' +
   '<p class="lede">Developer documentation for embedding, the workspace API, styling hooks, data refresh, and authoring .ddn sources — rendered from the Markdown in <code>website/docs/</code>.</p>\n' +
@@ -474,7 +500,7 @@ writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
 // Standard landing.
 writeOut('standard/index.html', page('../', 'standard', 'The DDN standard — DDN',
   '<h1 class="page-title">The Diagram Design Notation standard</h1>\n' +
-  '<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families (RFC-119…125) with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>\n' +
+  '<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>\n' +
   '<h2>Specification (' + SPEC_CHAPTER_COUNT + ' chapters)</h2>\n' +
   docList(path.join(REPO, 'standard/specification'), 'standard/specification', 'specification/') +
   '<h2>Governance</h2>\n' +

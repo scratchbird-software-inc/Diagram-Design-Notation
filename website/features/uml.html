@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UML 2.5.1 diagram support — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html" class="active">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<h1 class="page-title">UML 2.5.1 — all fourteen diagram families</h1>
+<p class="lede">Every UML 2.5.1 diagram family ships as a named, tested DDN profile. One end-to-end example per family is checked and rendered by the test suite. The known exclusions — no XMI/OCL exchange, no executable behavior, no conformance certification — are listed in plain language on the <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/UML-not-supported">wiki exclusions page</a>.</p>
+<div class="grid">
+  <div class="card"><h3>Class <small><code>uml.structure@2</code></small></h3><p>Types, attributes and operations with visibility, multiplicity and role names on association ends, aggregation and composition diamonds, navigability arrows, qualifiers, association classes, n-ary associations, generalization sets, templates, enumerations, derived members, and provided/required interfaces.</p><p><a href="../gallery/profiles/uml-structure-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-75-uml-class-complete.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Object <small><code>uml.object@2</code></small></h3><p>Instances with underlined name : Classifier titles, slot values checked against the classifier’s datatypes, and instance links with multiplicity labels.</p><p><a href="../gallery/profiles/uml-object-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Package <small><code>uml.structure@2</code></small></h3><p>Package boxes with nesting, «import» / «access» / «merge» dependencies, and +/− visibility on packaged elements.</p><p><a href="../gallery/profiles/uml-structure-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Deployment <small><code>uml.deployment@1</code></small></h3><p>Nodes, devices and execution environments as 3D boxes, artifacts as document icons, «deploy» and «manifest» dependencies, and communication paths with multiplicity.</p><p><a href="../gallery/profiles/uml-deployment-1.svg">Profile plate</a> · <a href="../gallery/corpus/basics-78-uml-deployment.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Composite structure <small><code>uml.composite@1</code></small></h3><p>Parts inside classifiers (role: Type [multiplicity] rows), ports on boundaries, and connectors with role names and multiplicity.</p><p><a href="../gallery/profiles/uml-composite-1.svg">Profile plate</a> · <a href="../gallery/corpus/basics-79-uml-composite.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Component <small><code>uml.composite@1</code></small></h3><p>Components with ports, assembly ball-and-socket connectors, delegation connectors, and provided/required lollipop-and-socket interfaces.</p><p><a href="../gallery/profiles/uml-composite-1.svg">Profile plate</a> · <a href="../gallery/corpus/basics-79-uml-composite.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Use case <small><code>uml.usecase@3</code></small></h3><p>Actors, use-case ellipses with extension points, subject boundaries, include/extend/generalization, and extend conditions on the edge label.</p><p><a href="../gallery/profiles/uml-usecase-3.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Activity <small><code>uml.activity@2</code></small></h3><p>Actions, decisions vs merges, fork/join bars, object nodes, swimlanes, pins with parameter sets and streaming, send/accept signal pentagons, time events, flow final, interruptible and structured regions, exception handlers, and connector circles.</p><p><a href="../gallery/profiles/uml-activity-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-80-uml-activity.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>State machine <small><code>uml.statemachine@1</code></small></h3><p>States with entry/exit/do activities and internal transitions, history (H/H*), junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, trigger [guard] / effect transitions, submachines, time events, composite states and parallel regions.</p><p><a href="../gallery/profiles/uml-statemachine-1.svg">Profile plate</a> · <a href="../gallery/corpus/basics-77-uml-statemachine-complete.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Sequence <small><code>uml.sequence@2</code></small></h3><p>Lifelines with combined fragments (alt/opt/loop/break/par and friends, nested, with guards), gates, creation and destruction, synchronous/asynchronous arrowheads, replies, lost/found messages, execution bars, time/duration constraints, and state invariants.</p><p><a href="../gallery/profiles/uml-sequence-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-76-uml-sequence-complete.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Communication <small><code>uml.communication@2</code></small></h3><p>Numbered messages on a graph layout, combined fragments around message groups, and {time}/{duration} constraints.</p><p><a href="../gallery/profiles/uml-communication-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Timing <small><code>uml.timing@2</code></small></h3><p>State bands per lifeline with duration/slew annotations, time/duration constraints, state compaction, and messages between lifelines.</p><p><a href="../gallery/profiles/uml-timing-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Interaction overview <small><code>uml.interaction_overview@2</code></small></h3><p>A flowchart of whole interactions: referenced interactions expand inline inside their node, with interaction-use gates and arguments.</p><p><a href="../gallery/profiles/uml-interaction-overview-2.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+  <div class="card"><h3>Profile <small><code>uml.profile@1</code></small></h3><p>Metaclasses and stereotypes with compartments, the filled-triangle extension arrow, and «apply» profile application between packages.</p><p><a href="../gallery/profiles/uml-profile-1.svg">Profile plate</a> · <a href="../gallery/corpus/basics-81-uml-remainder.svg">Example</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-UML">Wiki guide</a></p></div>
+</div>
+<p><a class="cta primary" href="../tools/index.html?mode=design">Open the designer</a> <a class="cta secondary" href="../gallery/index.html">Browse the gallery</a></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>
