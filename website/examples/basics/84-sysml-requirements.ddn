@@ -1,0 +1,52 @@
+ddn "0.5";
+module "ddn.examples.sysmlreq";
+
+// B1-065: SysML 1.6 requirements and package diagrams — requirements with
+// id/text compartments, a test case, the seven requirement dependencies
+// («deriveReqt», «satisfy», «verify», «refine», «trace», «copy», «master»),
+// composition containment, «allocate», and a package view with import/merge.
+// All data is synthetic.
+
+data reqs {
+    object perf "Pump performance" { kind: "req.requirement"; x_diagram: { code: "R-1"; text: "The pump shall sustain 40 L/min at 2 bar outlet pressure." }; }
+    object resp "Response time" { kind: "req.requirement"; x_diagram: { code: "R-1.1"; text: "The pump shall reach rated flow within 500 ms of start." }; }
+    object safe "Safety" { kind: "req.requirement"; x_diagram: { code: "R-2"; text: "The pump shall shut down on reservoir empty." }; }
+    object safeMaster "Safety (master)" { kind: "req.requirement"; x_diagram: { code: "PLANT-9"; text: "Plant equipment shall shut down on dry-run detection." }; }
+    object tc "Rated-flow test" { kind: "sysml.testcase"; }
+    object pump "Pump" { kind: "sysml.block"; }
+    object ctrl "Pump controller" { kind: "sysml.block"; }
+
+    relation derive "" @resp -> @perf { kind: "sysml.derive"; }
+    relation satisfy "" @pump -> @perf { kind: "sysml.satisfy"; }
+    relation satisfy2 "" @ctrl -> @resp { kind: "sysml.satisfy"; }
+    relation verify "" @tc -> @perf { kind: "sysml.verify"; }
+    relation refine "" @ctrl -> @resp { kind: "sysml.refine"; }
+    relation trace "" @safe -> @perf { kind: "sysml.trace"; }
+    relation copy "" @safe -> @safeMaster { kind: "sysml.copy"; }
+    relation master "" @safe -> @safeMaster { kind: "sysml.master"; }
+    relation contains "" @perf -> @resp { kind: "sysml.composition"; }
+    relation alloc "" @tc -> @pump { kind: "sysml.allocate"; }
+}
+
+data pkgs {
+    object plant "Plant model" { kind: "uml.package"; }
+    object pumps "Pump library" { kind: "uml.package"; }
+    object safety "Safety library" { kind: "uml.package"; }
+    relation imp "" @plant -> @pumps { kind: "uml.import"; }
+    relation mrg "" @pumps -> @safety { kind: "uml.merge"; }
+    relation acc "" @plant -> @safety { kind: "uml.access"; }
+}
+
+view requirements "Pump requirements" {
+    data: [@reqs];
+    projection { profile: "sysml.requirements@1"; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; }
+}
+
+view packages "Model packages" {
+    data: [@pkgs];
+    projection { profile: "sysml.package@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}

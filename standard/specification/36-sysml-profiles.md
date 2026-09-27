@@ -93,3 +93,60 @@ SysML XMI interchange, full SysML conformance, compartment typing beyond
 field rows, flow property propagation, and equation solving or evaluation
 are unsupported (recorded in the profile catalogue and
 `capabilities.json`).
+
+# 36a. SysML 1.6 full notation (nine profiles)
+
+Status: implemented in runtime 0.7.0, governed by RFC-128
+(`standard/governance/rfcs/RFC-128-sysml-compliance.md`). `sysml.bdd@1`,
+`sysml.ibd@1` and `sysml.parametric@1` stay installed and immutable; their
+fixtures render byte-identically.
+
+- **Requirements diagram** (`sysml.requirements@1`) — `req.requirement` (the
+  «requirement» id/text compartment rendering already shipped with
+  `requirements.basic@1`) plus the new `sysml.testcase` kind («testCase») and
+  seven dashed dependency relations whose labels are the guillemet keywords:
+  `sysml.derive` («deriveReqt»), `sysml.satisfy`, `sysml.verify`,
+  `sysml.refine`, `sysml.trace`, `sysml.copy`, `sysml.master`. Endpoint rules
+  validate as `DDN-PJ185` (verify from a test case, satisfy from a block,
+  derive/copy/master between requirements). Containment via
+  `sysml.composition` (filled diamond at the whole); «allocate» is
+  `sysml.allocate` between any two distinct elements.
+- **BDD@2** — `sysml.block` gains a «block» keyword header and named
+  compartments: fields carry `x_block: { compartment: values|parts|
+  references|operations|constraints }` (`DDN-PJ186` on other owners). Value
+  rows display units from `x_unit: { unit: "L/min" }`, resolved against the
+  new units registry `standard/registry/units.json` (~40 SI/derived units
+  with symbol, name, quantity kind; `DDN-PJ188` on unknown symbols or
+  quantity mismatches). Composition (`sysml.composition`) and generalization
+  (`uml.generalization`) connect block-family kinds (`DDN-PJ190`). New kinds:
+  `sysml.valuetype` («valueType»), `sysml.interfaceblock` («interfaceBlock»),
+  `sysml.flowspec` («flowSpecification»; flow properties are `ports {}`
+  members with direction — the @2 profiles admit ports on interface blocks
+  and flow specifications, `DDN-PJ121`).
+- **IBD@2** — port members carry `x_port: { type: proxy|full, conjugated?,
+  multiplicity?, nested? }`: the renderer draws the full port filled, the
+  proxy port hollow, a `~` for conjugation, a `[1..2]` multiplicity label and
+  nested ports as sub-squares on the port square (`DDN-PJ187`). Item flows
+  keep the `sysml.flow` verb; endpoints are blocks or their ports
+  (`DDN-PJ191`).
+- **Parametric@2** — the exactly-two-bindings rule (`DDN-PJ122`) stays the
+  `@1` contract; `@2` admits one or more bindings (`DDN-PJ189` on zero) and
+  renders constraint parameters as a compartment with units.
+- **Package diagram** (`sysml.package@1`) — thin over `uml.package` with
+  `uml.import`/`uml.access`/`uml.merge`.
+- **Behavioral rebadges** — `sysml.usecase@1`, `sysml.activity@1`,
+  `sysml.sequence@1`, `sysml.statemachine@1` alias the completed
+  `uml.usecase@3`/`uml.activity@2`/`uml.sequence@2`/`uml.statemachine@1`
+  machinery (validators and renderer fire for the SysML ids; an info
+  diagnostic `DDN-PJW06` records the rebadge). SysML-specific extension:
+  `x_flow: { rate?, probability?, continuous? }` on `uml.flow` edges under
+  `sysml.activity@1` renders `{rate = 10 L/min, continuous, probability =
+  0.9}` on the edge label (`DDN-PJ191` elsewhere); streaming pins reuse
+  `x_pin`.
+
+Fixtures: `website/examples/basics/84-sysml-requirements.ddn`,
+`85-sysml-blocks.ddn`, `86-sysml-behavioral.ddn`; tests
+`notation/tests/sysml-compliance.js` + the `sysml-showcase.js` sweep (one
+check+render per family). Out of scope, declared in the profiles: SysML XMI
+interchange, SysML 2.0, constraint/flow-property evaluation, formal OMG
+certification.

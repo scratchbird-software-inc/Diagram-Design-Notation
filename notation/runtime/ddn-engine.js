@@ -21,11 +21,18 @@ function placeholder(ir,kind){
  const scene={width:pageW,height:pageH,smallestText:11,scale:1,origin:[0,0],nodes:[],routes:[],crossings:[],frames:[],subdiagrams:[],marks:[],projection:{kind,profile:p.projection?.profile||'',sourceIds:[],quantitative:false},drawingBounds:{x:bx,y:by,w:bw,h:bh},drawingArea:{x:margin,y:margin,w:pageW-2*margin,h:pageH-2*margin},textMeasurement:{mode:'estimated',requestedFont:p.style?.font||'sans'},placeholder:bundle};
  return{svg,scene,diagnostics:[...(ir.diagnostics||[]),diag],_ir:ir};
 }
-function render(ir,registry,glyphs,options={}){if(['state.flat@1','state.composite@1','uml.statemachine@1'].includes(ir.view.profiles.projection.profile)){
+function render(ir,registry,glyphs,options={}){/* B1-065 (RFC-128): SysML behavioral rebadges reuse the UML machinery. */
+ const rebadge={'sysml.usecase@1':'uml.usecase@3','sysml.activity@1':'uml.activity@2','sysml.statemachine@1':'uml.statemachine@1','sysml.sequence@1':'uml.sequence@2'}[ir.view.profiles.projection.profile];
+ if(rebadge)ir={...ir,diagnostics:[...(ir.diagnostics||[]),{code:'DDN-PJW06',severity:'info',message:ir.view.profiles.projection.profile+' is a SysML rebadge of the '+rebadge+' machinery; SysML-specific extensions (x_flow on activity edges, x_port typing) apply on top.'}]};
+ if(['state.flat@1','state.composite@1','uml.statemachine@1','sysml.statemachine@1'].includes(ir.view.profiles.projection.profile)){
  const next={...ir,relations:ir.relations.map(r=>{const x=r.properties.x_transition;if(!x?.event)return r;const guard=typeof x.guard==='string'?x.guard:x.guard?Object.entries(x.guard).map(([k,v])=>k+' '+(v.op==='eq'?'= '+JSON.stringify(v.value):v.op==='interval'?'['+v.min+','+v.max+']':v.op)).join(' and '):'';return{...r,name:x.event+(guard?' ['+guard+']':'')+(x.effect?' / '+x.effect:'')};})};ir=next;}
- if(ir.view.profiles.projection.profile==='uml.usecase@3'){
+ if(ir.view.profiles.projection.profile==='uml.usecase@3'||ir.view.profiles.projection.profile==='sysml.usecase@1'){
   /* B1-061 (RFC-125): extension-point conditions render on the extend label. */
   const next={...ir,relations:ir.relations.map(r=>{const c=r.properties.x_usecase?.condition;if(r.kind!=='uml.extend'||!c)return r;return{...r,name:r.name+' {'+c+'}'};})};ir=next;}
+ if(ir.view.profiles.projection.profile==='sysml.activity@1'){
+  /* B1-065 (RFC-128): SysML edge annotations — rate/probability/continuous
+   * render on the flow label; streaming pins come from the x_pin machinery. */
+  const next={...ir,relations:ir.relations.map(r=>{const x=r.properties.x_flow;if(r.kind!=='uml.flow'||!x)return r;const tags=[x.continuous?'continuous':null,x.rate?'rate = '+x.rate:null,x.probability!==undefined?'probability = '+x.probability:null].filter(Boolean);return tags.length?{...r,name:r.name+' {'+tags.join(', ')+'}'}:r;})};ir=next;}
  if(ir.view.profiles.projection.profile==='uml.communication@1'){
  const next={...ir,relations:ir.relations.map(r=>{const seq=r.properties.x_message?.seq;if(r.kind!=='uml.message'||!seq||!ir.view.relations.includes(r.id))return r;return{...r,name:seq+' · '+r.name};})};ir=next;}
  if(ir.view.profiles.projection.profile==='bpmn.basic@1'){

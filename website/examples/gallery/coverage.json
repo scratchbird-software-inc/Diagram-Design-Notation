@@ -748,6 +748,13 @@
       "wiki": "Diagrams-States",
       "svg": "profiles/state-flat-1.svg"
     },
+    "sysml.activity@1": {
+      "entry": "website/examples/basics/86-sysml-behavioral.ddn",
+      "view": "activity",
+      "title": "Metering activity",
+      "kind": "graph",
+      "svg": "profiles/sysml-activity-1.svg"
+    },
     "sysml.bdd@1": {
       "entry": "website/examples/basics/50-sysml.ddn",
       "view": "bdd",
@@ -755,6 +762,13 @@
       "kind": "graph",
       "combined": "website/examples/basics/50-sysml.combined.ddn",
       "svg": "profiles/sysml-bdd-1.svg"
+    },
+    "sysml.bdd@2": {
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "bdd",
+      "title": "Pump block definition",
+      "kind": "graph",
+      "svg": "profiles/sysml-bdd-2.svg"
     },
     "sysml.ibd@1": {
       "entry": "website/examples/basics/50-sysml.ddn",
@@ -764,6 +778,20 @@
       "combined": "website/examples/basics/50-sysml.combined.ddn",
       "svg": "profiles/sysml-ibd-1.svg"
     },
+    "sysml.ibd@2": {
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "ibd",
+      "title": "Pump station internals",
+      "kind": "graph",
+      "svg": "profiles/sysml-ibd-2.svg"
+    },
+    "sysml.package@1": {
+      "entry": "website/examples/basics/84-sysml-requirements.ddn",
+      "view": "packages",
+      "title": "Model packages",
+      "kind": "graph",
+      "svg": "profiles/sysml-package-1.svg"
+    },
     "sysml.parametric@1": {
       "entry": "website/examples/basics/50-sysml.ddn",
       "view": "parametric",
@@ -771,6 +799,41 @@
       "kind": "graph",
       "combined": "website/examples/basics/50-sysml.combined.ddn",
       "svg": "profiles/sysml-parametric-1.svg"
+    },
+    "sysml.parametric@2": {
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "parametric",
+      "title": "Flow balance",
+      "kind": "graph",
+      "svg": "profiles/sysml-parametric-2.svg"
+    },
+    "sysml.requirements@1": {
+      "entry": "website/examples/basics/84-sysml-requirements.ddn",
+      "view": "requirements",
+      "title": "Pump requirements",
+      "kind": "graph",
+      "svg": "profiles/sysml-requirements-1.svg"
+    },
+    "sysml.sequence@1": {
+      "entry": "website/examples/basics/86-sysml-behavioral.ddn",
+      "view": "sequence",
+      "title": "Start sequence",
+      "kind": "sequence",
+      "svg": "profiles/sysml-sequence-1.svg"
+    },
+    "sysml.statemachine@1": {
+      "entry": "website/examples/basics/86-sysml-behavioral.ddn",
+      "view": "states",
+      "title": "Pump states",
+      "kind": "graph",
+      "svg": "profiles/sysml-statemachine-1.svg"
+    },
+    "sysml.usecase@1": {
+      "entry": "website/examples/basics/86-sysml-behavioral.ddn",
+      "view": "usecase",
+      "title": "Station use cases",
+      "kind": "graph",
+      "svg": "profiles/sysml-usecase-1.svg"
     },
     "table.records@1": {
       "entry": "website/examples/projections/views.ddn",
@@ -3212,6 +3275,72 @@
       "profile": "cmmn.complete@1",
       "kind": "graph",
       "svg": "corpus/basics-83-cmmn-complete.svg"
+    },
+    {
+      "entry": "website/examples/basics/84-sysml-requirements.ddn",
+      "view": "requirements",
+      "title": "Pump requirements",
+      "views": [
+        {
+          "id": "requirements",
+          "title": "Pump requirements"
+        },
+        {
+          "id": "packages",
+          "title": "Model packages"
+        }
+      ],
+      "profile": "sysml.requirements@1",
+      "kind": "graph",
+      "svg": "corpus/basics-84-sysml-requirements.svg"
+    },
+    {
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "bdd",
+      "title": "Pump block definition",
+      "views": [
+        {
+          "id": "bdd",
+          "title": "Pump block definition"
+        },
+        {
+          "id": "ibd",
+          "title": "Pump station internals"
+        },
+        {
+          "id": "parametric",
+          "title": "Flow balance"
+        }
+      ],
+      "profile": "sysml.bdd@2",
+      "kind": "graph",
+      "svg": "corpus/basics-85-sysml-blocks.svg"
+    },
+    {
+      "entry": "website/examples/basics/86-sysml-behavioral.ddn",
+      "view": "usecase",
+      "title": "Station use cases",
+      "views": [
+        {
+          "id": "usecase",
+          "title": "Station use cases"
+        },
+        {
+          "id": "activity",
+          "title": "Metering activity"
+        },
+        {
+          "id": "states",
+          "title": "Pump states"
+        },
+        {
+          "id": "sequence",
+          "title": "Start sequence"
+        }
+      ],
+      "profile": "sysml.usecase@1",
+      "kind": "graph",
+      "svg": "corpus/basics-86-sysml-behavioral.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

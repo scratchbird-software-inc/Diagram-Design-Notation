@@ -1396,6 +1396,54 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "sysml.testcase",
+      "name": "Test case",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "TESTCASE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sysml.valuetype",
+      "name": "Value type",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "VALUETYPE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sysml.interfaceblock",
+      "name": "Interface block",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "INTERFACEBLOCK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sysml.flowspec",
+      "name": "Flow specification",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "FLOWSPEC",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -1492,13 +1540,19 @@
         "uml.class",
         "uml.interface",
         "uml.actor",
-        "uml.usecase"
+        "uml.usecase",
+        "sysml.block",
+        "sysml.interfaceblock",
+        "sysml.valuetype"
       ],
       "target": [
         "uml.class",
         "uml.interface",
         "uml.actor",
-        "uml.usecase"
+        "uml.usecase",
+        "sysml.block",
+        "sysml.interfaceblock",
+        "sysml.valuetype"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -2547,6 +2601,186 @@
       ],
       "target": [
         "family.person"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.derive",
+      "name": "\u00abderiveReqt\u00bb",
+      "verb": "\u00abderiveReqt\u00bb",
+      "family": "dependency",
+      "code": "DERIVEREQT",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.satisfy",
+      "name": "\u00absatisfy\u00bb",
+      "verb": "\u00absatisfy\u00bb",
+      "family": "dependency",
+      "code": "SATISFY",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.verify",
+      "name": "\u00abverify\u00bb",
+      "verb": "\u00abverify\u00bb",
+      "family": "dependency",
+      "code": "VERIFY",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.refine",
+      "name": "\u00abrefine\u00bb",
+      "verb": "\u00abrefine\u00bb",
+      "family": "dependency",
+      "code": "REFINE",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.trace",
+      "name": "\u00abtrace\u00bb",
+      "verb": "\u00abtrace\u00bb",
+      "family": "dependency",
+      "code": "TRACE",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.copy",
+      "name": "\u00abcopy\u00bb",
+      "verb": "\u00abcopy\u00bb",
+      "family": "dependency",
+      "code": "COPY",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.master",
+      "name": "\u00abmaster\u00bb",
+      "verb": "\u00abmaster\u00bb",
+      "family": "dependency",
+      "code": "MASTER",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.allocate",
+      "name": "\u00aballocate\u00bb",
+      "verb": "\u00aballocate\u00bb",
+      "family": "dependency",
+      "code": "ALLOCATE",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "pattern": "7 5",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "sysml.composition",
+      "name": "Composition",
+      "verb": "Composes",
+      "family": "structural",
+      "code": "COMPOSITION",
+      "start": "diamond",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "sysml.block",
+        "sysml.interfaceblock",
+        "sysml.valuetype",
+        "sysml.flowspec",
+        "sysml.constraint",
+        "req.requirement"
+      ],
+      "target": [
+        "sysml.block",
+        "sysml.interfaceblock",
+        "sysml.valuetype",
+        "sysml.flowspec",
+        "sysml.constraint",
+        "req.requirement"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -4542,6 +4776,164 @@
       ],
       "unsupported": [
         "thematic encoding (use geo.choropleth@1 or geo.symbols@1)"
+      ]
+    },
+    {
+      "id": "sysml.requirements@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML requirements diagram"
+      ],
+      "scope": "SysML 1.6 requirements diagram: requirements with id/text compartments, test cases, \u00abderiveReqt\u00bb/\u00absatisfy\u00bb/\u00abverify\u00bb/\u00abrefine\u00bb/\u00abtrace\u00bb/\u00abcopy\u00bb/\u00abmaster\u00bb dependencies, composition containment.",
+      "validation": [
+        "requirement codes unique + text nonempty (DDN-PF014)",
+        "dependency endpoint rules (DDN-PJ185)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "requirement formal verification",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.bdd@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML block definition diagram"
+      ],
+      "scope": "sysml.bdd@1 plus SysML 1.6 BDD notation: block compartments (values/parts/references/operations/constraints) via x_block, \u00abblock\u00bb keyword, composition and generalization between blocks, value types, interface blocks, flow specifications.",
+      "validation": [
+        "ports on block-family kinds (DDN-PJ121 @2 set)",
+        "x_block compartment rules (DDN-PJ186)",
+        "composition/generalization endpoint kinds (DDN-PJ190)",
+        "x_unit resolves in the units registry (DDN-PJ188)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "constraint evaluation",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.ibd@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML internal block diagram"
+      ],
+      "scope": "sysml.ibd@1 plus SysML 1.6 port notation: proxy/full/conjugated port glyph variants, port multiplicity, nested ports (x_port), flow properties with direction on interface blocks and flow specifications.",
+      "validation": [
+        "ports on block-family kinds (DDN-PJ121 @2 set)",
+        "x_port typing/nesting rules (DDN-PJ187)",
+        "item flow endpoints (DDN-PJ191)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "flow property propagation/evaluation",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.parametric@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML parametric diagram"
+      ],
+      "scope": "sysml.parametric@1 with the two-binding limit relaxed: constraints bind one or more endpoints; constraint parameters display as a compartment.",
+      "validation": [
+        "ports on block-family kinds (DDN-PJ121 @2 set)",
+        "constraints bind at least one endpoint (DDN-PJ189)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "equation solving/evaluation",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.package@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML package diagram"
+      ],
+      "scope": "SysML 1.6 package diagram: uml.package vocabulary with uml.import/uml.access/uml.merge; thin profile over the UML package machinery.",
+      "validation": [
+        "package/profile relation contracts (DDN102 endpoint kinds)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "model library resolution semantics",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.usecase@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML use case diagram"
+      ],
+      "scope": "SysML 1.6 use case diagram: rebadge of the uml.usecase@3 machinery (subjects, extension points, include/extend, generalization).",
+      "validation": [
+        "uml.usecase@3 rules apply (DDN-PX002/PX004/PX006)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.activity@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML activity diagram"
+      ],
+      "scope": "SysML 1.6 activity diagram: rebadge of the uml.activity@2 machinery plus SysML edge annotations \u2014 x_flow rate/probability/continuous on activity edges; streaming pins via x_pin.",
+      "validation": [
+        "uml.activity@2 rules apply",
+        "x_flow owner/shape rules (DDN-PJ191)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "rate/probability evaluation",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.sequence@1",
+      "projection": "sequence",
+      "diagramFamilies": [
+        "SysML sequence diagram"
+      ],
+      "scope": "SysML 1.6 sequence diagram: rebadge of the uml.sequence@2 interaction machinery (fragments, gates, message sorts, constraints).",
+      "validation": [
+        "uml.sequence@2 rules apply"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "sysml.statemachine@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SysML state machine diagram"
+      ],
+      "scope": "SysML 1.6 state machine diagram: rebadge of the uml.statemachine@1 machinery (regions, pseudostates, triggers/guards/effects, submachines).",
+      "validation": [
+        "uml.statemachine@1 rules apply"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0",
+        "formal OMG certification"
       ]
     }
   ],

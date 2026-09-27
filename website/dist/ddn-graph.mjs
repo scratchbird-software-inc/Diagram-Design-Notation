@@ -284,6 +284,28 @@ function measure(g,p){
  if(n.kind==='req.requirement'){
   g.requirement=api$7.wrap(n.properties.x_diagram?.text||'',g.w-32*s,13*s,p.style.font);g.h=Math.max(g.h,(95+g.requirement.length*19)*s);
  }
+ /* B1-065 (RFC-128): SysML block-family compartments and keyword headers.
+  * Opt-in per profile (@2) and per x_block field property, so sysml.*@1
+  * fixtures render byte-identically. */
+ const SYSML2=/^sysml\.(bdd|ibd|parametric)@2$/.test(p.projection?.profile||'');
+ const SYSML_KW={'sysml.block':'block','sysml.interfaceblock':'interfaceBlock','sysml.flowspec':'flowSpecification','sysml.valuetype':'valueType','sysml.constraint':'constraint','sysml.testcase':'testCase'};
+ if(SYSML_KW[n.kind]&&(SYSML2||n.kind==='sysml.testcase')){
+  g.sysmlKeyword=SYSML_KW[n.kind];
+  if(n.fields.length){
+   const ORDER=['values','parts','references','operations','constraints'];
+   const list=g.fieldRows.slice().sort((a,b)=>ORDER.indexOf(a.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values'))-ORDER.indexOf(b.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values')));
+   let y=70*s,last=null;const div=[];
+   for(const row of list){const comp=row.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values');
+    const xu=row.field.properties.x_unit;
+    const adorned=row.field.name+(xu?': '+xu.unit:'');
+    row.labelLines=api$7.wrap(adorned,g.w-32*s,13.5*s,p.style.font,400);
+    if(comp!==last){div.push({top:y,label:comp});y+=25*s;last=comp;}
+    row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
+   }
+   g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);
+  }
+  g.headerH=70*s;
+ }
  if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
@@ -526,6 +548,12 @@ function render$2(g,p,theme){
  if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
  else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
   const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
+ }else if(g.sysmlKeyword){
+  /* B1-065 (RFC-128): SysML block-family — «keyword» header plus named
+   * compartments (values/parts/references/operations/constraints). */
+  out+=text(x+w/2,y+20*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
+  for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
+  for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';
  }else if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
   out+=text(x+w/2,y+20*s,{['uml.interface']:'«interface»','uml.enumeration':'«enumeration»','uml.metaclass':'«metaclass»','uml.stereotype':'«stereotype»'}[n.kind]||'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
@@ -1367,7 +1395,7 @@ function measureNode(n,registry,profiles,placement={},context={}){
  let w=Math.max(placement.size?q$1(placement.size[0]):270*s,160*s);
  const titleLines=api$7.wrap(n.name,w-96*s,16*s,font,650);if(profiles.display.kind==='text')w=Math.max(w,api$7.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
  let y=headerH,rows=[];
- for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
+ for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.x_unit)label+=': '+f.properties.x_unit.unit;if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
   const prefix=(f.properties.presence==='optional'?'? ':'')+(f.properties.nullable===true?'nullable · ':'');
   const labelLines=api$7.wrap(prefix+label,w-(40+depth*16)*s,13.5*s,font,400),details=[];
   if(profiles.display.domains==='show'&&f.properties.domain){const d=context.byId?.get(f.properties.domain.$ref);details.push('domain: '+(d?.name||pretty(f.properties.domain)));}
@@ -1641,16 +1669,22 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const ac=a.r.properties.x_association_class;
   if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
    diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
+  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
    for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
-    const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{};
-    diagram+=`<rect data-port-square="${esc$1(ep.member)}"${xp.streaming?' data-streaming="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+    const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{};
+    const filled=xp.streaming||xo.type==='full';
+    diagram+=`<rect data-port-square="${esc$1(ep.member)}"${xp.streaming?' data-streaming="true"':''}${xo.type?` data-port-type="${xo.type}"`:''}${xo.conjugated?' data-conjugated="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${filled?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+    /* B1-065 (RFC-128): SysML port typing — «proxy»/«full» label, conjugation
+     * tilde, multiplicity, nested port sub-squares. */
+    const portNote=[xo.conjugated?'~':'',member?.name||'',xo.multiplicity?' ['+xo.multiplicity+']':''].join('');
+    if(xo.type||xo.conjugated||xo.multiplicity)diagram+=`<g class="ddn-port-label">`+text$1(pt[0]+12*s,pt[1]-8*s,(xo.type?'«'+xo.type+'» ':'')+portNote,10.5*s,colour,500)+'</g>';
+    for(const [ni,np]of (xo.nested||[]).entries())diagram+=`<rect data-nested-port="${esc$1(np.name)}" x="${fmt(pt[0]-3*s+ni*7*s)}" y="${fmt(pt[1]-3*s)}" width="${fmt(6*s)}" height="${fmt(6*s)}" fill="${np.type==='full'?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.2"/>`;
     if(xp.set)diagram+=`<g class="ddn-pin-set">`+text$1(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
   diagram+='</g>';
  }
  /* B1-060 (RFC-124): pins with no incident edge still render on the action
   * border (in→west, out→east), streaming filled, set label beside. */
- if(p.projection.profile==='uml.activity@2'){
+ if(p.projection.profile==='uml.activity@2'||p.projection.profile==='sysml.activity@1'){
   const s=q$1(p.style.font_size,16)/16,connected=new Set(rels.flatMap(r=>[r.from.member,r.to.member].filter(Boolean)));
   for(const n of ir.elements){if(!byId.has(n.id)||!n.ports?.length)continue;
    const g=byId.get(n.id);

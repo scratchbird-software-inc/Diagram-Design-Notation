@@ -48,7 +48,7 @@ function measureNode(n,registry,profiles,placement={},context={}){
  let w=Math.max(placement.size?q(placement.size[0]):270*s,160*s);
  const titleLines=Text.wrap(n.name,w-96*s,16*s,font,650);if(profiles.display.kind==='text')w=Math.max(w,Text.measure(k.name,11*s,font,650).width+28*s);const headerH=Math.max(64*s,40*s+titleLines.length*21*s);
  let y=headerH,rows=[];
- for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
+ for(const f of visible){const depth=f.depth||0;let label=f.name;if(f.properties.x_part){const xp=f.properties.x_part;label+=(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':'');}if(f.properties.x_unit)label+=': '+f.properties.x_unit.unit;if(f.properties.shape==='array')label+=' []';else if(f.properties.shape==='object')label+=' {}';else if(f.properties.shape==='variant')label+=' <variant>';else if(f.properties.shape==='map')label+=' <map>';else if(f.properties.shape==='set')label+=' <set>';
   const prefix=(f.properties.presence==='optional'?'? ':'')+(f.properties.nullable===true?'nullable · ':'');
   const labelLines=Text.wrap(prefix+label,w-(40+depth*16)*s,13.5*s,font,400),details=[];
   if(profiles.display.domains==='show'&&f.properties.domain){const d=context.byId?.get(f.properties.domain.$ref);details.push('domain: '+(d?.name||pretty(f.properties.domain)));}
@@ -344,16 +344,22 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const ac=a.r.properties.x_association_class;
   if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
    diagram+=`<g class="ddn-association-class" data-class="${esc(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
+  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
    for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
-    const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{};
-    diagram+=`<rect data-port-square="${esc(ep.member)}"${xp.streaming?' data-streaming="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc(colour):esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.5"/>`;
+    const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{};
+    const filled=xp.streaming||xo.type==='full';
+    diagram+=`<rect data-port-square="${esc(ep.member)}"${xp.streaming?' data-streaming="true"':''}${xo.type?` data-port-type="${xo.type}"`:''}${xo.conjugated?' data-conjugated="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${filled?esc(colour):esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.5"/>`;
+    /* B1-065 (RFC-128): SysML port typing — «proxy»/«full» label, conjugation
+     * tilde, multiplicity, nested port sub-squares. */
+    const portNote=[xo.conjugated?'~':'',member?.name||'',xo.multiplicity?' ['+xo.multiplicity+']':''].join('');
+    if(xo.type||xo.conjugated||xo.multiplicity)diagram+=`<g class="ddn-port-label">`+text(pt[0]+12*s,pt[1]-8*s,(xo.type?'«'+xo.type+'» ':'')+portNote,10.5*s,colour,500)+'</g>';
+    for(const [ni,np]of (xo.nested||[]).entries())diagram+=`<rect data-nested-port="${esc(np.name)}" x="${fmt(pt[0]-3*s+ni*7*s)}" y="${fmt(pt[1]-3*s)}" width="${fmt(6*s)}" height="${fmt(6*s)}" fill="${np.type==='full'?esc(colour):esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.2"/>`;
     if(xp.set)diagram+=`<g class="ddn-pin-set">`+text(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
   diagram+='</g>';
  }
  /* B1-060 (RFC-124): pins with no incident edge still render on the action
   * border (in→west, out→east), streaming filled, set label beside. */
- if(p.projection.profile==='uml.activity@2'){
+ if(p.projection.profile==='uml.activity@2'||p.projection.profile==='sysml.activity@1'){
   const s=q(p.style.font_size,16)/16,connected=new Set(rels.flatMap(r=>[r.from.member,r.to.member].filter(Boolean)));
   for(const n of ir.elements){if(!byId.has(n.id)||!n.ports?.length)continue;
    const g=byId.get(n.id);

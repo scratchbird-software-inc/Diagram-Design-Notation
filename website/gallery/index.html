@@ -53,7 +53,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 </div></header>
 <div class="gallery-intro">
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation 0.7.0: 114 installed profiles across 12 projection kinds, 92 variation renders, and the complete example corpus (110 example files) — 316 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
+<p>Full notation coverage for Diagram Design Notation 0.7.0: 123 installed profiles across 12 projection kinds, 92 variation renders, and the complete example corpus (113 example files) — 328 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>. Open <strong>Explanation, DDN source &amp; links</strong> under any figure for what the diagram shows, its browsable DDN source, a wiki page for the diagram type, and deep links that open the exact view in the unified tool (viewer or designer mode — multi-file examples open their verified combined single-file variant there). Flow animation is part of the live renders: open any flow view in the tool and use its animation drawer, for example the <a href="../tools/index.html?entry=../examples/live/adaptive-lab.ddn&amp;view=automatic&amp;mode=explore">adaptive flow lab</a>.</p>
 </div>
 <nav class="sections">
@@ -72,7 +72,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <a href="#coverage">Coverage table</a>
 </nav>
 <main class="gallery">
-<h2 id="profiles">Installed profiles (114)</h2>
+<h2 id="profiles">Installed profiles (123)</h2>
 <p>One render per installed profile from <code>standard/registry/profiles/catalogue.json</code>. Each entry reuses the nearest existing example under <code>website/examples/basics/</code> or <code>website/examples/projections/</code>; the coverage map is generated, not hand-written, and is enforced by <code>notation/tests/gallery-coverage.js</code>.</p>
 <section class="family" id="family-archimate">
 <h3>archimate</h3>
@@ -556,18 +556,54 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <section class="family" id="family-sysml">
 <h3>sysml</h3>
 <div class="grid">
+<figure id="profile-sysml-activity-1"><a href="profiles/sysml-activity-1.svg"><img src="profiles/sysml-activity-1.svg" alt="sysml.activity@1 — Metering activity" loading="lazy"></a><figcaption><code>sysml.activity@1</code><br>Metering activity<br><small>website/examples/basics/86-sysml-behavioral.ddn · view <code>activity</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML activity diagram view rendered by the sysml.activity@1 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=activity&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=activity&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-86-sysml-behavioral-ddn"><code>website/examples/basics/86-sysml-behavioral.ddn</code></a> (<a href="../examples/basics/86-sysml-behavioral.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="profile-sysml-bdd-1"><a href="profiles/sysml-bdd-1.svg"><img src="profiles/sysml-bdd-1.svg" alt="sysml.bdd@1 — Pump station block definition" loading="lazy"></a><figcaption><code>sysml.bdd@1</code><br>Pump station block definition<br><small>website/examples/basics/50-sysml.ddn · view <code>bdd</code></small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML-style block definition diagram: blocks and their classification/composition.</p>
 <p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/50-sysml.combined.ddn&amp;view=bdd&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/50-sysml.combined.ddn&amp;view=bdd&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-50-sysml-ddn"><code>website/examples/basics/50-sysml.ddn</code></a> (<a href="../examples/basics/50-sysml.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/basics/50-sysml.combined.ddn"><code>50-sysml.combined.ddn</code></a></p></details></figcaption></figure>
+<figure id="profile-sysml-bdd-2"><a href="profiles/sysml-bdd-2.svg"><img src="profiles/sysml-bdd-2.svg" alt="sysml.bdd@2 — Pump block definition" loading="lazy"></a><figcaption><code>sysml.bdd@2</code><br>Pump block definition<br><small>website/examples/basics/85-sysml-blocks.ddn · view <code>bdd</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML block definition diagram view rendered by the sysml.bdd@2 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=bdd&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=bdd&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-85-sysml-blocks-ddn"><code>website/examples/basics/85-sysml-blocks.ddn</code></a> (<a href="../examples/basics/85-sysml-blocks.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="profile-sysml-ibd-1"><a href="profiles/sysml-ibd-1.svg"><img src="profiles/sysml-ibd-1.svg" alt="sysml.ibd@1 — Pump station internal block" loading="lazy"></a><figcaption><code>sysml.ibd@1</code><br>Pump station internal block<br><small>website/examples/basics/50-sysml.ddn · view <code>ibd</code></small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML-style internal block diagram: parts, ports and connectors inside a block.</p>
 <p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/50-sysml.combined.ddn&amp;view=ibd&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/50-sysml.combined.ddn&amp;view=ibd&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-50-sysml-ddn"><code>website/examples/basics/50-sysml.ddn</code></a> (<a href="../examples/basics/50-sysml.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/basics/50-sysml.combined.ddn"><code>50-sysml.combined.ddn</code></a></p></details></figcaption></figure>
+<figure id="profile-sysml-ibd-2"><a href="profiles/sysml-ibd-2.svg"><img src="profiles/sysml-ibd-2.svg" alt="sysml.ibd@2 — Pump station internals" loading="lazy"></a><figcaption><code>sysml.ibd@2</code><br>Pump station internals<br><small>website/examples/basics/85-sysml-blocks.ddn · view <code>ibd</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML internal block diagram view rendered by the sysml.ibd@2 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=ibd&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=ibd&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-85-sysml-blocks-ddn"><code>website/examples/basics/85-sysml-blocks.ddn</code></a> (<a href="../examples/basics/85-sysml-blocks.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-sysml-package-1"><a href="profiles/sysml-package-1.svg"><img src="profiles/sysml-package-1.svg" alt="sysml.package@1 — Model packages" loading="lazy"></a><figcaption><code>sysml.package@1</code><br>Model packages<br><small>website/examples/basics/84-sysml-requirements.ddn · view <code>packages</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML package diagram view rendered by the sysml.package@1 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/84-sysml-requirements.ddn&amp;view=packages&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/84-sysml-requirements.ddn&amp;view=packages&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-84-sysml-requirements-ddn"><code>website/examples/basics/84-sysml-requirements.ddn</code></a> (<a href="../examples/basics/84-sysml-requirements.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="profile-sysml-parametric-1"><a href="profiles/sysml-parametric-1.svg"><img src="profiles/sysml-parametric-1.svg" alt="sysml.parametric@1 — Pump station flow balance" loading="lazy"></a><figcaption><code>sysml.parametric@1</code><br>Pump station flow balance<br><small>website/examples/basics/50-sysml.ddn · view <code>parametric</code></small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML-style parametric diagram: constraint blocks and the properties they bind.</p>
 <p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/50-sysml.combined.ddn&amp;view=parametric&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/50-sysml.combined.ddn&amp;view=parametric&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-50-sysml-ddn"><code>website/examples/basics/50-sysml.ddn</code></a> (<a href="../examples/basics/50-sysml.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/basics/50-sysml.combined.ddn"><code>50-sysml.combined.ddn</code></a></p></details></figcaption></figure>
+<figure id="profile-sysml-parametric-2"><a href="profiles/sysml-parametric-2.svg"><img src="profiles/sysml-parametric-2.svg" alt="sysml.parametric@2 — Flow balance" loading="lazy"></a><figcaption><code>sysml.parametric@2</code><br>Flow balance<br><small>website/examples/basics/85-sysml-blocks.ddn · view <code>parametric</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML parametric diagram view rendered by the sysml.parametric@2 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=parametric&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=parametric&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-85-sysml-blocks-ddn"><code>website/examples/basics/85-sysml-blocks.ddn</code></a> (<a href="../examples/basics/85-sysml-blocks.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-sysml-requirements-1"><a href="profiles/sysml-requirements-1.svg"><img src="profiles/sysml-requirements-1.svg" alt="sysml.requirements@1 — Pump requirements" loading="lazy"></a><figcaption><code>sysml.requirements@1</code><br>Pump requirements<br><small>website/examples/basics/84-sysml-requirements.ddn · view <code>requirements</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML requirements diagram view rendered by the sysml.requirements@1 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/84-sysml-requirements.ddn&amp;view=requirements&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/84-sysml-requirements.ddn&amp;view=requirements&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-84-sysml-requirements-ddn"><code>website/examples/basics/84-sysml-requirements.ddn</code></a> (<a href="../examples/basics/84-sysml-requirements.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-sysml-sequence-1"><a href="profiles/sysml-sequence-1.svg"><img src="profiles/sysml-sequence-1.svg" alt="sysml.sequence@1 — Start sequence" loading="lazy"></a><figcaption><code>sysml.sequence@1</code><br>Start sequence<br><small>website/examples/basics/86-sysml-behavioral.ddn · view <code>sequence</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML sequence diagram view rendered by the sysml.sequence@1 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=sequence&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=sequence&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-86-sysml-behavioral-ddn"><code>website/examples/basics/86-sysml-behavioral.ddn</code></a> (<a href="../examples/basics/86-sysml-behavioral.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-sysml-statemachine-1"><a href="profiles/sysml-statemachine-1.svg"><img src="profiles/sysml-statemachine-1.svg" alt="sysml.statemachine@1 — Pump states" loading="lazy"></a><figcaption><code>sysml.statemachine@1</code><br>Pump states<br><small>website/examples/basics/86-sysml-behavioral.ddn · view <code>states</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML state machine diagram view rendered by the sysml.statemachine@1 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=states&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=states&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-86-sysml-behavioral-ddn"><code>website/examples/basics/86-sysml-behavioral.ddn</code></a> (<a href="../examples/basics/86-sysml-behavioral.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-sysml-usecase-1"><a href="profiles/sysml-usecase-1.svg"><img src="profiles/sysml-usecase-1.svg" alt="sysml.usecase@1 — Station use cases" loading="lazy"></a><figcaption><code>sysml.usecase@1</code><br>Station use cases<br><small>website/examples/basics/86-sysml-behavioral.ddn · view <code>usecase</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML use case diagram view rendered by the sysml.usecase@1 profile.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=usecase&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=usecase&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-86-sysml-behavioral-ddn"><code>website/examples/basics/86-sysml-behavioral.ddn</code></a> (<a href="../examples/basics/86-sysml-behavioral.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 </div>
 </section>
 <section class="family" id="family-table">
@@ -1106,8 +1142,8 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <p class="detail-src">Source: <a href="#src-website-examples-basics-73-iso-architecture-ddn"><code>website/examples/basics/73-iso-architecture.ddn</code></a> (<a href="../examples/basics/73-iso-architecture.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/basics/73-iso-architecture.combined.ddn"><code>73-iso-architecture.combined.ddn</code></a></p></details></figcaption></figure>
 </div>
 </section>
-<h2 id="corpus">Example corpus (110)</h2>
-<p>Every view-bearing example file under <code>website/examples/</code> — the 110 sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): <code>website/examples/projections/formats.ddn</code> <code>website/examples/projections/model.ddn</code> <code>website/examples/quality/details.ddn</code> <code>website/examples/quality/formats.ddn</code> <code>website/examples/quality/model.ddn</code> <code>website/examples/use-cases/formats.ddn</code>.</p>
+<h2 id="corpus">Example corpus (113)</h2>
+<p>Every view-bearing example file under <code>website/examples/</code> — the 113 sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): <code>website/examples/projections/formats.ddn</code> <code>website/examples/projections/model.ddn</code> <code>website/examples/quality/details.ddn</code> <code>website/examples/quality/formats.ddn</code> <code>website/examples/quality/model.ddn</code> <code>website/examples/use-cases/formats.ddn</code>.</p>
 <div class="grid">
 <figure id="corpus-basics-01-customer"><a href="corpus/basics-01-customer.svg"><img src="corpus/basics-01-customer.svg" alt="website/examples/basics/01-customer.ddn — Customer data / a shared model" loading="lazy"></a><figcaption><code>website/examples/basics/01-customer.ddn</code><br>Customer data / a shared model<br><small>view <code>overview</code> of 4</small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Free-form DDN graph: objects and relations from the semantic model drawn as boxes and links. This file declares 4 views: Customer data / a shared model (overview), Customer data / compact view (compact), Customer data / print rendition (print), Customer data / minimal chrome for embedding (embedded) — the deep links open the first; switch views in the tool’s view picker.</p>
@@ -1441,6 +1477,18 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">CMMN case diagram view rendered by the cmmn.complete@1 profile.</p>
 <p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/83-cmmn-complete.ddn&amp;view=v&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/83-cmmn-complete.ddn&amp;view=v&amp;mode=design">Open in designer</a></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-83-cmmn-complete-ddn"><code>website/examples/basics/83-cmmn-complete.ddn</code></a> (<a href="../examples/basics/83-cmmn-complete.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="corpus-basics-84-sysml-requirements"><a href="corpus/basics-84-sysml-requirements.svg"><img src="corpus/basics-84-sysml-requirements.svg" alt="website/examples/basics/84-sysml-requirements.ddn — Pump requirements" loading="lazy"></a><figcaption><code>website/examples/basics/84-sysml-requirements.ddn</code><br>Pump requirements<br><small>view <code>requirements</code> of 2</small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML requirements diagram view rendered by the sysml.requirements@1 profile. This file declares 2 views: Pump requirements (requirements), Model packages (packages) — the deep links open the first; switch views in the tool’s view picker.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/84-sysml-requirements.ddn&amp;view=requirements&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/84-sysml-requirements.ddn&amp;view=requirements&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-84-sysml-requirements-ddn"><code>website/examples/basics/84-sysml-requirements.ddn</code></a> (<a href="../examples/basics/84-sysml-requirements.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="corpus-basics-85-sysml-blocks"><a href="corpus/basics-85-sysml-blocks.svg"><img src="corpus/basics-85-sysml-blocks.svg" alt="website/examples/basics/85-sysml-blocks.ddn — Pump block definition" loading="lazy"></a><figcaption><code>website/examples/basics/85-sysml-blocks.ddn</code><br>Pump block definition<br><small>view <code>bdd</code> of 3</small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML block definition diagram view rendered by the sysml.bdd@2 profile. This file declares 3 views: Pump block definition (bdd), Pump station internals (ibd), Flow balance (parametric) — the deep links open the first; switch views in the tool’s view picker.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=bdd&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/85-sysml-blocks.ddn&amp;view=bdd&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-85-sysml-blocks-ddn"><code>website/examples/basics/85-sysml-blocks.ddn</code></a> (<a href="../examples/basics/85-sysml-blocks.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="corpus-basics-86-sysml-behavioral"><a href="corpus/basics-86-sysml-behavioral.svg"><img src="corpus/basics-86-sysml-behavioral.svg" alt="website/examples/basics/86-sysml-behavioral.ddn — Station use cases" loading="lazy"></a><figcaption><code>website/examples/basics/86-sysml-behavioral.ddn</code><br>Station use cases<br><small>view <code>usecase</code> of 4</small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">SysML use case diagram view rendered by the sysml.usecase@1 profile. This file declares 4 views: Station use cases (usecase), Metering activity (activity), Pump states (states), Start sequence (sequence) — the deep links open the first; switch views in the tool’s view picker.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=usecase&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/86-sysml-behavioral.ddn&amp;view=usecase&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-86-sysml-behavioral-ddn"><code>website/examples/basics/86-sysml-behavioral.ddn</code></a> (<a href="../examples/basics/86-sysml-behavioral.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="corpus-projections-views"><a href="corpus/projections-views.svg"><img src="corpus/projections-views.svg" alt="website/examples/projections/views.ddn — 01 / Purchasing control flow" loading="lazy"></a><figcaption><code>website/examples/projections/views.ddn</code><br>01 / Purchasing control flow<br><small>view <code>flowchart</code> of 27</small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Process flow: steps as boxes, decisions as diamonds, arrows showing order of execution. This file declares 27 views: 01 / Purchasing control flow (flowchart), 02 / Shared responsibility assignments (responsibility_graph), 03 / Model-derived RACI (raci), 04 / Model-derived CRUD (crud), 05 / Numbered Gane–Sarson-style DFD (dfd_gane), 06 / Yourdon-style DFD (dfd_yourdon), 07 / Declared class / interface subset (structure), 08 / Actor and use-case subset (usecases), 09 / Requirement traceability (requirements), 10 / Entity-field representation (erd), 11 / Chen binary projection (chen), 12 / Synthetic monthly value — bar (chart_bar), 13 / Synthetic monthly value — line (chart_line), 14 / Synthetic monthly value — area (chart_area), 15 / Synthetic monthly value — pie (chart_pie), 16 / Synthetic monthly value — donut (chart_donut), 17 / Cost versus recorded value (scatter), 18 / UTC monthly observations (time_series), 19 / Shared observation table (record_table), 20 / Declarative decision-table presentation (decision_table), 21 / Supplied-date procurement schedule (gantt), 22 / Schedule source records (schedule_table), 23 / Reusable SWOT panel template (swot), 24 / SIPOC from shared notes (sipoc), 25 / Service journey with spanning panels (journey), 26 / General relationship matrix (matrix_general), 27 / Composable semantic silhouettes (shape_atlas) — the deep links open the first; switch views in the tool’s view picker.</p>
 <p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../tools/index.html?entry=../examples/projections/views.combined.ddn&amp;view=flowchart&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/projections/views.combined.ddn&amp;view=flowchart&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
@@ -1560,10 +1608,10 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <tr><td><code>decision</code></td><td>1</td><td><a href="#profile-decision-rules-1"><code>decision.rules@1</code></a></td></tr>
 <tr><td><code>fishbone</code></td><td>1</td><td><a href="#profile-fishbone-basic-1"><code>fishbone.basic@1</code></a></td></tr>
 <tr><td><code>geo</code></td><td>3</td><td><a href="#profile-geo-choropleth-1"><code>geo.choropleth@1</code></a> <a href="#profile-geo-outline-1"><code>geo.outline@1</code></a> <a href="#profile-geo-symbols-1"><code>geo.symbols@1</code></a></td></tr>
-<tr><td><code>graph</code></td><td>51</td><td><a href="#profile-archimate-basic-1"><code>archimate.basic@1</code></a> <a href="#profile-bpmn-basic-1"><code>bpmn.basic@1</code></a> <a href="#profile-bpmn-choreography-1"><code>bpmn.choreography@1</code></a> <a href="#profile-bpmn-conversation-1"><code>bpmn.conversation@1</code></a> <a href="#profile-bpmn-process-1"><code>bpmn.process@1</code></a> <a href="#profile-c4-component-1"><code>c4.component@1</code></a> <a href="#profile-c4-container-1"><code>c4.container@1</code></a> <a href="#profile-c4-context-1"><code>c4.context@1</code></a> <a href="#profile-cmmn-basic-1"><code>cmmn.basic@1</code></a> <a href="#profile-cmmn-complete-1"><code>cmmn.complete@1</code></a> <a href="#profile-concept-map-1"><code>concept.map@1</code></a> <a href="#profile-ddn-1"><code>ddn@1</code></a> <a href="#profile-dfd-gane-sarson-1"><code>dfd.gane_sarson@1</code></a> <a href="#profile-dfd-yourdon-1"><code>dfd.yourdon@1</code></a> <a href="#profile-epc-basic-1"><code>epc.basic@1</code></a> <a href="#profile-erd-crowfoot-1"><code>erd.crowfoot@1</code></a> <a href="#profile-event-tree-1"><code>event.tree@1</code></a> <a href="#profile-family-tree-1"><code>family.tree@1</code></a> <a href="#profile-fault-tree-1"><code>fault.tree@1</code></a> <a href="#profile-flow-basic-1"><code>flow.basic@1</code></a> <a href="#profile-flow-documented-2"><code>flow.documented@2</code></a> <a href="#profile-mindmap-basic-1"><code>mindmap.basic@1</code></a> <a href="#profile-network-basic-1"><code>network.basic@1</code></a> <a href="#profile-network-rack-1"><code>network.rack@1</code></a> <a href="#profile-org-tree-1"><code>org.tree@1</code></a> <a href="#profile-pert-cpm-1"><code>pert.cpm@1</code></a> <a href="#profile-requirements-basic-1"><code>requirements.basic@1</code></a> <a href="#profile-state-composite-1"><code>state.composite@1</code></a> <a href="#profile-state-flat-1"><code>state.flat@1</code></a> <a href="#profile-sysml-bdd-1"><code>sysml.bdd@1</code></a> <a href="#profile-sysml-ibd-1"><code>sysml.ibd@1</code></a> <a href="#profile-sysml-parametric-1"><code>sysml.parametric@1</code></a> <a href="#profile-uml-activity-1"><code>uml.activity@1</code></a> <a href="#profile-uml-activity-2"><code>uml.activity@2</code></a> <a href="#profile-uml-communication-1"><code>uml.communication@1</code></a> <a href="#profile-uml-communication-2"><code>uml.communication@2</code></a> <a href="#profile-uml-composite-1"><code>uml.composite@1</code></a> <a href="#profile-uml-deployment-1"><code>uml.deployment@1</code></a> <a href="#profile-uml-interaction-overview-1"><code>uml.interaction_overview@1</code></a> <a href="#profile-uml-interaction-overview-2"><code>uml.interaction_overview@2</code></a> <a href="#profile-uml-object-1"><code>uml.object@1</code></a> <a href="#profile-uml-object-2"><code>uml.object@2</code></a> <a href="#profile-uml-profile-1"><code>uml.profile@1</code></a> <a href="#profile-uml-statemachine-1"><code>uml.statemachine@1</code></a> <a href="#profile-uml-structure-1"><code>uml.structure@1</code></a> <a href="#profile-uml-structure-2"><code>uml.structure@2</code></a> <a href="#profile-uml-usecase-1"><code>uml.usecase@1</code></a> <a href="#profile-uml-usecase-2"><code>uml.usecase@2</code></a> <a href="#profile-uml-usecase-3"><code>uml.usecase@3</code></a> <a href="#profile-wbs-tree-1"><code>wbs.tree@1</code></a> <a href="#profile-wireframe-ui-1"><code>wireframe.ui@1</code></a></td></tr>
+<tr><td><code>graph</code></td><td>59</td><td><a href="#profile-archimate-basic-1"><code>archimate.basic@1</code></a> <a href="#profile-bpmn-basic-1"><code>bpmn.basic@1</code></a> <a href="#profile-bpmn-choreography-1"><code>bpmn.choreography@1</code></a> <a href="#profile-bpmn-conversation-1"><code>bpmn.conversation@1</code></a> <a href="#profile-bpmn-process-1"><code>bpmn.process@1</code></a> <a href="#profile-c4-component-1"><code>c4.component@1</code></a> <a href="#profile-c4-container-1"><code>c4.container@1</code></a> <a href="#profile-c4-context-1"><code>c4.context@1</code></a> <a href="#profile-cmmn-basic-1"><code>cmmn.basic@1</code></a> <a href="#profile-cmmn-complete-1"><code>cmmn.complete@1</code></a> <a href="#profile-concept-map-1"><code>concept.map@1</code></a> <a href="#profile-ddn-1"><code>ddn@1</code></a> <a href="#profile-dfd-gane-sarson-1"><code>dfd.gane_sarson@1</code></a> <a href="#profile-dfd-yourdon-1"><code>dfd.yourdon@1</code></a> <a href="#profile-epc-basic-1"><code>epc.basic@1</code></a> <a href="#profile-erd-crowfoot-1"><code>erd.crowfoot@1</code></a> <a href="#profile-event-tree-1"><code>event.tree@1</code></a> <a href="#profile-family-tree-1"><code>family.tree@1</code></a> <a href="#profile-fault-tree-1"><code>fault.tree@1</code></a> <a href="#profile-flow-basic-1"><code>flow.basic@1</code></a> <a href="#profile-flow-documented-2"><code>flow.documented@2</code></a> <a href="#profile-mindmap-basic-1"><code>mindmap.basic@1</code></a> <a href="#profile-network-basic-1"><code>network.basic@1</code></a> <a href="#profile-network-rack-1"><code>network.rack@1</code></a> <a href="#profile-org-tree-1"><code>org.tree@1</code></a> <a href="#profile-pert-cpm-1"><code>pert.cpm@1</code></a> <a href="#profile-requirements-basic-1"><code>requirements.basic@1</code></a> <a href="#profile-state-composite-1"><code>state.composite@1</code></a> <a href="#profile-state-flat-1"><code>state.flat@1</code></a> <a href="#profile-sysml-activity-1"><code>sysml.activity@1</code></a> <a href="#profile-sysml-bdd-1"><code>sysml.bdd@1</code></a> <a href="#profile-sysml-bdd-2"><code>sysml.bdd@2</code></a> <a href="#profile-sysml-ibd-1"><code>sysml.ibd@1</code></a> <a href="#profile-sysml-ibd-2"><code>sysml.ibd@2</code></a> <a href="#profile-sysml-package-1"><code>sysml.package@1</code></a> <a href="#profile-sysml-parametric-1"><code>sysml.parametric@1</code></a> <a href="#profile-sysml-parametric-2"><code>sysml.parametric@2</code></a> <a href="#profile-sysml-requirements-1"><code>sysml.requirements@1</code></a> <a href="#profile-sysml-statemachine-1"><code>sysml.statemachine@1</code></a> <a href="#profile-sysml-usecase-1"><code>sysml.usecase@1</code></a> <a href="#profile-uml-activity-1"><code>uml.activity@1</code></a> <a href="#profile-uml-activity-2"><code>uml.activity@2</code></a> <a href="#profile-uml-communication-1"><code>uml.communication@1</code></a> <a href="#profile-uml-communication-2"><code>uml.communication@2</code></a> <a href="#profile-uml-composite-1"><code>uml.composite@1</code></a> <a href="#profile-uml-deployment-1"><code>uml.deployment@1</code></a> <a href="#profile-uml-interaction-overview-1"><code>uml.interaction_overview@1</code></a> <a href="#profile-uml-interaction-overview-2"><code>uml.interaction_overview@2</code></a> <a href="#profile-uml-object-1"><code>uml.object@1</code></a> <a href="#profile-uml-object-2"><code>uml.object@2</code></a> <a href="#profile-uml-profile-1"><code>uml.profile@1</code></a> <a href="#profile-uml-statemachine-1"><code>uml.statemachine@1</code></a> <a href="#profile-uml-structure-1"><code>uml.structure@1</code></a> <a href="#profile-uml-structure-2"><code>uml.structure@2</code></a> <a href="#profile-uml-usecase-1"><code>uml.usecase@1</code></a> <a href="#profile-uml-usecase-2"><code>uml.usecase@2</code></a> <a href="#profile-uml-usecase-3"><code>uml.usecase@3</code></a> <a href="#profile-wbs-tree-1"><code>wbs.tree@1</code></a> <a href="#profile-wireframe-ui-1"><code>wireframe.ui@1</code></a></td></tr>
 <tr><td><code>matrix</code></td><td>8</td><td><a href="#profile-matrix-ansoff-1"><code>matrix.ansoff@1</code></a> <a href="#profile-matrix-bcg-1"><code>matrix.bcg@1</code></a> <a href="#profile-matrix-crud-1"><code>matrix.crud@1</code></a> <a href="#profile-matrix-heatmap-1"><code>matrix.heatmap@1</code></a> <a href="#profile-matrix-raci-1"><code>matrix.raci@1</code></a> <a href="#profile-matrix-relations-1"><code>matrix.relations@1</code></a> <a href="#profile-matrix-storymap-1"><code>matrix.storymap@1</code></a> <a href="#profile-matrix-tows-1"><code>matrix.tows@1</code></a></td></tr>
 <tr><td><code>panels</code></td><td>12</td><td><a href="#profile-canvas-bmc-1"><code>canvas.bmc@1</code></a> <a href="#profile-canvas-empathy-1"><code>canvas.empathy@1</code></a> <a href="#profile-canvas-lean-1"><code>canvas.lean@1</code></a> <a href="#profile-canvas-pest-1"><code>canvas.pest@1</code></a> <a href="#profile-canvas-pestle-1"><code>canvas.pestle@1</code></a> <a href="#profile-canvas-porter5-1"><code>canvas.porter5@1</code></a> <a href="#profile-canvas-scorecard-1"><code>canvas.scorecard@1</code></a> <a href="#profile-panels-basic-1"><code>panels.basic@1</code></a> <a href="#profile-panels-composed-1"><code>panels.composed@1</code></a> <a href="#profile-panels-journey-1"><code>panels.journey@1</code></a> <a href="#profile-panels-pyramid-1"><code>panels.pyramid@1</code></a> <a href="#profile-panels-venn-1"><code>panels.venn@1</code></a></td></tr>
-<tr><td><code>sequence</code></td><td>2</td><td><a href="#profile-uml-sequence-1"><code>uml.sequence@1</code></a> <a href="#profile-uml-sequence-2"><code>uml.sequence@2</code></a></td></tr>
+<tr><td><code>sequence</code></td><td>3</td><td><a href="#profile-sysml-sequence-1"><code>sysml.sequence@1</code></a> <a href="#profile-uml-sequence-1"><code>uml.sequence@1</code></a> <a href="#profile-uml-sequence-2"><code>uml.sequence@2</code></a></td></tr>
 <tr><td><code>table</code></td><td>1</td><td><a href="#profile-table-records-1"><code>table.records@1</code></a></td></tr>
 <tr><td><code>timeline</code></td><td>1</td><td><a href="#profile-timeline-basic-1"><code>timeline.basic@1</code></a></td></tr>
 <tr><td><code>timing</code></td><td>2</td><td><a href="#profile-uml-timing-1"><code>uml.timing@1</code></a> <a href="#profile-uml-timing-2"><code>uml.timing@2</code></a></td></tr>
@@ -11992,6 +12040,218 @@ view v &quot;Case&quot; {
 </code></pre>
 
 </details>
+<details class="ddn-source" id="src-website-examples-basics-84-sysml-requirements-ddn"><summary><code>website/examples/basics/84-sysml-requirements.ddn</code></summary>
+<h4><code>website/examples/basics/84-sysml-requirements.ddn</code></h4>
+<pre class="ddn-src"><code>ddn &quot;0.5&quot;;
+module &quot;ddn.examples.sysmlreq&quot;;
+
+// B1-065: SysML 1.6 requirements and package diagrams — requirements with
+// id/text compartments, a test case, the seven requirement dependencies
+// («deriveReqt», «satisfy», «verify», «refine», «trace», «copy», «master»),
+// composition containment, «allocate», and a package view with import/merge.
+// All data is synthetic.
+
+data reqs {
+    object perf &quot;Pump performance&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;R-1&quot;; text: &quot;The pump shall sustain 40 L/min at 2 bar outlet pressure.&quot; }; }
+    object resp &quot;Response time&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;R-1.1&quot;; text: &quot;The pump shall reach rated flow within 500 ms of start.&quot; }; }
+    object safe &quot;Safety&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;R-2&quot;; text: &quot;The pump shall shut down on reservoir empty.&quot; }; }
+    object safeMaster &quot;Safety (master)&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;PLANT-9&quot;; text: &quot;Plant equipment shall shut down on dry-run detection.&quot; }; }
+    object tc &quot;Rated-flow test&quot; { kind: &quot;sysml.testcase&quot;; }
+    object pump &quot;Pump&quot; { kind: &quot;sysml.block&quot;; }
+    object ctrl &quot;Pump controller&quot; { kind: &quot;sysml.block&quot;; }
+
+    relation derive &quot;&quot; @resp -&gt; @perf { kind: &quot;sysml.derive&quot;; }
+    relation satisfy &quot;&quot; @pump -&gt; @perf { kind: &quot;sysml.satisfy&quot;; }
+    relation satisfy2 &quot;&quot; @ctrl -&gt; @resp { kind: &quot;sysml.satisfy&quot;; }
+    relation verify &quot;&quot; @tc -&gt; @perf { kind: &quot;sysml.verify&quot;; }
+    relation refine &quot;&quot; @ctrl -&gt; @resp { kind: &quot;sysml.refine&quot;; }
+    relation trace &quot;&quot; @safe -&gt; @perf { kind: &quot;sysml.trace&quot;; }
+    relation copy &quot;&quot; @safe -&gt; @safeMaster { kind: &quot;sysml.copy&quot;; }
+    relation master &quot;&quot; @safe -&gt; @safeMaster { kind: &quot;sysml.master&quot;; }
+    relation contains &quot;&quot; @perf -&gt; @resp { kind: &quot;sysml.composition&quot;; }
+    relation alloc &quot;&quot; @tc -&gt; @pump { kind: &quot;sysml.allocate&quot;; }
+}
+
+data pkgs {
+    object plant &quot;Plant model&quot; { kind: &quot;uml.package&quot;; }
+    object pumps &quot;Pump library&quot; { kind: &quot;uml.package&quot;; }
+    object safety &quot;Safety library&quot; { kind: &quot;uml.package&quot;; }
+    relation imp &quot;&quot; @plant -&gt; @pumps { kind: &quot;uml.import&quot;; }
+    relation mrg &quot;&quot; @pumps -&gt; @safety { kind: &quot;uml.merge&quot;; }
+    relation acc &quot;&quot; @plant -&gt; @safety { kind: &quot;uml.access&quot;; }
+}
+
+view requirements &quot;Pump requirements&quot; {
+    data: [@reqs];
+    projection { profile: &quot;sysml.requirements@1&quot;; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; }
+}
+
+view packages &quot;Model packages&quot; {
+    data: [@pkgs];
+    projection { profile: &quot;sysml.package@1&quot;; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+</code></pre>
+
+</details>
+<details class="ddn-source" id="src-website-examples-basics-85-sysml-blocks-ddn"><summary><code>website/examples/basics/85-sysml-blocks.ddn</code></summary>
+<h4><code>website/examples/basics/85-sysml-blocks.ddn</code></h4>
+<pre class="ddn-src"><code>ddn &quot;0.5&quot;;
+module &quot;ddn.examples.sysmlblocks&quot;;
+
+// B1-065: SysML 1.6 structural diagrams — BDD@2 (block compartments with
+// units, composition and generalization, value type, interface block, flow
+// specification), IBD@2 (proxy/full/conjugated port glyphs, multiplicity,
+// nested ports, flow properties, item flow), and parametric@2 (constraint
+// with three bindings and a parameters compartment). All data is synthetic.
+
+data m {
+    object pump &quot;Pump&quot; { kind: &quot;sysml.block&quot;;
+        fields {
+            field capacity &quot;capacity&quot; { x_block: { compartment: &quot;values&quot; }; x_unit: { unit: &quot;L/min&quot; }; }
+            field mass &quot;mass&quot; { x_block: { compartment: &quot;values&quot; }; x_unit: { unit: &quot;kg&quot; }; }
+            field impeller &quot;impeller&quot; { x_block: { compartment: &quot;parts&quot; }; }
+            field mount &quot;mounting&quot; { x_block: { compartment: &quot;references&quot; }; }
+            field prime &quot;prime()&quot; { x_block: { compartment: &quot;operations&quot; }; }
+            field cav &quot;cavitation free&quot; { x_block: { compartment: &quot;constraints&quot; }; }
+        }
+        ports {
+            port outlet { direction: out; x_port: { type: &quot;full&quot;; multiplicity: &quot;1..2&quot;; nested: [ { name: &quot;seal&quot;; direction: &quot;out&quot; } ] }; }
+        }
+    }
+    object reservoir &quot;Reservoir&quot; { kind: &quot;sysml.block&quot;;
+        ports { port inlet { direction: in; x_port: { type: &quot;proxy&quot;; conjugated: true }; } }
+    }
+    object pumpBase &quot;Fluid mover&quot; { kind: &quot;sysml.block&quot;; }
+    object litres &quot;Litres per minute&quot; { kind: &quot;sysml.valuetype&quot;; }
+    object pumpIf &quot;Pump interface&quot; { kind: &quot;sysml.interfaceblock&quot;;
+        ports { port flowOut { direction: out; } port cmd { direction: in; } }
+    }
+    object waterSpec &quot;Water flow spec&quot; { kind: &quot;sysml.flowspec&quot;;
+        ports { port flowRate { direction: out; } port temperature { direction: inout; } }
+    }
+    object balance &quot;{flow = pressure x area}&quot; { kind: &quot;sysml.constraint&quot;;
+        fields {
+            field flow &quot;flow&quot; { x_unit: { unit: &quot;L/min&quot; }; }
+            field pressure &quot;pressure&quot; { x_unit: { unit: &quot;bar&quot; }; }
+            field area &quot;area&quot; { x_unit: { unit: &quot;m3&quot; }; }
+        }
+    }
+
+    relation gen &quot;&quot; @pump -&gt; @pumpBase { kind: &quot;uml.generalization&quot;; }
+    relation comp &quot;&quot; @pump -&gt; @reservoir { kind: &quot;sysml.composition&quot;; }
+    relation typed &quot;&quot; @pump -&gt; @litres { kind: &quot;assoc&quot;; }
+    relation water &quot;water&quot; @pump.outlet -&gt; @reservoir.inlet { kind: &quot;sysml.flow&quot;; }
+    relation b1 &quot;&quot; @balance -&gt; @pump { kind: &quot;assoc&quot;; }
+    relation b2 &quot;&quot; @balance -&gt; @reservoir { kind: &quot;assoc&quot;; }
+    relation b3 &quot;&quot; @balance -&gt; @pumpBase { kind: &quot;assoc&quot;; }
+}
+
+view bdd &quot;Pump block definition&quot; {
+    data: [@m];
+    projection { profile: &quot;sysml.bdd@2&quot;; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; }
+    exclude: [@m.water, @m.balance, @m.b1, @m.b2, @m.b3];
+}
+
+view ibd &quot;Pump station internals&quot; {
+    data: [@m];
+    projection { profile: &quot;sysml.ibd@2&quot;; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+    exclude: [@m.balance, @m.b1, @m.b2, @m.b3, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpBase];
+}
+
+view parametric &quot;Flow balance&quot; {
+    data: [@m];
+    projection { profile: &quot;sysml.parametric@2&quot;; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];
+}
+</code></pre>
+
+</details>
+<details class="ddn-source" id="src-website-examples-basics-86-sysml-behavioral-ddn"><summary><code>website/examples/basics/86-sysml-behavioral.ddn</code></summary>
+<h4><code>website/examples/basics/86-sysml-behavioral.ddn</code></h4>
+<pre class="ddn-src"><code>ddn &quot;0.5&quot;;
+module &quot;ddn.examples.sysmlbeh&quot;;
+
+// B1-065: SysML 1.6 behavioral diagrams — rebadges of the completed UML
+// machinery: use case (subjects, include), activity (streaming pins plus
+// rate/probability/continuous edge annotations), state machine (trigger
+// transitions) and sequence (message sorts). All data is synthetic.
+
+data uc {
+    object station &quot;Pump station&quot; { kind: &quot;uml.subject&quot;; }
+    object op &quot;Operator&quot; { kind: &quot;uml.actor&quot;; }
+    object run &quot;Run pump&quot; { kind: &quot;uml.usecase&quot;; x_usecase: { subjects: [ @station ]; }; }
+    object log &quot;Log flow&quot; { kind: &quot;uml.usecase&quot;; x_usecase: { subjects: [ @station ]; }; }
+    relation u1 &quot;&quot; @op -&gt; @run { kind: &quot;uml.uses&quot;; }
+    relation inc &quot;&quot; @log -&gt; @run { kind: &quot;uml.include&quot;; }
+}
+
+data act {
+    object start &quot;&quot; { kind: &quot;flow.start&quot;; }
+    object meter &quot;Meter flow&quot; { kind: &quot;flow.process&quot;;
+        ports { port out { direction: out; x_pin: { streaming: true }; } }
+    }
+    object fin &quot;&quot; { kind: &quot;flow.end&quot;; }
+    relation e1 &quot;command&quot; @start -&gt; @meter { kind: &quot;uml.flow&quot;; }
+    relation e2 &quot;water&quot; @meter.out -&gt; @fin { kind: &quot;uml.flow&quot;; x_flow: { rate: &quot;10 L/min&quot;; continuous: true; probability: 0.9 }; }
+}
+
+data sm {
+    object off &quot;Off&quot; { kind: &quot;state.state&quot;; }
+    object on &quot;On&quot; { kind: &quot;state.state&quot;; }
+    object fault &quot;Fault&quot; { kind: &quot;state.state&quot;; }
+    relation t1 &quot;&quot; @off -&gt; @on { kind: &quot;transition&quot;; x_transition: { event: &quot;start&quot; }; }
+    relation t2 &quot;&quot; @on -&gt; @fault { kind: &quot;transition&quot;; x_transition: { event: &quot;dry run&quot;; guard: &quot;level == 0&quot; }; }
+    relation t3 &quot;&quot; @fault -&gt; @off { kind: &quot;transition&quot;; x_transition: { event: &quot;reset&quot; }; }
+}
+
+data sq {
+    object hmi &quot;HMI&quot; { kind: &quot;uml.class&quot;; }
+    object ctrl &quot;Controller&quot; { kind: &quot;uml.class&quot;; }
+    object pump &quot;Pump&quot; { kind: &quot;uml.class&quot;; }
+    relation m1 &quot;startPump()&quot; @hmi -&gt; @ctrl { kind: &quot;uml.message&quot;; }
+    relation m2 &quot;engage&quot; @ctrl -&gt; @pump { kind: &quot;uml.message&quot;; }
+    relation m3 &quot;ack&quot; @pump -&gt; @ctrl { kind: &quot;uml.message&quot;; x_message: { sort: &quot;reply&quot; }; }
+}
+
+view usecase &quot;Station use cases&quot; {
+    data: [@uc];
+    projection { profile: &quot;sysml.usecase@1&quot;; }
+    frame boundary &quot;Pump station&quot; { scope: @uc.station; members: [@uc.run, @uc.log]; }
+    publication { size: content; fit: none; }
+}
+
+view activity &quot;Metering activity&quot; {
+    data: [@act];
+    projection { profile: &quot;sysml.activity@1&quot;; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+
+view states &quot;Pump states&quot; {
+    data: [@sm];
+    projection { profile: &quot;sysml.statemachine@1&quot;; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+
+view sequence &quot;Start sequence&quot; {
+    data: [@sq];
+    projection { kind: sequence; profile: &quot;sysml.sequence@1&quot;; }
+    publication { size: content; fit: none; }
+}
+</code></pre>
+
+</details>
 <details class="ddn-source" id="src-website-examples-gallery-src-layouts-ddn"><summary><code>website/examples/gallery/src/layouts.ddn</code></summary>
 <h4><code>website/examples/gallery/src/layouts.ddn</code></h4>
 <pre class="ddn-src"><code>ddn &quot;0.5&quot;;
@@ -19194,9 +19454,18 @@ format shared {
 <tr><td><code>requirements.basic@1</code></td><td><a href="#profile-requirements-basic-1">09 / Requirement traceability</a></td><td><code>graph</code></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/requirements-basic-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>state.composite@1</code></td><td><a href="#profile-state-composite-1">Order lifecycle / composite states</a></td><td><code>graph</code></td><td><code>website/examples/basics/44-hierarchical-state.ddn</code></td><td><a href="profiles/state-composite-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-States">wiki</a></td></tr>
 <tr><td><code>state.flat@1</code></td><td><a href="#profile-state-flat-1">12 / Corrective-action lifecycle</a></td><td><code>graph</code></td><td><code>website/examples/quality/views.ddn</code></td><td><a href="profiles/state-flat-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-States">wiki</a></td></tr>
+<tr><td><code>sysml.activity@1</code></td><td><a href="#profile-sysml-activity-1">Metering activity</a></td><td><code>graph</code></td><td><code>website/examples/basics/86-sysml-behavioral.ddn</code></td><td><a href="profiles/sysml-activity-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>sysml.bdd@1</code></td><td><a href="#profile-sysml-bdd-1">Pump station block definition</a></td><td><code>graph</code></td><td><code>website/examples/basics/50-sysml.ddn</code></td><td><a href="profiles/sysml-bdd-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.bdd@2</code></td><td><a href="#profile-sysml-bdd-2">Pump block definition</a></td><td><code>graph</code></td><td><code>website/examples/basics/85-sysml-blocks.ddn</code></td><td><a href="profiles/sysml-bdd-2.svg">SVG</a></td><td></td></tr>
 <tr><td><code>sysml.ibd@1</code></td><td><a href="#profile-sysml-ibd-1">Pump station internal block</a></td><td><code>graph</code></td><td><code>website/examples/basics/50-sysml.ddn</code></td><td><a href="profiles/sysml-ibd-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.ibd@2</code></td><td><a href="#profile-sysml-ibd-2">Pump station internals</a></td><td><code>graph</code></td><td><code>website/examples/basics/85-sysml-blocks.ddn</code></td><td><a href="profiles/sysml-ibd-2.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.package@1</code></td><td><a href="#profile-sysml-package-1">Model packages</a></td><td><code>graph</code></td><td><code>website/examples/basics/84-sysml-requirements.ddn</code></td><td><a href="profiles/sysml-package-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>sysml.parametric@1</code></td><td><a href="#profile-sysml-parametric-1">Pump station flow balance</a></td><td><code>graph</code></td><td><code>website/examples/basics/50-sysml.ddn</code></td><td><a href="profiles/sysml-parametric-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.parametric@2</code></td><td><a href="#profile-sysml-parametric-2">Flow balance</a></td><td><code>graph</code></td><td><code>website/examples/basics/85-sysml-blocks.ddn</code></td><td><a href="profiles/sysml-parametric-2.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.requirements@1</code></td><td><a href="#profile-sysml-requirements-1">Pump requirements</a></td><td><code>graph</code></td><td><code>website/examples/basics/84-sysml-requirements.ddn</code></td><td><a href="profiles/sysml-requirements-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.sequence@1</code></td><td><a href="#profile-sysml-sequence-1">Start sequence</a></td><td><code>sequence</code></td><td><code>website/examples/basics/86-sysml-behavioral.ddn</code></td><td><a href="profiles/sysml-sequence-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.statemachine@1</code></td><td><a href="#profile-sysml-statemachine-1">Pump states</a></td><td><code>graph</code></td><td><code>website/examples/basics/86-sysml-behavioral.ddn</code></td><td><a href="profiles/sysml-statemachine-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>sysml.usecase@1</code></td><td><a href="#profile-sysml-usecase-1">Station use cases</a></td><td><code>graph</code></td><td><code>website/examples/basics/86-sysml-behavioral.ddn</code></td><td><a href="profiles/sysml-usecase-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>table.records@1</code></td><td><a href="#profile-table-records-1">19 / Shared observation table</a></td><td><code>table</code></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/table-records-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>timeline.basic@1</code></td><td><a href="#profile-timeline-basic-1">21 / Supplied-date procurement schedule</a></td><td><code>timeline</code></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/timeline-basic-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Timelines">wiki</a></td></tr>
 <tr><td><code>uml.activity@1</code></td><td><a href="#profile-uml-activity-1">Order fulfilment activity</a></td><td><code>graph</code></td><td><code>website/examples/basics/45-activity-diagram.ddn</code></td><td><a href="profiles/uml-activity-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>

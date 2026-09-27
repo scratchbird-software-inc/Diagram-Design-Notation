@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 227,
+  "kindCount": 231,
   "kinds": [
     {
       "kind": "object",
@@ -7548,6 +7548,140 @@
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
       "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
       "default_expanded_control_count": 3
+    },
+    {
+      "kind": "sysml.testcase",
+      "name": "Test case",
+      "source": "profile",
+      "palette_group": "Notes & evidence",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "governance"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "sysml.requirements@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "sysml.valuetype",
+      "name": "Value type",
+      "source": "profile",
+      "palette_group": "Data",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "interface"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "sysml.bdd@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "sysml.interfaceblock",
+      "name": "Interface block",
+      "source": "profile",
+      "palette_group": "Systems",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "interface"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "sysml.bdd@2",
+        "sysml.ibd@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "sysml.flowspec",
+      "name": "Flow specification",
+      "source": "profile",
+      "palette_group": "Systems",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "sysml.bdd@2",
+        "sysml.ibd@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
     }
   ]
 }

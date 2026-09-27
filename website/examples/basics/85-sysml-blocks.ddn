@@ -1,0 +1,74 @@
+ddn "0.5";
+module "ddn.examples.sysmlblocks";
+
+// B1-065: SysML 1.6 structural diagrams — BDD@2 (block compartments with
+// units, composition and generalization, value type, interface block, flow
+// specification), IBD@2 (proxy/full/conjugated port glyphs, multiplicity,
+// nested ports, flow properties, item flow), and parametric@2 (constraint
+// with three bindings and a parameters compartment). All data is synthetic.
+
+data m {
+    object pump "Pump" { kind: "sysml.block";
+        fields {
+            field capacity "capacity" { x_block: { compartment: "values" }; x_unit: { unit: "L/min" }; }
+            field mass "mass" { x_block: { compartment: "values" }; x_unit: { unit: "kg" }; }
+            field impeller "impeller" { x_block: { compartment: "parts" }; }
+            field mount "mounting" { x_block: { compartment: "references" }; }
+            field prime "prime()" { x_block: { compartment: "operations" }; }
+            field cav "cavitation free" { x_block: { compartment: "constraints" }; }
+        }
+        ports {
+            port outlet { direction: out; x_port: { type: "full"; multiplicity: "1..2"; nested: [ { name: "seal"; direction: "out" } ] }; }
+        }
+    }
+    object reservoir "Reservoir" { kind: "sysml.block";
+        ports { port inlet { direction: in; x_port: { type: "proxy"; conjugated: true }; } }
+    }
+    object pumpBase "Fluid mover" { kind: "sysml.block"; }
+    object litres "Litres per minute" { kind: "sysml.valuetype"; }
+    object pumpIf "Pump interface" { kind: "sysml.interfaceblock";
+        ports { port flowOut { direction: out; } port cmd { direction: in; } }
+    }
+    object waterSpec "Water flow spec" { kind: "sysml.flowspec";
+        ports { port flowRate { direction: out; } port temperature { direction: inout; } }
+    }
+    object balance "{flow = pressure x area}" { kind: "sysml.constraint";
+        fields {
+            field flow "flow" { x_unit: { unit: "L/min" }; }
+            field pressure "pressure" { x_unit: { unit: "bar" }; }
+            field area "area" { x_unit: { unit: "m3" }; }
+        }
+    }
+
+    relation gen "" @pump -> @pumpBase { kind: "uml.generalization"; }
+    relation comp "" @pump -> @reservoir { kind: "sysml.composition"; }
+    relation typed "" @pump -> @litres { kind: "assoc"; }
+    relation water "water" @pump.outlet -> @reservoir.inlet { kind: "sysml.flow"; }
+    relation b1 "" @balance -> @pump { kind: "assoc"; }
+    relation b2 "" @balance -> @reservoir { kind: "assoc"; }
+    relation b3 "" @balance -> @pumpBase { kind: "assoc"; }
+}
+
+view bdd "Pump block definition" {
+    data: [@m];
+    projection { profile: "sysml.bdd@2"; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; }
+    exclude: [@m.water, @m.balance, @m.b1, @m.b2, @m.b3];
+}
+
+view ibd "Pump station internals" {
+    data: [@m];
+    projection { profile: "sysml.ibd@2"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+    exclude: [@m.balance, @m.b1, @m.b2, @m.b3, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpBase];
+}
+
+view parametric "Flow balance" {
+    data: [@m];
+    projection { profile: "sysml.parametric@2"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];
+}

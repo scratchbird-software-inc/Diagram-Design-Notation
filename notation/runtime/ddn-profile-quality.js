@@ -1,8 +1,13 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. Additive profile-completion contracts. */
 import {publishNamespace} from './ddn-module-registry.js';
+import UNITS from './assets/units.js';
 'use strict';
 function validate(ir,E){
  const ns=new Map(ir.elements.map(n=>[n.id,n])),shown=new Set(ir.view.selected),profile=ir.view.profiles.projection.profile;
+ /* B1-065 (RFC-128): SysML behavioral rebadges alias the completed UML
+  * machinery — the gates below fire for the SysML profile ids too. */
+ const REBADGE={'sysml.usecase@1':['uml.usecase@2','uml.usecase@3'],'sysml.activity@1':['uml.activity@1','uml.activity@2'],'sysml.statemachine@1':['uml.statemachine@1'],'sysml.sequence@1':['uml.sequence@2']};
+ const eff=new Set([profile,...(REBADGE[profile]||[])]);
  const fail=(c,m,n)=>{const e=new E(c,m,n?.source?.file||ir.view.source.file,n?.source?.start||ir.view.source.start);if(E===Error){e.code=c;e.message=m;}throw e;};
  const keys=(o,a,label,n)=>{if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).some(k=>!a.includes(k)))fail('DDN-PX001','Unknown or malformed '+label,n);};
  for(const n of ir.elements){
@@ -24,7 +29,7 @@ function validate(ir,E){
   if(r.properties.x_chen){const x=r.properties.x_chen;keys(x,['identifying','owner','weak','from','to'],'Chen association metadata',r);if(!['assoc','ref'].includes(r.kind)||r.from.member||r.to.member)fail('DDN-PX005','Chen associations are binary object-level assoc/ref',r);for(const side of ['from','to']){const m=x[side];if(m){keys(m,['min','max'],'participation bound',r);if(!Number.isSafeInteger(m.min)||m.min<0||!(m.max==='many'||Number.isSafeInteger(m.max)&&m.max>=m.min))fail('DDN-PX005','Participation is nonnegative min/max or max:many',r);}}
    if(x.identifying!==undefined&&typeof x.identifying!=='boolean')fail('DDN-PX005','identifying is boolean',r);if(x.identifying){const weak=ns.get(x.weak?.$ref),owner=ns.get(x.owner?.$ref);if(!weak?.properties.x_chen?.weak||weak.properties.x_chen.owner?.$ref!==owner?.id||!new Set([r.from.element,r.to.element]).has(weak?.id)||!new Set([r.from.element,r.to.element]).has(owner?.id))fail('DDN-PX005','Identifying association must connect the declared weak entity to its owner',r);const end=r.from.element===owner.id?x.from:x.to;if(!end||end.min!==1||end.max!==1)fail('DDN-PX005','Each weak instance has exactly one owner',r);}else if(x.owner||x.weak)fail('DDN-PX005','Nonidentifying relationship cannot declare owner/weak roles',r);}
  }
- if(profile==='uml.usecase@2'){
+ if(eff.has('uml.usecase@2')){
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='uml.usecase'))if(!n.properties.x_usecase?.subjects?.length)fail('DDN-PX006','Use case must name its subject boundary',n);
   for(const r of ir.relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element)&&['uml.include','uml.extend'].includes(r.kind))){if(r.kind==='uml.extend'&&!r.properties.x_usecase)fail('DDN-PX006','Extend needs an extension point and condition',r);const a=ns.get(r.from.element).properties.x_usecase?.subjects||[],b=ns.get(r.to.element).properties.x_usecase?.subjects||[];if(!a.some(x=>b.some(y=>x.$ref===y.$ref)))fail('DDN-PX006','Include/extend endpoints must share a declared subject',r);}
   for(const frame of ir.view.frames)if(ns.get(frame.scope)?.kind==='uml.subject')for(const id of frame.members){const n=ns.get(id);if(n?.kind==='uml.usecase'&&!n.properties.x_usecase?.subjects?.some(r=>r.$ref===frame.scope))fail('DDN-PX006','View subject frame contradicts model membership',n);}
@@ -58,7 +63,7 @@ function validate(ir,E){
    if(!ret&&dotted)fail('DDN-PJ111','Non-reply message '+r.id+' must carry a top-level number, got dotted '+seq,r);
   }
  }
- if(profile==='state.composite@1'||profile==='uml.statemachine@1'){
+ if(eff.has('state.composite@1')||eff.has('uml.statemachine@1')){
   const frames=ir.view.frames||[],regions=frames.filter(f=>f.x_region===true);
   const collide=f=>{const initials=f.members.map(id=>ns.get(id)).filter(n=>n?.kind==='state.initial');if(initials.length>1)fail('DDN-PJ113','Frame '+(f.name||f.id)+' declares '+initials.length+' initial states ('+initials.map(n=>n.id).join(', ')+'); at most one initial state per region');};
   for(const f of regions)collide(f);
@@ -67,7 +72,7 @@ function validate(ir,E){
  /* B1-057 (RFC-121): pseudostate endpoint/membership rules and transition
   * label form. Endpoint rules are state-profile business; a pseudostate kind
   * dropped into a plain graph view is just a marker there. */
- if(profile==='uml.statemachine@1'||profile.startsWith('state.')){
+ if(eff.has('uml.statemachine@1')||profile.startsWith('state.')){
   const es=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='state.transition');
   const PSEUDO=['state.history_shallow','state.history_deep','state.junction','state.choice','state.entrypoint','state.exitpoint','state.forkjoin','state.terminate'];
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&PSEUDO.includes(n.kind))){
@@ -75,10 +80,10 @@ function validate(ir,E){
    if(n.kind==='state.terminate'&&out.length)fail('DDN-PJ161','Terminate pseudostate '+n.id+' cannot have outgoing transitions',n);
    if(n.kind==='state.choice'&&out.length<2)fail('DDN-PJ161','Choice pseudostate '+n.id+' needs at least two outgoing transitions',n);
    if(n.kind==='state.junction'&&(!inc.length||!out.length))fail('DDN-PJ161','Junction pseudostate '+n.id+' is a pass-through and needs incoming and outgoing transitions',n);
-   if(['state.entrypoint','state.exitpoint'].includes(n.kind)&&profile==='uml.statemachine@1'){
+   if(['state.entrypoint','state.exitpoint'].includes(n.kind)&&eff.has('uml.statemachine@1')){
     const frames=ir.view.frames||[];
     if(!frames.some(f=>f.members.includes(n.id)))fail('DDN-PJ161','Entry/exit point '+n.id+' must be a member of a composite-state frame',n);}
-   if(['state.history_shallow','state.history_deep'].includes(n.kind)&&profile==='uml.statemachine@1'){
+   if(['state.history_shallow','state.history_deep'].includes(n.kind)&&eff.has('uml.statemachine@1')){
     const frames=ir.view.frames||[];
     if(!frames.some(f=>f.members.includes(n.id)))fail('DDN-PJ161','History pseudostate '+n.id+' must be a member of a composite-state frame',n);}
   }
@@ -210,7 +215,7 @@ function validate(ir,E){
   }
  }
  /* B1-060 (RFC-124): activity-diagram completeness semantics. */
- if(profile==='uml.activity@2'){
+ if(eff.has('uml.activity@2')){
   const es2=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.flow');
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='flow.merge')){
    const inc=es2.filter(r=>r.to.element===n.id).length,out=es2.filter(r=>r.from.element===n.id).length;
@@ -249,7 +254,7 @@ function validate(ir,E){
    }
   }
  }
- if(profile==='uml.activity@1'){
+ if(eff.has('uml.activity@1')){
   const frames=ir.view.frames||[],lanes=new Set(frames.flatMap(f=>[f.id,f.name,String(f.id).split('::').pop().split('.').pop()]));
   const shown2=new Set(ir.view.selected),es2=ir.relations.filter(r=>shown2.has(r.from.element)&&shown2.has(r.to.element)&&r.kind==='uml.flow');
   for(const n of ir.elements.filter(n=>shown2.has(n.id)&&n.properties.x_partition)){const lane=n.properties.x_partition.lane;if(!lanes.has(lane))fail('DDN-PJ114','Node '+n.id+' declares partition lane '+JSON.stringify(lane)+' but no frame of this view has that id or name',n);}
@@ -268,15 +273,66 @@ function validate(ir,E){
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='flow.gateway'))
    if(!['exclusive','parallel','inclusive'].includes(n.properties.x_gateway?.type))fail('DDN-PJ117','Gateway '+n.id+' lacks a valid x_gateway.type (exclusive, parallel or inclusive)',n);
  }
- if(profile.startsWith('sysml.')){
-  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.ports.length&&n.kind!=='sysml.block'))
-   fail('DDN-PJ121','Element '+(n.name||n.id)+' (kind '+n.kind+') declares a ports group; under sysml.* profiles only sysml.block elements declare ports',n);
+ if(profile.startsWith('sysml.')&&profile!=='sysml.activity@1'){ /* activity pins are x_pin ports on action kinds */
+  /* B1-065 (RFC-128): @2 profiles widen the port-owner set to the block
+   * family (interface blocks, flow specifications); @1 keeps sysml.block. */
+  const portOwners=['sysml.block',...(/^sysml\.(bdd|ibd|parametric)@2$/.test(profile)?['sysml.interfaceblock','sysml.flowspec']:[])];
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.ports.length&&!portOwners.includes(n.kind)))
+   fail('DDN-PJ121','Element '+(n.name||n.id)+' (kind '+n.kind+') declares a ports group; under '+profile+' only '+portOwners.join('/')+' elements declare ports',n);
  }
  if(profile==='sysml.parametric@1'){
   const es=ir.relations.filter(r=>ir.view.relations.includes(r.id));
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='sysml.constraint')){
    const count=es.filter(r=>r.from.element===n.id||r.to.element===n.id).length;
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
+  }
+ }
+ /* B1-065 (RFC-128): SysML 1.6 semantics. */
+ {
+  const BLOCKY=['sysml.block','sysml.interfaceblock','sysml.valuetype','sysml.flowspec','sysml.constraint'];
+  for(const n of ir.elements){
+   for(const f of n.fields){
+    const xb=f.properties.x_block;
+    if(xb!==undefined&&!['sysml.block','sysml.interfaceblock'].includes(n.kind))fail('DDN-PJ186','x_block compartments belong to sysml.block/sysml.interfaceblock fields; '+n.id+' is '+n.kind,f);
+    const xu=f.properties.x_unit;
+    if(xu!==undefined){const entry=UNITS.units.find(u=>u.symbol===xu.unit);
+     if(!entry)fail('DDN-PJ188','Field '+f.id+' declares unit '+JSON.stringify(xu.unit)+' which is not in the units registry (standard/registry/units.json)',f);
+     else if(xu.quantity!==undefined&&entry.quantity!==xu.quantity)fail('DDN-PJ188','Field '+f.id+' declares quantity '+JSON.stringify(xu.quantity)+' but unit '+xu.unit+' is a '+entry.quantity+' unit',f);}
+   }
+   for(const pt of n.ports||[]){
+    const xp=pt.properties.x_port;
+    if(xp===undefined)continue;
+    if(!BLOCKY.includes(n.kind))fail('DDN-PJ187','x_port typing applies to ports of block-family kinds; '+n.id+' is '+n.kind,pt);
+    if(xp.nested){const names=xp.nested.map(x=>x.name);if(new Set(names).size!==names.length)fail('DDN-PJ187','Port '+pt.id+' declares duplicate nested port names',pt);}
+    if(xp.multiplicity!==undefined&&!/^(\d+|\*)(\.\.(\d+|\*))?$/.test(xp.multiplicity))fail('DDN-PJ187','Port '+pt.id+' multiplicity must be a UML multiplicity; found '+JSON.stringify(xp.multiplicity),pt);
+   }
+  }
+  for(const r of ir.relations){
+   const a=ns.get(r.from.element),b=ns.get(r.to.element),ka=a?.kind,kb=b?.kind;
+   const reqDep={'sysml.derive':[['req.requirement'],['req.requirement']],'sysml.copy':[['req.requirement'],['req.requirement']],'sysml.master':[['req.requirement'],['req.requirement']],'sysml.verify':[['sysml.testcase','req.test'],['req.requirement']],'sysml.satisfy':[BLOCKY.concat(['uml.class','activity','flow.process']),['req.requirement']]}[r.kind];
+   if(reqDep){const [src,tgt]=reqDep;
+    if(!src.includes(ka))fail('DDN-PJ185',r.kind+' '+r.id+' must start at '+src.join('/')+'; found '+(ka||'unresolved'),r);
+    if(!tgt.includes(kb))fail('DDN-PJ185',r.kind+' '+r.id+' must target '+tgt.join('/')+'; found '+(kb||'unresolved'),r);}
+   if(r.kind==='sysml.composition'&&!(BLOCKY.includes(ka)||ka==='req.requirement')||r.kind==='sysml.composition'&&!(BLOCKY.includes(kb)||kb==='req.requirement'))
+    fail('DDN-PJ190','sysml.composition '+r.id+' connects block-family kinds or requirements; found '+(ka||'?')+' -> '+(kb||'?'),r);
+   if(r.kind==='uml.generalization'&&profile.startsWith('sysml.')&&!(BLOCKY.includes(ka)&&BLOCKY.includes(kb)))
+    fail('DDN-PJ190','Generalization '+r.id+' under '+profile+' connects block-family kinds; found '+(ka||'?')+' -> '+(kb||'?'),r);
+   const xf=r.properties.x_flow;
+   if(xf!==undefined&&(r.kind!=='uml.flow'||profile!=='sysml.activity@1'))fail('DDN-PJ191','x_flow (rate/probability/continuous) annotates uml.flow edges under sysml.activity@1; '+r.id+' is '+r.kind+' under '+profile,r);
+  }
+  if(profile==='sysml.parametric@2'){
+   const es=ir.relations.filter(r=>ir.view.relations.includes(r.id));
+   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='sysml.constraint')){
+    const count=es.filter(r=>r.from.element===n.id||r.to.element===n.id).length;
+    if(count<1)fail('DDN-PJ189','Constraint '+(n.name||n.id)+' binds no endpoint; a parametric constraint binds at least one',n);
+   }
+  }
+  if(profile==='sysml.ibd@2'){
+   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='sysml.flow'))
+    for(const [label,ep]of [['source',r.from],['target',r.to]]){
+     const host=ns.get(ep.element);
+     if(!host||!BLOCKY.includes(host.kind))fail('DDN-PJ191','Item flow '+r.id+' '+label+' must be a block-family element or one of its ports; found '+(host?host.kind:'unresolved'),r);
+    }
   }
  }
  if(profile==='archimate.basic@1'){

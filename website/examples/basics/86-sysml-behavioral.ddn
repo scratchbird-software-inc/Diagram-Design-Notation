@@ -1,0 +1,71 @@
+ddn "0.5";
+module "ddn.examples.sysmlbeh";
+
+// B1-065: SysML 1.6 behavioral diagrams — rebadges of the completed UML
+// machinery: use case (subjects, include), activity (streaming pins plus
+// rate/probability/continuous edge annotations), state machine (trigger
+// transitions) and sequence (message sorts). All data is synthetic.
+
+data uc {
+    object station "Pump station" { kind: "uml.subject"; }
+    object op "Operator" { kind: "uml.actor"; }
+    object run "Run pump" { kind: "uml.usecase"; x_usecase: { subjects: [ @station ]; }; }
+    object log "Log flow" { kind: "uml.usecase"; x_usecase: { subjects: [ @station ]; }; }
+    relation u1 "" @op -> @run { kind: "uml.uses"; }
+    relation inc "" @log -> @run { kind: "uml.include"; }
+}
+
+data act {
+    object start "" { kind: "flow.start"; }
+    object meter "Meter flow" { kind: "flow.process";
+        ports { port out { direction: out; x_pin: { streaming: true }; } }
+    }
+    object fin "" { kind: "flow.end"; }
+    relation e1 "command" @start -> @meter { kind: "uml.flow"; }
+    relation e2 "water" @meter.out -> @fin { kind: "uml.flow"; x_flow: { rate: "10 L/min"; continuous: true; probability: 0.9 }; }
+}
+
+data sm {
+    object off "Off" { kind: "state.state"; }
+    object on "On" { kind: "state.state"; }
+    object fault "Fault" { kind: "state.state"; }
+    relation t1 "" @off -> @on { kind: "transition"; x_transition: { event: "start" }; }
+    relation t2 "" @on -> @fault { kind: "transition"; x_transition: { event: "dry run"; guard: "level == 0" }; }
+    relation t3 "" @fault -> @off { kind: "transition"; x_transition: { event: "reset" }; }
+}
+
+data sq {
+    object hmi "HMI" { kind: "uml.class"; }
+    object ctrl "Controller" { kind: "uml.class"; }
+    object pump "Pump" { kind: "uml.class"; }
+    relation m1 "startPump()" @hmi -> @ctrl { kind: "uml.message"; }
+    relation m2 "engage" @ctrl -> @pump { kind: "uml.message"; }
+    relation m3 "ack" @pump -> @ctrl { kind: "uml.message"; x_message: { sort: "reply" }; }
+}
+
+view usecase "Station use cases" {
+    data: [@uc];
+    projection { profile: "sysml.usecase@1"; }
+    frame boundary "Pump station" { scope: @uc.station; members: [@uc.run, @uc.log]; }
+    publication { size: content; fit: none; }
+}
+
+view activity "Metering activity" {
+    data: [@act];
+    projection { profile: "sysml.activity@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+
+view states "Pump states" {
+    data: [@sm];
+    projection { profile: "sysml.statemachine@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+
+view sequence "Start sequence" {
+    data: [@sq];
+    projection { kind: sequence; profile: "sysml.sequence@1"; }
+    publication { size: content; fit: none; }
+}

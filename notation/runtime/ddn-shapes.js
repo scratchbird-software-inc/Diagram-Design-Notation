@@ -37,6 +37,28 @@ function measure(g,p){
  if(n.kind==='req.requirement'){
   g.requirement=Text.wrap(n.properties.x_diagram?.text||'',g.w-32*s,13*s,p.style.font);g.h=Math.max(g.h,(95+g.requirement.length*19)*s);
  }
+ /* B1-065 (RFC-128): SysML block-family compartments and keyword headers.
+  * Opt-in per profile (@2) and per x_block field property, so sysml.*@1
+  * fixtures render byte-identically. */
+ const SYSML2=/^sysml\.(bdd|ibd|parametric)@2$/.test(p.projection?.profile||'');
+ const SYSML_KW={'sysml.block':'block','sysml.interfaceblock':'interfaceBlock','sysml.flowspec':'flowSpecification','sysml.valuetype':'valueType','sysml.constraint':'constraint','sysml.testcase':'testCase'};
+ if(SYSML_KW[n.kind]&&(SYSML2||n.kind==='sysml.testcase')){
+  g.sysmlKeyword=SYSML_KW[n.kind];
+  if(n.fields.length){
+   const ORDER=['values','parts','references','operations','constraints'];
+   const list=g.fieldRows.slice().sort((a,b)=>ORDER.indexOf(a.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values'))-ORDER.indexOf(b.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values')));
+   let y=70*s,last=null;const div=[];
+   for(const row of list){const comp=row.field.properties.x_block?.compartment||(n.kind==='sysml.constraint'?'constraints':'values');
+    const xu=row.field.properties.x_unit;
+    const adorned=row.field.name+(xu?': '+xu.unit:'');
+    row.labelLines=Text.wrap(adorned,g.w-32*s,13.5*s,p.style.font,400);
+    if(comp!==last){div.push({top:y,label:comp});y+=25*s;last=comp;}
+    row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
+   }
+   g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);
+  }
+  g.headerH=70*s;
+ }
  if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,Text.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
@@ -279,6 +301,12 @@ function render(g,p,theme){
  if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
  else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
   const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
+ }else if(g.sysmlKeyword){
+  /* B1-065 (RFC-128): SysML block-family — «keyword» header plus named
+   * compartments (values/parts/references/operations/constraints). */
+  out+=text(x+w/2,y+20*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
+  for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
+  for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';
  }else if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
   out+=text(x+w/2,y+20*s,{['uml.interface']:'«interface»','uml.enumeration':'«enumeration»','uml.metaclass':'«metaclass»','uml.stereotype':'«stereotype»'}[n.kind]||'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);

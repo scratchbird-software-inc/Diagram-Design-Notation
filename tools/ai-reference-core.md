@@ -186,6 +186,10 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
 | `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
 | `x_sentry` | object | `{on: entry|exit, attach?, on_part?, if_part?}` (B1-064: criterion attachment, on/if-parts; DDN-PJ182) |
+| `x_block` | field | `{compartment: values|parts|references|operations|constraints}` — SysML block compartment row (DDN-PJ186) |
+| `x_port` | port | `{type: proxy|full, conjugated?, multiplicity?, nested?}` — SysML port typing (DDN-PJ187) |
+| `x_unit` | field | `{unit, quantity?}` — unit from `standard/registry/units.json`, renders `name: unit` (DDN-PJ188) |
+| `x_flow` | relation | `{rate?, probability?, continuous?}` — SysML activity-edge annotations under sysml.activity@1 (DDN-PJ191) |
 | `x_pack` | object | `{visibility: public|private}` — packaged element +/− (RFC-125; DDN-PJ171) |
 | `x_use` | object | `{arguments?, gates?}` — interaction-use detail (RFC-125; DDN-PJ174) |
 | `x_timeconstraint` | object | `["{…}", …]` timing constraints (RFC-125; DDN-PJ173) |
@@ -275,7 +279,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | C4 architecture | graph | `c4.context@1` / `c4.container@1` / `c4.component@1` | exactly one boundary frame |
 | system context/free architecture | graph | `ddn@1` | any kinds/verbs; no enforced profile rules |
 | requirements traceability | graph | `requirements.basic@1` | `req.*` kinds/verbs, `x_diagram.code`+`text` |
-| SysML | graph | `sysml.bdd@1` / `sysml.ibd@1` / `sysml.parametric@1` | ports only on `sysml.block` |
+| SysML | graph | `sysml.bdd@1/@2` / `sysml.ibd@1/@2` / `sysml.parametric@1/@2` / `sysml.requirements@1` / `sysml.package@1` | @2: block compartments, port typing, relaxed parametric bindings |
 | ArchiMate | graph | `archimate.basic@1` | `archi.*` kinds, same-layer or upward `archi.rel` |
 | fault / event tree | graph | `fault.tree@1` / `event.tree@1` | `tree.gate` + `x_gate.type`, ≥2 `tree.input` |
 | network / rack | graph | `network.basic@1` / `network.rack@1` | `network.attaches` to bus/ports; `x_rack.unit` unique per rack |
@@ -397,7 +401,7 @@ Per-profile:
 - **uml.communication@2** (RFC-125): fragment refs resolve to visible messages; constraints in {…} (DDN-PJ172).
 - **uml.timing@2** (RFC-125): annotations/constraints in {…}; messages need x_message.at (DDN-PJ173).
 - **uml.structure@2 packages / uml.profile@1** (RFC-125): x_pack.visibility needs a package frame (DDN-PJ171); extension endpoints stereotype → metaclass (DDN102).
-- **sysml.***: only `sysml.block` declares `ports` (DDN-PJ121); parametric: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122).
+- **sysml.***: only block-family kinds declare `ports` (DDN-PJ121; @1: `sysml.block` only); parametric@1: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122), parametric@2: at least one (DDN-PJ189). Requirements: dependency endpoint rules (DDN-PJ185); x_block compartments (PJ186); x_port typing/nesting (PJ187); x_unit resolves in the units registry (PJ188); composition/generalization on block-family kinds (PJ190); ibd@2 item-flow endpoints + x_flow edges (PJ191). Behavioral rebadges sysml.usecase/activity/sequence/statemachine@1 run the uml.* machinery (info DDN-PJW06).
 - **archimate.basic@1**: `archi.rel` endpoints among the nine `archi.*` kinds; links same-layer or upward (DDN-PJ123).
 - **cmmn.basic@1 / cmmn.complete@1**: `cmmn.sentry` inside a `cmmn.stage` frame with `x_sentry.on` (DDN-PJ120); complete@1: x_cmmn owner/decorator rules (PJ181), sentry attachment/on-part (PJ182), planning tables (PJ183), one case plan per view (PJ184).
 - **network.basic@1 / network.rack@1**: `network.attaches` targets a `network.bus` or port (DDN-PJ127); rack members carry unique integer `x_rack.unit` 1..`x_rack.units` (DDN-PJ127).
