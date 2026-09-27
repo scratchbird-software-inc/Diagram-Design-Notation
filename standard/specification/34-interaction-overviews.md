@@ -81,3 +81,17 @@ view payment_flow "Payment flow detail" {
 See `website/examples/basics/48-interaction-overview.ddn` for the full synthetic
 checkout example (overview plus `payment_flow` and `stock_flow` detail views
 in one file).
+
+# 34a. Interaction overviews at uml.interaction_overview@2 (RFC-125)
+
+`uml.interaction_overview@2` adds inline expansion and interaction-use
+detail; @1 stays installed and immutable.
+
+- **Inline expansion** — a node with `x_subdiagram.view` renders the
+  referenced view inline inside the node box (one recursion level; child
+  limits shared with panels — `DDN-PJ174`); the badge reads `↗ inline`.
+- **Interaction-use gates/arguments** — `x_use: { arguments?: [string],
+  gates?: [string] }` renders arguments under the node and named gate squares
+  on its left border; duplicate gate names are `DDN-PJ174`.
+
+Fixture: `website/examples/basics/81-uml-remainder.ddn` (view `overview`).

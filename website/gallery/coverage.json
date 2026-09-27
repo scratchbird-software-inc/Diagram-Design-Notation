@@ -783,6 +783,13 @@
       "combined": "website/examples/basics/42-communication-diagram.combined.ddn",
       "svg": "profiles/uml-communication-1.svg"
     },
+    "uml.communication@2": {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "comms",
+      "title": "Communication",
+      "kind": "graph",
+      "svg": "profiles/uml-communication-2.svg"
+    },
     "uml.composite@1": {
       "entry": "website/examples/basics/79-uml-composite.ddn",
       "view": "components",
@@ -806,6 +813,14 @@
       "wiki": "Diagrams-Flowcharts",
       "svg": "profiles/uml-interaction-overview-1.svg"
     },
+    "uml.interaction_overview@2": {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "overview",
+      "title": "IO",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/uml-interaction-overview-2.svg"
+    },
     "uml.object@1": {
       "entry": "website/examples/basics/43-object-diagram.ddn",
       "view": "objects",
@@ -813,6 +828,20 @@
       "kind": "graph",
       "combined": "website/examples/basics/43-object-diagram.combined.ddn",
       "svg": "profiles/uml-object-1.svg"
+    },
+    "uml.object@2": {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "objects",
+      "title": "Objects",
+      "kind": "graph",
+      "svg": "profiles/uml-object-2.svg"
+    },
+    "uml.profile@1": {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "profiles",
+      "title": "Profile diagram",
+      "kind": "graph",
+      "svg": "profiles/uml-profile-1.svg"
     },
     "uml.sequence@1": {
       "entry": "website/examples/basics/41-sequence-diagram.ddn",
@@ -862,6 +891,14 @@
       "wiki": "Diagrams-Sequence",
       "svg": "profiles/uml-timing-1.svg"
     },
+    "uml.timing@2": {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "timing",
+      "title": "Timing",
+      "kind": "timing",
+      "wiki": "Diagrams-Sequence",
+      "svg": "profiles/uml-timing-2.svg"
+    },
     "uml.usecase@1": {
       "entry": "website/examples/projections/views.ddn",
       "view": "usecases",
@@ -877,6 +914,13 @@
       "kind": "graph",
       "combined": "website/examples/quality/views.combined.ddn",
       "svg": "profiles/uml-usecase-2.svg"
+    },
+    "uml.usecase@3": {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "usecases",
+      "title": "Use cases",
+      "kind": "graph",
+      "svg": "profiles/uml-usecase-3.svg"
     },
     "wbs.tree@1": {
       "entry": "website/examples/basics/27-wbs.ddn",
@@ -3054,6 +3098,48 @@
       "kind": "graph",
       "wiki": "Diagrams-Flowcharts",
       "svg": "corpus/basics-80-uml-activity.svg"
+    },
+    {
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "objects",
+      "title": "Objects",
+      "views": [
+        {
+          "id": "objects",
+          "title": "Objects"
+        },
+        {
+          "id": "packages",
+          "title": "Packages"
+        },
+        {
+          "id": "profiles",
+          "title": "Profile diagram"
+        },
+        {
+          "id": "comms",
+          "title": "Communication"
+        },
+        {
+          "id": "overview",
+          "title": "IO"
+        },
+        {
+          "id": "detail",
+          "title": "Pay detail"
+        },
+        {
+          "id": "timing",
+          "title": "Timing"
+        },
+        {
+          "id": "usecases",
+          "title": "Use cases"
+        }
+      ],
+      "profile": "uml.object@2",
+      "kind": "graph",
+      "svg": "corpus/basics-81-uml-remainder.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

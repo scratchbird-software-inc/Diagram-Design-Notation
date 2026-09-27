@@ -19,7 +19,7 @@ function measure(g,p){
   if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
   g.fieldRows=[];
  }
- if(['uml.class','uml.interface','uml.enumeration'].includes(n.kind)){
+ if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
   const list=g.fieldRows.slice().sort((a,b)=>(a.field.properties.x_member?.kind==='operation')-(b.field.properties.x_member?.kind==='operation'));
   let y=70*s,last=null;const div=[];
   for(const row of list){const m=row.field.properties.x_member||{},type=m.kind||(n.kind==='uml.enumeration'?'literal':'attribute');if(type!==last){div.push({top:y,label:type==='operation'?'OPERATIONS':type==='literal'?'LITERALS':'ATTRIBUTES'});y+=25*s;last=type;}
@@ -204,8 +204,8 @@ function render(g,p,theme){
  if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
  else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
   const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
- }else if(['uml.class','uml.interface','uml.enumeration'].includes(n.kind)){
-  out+=text(x+w/2,y+20*s,n.kind==='uml.interface'?'«interface»':n.kind==='uml.enumeration'?'«enumeration»':'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
+ }else if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
+  out+=text(x+w/2,y+20*s,{['uml.interface']:'«interface»','uml.enumeration':'«enumeration»','uml.metaclass':'«metaclass»','uml.stereotype':'«stereotype»'}[n.kind]||'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
   for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
  }else if(n.kind==='req.requirement'){

@@ -110,3 +110,19 @@ OMG UML 2.5.1 separately publishes its formal specification, abstract syntax and
 ## 17.10 Activity diagrams at uml.activity@2 (RFC-124)
 
 `uml.activity@2` extends the activity profile to the UML 2.5.1 surface; @1 is immutable. Additions: `flow.merge` (merge diamond, ≥2 incoming / exactly one outgoing — `DDN-PJ167`; decisions keep the named-branch rule DDN-PF009); pins as ports on action kinds with `x_pin: { set?, streaming? }` (attached pins draw at edge endpoints, unattached pins draw on the action border, streaming pins filled, set names beside — `DDN-PJ169` on non-action owners; `uml.flow` gained `member_endpoints: true` so edges attach to pins); `flow.sendsignal`/`flow.acceptsignal` pentagons and the `flow.timeevent` hourglass; `flow.flowfinal` (⊗), which counts as an end under @2 (DDN-PF008); interruptible regions as frames with `x_interruptible: true` (dashed roundrect) and interrupting/exception edges as `uml.flow` with `x_interrupt`/`x_exception: true` drawn as lightning zigzags (source must be inside an interruptible region, exception must target a handler action — `DDN-PJ168`); structured/expansion regions as frames with `x_structured: { mode: structured|iterative|parallel }` («mode» keyword). Connector circles are the existing `flow.connector` kind (admitted to `uml.flow` endpoints). Activity execution semantics, object-flow type checking and expansion-region collections remain outside the profile.
+
+## 17.11 Package and profile diagrams (RFC-125)
+
+Package dependencies land on the structure vocabulary: `uml.import`
+(«import»), `uml.access` («access») and `uml.merge` («merge») are dashed
+open-arrow dependencies with package endpoints (import/access may target
+classifiers). Packaged-element visibility uses the closed contract
+`x_pack: { visibility: public|private }`, rendered as a `+`/`−` name prefix;
+visibility outside a package frame is meaningless and rejected
+(`DDN-PJ171`).
+
+The new profile `uml.profile@1` covers UML 2.5.1 profile diagrams:
+`uml.metaclass` and `uml.stereotype` are classifiers with «metaclass» /
+«stereotype» headers and class compartments; `uml.extension` (stereotype →
+metaclass) carries the new filled-triangle end mark; `uml.application`
+(«apply») is the dashed profile-application arrow between packages.

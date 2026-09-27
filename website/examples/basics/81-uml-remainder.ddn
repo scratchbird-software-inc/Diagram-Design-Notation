@@ -1,0 +1,94 @@
+ddn "0.5";
+module "ddn.examples.umlrem";
+
+// B1-061 (RFC-125): UML 2.5.1 remainder — object@2 (underlined instances, slot
+// datatype checks, link multiplicity), packages («import»/«access»/«merge» +
+// visibility), profile diagram (uml.profile@1), communication@2 (fragments +
+// {…} constraints), interaction overview @2 (inline expansion, gates,
+// arguments), timing@2 (annotations, constraints, compaction, lifeline
+// messages), usecase@3 (extension-point conditions). Minimal dialect, no pins.
+
+data obj {
+    object customer "Customer" { kind: "uml.class";
+        fields { field customer_id { datatype: "string"; } field age { datatype: "number"; } }
+    }
+    object ada "ada : Customer" { kind: record; x_instance: { classifier: @obj.customer; };
+        fields { field customer_id "C-1001"; field age "41"; }
+    }
+    object bob "bob : Customer" { kind: record; x_instance: { classifier: @obj.customer; };
+        fields { field customer_id "C-1002"; field age "36"; }
+    }
+    relation link1 "knows" @ada -> @bob { kind: "uml.link"; x_endlabels: { source: { multiplicity: "0..*"; }; target: { multiplicity: "1"; }; }; }
+}
+
+data pkg {
+    object shop "shop" { kind: "uml.package"; }
+    object core "core" { kind: "uml.package"; }
+    object domain_model "Domain model" { kind: "uml.class"; x_pack: { visibility: public; }; }
+    object helper "Helper" { kind: "uml.class"; x_pack: { visibility: private; }; }
+    relation imp "" @shop -> @core { kind: "uml.import"; }
+}
+
+data prof {
+    object meta "Classifier" { kind: "uml.metaclass"; }
+    object stereo "Audited" { kind: "uml.stereotype";
+        fields { field audited_by { x_member: { kind: attribute; }; } }
+    }
+    object base_pkg "base" { kind: "uml.package"; }
+    object applied_pkg "shop" { kind: "uml.package"; }
+    relation ext "" @stereo -> @meta { kind: "uml.extension"; }
+    relation app "" @applied_pkg -> @base_pkg { kind: "uml.application"; }
+}
+
+data comm {
+    object ui "UI" { kind: application; }
+    object svc "Service" { kind: service; }
+    relation m1 "request" @ui -> @svc { kind: "uml.message"; x_message: { seq: "1"; time: "{t1}"; };
+        x_fragment: { operator: alt; operands: [ { guard: "ok"; messages: [@comm.m1]; }, { guard: "else"; messages: [@comm.m2]; } ] };
+    }
+    relation m2 "fail" @svc -> @ui { kind: "uml.message"; x_message: { seq: "2"; duration: "{0..2s}"; }; }
+}
+
+data io {
+    object start "Start" { kind: "flow.start"; }
+    object pay "Pay" { kind: "flow.process"; x_subdiagram: { view: "detail" };
+        x_use: { arguments: [ "order" ]; gates: [ "in", "out" ]; };
+    }
+    object end "End" { kind: "flow.end"; }
+    relation t1 "" @start -> @pay { kind: "flow.next"; }
+    relation t2 "" @pay -> @end { kind: "flow.next"; }
+}
+data detail_data {
+    object a "Authorize" { kind: "flow.process"; }
+    object b "Capture" { kind: "flow.process"; }
+    relation ab "" @a -> @b { kind: "flow.next"; }
+}
+
+data tim {
+    object bus "Bus" { kind: service;
+        x_timeconstraint: [ "{0..40}" ];
+        x_states: [ { at: 0; state: "idle"; }, { at: 10; state: "idle"; }, { at: 20; state: "busy"; duration: "{20..30}"; } ];
+    }
+    object card "Card" { kind: application;
+        x_states: [ { at: 5; state: "out"; slew: "{2}"; }, { at: 25; state: "in"; } ];
+    }
+    relation tm "swipe" @card -> @bus { kind: "uml.message"; x_message: { at: 15 }; }
+}
+
+data uc {
+    object sys "Shop" { kind: "uml.subject"; }
+    object buyer "Buyer" { kind: "uml.actor"; }
+    object checkout "Checkout" { kind: "uml.usecase"; x_usecase: { subjects: [@uc.sys]; extension_points: [ "payment" ]; }; }
+    object rush "Rush order" { kind: "uml.usecase"; x_usecase: { subjects: [@uc.sys]; }; }
+    relation u1 "" @buyer -> @checkout { kind: "uml.uses"; }
+    relation u2 "rush extends" @rush -> @checkout { kind: "uml.extend"; x_usecase: { extension_point: "payment"; condition: "basket > 200"; }; }
+}
+
+view objects "Objects" { data: [@obj]; projection { profile: "uml.object@2"; } publication { size: content; fit: none; } }
+view packages "Packages" { data: [@pkg]; projection { profile: "uml.structure@2"; } frame shopf "shop" { scope: @pkg.shop; members: [@pkg.domain_model, @pkg.helper]; } publication { size: content; fit: none; } }
+view profiles "Profile diagram" { data: [@prof]; projection { profile: "uml.profile@1"; } publication { size: content; fit: none; } }
+view comms "Communication" { data: [@comm]; projection { profile: "uml.communication@2"; } publication { size: content; fit: none; } }
+view overview "IO" { data: [@io]; projection { profile: "uml.interaction_overview@2"; } publication { size: content; fit: none; minimum_text: 6pt; } }
+view detail "Pay detail" { data: [@detail_data]; publication { size: content; fit: none; minimum_text: 6pt; } }
+view timing "Timing" { data: [@tim]; projection { kind: timing; profile: "uml.timing@2"; } publication { size: content; fit: none; minimum_text: 6pt; } }
+view usecases "Use cases" { data: [@uc]; projection { profile: "uml.usecase@3"; } publication { size: content; fit: none; } }

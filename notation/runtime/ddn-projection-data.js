@@ -491,17 +491,29 @@ function plan(ir,ErrorClass=Error){
   return{kind,profile:p.profile,participants,messages,fragments,sourceIds:participants.map(n=>n.id).concat(messages.map(r=>r.id))};
  }
  if(kind==='timing'){
+  const t2=p.profile==='uml.timing@2';
   const participants=orderedParticipants(ir,shown).map(n=>{
    const xs=n.properties.x_states;
    if(!Array.isArray(xs)||!xs.length)fail('DDN-PJ118','Timing participant '+n.name+' must carry x_states with at least one {at,state} entry',n);
    const states=xs.map((e,i)=>{
     if(!e||typeof e!=='object'||!Number.isFinite(e.at)||typeof e.state!=='string'||!e.state.length)fail('DDN-PJ118','Timing participant '+n.name+' has a malformed x_states entry at index '+i+': at must be a finite number and state a nonempty string',n);
     if(i&&!(e.at>xs[i-1].at))fail('DDN-PJ118','Timing participant '+n.name+' x_states entry at index '+i+' (at='+e.at+') is not strictly after the previous entry (at='+xs[i-1].at+')',n);
-    return{at:e.at,state:e.state};
+    /* B1-061 (RFC-125): duration/slew annotations, {…} form. */
+    for(const key of ['duration','slew'])if(e[key]!==undefined){if(!t2)fail('DDN-PJ173','State '+key+' annotations require uml.timing@2',n);
+     if(typeof e[key]!=='string'||!/^\{[^{}]+\}$/.test(e[key]))fail('DDN-PJ173','Timing state '+key+' on '+n.name+' must use constraint form {…}; found '+JSON.stringify(e[key]),n);}
+    return{at:e.at,state:e.state,...(e.duration!==undefined?{duration:e.duration}:{}),...(e.slew!==undefined?{slew:e.slew}:[])};
    });
-   return{node:n,states};
+   const constraints=n.properties.x_timeconstraint;
+   if(constraints!==undefined){if(!t2)fail('DDN-PJ173','x_timeconstraint requires uml.timing@2',n);
+    for(const ctext of constraints)if(!/^\{[^{}]+\}$/.test(ctext))fail('DDN-PJ173','Timing constraint on '+n.name+' must use {…} form; found '+JSON.stringify(ctext),n);}
+   return{node:n,states,...(constraints?{constraints}:[])};
   });
-  return{kind,profile:p.profile,participants,sourceIds:participants.map(x=>x.node.id)};
+  /* B1-061: messages between lifelines, anchored at x_message.at. */
+  const messages=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.message');
+  for(const r of messages){if(!t2)fail('DDN-PJ173','Timing lifeline messages require uml.timing@2',r);
+   const at=r.properties.x_message?.at;if(!Number.isFinite(at))fail('DDN-PJ173','Timing message '+r.id+' needs x_message.at (a finite time point)',r);
+   const ids=new Set(participants.map(x=>x.node.id));if(!ids.has(r.from.element)||!ids.has(r.to.element))fail('DDN-PJ173','Timing message '+r.id+' endpoints must be timing participants',r);}
+  return{kind,profile:p.profile,participants,messages,sourceIds:participants.map(x=>x.node.id).concat(messages.map(r=>r.id))};
  }
 }
 function orderedParticipants(ir,shown){return ir.elements.filter(n=>shown.has(n.id)&&n.type==='object');}

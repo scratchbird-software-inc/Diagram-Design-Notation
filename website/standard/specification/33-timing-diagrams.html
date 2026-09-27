@@ -67,6 +67,17 @@ view timing &quot;Synthetic traffic lights / timing (seconds)&quot; {
 <p>  <code>DDN-PJ005</code>; width/height guards → <code>DDN-PJ006</code>; graph geometry (<code>place</code>,   <code>route</code>) in a timing view → <code>DDN-PJ002</code>; Vega-Lite export → <code>DDN-PJ070</code>.</p>
 <h2>Relationship to <code>timeline.basic@1</code></h2>
 <p><code>timeline.basic@1</code> is an immutable published profile and is unchanged by this chapter — including the &quot;UML timing&quot; entry in its <code>unsupported</code> list, which remains true for the date-interval timeline. Timing coverage arrives as a new projection kind and profile, not as an edit to the old profile. The timeline shows UTC date spans; the timing projection shows value steps on an abstract numeric axis. Neither claims duration/slew-rate annotations, clock/unit conversion, or full UML conformance.</p>
+<h1>33a. Timing diagrams at uml.timing@2 (RFC-125)</h1>
+<p><code>uml.timing@2</code> adds UML 2.5.1 timing notation; @1 stays installed and immutable.</p>
+<ul><li><strong>Annotations</strong> — <code>x_states</code> entries may carry <code>duration</code>/<code>slew</code> in <code>{…}</code></li></ul>
+<p>  form, rendered beside the plateau.</p>
+<ul><li><strong>Constraints</strong> — <code>x_timeconstraint: [&quot;{…}&quot;, …]</code> on a participant renders</li></ul>
+<p>  time/duration constraints under its lifeline band.</p>
+<ul><li><strong>State compaction</strong> — consecutive equal states render compacted (no</li></ul>
+<p>  transition line) under @2.</p>
+<ul><li><strong>Lifeline messages</strong> — <code>uml.message</code> relations between participants with</li></ul>
+<p>  <code>x_message.at</code> render as arrows at the declared time anchor.</p>
+<p>Malformed entries, constraints or anchors are <code>DDN-PJ173</code>; @2 features under uml.timing@1 are also <code>DDN-PJ173</code>. Fixture: <code>website/examples/basics/81-uml-remainder.ddn</code> (view <code>timing</code>).</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

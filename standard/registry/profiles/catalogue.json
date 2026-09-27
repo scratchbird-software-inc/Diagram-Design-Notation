@@ -243,6 +243,30 @@
       "defaults": {}
     },
     {
+      "keyword": "uml.metaclass",
+      "name": "Metaclass",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "METACLASS",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uml.stereotype",
+      "name": "Stereotype",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "STEREOTYPE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "uml.actor",
       "name": "Actor",
       "shape": "profile",
@@ -1443,6 +1467,134 @@
       ],
       "allow_self": false,
       "member_endpoints": true
+    },
+    {
+      "keyword": "uml.link",
+      "name": "Link",
+      "verb": "Links",
+      "family": "structural",
+      "code": "LINK",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "record",
+        "uml.class",
+        "uml.interface",
+        "uml.enumeration",
+        "uml.collaboration"
+      ],
+      "target": [
+        "record",
+        "uml.class",
+        "uml.interface",
+        "uml.enumeration",
+        "uml.collaboration"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uml.import",
+      "name": "\u00abimport\u00bb",
+      "verb": "Imports",
+      "family": "dependency",
+      "code": "IMPORT",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.package"
+      ],
+      "target": [
+        "uml.package",
+        "uml.class",
+        "uml.interface",
+        "uml.enumeration",
+        "uml.component"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uml.access",
+      "name": "\u00abaccess\u00bb",
+      "verb": "Accesses",
+      "family": "dependency",
+      "code": "ACCESS",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.package"
+      ],
+      "target": [
+        "uml.package",
+        "uml.class",
+        "uml.interface",
+        "uml.enumeration",
+        "uml.component"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uml.merge",
+      "name": "\u00abmerge\u00bb",
+      "verb": "Merges",
+      "family": "dependency",
+      "code": "MERGE",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.package"
+      ],
+      "target": [
+        "uml.package"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uml.extension",
+      "name": "Extension",
+      "verb": "Extends",
+      "family": "structural",
+      "code": "EXT",
+      "start": "none",
+      "end": "filled_triangle",
+      "glyph": "link",
+      "source": [
+        "uml.stereotype"
+      ],
+      "target": [
+        "uml.metaclass"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uml.application",
+      "name": "\u00abapply\u00bb",
+      "verb": "Applies",
+      "family": "dependency",
+      "code": "APPLY",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.package"
+      ],
+      "target": [
+        "uml.package"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
     },
     {
       "keyword": "uml.dependency",
@@ -2647,6 +2799,21 @@
       ]
     },
     {
+      "id": "uml.usecase@3",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML use-case diagram"
+      ],
+      "scope": "uml.usecase@2 plus (RFC-125): extend conditions on the label; extension-point existence (DDN-PX004).",
+      "validation": [
+        "subject naming (DDN-PX002/PX004/PX006)"
+      ],
+      "unsupported": [
+        "actor generalization details",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "chen.binary@2",
       "projection": "chen",
       "diagramFamilies": [
@@ -3109,6 +3276,22 @@
       ]
     },
     {
+      "id": "uml.communication@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML communication diagram"
+      ],
+      "scope": "uml.communication@1 plus (RFC-125): x_fragment frames, {\u2026} time/duration constraints on messages.",
+      "validation": [
+        "message numbering (DDN-PJ111)",
+        "fragment refs resolve (DDN-PJ172)"
+      ],
+      "unsupported": [
+        "protocol verification",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.object@1",
       "projection": "graph",
       "diagramFamilies": [
@@ -3122,6 +3305,22 @@
         "object identity semantics beyond labels",
         "slot datatype checking",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "uml.object@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML object diagram"
+      ],
+      "scope": "uml.object@1 plus (RFC-125): underlined instance titles, slot datatype checks, uml.link multiplicity.",
+      "validation": [
+        "slot names on classifier (DDN-PJ112)",
+        "slot datatype form (DDN-PJ170)"
+      ],
+      "unsupported": [
+        "slot constraint solving",
+        "formal UML conformance"
       ]
     },
     {
@@ -3234,6 +3433,22 @@
       ]
     },
     {
+      "id": "uml.timing@2",
+      "projection": "timing",
+      "diagramFamilies": [
+        "UML timing diagram"
+      ],
+      "scope": "uml.timing@1 plus (RFC-125): duration/slew annotations, x_timeconstraint constraints, state compaction, lifeline messages.",
+      "validation": [
+        "x_states entries (DDN-PJ118)",
+        "annotations/constraints/anchors (DDN-PJ173)"
+      ],
+      "unsupported": [
+        "simulation",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.interaction_overview@1",
       "projection": "graph",
       "diagramFamilies": [
@@ -3246,6 +3461,37 @@
       "unsupported": [
         "inline expansion of referenced views",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "uml.interaction_overview@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML interaction overview diagram"
+      ],
+      "scope": "uml.interaction_overview@1 plus (RFC-125): inline expansion of referenced interactions; x_use gates/arguments.",
+      "validation": [
+        "referenced views resolve (DDN-PJ119)",
+        "gates/arguments (DDN-PJ174)"
+      ],
+      "unsupported": [
+        "expansion beyond one level",
+        "formal UML conformance"
+      ]
+    },
+    {
+      "id": "uml.profile@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML profile diagram"
+      ],
+      "scope": "UML 2.5.1 profile diagrams (RFC-125): uml.metaclass/uml.stereotype, uml.extension (filled triangle), uml.application (\u00abapply\u00bb).",
+      "validation": [
+        "extension endpoints stereotype \u2192 metaclass (DDN102)"
+      ],
+      "unsupported": [
+        "profile registry semantics",
+        "formal UML conformance"
       ]
     },
     {

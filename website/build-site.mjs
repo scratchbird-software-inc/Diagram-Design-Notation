@@ -426,7 +426,7 @@ writeOut('index.html', shell({
     homeCards.map(([href, h, p, small]) =>
       '    <a class="card" href="' + href + '"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p><small>' + esc(small) + '</small></a>').join('\n') +
     '\n  </div>\n</section>\n' +
-    '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families and claims no UML/BPMN/DMN conformance certification.</small></p>\n' +
+    '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families (RFC-119…125) with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>\n' +
     '</main>\n' +
     '<script>\n' + runtime + '\n</' + 'script>\n' +
     '<script>\n' + demoScript + '\n</' + 'script>\n',
@@ -474,7 +474,7 @@ writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
 // Standard landing.
 writeOut('standard/index.html', page('../', 'standard', 'The DDN standard — DDN',
   '<h1 class="page-title">The Diagram Design Notation standard</h1>\n' +
-  '<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families and claims no UML/BPMN/DMN conformance certification.</p>\n' +
+  '<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families (RFC-119…125) with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>\n' +
   '<h2>Specification (' + SPEC_CHAPTER_COUNT + ' chapters)</h2>\n' +
   docList(path.join(REPO, 'standard/specification'), 'standard/specification', 'specification/') +
   '<h2>Governance</h2>\n' +

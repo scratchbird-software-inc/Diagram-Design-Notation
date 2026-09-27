@@ -128,6 +128,11 @@
     "DDN-PJ166": "x_part fields: uml.class/uml.component/uml.collaboration owners, UML multiplicity",
     "DDN-PJ167": "flow.merge needs \u22652 incoming uml.flow edges and exactly one outgoing",
     "DDN-PJ168": "x_interrupt edges start inside an x_interruptible frame; x_exception edges target a handler action (flow.process)",
-    "DDN-PJ169": "x_pin (set/streaming) applies to ports on flow.process/subprocess/objectnode only"
+    "DDN-PJ169": "x_pin (set/streaming) applies to ports on flow.process/subprocess/objectnode only",
+    "DDN-PJ170": "Slot value must match the classifier field datatype (numeric/boolean scalar forms)",
+    "DDN-PJ171": "x_pack.visibility is meaningful only inside a uml.package frame \u2014 add the frame or drop the property",
+    "DDN-PJ172": "Communication fragments reference visible uml.message relations; time/duration use {\u2026} form",
+    "DDN-PJ173": "Timing annotations/constraints use {\u2026} form; lifeline messages need x_message.at (finite) and participant endpoints",
+    "DDN-PJ174": "Interaction-use gates must be uniquely named; inline expansion supports one level"
   }
 }

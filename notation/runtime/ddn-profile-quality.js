@@ -96,6 +96,45 @@ function validate(ir,E){
    if(f.scope&&sc&&!NODE.has(sc.kind))fail('DDN-PJ164','Deployment nesting frames must scope to a node kind (uml.node/device/executionenv); '+f.id+' scopes to '+sc.kind,f);
   }
  }
+ /* B1-061 (RFC-125): UML remainder semantics. */
+ if(profile==='uml.object@2'){
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.properties.x_instance)){
+   const c=ns.get(n.properties.x_instance.classifier?.$ref);if(!c)continue;
+   for(const f of n.fields){
+    const cf=c.fields.find(g=>g.name===f.name||g.local===f.local||g.name===f.local||g.local===f.name);
+    const dt=cf?.properties?.datatype;
+    const val=f.name??f.label;if(typeof dt!=='string'||val===undefined)continue;
+    const v=String(val);
+    if(['number','integer','decimal','float'].includes(dt)&&!/^-?\d+(\.\d+)?$/.test(v))fail('DDN-PJ170','Slot '+f.id+' value '+JSON.stringify(v)+' is not numeric as classifier field datatype '+dt+' requires',f);
+    if(dt==='boolean'&&!['true','false'].includes(v))fail('DDN-PJ170','Slot '+f.id+' value '+JSON.stringify(v)+' is not boolean as classifier field datatype requires',f);
+   }
+  }
+ }
+ if(profile==='uml.communication@2'){
+  const visible=new Set(ir.view.relations);
+  for(const r of ir.relations.filter(r=>visible.has(r.id)&&r.properties.x_fragment!==undefined)){
+   const check=(fx,owner)=>{for(const op of fx.operands){for(const mref of op.messages){const id=mref?.$ref,m=ir.relations.find(x=>x.id===id);
+     if(!m||!visible.has(id)||m.kind!=='uml.message')fail('DDN-PJ172','Communication fragment on '+owner+' references a non-message or invisible relation: '+id,r);}
+    for(const nf of op.fragments||[])check(nf,owner);}};
+   check(r.properties.x_fragment,r.id);
+  }
+ }
+ if(profile==='uml.communication@2'){/* timing constraints reuse RFC-120 form */
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)))for(const key of ['time','duration']){const v=r.properties.x_message?.[key];
+   if(v!==undefined&&!/^\{[^{}]+\}$/.test(v))fail('DDN-PJ172','Message '+r.id+' '+key+' must use constraint form {…}; found '+JSON.stringify(v),r);}
+ }
+ for(const n of ir.elements){
+  if(n.properties.x_pack?.visibility!==undefined){
+   const inPkg=(ir.view.frames||[]).some(f=>f.members.includes(n.id)&&ns.get(f.scope)?.kind==='uml.package');
+   if(!inPkg)fail('DDN-PJ171','x_pack.visibility on '+n.id+' is meaningless: the element is not a member of any uml.package frame in this view',n);
+  }
+ }
+ if(profile==='uml.interaction_overview@2'){
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.properties.x_use)){
+   const gates=n.properties.x_use.gates||[];
+   if(new Set(gates).size!==gates.length)fail('DDN-PJ174','Interaction-use '+n.id+' declares duplicate gate names',n);
+  }
+ }
  /* B1-060 (RFC-124): activity-diagram completeness semantics. */
  if(profile==='uml.activity@2'){
   const es2=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.flow');

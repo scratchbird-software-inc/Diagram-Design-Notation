@@ -834,10 +834,22 @@ import RegistryCatalogue from './assets/catalogue.js';
       }
       if(ir.view.children.length>12)throw new DDNError('DDN-QP003','At most twelve embedded child views are permitted',view.source,view.start);
     }
-    if(p.projection.profile==='uml.interaction_overview@1'){
+    if(p.projection.profile==='uml.interaction_overview@1'||p.projection.profile==='uml.interaction_overview@2'){
       const viewIds=new Set();for(const n of ws.symbols.values())if(n.type==='view'){viewIds.add(n.id);viewIds.add(n.uid);}
+      /* B1-061 (RFC-125): @2 expands referenced interactions inline — one
+       * recursion level via build(), child IRs on ir.view.ioChildren (view-level
+       * metadata; semanticJSON reads elements/relations only). */
+      const ioChildren={};
       for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;
-        if(typeof target==='string'&&!viewIds.has(target))throw new DDNError('DDN-PJ119','Interaction overview node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);}
+        if(typeof target==='string'&&!viewIds.has(target))throw new DDNError('DDN-PJ119','Interaction overview node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        if(typeof target==='string'&&p.projection.profile==='uml.interaction_overview@2'){
+         const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&x.id===target);
+         const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+         if(child.view.profiles.projection.profile==='uml.interaction_overview@2'&&child.elements.some(m=>m.properties.x_subdiagram))throw new DDNError('DDN-PJ174','Interaction overview inline expansion supports one level; nested expansions are not rendered',view.source,view.start);
+         if(child.view.selected.length>128||child.view.relations.length>384)throw new DDNError('DDN-PJ174','Interaction overview child exceeds visible graph limits',view.source,view.start);
+         ioChildren[n.id]=child;
+        }}
+      if(Object.keys(ioChildren).length)ir.view.ioChildren=ioChildren;
     }
     if(!Contracts)throw new DDNError('DDN099','Load ddn-contracts.js before ddn-core.js');ir.diagnostics.push(...Contracts.validate(ir,registry,DDNError));
     ir.diagnostics.push(...Profiles.validate(ir,registry,DDNError));

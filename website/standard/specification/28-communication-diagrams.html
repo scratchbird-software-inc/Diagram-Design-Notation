@@ -60,6 +60,13 @@
 <p>  page/extent guards, and so on). The sequence-only rules of chapter 27 do not   apply here, and a communication view does not require place/route geometry.</p>
 <h2>Unsupported</h2>
 <p>Combined fragments; timing constraints; full UML conformance. Cross-message consistency (gap-free numbering, replies matching an existing request number) is deliberately not checked in <code>uml.communication@1</code> — numbers are validated for shape only.</p>
+<h1>28a. Communication diagrams at uml.communication@2 (RFC-125)</h1>
+<p><code>uml.communication@2</code> adds combined fragments and timing constraints to the communication profile; @1 stays installed and immutable.</p>
+<ul><li><strong>Combined fragments</strong> — <code>x_fragment</code> (RFC-120 contract) on a message: the</li></ul>
+<p>  covered messages' routes are wrapped in a dashed fragment frame with the   operator pentagon; operand guards render at each operand's first message.   References must resolve to visible <code>uml.message</code> relations (<code>DDN-PJ172</code>);   declaration-order span rules (DDN-PJ155) remain sequence-projection business.</p>
+<ul><li><strong>Timing constraints</strong> — <code>x_message.time</code> / <code>x_message.duration</code> in <code>{…}</code></li></ul>
+<p>  form render under the message label (<code>DDN-PJ172</code> on other forms).</p>
+<p>Fixture: <code>website/examples/basics/81-uml-remainder.ddn</code> (view <code>comms</code>).</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

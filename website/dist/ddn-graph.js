@@ -266,7 +266,7 @@
     if(g.silhouette==='actor')g.h=Math.max(g.h,(140+g.titleLines.length*21)*s);
     g.fieldRows=[];
    }
-   if(['uml.class','uml.interface','uml.enumeration'].includes(n.kind)){
+   if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
     const list=g.fieldRows.slice().sort((a,b)=>(a.field.properties.x_member?.kind==='operation')-(b.field.properties.x_member?.kind==='operation'));
     let y=70*s,last=null;const div=[];
     for(const row of list){const m=row.field.properties.x_member||{},type=m.kind||(n.kind==='uml.enumeration'?'literal':'attribute');if(type!==last){div.push({top:y,label:type==='operation'?'OPERATIONS':type==='literal'?'LITERALS':'ATTRIBUTES'});y+=25*s;last=type;}
@@ -451,8 +451,8 @@
    if(g.extensionPoints){const yy=y+h*.35;out+=lines(g.titleLines,x+w/2,yy,16,600)+line(x+w*.16,y+h*.50,x+w*.84,y+h*.50)+text(x+w/2,y+h*.50+20*s,'extension points',11,600,'text-anchor="middle"')+lines(g.extensionPoints,x+w/2,y+h*.50+42*s,12,400);}
    else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
     const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
-   }else if(['uml.class','uml.interface','uml.enumeration'].includes(n.kind)){
-    out+=text(x+w/2,y+20*s,n.kind==='uml.interface'?'«interface»':n.kind==='uml.enumeration'?'«enumeration»':'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
+   }else if(['uml.class','uml.interface','uml.enumeration','uml.metaclass','uml.stereotype'].includes(n.kind)){
+    out+=text(x+w/2,y+20*s,{['uml.interface']:'«interface»','uml.enumeration':'«enumeration»','uml.metaclass':'«metaclass»','uml.stereotype':'«stereotype»'}[n.kind]||'«class»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
     for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
     for(const r of g.fieldRows){const m=r.field.properties.x_member||{},extra=`${m.static?'text-decoration="underline"':''} ${m.abstract?'font-style="italic"':''}`;out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,extra)+lines(r.detailLines,x+16*s,y+r.top+r.labelLines.length*18*s+17*s,11.5,400,'')+'</g>';}
    }else if(n.kind==='req.requirement'){
@@ -1251,6 +1251,8 @@
     let h=(labelLines.length*18+detailLines.length*16+10)*s;h=Math.max(h,(context.degrees?.[f.id]||1)*18+10,(context.degrees?.[f.id]||1)>2?(context.degrees[f.id]*40+10):0);
     rows.push({id:f.id,field:f,top:y,h,labelLines,detailLines,depth});y+=h;
    }
+   /* B1-061 (RFC-125): packaged-element visibility prefix. */
+   if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
    let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=api$7.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
    let noteLines=[];if(k.shape==='note'&&n.properties.description){noteLines=api$7.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
    let sample=null;
@@ -1267,7 +1269,19 @@
    const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample}; return k.profileKind?api$5.measure(g,profiles):g;
   }
   function renderNode(g,p,theme){
-   if(g.k.profileKind){let shaped=api$5.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}return shaped;}
+   if(g.k.profileKind){let shaped=api$5.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
+    if(g.ioChild){const c=g.ioChild,scale2=Math.min((g.w-24*g.scale)/c.scene.width,g.ioH/c.scene.height),cw2=c.scene.width*scale2,ch2=c.scene.height*scale2;
+     const prefix='io-'+hash(g.id)+'-';let inner=c.svg.replace(/<\?xml[^>]*>/,'');
+     inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
+     inner=inner.replace(/<svg /,`<svg x="${fmt(g.x+(g.w-cw2)/2)}" y="${fmt(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt(cw2)}" height="${fmt(ch2)}"`);
+     shaped=shaped.slice(0,-4)+`<g class="ddn-io-inline" data-view="${esc$1(c.scene.projection?.profile||'')}">`+inner+'</g></g>';}
+    /* B1-061 (RFC-125): interaction-use gates (border squares) and arguments. */
+    const xu=g.n.properties?.x_use;
+    if(xu){const s2=g.scale;
+     if(xu.arguments?.length)shaped=shaped.slice(0,-4)+`<g class="ddn-io-arguments">`+text$1(g.x+g.w/2,g.y+g.h-8*s2,'('+xu.arguments.join(', ')+')',11*s2,theme.muted,500,'text-anchor="middle"')+'</g></g>';
+     for(const [gi,gname]of (xu.gates||[]).entries()){
+      shaped=shaped.slice(0,-4)+`<g class="ddn-io-gate" data-gate="${esc$1(gname)}"><rect x="${fmt(g.x-5*s2)}" y="${fmt(g.y+(24+gi*22)*s2)}" width="${fmt(10*s2)}" height="${fmt(10*s2)}" fill="${esc$1(theme.surface)}" stroke="${esc$1(theme.accent)}" stroke-width="1.4"/>`+text$1(g.x+8*s2,g.y+(32+gi*22)*s2,gname,10.5*s2,theme.muted,500)+'</g></g>';}}
+    return shaped;}
    const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral',look=p.style.look;
    const nc=api$8.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,bodyInk=nc.text;
    const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
@@ -1282,7 +1296,8 @@
     if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);
     if(['text','icon_token'].includes(p.display.kind)||mono)out+=text$1(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
    }
-   out+=multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650);
+   if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650)+'</g>';
+   else out+=multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650);
    if(m&&p.display.maturity!=='none')out+=`<rect x="${x+w-46*s}" y="${y+8*s}" width="${38*s}" height="${22*s}" rx="4" fill="${esc$1(fill)}" stroke="${esc$1(ink)}"/>`+text$1(x+w-27*s,y+24*s,m,11*s,ink,650,'text-anchor="middle"');
    if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt(x+w-b.w*s)} ${fmt(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
    if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
@@ -1311,6 +1326,7 @@
    else if(type==='diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$1(ink)}"/>`;
    else if(type==='hollow_diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$1(surface)}"/>`;
    else if(type==='triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc$1(surface)}"/>`;
+   else if(type==='filled_triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc$1(ink)}"/>`;
    else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc$1(surface)}"/>`;
    else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
    else if(['one','zeroone','many','zeromany'].includes(type)){
@@ -1360,6 +1376,15 @@
    const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
    for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
    let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
+   /* B1-061 (RFC-125): interaction-overview inline expansion. Child views render
+    * through the same recursive render() as inline subdiagrams; the owning node
+    * grows to fit. */
+   const ioChildren=ir.view.ioChildren||{};
+   for(const g of geoms){const child=ioChildren[g.id];if(!child)continue;
+    const c=render$1(child,registry,glyphDefs,options),s=q$1(p.style.font_size,16)/16;
+    const cw=Math.min(360*s,c.scene.width),ch=Math.min(200*s,c.scene.height);
+    g.ioChild={scene:c,svg:c.svg};g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
+   }
    
    if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=legendPlacement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$4.round(q$1(p.layout.gap,100)*api$4.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
    const placed=api$3.place(geoms,rels,ir,options);geoms=placed.nodes;
@@ -1496,6 +1521,24 @@
       diagram+=`<g class="ddn-pin" data-port-square="${esc$1(pt.id)}"${xp.streaming?' data-streaming="true"':''}><rect x="${fmt(xx-5*s)}" y="${fmt(yy-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc$1(t.ink):esc$1(t.surface)}" stroke="${esc$1(t.ink)}" stroke-width="1.5"/>`+(xp.set?text$1(xx+(west?-8*s:8*s),yy-8*s,xp.set,10.5*s,t.muted,500,west?'text-anchor="end"':''):'')+'</g>';}
     }
    }
+   // B1-061 (RFC-125): communication-diagram fragments — dashed frame with an
+   // operator pentagon over the covered message routes; guards at operand starts.
+   if(p.projection.profile==='uml.communication@2'){
+    const s=q$1(p.style.font_size,16)/16,byRelId=new Map(routes.map(a=>[a.r.id,a]));
+    const drawFrag=(fx,owner,depth,x0,y0,x1,y1)=>{
+     const pad=(30+depth*10)*s,rx0=Math.max(4*s,x0-pad),ry0=Math.max(4*s,y0-pad),rx1=x1+pad,ry1=y1+pad;
+     const opw=Math.max(54*s,api$7.measure(fx.operator,11*s,p.style.font,650).width+22*s);
+     let out=`<g class="ddn-fragment ddn-fragment-${esc$1(fx.operator)}" data-operator="${esc$1(fx.operator)}" data-owner="${esc$1(owner)}"><rect x="${fmt(rx0)}" y="${fmt(ry0)}" width="${fmt(rx1-rx0)}" height="${fmt(ry1-ry0)}" fill="none" stroke="${t.ink}" stroke-width="1.3" stroke-dasharray="7 5"/>`;
+     out+=`<path d="M${fmt(rx0)} ${fmt(ry0)}H${fmt(rx0+opw)}V${fmt(ry0+12*s)}L${fmt(rx0+opw-10*s)} ${fmt(ry0+22*s)}H${fmt(rx0)}Z" fill="${esc$1(t.surface)}" stroke="${esc$1(t.ink)}" stroke-width="1.2"/>`+text$1(rx0+11*s,ry0+15*s,fx.operator,11*s,t.ink,650);
+     for(const op of fx.operands){if(op.guard){const first=byRelId.get(op.messages[0]?.$ref);if(first){const [mx,my]=midpoint(first.points);out+=text$1(mx,my-22*s,'['+op.guard+']',11*s,t.ink,500);}}
+      for(const nf of op.fragments||[]){}}
+     return out+'</g>';};
+    for(const a of routes){const fx=a.r.properties.x_fragment;if(!fx)continue;
+     const pts=[];const collect=(f2)=>{for(const op of f2.operands){for(const mref of op.messages){const rr=byRelId.get(mref?.$ref);if(rr)pts.push(...rr.points);}for(const nf of op.fragments||[])collect(nf);}};
+     collect(fx);if(pts.length<2)continue;
+     const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+     diagram+=drawFrag(fx,a.r.id,0,Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys));}
+   }
    // B1-055: generalization-set labels at the shared target end.
    for(const [name,{gs,pt,ang,colour}] of gensets){const s=q$1(p.style.font_size,16)/16,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);
     const str=name+' {'+(gs.disjoint===false?'overlapping':'disjoint')+', '+(gs.complete?'complete':'incomplete')+'}';
@@ -1571,7 +1614,10 @@
    }
    for(const a of routes){if(a.r._visualLabel===false)continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$1(v)):midpoint(a.points);let mode=p.legend.mode;
     if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$1(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
-    else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$1(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
+    else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$1(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
+     /* B1-061: {…} time/duration constraints under the message label. */
+     const cons=[a.r.properties.x_message?.time,a.r.properties.x_message?.duration].filter(Boolean);
+     if(cons.length&&p.projection.profile==='uml.communication@2')diagram+=`<g class="ddn-timing-constraint">`+text$1(x,y+22,cons.join(' '),11,t.muted,500,'text-anchor="middle"')+'</g>';}
    }
    const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:api$4.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN$1.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
    const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';

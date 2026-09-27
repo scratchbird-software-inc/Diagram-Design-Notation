@@ -181,6 +181,9 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_part` | field | `{classifier?, multiplicity?}` — internal part row `role: Classifier [mult]` (RFC-123; DDN-PJ166) |
 | `x_pin` | port | `{set?, streaming?}` — activity pin parameter set/streaming (RFC-124; DDN-PJ169) |
 | `x_interrupt` / `x_exception` | relation | boolean — lightning-bolt activity edges (RFC-124; DDN-PJ168) |
+| `x_pack` | object | `{visibility: public|private}` — packaged element +/− (RFC-125; DDN-PJ171) |
+| `x_use` | object | `{arguments?, gates?}` — interaction-use detail (RFC-125; DDN-PJ174) |
+| `x_timeconstraint` | object | `["{…}", …]` timing constraints (RFC-125; DDN-PJ173) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
@@ -253,13 +256,15 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | activity diagram / swimlanes | graph | `uml.activity@1` / `uml.activity@2` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars; @2 (RFC-124): merge, pins (x_pin), signals/time events, flow final, interruptible/structured regions, exception handlers |
 | state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `x_transition.event`; regions = `x_region` frames; uml.statemachine@1: activities/internal/submachines, pseudostates, effects, time events |
 | sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines; @2 (RFC-120): fragments, gates, message sorts, `{…}` constraints, invariants, activations |
-| communication/collaboration | graph | `uml.communication@1` | `uml.message` + dotted `x_message.seq` |
+| communication | graph | `uml.communication@1` / `uml.communication@2` | `uml.message` + dotted `x_message.seq`; @2 (RFC-125): `x_fragment` frames, `{…}` constraints |
+| interaction overview | graph | `uml.interaction_overview@1` / `uml.interaction_overview@2` | `x_subdiagram.view` refs; @2 (RFC-125): inline expansion, `x_use` gates/arguments |
+| profile diagram | graph | `uml.profile@1` | `uml.metaclass`/`uml.stereotype`, `uml.extension` (filled triangle), `uml.application` |
 | class diagram | graph | `uml.structure@1` / `uml.structure@2` | class/interface/enumeration, `x_member`; @2 (RFC-119): end labels, diamonds, association classes, n-ary, gensets, templates, provided/required |
 | deployment diagram | graph | `uml.deployment@1` | node/device/executionenv 3D boxes, artifacts, deploy/manifest, commpaths + multiplicity; nesting = node-scoped frames (RFC-122) |
 | component / composite structure | graph | `uml.composite@1` | ports on classifiers, `uml.assembly` (socket+lollipop), `uml.delegation`, `uml.connector` + `x_endlabels`, parts (`x_part`), `uml.collaboration` (RFC-123) |
-| use cases | graph | `uml.usecase@1` / `uml.usecase@2` | `uml.subject` boundaries + `x_usecase` for @2 |
-| object diagram | graph | `uml.object@1` | `x_instance.classifier` |
-| timing diagram | timing | `uml.timing@1` | `x_states` per participant |
+| use cases | graph | `uml.usecase@1` / `uml.usecase@2` / `uml.usecase@3` | `uml.subject` boundaries + `x_usecase` (@2); @3: extend conditions on labels |
+| object diagram | graph | `uml.object@1` / `uml.object@2` | `x_instance.classifier`; @2 (RFC-125): underlined titles, slot datatype checks, `uml.link` multiplicity |
+| timing diagram | timing | `uml.timing@1` / `uml.timing@2` | `x_states` per participant; @2 (RFC-125): duration/slew, `x_timeconstraint`, compaction, lifeline messages |
 | C4 architecture | graph | `c4.context@1` / `c4.container@1` / `c4.component@1` | exactly one boundary frame |
 | system context/free architecture | graph | `ddn@1` | any kinds/verbs; no enforced profile rules |
 | requirements traceability | graph | `requirements.basic@1` | `req.*` kinds/verbs, `x_diagram.code`+`text` |
@@ -379,7 +384,11 @@ Per-profile:
 - **state.composite@1**: `x_region: true` frames = parallel regions; at most one `state.initial` per region/composite (DDN-PJ113); labels from `x_transition`.
 - **uml.activity@1** (+ flow rules): `x_partition.lane` names an existing frame (DDN-PJ114); fork count = join count on `flow.forkjoin` bars (DDN-PJ115).
 - **bpmn.basic@1**: pools = frames `x_pool: true`; `bpmn.messageflow` only across pools (DDN-PJ116); every `flow.gateway` needs `x_gateway.type` exclusive|parallel|inclusive (DDN-PJ117).
-- **uml.interaction_overview@1**: nodes referencing sub-views via `x_subdiagram.view` must name an existing view (DDN-PJ119).
+- **uml.interaction_overview@1**: nodes referencing sub-views via `x_subdiagram.view` must name an existing view (DDN-PJ119); @2: unique gate names, one expansion level (DDN-PJ174).
+- **uml.object@2** (RFC-125): slot values match classifier field datatypes (DDN-PJ170).
+- **uml.communication@2** (RFC-125): fragment refs resolve to visible messages; constraints in {…} (DDN-PJ172).
+- **uml.timing@2** (RFC-125): annotations/constraints in {…}; messages need x_message.at (DDN-PJ173).
+- **uml.structure@2 packages / uml.profile@1** (RFC-125): x_pack.visibility needs a package frame (DDN-PJ171); extension endpoints stereotype → metaclass (DDN102).
 - **sysml.***: only `sysml.block` declares `ports` (DDN-PJ121); parametric: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122).
 - **archimate.basic@1**: `archi.rel` endpoints among the nine `archi.*` kinds; links same-layer or upward (DDN-PJ123).
 - **cmmn.basic@1**: `cmmn.sentry` inside a `cmmn.stage` frame with `x_sentry.on` entry|exit (DDN-PJ120).

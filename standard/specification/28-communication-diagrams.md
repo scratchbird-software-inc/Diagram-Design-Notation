@@ -84,3 +84,18 @@ Combined fragments; timing constraints; full UML conformance. Cross-message
 consistency (gap-free numbering, replies matching an existing request number)
 is deliberately not checked in `uml.communication@1` — numbers are validated
 for shape only.
+
+# 28a. Communication diagrams at uml.communication@2 (RFC-125)
+
+`uml.communication@2` adds combined fragments and timing constraints to the
+communication profile; @1 stays installed and immutable.
+
+- **Combined fragments** — `x_fragment` (RFC-120 contract) on a message: the
+  covered messages' routes are wrapped in a dashed fragment frame with the
+  operator pentagon; operand guards render at each operand's first message.
+  References must resolve to visible `uml.message` relations (`DDN-PJ172`);
+  declaration-order span rules (DDN-PJ155) remain sequence-projection business.
+- **Timing constraints** — `x_message.time` / `x_message.duration` in `{…}`
+  form render under the message label (`DDN-PJ172` on other forms).
+
+Fixture: `website/examples/basics/81-uml-remainder.ddn` (view `comms`).

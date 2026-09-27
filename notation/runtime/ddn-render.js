@@ -57,6 +57,8 @@ function measureNode(n,registry,profiles,placement={},context={}){
   let h=(labelLines.length*18+detailLines.length*16+10)*s;h=Math.max(h,(context.degrees?.[f.id]||1)*18+10,(context.degrees?.[f.id]||1)>2?(context.degrees[f.id]*40+10):0);
   rows.push({id:f.id,field:f,top:y,h,labelLines,detailLines,depth});y+=h;
  }
+ /* B1-061 (RFC-125): packaged-element visibility prefix. */
+ if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
  let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=Text.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
  let noteLines=[];if(k.shape==='note'&&n.properties.description){noteLines=Text.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
  let sample=null;
@@ -73,7 +75,19 @@ function measureNode(n,registry,profiles,placement={},context={}){
  const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample}; return k.profileKind?Shapes.measure(g,profiles):g;
 }
 function renderNode(g,p,theme){
- if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}return shaped;}
+ if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
+  if(g.ioChild){const c=g.ioChild,scale2=Math.min((g.w-24*g.scale)/c.scene.width,g.ioH/c.scene.height),cw2=c.scene.width*scale2,ch2=c.scene.height*scale2;
+   const prefix='io-'+hash(g.id)+'-';let inner=c.svg.replace(/<\?xml[^>]*>/,'');
+   inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
+   inner=inner.replace(/<svg /,`<svg x="${fmt(g.x+(g.w-cw2)/2)}" y="${fmt(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt(cw2)}" height="${fmt(ch2)}"`);
+   shaped=shaped.slice(0,-4)+`<g class="ddn-io-inline" data-view="${esc(c.scene.projection?.profile||'')}">`+inner+'</g></g>';}
+  /* B1-061 (RFC-125): interaction-use gates (border squares) and arguments. */
+  const xu=g.n.properties?.x_use;
+  if(xu){const s2=g.scale;
+   if(xu.arguments?.length)shaped=shaped.slice(0,-4)+`<g class="ddn-io-arguments">`+text(g.x+g.w/2,g.y+g.h-8*s2,'('+xu.arguments.join(', ')+')',11*s2,theme.muted,500,'text-anchor="middle"')+'</g></g>';
+   for(const [gi,gname]of (xu.gates||[]).entries()){
+    shaped=shaped.slice(0,-4)+`<g class="ddn-io-gate" data-gate="${esc(gname)}"><rect x="${fmt(g.x-5*s2)}" y="${fmt(g.y+(24+gi*22)*s2)}" width="${fmt(10*s2)}" height="${fmt(10*s2)}" fill="${esc(theme.surface)}" stroke="${esc(theme.accent)}" stroke-width="1.4"/>`+text(g.x+8*s2,g.y+(32+gi*22)*s2,gname,10.5*s2,theme.muted,500)+'</g></g>';}}
+  return shaped;}
  const{n,k,x,y,w,h,titleLines,footer}=g,s=g.scale,font=p.style.font,mono=p.style.theme==='neutral',look=p.style.look;
  const nc=Palette.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,bodyInk=nc.text;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
@@ -88,7 +102,8 @@ function renderNode(g,p,theme){
   if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);
   if(['text','icon_token'].includes(p.display.kind)||mono)out+=text(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
  }
- out+=multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650);
+ if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650)+'</g>';
+ else out+=multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650);
  if(m&&p.display.maturity!=='none')out+=`<rect x="${x+w-46*s}" y="${y+8*s}" width="${38*s}" height="${22*s}" rx="4" fill="${esc(fill)}" stroke="${esc(ink)}"/>`+text(x+w-27*s,y+24*s,m,11*s,ink,650,'text-anchor="middle"');
  if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt(x+w-b.w*s)} ${fmt(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
  if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');
@@ -139,6 +154,7 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  else if(type==='diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc(ink)}"/>`;
  else if(type==='hollow_diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc(surface)}"/>`;
  else if(type==='triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc(surface)}"/>`;
+ else if(type==='filled_triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc(ink)}"/>`;
  else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc(surface)}"/>`;
  else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
  else if(['one','zeroone','many','zeromany'].includes(type)){
@@ -188,6 +204,15 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
+ /* B1-061 (RFC-125): interaction-overview inline expansion. Child views render
+  * through the same recursive render() as inline subdiagrams; the owning node
+  * grows to fit. */
+ const ioChildren=ir.view.ioChildren||{};
+ for(const g of geoms){const child=ioChildren[g.id];if(!child)continue;
+  const c=render(child,registry,glyphDefs,options),s=q(p.style.font_size,16)/16;
+  const cw=Math.min(360*s,c.scene.width),ch=Math.min(200*s,c.scene.height);
+  g.ioChild={scene:c,svg:c.svg};g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
+ }
  
  if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=legendPlacement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
@@ -324,6 +349,24 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     diagram+=`<g class="ddn-pin" data-port-square="${esc(pt.id)}"${xp.streaming?' data-streaming="true"':''}><rect x="${fmt(xx-5*s)}" y="${fmt(yy-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc(t.ink):esc(t.surface)}" stroke="${esc(t.ink)}" stroke-width="1.5"/>`+(xp.set?text(xx+(west?-8*s:8*s),yy-8*s,xp.set,10.5*s,t.muted,500,west?'text-anchor="end"':''):'')+'</g>';}
   }
  }
+ // B1-061 (RFC-125): communication-diagram fragments — dashed frame with an
+ // operator pentagon over the covered message routes; guards at operand starts.
+ if(p.projection.profile==='uml.communication@2'){
+  const s=q(p.style.font_size,16)/16,byRelId=new Map(routes.map(a=>[a.r.id,a]));
+  const drawFrag=(fx,owner,depth,x0,y0,x1,y1)=>{
+   const pad=(30+depth*10)*s,rx0=Math.max(4*s,x0-pad),ry0=Math.max(4*s,y0-pad),rx1=x1+pad,ry1=y1+pad;
+   const opw=Math.max(54*s,Text.measure(fx.operator,11*s,p.style.font,650).width+22*s);
+   let out=`<g class="ddn-fragment ddn-fragment-${esc(fx.operator)}" data-operator="${esc(fx.operator)}" data-owner="${esc(owner)}"><rect x="${fmt(rx0)}" y="${fmt(ry0)}" width="${fmt(rx1-rx0)}" height="${fmt(ry1-ry0)}" fill="none" stroke="${t.ink}" stroke-width="1.3" stroke-dasharray="7 5"/>`;
+   out+=`<path d="M${fmt(rx0)} ${fmt(ry0)}H${fmt(rx0+opw)}V${fmt(ry0+12*s)}L${fmt(rx0+opw-10*s)} ${fmt(ry0+22*s)}H${fmt(rx0)}Z" fill="${esc(t.surface)}" stroke="${esc(t.ink)}" stroke-width="1.2"/>`+text(rx0+11*s,ry0+15*s,fx.operator,11*s,t.ink,650);
+   for(const op of fx.operands){if(op.guard){const first=byRelId.get(op.messages[0]?.$ref);if(first){const [mx,my]=midpoint(first.points);out+=text(mx,my-22*s,'['+op.guard+']',11*s,t.ink,500);}}
+    for(const nf of op.fragments||[]){}}
+   return out+'</g>';};
+  for(const a of routes){const fx=a.r.properties.x_fragment;if(!fx)continue;
+   const pts=[];const collect=(f2)=>{for(const op of f2.operands){for(const mref of op.messages){const rr=byRelId.get(mref?.$ref);if(rr)pts.push(...rr.points);}for(const nf of op.fragments||[])collect(nf);}};
+   collect(fx);if(pts.length<2)continue;
+   const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
+   diagram+=drawFrag(fx,a.r.id,0,Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys));}
+ }
  // B1-055: generalization-set labels at the shared target end.
  for(const [name,{gs,pt,ang,colour}] of gensets){const s=q(p.style.font_size,16)/16,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);
   const str=name+' {'+(gs.disjoint===false?'overlapping':'disjoint')+', '+(gs.complete?'complete':'incomplete')+'}';
@@ -399,7 +442,10 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  }
  for(const a of routes){if(a.r._visualLabel===false)continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
-  else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';}
+  else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
+   /* B1-061: {…} time/duration constraints under the message label. */
+   const cons=[a.r.properties.x_message?.time,a.r.properties.x_message?.duration].filter(Boolean);
+   if(cons.length&&p.projection.profile==='uml.communication@2')diagram+=`<g class="ddn-timing-constraint">`+text(x,y+22,cons.join(' '),11,t.muted,500,'text-anchor="middle"')+'</g>';}
  }
  const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';

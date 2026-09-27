@@ -80,3 +80,21 @@ projection kind and profile, not as an edit to the old profile. The timeline
 shows UTC date spans; the timing projection shows value steps on an abstract
 numeric axis. Neither claims duration/slew-rate annotations, clock/unit
 conversion, or full UML conformance.
+
+# 33a. Timing diagrams at uml.timing@2 (RFC-125)
+
+`uml.timing@2` adds UML 2.5.1 timing notation; @1 stays installed and
+immutable.
+
+- **Annotations** — `x_states` entries may carry `duration`/`slew` in `{…}`
+  form, rendered beside the plateau.
+- **Constraints** — `x_timeconstraint: ["{…}", …]` on a participant renders
+  time/duration constraints under its lifeline band.
+- **State compaction** — consecutive equal states render compacted (no
+  transition line) under @2.
+- **Lifeline messages** — `uml.message` relations between participants with
+  `x_message.at` render as arrows at the declared time anchor.
+
+Malformed entries, constraints or anchors are `DDN-PJ173`; @2 features under
+uml.timing@1 are also `DDN-PJ173`. Fixture:
+`website/examples/basics/81-uml-remainder.ddn` (view `timing`).

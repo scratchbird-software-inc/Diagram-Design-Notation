@@ -64,6 +64,13 @@ view payment_flow &quot;Payment flow detail&quot; {
     projection { kind: graph; profile: &quot;ddn@1&quot;; }
 }</code></pre>
 <p>See <code>website/examples/basics/48-interaction-overview.ddn</code> for the full synthetic checkout example (overview plus <code>payment_flow</code> and <code>stock_flow</code> detail views in one file).</p>
+<h1>34a. Interaction overviews at uml.interaction_overview@2 (RFC-125)</h1>
+<p><code>uml.interaction_overview@2</code> adds inline expansion and interaction-use detail; @1 stays installed and immutable.</p>
+<ul><li><strong>Inline expansion</strong> — a node with <code>x_subdiagram.view</code> renders the</li></ul>
+<p>  referenced view inline inside the node box (one recursion level; child   limits shared with panels — <code>DDN-PJ174</code>); the badge reads <code>↗ inline</code>.</p>
+<ul><li><strong>Interaction-use gates/arguments</strong> — `x_use: { arguments?: [string],</li></ul>
+<p>  gates?: [string] }<code> renders arguments under the node and named gate squares   on its left border; duplicate gate names are </code>DDN-PJ174`.</p>
+<p>Fixture: <code>website/examples/basics/81-uml-remainder.ddn</code> (view <code>overview</code>).</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

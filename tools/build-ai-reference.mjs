@@ -221,13 +221,14 @@ function genVocabulary(S) {
 
   out.push('### 4.5 Diagram profiles (' + pc.profiles.length + ')\n\n' +
     'A profile is selected in a view\'s projection: `projection { kind: graph; profile: "c4.container@1"; }`. `kind` MUST equal the profile\'s registered projection (DDN-PF002); unknown profile → DDN-PF001. Per-profile enforced rules are in section 6. `use when` is the authoring-intent annotation (tools/ai-reference/profile-annotations.json; the generator fails if any profile lacks one).\n\n' +
-    table(['profile id', 'projection', 'use when', 'diagram families', 'scope', 'validation', 'unsupported'],
+    table(['profile id', 'projection', 'use when', 'diagram families', 'scope', 'validation'],
       pc.profiles.map(p => {
         const ann = S.profileAnnotations[p.id];
         if (!ann) throw new Error('profile ' + p.id + ' lacks a use-when annotation in tools/ai-reference/profile-annotations.json');
         return [p.id, p.projection, ann, joinList(p.diagramFamilies), p.scope,
-          joinList(p.validation, '; '), joinList(p.unsupported, '; ')];
-      })));
+          joinList(p.validation, '; ')];
+      })) + '\n\n' +
+    'Each profile\'s declared exclusions live in its registry `unsupported` list (standard/registry/profiles/catalogue.json); the enforced rules are in section 10.');
 
   out.push('### 4.6 Endpoint marks (' + cat.endpoints.length + '; set via `source_mark:` / `target_mark:` on relations)\n\n' +
     'Structural participation marks (`one`, `zeroone`, `many`, `zeromany`, `diamond`, `triangle`) are allowed only on `structural`-family relations (DDN114). Unknown mark → DDN114.\n\n' +

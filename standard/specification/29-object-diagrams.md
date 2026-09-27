@@ -80,3 +80,19 @@ classifiers, two record instances with matching slots, and one `assoc` link.
 
 Object identity semantics beyond labels; slot datatype checking (names only in
 v1); full UML conformance.
+
+# 29a. Object diagrams at uml.object@2 (RFC-125)
+
+`uml.object@2` adds the UML 2.5.1 object surface; @1 stays installed and
+immutable.
+
+- **Instance styling** — instance titles (`name : Classifier`) render
+  underlined.
+- **Slot datatype checking** — slot values are checked against the
+  classifier's declared field datatypes (deterministic scalar cases: number /
+  boolean; richer datatypes pass through) as `DDN-PJ170`.
+- **Link multiplicity** — the new `uml.link` relation (record/classifier
+  endpoints) carries RFC-119 `x_endlabels` multiplicity (the PJ149 rule now
+  names association, communication path, connector or link).
+
+Fixture: `website/examples/basics/81-uml-remainder.ddn` (view `objects`).

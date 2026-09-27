@@ -63,6 +63,15 @@ view objects &quot;Synthetic snapshot / objects&quot; {
 <p>See <code>website/examples/basics/43-object-diagram.ddn</code>: synthetic <code>Customer</code>/<code>Order</code> classifiers, two record instances with matching slots, and one <code>assoc</code> link.</p>
 <h2>Unsupported</h2>
 <p>Object identity semantics beyond labels; slot datatype checking (names only in v1); full UML conformance.</p>
+<h1>29a. Object diagrams at uml.object@2 (RFC-125)</h1>
+<p><code>uml.object@2</code> adds the UML 2.5.1 object surface; @1 stays installed and immutable.</p>
+<ul><li><strong>Instance styling</strong> — instance titles (<code>name : Classifier</code>) render</li></ul>
+<p>  underlined.</p>
+<ul><li><strong>Slot datatype checking</strong> — slot values are checked against the</li></ul>
+<p>  classifier's declared field datatypes (deterministic scalar cases: number /   boolean; richer datatypes pass through) as <code>DDN-PJ170</code>.</p>
+<ul><li><strong>Link multiplicity</strong> — the new <code>uml.link</code> relation (record/classifier</li></ul>
+<p>  endpoints) carries RFC-119 <code>x_endlabels</code> multiplicity (the PJ149 rule now   names association, communication path, connector or link).</p>
+<p>Fixture: <code>website/examples/basics/81-uml-remainder.ddn</code> (view <code>objects</code>).</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

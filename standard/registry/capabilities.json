@@ -2048,6 +2048,21 @@
       ]
     },
     {
+      "id": "uml.usecase@3",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML use-case diagram"
+      ],
+      "scope": "uml.usecase@2 plus (RFC-125): extend conditions on the label; extension-point existence (DDN-PX004).",
+      "validation": [
+        "subject naming (DDN-PX002/PX004/PX006)"
+      ],
+      "unsupported": [
+        "actor generalization details",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "chen.binary@2",
       "projection": "chen",
       "diagramFamilies": [
@@ -2510,6 +2525,22 @@
       ]
     },
     {
+      "id": "uml.communication@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML communication diagram"
+      ],
+      "scope": "uml.communication@1 plus (RFC-125): x_fragment frames, {\u2026} time/duration constraints on messages.",
+      "validation": [
+        "message numbering (DDN-PJ111)",
+        "fragment refs resolve (DDN-PJ172)"
+      ],
+      "unsupported": [
+        "protocol verification",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.object@1",
       "projection": "graph",
       "diagramFamilies": [
@@ -2523,6 +2554,22 @@
         "object identity semantics beyond labels",
         "slot datatype checking",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "uml.object@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML object diagram"
+      ],
+      "scope": "uml.object@1 plus (RFC-125): underlined instance titles, slot datatype checks, uml.link multiplicity.",
+      "validation": [
+        "slot names on classifier (DDN-PJ112)",
+        "slot datatype form (DDN-PJ170)"
+      ],
+      "unsupported": [
+        "slot constraint solving",
+        "formal UML conformance"
       ]
     },
     {
@@ -2585,11 +2632,11 @@
       "diagramFamilies": [
         "UML activity diagram"
       ],
-      "scope": "uml.activity@1 plus UML 2.5.1 activity notation (RFC-124): decision/merge distinction, pins with parameter sets and streaming (x_pin on ports), send/accept signal pentagons, time-event hourglass, flow final (⊗), interruptible regions with lightning edges, exception handlers, structured/expansion regions.",
+      "scope": "uml.activity@1 plus UML 2.5.1 activity notation (RFC-124): decision/merge distinction, pins with parameter sets and streaming (x_pin on ports), send/accept signal pentagons, time-event hourglass, flow final (\u2297), interruptible regions with lightning edges, exception handlers, structured/expansion regions.",
       "validation": [
         "node in an unknown partition rejected (DDN-PJ114)",
         "fork/join counts must balance (DDN-PJ115)",
-        "merge fans in ≥2, out exactly 1 (DDN-PJ167)",
+        "merge fans in \u22652, out exactly 1 (DDN-PJ167)",
         "interrupt/exception edge rules (DDN-PJ168)",
         "pins on action kinds only (DDN-PJ169)"
       ],
@@ -2635,6 +2682,22 @@
       ]
     },
     {
+      "id": "uml.timing@2",
+      "projection": "timing",
+      "diagramFamilies": [
+        "UML timing diagram"
+      ],
+      "scope": "uml.timing@1 plus (RFC-125): duration/slew annotations, x_timeconstraint constraints, state compaction, lifeline messages.",
+      "validation": [
+        "x_states entries (DDN-PJ118)",
+        "annotations/constraints/anchors (DDN-PJ173)"
+      ],
+      "unsupported": [
+        "simulation",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.interaction_overview@1",
       "projection": "graph",
       "diagramFamilies": [
@@ -2647,6 +2710,37 @@
       "unsupported": [
         "inline expansion of referenced views",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "uml.interaction_overview@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML interaction overview diagram"
+      ],
+      "scope": "uml.interaction_overview@1 plus (RFC-125): inline expansion of referenced interactions; x_use gates/arguments.",
+      "validation": [
+        "referenced views resolve (DDN-PJ119)",
+        "gates/arguments (DDN-PJ174)"
+      ],
+      "unsupported": [
+        "expansion beyond one level",
+        "formal UML conformance"
+      ]
+    },
+    {
+      "id": "uml.profile@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML profile diagram"
+      ],
+      "scope": "UML 2.5.1 profile diagrams (RFC-125): uml.metaclass/uml.stereotype, uml.extension (filled triangle), uml.application (\u00abapply\u00bb).",
+      "validation": [
+        "extension endpoints stereotype \u2192 metaclass (DDN102)"
+      ],
+      "unsupported": [
+        "profile registry semantics",
+        "formal UML conformance"
       ]
     },
     {

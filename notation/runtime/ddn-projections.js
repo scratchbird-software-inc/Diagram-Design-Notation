@@ -638,13 +638,23 @@ function render(ir,reg,glyphs='',options={}){
     const x0=fx(e.at),x1=m+1<part.states.length?fx(part.states[m+1].at):fx(hi),yy=ly(level.get(e.state));
     d+=(m?'L':'M')+f(x0)+' '+f(yy)+'L'+f(x1)+' '+f(yy);
     const content=`<title>${esc(n.name+': '+e.state+' from '+fmtNumber(e.at))}</title><path class="ddn-timing-plateau" data-at="${e.at}" data-state="${esc(e.state)}" d="M${f(x0)} ${f(yy)}L${f(x1)} ${f(yy)}" stroke="${colour(level.get(e.state))}" stroke-width="2.5" fill="none"/>`;
-    body+=group(n.id,[n.id],content+text((x0+x1)/2,yy-8*s,e.state,11,400,'middle'),{x:x0,y:yy-16*s,w:x1-x0,h:20*s,at:e.at,state:e.state},'x_states');
+    /* B1-061 (RFC-125): duration/slew annotations beside the plateau. */
+    const ann=(e.duration||'')+(e.slew?' '+e.slew:'');
+    body+=group(n.id,[n.id],content+text((x0+x1)/2,yy-8*s,e.state,11,400,'middle')+(ann?`<g class="ddn-timing-annotation">`+text((x0+x1)/2,yy+16*s,ann,10.5,500,'middle')+'</g>':''),{x:x0,y:yy-16*s,w:x1-x0,h:20*s,at:e.at,state:e.state},'x_states');
    });
    body+=`<path class="ddn-timing-trace" d="${d}" stroke="${t.ink}" stroke-width="1.4" fill="none"/>`;
-   for(let m=1;m<part.states.length;m++){const xx=fx(part.states[m].at);body+=line(xx,ly(level.get(part.states[m-1].state)),xx,ly(level.get(part.states[m].state)),t.ink,1.4);}
+   // B1-061: time/duration constraints under the lifeline band.
+   for(const [ci,c2]of (part.constraints||[]).entries())body+=`<g class="ddn-timing-constraint">`+text(labelW+12*s,y+bandH-4*s,c2,11,500)+'</g>';
+   for(let m=1;m<part.states.length;m++){if(plan.profile==='uml.timing@2'&&part.states[m].state===part.states[m-1].state)continue;const xx=fx(part.states[m].at);body+=line(xx,ly(level.get(part.states[m-1].state)),xx,ly(level.get(part.states[m].state)),t.ink,1.4);}
   });
   body+=line(labelW,bottom,right,bottom,t.ink,1.4);
   for(const v of [lo,hi0]){const x=fx(v);body+=line(x,bottom,x,bottom+8*s,t.ink,1.2)+text(x,bottom+26*s,fmtNumber(v),11,400,'middle');}
+  // B1-061: messages between lifelines at their declared time anchor.
+  for(const r of plan.messages||[]){
+   const at=r.properties.x_message?.at,ai=parts.findIndex(x=>x.node.id===r.from.element),bi=parts.findIndex(x=>x.node.id===r.to.element);
+   if(ai<0||bi<0)continue;const yy0=top+ai*bandH+bandH/2,yy1=top+bi*bandH+bandH/2,xx=fx(Math.min(Math.max(at,lo),hi0));
+   body+=group(r.id,[r.id],`<g class="ddn-timing-message"><path d="M${f(xx)} ${f(yy0)}V${f(yy1)}" stroke="${t.ink}" stroke-width="1.4" fill="none"/>`+R.endMark([xx,yy1],yy1>yy0?90:-90,'open',t.ink,t.surface)+text(xx+6*s,(yy0+yy1)/2,r.name,11,400)+'</g>',{x:xx-4*s,y:Math.min(yy0,yy1),w:8*s,h:Math.abs(yy1-yy0)});
+  }
   body+=text(labelW,H-15*s,'Supplied time points, not a simulation · '+parts.length+' participants · abstract numeric time axis in the author\'s unit.',11);
  }
  if(plan.kind==='panels'&&plan.panels.some(v=>v.child)){

@@ -11196,6 +11196,244 @@
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
     },
     {
+      "id": "uml.link",
+      "label": "Link",
+      "origin": "profile",
+      "family": "structural",
+      "semantic_contract": {
+        "source": [
+          "record",
+          "uml.class",
+          "uml.interface",
+          "uml.enumeration",
+          "uml.collaboration"
+        ],
+        "target": [
+          "record",
+          "uml.class",
+          "uml.interface",
+          "uml.enumeration",
+          "uml.collaboration"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.import",
+      "label": "\u00abimport\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "uml.package"
+        ],
+        "target": [
+          "uml.package",
+          "uml.class",
+          "uml.interface",
+          "uml.enumeration",
+          "uml.component"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.access",
+      "label": "\u00abaccess\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "uml.package"
+        ],
+        "target": [
+          "uml.package",
+          "uml.class",
+          "uml.interface",
+          "uml.enumeration",
+          "uml.component"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.merge",
+      "label": "\u00abmerge\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "uml.package"
+        ],
+        "target": [
+          "uml.package"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.extension",
+      "label": "Extension",
+      "origin": "profile",
+      "family": "structural",
+      "semantic_contract": {
+        "source": [
+          "uml.stereotype"
+        ],
+        "target": [
+          "uml.metaclass"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.application",
+      "label": "\u00abapply\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "uml.package"
+        ],
+        "target": [
+          "uml.package"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
       "id": "uml.dependency",
       "label": "Dependency",
       "origin": "profile",

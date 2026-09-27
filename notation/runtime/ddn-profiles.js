@@ -46,7 +46,7 @@ function registry(base){
   * contract level; uml.communication@1 enforces it via DDN-PJ111). x_fragment
   * anchors a combined fragment to its first covered message; operands carry
   * guards and message refs and nest recursively. */
- out.extension_contracts.x_message=def({type:'object',properties:{seq:{type:'string',minLength:1},sort:{enum:['synch','asynch','create','delete','reply','lost','found']},gate:{enum:['source','target']},time:{type:'string',minLength:1},duration:{type:'string',minLength:1}},additionalProperties:false},['relation']);
+ out.extension_contracts.x_message=def({type:'object',properties:{seq:{type:'string',minLength:1},sort:{enum:['synch','asynch','create','delete','reply','lost','found']},gate:{enum:['source','target']},time:{type:'string',minLength:1},duration:{type:'string',minLength:1},at:{type:'number'}},additionalProperties:false},['relation']);
  const ref={type:'object'},msgList={type:'array',minItems:1,items:ref};
  const fragment={type:'object',required:['operator','operands'],properties:{operator:{enum:['alt','opt','loop','break','par','neg','critical','seq','strict','ignore','consider','assert']},operands:{type:'array',minItems:1,maxItems:12}},additionalProperties:false};
  fragment.properties.operands.items={type:'object',required:['messages'],properties:{guard:{type:'string',minLength:1},messages:msgList,fragments:{type:'array',minItems:1,items:fragment}},additionalProperties:false};
@@ -69,6 +69,11 @@ function registry(base){
  out.extension_contracts.x_pin=def({type:'object',properties:{set:{type:'string',minLength:1},streaming:{type:'boolean'}},additionalProperties:false},['port']);
  out.extension_contracts.x_interrupt=def({type:'boolean'},['relation']);
  out.extension_contracts.x_exception=def({type:'boolean'},['relation']);
+ /* B1-061 (RFC-125): packaged-element visibility, interaction-use gates and
+  * arguments, timing constraints. */
+ out.extension_contracts.x_pack=def({type:'object',properties:{visibility:{enum:['public','private']}},additionalProperties:false},['object']);
+ out.extension_contracts.x_use=def({type:'object',properties:{arguments:{type:'array',maxItems:8,items:{type:'string',minLength:1}},gates:{type:'array',maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
+ out.extension_contracts.x_timeconstraint=def({type:'array',minItems:1,maxItems:6,items:{type:'string',minLength:1}},['object']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
@@ -97,7 +102,7 @@ function validate(ir,reg,ErrorClass){
   if(el!==undefined){
    /* RFC-122: communication paths carry multiplicity end labels too; the
     * qualifier stays association-only (DDN-PJ164 covers the misuse). */
-   if(!['uml.association','uml.commpath','uml.connector'].includes(r.kind))fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association, uml.commpath and uml.connector only, not '+r.kind,r);
+   if(!['uml.association','uml.commpath','uml.connector','uml.link'].includes(r.kind))fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association, uml.commpath, uml.connector and uml.link only, not '+r.kind,r);
    for(const side of ['source','target']){const e=el[side];if(!e)continue;
     if(e.multiplicity!==undefined&&!MULT.test(e.multiplicity))fail('DDN-PJ149','Association-end multiplicity must be a UML multiplicity (1, 0..1, 0..*, 1..*, *); found "'+e.multiplicity+'"',r);}
   }
