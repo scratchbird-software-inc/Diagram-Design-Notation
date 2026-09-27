@@ -65,6 +65,10 @@ function registry(base){
  out.extension_contracts.x_rack=def({type:'object',properties:{units:{type:'integer',minimum:1},unit:{type:'integer',minimum:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_birth=def({type:'integer'},['object']);
  out.extension_contracts.x_death=def({type:'integer'},['object']);
+ /* B1-060 (RFC-124): activity pins, interrupt/exception edges. */
+ out.extension_contracts.x_pin=def({type:'object',properties:{set:{type:'string',minLength:1},streaming:{type:'boolean'}},additionalProperties:false},['port']);
+ out.extension_contracts.x_interrupt=def({type:'boolean'},['relation']);
+ out.extension_contracts.x_exception=def({type:'boolean'},['relation']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
@@ -132,14 +136,14 @@ function validate(ir,reg,ErrorClass){
  }
  if(ir.view.profiles.export.mode==='redacted'&&ir.elements.some(n=>n.kind.includes('.')))fail('DDN-PJ003','Profile-specific redacted projection is not qualified; provide a separately authorized workspace');
  const shown=new Set(ir.view.selected),ns=ir.elements.filter(n=>shown.has(n.id)),es=rels.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
- if(p.profile==='flow.basic@1'||p.profile==='flow.documented@2'||p.profile==='uml.activity@1'){
+ if(p.profile==='flow.basic@1'||p.profile==='flow.documented@2'||p.profile==='uml.activity@1'||p.profile==='uml.activity@2'){
   if(ns.some(n=>!n.kind.startsWith('flow.')))fail('DDN-PF007','Flowchart projection accepts flow.* participants only');
   if(p.profile==='flow.basic@1'&&es.some(r=>r.kind!=='flow.next'))fail('DDN-PF007','Flowchart projection accepts flow.next links only');
-  if(p.profile==='uml.activity@1'&&es.some(r=>r.kind!=='uml.flow'))fail('DDN-PF007','Activity projection accepts uml.flow links only');
-  const control=es.filter(r=>(p.profile==='uml.activity@1'?['uml.flow']:['flow.next','flow.continues']).includes(r.kind)),activeNodes=ns.filter(n=>n.kind!=='flow.annotation');
-  const incoming=id=>control.filter(r=>r.to.element===id),outgoing=id=>control.filter(r=>r.from.element===id),starts=ns.filter(n=>n.kind==='flow.start'),ends=ns.filter(n=>n.kind==='flow.end');
+  if(p.profile.startsWith('uml.activity@')&&es.some(r=>r.kind!=='uml.flow'))fail('DDN-PF007','Activity projection accepts uml.flow links only');
+  const control=es.filter(r=>(p.profile.startsWith('uml.activity@')?['uml.flow']:['flow.next','flow.continues']).includes(r.kind)),activeNodes=ns.filter(n=>n.kind!=='flow.annotation');
+  const incoming=id=>control.filter(r=>r.to.element===id),outgoing=id=>control.filter(r=>r.from.element===id),starts=ns.filter(n=>n.kind==='flow.start'),ends=ns.filter(n=>n.kind==='flow.end'||(p.profile==='uml.activity@2'&&n.kind==='flow.flowfinal'));
   if(!starts.length||!ends.length)fail('DDN-PF008','Closed flowchart needs a start and an end');
-  for(const n of ns){if(n.kind==='flow.start'&&incoming(n.id).length)fail('DDN-PF008','Start cannot have incoming control',n);if(n.kind==='flow.end'&&outgoing(n.id).length)fail('DDN-PF008','End cannot have outgoing control',n);
+  for(const n of ns){if(n.kind==='flow.start'&&incoming(n.id).length)fail('DDN-PF008','Start cannot have incoming control',n);if((n.kind==='flow.end'||(p.profile==='uml.activity@2'&&n.kind==='flow.flowfinal'))&&outgoing(n.id).length)fail('DDN-PF008','End cannot have outgoing control',n);
    if(n.kind==='flow.decision'){const branches=outgoing(n.id).map(r=>r.properties.x_diagram?.branch);if(branches.length<2||branches.some(x=>typeof x!=='string'||!x.trim())||new Set(branches).size!==branches.length)fail('DDN-PF009','Decision requires at least two explicitly named, distinct branches',n);}}
   const reach=(roots,reverse)=>{const seen=new Set(roots.map(n=>n.id)),q=[...seen];while(q.length){const id=q.shift();for(const r of control){if((reverse?r.to.element:r.from.element)===id){const t=reverse?r.from.element:r.to.element;if(!seen.has(t)){seen.add(t);q.push(t);}}}}return seen;};
   const a=reach(starts,false),b=reach(ends,true);if(activeNodes.some(n=>!a.has(n.id)||!b.has(n.id)))fail('DDN-PF010','Every flowchart symbol must be reachable from a start and able to reach an end');

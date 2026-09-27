@@ -1,0 +1,70 @@
+ddn "0.5";
+module "ddn.examples.umlact";
+
+// B1-060 (RFC-124): UML 2.5.1 activity-diagram completeness on uml.activity@2.
+// View 1: pins + parameter sets/streaming, decision vs merge, flow final.
+// View 2: signals, time event, interruptible region, exception handler,
+// structured region, connector circles.
+// Minimal current-dialect style, no pinned layout.
+
+data fulfil {
+    object start "" { kind: "flow.start"; }
+    object take "Take order" { kind: "flow.process";
+        ports {
+            port order_in { direction: in; x_pin: { set: "request"; }; }
+            port order_out { direction: out; x_pin: { streaming: true; }; }
+        }
+    }
+    object dec "" { kind: "flow.decision"; }
+    object mrg "" { kind: "flow.merge"; }
+    object pack "Pack" { kind: "flow.process"; }
+    object ship "Ship" { kind: "flow.process"; }
+    object ffin "" { kind: "flow.flowfinal"; }
+    object fin "" { kind: "flow.end"; }
+
+    relation e1 "" @start -> @take.order_in { kind: "uml.flow"; }
+    relation e2 "" @take.order_out -> @dec { kind: "uml.flow"; }
+    relation e3 "in stock" @dec -> @pack { kind: "uml.flow"; x_diagram: { branch: "in stock"; }; }
+    relation e4 "backorder" @dec -> @mrg { kind: "uml.flow"; x_diagram: { branch: "backorder"; }; }
+    relation e5 "" @pack -> @mrg { kind: "uml.flow"; }
+    relation e6 "" @mrg -> @ship { kind: "uml.flow"; }
+    relation e7 "" @ship -> @ffin { kind: "uml.flow"; }
+    relation e8 "" @ship -> @fin { kind: "uml.flow"; }
+}
+
+data signals {
+    object start2 "" { kind: "flow.start"; }
+    object prepare "Prepare shipment" { kind: "flow.process"; }
+    object send_ship "" { kind: "flow.sendsignal"; }
+    object wait_ack "after(24h)" { kind: "flow.timeevent"; }
+    object recv_ack "" { kind: "flow.acceptsignal"; }
+    object handle_fail "Handle failure" { kind: "flow.process"; }
+    object close "Close" { kind: "flow.process"; }
+    object conn_a "A" { kind: "flow.connector"; }
+    object fin2 "" { kind: "flow.end"; }
+
+    relation s1 "" @start2 -> @prepare { kind: "uml.flow"; }
+    relation s2 "" @prepare -> @send_ship { kind: "uml.flow"; }
+    relation s3 "" @send_ship -> @wait_ack { kind: "uml.flow"; }
+    relation s4 "" @wait_ack -> @recv_ack { kind: "uml.flow"; }
+    relation s5 "" @recv_ack -> @conn_a { kind: "uml.flow"; }
+    relation s6 "" @conn_a -> @close { kind: "uml.flow"; }
+    relation s7 "" @prepare -> @handle_fail { kind: "uml.flow"; x_exception: true; }
+    relation s8 "" @handle_fail -> @close { kind: "uml.flow"; }
+    relation s9 "" @close -> @fin2 { kind: "uml.flow"; }
+    relation s10 "" @send_ship -> @fin2 { kind: "uml.flow"; x_interrupt: true; }
+}
+
+view pins "UML activity / pins, decision and merge" {
+    data: [@fulfil];
+    projection { kind: graph; profile: "uml.activity@2"; }
+    frame struct "Iterative" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: "iterative" }; }
+    publication { size: content; fit: none; }
+}
+
+view interrupts "UML activity / signals, interrupts, exceptions" {
+    data: [@signals];
+    projection { profile: "uml.activity@2"; }
+    frame danger "Interruptible" { members: [@signals.prepare, @signals.send_ship, @signals.wait_ack]; x_interruptible: true; }
+    publication { size: content; fit: none; }
+}

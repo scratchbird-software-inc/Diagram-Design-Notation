@@ -96,6 +96,23 @@ function validate(ir,E){
    if(f.scope&&sc&&!NODE.has(sc.kind))fail('DDN-PJ164','Deployment nesting frames must scope to a node kind (uml.node/device/executionenv); '+f.id+' scopes to '+sc.kind,f);
   }
  }
+ /* B1-060 (RFC-124): activity-diagram completeness semantics. */
+ if(profile==='uml.activity@2'){
+  const es2=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.flow');
+  for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='flow.merge')){
+   const inc=es2.filter(r=>r.to.element===n.id).length,out=es2.filter(r=>r.from.element===n.id).length;
+   if(inc<2||out!==1)fail('DDN-PJ167','Merge '+n.id+' needs at least two incoming edges and exactly one outgoing; found '+inc+' in / '+out+' out',n);
+  }
+  const iFrames=(ir.view.frames||[]).filter(f=>f.x_interruptible===true);
+  const inInterruptible=id=>iFrames.some(f=>f.members.includes(id));
+  for(const r of es2){
+   if(r.properties.x_interrupt===true&&!inInterruptible(r.from.element))fail('DDN-PJ168','Interrupting edge '+r.id+' must start inside an interruptible activity region (a frame with x_interruptible: true)',r);
+   if(r.properties.x_exception===true&&ns.get(r.to.element)?.kind!=='flow.process')fail('DDN-PJ168','Exception edge '+r.id+' must target a handler action (flow.process); found '+(ns.get(r.to.element)?.kind||'unresolved'),r);
+  }
+  for(const n of ir.elements.filter(n=>shown.has(n.id)))for(const pt of n.ports){
+   if(pt.properties.x_pin!==undefined&&!['flow.process','flow.subprocess','flow.objectnode'].includes(n.kind))fail('DDN-PJ169','x_pin (parameter set/streaming) applies to pins on action kinds (flow.process/subprocess/objectnode); '+n.id+' is '+n.kind,pt);
+  }
+ }
  /* B1-059 (RFC-123): component/composite-structure semantics. */
  {
   const members=new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(m=>[m.id,{m,owner:n}])));

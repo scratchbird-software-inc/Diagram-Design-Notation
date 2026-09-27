@@ -239,7 +239,13 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
  let diagram='';
- for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
+ for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);
+  if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;
+  /* B1-060 (RFC-124): interruptible activity region (dashed roundrect) and
+   * structured/expansion region keyword. */
+  if(f.x_interruptible===true)diagram+=`<rect data-interruptible="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="18" fill="none" stroke="${t.rule}" stroke-dasharray="7 5"/>`;
+  if(f.x_structured?.mode)diagram+=text(f.x+15,f.y+46,'«'+f.x_structured.mode+'»',11,t.muted,650);
+  diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();
  for(const a of routes){const colour=mono?'#383838':Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
@@ -272,6 +278,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(a.r.properties.x_critical){const s=q(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt(3*s)}"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
   diagram+=endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface);
+  /* B1-060 (RFC-124): interrupting/exception edges draw a lightning-bolt
+   * zigzag over the route (perpendicular jog per segment, alternating side). */
+  if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){
+   const bolt=[];let side=1;
+   for(const seg of segments(a.points)){const mx=(seg.a[0]+seg.b[0])/2,my=(seg.a[1]+seg.b[1])/2,dx=seg.b[0]-seg.a[0],dy=seg.b[1]-seg.a[1],len=Math.hypot(dx,dy)||1,nx=-dy/len*8,ny=dx/len*8;
+    bolt.push(seg.a,[mx+nx*side,my+ny*side]);side=-side;}
+   bolt.push(a.points.at(-1));
+   diagram+=`<g data-lightning="${a.r.properties.x_exception===true?'exception':'interrupt'}"><path d="${pathD(bolt)}" fill="none" stroke="${esc(colour)}" stroke-width="1.7"/>`+endMark(a.points.at(-1),Layout.curveDirection(a),'filled',colour,t.surface)+'</g>';}
   /* B1-055 (RFC-119): UML endpoint label slots. Role text sits above the line
    * near the endpoint, multiplicity below it; a qualifier is the small rect at
    * the end. Angles point away from the endpoint along the route. */
@@ -291,9 +305,24 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const ac=a.r.properties.x_association_class;
   if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
    diagram+=`<g class="ddn-association-class" data-class="${esc(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-  if(p.projection.profile?.startsWith('sysml.')||p.projection.profile==='uml.composite@1'){const s=q(p.style.font_size,16)/16;
-   for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member))diagram+=`<rect data-port-square="${esc(ep.member)}" x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.5"/>`;}
+  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
+   for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
+    const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{};
+    diagram+=`<rect data-port-square="${esc(ep.member)}"${xp.streaming?' data-streaming="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc(colour):esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.5"/>`;
+    if(xp.set)diagram+=`<g class="ddn-pin-set">`+text(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
   diagram+='</g>';
+ }
+ /* B1-060 (RFC-124): pins with no incident edge still render on the action
+  * border (in→west, out→east), streaming filled, set label beside. */
+ if(p.projection.profile==='uml.activity@2'){
+  const s=q(p.style.font_size,16)/16,connected=new Set(rels.flatMap(r=>[r.from.member,r.to.member].filter(Boolean)));
+  for(const n of ir.elements){if(!byId.has(n.id)||!n.ports?.length)continue;
+   const g=byId.get(n.id);
+   for(const pt of n.ports){if(connected.has(pt.id))continue;
+    const xp=pt.properties.x_pin||{},west=(pt.properties.direction||'in')!=='out';
+    const xx=west?g.x:g.x+g.w,yy=g.y+g.h/2;
+    diagram+=`<g class="ddn-pin" data-port-square="${esc(pt.id)}"${xp.streaming?' data-streaming="true"':''}><rect x="${fmt(xx-5*s)}" y="${fmt(yy-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc(t.ink):esc(t.surface)}" stroke="${esc(t.ink)}" stroke-width="1.5"/>`+(xp.set?text(xx+(west?-8*s:8*s),yy-8*s,xp.set,10.5*s,t.muted,500,west?'text-anchor="end"':''):'')+'</g>';}
+  }
  }
  // B1-055: generalization-set labels at the shared target end.
  for(const [name,{gs,pt,ang,colour}] of gensets){const s=q(p.style.font_size,16)/16,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);

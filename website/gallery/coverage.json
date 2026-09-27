@@ -767,6 +767,14 @@
       "wiki": "Diagrams-Flowcharts",
       "svg": "profiles/uml-activity-1.svg"
     },
+    "uml.activity@2": {
+      "entry": "website/examples/basics/80-uml-activity.ddn",
+      "view": "pins",
+      "title": "UML activity / pins, decision and merge",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/uml-activity-2.svg"
+    },
     "uml.communication@1": {
       "entry": "website/examples/basics/42-communication-diagram.ddn",
       "view": "communication",
@@ -3027,6 +3035,25 @@
       "profile": "uml.composite@1",
       "kind": "graph",
       "svg": "corpus/basics-79-uml-composite.svg"
+    },
+    {
+      "entry": "website/examples/basics/80-uml-activity.ddn",
+      "view": "pins",
+      "title": "UML activity / pins, decision and merge",
+      "views": [
+        {
+          "id": "pins",
+          "title": "UML activity / pins, decision and merge"
+        },
+        {
+          "id": "interrupts",
+          "title": "UML activity / signals, interrupts, exceptions"
+        }
+      ],
+      "profile": "uml.activity@2",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-80-uml-activity.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 202,
+  "kindCount": 207,
   "kinds": [
     {
       "kind": "object",
@@ -5036,7 +5036,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -5070,7 +5071,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -5104,7 +5106,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -5137,7 +5140,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -5171,7 +5175,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -5205,7 +5210,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -5239,7 +5245,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -6577,7 +6584,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -6611,7 +6619,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -6645,7 +6654,8 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
@@ -6679,12 +6689,183 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "flow.basic@1",
-        "flow.documented@2"
+        "flow.documented@2",
+        "uml.activity@2"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
       "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
       "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.merge",
+      "name": "Merge",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "decision",
+      "basic_controls": [
+        "name",
+        "kind",
+        "branch_conditions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "diamond",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.basic@1",
+        "flow.documented@2",
+        "uml.activity@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 3
+    },
+    {
+      "kind": "flow.sendsignal",
+      "name": "Send signal",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "decision",
+      "basic_controls": [
+        "name",
+        "kind",
+        "branch_conditions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "diamond",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.basic@1",
+        "flow.documented@2",
+        "uml.activity@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 3
+    },
+    {
+      "kind": "flow.acceptsignal",
+      "name": "Accept signal",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "decision",
+      "basic_controls": [
+        "name",
+        "kind",
+        "branch_conditions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "diamond",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.basic@1",
+        "flow.documented@2",
+        "uml.activity@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 3
+    },
+    {
+      "kind": "flow.timeevent",
+      "name": "Time event",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "decision",
+      "basic_controls": [
+        "name",
+        "kind",
+        "branch_conditions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "diamond",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.basic@1",
+        "flow.documented@2",
+        "uml.activity@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 3
+    },
+    {
+      "kind": "flow.flowfinal",
+      "name": "Flow final",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "decision",
+      "basic_controls": [
+        "name",
+        "kind",
+        "branch_conditions"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "diamond",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.basic@1",
+        "flow.documented@2",
+        "uml.activity@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 3
     }
   ]
 }

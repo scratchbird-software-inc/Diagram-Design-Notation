@@ -10,7 +10,7 @@ const slug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-
 function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile==='dfd.yourdon@1'?'circle':'round';return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
- const compact=['ellipse','circle','diamond','actor','terminal','parallelogram','document','store','subprocess','round','hexagon'].includes(g.silhouette);
+ const compact=['ellipse','circle','diamond','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
  if(compact&&!n.fields.length){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
   g.titleLines=Text.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
@@ -37,7 +37,7 @@ function measure(g,p){
  /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
   * compartment under the name. */
- if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar'].includes(g.silhouette)){g.w=Math.max(110*s,Text.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,Text.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  if(n.kind==='state.state'){const x=n.properties.x_state||{};
   const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
   if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
@@ -50,6 +50,8 @@ function measure(g,p){
 function polygon(g){const{x,y,w,h,silhouette:t}=g;
  if(['initial','final'].includes(t)){const ps=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;ps.push([x+w/2+12*g.scale*Math.cos(a),y+h/2-8*g.scale+12*g.scale*Math.sin(a)]);}return ps;}
  if(t==='offpage')return[[x,y],[x+w,y],[x+w,y+h*.7],[x+w/2,y+h],[x,y+h*.7]];
+ if(t==='sendpent')return[[x,y],[x+w*.82,y],[x+w,y+h/2],[x+w*.82,y+h],[x,y+h]];
+ if(t==='acceptpent')return[[x,y],[x+w,y],[x+w*.82,y+h/2],[x+w,y+h],[x,y+h],[x+w*.18,y+h/2]];
  if(t==='diamond')return[[x+w/2,y],[x+w,y+h/2],[x+w/2,y+h],[x,y+h/2]];
  if(t==='hexagon')return[[x+w*.25,y],[x+w*.75,y],[x+w,y+h/2],[x+w*.75,y+h],[x+w*.25,y+h],[x,y+h/2]];
  if(t==='parallelogram')return[[x+w*.16,y],[x+w,y],[x+w*.84,y+h],[x,y+h]];
@@ -160,6 +162,24 @@ function render(g,p,theme){
   return out+'</g>';
  }
  if(look==='neo'&&shape!=='actor')out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0]+4)+' '+f(v[1]+6)).join('')}Z" fill="#000" opacity=".14"/>`;
+ /* B1-060 (RFC-124): signal pentagons, time-event hourglass, flow final. */
+ if(['sendpent','acceptpent'].includes(shape)){
+  out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0])+' '+f(v[1])).join('')}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
+  return out+'</g>';
+ }
+ if(shape==='hourglass'){
+  const cx=x+w/2,cy=y+h/2,hw=Math.min(w/2,26*s),hh=Math.min(h/2,20*s);
+  out+=`<path d="M${f(cx-hw)} ${f(cy-hh)}L${f(cx+hw)} ${f(cy-hh)}L${f(cx-hw)} ${f(cy+hh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<path d="M${f(cx+hw)} ${f(cy-hh)}L${f(cx-hw)} ${f(cy+hh)}L${f(cx+hw)} ${f(cy+hh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=lines(g.titleLines,cx,y+h-5*s,12,600);
+  return out+'</g>';
+ }
+ if(shape==='flowfinal'){
+  const cx=x+w/2,cy=y+h/2-8,r=11*s;
+  out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="2"/><path d="M${f(cx-5*s)} ${f(cy-5*s)}L${f(cx+5*s)} ${f(cy+5*s)}M${f(cx+5*s)} ${f(cy-5*s)}L${f(cx-5*s)} ${f(cy+5*s)}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+ }
  if(shape==='actor'){
   const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   for(const a of [[cx,head+14*s,cx,head+65*s],[cx-32*s,head+36*s,cx+32*s,head+36*s],[cx,head+65*s,cx-28*s,head+104*s],[cx,head+65*s,cx+28*s,head+104*s]])out+=line(...a,1.8);

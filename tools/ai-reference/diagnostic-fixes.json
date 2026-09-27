@@ -125,6 +125,9 @@
     "DDN-PJ162": "Time/change triggers use after(\u2026), at(\u2026) or when(\u2026) with parentheses \u2014 fix the event text or drop the time-trigger prefix",
     "DDN-PJ164": "Commpaths carry role/multiplicity only (no qualifiers); deployment nesting frames scope to node kinds",
     "DDN-PJ165": "uml.assembly endpoints are components or their ports (fields are not ports); uml.delegation starts at a port member",
-    "DDN-PJ166": "x_part fields: uml.class/uml.component/uml.collaboration owners, UML multiplicity"
+    "DDN-PJ166": "x_part fields: uml.class/uml.component/uml.collaboration owners, UML multiplicity",
+    "DDN-PJ167": "flow.merge needs \u22652 incoming uml.flow edges and exactly one outgoing",
+    "DDN-PJ168": "x_interrupt edges start inside an x_interruptible frame; x_exception edges target a handler action (flow.process)",
+    "DDN-PJ169": "x_pin (set/streaming) applies to ports on flow.process/subprocess/objectnode only"
   }
 }

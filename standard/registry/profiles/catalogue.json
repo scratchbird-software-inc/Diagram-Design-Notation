@@ -630,6 +630,66 @@
       "defaults": {}
     },
     {
+      "keyword": "flow.merge",
+      "name": "Merge",
+      "shape": "profile",
+      "silhouette": "diamond",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "MERGE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.sendsignal",
+      "name": "Send signal",
+      "shape": "profile",
+      "silhouette": "sendpent",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "SEND",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.acceptsignal",
+      "name": "Accept signal",
+      "shape": "profile",
+      "silhouette": "acceptpent",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "ACCEPT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.timeevent",
+      "name": "Time event",
+      "shape": "profile",
+      "silhouette": "hourglass",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "TIMEEVT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.flowfinal",
+      "name": "Flow final",
+      "shape": "profile",
+      "silhouette": "flowfinal",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "FLOWFINAL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "c4.person",
       "name": "Person",
       "shape": "profile",
@@ -1794,7 +1854,13 @@
         "flow.io",
         "flow.forkjoin",
         "flow.objectnode",
-        "flow.gateway"
+        "flow.gateway",
+        "flow.merge",
+        "flow.sendsignal",
+        "flow.acceptsignal",
+        "flow.timeevent",
+        "flow.flowfinal",
+        "flow.connector"
       ],
       "target": [
         "flow.start",
@@ -1804,10 +1870,16 @@
         "flow.io",
         "flow.forkjoin",
         "flow.objectnode",
-        "flow.gateway"
+        "flow.gateway",
+        "flow.merge",
+        "flow.sendsignal",
+        "flow.acceptsignal",
+        "flow.timeevent",
+        "flow.flowfinal",
+        "flow.connector"
       ],
       "allow_self": false,
-      "member_endpoints": false
+      "member_endpoints": true
     },
     {
       "keyword": "bpmn.messageflow",
@@ -3104,6 +3176,27 @@
         "interruptible regions",
         "pins and parameter sets",
         "full UML conformance"
+      ]
+    },
+    {
+      "id": "uml.activity@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML activity diagram"
+      ],
+      "scope": "uml.activity@1 plus UML 2.5.1 activity notation (RFC-124): decision/merge distinction, pins with parameter sets and streaming (x_pin on ports), send/accept signal pentagons, time-event hourglass, flow final (\u2297), interruptible regions with lightning edges, exception handlers, structured/expansion regions.",
+      "validation": [
+        "node in an unknown partition rejected (DDN-PJ114)",
+        "fork/join counts must balance (DDN-PJ115)",
+        "merge fans in \u22652, out exactly 1 (DDN-PJ167)",
+        "interrupt/exception edge rules (DDN-PJ168)",
+        "pins on action kinds only (DDN-PJ169)"
+      ],
+      "unsupported": [
+        "activity execution semantics",
+        "object-flow type checking",
+        "expansion-region collections",
+        "formal UML conformance"
       ]
     },
     {

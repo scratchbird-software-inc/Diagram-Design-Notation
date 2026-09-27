@@ -80,14 +80,14 @@ Groups inside objects (and fields): `fields { field <id> ["label"] {…}; … }`
 
 Compact authoring (purely additive — both forms desugar in the parser to the IDENTICAL canonical declarations; semantic model, rendered SVG and validation are indistinguishable):
 
-- Typed declarations: any registry object-kind keyword may be the declaration keyword inside a data block — `table customer "Customer" { … }` ≡ `object customer "Customer" { kind: table; … }`. Registered aliases spell the same kind (`tbl customer {…}`). Do NOT repeat `kind:` in the body (duplicate property, DDN011). Dotted extension kinds (`uml.actor`, `flow.start`) are usable only through a registry-declared `alias` (e.g. `uml.actor` declares `actor`, so `actor customer {…}` ≡ `kind: "uml.actor"`); most dotted kinds have NO alias — write them as `object x { kind: "dfd.process"; }`.
-- Disambiguation: kind words are contextual — recognized only at data-child statement start followed by an identifier. Structural keywords (`object`, `domain`, `sample`, `flow`, `assertion`, `relation`) always keep their meaning, so `object table "…" { kind: table; }` (an object NAMED `table`) still parses. The `view`/`field` kind words are typed declarations only inside data blocks.
-- Contextual members: inside `fields {}`/`ports {}` the member keyword may be omitted — `fields { id { key: primary; } name; }` ≡ `fields { field id { key: primary; } field name; }`. Explicit `field`/`port` remains valid and mixes freely; a nested `fields {…}` keyword still reads as a group.
-- Verb relations: any registry relationship keyword may be the declaration keyword — `ref places "places" @customer [one] -> @purchase [zeromany] { enforcement: database; }` ≡ `relation places "places" @customer -> @purchase { kind: ref; source_mark: one; target_mark: zeromany; enforcement: database; }`. Brackets are optional per side; an OMITTED bracket omits the mark property (never defaulted); enforcement is never implied. Aliases work (`transfers_to` ≡ flow); extension relation kinds opt in via registry `alias` (`req.satisfies` declares `satisfies`). Words registered as both kind and verb (`note`, `report`, `test`, …) are relations only when `@` endpoints follow; `flow`/`domain` stay structural.
-- Named batches: `relations depends { enforcement: undecided; dep_a "a" @x -> @y; dep_b "b" @y -> @z { lane: hot; } }` expands to one canonical relation per entry, kind from the header (writing `kind:` inside is DDN011), shared properties merge UNDER per-entry ones (per-entry wins). Identity is never positional — every entry has its own id/label/endpoints. Anonymous arrow chains are NOT provided.
-- View headers: `view erd: @sales as "erd.crowfoot@1";` ≡ `view erd { data: [@sales]; projection { kind: graph; profile: "erd.crowfoot@1"; } }`. Datasource is `@name` or `[@a, @b]`; the label keeps its position after the id; an optional body merges like canonical properties/groups (`view erd: @sales as "…" { format: @s; layout {…} }`). The versioned profile string uniquely implies `projection.kind` (registry-verified); unknown/ambiguous profiles and any body `projection` after `as` are coded parse errors (DDN-E015). Omitting `as` ≡ a view without a projection block (defaults apply).
-- Keyed tabular records: a `records` block is a data block whose column order is declared once — `records metrics { columns: label, value, unit; label_column: label; row m1: "Alpha", 10, "ms"; row m2: missing, null, "ms"; }` — and each `row <id>:` ≡ `object <id> "<label>" { kind: record; x_record: { <column>: <value>, … } }` (per-row identity, column order, scalar types, missing/null/undecided preserved). Row values are scalar literals only (string/number/quantity/boolean/null/missing/state words/bare word); `label_column` supplies the display label (string or finite number, else falls back to the row id; without it the label IS the row id). Row ids are the keyed-refresh record keys; a column count mismatch is a coded parse error (DDN-E016) naming row + expected/actual counts; a row body carries extra PROPERTIES only (`kind:`/`x_record:` inside is DDN011; nested declarations are DDN-E016). Canonical data members mix in freely.
-- Reuse presets and fragments: top-level closed templates applied with `use: @name;` or `use: [@a, @b];` — `fields`/`ports` member groups (inside a `fields {}`/`ports {}` group of the same kind), `relation_props` (relation bodies only), `preset` (any element/relation body and view-level flow blocks; a motion preset carries the motion keys of §7.6), `fragment` (unparameterized include-by-reference data members). Expansion happens in the workspace assembly before indexing and yields identities exactly as handwritten inline. Local properties override presets; two presets conflicting on a property are DDN-E017 unless resolved locally; preset-applied properties are ASSERTED, never omitted, and only the named definitions' own properties apply. `version: N` on a definition is documentary only. `use:` inside a definition body, a batch header, or a non-application context is DDN-E017.
+- Typed declarations: any registry object-kind keyword may be the declaration keyword — `table customer "Customer" { … }` ≡ `object customer "Customer" { kind: table; … }`; aliases spell the same kind (`tbl`). Do NOT repeat `kind:` in the body (DDN011). Dotted kinds (`uml.actor`) are usable only through a registry `alias`; most have none — write `object x { kind: "dfd.process"; }`.
+- Disambiguation: kind words are contextual (statement start + identifier). Structural keywords (`object`, `relation`, …) always keep their meaning, so `object table "…" { kind: table; }` still parses.
+- Contextual members: inside `fields {}`/`ports {}` the member keyword may be omitted — `fields { id { key: primary; } name; }` ≡ the explicit form. Explicit `field`/`port` mixes freely.
+- Verb relations: any registry relationship keyword may be the declaration keyword — `ref places "places" @customer [one] -> @purchase [zeromany] { enforcement: database; }` ≡ the canonical `relation … { kind: ref; source_mark: one; target_mark: zeromany; enforcement: database; }`. Brackets are optional per side; an OMITTED bracket omits the mark. Aliases work; extension verbs opt in via registry `alias`. Words registered as both kind and verb (`note`, `report`, …) are relations only when `@` endpoints follow.
+- Named batches: `relations depends { enforcement: undecided; dep_a "a" @x -> @y; dep_b "b" @y -> @z { lane: hot; } }` expands to one canonical relation per entry (kind from the header; shared properties merge under per-entry ones). Identity is never positional. Anonymous arrow chains are NOT provided.
+- View headers: `view erd: @sales as "erd.crowfoot@1";` ≡ `view erd { data: [@sales]; projection { kind: graph; profile: "erd.crowfoot@1"; } }`. Datasource is `@name` or `[@a, @b]`; an optional body merges like canonical properties. The profile string implies `projection.kind` (registry-verified); unknown/ambiguous profiles or a body `projection` after `as` are DDN-E015. Omitting `as` ≡ no projection block.
+- Keyed tabular records: a `records` block declares column order once — `records metrics { columns: label, value, unit; label_column: label; row m1: "Alpha", 10, "ms"; }` — and each `row <id>:` ≡ `object <id> "<label>" { kind: record; x_record: {…} }`. Row values are scalar literals only; `label_column` supplies the display label (default: row id). Row ids are the keyed-refresh record keys; a column count mismatch is DDN-E016 naming row + counts; a row body carries extra PROPERTIES only. Canonical data members mix in freely.
+- Reuse presets and fragments: top-level templates applied with `use: @name;` — `fields`/`ports` member groups, `relation_props` (relation bodies), `preset` (element/relation bodies and view flow blocks), `fragment` (include-by-reference data members). Expansion happens in workspace assembly and yields identities exactly as handwritten inline. Local properties override presets; conflicting presets are DDN-E017 unless resolved locally; preset-applied properties are ASSERTED, never omitted. `use:` inside a definition body, batch header or non-application context is DDN-E017.
 - The normalizer never rewrites verbose↔compact; compactness is an author choice.
 
 Only `object`/`domain`/`sample`/`flow`/`assertion`/`relation` (or compact equivalents) may appear in data (DDN042). Relations belong to data, never to a format override; a renderer never invents a relation because two shapes touch.
@@ -179,6 +179,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_genset` | relation | `{name, disjoint?, complete?}` on uml.generalization (DDN-PJ152) |
 | `x_template` | object | `{parameters: [string]}` on uml.class/interface (DDN-PJ153) |
 | `x_part` | field | `{classifier?, multiplicity?}` — internal part row `role: Classifier [mult]` (RFC-123; DDN-PJ166) |
+| `x_pin` | port | `{set?, streaming?}` — activity pin parameter set/streaming (RFC-124; DDN-PJ169) |
+| `x_interrupt` / `x_exception` | relation | boolean — lightning-bolt activity edges (RFC-124; DDN-PJ168) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
@@ -246,19 +248,19 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | database schema / ERD | graph | `erd.crowfoot@1` | `table` kinds + `ref` with BOTH `source_mark`/`target_mark`; Chen style → kind chen, `chen.basic@1`/`chen.binary@2` |
 | flowchart | graph | `flow.basic@1` | `flow.*` kinds, `flow.next`, one start/end, `x_diagram.branch` on decision outlets; annotations/off-page → `flow.documented@2` |
 | data flow diagram | graph | `dfd.gane_sarson@1` / `dfd.yourdon@1` | `dfd.process/store/external` + `dfd.data`; unique `x_diagram.number` per process |
-| process map (BPMN) | graph | `bpmn.basic@1` | pools = frames `x_pool: true`, `x_gateway.type`, `bpmn.messageflow` across pools |
+| process map (BPMN) | graph | `bpmn.basic@1` | pools = `x_pool` frames, `x_gateway.type`, `bpmn.messageflow` across pools |
 | process chain (EPC) | graph | `epc.basic@1` | alternating `epk.event`/`epk.function`, `x_epc.operator` on connectors |
-| activity diagram / swimlanes | graph | `uml.activity@1` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars |
-| state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `x_transition.event`; regions = `x_region` frames; uml.statemachine@1 (RFC-121): activities/internal/submachines, 8 pseudostates, `trigger [guard] / effect`, time events |
+| activity diagram / swimlanes | graph | `uml.activity@1` / `uml.activity@2` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars; @2 (RFC-124): merge, pins (x_pin), signals/time events, flow final, interruptible/structured regions, exception handlers |
+| state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `x_transition.event`; regions = `x_region` frames; uml.statemachine@1: activities/internal/submachines, pseudostates, effects, time events |
 | sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines; @2 (RFC-120): fragments, gates, message sorts, `{…}` constraints, invariants, activations |
-| communication/collaboration | graph | `uml.communication@1` | `uml.message` + `x_message.seq` dotted-decimal |
+| communication/collaboration | graph | `uml.communication@1` | `uml.message` + dotted `x_message.seq` |
 | class diagram | graph | `uml.structure@1` / `uml.structure@2` | class/interface/enumeration, `x_member`; @2 (RFC-119): end labels, diamonds, association classes, n-ary, gensets, templates, provided/required |
 | deployment diagram | graph | `uml.deployment@1` | node/device/executionenv 3D boxes, artifacts, deploy/manifest, commpaths + multiplicity; nesting = node-scoped frames (RFC-122) |
 | component / composite structure | graph | `uml.composite@1` | ports on classifiers, `uml.assembly` (socket+lollipop), `uml.delegation`, `uml.connector` + `x_endlabels`, parts (`x_part`), `uml.collaboration` (RFC-123) |
 | use cases | graph | `uml.usecase@1` / `uml.usecase@2` | `uml.subject` boundaries + `x_usecase` for @2 |
-| object/instance diagram | graph | `uml.object@1` | `x_instance.classifier` |
+| object diagram | graph | `uml.object@1` | `x_instance.classifier` |
 | timing diagram | timing | `uml.timing@1` | `x_states` per participant |
-| C4 architecture | graph | `c4.context@1` / `c4.container@1` / `c4.component@1` | exactly one boundary frame for container/component |
+| C4 architecture | graph | `c4.context@1` / `c4.container@1` / `c4.component@1` | exactly one boundary frame |
 | system context/free architecture | graph | `ddn@1` | any kinds/verbs; no enforced profile rules |
 | requirements traceability | graph | `requirements.basic@1` | `req.*` kinds/verbs, `x_diagram.code`+`text` |
 | SysML | graph | `sysml.bdd@1` / `sysml.ibd@1` / `sysml.parametric@1` | ports only on `sysml.block` |
@@ -388,6 +390,7 @@ Per-profile:
 - **pert.cpm@1**: tasks (`analysis.task`) need finite nonnegative `x_estimate` days (DDN-PJ125); `analysis.precedes` must be acyclic (DDN-PJ124); critical-path relations/labels are computed at render.
 - **uml.deployment@1** (RFC-122): endpoint contracts do the work (DDN102); commpath labels never carry qualifiers; nesting frames scope to node kinds (DDN-PJ164).
 - **uml.composite@1** (RFC-123): assembly endpoints are components or their ports; delegation starts at a port member (DDN-PJ165); x_part owners/multiplicity (PJ166).
+- **uml.activity@2** (RFC-124): merge ≥2 in / 1 out (DDN-PJ167); interrupt inside x_interruptible frame, exception targets flow.process (PJ168); x_pin on action kinds (PJ169); flow.flowfinal counts as an end (DDN-PF008).
 - **uml.structure@2** (RFC-119): end labels/multiplicity on associations (DDN-PJ149); association class resolves to uml.class (PJ150); n-ary ≥3 distinct classifier ends (PJ151); genset one target per name (PJ152); templates on classifiers (PJ153); enumeration literals (PJ154).
 - **uml.sequence@2** (RFC-120): fragment spans contiguous/nested, anchored on first message (DDN-PJ155); sort/gate rules — create first, delete final, lost/found self-anchored, gate needs a fragment (PJ156); invariant/activation refs incident (PJ157/158); `{…}` constraints (PJ159).
 - **uml.statemachine@1** (RFC-121): x_state on state kinds; submachine → distinct state.state (DDN-PJ160); choice 2+ out, junction pass-through, history/boundary points inside a composite frame (PJ161); after/at/when need parentheses (PJ162); traces stay state.flat@1-only (DDN-Q005).
@@ -1050,30 +1053,6 @@ data indicators {
 view choropleth "Synthetic adoption index / world choropleth" {
     data: [@indicators]; format: @shared.styles.technical;
     projection { kind: geo; profile: "geo.choropleth@1"; records: [@indicators.c840, @indicators.c156, @indicators.c356, @indicators.c276, @indicators.c076, @indicators.c392]; mark: choropleth; geography: "assets/geo/world-110m.json"; method: equalEarth; x: "x_record.id"; value: "x_record.value"; unit: "index"; width: 1120px; height: 640px; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
-}
-```
-
-### 13.21 Geo symbol map (`geo.symbols@1`)
-
-```ddn
-ddn "0.5";
-module "ddn.examples.geo-symbols";
-
-import "shared.ddn" as shared;
-
-// Symbol map: x = longitude, y = latitude (in range), optional size binding
-// (sqrt-scaled radius).
-data quakes {
-    object q1 "Honshu M7.1" { kind: record; x_record: { lon: 141.3, lat: 38.3, mag: 7.1, unit: "Mw" }; }
-    object q2 "Chile M6.8" { kind: record; x_record: { lon: -70.7, lat: -33.4, mag: 6.8, unit: "Mw" }; }
-    object q3 "Sumatra M6.2" { kind: record; x_record: { lon: 100.5, lat: -0.8, mag: 6.2, unit: "Mw" }; }
-    object q4 "Iceland M5.1" { kind: record; x_record: { lon: -18.9, lat: 64.8, mag: 5.1, unit: "Mw" }; }
-}
-
-view symbols "Synthetic seismic catalog / symbol map" {
-    data: [@quakes]; format: @shared.styles.technical;
-    projection { kind: geo; profile: "geo.symbols@1"; records: [@quakes.q1, @quakes.q2, @quakes.q3, @quakes.q4]; mark: symbol; geography: "assets/geo/world-110m.json"; method: mercator; x: "x_record.lon"; y: "x_record.lat"; size: "x_record.mag"; unit: "Mw"; width: 1120px; height: 640px; }
     publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
 }
 ```

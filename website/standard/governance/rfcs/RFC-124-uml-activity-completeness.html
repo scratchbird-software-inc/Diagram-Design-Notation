@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 0124 — UML 2.5.1 activity-diagram completeness (profile uml.activity@2) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 0124 — UML 2.5.1 activity-diagram completeness (profile <code>uml.activity@2</code>)</h1>
+<p>Status: implemented   Authors/reviewers: B1-060 work item   Language/registry impact: additive registry entries within the 0.7 draft; new profile <code>uml.activity@2</code>; no grammar change; runtime/specification 0.7 line.</p>
+<h2>Problem and motivating example</h2>
+<p><code>uml.activity@1</code> covers start/end, actions, decisions, fork/join bars with a balance check, object nodes and swimlanes. UML 2.5.1 adds: the decision-vs-merge diamond distinction, input/output pins with parameter sets and streaming, signal send/accept pentagons and the time-event hourglass, flow final (⊗) vs activity final, interruptible activity regions with lightning-bolt edges, exception handlers, structured/expansion regions, and connector circles (already present as <code>flow.connector</code>).</p>
+<p>Motivating example (excerpt; full fixture in <code>website/examples/basics/80-uml-activity.ddn</code>):</p>
+<pre><code>object verify &quot;Verify card&quot; { kind: &quot;flow.process&quot;;
+    ports { port card { direction: in; } port ok { direction: out; x_pin: { streaming: true; }; } } }
+relation esc &quot;&quot; @verify -&gt; @declined { kind: &quot;uml.flow&quot;; x_exception: true; }
+frame danger &quot;Interruptible&quot; { scope: @r.region; members: [...]; x_interruptible: true; }</code></pre>
+<h2>Proposed syntax</h2>
+<p>No new grammar. Additive kinds + extension properties, one new profile version (<code>uml.activity@1</code> immutable):</p>
+<ol><li><strong>New kinds</strong> (family <code>activity</code>): <code>flow.merge</code> (merge diamond), <code>flow.sendsignal</code> (convex pentagon), <code>flow.acceptsignal</code> (concave pentagon), <code>flow.timeevent</code> (hourglass), <code>flow.flowfinal</code> (⊗ circle-cross). <code>uml.flow</code>'s endpoint contract admits them additively.</li><li><strong>Pins</strong> — ports on action kinds (<code>flow.process</code>/<code>flow.subprocess</code>/<code>flow.objectnode</code>); the port-square attachment renders under <code>uml.activity@2</code>. New closed contract <code>x_pin</code> (port target): <code>{ set?, streaming? }</code> — streaming pins render filled; a set name labels the pin group.</li><li><strong>Interruptible regions / exception handlers</strong> — a view frame with <code>x_interruptible: true</code> renders as a dashed rounded region; a <code>uml.flow</code> edge with <code>x_interrupt: true</code> or <code>x_exception: true</code> renders as a lightning-bolt zigzag arrow (exception edges are the handler notation; the small exception pin is the zigzag's filled head).</li><li><strong>Structured/expansion regions</strong> — a view frame with <code>x_structured: { mode: structured|iterative|parallel }</code> renders the «mode» keyword in its top-left corner.</li><li><strong>Decision vs merge</strong> — <code>flow.merge</code> is validated as ≥2 incoming / exactly 1 outgoing; decisions keep the existing named-branch rule (DDN-PF009).</li><li><strong>New profile <code>uml.activity@2</code></strong> extending the @1 rule set (start/end presence, reachability, partitions, fork/join balance) with the above.</li></ol>
+<h2>Semantic normalization and identity effects</h2>
+<p>None. New kinds are ordinary elements; region/interrupt metadata is view/relation notation.</p>
+<h2>Visual encoding and routing effects</h2>
+<ul><li>Signal pentagons: send = rectangle with pointed right side (convex), accept = rectangle with notched right side (concave); time event = hourglass (two triangles) with the <code>after(…)</code>/<code>at(…)</code> text inside.</li><li>Flow final ⊗: ring with an ✕ inside, distinct from the activity-final ringed dot.</li><li>Lightning edge: deterministic zigzag (perpendicular jog at each segment midpoint, alternating side) with a filled head.</li><li>Interruptible region: dashed roundrect; structured region: existing frame box plus «mode» keyword.</li><li>Streaming pin: filled square; parameter-set pins carry their set name beside the square.</li></ul>
+<h2>Alternatives considered</h2>
+<ol><li><strong>Pins as fields with x_part</strong>: rejected — pins are interaction points on the action boundary, exactly the port abstraction the SysML profile already proves (RFC-123 precedent).</li><li><strong>Merge as <code>flow.decision</code> with an x_ flag</strong>: rejected — distinct vertices with opposite fan rules; kinds make DDN-PF009 vs PJ167 enforceable (RFC-121 precedent).</li><li><strong>Interrupt/exception as new relation kinds</strong>: rejected — they are edge <em>styles</em> of the one control flow, marked per edge (the <code>x_interrupt</code> flag mirrors UML's InterruptingEdge marker on an ActivityEdge).</li></ol>
+<h2>Compatibility and migration</h2>
+<p>Fully additive. <code>uml.activity@1</code> is unchanged; its fixtures render byte-identically. The start/end presence rule accepts <code>flow.flowfinal</code> as an end under @2 only. One registry widening: <code>uml.flow</code> gains <code>member_endpoints: true</code> so edges can attach to pins (previously they were rejected as DDN102; no previously valid source changes meaning).</p>
+<h2>Security, privacy and accessibility</h2>
+<p>No new input channels; standard contracts and escaped labels.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li>Registry: +5 kinds, widened <code>uml.flow</code> endpoints, +1 profile; regenerated assets.</li><li>Contracts: new <code>x_pin</code> (port), <code>x_interrupt</code> (relation), <code>x_exception</code> (relation).</li><li>New error codes (ceilings re-grepped: PJ166, PJW05): <code>DDN-PJ167</code> (merge fan rules), <code>DDN-PJ168</code> (interrupt source outside an interruptible region; exception target not an action), <code>DDN-PJ169</code> (x_pin on a non-action owner).</li></ul>
+<h2>Positive and negative fixtures</h2>
+<p><code>notation/tests/activity-compliance.js</code>; gallery fixture <code>website/examples/basics/80-uml-activity.ddn</code>.</p>
+<h2>Implementation/conformance impact</h2>
+<p>Touch points: registry, <code>ddn-profiles.js</code> (contracts + flow-block @2 wiring), <code>ddn-profile-quality.js</code> (PJ167–PJ169), <code>ddn-shapes.js</code> (pentagons/hourglass/flowfinal), <code>ddn-render.js</code> (pin squares/streaming/labels, region frames, lightning edges). Spec chapter 17 gains §17.10. Still outside scope: activity <em>execution</em> semantics, object-flow type checking, expansion-region input/output collections, formal OMG conformance.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>Flow final vs activity final: <strong>decided</strong> — distinct kind <code>flow.flowfinal</code>; <code>flow.end</code> remains the activity final.</li><li>Parameter sets render as named pin groups (set label beside the square); full set boxing deferred as cosmetic.</li></ul>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

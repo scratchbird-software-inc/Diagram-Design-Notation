@@ -28,7 +28,7 @@ Appearance-only settings must not write semantic properties. Changing a type cal
 | Note/example | Text, Describes | Sample bindings, provenance, review state |
 | Analysis/view | Projection, Source, Template | Measures, rules, series, scales, child views |
 
-The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 202 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
+The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 207 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
 
 > Implementation status (B1-055, RFC-119): the palette now includes `uml.enumeration` (Meaning group, classifier inspector with a LITERALS compartment; members carry `x_member: { kind: literal }`) and the `uml.provided`/`uml.required` relations in the relation map. `uml.structure@2` is the hinted profile for UML classifier kinds. Template parameters (`x_template`) edit as a string list on the class inspector; association-end roles, multiplicities and qualifiers (`x_endlabels`), association-class attachment, n-ary ends and generalization-set membership edit on the relation inspector as structured records — never as free-form label text.
 
@@ -51,3 +51,5 @@ Choosing Table creates a table definition with an auto-generated stable ID, a na
 > Implementation status (B1-058, RFC-122): the palette adds the deployment kinds (`uml.node`/`uml.device`/`uml.executionenv`/`uml.artifact`, Systems group) and relations (`uml.deploy`/`uml.manifest`/`uml.commpath`) for the `uml.deployment@1` profile. Communication-path multiplicity edits via the same endpoint-label control as UML associations (RFC-119); qualifiers stay association-only (`DDN-PJ164`); node nesting is frame assignment scoped to a node kind.
 
 > Implementation status (B1-059, RFC-123): the palette adds `uml.collaboration` (Meaning group) and the `uml.assembly`/`uml.delegation`/`uml.connector` relations for the `uml.composite@1` profile; `uml.component`/`uml.class`/`uml.interface` hint it. Ports edit as port rows on the classifier inspector (existing port machinery); parts edit as field rows with `x_part` classifier/multiplicity; connector roles and multiplicity use the RFC-119 endpoint-label control; `DDN-PJ165`/`DDN-PJ166` are the commit-time authorities.
+
+> Implementation status (B1-060, RFC-124): the palette adds the five UML activity kinds (`flow.merge`/`sendsignal`/`acceptsignal`/`timeevent`/`flowfinal`, Process group) for `uml.activity@2`, hinted on all flow.* kinds. Pins edit as port rows with `x_pin` set/streaming; interrupt/exception are edge toggles on `uml.flow`; interruptible and structured regions are frame assignments with `x_interruptible`/`x_structured.mode`; `DDN-PJ167`–`DDN-PJ169` are the commit-time authorities.

@@ -257,7 +257,7 @@ const slug$1=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/
 function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile==='dfd.yourdon@1'?'circle':'round';return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
- const compact=['ellipse','circle','diamond','actor','terminal','parallelogram','document','store','subprocess','round','hexagon'].includes(g.silhouette);
+ const compact=['ellipse','circle','diamond','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
  if(compact&&!n.fields.length){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
   g.titleLines=api$7.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
@@ -284,7 +284,7 @@ function measure(g,p){
  /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
   * compartment under the name. */
- if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar'].includes(g.silhouette)){g.w=Math.max(110*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
+ if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
  if(n.kind==='state.state'){const x=n.properties.x_state||{};
   const acts=[...['entry','exit','do'].filter(k=>x[k]).map(k=>k+' / '+x[k]),...(x.internal||[])];
   if(acts.length||x.submachine){g.stateActs=acts;g.submachine=x.submachine;
@@ -297,6 +297,8 @@ function measure(g,p){
 function polygon(g){const{x,y,w,h,silhouette:t}=g;
  if(['initial','final'].includes(t)){const ps=[];for(let i=0;i<32;i++){const a=i/32*Math.PI*2;ps.push([x+w/2+12*g.scale*Math.cos(a),y+h/2-8*g.scale+12*g.scale*Math.sin(a)]);}return ps;}
  if(t==='offpage')return [[x,y],[x+w,y],[x+w,y+h*.7],[x+w/2,y+h],[x,y+h*.7]];
+ if(t==='sendpent')return [[x,y],[x+w*.82,y],[x+w,y+h/2],[x+w*.82,y+h],[x,y+h]];
+ if(t==='acceptpent')return [[x,y],[x+w,y],[x+w*.82,y+h/2],[x+w,y+h],[x,y+h],[x+w*.18,y+h/2]];
  if(t==='diamond')return [[x+w/2,y],[x+w,y+h/2],[x+w/2,y+h],[x,y+h/2]];
  if(t==='hexagon')return [[x+w*.25,y],[x+w*.75,y],[x+w,y+h/2],[x+w*.75,y+h],[x+w*.25,y+h],[x,y+h/2]];
  if(t==='parallelogram')return [[x+w*.16,y],[x+w,y],[x+w*.84,y+h],[x,y+h]];
@@ -407,6 +409,24 @@ function render$2(g,p,theme){
   return out+'</g>';
  }
  if(look==='neo'&&shape!=='actor')out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0]+4)+' '+f(v[1]+6)).join('')}Z" fill="#000" opacity=".14"/>`;
+ /* B1-060 (RFC-124): signal pentagons, time-event hourglass, flow final. */
+ if(['sendpent','acceptpent'].includes(shape)){
+  out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0])+' '+f(v[1])).join('')}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
+  return out+'</g>';
+ }
+ if(shape==='hourglass'){
+  const cx=x+w/2,cy=y+h/2,hw=Math.min(w/2,26*s),hh=Math.min(h/2,20*s);
+  out+=`<path d="M${f(cx-hw)} ${f(cy-hh)}L${f(cx+hw)} ${f(cy-hh)}L${f(cx-hw)} ${f(cy+hh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<path d="M${f(cx+hw)} ${f(cy-hh)}L${f(cx-hw)} ${f(cy+hh)}L${f(cx+hw)} ${f(cy+hh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=lines(g.titleLines,cx,y+h-5*s,12,600);
+  return out+'</g>';
+ }
+ if(shape==='flowfinal'){
+  const cx=x+w/2,cy=y+h/2-8,r=11*s;
+  out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="2"/><path d="M${f(cx-5*s)} ${f(cy-5*s)}L${f(cx+5*s)} ${f(cy+5*s)}M${f(cx+5*s)} ${f(cy-5*s)}L${f(cx-5*s)} ${f(cy+5*s)}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+ }
  if(shape==='actor'){
   const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   for(const a of [[cx,head+14*s,cx,head+65*s],[cx-32*s,head+36*s,cx+32*s,head+36*s],[cx,head+65*s,cx-28*s,head+104*s],[cx,head+65*s,cx+28*s,head+104*s]])out+=line(...a,1.8);
@@ -1391,7 +1411,13 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
  let diagram='';
- for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$1(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;diagram+=`</g>`;}
+ for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$1(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);
+  if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;
+  /* B1-060 (RFC-124): interruptible activity region (dashed roundrect) and
+   * structured/expansion region keyword. */
+  if(f.x_interruptible===true)diagram+=`<rect data-interruptible="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="18" fill="none" stroke="${t.rule}" stroke-dasharray="7 5"/>`;
+  if(f.x_structured?.mode)diagram+=text$1(f.x+15,f.y+46,'«'+f.x_structured.mode+'»',11,t.muted,650);
+  diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();
  for(const a of routes){const colour=mono?'#383838':api$8.semantic(a.reg.colour,t);routeColours[a.id]=colour;
@@ -1424,6 +1450,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(a.r.properties.x_critical){const s=q$1(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt(3*s)}"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
   diagram+=endMark(a.points[0],api$4.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),api$4.curveDirection(a),endType,colour,t.surface);
+  /* B1-060 (RFC-124): interrupting/exception edges draw a lightning-bolt
+   * zigzag over the route (perpendicular jog per segment, alternating side). */
+  if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){
+   const bolt=[];let side=1;
+   for(const seg of segments(a.points)){const mx=(seg.a[0]+seg.b[0])/2,my=(seg.a[1]+seg.b[1])/2,dx=seg.b[0]-seg.a[0],dy=seg.b[1]-seg.a[1],len=Math.hypot(dx,dy)||1,nx=-dy/len*8,ny=dx/len*8;
+    bolt.push(seg.a,[mx+nx*side,my+ny*side]);side=-side;}
+   bolt.push(a.points.at(-1));
+   diagram+=`<g data-lightning="${a.r.properties.x_exception===true?'exception':'interrupt'}"><path d="${pathD(bolt)}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.7"/>`+endMark(a.points.at(-1),api$4.curveDirection(a),'filled',colour,t.surface)+'</g>';}
   /* B1-055 (RFC-119): UML endpoint label slots. Role text sits above the line
    * near the endpoint, multiplicity below it; a qualifier is the small rect at
    * the end. Angles point away from the endpoint along the route. */
@@ -1443,9 +1477,24 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const ac=a.r.properties.x_association_class;
   if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
    diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-  if(p.projection.profile?.startsWith('sysml.')||p.projection.profile==='uml.composite@1'){const s=q$1(p.style.font_size,16)/16;
-   for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member))diagram+=`<rect data-port-square="${esc$1(ep.member)}" x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;}
+  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
+   for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
+    const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{};
+    diagram+=`<rect data-port-square="${esc$1(ep.member)}"${xp.streaming?' data-streaming="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+    if(xp.set)diagram+=`<g class="ddn-pin-set">`+text$1(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
   diagram+='</g>';
+ }
+ /* B1-060 (RFC-124): pins with no incident edge still render on the action
+  * border (in→west, out→east), streaming filled, set label beside. */
+ if(p.projection.profile==='uml.activity@2'){
+  const s=q$1(p.style.font_size,16)/16,connected=new Set(rels.flatMap(r=>[r.from.member,r.to.member].filter(Boolean)));
+  for(const n of ir.elements){if(!byId.has(n.id)||!n.ports?.length)continue;
+   const g=byId.get(n.id);
+   for(const pt of n.ports){if(connected.has(pt.id))continue;
+    const xp=pt.properties.x_pin||{},west=(pt.properties.direction||'in')!=='out';
+    const xx=west?g.x:g.x+g.w,yy=g.y+g.h/2;
+    diagram+=`<g class="ddn-pin" data-port-square="${esc$1(pt.id)}"${xp.streaming?' data-streaming="true"':''}><rect x="${fmt(xx-5*s)}" y="${fmt(yy-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc$1(t.ink):esc$1(t.surface)}" stroke="${esc$1(t.ink)}" stroke-width="1.5"/>`+(xp.set?text$1(xx+(west?-8*s:8*s),yy-8*s,xp.set,10.5*s,t.muted,500,west?'text-anchor="end"':''):'')+'</g>';}
+  }
  }
  // B1-055: generalization-set labels at the shared target end.
  for(const [name,{gs,pt,ang,colour}] of gensets){const s=q$1(p.style.font_size,16)/16,rad=ang*Math.PI/180,dx=Math.cos(rad),dy=Math.sin(rad);

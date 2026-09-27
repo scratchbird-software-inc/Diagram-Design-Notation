@@ -2580,6 +2580,27 @@
       ]
     },
     {
+      "id": "uml.activity@2",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML activity diagram"
+      ],
+      "scope": "uml.activity@1 plus UML 2.5.1 activity notation (RFC-124): decision/merge distinction, pins with parameter sets and streaming (x_pin on ports), send/accept signal pentagons, time-event hourglass, flow final (⊗), interruptible regions with lightning edges, exception handlers, structured/expansion regions.",
+      "validation": [
+        "node in an unknown partition rejected (DDN-PJ114)",
+        "fork/join counts must balance (DDN-PJ115)",
+        "merge fans in ≥2, out exactly 1 (DDN-PJ167)",
+        "interrupt/exception edge rules (DDN-PJ168)",
+        "pins on action kinds only (DDN-PJ169)"
+      ],
+      "unsupported": [
+        "activity execution semantics",
+        "object-flow type checking",
+        "expansion-region collections",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "bpmn.basic@1",
       "projection": "graph",
       "diagramFamilies": [
