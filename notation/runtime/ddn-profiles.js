@@ -34,6 +34,9 @@ function registry(base){
  out.extension_contracts.x_nary=def({type:'object',required:['ends'],properties:{ends:{type:'array',minItems:1,maxItems:6,items:{type:'object',required:['element'],properties:{element:{type:'object'},role:{type:'string',minLength:1},multiplicity:{type:'string',minLength:1}},additionalProperties:false}}},additionalProperties:false},['relation']);
  out.extension_contracts.x_genset=def({type:'object',required:['name'],properties:{name:{type:'string',minLength:1},disjoint:{type:'boolean'},complete:{type:'boolean'}},additionalProperties:false},['relation']);
  out.extension_contracts.x_template=def({type:'object',required:['parameters'],properties:{parameters:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
+ /* B1-059 (RFC-123): internal parts — field-level typed members of a
+  * classifier, rendered "role: Classifier [mult]". */
+ out.extension_contracts.x_part=def({type:'object',properties:{classifier:{type:'string',minLength:1},multiplicity:{type:'string',minLength:1}},additionalProperties:false},['field']);
  out.extension_contracts.x_diagram=def({type:'object',properties:{number:{type:'string',minLength:1},owner:{type:'string'},code:{type:'string'},text:{type:'string'},branch:{type:'string'},stereotype:{type:'string'}},additionalProperties:false},['object','relation']);
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
@@ -90,7 +93,7 @@ function validate(ir,reg,ErrorClass){
   if(el!==undefined){
    /* RFC-122: communication paths carry multiplicity end labels too; the
     * qualifier stays association-only (DDN-PJ164 covers the misuse). */
-   if(!['uml.association','uml.commpath'].includes(r.kind))fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association and uml.commpath only, not '+r.kind,r);
+   if(!['uml.association','uml.commpath','uml.connector'].includes(r.kind))fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association, uml.commpath and uml.connector only, not '+r.kind,r);
    for(const side of ['source','target']){const e=el[side];if(!e)continue;
     if(e.multiplicity!==undefined&&!MULT.test(e.multiplicity))fail('DDN-PJ149','Association-end multiplicity must be a UML multiplicity (1, 0..1, 0..*, 1..*, *); found "'+e.multiplicity+'"',r);}
   }

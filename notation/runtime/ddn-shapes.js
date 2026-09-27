@@ -24,7 +24,8 @@ function measure(g,p){
   let y=70*s,last=null;const div=[];
   for(const row of list){const m=row.field.properties.x_member||{},type=m.kind||(n.kind==='uml.enumeration'?'literal':'attribute');if(type!==last){div.push({top:y,label:type==='operation'?'OPERATIONS':type==='literal'?'LITERALS':'ATTRIBUTES'});y+=25*s;last=type;}
    const prefix={public:'+',private:'−',protected:'#',package:'~'}[m.visibility]||'';
-   const adorned=(m.derived?'/':'')+row.field.name+(m.multiplicity?' ['+m.multiplicity+']':'')+(m.modifiers?.length?' {'+m.modifiers.join(', ')+'}':'');
+   const xp=row.field.properties.x_part;
+   const adorned=(m.derived?'/':'')+row.field.name+(xp?(xp.classifier?': '+xp.classifier:'')+(xp.multiplicity?' ['+xp.multiplicity+']':''):'')+(m.multiplicity?' ['+m.multiplicity+']':'')+(m.modifiers?.length?' {'+m.modifiers.join(', ')+'}':'');
    row.labelLines=Text.wrap((prefix?prefix+' ':'')+adorned,g.w-32*s,13.5*s,p.style.font,400);row.top=y;row.h=Math.max(row.h,(row.labelLines.length*18+row.detailLines.length*16+10)*s);y+=row.h;
   }
   g.fieldRows=list;g.compartments=div;g.h=Math.max(g.h,y+20*s);g.headerH=70*s;
@@ -55,14 +56,14 @@ function polygon(g){const{x,y,w,h,silhouette:t}=g;
  if(t==='package')return[[x,y],[x+w*.43,y],[x+w*.49,y+20],[x+w,y+20],[x+w,y+h],[x,y+h]];
  if(t==='document'){const ps=[[x,y],[x+w,y],[x+w,y+h-14]];for(let i=1;i<=24;i++){const t=i/24;ps.push([x+w*(1-t),y+h-14+12*Math.sin(t*Math.PI*2)]);}return ps;}
  if(t==='actor'){const z=g.scale,cx=x+w/2;return [[cx,y+9*z],[cx+14*z,y+23*z],[cx+14*z,y+40*z],[cx+32*z,y+59*z],[cx+3*z,y+70*z],[cx+28*z,y+127*z],[cx,y+100*z],[cx-28*z,y+127*z],[cx-3*z,y+70*z],[cx-32*z,y+59*z],[cx-14*z,y+40*z],[cx-14*z,y+23*z]];}
- if(['ellipse','circle'].includes(t)){const ps=[];for(let i=0;i<64;i++){const a=i/64*Math.PI*2;ps.push([x+w/2+Math.cos(a)*w/2,y+h/2+Math.sin(a)*h/2]);}return ps;}
+ if(['ellipse','circle','collab'].includes(t)){const ps=[];for(let i=0;i<64;i++){const a=i/64*Math.PI*2;ps.push([x+w/2+Math.cos(a)*w/2,y+h/2+Math.sin(a)*h/2]);}return ps;}
  return[[x,y],[x+w,y],[x+w,y+h],[x,y+h]];
 }
 function anchor(g,side,point){
  const {x,y,w,h,silhouette:t}=g;if(!t)return point;
  let px=point[0],py=point[1];const cx=x+w/2,cy=y+h/2;
  if(['initial','final'].includes(t)){const a={east:0,south:Math.PI/2,west:Math.PI,north:-Math.PI/2}[side];return [f(cx+12*g.scale*Math.cos(a)),f(cy-8*g.scale+12*g.scale*Math.sin(a))];}
- if(['ellipse','circle'].includes(t)){
+ if(['ellipse','circle','collab'].includes(t)){
   if(side==='east'||side==='west'){const dy=Math.min(.94,Math.abs((py-cy)/(h/2)));px=cx+(side==='east'?1:-1)*w/2*Math.sqrt(1-dy*dy);}else{const dx=Math.min(.94,Math.abs((px-cx)/(w/2)));py=cy+(side==='south'?1:-1)*h/2*Math.sqrt(1-dx*dx);}
  }else if(t==='diamond'){
   if(side==='east'||side==='west'){py=Math.max(y+h*.1,Math.min(y+h*.9,py));px=cx+(side==='east'?1:-1)*(w/2)*(1-Math.abs(py-cy)/(h/2));}else{px=Math.max(x+w*.1,Math.min(x+w*.9,px));py=cy+(side==='south'?1:-1)*(h/2)*(1-Math.abs(px-cx)/(w/2));}
@@ -78,7 +79,7 @@ function anchor(g,side,point){
 // inside the empty corners of a diamond or parallelogram.
 function segmentInterior(segment,g){
  const a=segment.a,b=segment.b,dx=b[0]-a[0],dy=b[1]-a[1];
- if(['ellipse','circle'].includes(g.silhouette)){
+ if(['ellipse','circle','collab'].includes(g.silhouette)){
   const rx=g.w/2,ry=g.h/2,cx=g.x+rx,cy=g.y+ry;
   const x=(a[0]-cx)/rx,y=(a[1]-cy)/ry,u=dx/rx,v=dy/ry,den=u*u+v*v;
   const t=den?Math.max(0,Math.min(1,-(x*u+y*v)/den)):0;
@@ -128,6 +129,16 @@ function render(g,p,theme){
   else if(shape==='history')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`+text(cx,cy+4.5*s,k.keyword==='state.history_deep'?'H*':'H',13,650,'text-anchor="middle"');
   else if(shape==='forkbar')out+=`<rect x="${f(cx-32*s)}" y="${f(cy-4*s)}" width="${f(64*s)}" height="${f(8*s)}" rx="${f(2*s)}" fill="${ink}"/>`;
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+ }
+ /* B1-059 (RFC-123): collaboration occurrence — dashed ellipse with keyword. */
+ if(shape==='collab'){
+  out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+  const hasRows=(g.fieldRows||[]).length>0;
+  out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),'«collaboration»',11,500,'text-anchor="middle"');
+  out+=lines(g.titleLines,x+w/2,y+(hasRows?48*s:h/2+14*s),16,600);
+  if(hasRows){out+=line(x+w*.18,y+62*s,x+w*.82,y+62*s,1);
+   for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+w/2,y+r.top+18*s,12.5,400)+'</g>';}
+  return out+'</g>';
  }
  /* B1-058 (RFC-122): deployment silhouettes — 3D-box node (top/right depth
   * faces) and dog-eared artifact document. */

@@ -195,10 +195,12 @@ function genVocabulary(S) {
     ') and `standard/registry/profiles/catalogue.json` (runtime ' + S.version + '). Use these EXACT keywords. ' +
     'Aliases and lowercase registry codes are also accepted by the resolver (`DDN.kindEntry`/`DDN.relationEntry` match keyword, lowercase code, or alias).');
 
+  const nonEmptyDefaults = cat.kinds.filter(k => k.defaults && Object.keys(k.defaults).length);
   out.push('### 4.1 Core object kinds (' + cat.kinds.length + ')\n\n' +
-    '`shape` is the registered default presentation (card = rectangular card; activity = rounded card; frame; note = folded annotation; sample = grid; port; cylinder etc.). `defaults` is the registry\'s documentation-only per-kind default property object: the renderer NEVER applies it implicitly; authoring tools merge it before explicit properties (explicit wins) and write it into source.\n\n' +
-    table(['keyword', 'name', 'shape', 'family', 'aliases', 'defaults'],
-      cat.kinds.map(k => [k.keyword, k.name, k.shape, k.family, joinList(k.aliases), JSON.stringify(k.defaults || {})])));
+    '`shape` is the registered default presentation (card = rectangular card; activity = rounded card; frame; note = folded annotation; sample = grid; port; cylinder etc.). Kinds may carry a documentation-only registry `defaults` property object: the renderer NEVER applies it implicitly; authoring tools merge it before explicit properties (explicit wins) and write it into source. ' +
+    (nonEmptyDefaults.length ? 'Kinds with nonempty defaults: ' + nonEmptyDefaults.map(k => '`' + k.keyword + '` ' + JSON.stringify(k.defaults)).join('; ') + '. All other kinds default to `{}`.' : 'No kind currently declares nonempty defaults.') + '\n\n' +
+    table(['keyword', 'name', 'shape', 'family', 'aliases'],
+      cat.kinds.map(k => [k.keyword, k.name, k.shape, k.family, joinList(k.aliases)])));
 
   out.push('### 4.2 Profile object kinds (' + pc.kinds.length + ')\n\n' +
     table(['keyword', 'name', 'silhouette', 'core fallback', 'family', 'code'],

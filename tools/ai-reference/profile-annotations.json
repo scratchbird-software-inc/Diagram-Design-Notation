@@ -9,6 +9,7 @@
     "uml.structure@1": "UML class/structure diagram: classes, interfaces, inheritance, associations",
     "uml.structure@2": "UML 2.5.1 class diagram (RFC-119): end labels, aggregation/composition, navigability, association classes, n-ary, gensets, templates, enumerations, provided/required",
     "uml.deployment@1": "UML 2.5.1 deployment diagram (RFC-122): nodes/devices/execution environments, artifacts, deploy/manifest, communication paths with multiplicity",
+    "uml.composite@1": "UML 2.5.1 component + composite structure (RFC-123): ports, assembly ball-and-socket, delegation, connectors, parts, collaborations",
     "uml.usecase@1": "UML use-case diagram: actors, use cases, include/extend (basic)",
     "uml.usecase@2": "UML use-case with subject boundaries and extension-point contracts",
     "requirements.basic@1": "Requirements traceability: requirements, tests, implementations, derives/satisfies/verifies",

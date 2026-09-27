@@ -96,6 +96,29 @@ function validate(ir,E){
    if(f.scope&&sc&&!NODE.has(sc.kind))fail('DDN-PJ164','Deployment nesting frames must scope to a node kind (uml.node/device/executionenv); '+f.id+' scopes to '+sc.kind,f);
   }
  }
+ /* B1-059 (RFC-123): component/composite-structure semantics. */
+ {
+  const members=new Map(ir.elements.flatMap(n=>[...n.fields,...n.ports].map(m=>[m.id,{m,owner:n}])));
+  for(const r of ir.relations){
+   const end=e=>members.get(e.member)||null;
+   if(r.kind==='uml.assembly')for(const side of ['from','to']){
+    const ep=r[side],mem=end(ep),kind=mem?mem.owner.kind:ns.get(ep.element)?.kind;
+    if(kind!=='uml.component')fail('DDN-PJ165','uml.assembly '+side+' endpoint must be a uml.component or a port of one; found '+(mem?'port on '+kind:kind),r);
+    if(ep.member&&mem&&![...mem.owner.ports].some(pt=>pt.id===ep.member))fail('DDN-PJ165','uml.assembly '+side+' member must be a port, not a field/part',r);
+   }
+   if(r.kind==='uml.delegation'){
+    const mem=end(r.from);
+    if(!r.from.member||!mem||![...mem.owner.ports].some(pt=>pt.id===r.from.member))fail('DDN-PJ165','uml.delegation must start at a declared port member of the boundary classifier',r);
+   }
+  }
+  for(const n of ir.elements)for(const f of n.fields){
+   const xp=f.properties.x_part;
+   if(xp!==undefined){
+    if(!['uml.class','uml.component','uml.collaboration'].includes(n.kind))fail('DDN-PJ166','x_part fields belong to uml.class/uml.component/uml.collaboration owners; '+n.id+' is '+n.kind,f);
+    if(xp.multiplicity!==undefined&&!/^(\d+|\*)(\.\.(\d+|\*))?$/.test(xp.multiplicity))fail('DDN-PJ166','Part multiplicity must be a UML multiplicity; found "'+xp.multiplicity+'"',f);
+   }
+  }
+ }
  if(profile==='uml.activity@1'){
   const frames=ir.view.frames||[],lanes=new Set(frames.flatMap(f=>[f.id,f.name,String(f.id).split('::').pop().split('.').pop()]));
   const shown2=new Set(ir.view.selected),es2=ir.relations.filter(r=>shown2.has(r.from.element)&&shown2.has(r.to.element)&&r.kind==='uml.flow');

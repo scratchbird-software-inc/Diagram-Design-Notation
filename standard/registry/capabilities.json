@@ -1571,6 +1571,25 @@
       ]
     },
     {
+      "id": "uml.composite@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML component diagram",
+        "UML composite structure diagram"
+      ],
+      "scope": "UML 2.5.1 component + composite structure (RFC-123): ports on classifiers (SysML port machinery), assembly ball-and-socket connectors, delegation connectors, plain connectors with role names and multiplicity (x_endlabels), internal parts (x_part), collaboration occurrences (uml.collaboration).",
+      "validation": [
+        "assembly endpoints are components or ports of components; delegation starts at a port (DDN-PJ165)",
+        "x_part owners and multiplicity form (DDN-PJ166)"
+      ],
+      "unsupported": [
+        "port protocol state machines",
+        "interface type-checking of assembly pairings",
+        "structured-classifier behavior",
+        "formal UML conformance"
+      ]
+    },
+    {
       "id": "uml.usecase@1",
       "projection": "graph",
       "diagramFamilies": [

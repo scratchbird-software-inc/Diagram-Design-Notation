@@ -231,6 +231,18 @@
       "defaults": {}
     },
     {
+      "keyword": "uml.collaboration",
+      "name": "Collaboration",
+      "shape": "profile",
+      "silhouette": "collab",
+      "fallback": "application",
+      "family": "concept",
+      "code": "COLLAB",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "uml.actor",
       "name": "Actor",
       "shape": "profile",
@@ -1316,6 +1328,63 @@
       "member_endpoints": false
     },
     {
+      "keyword": "uml.assembly",
+      "name": "Assembly connector",
+      "verb": "Assembles",
+      "family": "structural",
+      "code": "ASSEMBLY",
+      "start": "socket",
+      "end": "lollipop",
+      "glyph": "link",
+      "source": [
+        "uml.component"
+      ],
+      "target": [
+        "uml.component"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
+    },
+    {
+      "keyword": "uml.delegation",
+      "name": "Delegation connector",
+      "verb": "Delegates",
+      "family": "dependency",
+      "code": "DELEGATION",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.component"
+      ],
+      "target": [
+        "uml.component"
+      ],
+      "allow_self": true,
+      "member_endpoints": true,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uml.connector",
+      "name": "Connector",
+      "verb": "Connects",
+      "family": "structural",
+      "code": "CONNECTOR",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "uml.class",
+        "uml.component"
+      ],
+      "target": [
+        "uml.class",
+        "uml.component"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
+    },
+    {
       "keyword": "uml.dependency",
       "name": "Dependency",
       "verb": "Dependency",
@@ -2025,6 +2094,25 @@
         "middleware-specific deployment models",
         "artifact content descriptors",
         "topology discovery",
+        "formal UML conformance"
+      ]
+    },
+    {
+      "id": "uml.composite@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML component diagram",
+        "UML composite structure diagram"
+      ],
+      "scope": "UML 2.5.1 component + composite structure (RFC-123): ports on classifiers (SysML port machinery), assembly ball-and-socket connectors, delegation connectors, plain connectors with role names and multiplicity (x_endlabels), internal parts (x_part), collaboration occurrences (uml.collaboration).",
+      "validation": [
+        "assembly endpoints are components or ports of components; delegation starts at a port (DDN-PJ165)",
+        "x_part owners and multiplicity form (DDN-PJ166)"
+      ],
+      "unsupported": [
+        "port protocol state machines",
+        "interface type-checking of assembly pairings",
+        "structured-classifier behavior",
         "formal UML conformance"
       ]
     },

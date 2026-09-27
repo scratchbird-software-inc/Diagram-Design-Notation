@@ -1,0 +1,57 @@
+ddn "0.5";
+module "ddn.examples.umlcomp";
+
+// B1-059 (RFC-123): UML 2.5.1 component + composite structure on uml.composite@1.
+// View 1: ports, assembly ball-and-socket, delegation, parts. View 2: plain
+// connectors with role names + multiplicity, collaboration occurrence.
+// Minimal current-dialect style, no pinned layout.
+
+data shop {
+    object storefront "Storefront" { kind: "uml.component";
+        ports { port web { direction: in; } port orders_if { direction: out; } }
+        fields { field cart { x_part: { classifier: "Cart"; multiplicity: "1" }; } }
+    }
+    object warehouse "Warehouse" { kind: "uml.component";
+        ports { port orders_in { direction: in; } }
+        fields { field stock { x_part: { classifier: "Stock"; multiplicity: "0..*" }; } }
+    }
+    object accounts "Accounts" { kind: "uml.interface"; }
+
+    relation assembly "" @storefront.orders_if -> @warehouse.orders_in { kind: "uml.assembly"; }
+    relation delegate "" @storefront.web -> @storefront.cart { kind: "uml.delegation"; }
+    relation billing "" @storefront -> @accounts { kind: "uml.provided"; }
+}
+
+data structure {
+    object order "Order" { kind: "uml.class";
+        fields {
+            field customer { x_part: { classifier: "Customer"; multiplicity: "1" }; }
+            field lines { x_part: { classifier: "OrderLine"; multiplicity: "1..*" }; }
+        }
+    }
+    object fulfil "Fulfilment" { kind: "uml.class";
+        fields { field picking { x_part: { classifier: "Picking" }; } }
+    }
+    object planning "Release planning" { kind: "uml.collaboration";
+        fields {
+            field planner { x_part: { classifier: "Planner" }; }
+            field builder { x_part: { classifier: "Builder" }; }
+        }
+    }
+
+    relation c1 "" @order.customer -> @fulfil.picking { kind: "uml.connector";
+        x_endlabels: { source: { role: "buyer"; multiplicity: "1"; }; target: { role: "picking"; multiplicity: "0..1"; }; };
+    }
+}
+
+view components "UML component / ports and assembly" {
+    data: [@shop];
+    projection { profile: "uml.composite@1"; }
+    publication { size: content; fit: none; }
+}
+
+view structures "UML composite structure / parts and connectors" {
+    data: [@structure];
+    projection { profile: "uml.composite@1"; }
+    publication { size: content; fit: none; }
+}

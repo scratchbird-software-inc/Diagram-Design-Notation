@@ -178,6 +178,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_nary` | relation | `{ends: [{element: @ref, role?, multiplicity?}]}` n-ary ends (DDN-PJ151) |
 | `x_genset` | relation | `{name, disjoint?, complete?}` on uml.generalization (DDN-PJ152) |
 | `x_template` | object | `{parameters: [string]}` on uml.class/interface (DDN-PJ153) |
+| `x_part` | field | `{classifier?, multiplicity?}` — internal part row `role: Classifier [mult]` (RFC-123; DDN-PJ166) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
@@ -253,6 +254,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | communication/collaboration | graph | `uml.communication@1` | `uml.message` + `x_message.seq` dotted-decimal |
 | class diagram | graph | `uml.structure@1` / `uml.structure@2` | class/interface/enumeration, `x_member`; @2 (RFC-119): end labels, diamonds, association classes, n-ary, gensets, templates, provided/required |
 | deployment diagram | graph | `uml.deployment@1` | node/device/executionenv 3D boxes, artifacts, deploy/manifest, commpaths + multiplicity; nesting = node-scoped frames (RFC-122) |
+| component / composite structure | graph | `uml.composite@1` | ports on classifiers, `uml.assembly` (socket+lollipop), `uml.delegation`, `uml.connector` + `x_endlabels`, parts (`x_part`), `uml.collaboration` (RFC-123) |
 | use cases | graph | `uml.usecase@1` / `uml.usecase@2` | `uml.subject` boundaries + `x_usecase` for @2 |
 | object/instance diagram | graph | `uml.object@1` | `x_instance.classifier` |
 | timing diagram | timing | `uml.timing@1` | `x_states` per participant |
@@ -304,43 +306,43 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 
 ### 7.1 Defaults and omitted ≠ asserted
 
-Every view resolves to the full §3.5 default set; a property you omit takes the default (or inherits from the referenced bundle/concern per the §3.3 resolution order) and is NEVER written into the model. Asserting a property pins it. Consequences: omit everything you do not intend to change; a view-local group overrides a bundle for exactly the keys it names; compact forms never imply extra properties (an omitted mark bracket omits the mark; preset-applied properties are asserted by definition).
+Every view resolves to the full §3.5 default set; an omitted property takes the default (or inherits from the referenced bundle per §3.3) and is NEVER written into the model. Asserting pins it. So: omit everything you do not intend to change; a view-local group overrides a bundle for exactly the keys it names; compact forms never imply extra properties.
 
 ### 7.2 Identity, labels, uid
 
-Identity is the declaration id (dotted path inside its module), never the quoted label. Renaming a label changes no references; renaming an id breaks every `@ref`. `uid: "…"` pins a stable identity across refactoring. Two declarations sharing a symbol key fail (DDN024).
+Identity is the declaration id (dotted path in its module), never the quoted label. Renaming a label changes no references; renaming an id breaks every `@ref`. `uid: "…"` pins identity across refactoring. Duplicate symbol keys fail (DDN024).
 
 ### 7.3 missing / null / undecided / not_applicable / conflicting
 
-`null` = SQL-like UNKNOWN (absence of value; in data-refresh typing, a null-typed field accepts anything). `missing` = the value is required but not supplied. `undecided` = an open modeling decision. `not_applicable` = the property does not apply. `conflicting` = known disagreement. They are unquoted atoms; quoted forms are plain strings. Charts: `missing: error|skip` controls record handling (DDN-PJ019); tables: `missing: error|blank`.
+`null` = SQL-like UNKNOWN (a null-typed field accepts anything). `missing` = required but not supplied. `undecided` = open modeling decision. `not_applicable` = does not apply. `conflicting` = known disagreement. Unquoted atoms; quoted forms are plain strings. Charts: `missing: error|skip` (DDN-PJ019); tables: `missing: error|blank`.
 
 ### 7.4 Data refresh contract (keyed, transactional)
 
-`ws.replaceData(name, records)` replaces a data block's records atomically: records carry the same field keys as the block's first record (DDN-E011); optional per-record `key` matches declaration ids (all-or-nothing, valid unique identifiers, stripped from the payload; unknown key appends a declaration with that id) — a `records` block's row ids ARE these keys, so author refresh-target data as `records` blocks. Without keys the match is positional and order-sensitive. Field values are type-checked against inferred field types; every workspace view is validated on the candidate source BEFORE commit; failure → `{committed:false}` with structured DDN-E012 diagnostics (`type-mismatch`, `removed-record-referenced`, `view-validation`, `source-validation`). Removing a view-referenced record is rejected. Membership re-resolved: selector views (`data: [@block]`) pick up additions automatically; explicit-binding views (chart `records: [@…]`) keep exactly their bound records and warn DDN-W015 `addedRecordsNotVisible`. Empty refresh is legal (subject to the removal rule): graph renders an empty canvas; chart/table authored with `records: []` render the declared empty state; filter-to-empty still fails DDN-PJ012.
+`ws.replaceData(name, records)` replaces a data block's records atomically: records carry the same field keys as the block's first record (DDN-E011); optional per-record `key` matches declaration ids (all-or-nothing; unknown key appends a declaration) — a `records` block's row ids ARE these keys, so author refresh-target data as `records` blocks. Without keys the match is positional. Values type-check against inferred field types; every workspace view is validated BEFORE commit; failure → `{committed:false}` with structured DDN-E012 diagnostics. Removing a view-referenced record is rejected. Selector views (`data: [@block]`) pick up additions automatically; explicit-binding views keep exactly their bound records and warn DDN-W015. Empty refresh is legal (subject to the removal rule); filter-to-empty fails DDN-PJ012.
 
 ### 7.5 Layout, routing, chrome, sizing
 
-- Omit `place`/`route` for automatic layout; pin only when the author must control geometry (`place.at`/`size`, `route.via`). Pins must not overlap (DDN204); route hints follow `route_policy` (§3.3). `layout.algorithm` picks the placement (grid/layered/tree/mindmap/organic/…, §3.6); `direction` orients layered/tree layouts; `spacing: tight|normal|loose|expanded` scales gaps.
+- Omit `place`/`route` for automatic layout; pin only to control geometry (`place.at`/`size`, `route.via`). Pins must not overlap (DDN204). `layout.algorithm` picks placement (§3.6); `direction` orients layered/tree; `spacing` scales gaps.
 - Legends/title/footer chrome: §3.3 `chrome` bullet; numbered legends number relations, not time.
 - Page/artboard: `publication { size: content|fixed; width/height; margin; fit; overflow: warn|error; minimum_text }`; result extent ≤ 50000 px.
-- Text: measured with the embedded font metrics; if the smallest final text would fall below `publication.minimum_text`, DDN071 warns (or errors under `overflow: error`). DDN071 rule of thumb: keep labels ≤ ~30 chars, give dense graphs ≥ 1200 px width, and prefer `size: content` so the page grows instead of shrinking text.
+- Text is measured with embedded font metrics; below `publication.minimum_text` DDN071 warns (or errors under `overflow: error`). Rule of thumb: labels ≤ ~30 chars, dense graphs ≥ 1200 px wide, prefer `size: content` so the page grows instead of shrinking text.
 
 ### 7.6 Motion and flow semantics (animation)
 
-Relations accept motion properties: `motion: flow|pulse|none` (travelling markers / edge pulse / static), `marker: circle|square|rect`, `marker_size` (>0..128px), `speed` (px/s ≤ 10000), `rate` (markers in flight, positive integer; >32 warns DDN-W016 and clamps), `marker_color`, `pulse_color`. View-level `flow <id> "label" { steps: @a -> @b -> @c; … }` declares a step-traceable multi-hop sequence: each hop must resolve to an existing VISIBLE relation in its declared direction (DDN-E013). Invalid motion values → DDN-E014. The exported SVG animates autonomously (SMIL); `noMotion` / `--no-motion` renders static for print.
+Relations accept motion properties: `motion: flow|pulse|none`, `marker: circle|square|rect`, `marker_size` (>0..128px), `speed` (px/s), `rate` (markers in flight; >32 warns DDN-W016 and clamps), `marker_color`, `pulse_color`. View-level `flow <id> "label" { steps: @a -> @b -> @c; … }` declares a multi-hop sequence: each hop must follow an existing VISIBLE relation in its declared direction (DDN-E013). Invalid values → DDN-E014. The SVG animates autonomously (SMIL); `noMotion` / `--no-motion` renders static for print.
 
 ### 7.7 Module requirements (iso / geo)
 
-Geo views need the optional `ddn-geo.js` module and a registered geography (`assets/geo/world-110m.json`; CLI pre-registers it; browser hosts call `DDNGeo.registerGeography(name, geojson)`; inline GeoJSON via `geography: @data.record`). Iso/depth needs `ddn-iso.js` (graph + chart only). Both degrade loudly without the module (visible placeholder + DDN-E010) — §5 geo/iso bullets. Never assume they are inside `ddn.global.js` — they are not.
+Geo views need the optional `ddn-geo.js` module and a registered geography (`assets/geo/world-110m.json`; CLI pre-registers it; or inline GeoJSON via `geography: @data.record`). Iso/depth needs `ddn-iso.js` (graph + chart only). Both degrade loudly without the module (placeholder + DDN-E010). Neither is inside `ddn.global.js`.
 
 ## 8. Optimization and size discipline
 
 - Omit defaults (§7.1) — the shortest correct source is the best source.
-- Use compact forms where they read naturally: typed declarations (`table customer {…}`), contextual members (`fields { id { key: primary; } name; }`), verb relations (`ref places @a [one] -> @b [zeromany]`), view headers (`view erd: @sales as "erd.crowfoot@1";`).
-- Use a `records` block for tabular data — one column declaration instead of repeating `kind: record; x_record: {…}` per row, and row ids double as `replaceData` keys.
-- Use `preset`/`relation_props`/`fields` groups for repetition (≥3 similar declarations); use `fragment` for reusable sub-models.
-- Size limits to design within: live/refresh views cap at **128 elements / 384 relations** (LIVE013); reference arrays ≤500 refs; matrices ≤5000 cells and ≤40 columns; panels ≤80; chart series ≤20 × 200 categories; file ≤ 2M chars; result extent ≤ 50000 px. To stay under them: filter (`filter`/`order` on projections), select subsets (`select:`/`exclude:`), drill down with `subdiagram` or `panels.composed@1` child views (each child has its own 128/384 budget), and split large models across linked views rather than one giant canvas.
-- Canvas/routing hints for large graphs: `layout { algorithm: layered; direction: down; }` for DAGs, `grid` for atlases, `tree`+`root`+`hierarchy` for hierarchies; raise `gap`/`row_gap` before pinning anything; use `spacing` at the view level; prefer `route` hints over `place` pins when only crossings bother you.
+- Use compact forms: typed declarations (`table customer {…}`), contextual members, verb relations (`ref places @a [one] -> @b [zeromany]`), view headers (`view erd: @sales as "erd.crowfoot@1";`).
+- Use a `records` block for tabular data — one column declaration instead of `x_record` per row, and row ids double as `replaceData` keys.
+- Use `preset`/`relation_props`/`fields` groups for repetition (≥3 similar declarations); `fragment` for reusable sub-models.
+- Size limits: live views cap at **128 elements / 384 relations** (LIVE013); reference arrays ≤500; matrices ≤5000 cells / ≤40 columns; panels ≤80; chart series ≤20 × 200 categories; file ≤ 2M chars; extent ≤ 50000 px. Stay under them with `filter`/`order`, `select:`/`exclude:`, `subdiagram`/`panels.composed@1` child views (each child has its own budget), and linked views over one giant canvas.
+- Canvas/routing hints: `layered; direction: down` for DAGs, `grid` for atlases, `tree`+`root`+`hierarchy` for hierarchies; raise `gap`/`row_gap` before pinning; use view-level `spacing`; prefer `route` hints over `place` pins when only crossings bother you.
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- @gen:diagnostics -->
@@ -358,7 +360,7 @@ Global (all profiles):
 - `req.requirement` elements need unique `x_diagram.code` and nonempty `x_diagram.text` (DDN-PF014).
 
 Per-profile:
-- **flow.basic@1 / flow.documented@2 / uml.activity@1**: `flow.*` participants only (DDN-PF007); links flow.basic `flow.next` / uml.activity `uml.flow` / flow.documented +`flow.annotation`,`flow.continues` (DDN-PX008). One `flow.start`+`flow.end`; start no incoming, end no outgoing (DDN-PF008); `flow.decision` ≥2 distinct named `x_diagram.branch` out-edges (DDN-PF009); all non-annotation symbols reachable start→end (DDN-PF010). flow.documented@2: `flow.offpage` needs valid `x_continuation {key, side, page?}`, each key one out+in pair via one `flow.continues` (DDN-PX008); annotations need an outgoing attachment.
+- **flow.basic@1 / flow.documented@2 / uml.activity@1**: `flow.*` only (DDN-PF007); links `flow.next` / `uml.flow` / +`flow.annotation`,`flow.continues` (DDN-PX008). One start+end; start none in, end none out (DDN-PF008); `flow.decision` ≥2 distinct named branches (DDN-PF009); all symbols reachable start→end (DDN-PF010). documented@2: offpage needs `x_continuation {key, side, page?}`, one out+in pair per key (DDN-PX008); annotations need an outgoing attachment.
 - **dfd.***: `dfd.*` + `dfd.data` only (DDN-PF011); each `dfd.process` unique `x_diagram.number`, ≥1 input and output (DDN-PF012/013).
 - **org.tree@1**: `organization|team|role|analysis.role` + `reports_to` only; acyclic; exactly one root (DDN-PJ102); multi-parent fails layout (DDN201).
 - **wbs.tree@1**: `analysis.task` + `analysis.decomposes` only; acyclic; one root (DDN-PJ102).
@@ -368,10 +370,10 @@ Per-profile:
 - **epc.basic@1**: `epk.event|function|connector` + `epk.next` only; events/functions strictly alternate (DDN-PJ105); connectors carry `x_epc.operator` and|or|xor, forbidden elsewhere (DDN-PJ106).
 - **erd.crowfoot@1**: every visible relation `ref|assoc` with BOTH `source_mark`/`target_mark` in `one|zeroone|many|zeromany` (DDN-PJ087).
 - **uml.usecase@2**: every `uml.usecase` names subjects (`x_usecase.subjects` → distinct uml.subject refs); `uml.extend` names a declared extension point + condition or condition_ref (one form); include/extend share a declared subject; subject frames must match model membership (DDN-PX002/PX004/PX006).
-- **chen.basic@1 / chen.binary@2**: entities only; weak entity needs distinct owner, partial-key field, exactly one visible identifying relation connecting weak↔owner (owner end min1/max1); binary@2 requires `x_chen.from/to {min,max|many}` on every relation; composite flags match nested fields; keys not derived/multivalued; ownership acyclic (DDN-PX003/PX005/PX007).
+- **chen.basic@1 / chen.binary@2**: entities only; weak entity needs distinct owner, partial-key field, one visible identifying relation weak↔owner (owner min1/max1); binary@2 requires `x_chen.from/to {min,max|many}`; composite flags match nested fields; ownership acyclic (DDN-PX003/PX005/PX007).
 - **uml.object@1**: instances carry `x_instance.classifier`; slots must exist on classifier fields (DDN-PJ112).
 - **uml.communication@1**: every `uml.message` needs `x_message.seq` (`^\d+(\.\d+)*$`); replies dotted under the request, non-replies top-level (DDN-PJ111).
-- **state.flat@1**: `state.initial|state.state|state.final` + `state.transition` only; exactly one initial, ≥1 terminal (`state.final` or `x_state.terminal`); no fields; initial transition unconditional/action-free; non-initial transitions require `x_transition.event`; terminals have no outgoing; all states reach a terminal from initial; same-event branches need guard `inputs` domains; optional `traces` simulated, each step exactly one transition (DDN-QL001..QL007).
+- **state.flat@1**: `state.initial|state.state|state.final` + `state.transition` only; one initial, ≥1 terminal (`state.final` or `x_state.terminal`); no fields; initial transition unconditional; non-initial transitions need `x_transition.event`; terminals none out; all states reach a terminal; same-event branches need guard `inputs` domains; optional `traces`, each step exactly one transition (DDN-QL001..QL007).
 - **state.composite@1**: `x_region: true` frames = parallel regions; at most one `state.initial` per region/composite (DDN-PJ113); labels from `x_transition`.
 - **uml.activity@1** (+ flow rules): `x_partition.lane` names an existing frame (DDN-PJ114); fork count = join count on `flow.forkjoin` bars (DDN-PJ115).
 - **bpmn.basic@1**: pools = frames `x_pool: true`; `bpmn.messageflow` only across pools (DDN-PJ116); every `flow.gateway` needs `x_gateway.type` exclusive|parallel|inclusive (DDN-PJ117).
@@ -385,6 +387,7 @@ Per-profile:
 - **wireframe.ui@1**: `ui.*` controls outside any `ui.frame` frame → warning DDN-PJ128.
 - **pert.cpm@1**: tasks (`analysis.task`) need finite nonnegative `x_estimate` days (DDN-PJ125); `analysis.precedes` must be acyclic (DDN-PJ124); critical-path relations/labels are computed at render.
 - **uml.deployment@1** (RFC-122): endpoint contracts do the work (DDN102); commpath labels never carry qualifiers; nesting frames scope to node kinds (DDN-PJ164).
+- **uml.composite@1** (RFC-123): assembly endpoints are components or their ports; delegation starts at a port member (DDN-PJ165); x_part owners/multiplicity (PJ166).
 - **uml.structure@2** (RFC-119): end labels/multiplicity on associations (DDN-PJ149); association class resolves to uml.class (PJ150); n-ary ≥3 distinct classifier ends (PJ151); genset one target per name (PJ152); templates on classifiers (PJ153); enumeration literals (PJ154).
 - **uml.sequence@2** (RFC-120): fragment spans contiguous/nested, anchored on first message (DDN-PJ155); sort/gate rules — create first, delete final, lost/found self-anchored, gate needs a fragment (PJ156); invariant/activation refs incident (PJ157/158); `{…}` constraints (PJ159).
 - **uml.statemachine@1** (RFC-121): x_state on state kinds; submachine → distinct state.state (DDN-PJ160); choice 2+ out, junction pass-through, history/boundary points inside a composite frame (PJ161); after/at/when need parentheses (PJ162); traces stay state.flat@1-only (DDN-Q005).
