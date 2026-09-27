@@ -25,8 +25,8 @@ const template = read('notation/tool/src/template.html');
  * worker script (which file:// pages and strict CSP contexts could not). */
 const WORKER_BOOT_SRC = 'notation/tool/src/worker.js';
 const workerSource = runtime.trimEnd() + '\n;\n' + read(WORKER_BOOT_SRC).trimEnd() + '\n';
-// ScratchWeaver brand (B1-020): inline logo + data-URI favicon keep the single file self-contained.
-const brandSvg = read('assets/brand/scratchweaver.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
+// DDN brand (B1-020, renamed B1-067): inline logo + data-URI favicon keep the single file self-contained.
+const brandSvg = read('assets/brand/ddn.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
 const brandFavicon = 'data:image/svg+xml;base64,' + Buffer.from(brandSvg).toString('base64');
 
 for (const [name, src] of [['runtime', runtime], ['workspaces data', data], ['tool.js', js], ['worker source', workerSource]]) {

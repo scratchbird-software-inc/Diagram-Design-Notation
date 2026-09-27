@@ -12,14 +12,14 @@ const repoRoot = join(here, '..', '..');
 
 const STANDALONE_LINK = '<a href="../../README.md" style="color:inherit;text-decoration:none;border-bottom:1px dotted">Diagram-Design-Notation ↗</a>';
 const LOCAL_SCRIPTS = ['kind-ui-map.js', 'relation-ui-map.js', 'commands.js', 'app.js'];
-const LOGO_SRC = '../../assets/brand/scratchweaver.svg';
+const LOGO_SRC = '../../assets/brand/ddn.svg';
 const LOGO_SRC_PLACEHOLDER = '{{SCRATCHWEAVER_LOGO}}';
 
 function read(p) { return readFileSync(p, 'utf8'); }
 
-// ScratchWeaver brand (B1-020): the standalone file inlines the logo as a data
+// DDN brand (B1-020, renamed B1-067): the standalone file inlines the logo as a data
 // URI; index.html references the repo copy. Favicon is the data-URI logo.
-const brandSvg = read(join(repoRoot, 'assets', 'brand', 'scratchweaver.svg'))
+const brandSvg = read(join(repoRoot, 'assets', 'brand', 'ddn.svg'))
   .replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
 const brandDataUri = 'data:image/svg+xml;base64,' + Buffer.from(brandSvg).toString('base64');
 const FAVICON = '<link rel="icon" type="image/svg+xml" href="' + brandDataUri + '">';
@@ -45,7 +45,7 @@ export function buildPages() {
   const sourceScript = '<script type="application/json" id="sourceFiles">' + json + '</script>';
 
   const indexBody = body.split(LOGO_SRC_PLACEHOLDER).join(LOGO_SRC);
-  const index = head('ScratchWeaver Designer — interactive review prototype · DDN') + style + '</style></head><body>' + indexBody + '\n'
+  const index = head('DDN Designer — interactive review prototype · DDN') + style + '</style></head><body>' + indexBody + '\n'
     + sourceScript
     + '<script src="kind-ui-map.js"></script><script src="relation-ui-map.js"></script><script src="../../notation/dist/ddn.global.min.js"></script><script src="commands.js"></script><script src="app.js"></script></body></html>';
 
@@ -60,7 +60,7 @@ export function buildPages() {
     .replace(/\n$/, '');
   let inlines = inlineScript('../../notation/dist/ddn.global.min.js', runtime);
   for (const name of LOCAL_SCRIPTS) inlines += inlineScript(name, read(join(here, name)).replace(/\n$/, ''));
-  const standalone = head('ScratchWeaver Designer — standalone prototype · DDN') + style + '</style></head><body>' + standaloneBody + '\n'
+  const standalone = head('DDN Designer — standalone prototype · DDN') + style + '</style></head><body>' + standaloneBody + '\n'
     + sourceScript + '\n' + inlines + '</body></html>';
 
   return { 'index.html': index, 'standalone.html': standalone };

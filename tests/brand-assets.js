@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-020 (D1/D6): ScratchWeaver brand assets —
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-020 (D1/D6) + B1-067: DDN brand assets —
  * presence, self-containment, byte-freshness of the generated assets/brand/ tree, and
  * brand references in the built website and standalone tool pages. */
 'use strict';
@@ -15,14 +15,14 @@ function* walk(dir) {
   }
 }
 
-const BRAND_FILES = ['scratchweaver.svg', 'scratchweaver.png', 'favicon.svg', 'favicon-32.png', 'favicon-64.png'];
+const BRAND_FILES = ['ddn.svg', 'ddn.png', 'favicon.svg', 'favicon-32.png', 'favicon-64.png'];
 
 test('assets/brand/ contains the five brand files', () => {
   for (const f of BRAND_FILES) assert.ok(fs.statSync(path.join(root, 'assets/brand', f)).size > 0, f + ' missing or empty');
 });
 
-test('scratchweaver.svg is self-contained with a synthesized viewBox and no editor cruft', () => {
-  const svg = fs.readFileSync(path.join(root, 'assets/brand/scratchweaver.svg'), 'utf8');
+test('ddn.svg is self-contained with a synthesized viewBox and no editor cruft', () => {
+  const svg = fs.readFileSync(path.join(root, 'assets/brand/ddn.svg'), 'utf8');
   assert.match(svg, /<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" viewBox="[\d.\- ]+"/);
   assert.ok(svg.includes('fill:#0c75bd'), 'logo blue missing');
   assert.ok(!/inkscape:|sodipodi:/.test(svg), 'inkscape/sodipodi attributes left in the logo');
@@ -44,12 +44,12 @@ test('build:brand is fresh (re-run into temp dir byte-matches committed assets)'
 
 test('website shell pages carry the logo, favicons, wordmark, and ScratchBird footer', () => {
   const home = fs.readFileSync(path.join(root, 'website/index.html'), 'utf8');
-  assert.ok(home.includes('assets/brand/scratchweaver.svg'), 'logo missing from home header');
+  assert.ok(home.includes('assets/brand/ddn.svg'), 'logo missing from home header');
   assert.ok(home.includes('assets/brand/favicon.svg') && home.includes('assets/brand/favicon-32.png'), 'favicons missing');
-  assert.ok(home.includes('>ScratchWeaver<small>Diagram Design Notation</small>'), 'wordmark missing');
+  assert.ok(home.includes('>DDN<small>Diagram Design Notation</small>'), 'wordmark missing');
   assert.ok(home.includes('>ScratchBird Software Inc.</a> project · GPL-2.0-or-later') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
   const download = fs.readFileSync(path.join(root, 'website/download/index.html'), 'utf8');
-  assert.ok(download.includes('ScratchWeaver'), 'download page does not mention the product name');
+  assert.ok(download.includes('open-source Diagram Design Notation project'), 'download page does not name the project');
 });
 
 test('every HTML page under website/ has a favicon link', () => {
@@ -60,11 +60,11 @@ test('every HTML page under website/ has a favicon link', () => {
   assert.deepEqual(missing, [], 'pages without favicons:\n' + missing.slice(0, 20).join('\n'));
 });
 
-test('standalone tool pages carry the ScratchWeaver brand and a favicon', () => {
+test('standalone tool pages carry the DDN brand and a favicon', () => {
   for (const rel of ['tools/index.html', 'tools/designer/index.html',
     'tools/viewer/index.html', 'tools/studio/index.html', 'tools/studio/editor.html']) {
     const html = fs.readFileSync(path.join(root, 'website', rel), 'utf8');
-    assert.ok(html.includes('ScratchWeaver'), rel + ' missing the product name');
+    assert.ok(html.includes('DDN'), rel + ' missing the project name');
     assert.ok(html.includes('rel="icon"'), rel + ' missing a favicon');
   }
 });

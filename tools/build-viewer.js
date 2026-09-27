@@ -18,8 +18,8 @@ const runtime = read(RUNTIME_SRC)
 const css = read('notation/viewer/src/viewer.css');
 const js = read('notation/viewer/src/viewer.js');
 const template = read('notation/viewer/src/template.html');
-// ScratchWeaver brand (B1-020): inline logo + data-URI favicon keep the single file self-contained.
-const brandSvg = read('assets/brand/scratchweaver.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
+// DDN brand (B1-020, renamed B1-067): inline logo + data-URI favicon keep the single file self-contained.
+const brandSvg = read('assets/brand/ddn.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();
 const brandFavicon = 'data:image/svg+xml;base64,' + Buffer.from(brandSvg).toString('base64');
 
 for (const [name, src] of [['runtime', runtime], ['viewer.js', js]]) {

@@ -1,8 +1,10 @@
-<p><img src="assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" width="120"></p>
+<p><img src="assets/brand/ddn.svg" alt="DDN logo" width="120"></p>
 
-## ScratchWeaver — the Diagram Design Notation (DDN) toolkit
+## DDN — the Diagram Design Notation project
 
-**ScratchWeaver** is the product name of this toolkit, from **[ScratchBird Software Inc.](https://www.scratchbird.ca)** The language it implements keeps its name: Diagram Design Notation (DDN).
+**DDN** (Diagram Design Notation) is an open-source diagram dialect from **[ScratchBird Software Inc.](https://www.scratchbird.ca)**, with a free **viewer** (display and verify .ddn diagrams) and a free **designer** (simple edits and small diagrams). The free tools ship the complete notation and rendering core — only tool depth differs from the commercial offerings.
+
+The product family: **DDN** (this open-source project) is the foundation of **ScratchWeaver**, the subscription full diagramming suite (some on-site licensing), and **ScratchRobin**, the commercial database console / BI / analytics package that owns backend capabilities such as KEEL. KEEL is not part of DDN, the viewer, or the designer, and never will be.
 
 A simple script language that allows complex diagrams to be created with just a few lines of text.  
 

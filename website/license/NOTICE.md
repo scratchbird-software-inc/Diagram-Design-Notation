@@ -1,7 +1,9 @@
 # Notices and provenance
 
-ScratchWeaver is a product of ScratchBird Software Inc. (https://www.scratchbird.ca); Diagram Design
-Notation (DDN) is the name of the language/notation it implements.
+DDN (Diagram Design Notation) is an open-source project of ScratchBird Software Inc.
+(https://www.scratchbird.ca). ScratchWeaver (subscription diagramming suite) and
+ScratchRobin (commercial database console/BI, owner of backend capabilities such as
+KEEL) are separate commercial products that build on DDN; they are not this project.
 
 DDN is an original proposed notation/language project. Original reference
 code, SVG geometry, documentation, and site assets are distributed together

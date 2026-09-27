@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ScratchWeaver — the Diagram Design Notation toolkit from ScratchBird Software Inc.</title>
+<title>DDN — the Diagram Design Notation project from ScratchBird Software Inc.</title>
 <meta name="description" content="DDN: author data, format, and view declarations separately in plain-text .ddn files; one semantic model projects into ERDs, flowcharts, charts, timelines, matrices, and 70+ more diagram types. Zero-dependency JavaScript, deterministic SVG, GPL-2.0-or-later.">
 <link rel="icon" type="image/svg+xml" href="assets/brand/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
@@ -12,7 +12,7 @@
 </head>
 <body>
 <header class="site-header"><div class="bar">
-  <a class="wordmark" href="index.html"><img class="logo" src="assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <a class="wordmark" href="index.html"><img class="logo" src="assets/brand/ddn.svg" alt="DDN logo"><span class="name">DDN<small>Diagram Design Notation</small></span></a>
   <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
   <nav class="site-nav">
       <a href="index.html" class="active">Home</a>
@@ -26,7 +26,7 @@
 </div></header>
 <section class="hero"><div class="inner">
   <h1>One semantic model. Every diagram you need.</h1>
-  <p class="pitch"><strong>ScratchWeaver</strong> is the Diagram Design Notation (DDN) toolkit from ScratchBird Software Inc. DDN is a model-first diagram language and open standard proposal: declare data, format, and views separately in plain-text <code>.ddn</code> files, and project one model into ERDs, DFDs, flowcharts, C4 views, matrices, charts, timelines, fishbones, decision tables, wireframes, and dozens more — with a zero-dependency JavaScript runtime and deterministic SVG output.</p>
+  <p class="pitch"><strong>DDN</strong> — Diagram Design Notation — is an open-source diagram dialect from ScratchBird Software Inc., with a free viewer and a free designer. It is a model-first diagram language and open standard proposal: declare data, format, and views separately in plain-text <code>.ddn</code> files, and project one model into ERDs, DFDs, flowcharts, C4 views, matrices, charts, timelines, fishbones, decision tables, wireframes, and dozens more — with a zero-dependency JavaScript runtime and deterministic SVG output.</p>
   <div class="cta-row">
     <a class="cta primary" href="tools/index.html?mode=design">Open the designer</a>
     <a class="cta secondary" href="docs/developers/embedding.html">Embed the runtime</a>
@@ -46,6 +46,15 @@
     <a class="card" href="tools/index.html?mode=design"><h3>Designer — the tool in design mode</h3><p>The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.</p><small>standalone · no server</small></a>
     <a class="card" href="tools/index.html"><h3>Unified diagram tool</h3><p>One page for viewing, exploring, editing and designing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets — view, explore, edit, design), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.</p><small>standalone · no server</small></a>
     <a class="card" href="standard/index.html"><h3>The open standard</h3><p>48 specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.</p><small>rendered from Markdown</small></a>
+  </div>
+</section>
+<section>
+  <h2>The product family</h2>
+  <div class="grid">
+    <div class="card"><h3>DDN — open source (this project)</h3><p>The dialect itself, the reference runtime, the free <strong>viewer</strong> (display and verify .ddn diagrams) and the free <strong>designer</strong> (simple edits and small diagrams) — GPL-2.0-or-later, supported by ScratchBird Software Inc. The free tools ship the complete notation and rendering core; only tool depth differs from the commercial offerings.</p></div>
+    <div class="card"><h3>ScratchWeaver — subscription suite</h3><p>The full commercial diagramming suite (subscription, with some on-site licensing) built on DDN as its file storage and communication format. ScratchWeaver is a separate product — it is not the name of this open-source project.</p></div>
+    <div class="card"><h3>ScratchRobin — commercial console</h3><p>The database management console, BI and data-analytics package that uses DDN and owns backend capabilities such as KEEL. KEEL is not part of DDN, the viewer, or the designer, and never will be.</p></div>
+
   </div>
 </section>
 <p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>
@@ -102,7 +111,7 @@ try {
 </script>
 
 <footer class="site-footer"><div class="inner">
-  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>DDN 0.7.0 — an open-source diagram dialect with a free viewer and designer · proposed standard, pre-1.0</span>
   <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
   <a href="license/index.html">License: GPL-2.0-or-later</a>
   <a href="docs/index.html">Docs</a>

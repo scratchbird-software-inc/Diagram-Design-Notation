@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-020 (D1): ScratchWeaver brand asset pipeline.
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-020 (D1) + B1-067: DDN brand asset pipeline.
  *
  *   node tools/build-brand.mjs            # write generated files into assets/brand/
  *   DDN_BRAND_OUT=DIR node tools/build-brand.mjs   # write into DIR (freshness test)
  *
  * Regenerates assets/brand/ from the Sandbox brand sources:
- *   - scratchweaver.svg  — the `ScratchWeaverLogo` group of ScratchBirdLogos.svg,
+ *   - ddn.svg  — the `ScratchWeaverLogo` group of ScratchBirdLogos.svg (the shared ScratchBird brand mark),
  *                          extracted into a standalone, self-contained SVG with a
  *                          viewBox synthesized from the path extents
  *   - favicon.svg        — the same logo for browser tab icons
@@ -89,16 +89,16 @@ const fmt = n => String(Math.round(n * 100) / 100);
 const viewBox = [fmt(minX - pad), fmt(minY - pad), fmt(maxX - minX + 2 * pad), fmt(maxY - minY + 2 * pad)].join(' ');
 
 const logoSvg = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-  '<!-- SPDX-License-Identifier: GPL-2.0-or-later. ScratchWeaver logo, extracted from the\n' +
+  '<!-- SPDX-License-Identifier: GPL-2.0-or-later. DDN project logo, extracted from the\n' +
   '     ScratchBirdLogos.svg ScratchWeaverLogo group by tools/build-brand.mjs. -->\n' +
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + viewBox + '">\n' + group + '\n</svg>\n';
 
 /* ------------------------------------------------------------------ write */
 fs.mkdirSync(OUT, { recursive: true });
 const write = (rel, content) => fs.writeFileSync(path.join(OUT, rel), content);
-write('scratchweaver.svg', logoSvg);
+write('ddn.svg', logoSvg);
 write('favicon.svg', logoSvg);
-fs.copyFileSync(SRC_PNG, path.join(OUT, 'scratchweaver.png'));
+fs.copyFileSync(SRC_PNG, path.join(OUT, 'ddn.png'));
 
 /* ----------------------------------------------- rasterize the PNG icons */
 const rasterizer = ['rsvg-convert', 'inkscape', 'convert'].find(c =>
@@ -107,11 +107,11 @@ if (!rasterizer) throw new Error('no SVG rasterizer found (need rsvg-convert, in
 for (const size of [32, 64]) {
   const out = path.join(OUT, 'favicon-' + size + '.png');
   if (rasterizer === 'rsvg-convert') {
-    cp.execFileSync('rsvg-convert', ['-w', String(size), '-h', String(size), '-o', out, path.join(OUT, 'scratchweaver.svg')], { stdio: 'pipe' });
+    cp.execFileSync('rsvg-convert', ['-w', String(size), '-h', String(size), '-o', out, path.join(OUT, 'ddn.svg')], { stdio: 'pipe' });
   } else if (rasterizer === 'inkscape') {
-    cp.execFileSync('inkscape', [path.join(OUT, 'scratchweaver.svg'), '-w', String(size), '-h', String(size), '-o', out], { stdio: 'pipe' });
+    cp.execFileSync('inkscape', [path.join(OUT, 'ddn.svg'), '-w', String(size), '-h', String(size), '-o', out], { stdio: 'pipe' });
   } else {
-    cp.execFileSync('convert', ['-background', 'none', path.join(OUT, 'scratchweaver.svg'), '-resize', size + 'x' + size, out], { stdio: 'pipe' });
+    cp.execFileSync('convert', ['-background', 'none', path.join(OUT, 'ddn.svg'), '-resize', size + 'x' + size, out], { stdio: 'pipe' });
   }
 }
 console.log('build-brand: 5 files → ' + path.relative(REPO, OUT) + ' (viewBox ' + viewBox + ', rasterizer ' + rasterizer + ')');
