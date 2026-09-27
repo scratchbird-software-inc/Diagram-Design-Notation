@@ -317,7 +317,7 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
   const escape=(pt,dir,own)=>{let distance=clear+port;if(dir[0]>0)distance=Math.max(distance,own.x+own.w-pt[0]+clear+port);if(dir[0]<0)distance=Math.max(distance,pt[0]-own.x+clear+port);if(dir[1]>0)distance=Math.max(distance,own.y+own.h-pt[1]+clear+port);if(dir[1]<0)distance=Math.max(distance,pt[1]-own.y+clear+port);return normal(pt,dir,distance);};
   const a=escape(start,ep.source_direction,ownA),b=escape(end,ep.target_direction,ownB);
   const stubs=[{a:start,b:a},{a:b,b:end}];
-  for(const [j,s]of stubs.entries()){const own=j?ownB:ownA;if(nodes.some(n=>n.id!==own.id&&segmentBox(s,box(n,clear))))throw new ErrorClass('DDN212','Endpoint clearance conflicts with another object: '+r.id);}
+  for(const [j,s]of stubs.entries()){const own=j?ownB:ownA;/* B1-063/064: boundary-attached nodes sit on their host's corridor by design. */if(nodes.some(n=>n.id!==own.id&&!(n.x_boundaryOf===own.id||own.x_boundaryOf===n.id)&&segmentBox(s,box(n,clear))))throw new ErrorClass('DDN212','Endpoint clearance conflicts with another object: '+r.id);}
   const prior=[...routes,...reservations.filter(rt=>rt.owner!==r.id&&!routes.some(old=>old.id===rt.owner))];
   // B1-042 (D2.1): the prior geometry is fixed for the whole relation
   // iteration — derive segment records once, not once per probe.

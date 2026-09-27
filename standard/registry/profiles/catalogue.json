@@ -990,6 +990,102 @@
       "defaults": {}
     },
     {
+      "keyword": "cmmn.caseplan",
+      "name": "Case plan model",
+      "shape": "profile",
+      "silhouette": "caseplan",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "CASEPLAN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.task",
+      "name": "Task",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "TASK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.humantask",
+      "name": "Human task",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "HUMANTASK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.processtask",
+      "name": "Process task",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "PROCESSTASK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.decisiontask",
+      "name": "Decision task",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "DECISIONTASK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.timerevent",
+      "name": "Timer event listener",
+      "shape": "profile",
+      "silhouette": "hourglass",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "TIMELISTENER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.userevent",
+      "name": "User event listener",
+      "shape": "profile",
+      "silhouette": "userevent",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "USERLISTENER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "cmmn.casefile",
+      "name": "Case file item",
+      "shape": "profile",
+      "silhouette": "dataobject",
+      "fallback": "object",
+      "family": "activity",
+      "code": "CASEFILE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "sysml.block",
       "name": "Block",
       "shape": "profile",
@@ -1911,13 +2007,90 @@
         "analysis.task",
         "activity",
         "flow.process",
-        "flow.subprocess"
+        "flow.subprocess",
+        "cmmn.task",
+        "cmmn.humantask",
+        "cmmn.processtask",
+        "cmmn.decisiontask",
+        "cmmn.stage",
+        "cmmn.milestone",
+        "cmmn.timerevent",
+        "cmmn.userevent",
+        "cmmn.casefile"
       ],
       "target": [
         "analysis.task",
         "activity",
         "flow.process",
-        "flow.subprocess"
+        "flow.subprocess",
+        "cmmn.task",
+        "cmmn.humantask",
+        "cmmn.processtask",
+        "cmmn.decisiontask",
+        "cmmn.stage",
+        "cmmn.milestone",
+        "cmmn.timerevent",
+        "cmmn.userevent",
+        "cmmn.casefile"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "cmmn.dependency",
+      "name": "Dependency",
+      "verb": "Depends",
+      "family": "dependency",
+      "code": "CMNDEP",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "cmmn.task",
+        "cmmn.humantask",
+        "cmmn.processtask",
+        "cmmn.decisiontask",
+        "cmmn.stage",
+        "cmmn.milestone",
+        "cmmn.timerevent",
+        "cmmn.userevent",
+        "cmmn.casefile",
+        "cmmn.sentry",
+        "analysis.task"
+      ],
+      "target": [
+        "cmmn.task",
+        "cmmn.humantask",
+        "cmmn.processtask",
+        "cmmn.decisiontask",
+        "cmmn.stage",
+        "cmmn.milestone",
+        "cmmn.timerevent",
+        "cmmn.userevent",
+        "cmmn.casefile",
+        "cmmn.sentry",
+        "analysis.task"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "4 4"
+    },
+    {
+      "keyword": "cmmn.sentryref",
+      "name": "Sentry on-part",
+      "verb": "Triggers",
+      "family": "control",
+      "code": "SENTRYREF",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "cmmn.timerevent",
+        "cmmn.userevent",
+        "cmmn.casefile"
+      ],
+      "target": [
+        "cmmn.sentry"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -3753,6 +3926,26 @@
         "case execution semantics",
         "discretionary items",
         "full CMMN conformance"
+      ]
+    },
+    {
+      "id": "cmmn.complete@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "CMMN case diagram"
+      ],
+      "scope": "Full CMMN 1.1 notation: case plan model container, typed tasks (human/process/decision, blocking, discretionary), timer/user event listeners, stage variants, milestones, sentries with on-part/if-part and criterion attachment, plan-item decorators (required/repetition/manual activation/completion), case file items, planning tables, dependency and on-part connectors.",
+      "validation": [
+        "sentries belong to a stage frame and declare entry/exit (DDN-PJ120)",
+        "x_cmmn owner/decorator rules (DDN-PJ181)",
+        "sentry attachment and on-part references (DDN-PJ182)",
+        "planning-table rules (DDN-PJ183)",
+        "one case plan per view (DDN-PJ184)"
+      ],
+      "unsupported": [
+        "CMMN XML interchange",
+        "case engine/execution semantics",
+        "formal OMG certification"
       ]
     },
     {

@@ -79,3 +79,39 @@ See `website/examples/basics/49-cmmn.ddn` for the full runnable example.
 CMMN XML interchange, case execution semantics, discretionary items, and full
 CMMN conformance are unsupported (recorded in the profile catalogue and
 `capabilities.json`).
+
+# 35a. CMMN 1.1 full notation (cmmn.complete@1)
+
+Status: implemented in runtime 0.7.0, governed by RFC-127
+(`standard/governance/rfcs/RFC-127-cmmn-compliance.md`). `cmmn.basic@1` stays
+installed and immutable; its fixtures render byte-identically.
+
+The full CMMN 1.1 surface, built on the generic decorator/badge layer (shared
+with the BPMN profiles, not forked):
+
+- **Case plan model** — `cmmn.caseplan`, the clipboard/tab container; a case
+  view declares exactly one (`DDN-PJ184`).
+- **Typed tasks** — `cmmn.task`, `cmmn.humantask`, `cmmn.processtask`,
+  `cmmn.decisiontask`; `x_cmmn` marks discretionary (dashed border),
+  non-blocking (human tasks only, `DDN-PJ181`), required (`!`), repetition
+  (circular arrow), manual activation (hand), completion (check), and the
+  collapsed-stage `+` (stages only, `DDN-PJ181`).
+- **Event listeners** — `cmmn.timerevent` (hourglass) and `cmmn.userevent`
+  (circle with person).
+- **Sentries** — `x_sentry` grows `attach: @ref` (criterion attachment onto a
+  plan item's border, same machinery as BPMN boundary events), `on_part: @ref`
+  (the event/case-file source) and `if_part: "condition"` (text inside the
+  criterion diamond); `cmmn.sentryref` is the on-part connector. Attachment
+  and on-part references validate as `DDN-PJ182`.
+- **Stages/milestones** — existing frame machinery and rounded milestones;
+  `x_cmmn.discretionary` renders the dashed variants.
+- **Case file items** — `cmmn.casefile` (folded document), linked by
+  `cmmn.dependency` dashed connectors.
+- **Planning tables** — `x_planning: { items: […] }` on a stage or task
+  renders the dashed-rule discretionary-items table at its top edge
+  (`DDN-PJ183` on other owners).
+
+Fixture: `website/examples/basics/83-cmmn-complete.ddn`; tests
+`notation/tests/cmmn-compliance.js` + the `cmmn-showcase.js` sweep. Out of
+scope, declared in the profile: CMMN XML interchange, case engine/execution
+semantics, formal OMG certification.

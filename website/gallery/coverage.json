@@ -414,6 +414,13 @@
       "combined": "website/examples/basics/49-cmmn.combined.ddn",
       "svg": "profiles/cmmn-basic-1.svg"
     },
+    "cmmn.complete@1": {
+      "entry": "website/examples/basics/83-cmmn-complete.ddn",
+      "view": "v",
+      "title": "Case",
+      "kind": "graph",
+      "svg": "profiles/cmmn-complete-1.svg"
+    },
     "concept.map@1": {
       "entry": "website/examples/basics/29-concept-map.ddn",
       "view": "concepts",
@@ -3191,6 +3198,20 @@
       "kind": "graph",
       "wiki": "Diagrams-Flowcharts",
       "svg": "corpus/basics-82-bpmn-complete.svg"
+    },
+    {
+      "entry": "website/examples/basics/83-cmmn-complete.ddn",
+      "view": "v",
+      "title": "Case",
+      "views": [
+        {
+          "id": "v",
+          "title": "Case"
+        }
+      ],
+      "profile": "cmmn.complete@1",
+      "kind": "graph",
+      "svg": "corpus/basics-83-cmmn-complete.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

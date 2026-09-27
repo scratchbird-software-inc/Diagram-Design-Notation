@@ -68,6 +68,24 @@ view case &quot;Claim handling&quot; {
 <p>See <code>website/examples/basics/49-cmmn.ddn</code> for the full runnable example.</p>
 <h2>Out of scope</h2>
 <p>CMMN XML interchange, case execution semantics, discretionary items, and full CMMN conformance are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
+<h1>35a. CMMN 1.1 full notation (cmmn.complete@1)</h1>
+<p>Status: implemented in runtime 0.7.0, governed by RFC-127 (<code>standard/governance/rfcs/RFC-127-cmmn-compliance.md</code>). <code>cmmn.basic@1</code> stays installed and immutable; its fixtures render byte-identically.</p>
+<p>The full CMMN 1.1 surface, built on the generic decorator/badge layer (shared with the BPMN profiles, not forked):</p>
+<ul><li><strong>Case plan model</strong> — <code>cmmn.caseplan</code>, the clipboard/tab container; a case</li></ul>
+<p>  view declares exactly one (<code>DDN-PJ184</code>).</p>
+<ul><li><strong>Typed tasks</strong> — <code>cmmn.task</code>, <code>cmmn.humantask</code>, <code>cmmn.processtask</code>,</li></ul>
+<p>  <code>cmmn.decisiontask</code>; <code>x_cmmn</code> marks discretionary (dashed border),   non-blocking (human tasks only, <code>DDN-PJ181</code>), required (<code>!</code>), repetition   (circular arrow), manual activation (hand), completion (check), and the   collapsed-stage <code>+</code> (stages only, <code>DDN-PJ181</code>).</p>
+<ul><li><strong>Event listeners</strong> — <code>cmmn.timerevent</code> (hourglass) and <code>cmmn.userevent</code></li></ul>
+<p>  (circle with person).</p>
+<ul><li><strong>Sentries</strong> — <code>x_sentry</code> grows <code>attach: @ref</code> (criterion attachment onto a</li></ul>
+<p>  plan item's border, same machinery as BPMN boundary events), <code>on_part: @ref</code>   (the event/case-file source) and <code>if_part: &quot;condition&quot;</code> (text inside the   criterion diamond); <code>cmmn.sentryref</code> is the on-part connector. Attachment   and on-part references validate as <code>DDN-PJ182</code>.</p>
+<ul><li><strong>Stages/milestones</strong> — existing frame machinery and rounded milestones;</li></ul>
+<p>  <code>x_cmmn.discretionary</code> renders the dashed variants.</p>
+<ul><li><strong>Case file items</strong> — <code>cmmn.casefile</code> (folded document), linked by</li></ul>
+<p>  <code>cmmn.dependency</code> dashed connectors.</p>
+<ul><li><strong>Planning tables</strong> — <code>x_planning: { items: […] }</code> on a stage or task</li></ul>
+<p>  renders the dashed-rule discretionary-items table at its top edge   (<code>DDN-PJ183</code> on other owners).</p>
+<p>Fixture: <code>website/examples/basics/83-cmmn-complete.ddn</code>; tests <code>notation/tests/cmmn-compliance.js</code> + the <code>cmmn-showcase.js</code> sweep. Out of scope, declared in the profile: CMMN XML interchange, case engine/execution semantics, formal OMG certification.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
 </main>

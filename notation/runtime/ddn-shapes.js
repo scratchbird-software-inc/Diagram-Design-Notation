@@ -14,7 +14,7 @@ function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile=
  return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
- const compact=['ellipse','circle','diamond','bpmevent','choreotask','groupbox','dataobject','datainput','dataoutput','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
+ const compact=['ellipse','circle','diamond','bpmevent','choreotask','groupbox','dataobject','datainput','dataoutput','caseplan','userevent','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
  if(compact&&!n.fields.length){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
   g.titleLines=Text.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
@@ -135,6 +135,21 @@ function render(g,p,theme){
   else if(shape==='history')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`+text(cx,cy+4.5*s,k.keyword==='state.history_deep'?'H*':'H',13,650,'text-anchor="middle"');
   else if(shape==='forkbar')out+=`<rect x="${f(cx-32*s)}" y="${f(cy-4*s)}" width="${f(64*s)}" height="${f(8*s)}" rx="${f(2*s)}" fill="${ink}"/>`;
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+ }
+ /* B1-064: CMMN 1.1 — case plan clipboard, user event listener, case file
+  * (reuses the dataobject fold), and x_cmmn/x_planning decorators. */
+ if(shape==='caseplan'){
+  const tw=w*.62,th=24*s;
+  out+=`<rect x="${f(x)}" y="${f(y+th)}" width="${f(w)}" height="${f(h-th)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<path d="M${f(x)} ${f(y+th)}V${f(y)}H${f(x+tw)}L${f(x+tw+8*s)} ${f(y+th)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=lines(g.titleLines,x+w/2,y+th+26*s,15,650);
+  return out+'</g>';
+ }
+ if(shape==='userevent'){
+  const cx=x+w/2,cy=y+h/2-8,r=15*s;
+  out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/><circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r-3.5*s)}" fill="none" stroke="${ink}" stroke-width="1.2"/>`;
+  out+=`<circle cx="${f(cx)}" cy="${f(cy-3.5*s)}" r="${f(2.6*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/><path d="M${f(cx-4*s)} ${f(cy+5*s)}Q${f(cx)} ${f(cy-1*s)} ${f(cx+4*s)} ${f(cy+5*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/>`;
+  out+=text(cx,y+h-4*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
  /* B1-063: BPMN 2.0.2 decorator layer — event rings + trigger icons, data
   * documents, choreography bands, group artifacts. Driven by the extension
@@ -283,6 +298,26 @@ function render(g,p,theme){
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
  }
  if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,Text.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
+ // B1-064: sentry if-part condition text inside the criterion diamond.
+ if(n.kind==='cmmn.sentry'&&n.properties.x_sentry?.if_part)out+=text(x+w/2,y+h/2+4*s,n.properties.x_sentry.if_part,10.5,500,'text-anchor="middle"');
+ /* B1-064: CMMN decorators (extending the B1-063 badge layer). */
+ const xc=n.properties.x_cmmn;
+ if(xc){
+  if(xc.discretionary||xc.nonblocking)out+=`<rect x="${f(x+3*s)}" y="${f(y+3*s)}" width="${f(w-6*s)}" height="${f(h-6*s)}" rx="${f(8*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="6 4"/>`;
+  const cbadges=[...(xc.required?['required']:[]),...(xc.repetition?['repetition']:[]),...(xc.manual_activation?['manual']:[]),...(xc.completion?['completion']:[]),...(xc.collapsed?['collapsed']:[])];
+  cbadges.forEach((m,i)=>{const bx=x+w-12*s-i*20*s,by=y+h-13*s;
+   if(m==='required')out+=`<g class="ddn-marker" data-marker="required">`+text(bx,by+4*s,'!',14,650,'text-anchor="middle"')+'</g>';
+   else if(m==='repetition')out+=`<g class="ddn-marker" data-marker="repetition"><circle cx="${f(bx)}" cy="${f(by)}" r="${f(6*s)}" fill="none" stroke="${ink}" stroke-width="1.6"/><path d="M${f(bx+6*s)} ${f(by)}L${f(bx+3*s)} ${f(by-3*s)}L${f(bx+3*s)} ${f(by+3*s)}Z" fill="${ink}"/></g>`;
+   else if(m==='manual')out+=`<g class="ddn-marker" data-marker="manual_activation"><rect x="${f(bx-4*s)}" y="${f(by-2*s)}" width="${f(8*s)}" height="${f(7*s)}" fill="none" stroke="${ink}" stroke-width="1.4"/><path d="M${f(bx-3*s)} ${f(by-2*s)}V${f(by-6*s)}M${f(bx-1*s)} ${f(by-2*s)}V${f(by-7*s)}M${f(bx+1*s)} ${f(by-2*s)}V${f(by-7*s)}M${f(bx+3*s)} ${f(by-2*s)}V${f(by-6*s)}" stroke="${ink}" stroke-width="1.2" fill="none"/></g>`;
+   else if(m==='completion')out+=`<g class="ddn-marker" data-marker="completion"><path d="M${f(bx-5*s)} ${f(by)}L${f(bx-1*s)} ${f(by+4*s)}L${f(bx+6*s)} ${f(by-5*s)}" fill="none" stroke="${ink}" stroke-width="1.8"/></g>`;
+   else if(m==='collapsed')out+=`<g class="ddn-marker" data-marker="collapsed">`+text(bx,by+4*s,'+',14,650,'text-anchor="middle"')+'</g>';
+  });
+ }
+ const xp=n.properties.x_planning;
+ if(xp?.items?.length){
+  const pw=Math.max(w,Math.max(...xp.items.map(it=>Text.measure(it,10.5*s,p.style.font,400).width))+24*s),ph=xp.items.length*16*s+24*s;
+  out+=`<g class="ddn-planning-table"><rect x="${f(x)}" y="${f(y-ph+6*s)}" width="${f(pw)}" height="${f(ph)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(x+8*s,y-ph+18*s+6*s,'Planning',10,650,'')+xp.items.map((it,i)=>text(x+8*s,y-ph+(36+i*16)*s+6*s,it,10.5,400,'')).join('')+'</g>';
+ }
  /* B1-063: BPMN decorators — gateway inner glyphs and activity border
   * modes/markers. Driven by x_gateway/x_activity contracts; profile-neutral. */
  const bpmnProfile=/^bpmn\.(process|choreography|conversation)@/.test(p.projection?.profile||'');

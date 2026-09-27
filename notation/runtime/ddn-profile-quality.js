@@ -96,6 +96,38 @@ function validate(ir,E){
    if(f.scope&&sc&&!NODE.has(sc.kind))fail('DDN-PJ164','Deployment nesting frames must scope to a node kind (uml.node/device/executionenv); '+f.id+' scopes to '+sc.kind,f);
   }
  }
+ /* B1-064: CMMN 1.1 semantics. */
+ {
+  const CMMN_TASK=['cmmn.task','cmmn.humantask','cmmn.processtask','cmmn.decisiontask','analysis.task'];
+  const PLAN=['cmmn.stage','cmmn.milestone','cmmn.sentry','cmmn.casefile','cmmn.timerevent','cmmn.userevent',...CMMN_TASK];
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   const xc=n.properties.x_cmmn;
+   if(xc!==undefined){
+    if(!PLAN.includes(n.kind))fail('DDN-PJ181','x_cmmn decorators apply to plan items (tasks/stages/milestones/sentries/listeners/case files); '+n.id+' is '+n.kind,n);
+    if(xc.nonblocking&&!['cmmn.humantask','cmmn.task'].includes(n.kind))fail('DDN-PJ181','Non-blocking applies to (human) tasks; '+n.id+' is '+n.kind,n);
+    if(xc.collapsed&&n.kind!=='cmmn.stage')fail('DDN-PJ181','Collapsed applies to stages; '+n.id+' is '+n.kind,n);
+   }
+   if(n.properties.x_planning!==undefined&&!['cmmn.stage',...CMMN_TASK].includes(n.kind))fail('DDN-PJ183','Planning tables attach to stages or tasks; '+n.id+' is '+n.kind,n);
+   const xs=n.properties.x_sentry;
+   if(xs?.attach!==undefined){
+    const host=ns.get(xs.attach?.$ref);
+    if(!host||!PLAN.includes(host.kind))fail('DDN-PJ182','Sentry '+n.id+' attachment must resolve to a plan item',n);
+    if(host&&host.id===n.id)fail('DDN-PJ182','Sentry '+n.id+' cannot attach to itself',n);
+   }
+   if(xs?.on_part!==undefined){
+    const src=ns.get(xs.on_part?.$ref);
+    if(!src||!['cmmn.timerevent','cmmn.userevent','cmmn.casefile'].includes(src.kind))fail('DDN-PJ182','Sentry on-part '+n.id+' must reference an event listener or case file item',n);
+   }
+  }
+  if(profile==='cmmn.complete@1'){
+   const plans=ir.elements.filter(n=>shown.has(n.id)&&n.kind==='cmmn.caseplan');
+   if(plans.length!==1)fail('DDN-PJ184','A case view needs exactly one cmmn.caseplan container; found '+plans.length);
+   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='cmmn.sentryref')){
+    const b=ns.get(r.to.element);
+    if(!b||b.kind!=='cmmn.sentry')fail('DDN-PJ182','Sentry on-part connector '+r.id+' must target a sentry',r);
+   }
+  }
+ }
  /* B1-063: BPMN 2.0.2 semantics — decorator contracts are profile-neutral,
   * so the checks fire wherever the properties appear. */
  {

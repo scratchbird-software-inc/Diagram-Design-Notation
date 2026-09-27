@@ -11532,6 +11532,100 @@
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
     },
     {
+      "id": "cmmn.dependency",
+      "label": "Dependency",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "cmmn.task",
+          "cmmn.humantask",
+          "cmmn.processtask",
+          "cmmn.decisiontask",
+          "cmmn.stage",
+          "cmmn.milestone",
+          "cmmn.timerevent",
+          "cmmn.userevent",
+          "cmmn.casefile",
+          "analysis.task"
+        ],
+        "target": [
+          "cmmn.task",
+          "cmmn.humantask",
+          "cmmn.processtask",
+          "cmmn.decisiontask",
+          "cmmn.stage",
+          "cmmn.milestone",
+          "cmmn.timerevent",
+          "cmmn.userevent",
+          "cmmn.casefile",
+          "analysis.task"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "cmmn.sentryref",
+      "label": "Sentry on-part",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "cmmn.timerevent",
+          "cmmn.userevent",
+          "cmmn.casefile"
+        ],
+        "target": [
+          "cmmn.sentry"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
       "id": "uml.dependency",
       "label": "Dependency",
       "origin": "profile",

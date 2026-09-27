@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 219,
+  "kindCount": 227,
   "kinds": [
     {
       "kind": "object",
@@ -5991,6 +5991,270 @@
       },
       "creation_action": "create-semantic-element",
       "profiles_hint": [],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.caseplan",
+      "name": "Case plan model",
+      "source": "profile",
+      "palette_group": "Scopes",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.task",
+      "name": "Task",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.humantask",
+      "name": "Human task",
+      "source": "profile",
+      "palette_group": "People & control",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.processtask",
+      "name": "Process task",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.decisiontask",
+      "name": "Decision task",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.timerevent",
+      "name": "Timer event listener",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.userevent",
+      "name": "User event listener",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "cmmn.casefile",
+      "name": "Case file item",
+      "source": "profile",
+      "palette_group": "Data",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "round",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "cmmn.complete@1"
+      ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
       "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",

@@ -59,7 +59,10 @@ function registry(base){
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
  out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1}},additionalProperties:false},['object']);
- out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']}},additionalProperties:false},['object']);
+ out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']},attach:{type:'object'},on_part:{type:'object'},if_part:{type:'string',minLength:1}},additionalProperties:false},['object']);
+ /* B1-064: CMMN 1.1 — plan-item decorators and planning tables. */
+ out.extension_contracts.x_cmmn=def({type:'object',properties:{discretionary:{type:'boolean'},nonblocking:{type:'boolean'},required:{type:'boolean'},repetition:{type:'boolean'},manual_activation:{type:'boolean'},completion:{type:'boolean'},collapsed:{type:'boolean'}},additionalProperties:false},['object']);
+ out.extension_contracts.x_planning=def({type:'object',required:['items'],properties:{items:{type:'array',minItems:1,maxItems:10,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  out.extension_contracts.x_estimate=def({type:'number'},['object']);
  out.extension_contracts.x_gate=def({type:'object',required:['type'],properties:{type:{enum:['and','or']}},additionalProperties:false},['object']);
  out.extension_contracts.x_rack=def({type:'object',properties:{units:{type:'integer',minimum:1},unit:{type:'integer',minimum:1}},additionalProperties:false},['object']);

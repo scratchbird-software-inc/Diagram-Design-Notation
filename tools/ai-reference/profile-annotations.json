@@ -97,6 +97,7 @@
     "uml.interaction_overview@2": "UML interaction overview with inline expansion and interaction-use gates/arguments (RFC-125)",
     "uml.profile@1": "UML 2.5.1 profile diagram (RFC-125): metaclasses, stereotypes, extension, application",
     "cmmn.basic@1": "CMMN case management: stages, milestones, entry/exit sentries",
+    "cmmn.complete@1": "Full CMMN 1.1 case diagram: case plan container, typed tasks with decorators, event listeners, sentries with on/if-parts, planning tables, case files",
     "sysml.bdd@1": "SysML block definition diagram: blocks and their relationships",
     "sysml.ibd@1": "SysML internal block diagram: blocks with ports and flows",
     "sysml.parametric@1": "SysML parametric diagram: constraints each bound to exactly two relations",

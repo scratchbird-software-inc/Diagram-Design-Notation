@@ -183,6 +183,9 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_interrupt` / `x_exception` | relation | boolean — lightning-bolt activity edges (RFC-124; DDN-PJ168) |
 | `x_activity` | object | `{call?, transaction?, adhoc?, event_subprocess?, collapsed?, markers?}` BPMN task decorations (DDN-PJ177) |
 | `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
+| `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
+| `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
+| `x_sentry` | object | `{on: entry|exit, attach?, on_part?, if_part?}` (B1-064: criterion attachment, on/if-parts; DDN-PJ182) |
 | `x_pack` | object | `{visibility: public|private}` — packaged element +/− (RFC-125; DDN-PJ171) |
 | `x_use` | object | `{arguments?, gates?}` — interaction-use detail (RFC-125; DDN-PJ174) |
 | `x_timeconstraint` | object | `["{…}", …]` timing constraints (RFC-125; DDN-PJ173) |
@@ -200,7 +203,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_gateway` | object | `{type: exclusive|parallel|inclusive|complex|event|event_exclusive}` on flow.gateway |
 | `x_states` | object | array of `{at: number, state: string}` (timing; strictly increasing `at`) |
 | `x_subdiagram` | object | `{view: string}` (interaction-overview node → view id) |
-| `x_sentry` | object | `{on: entry|exit}` |
+| `x_sentry` | object | `{on: entry|exit, attach?, on_part?, if_part?}` (DDN-PJ182) |
 | `x_estimate` | object | number (CPM duration in days) |
 | `x_gate` | object | `{type: and|or}` |
 | `x_rack` | object | `{units: int≥1, unit: int≥1}` |
@@ -396,7 +399,7 @@ Per-profile:
 - **uml.structure@2 packages / uml.profile@1** (RFC-125): x_pack.visibility needs a package frame (DDN-PJ171); extension endpoints stereotype → metaclass (DDN102).
 - **sysml.***: only `sysml.block` declares `ports` (DDN-PJ121); parametric: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122).
 - **archimate.basic@1**: `archi.rel` endpoints among the nine `archi.*` kinds; links same-layer or upward (DDN-PJ123).
-- **cmmn.basic@1**: `cmmn.sentry` inside a `cmmn.stage` frame with `x_sentry.on` entry|exit (DDN-PJ120).
+- **cmmn.basic@1 / cmmn.complete@1**: `cmmn.sentry` inside a `cmmn.stage` frame with `x_sentry.on` (DDN-PJ120); complete@1: x_cmmn owner/decorator rules (PJ181), sentry attachment/on-part (PJ182), planning tables (PJ183), one case plan per view (PJ184).
 - **network.basic@1 / network.rack@1**: `network.attaches` targets a `network.bus` or port (DDN-PJ127); rack members carry unique integer `x_rack.unit` 1..`x_rack.units` (DDN-PJ127).
 - **fault.tree@1 / event.tree@1**: `tree.gate` declares `x_gate.type` and|or with ≥2 outgoing `tree.input` edges (DDN-PJ126).
 - **family.tree@1**: `family.parent_of` acyclic (DDN-PJ129); ≤2 distinct parents per person (DDN-PJ130).

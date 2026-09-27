@@ -139,6 +139,10 @@
     "DDN-PJ177": "x_activity markers apply to task/subprocess kinds; call/transaction are not choreography bands",
     "DDN-PJ178": "x_bands is flow.choreotask-only; a choreography task needs at least two participant bands",
     "DDN-PJ179": "bpmn.conversationlink must target a flow.conversation/subconversation/callconversation node",
-    "DDN-PJ180": "bpmn.association needs a data node (dataobject/datainput/dataoutput/datastore) on one side and an activity on the other"
+    "DDN-PJ180": "bpmn.association needs a data node (dataobject/datainput/dataoutput/datastore) on one side and an activity on the other",
+    "DDN-PJ181": "x_cmmn decorators apply to plan items; non-blocking is human-task-only, collapsed is stage-only",
+    "DDN-PJ182": "Sentry attach: must resolve to a plan item (not itself); on_part: references an event listener or case file; sentryref targets a sentry",
+    "DDN-PJ183": "Planning tables (x_planning) attach to stages or tasks only",
+    "DDN-PJ184": "A case view declares exactly one cmmn.caseplan container"
   }
 }

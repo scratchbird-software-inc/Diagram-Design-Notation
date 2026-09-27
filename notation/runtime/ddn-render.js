@@ -222,6 +222,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  {const byIdPre=new Map(geoms.map(g=>[g.id,g]));
   for(const g of geoms){const xe=g.n.properties.x_event;
    if(xe?.position==='boundary'&&xe.on){const host=byIdPre.get(xe.on.$ref);
+    if(host){g.x=host.x+host.w/2-g.w/2;g.y=host.y+host.h-g.h*0.30;g.x_boundaryOf=host.id;}}
+   /* B1-064: CMMN criterion attachment — a sentry with x_sentry.attach sits on
+    * the plan item's border (same machinery as BPMN boundary events). */
+   const xs=g.n.properties.x_sentry;
+   if(xs?.attach){const host=byIdPre.get(xs.attach.$ref);
     if(host){g.x=host.x+host.w/2-g.w/2;g.y=host.y+host.h-g.h*0.30;g.x_boundaryOf=host.id;}}}}
  let maxW=geoms.reduce((m,g)=>Math.max(m,g.w),270),maxH=geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));

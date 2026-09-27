@@ -2769,6 +2769,14 @@
       ]
     },
     {
+      "id": "cmmn.complete@1",
+      "projection": "graph",
+      "diagramFamilies": ["CMMN case diagram"],
+      "scope": "Full CMMN 1.1 notation: case plan model container, typed tasks (human/process/decision, blocking, discretionary), timer/user event listeners, stage variants, milestones, sentries with on-part/if-part and criterion attachment, plan-item decorators, case file items, planning tables, dependency and on-part connectors.",
+      "validation": ["sentries belong to a stage frame and declare entry/exit (DDN-PJ120)", "x_cmmn owner/decorator rules (DDN-PJ181)", "sentry attachment and on-part references (DDN-PJ182)", "planning-table rules (DDN-PJ183)", "one case plan per view (DDN-PJ184)"],
+      "unsupported": ["CMMN XML interchange", "case engine/execution semantics", "formal OMG certification"]
+    },
+    {
       "id": "cmmn.basic@1",
       "projection": "graph",
       "diagramFamilies": [
