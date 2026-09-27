@@ -53,7 +53,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 </div></header>
 <div class="gallery-intro">
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation 0.7.0: 110 installed profiles across 12 projection kinds, 92 variation renders, and the complete example corpus (108 example files) — 310 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
+<p>Full notation coverage for Diagram Design Notation 0.7.0: 113 installed profiles across 12 projection kinds, 92 variation renders, and the complete example corpus (109 example files) — 314 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>. Open <strong>Explanation, DDN source &amp; links</strong> under any figure for what the diagram shows, its browsable DDN source, a wiki page for the diagram type, and deep links that open the exact view in the unified tool (viewer or designer mode — multi-file examples open their verified combined single-file variant there). Flow animation is part of the live renders: open any flow view in the tool and use its animation drawer, for example the <a href="../../tools/index.html?entry=../examples/live/adaptive-lab.ddn&amp;view=automatic&amp;mode=explore">adaptive flow lab</a>.</p>
 </div>
 <nav class="sections">
@@ -72,7 +72,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <a href="#coverage">Coverage table</a>
 </nav>
 <main class="gallery">
-<h2 id="profiles">Installed profiles (110)</h2>
+<h2 id="profiles">Installed profiles (113)</h2>
 <p>One render per installed profile from <code>standard/registry/profiles/catalogue.json</code>. Each entry reuses the nearest existing example under <code>website/examples/basics/</code> or <code>website/examples/projections/</code>; the coverage map is generated, not hand-written, and is enforced by <code>notation/tests/gallery-coverage.js</code>.</p>
 <section class="family" id="family-archimate">
 <h3>archimate</h3>
@@ -90,6 +90,18 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">BPMN-style process: tasks, gateways and events along a sequence flow.</p>
 <p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../../tools/index.html?entry=../examples/basics/46-bpmn.combined.ddn&amp;view=collaboration&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/basics/46-bpmn.combined.ddn&amp;view=collaboration&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-46-bpmn-ddn"><code>website/examples/basics/46-bpmn.ddn</code></a> (<a href="../../examples/basics/46-bpmn.ddn">raw .ddn</a>) · combined single-file variant: <a href="../../examples/basics/46-bpmn.combined.ddn"><code>46-bpmn.combined.ddn</code></a></p></details></figcaption></figure>
+<figure id="profile-bpmn-choreography-1"><a href="profiles/bpmn-choreography-1.svg"><img src="profiles/bpmn-choreography-1.svg" alt="bpmn.choreography@1 — Choreography" loading="lazy"></a><figcaption><code>bpmn.choreography@1</code><br>Choreography<br><small>website/examples/basics/82-bpmn-complete.ddn · view <code>choreography</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">BPMN choreography diagram view rendered by the bpmn.choreography@1 profile.</p>
+<p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=choreography&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=choreography&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-82-bpmn-complete-ddn"><code>website/examples/basics/82-bpmn-complete.ddn</code></a> (<a href="../../examples/basics/82-bpmn-complete.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-bpmn-conversation-1"><a href="profiles/bpmn-conversation-1.svg"><img src="profiles/bpmn-conversation-1.svg" alt="bpmn.conversation@1 — Conversation" loading="lazy"></a><figcaption><code>bpmn.conversation@1</code><br>Conversation<br><small>website/examples/basics/82-bpmn-complete.ddn · view <code>conversation</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">BPMN conversation diagram view rendered by the bpmn.conversation@1 profile.</p>
+<p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=conversation&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=conversation&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-82-bpmn-complete-ddn"><code>website/examples/basics/82-bpmn-complete.ddn</code></a> (<a href="../../examples/basics/82-bpmn-complete.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="profile-bpmn-process-1"><a href="profiles/bpmn-process-1.svg"><img src="profiles/bpmn-process-1.svg" alt="bpmn.process@1 — Process" loading="lazy"></a><figcaption><code>bpmn.process@1</code><br>Process<br><small>website/examples/basics/82-bpmn-complete.ddn · view <code>process</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">BPMN process diagram view rendered by the bpmn.process@1 profile.</p>
+<p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=process&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=process&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-82-bpmn-complete-ddn"><code>website/examples/basics/82-bpmn-complete.ddn</code></a> (<a href="../../examples/basics/82-bpmn-complete.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 </div>
 </section>
 <section class="family" id="family-c4">
@@ -1090,8 +1102,8 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <p class="detail-src">Source: <a href="#src-website-examples-basics-73-iso-architecture-ddn"><code>website/examples/basics/73-iso-architecture.ddn</code></a> (<a href="../../examples/basics/73-iso-architecture.ddn">raw .ddn</a>) · combined single-file variant: <a href="../../examples/basics/73-iso-architecture.combined.ddn"><code>73-iso-architecture.combined.ddn</code></a></p></details></figcaption></figure>
 </div>
 </section>
-<h2 id="corpus">Example corpus (108)</h2>
-<p>Every view-bearing example file under <code>website/examples/</code> — the 108 sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): <code>website/examples/projections/formats.ddn</code> <code>website/examples/projections/model.ddn</code> <code>website/examples/quality/details.ddn</code> <code>website/examples/quality/formats.ddn</code> <code>website/examples/quality/model.ddn</code> <code>website/examples/use-cases/formats.ddn</code>.</p>
+<h2 id="corpus">Example corpus (109)</h2>
+<p>Every view-bearing example file under <code>website/examples/</code> — the 109 sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): <code>website/examples/projections/formats.ddn</code> <code>website/examples/projections/model.ddn</code> <code>website/examples/quality/details.ddn</code> <code>website/examples/quality/formats.ddn</code> <code>website/examples/quality/model.ddn</code> <code>website/examples/use-cases/formats.ddn</code>.</p>
 <div class="grid">
 <figure id="corpus-basics-01-customer"><a href="corpus/basics-01-customer.svg"><img src="corpus/basics-01-customer.svg" alt="website/examples/basics/01-customer.ddn — Customer data / a shared model" loading="lazy"></a><figcaption><code>website/examples/basics/01-customer.ddn</code><br>Customer data / a shared model<br><small>view <code>overview</code> of 4</small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Free-form DDN graph: objects and relations from the semantic model drawn as boxes and links. This file declares 4 views: Customer data / a shared model (overview), Customer data / compact view (compact), Customer data / print rendition (print), Customer data / minimal chrome for embedding (embedded) — the deep links open the first; switch views in the tool’s view picker.</p>
@@ -1417,6 +1429,10 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">A UML-style view of the semantic model. This file declares 8 views: Objects (objects), Packages (packages), Profile diagram (profiles), Communication (comms), IO (overview), Pay detail (detail), Timing (timing), Use cases (usecases) — the deep links open the first; switch views in the tool’s view picker.</p>
 <p class="detail-links"><a href="../../tools/index.html?entry=../examples/basics/81-uml-remainder.ddn&amp;view=objects&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/basics/81-uml-remainder.ddn&amp;view=objects&amp;mode=design">Open in designer</a></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-81-uml-remainder-ddn"><code>website/examples/basics/81-uml-remainder.ddn</code></a> (<a href="../../examples/basics/81-uml-remainder.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="corpus-basics-82-bpmn-complete"><a href="corpus/basics-82-bpmn-complete.svg"><img src="corpus/basics-82-bpmn-complete.svg" alt="website/examples/basics/82-bpmn-complete.ddn — Process" loading="lazy"></a><figcaption><code>website/examples/basics/82-bpmn-complete.ddn</code><br>Process<br><small>view <code>process</code> of 4</small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">BPMN process diagram view rendered by the bpmn.process@1 profile. This file declares 4 views: Process (process), Collaboration (collaboration), Choreography (choreography), Conversation (conversation) — the deep links open the first; switch views in the tool’s view picker.</p>
+<p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=process&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/basics/82-bpmn-complete.ddn&amp;view=process&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-82-bpmn-complete-ddn"><code>website/examples/basics/82-bpmn-complete.ddn</code></a> (<a href="../../examples/basics/82-bpmn-complete.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="corpus-projections-views"><a href="corpus/projections-views.svg"><img src="corpus/projections-views.svg" alt="website/examples/projections/views.ddn — 01 / Purchasing control flow" loading="lazy"></a><figcaption><code>website/examples/projections/views.ddn</code><br>01 / Purchasing control flow<br><small>view <code>flowchart</code> of 27</small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Process flow: steps as boxes, decisions as diamonds, arrows showing order of execution. This file declares 27 views: 01 / Purchasing control flow (flowchart), 02 / Shared responsibility assignments (responsibility_graph), 03 / Model-derived RACI (raci), 04 / Model-derived CRUD (crud), 05 / Numbered Gane–Sarson-style DFD (dfd_gane), 06 / Yourdon-style DFD (dfd_yourdon), 07 / Declared class / interface subset (structure), 08 / Actor and use-case subset (usecases), 09 / Requirement traceability (requirements), 10 / Entity-field representation (erd), 11 / Chen binary projection (chen), 12 / Synthetic monthly value — bar (chart_bar), 13 / Synthetic monthly value — line (chart_line), 14 / Synthetic monthly value — area (chart_area), 15 / Synthetic monthly value — pie (chart_pie), 16 / Synthetic monthly value — donut (chart_donut), 17 / Cost versus recorded value (scatter), 18 / UTC monthly observations (time_series), 19 / Shared observation table (record_table), 20 / Declarative decision-table presentation (decision_table), 21 / Supplied-date procurement schedule (gantt), 22 / Schedule source records (schedule_table), 23 / Reusable SWOT panel template (swot), 24 / SIPOC from shared notes (sipoc), 25 / Service journey with spanning panels (journey), 26 / General relationship matrix (matrix_general), 27 / Composable semantic silhouettes (shape_atlas) — the deep links open the first; switch views in the tool’s view picker.</p>
 <p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../../tools/index.html?entry=../examples/projections/views.combined.ddn&amp;view=flowchart&amp;mode=view">Open in viewer</a> · <a href="../../tools/index.html?entry=../examples/projections/views.combined.ddn&amp;view=flowchart&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
@@ -1536,7 +1552,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <tr><td><code>decision</code></td><td>1</td><td><a href="#profile-decision-rules-1"><code>decision.rules@1</code></a></td></tr>
 <tr><td><code>fishbone</code></td><td>1</td><td><a href="#profile-fishbone-basic-1"><code>fishbone.basic@1</code></a></td></tr>
 <tr><td><code>geo</code></td><td>3</td><td><a href="#profile-geo-choropleth-1"><code>geo.choropleth@1</code></a> <a href="#profile-geo-outline-1"><code>geo.outline@1</code></a> <a href="#profile-geo-symbols-1"><code>geo.symbols@1</code></a></td></tr>
-<tr><td><code>graph</code></td><td>47</td><td><a href="#profile-archimate-basic-1"><code>archimate.basic@1</code></a> <a href="#profile-bpmn-basic-1"><code>bpmn.basic@1</code></a> <a href="#profile-c4-component-1"><code>c4.component@1</code></a> <a href="#profile-c4-container-1"><code>c4.container@1</code></a> <a href="#profile-c4-context-1"><code>c4.context@1</code></a> <a href="#profile-cmmn-basic-1"><code>cmmn.basic@1</code></a> <a href="#profile-concept-map-1"><code>concept.map@1</code></a> <a href="#profile-ddn-1"><code>ddn@1</code></a> <a href="#profile-dfd-gane-sarson-1"><code>dfd.gane_sarson@1</code></a> <a href="#profile-dfd-yourdon-1"><code>dfd.yourdon@1</code></a> <a href="#profile-epc-basic-1"><code>epc.basic@1</code></a> <a href="#profile-erd-crowfoot-1"><code>erd.crowfoot@1</code></a> <a href="#profile-event-tree-1"><code>event.tree@1</code></a> <a href="#profile-family-tree-1"><code>family.tree@1</code></a> <a href="#profile-fault-tree-1"><code>fault.tree@1</code></a> <a href="#profile-flow-basic-1"><code>flow.basic@1</code></a> <a href="#profile-flow-documented-2"><code>flow.documented@2</code></a> <a href="#profile-mindmap-basic-1"><code>mindmap.basic@1</code></a> <a href="#profile-network-basic-1"><code>network.basic@1</code></a> <a href="#profile-network-rack-1"><code>network.rack@1</code></a> <a href="#profile-org-tree-1"><code>org.tree@1</code></a> <a href="#profile-pert-cpm-1"><code>pert.cpm@1</code></a> <a href="#profile-requirements-basic-1"><code>requirements.basic@1</code></a> <a href="#profile-state-composite-1"><code>state.composite@1</code></a> <a href="#profile-state-flat-1"><code>state.flat@1</code></a> <a href="#profile-sysml-bdd-1"><code>sysml.bdd@1</code></a> <a href="#profile-sysml-ibd-1"><code>sysml.ibd@1</code></a> <a href="#profile-sysml-parametric-1"><code>sysml.parametric@1</code></a> <a href="#profile-uml-activity-1"><code>uml.activity@1</code></a> <a href="#profile-uml-activity-2"><code>uml.activity@2</code></a> <a href="#profile-uml-communication-1"><code>uml.communication@1</code></a> <a href="#profile-uml-communication-2"><code>uml.communication@2</code></a> <a href="#profile-uml-composite-1"><code>uml.composite@1</code></a> <a href="#profile-uml-deployment-1"><code>uml.deployment@1</code></a> <a href="#profile-uml-interaction-overview-1"><code>uml.interaction_overview@1</code></a> <a href="#profile-uml-interaction-overview-2"><code>uml.interaction_overview@2</code></a> <a href="#profile-uml-object-1"><code>uml.object@1</code></a> <a href="#profile-uml-object-2"><code>uml.object@2</code></a> <a href="#profile-uml-profile-1"><code>uml.profile@1</code></a> <a href="#profile-uml-statemachine-1"><code>uml.statemachine@1</code></a> <a href="#profile-uml-structure-1"><code>uml.structure@1</code></a> <a href="#profile-uml-structure-2"><code>uml.structure@2</code></a> <a href="#profile-uml-usecase-1"><code>uml.usecase@1</code></a> <a href="#profile-uml-usecase-2"><code>uml.usecase@2</code></a> <a href="#profile-uml-usecase-3"><code>uml.usecase@3</code></a> <a href="#profile-wbs-tree-1"><code>wbs.tree@1</code></a> <a href="#profile-wireframe-ui-1"><code>wireframe.ui@1</code></a></td></tr>
+<tr><td><code>graph</code></td><td>50</td><td><a href="#profile-archimate-basic-1"><code>archimate.basic@1</code></a> <a href="#profile-bpmn-basic-1"><code>bpmn.basic@1</code></a> <a href="#profile-bpmn-choreography-1"><code>bpmn.choreography@1</code></a> <a href="#profile-bpmn-conversation-1"><code>bpmn.conversation@1</code></a> <a href="#profile-bpmn-process-1"><code>bpmn.process@1</code></a> <a href="#profile-c4-component-1"><code>c4.component@1</code></a> <a href="#profile-c4-container-1"><code>c4.container@1</code></a> <a href="#profile-c4-context-1"><code>c4.context@1</code></a> <a href="#profile-cmmn-basic-1"><code>cmmn.basic@1</code></a> <a href="#profile-concept-map-1"><code>concept.map@1</code></a> <a href="#profile-ddn-1"><code>ddn@1</code></a> <a href="#profile-dfd-gane-sarson-1"><code>dfd.gane_sarson@1</code></a> <a href="#profile-dfd-yourdon-1"><code>dfd.yourdon@1</code></a> <a href="#profile-epc-basic-1"><code>epc.basic@1</code></a> <a href="#profile-erd-crowfoot-1"><code>erd.crowfoot@1</code></a> <a href="#profile-event-tree-1"><code>event.tree@1</code></a> <a href="#profile-family-tree-1"><code>family.tree@1</code></a> <a href="#profile-fault-tree-1"><code>fault.tree@1</code></a> <a href="#profile-flow-basic-1"><code>flow.basic@1</code></a> <a href="#profile-flow-documented-2"><code>flow.documented@2</code></a> <a href="#profile-mindmap-basic-1"><code>mindmap.basic@1</code></a> <a href="#profile-network-basic-1"><code>network.basic@1</code></a> <a href="#profile-network-rack-1"><code>network.rack@1</code></a> <a href="#profile-org-tree-1"><code>org.tree@1</code></a> <a href="#profile-pert-cpm-1"><code>pert.cpm@1</code></a> <a href="#profile-requirements-basic-1"><code>requirements.basic@1</code></a> <a href="#profile-state-composite-1"><code>state.composite@1</code></a> <a href="#profile-state-flat-1"><code>state.flat@1</code></a> <a href="#profile-sysml-bdd-1"><code>sysml.bdd@1</code></a> <a href="#profile-sysml-ibd-1"><code>sysml.ibd@1</code></a> <a href="#profile-sysml-parametric-1"><code>sysml.parametric@1</code></a> <a href="#profile-uml-activity-1"><code>uml.activity@1</code></a> <a href="#profile-uml-activity-2"><code>uml.activity@2</code></a> <a href="#profile-uml-communication-1"><code>uml.communication@1</code></a> <a href="#profile-uml-communication-2"><code>uml.communication@2</code></a> <a href="#profile-uml-composite-1"><code>uml.composite@1</code></a> <a href="#profile-uml-deployment-1"><code>uml.deployment@1</code></a> <a href="#profile-uml-interaction-overview-1"><code>uml.interaction_overview@1</code></a> <a href="#profile-uml-interaction-overview-2"><code>uml.interaction_overview@2</code></a> <a href="#profile-uml-object-1"><code>uml.object@1</code></a> <a href="#profile-uml-object-2"><code>uml.object@2</code></a> <a href="#profile-uml-profile-1"><code>uml.profile@1</code></a> <a href="#profile-uml-statemachine-1"><code>uml.statemachine@1</code></a> <a href="#profile-uml-structure-1"><code>uml.structure@1</code></a> <a href="#profile-uml-structure-2"><code>uml.structure@2</code></a> <a href="#profile-uml-usecase-1"><code>uml.usecase@1</code></a> <a href="#profile-uml-usecase-2"><code>uml.usecase@2</code></a> <a href="#profile-uml-usecase-3"><code>uml.usecase@3</code></a> <a href="#profile-wbs-tree-1"><code>wbs.tree@1</code></a> <a href="#profile-wireframe-ui-1"><code>wireframe.ui@1</code></a></td></tr>
 <tr><td><code>matrix</code></td><td>8</td><td><a href="#profile-matrix-ansoff-1"><code>matrix.ansoff@1</code></a> <a href="#profile-matrix-bcg-1"><code>matrix.bcg@1</code></a> <a href="#profile-matrix-crud-1"><code>matrix.crud@1</code></a> <a href="#profile-matrix-heatmap-1"><code>matrix.heatmap@1</code></a> <a href="#profile-matrix-raci-1"><code>matrix.raci@1</code></a> <a href="#profile-matrix-relations-1"><code>matrix.relations@1</code></a> <a href="#profile-matrix-storymap-1"><code>matrix.storymap@1</code></a> <a href="#profile-matrix-tows-1"><code>matrix.tows@1</code></a></td></tr>
 <tr><td><code>panels</code></td><td>12</td><td><a href="#profile-canvas-bmc-1"><code>canvas.bmc@1</code></a> <a href="#profile-canvas-empathy-1"><code>canvas.empathy@1</code></a> <a href="#profile-canvas-lean-1"><code>canvas.lean@1</code></a> <a href="#profile-canvas-pest-1"><code>canvas.pest@1</code></a> <a href="#profile-canvas-pestle-1"><code>canvas.pestle@1</code></a> <a href="#profile-canvas-porter5-1"><code>canvas.porter5@1</code></a> <a href="#profile-canvas-scorecard-1"><code>canvas.scorecard@1</code></a> <a href="#profile-panels-basic-1"><code>panels.basic@1</code></a> <a href="#profile-panels-composed-1"><code>panels.composed@1</code></a> <a href="#profile-panels-journey-1"><code>panels.journey@1</code></a> <a href="#profile-panels-pyramid-1"><code>panels.pyramid@1</code></a> <a href="#profile-panels-venn-1"><code>panels.venn@1</code></a></td></tr>
 <tr><td><code>sequence</code></td><td>2</td><td><a href="#profile-uml-sequence-1"><code>uml.sequence@1</code></a> <a href="#profile-uml-sequence-2"><code>uml.sequence@2</code></a></td></tr>
@@ -11833,6 +11849,100 @@ view usecases &quot;Use cases&quot; { data: [@uc]; projection { profile: &quot;u
 </code></pre>
 
 </details>
+<details class="ddn-source" id="src-website-examples-basics-82-bpmn-complete-ddn"><summary><code>website/examples/basics/82-bpmn-complete.ddn</code></summary>
+<h4><code>website/examples/basics/82-bpmn-complete.ddn</code></h4>
+<pre class="ddn-src"><code>ddn &quot;0.5&quot;;
+module &quot;ddn.examples.bpmn&quot;;
+
+// B1-063: full BPMN 2.0.2 notation. process view: events (triggers, boundary,
+// non-interrupting), gateways, activity markers, data nodes, flow variants.
+// collaboration view: two pools, message flow, collapsed pool. choreography
+// and conversation views cover the remaining families. No pinned layout.
+
+data proc {
+    object start &quot;Order received&quot; { kind: &quot;flow.start&quot;; x_event: { type: message; }; }
+    object review &quot;Review order&quot; { kind: &quot;flow.process&quot;; x_activity: { markers: [loop]; }; }
+    object escalate &quot;&quot; { kind: &quot;flow.intermediate&quot;; x_event: { type: escalation; position: boundary; interrupting: false; on: @proc.review; }; }
+    object dec &quot;&quot; { kind: &quot;flow.gateway&quot;; x_gateway: { type: exclusive }; }
+    object pack &quot;Pack&quot; { kind: &quot;flow.process&quot;; x_activity: { markers: [parallel]; }; }
+    object call &quot;Billing&quot; { kind: &quot;flow.process&quot;; x_activity: { call: true; }; }
+    object tx &quot;Reserve stock&quot; { kind: &quot;flow.subprocess&quot;; x_activity: { transaction: true; }; }
+    object adhoc &quot;Fix up&quot; { kind: &quot;flow.process&quot;; x_activity: { adhoc: true; }; }
+    object evsub &quot;Timeout handler&quot; { kind: &quot;flow.subprocess&quot;; x_activity: { event_subprocess: true }; }
+    object data &quot;Order data&quot; { kind: &quot;flow.dataobject&quot;; }
+    object din &quot;Credit check&quot; { kind: &quot;flow.datainput&quot;; }
+    object dout &quot;Invoice&quot; { kind: &quot;flow.dataoutput&quot;; x_io: { set: true; }; }
+    object store &quot;Order store&quot; { kind: &quot;flow.datastore&quot;; }
+    object grp &quot;Notes&quot; { kind: &quot;flow.group&quot;; }
+    object cancel_end &quot;Cancelled&quot; { kind: &quot;flow.end&quot;; x_event: { type: cancel; }; }
+    object done &quot;Shipped&quot; { kind: &quot;flow.end&quot;; x_event: { type: terminate; }; }
+
+    relation f1 &quot;&quot; @start -&gt; @review { kind: &quot;uml.flow&quot;; }
+    relation f2 &quot;&quot; @review -&gt; @dec { kind: &quot;uml.flow&quot;; }
+    relation f3 &quot;ok&quot; @dec -&gt; @pack { kind: &quot;uml.flow&quot;; source_mark: slash; }
+    relation f4 &quot;big&quot; @dec -&gt; @tx { kind: &quot;uml.flow&quot;; source_mark: diamond; }
+    relation f5 &quot;&quot; @pack -&gt; @call { kind: &quot;uml.flow&quot;; }
+    relation f6 &quot;&quot; @tx -&gt; @call { kind: &quot;uml.flow&quot;; }
+    relation f7 &quot;&quot; @call -&gt; @done { kind: &quot;uml.flow&quot;; }
+    relation f8 &quot;&quot; @review -&gt; @cancel_end { kind: &quot;uml.flow&quot;; }
+    relation f9 &quot;&quot; @escalate -&gt; @adhoc { kind: &quot;uml.flow&quot;; }
+    relation f10 &quot;&quot; @adhoc -&gt; @done { kind: &quot;uml.flow&quot;; }
+    relation f11 &quot;&quot; @evsub -&gt; @adhoc { kind: &quot;uml.flow&quot;; }
+    relation a1 &quot;&quot; @data -&gt; @review { kind: &quot;bpmn.association&quot;; }
+    relation a2 &quot;&quot; @review -&gt; @dout { kind: &quot;bpmn.association&quot;; }
+    relation a3 &quot;&quot; @din -&gt; @call { kind: &quot;bpmn.association&quot;; }
+    relation a4 &quot;&quot; @call -&gt; @store { kind: &quot;bpmn.association&quot;; }
+    relation msg &quot;billing status&quot; @pack -&gt; @call { kind: &quot;bpmn.messageflow&quot;; }
+}
+
+data choreo {
+    object ship_order &quot;Ship order&quot; { kind: &quot;flow.choreotask&quot;; x_bands: [ &quot;Shop&quot;, &quot;Carrier&quot; ]; }
+    object pay &quot;Pay&quot; { kind: &quot;flow.choreotask&quot;; x_bands: [ &quot;Shop&quot;, &quot;Bank *&quot; ]; }
+    object gw &quot;&quot; { kind: &quot;flow.gateway&quot;; x_gateway: { type: parallel }; }
+    relation c1 &quot;&quot; @ship_order -&gt; @gw { kind: &quot;uml.flow&quot;; }
+    relation c2 &quot;&quot; @gw -&gt; @pay { kind: &quot;uml.flow&quot;; }
+}
+
+data conv {
+    object shop &quot;Shop&quot; { kind: &quot;uml.actor&quot;; }
+    object sup &quot;Supplier&quot; { kind: &quot;uml.actor&quot;; }
+    object talk &quot;Ordering&quot; { kind: &quot;flow.conversation&quot;; }
+    object sub &quot;Payment&quot; { kind: &quot;flow.subconversation&quot;; }
+    object shared &quot;Shared billing&quot; { kind: &quot;flow.callconversation&quot;; }
+    relation l1 &quot;&quot; @shop -&gt; @talk { kind: &quot;bpmn.conversationlink&quot;; }
+    relation l2 &quot;&quot; @sup -&gt; @talk { kind: &quot;bpmn.conversationlink&quot;; }
+    relation l3 &quot;&quot; @shop -&gt; @sub { kind: &quot;bpmn.conversationlink&quot;; }
+    relation l4 &quot;&quot; @sup -&gt; @shared { kind: &quot;bpmn.conversationlink&quot;; }
+}
+
+view process &quot;Process&quot; {
+    data: [@proc];
+    projection { profile: &quot;bpmn.process@1&quot;; }
+    frame pool &quot;Webshop&quot; { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }
+    publication { size: content; fit: none; minimum_text: 6pt; }
+}
+view collaboration &quot;Collaboration&quot; {
+    data: [@proc];
+    projection { profile: &quot;bpmn.process@1&quot;; }
+    frame shop &quot;Webshop&quot; { members: [@proc.start, @proc.review, @proc.dec, @proc.pack, @proc.done]; x_pool: true; }
+    frame erp &quot;ERP (black box)&quot; { members: [@proc.call, @proc.tx]; x_pool: true; x_collapsed: true; }
+    publication { size: content; fit: none; }
+}
+
+view choreography &quot;Choreography&quot; {
+    data: [@choreo];
+    projection { profile: &quot;bpmn.choreography@1&quot;; }
+    publication { size: content; fit: none; minimum_text: 6pt; }
+}
+view conversation &quot;Conversation&quot; {
+    data: [@conv];
+    layout { algorithm: layered; routing: straight; }
+    projection { profile: &quot;bpmn.conversation@1&quot;; }
+    publication { size: content; fit: none; minimum_text: 6pt; }
+}
+</code></pre>
+
+</details>
 <details class="ddn-source" id="src-website-examples-gallery-src-layouts-ddn"><summary><code>website/examples/gallery/src/layouts.ddn</code></summary>
 <h4><code>website/examples/gallery/src/layouts.ddn</code></h4>
 <pre class="ddn-src"><code>ddn &quot;0.5&quot;;
@@ -18951,6 +19061,9 @@ format shared {
 <tbody>
 <tr><td><code>archimate.basic@1</code></td><td><a href="#profile-archimate-basic-1">Order platform landscape</a></td><td><code>graph</code></td><td><code>website/examples/basics/51-archimate.ddn</code></td><td><a href="profiles/archimate-basic-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>bpmn.basic@1</code></td><td><a href="#profile-bpmn-basic-1">Buyer / seller collaboration</a></td><td><code>graph</code></td><td><code>website/examples/basics/46-bpmn.ddn</code></td><td><a href="profiles/bpmn-basic-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>
+<tr><td><code>bpmn.choreography@1</code></td><td><a href="#profile-bpmn-choreography-1">Choreography</a></td><td><code>graph</code></td><td><code>website/examples/basics/82-bpmn-complete.ddn</code></td><td><a href="profiles/bpmn-choreography-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>
+<tr><td><code>bpmn.conversation@1</code></td><td><a href="#profile-bpmn-conversation-1">Conversation</a></td><td><code>graph</code></td><td><code>website/examples/basics/82-bpmn-complete.ddn</code></td><td><a href="profiles/bpmn-conversation-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>
+<tr><td><code>bpmn.process@1</code></td><td><a href="#profile-bpmn-process-1">Process</a></td><td><code>graph</code></td><td><code>website/examples/basics/82-bpmn-complete.ddn</code></td><td><a href="profiles/bpmn-process-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>
 <tr><td><code>c4.component@1</code></td><td><a href="#profile-c4-component-1">Synthetic shop / C4 component</a></td><td><code>graph</code></td><td><code>website/examples/basics/25-c4-views.ddn</code></td><td><a href="profiles/c4-component-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">wiki</a></td></tr>
 <tr><td><code>c4.container@1</code></td><td><a href="#profile-c4-container-1">Synthetic shop / C4 container</a></td><td><code>graph</code></td><td><code>website/examples/basics/25-c4-views.ddn</code></td><td><a href="profiles/c4-container-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">wiki</a></td></tr>
 <tr><td><code>c4.context@1</code></td><td><a href="#profile-c4-context-1">Synthetic shop / C4 context</a></td><td><code>graph</code></td><td><code>website/examples/basics/25-c4-views.ddn</code></td><td><a href="profiles/c4-context-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">wiki</a></td></tr>

@@ -834,6 +834,126 @@
       "defaults": {}
     },
     {
+      "keyword": "flow.intermediate",
+      "name": "Intermediate event",
+      "shape": "profile",
+      "silhouette": "intermediate",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "INTERMEDIATE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.dataobject",
+      "name": "Data object",
+      "shape": "profile",
+      "silhouette": "dataobject",
+      "fallback": "object",
+      "family": "data",
+      "code": "DATAOBJECT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.datainput",
+      "name": "Data input",
+      "shape": "profile",
+      "silhouette": "datainput",
+      "fallback": "object",
+      "family": "data",
+      "code": "DATAINPUT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.dataoutput",
+      "name": "Data output",
+      "shape": "profile",
+      "silhouette": "dataoutput",
+      "fallback": "object",
+      "family": "data",
+      "code": "DATAOUTPUT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.datastore",
+      "name": "Data store",
+      "shape": "profile",
+      "silhouette": "cylinder",
+      "fallback": "dataset",
+      "family": "data",
+      "code": "DATASTORE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.group",
+      "name": "Group",
+      "shape": "profile",
+      "silhouette": "groupbox",
+      "fallback": "note",
+      "family": "activity",
+      "code": "GROUP",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.choreotask",
+      "name": "Choreography task",
+      "shape": "profile",
+      "silhouette": "choreotask",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "CHOREOTASK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.conversation",
+      "name": "Conversation",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "CONVERSATION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.subconversation",
+      "name": "Sub-conversation",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "SUBCONVO",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.callconversation",
+      "name": "Call conversation",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "CALLCONVO",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "cmmn.stage",
       "name": "Case stage",
       "shape": "profile",
@@ -2012,7 +2132,11 @@
         "flow.acceptsignal",
         "flow.timeevent",
         "flow.flowfinal",
-        "flow.connector"
+        "flow.connector",
+        "flow.intermediate",
+        "flow.choreotask",
+        "flow.group",
+        "flow.subprocess"
       ],
       "target": [
         "flow.start",
@@ -2028,7 +2152,11 @@
         "flow.acceptsignal",
         "flow.timeevent",
         "flow.flowfinal",
-        "flow.connector"
+        "flow.connector",
+        "flow.intermediate",
+        "flow.choreotask",
+        "flow.group",
+        "flow.subprocess"
       ],
       "allow_self": false,
       "member_endpoints": true
@@ -2058,6 +2186,67 @@
         "flow.subprocess",
         "flow.gateway",
         "analysis.task"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "bpmn.association",
+      "name": "Data association",
+      "verb": "Associates",
+      "family": "dependency",
+      "code": "ASSOCIATION",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "flow.dataobject",
+        "flow.datainput",
+        "flow.dataoutput",
+        "flow.datastore",
+        "flow.start",
+        "flow.intermediate",
+        "flow.end",
+        "flow.process",
+        "flow.subprocess",
+        "flow.gateway",
+        "flow.choreotask"
+      ],
+      "target": [
+        "flow.start",
+        "flow.intermediate",
+        "flow.end",
+        "flow.process",
+        "flow.subprocess",
+        "flow.gateway",
+        "flow.choreotask",
+        "flow.dataobject",
+        "flow.datainput",
+        "flow.dataoutput",
+        "flow.datastore"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "4 4"
+    },
+    {
+      "keyword": "bpmn.conversationlink",
+      "name": "Conversation link",
+      "verb": "Links",
+      "family": "structural",
+      "code": "CONVOLINK",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "uml.actor",
+        "flow.process",
+        "flow.subprocess"
+      ],
+      "target": [
+        "flow.conversation",
+        "flow.subconversation",
+        "flow.callconversation"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -3415,6 +3604,60 @@
         "choreography and conversation diagrams",
         "executable process semantics",
         "full BPMN conformance"
+      ]
+    },
+    {
+      "id": "bpmn.process@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "BPMN process diagram",
+        "BPMN collaboration diagram"
+      ],
+      "scope": "Full BPMN 2.0.2 process and collaboration notation: complete event system (start/intermediate/end x 14 triggers, boundary interrupting/non-interrupting), six gateway types with true glyphs, call/ad-hoc/transaction/event subprocesses, loop/multi-instance/compensation markers, data objects/inputs/outputs/stores with associations, default/conditional sequence flows, pools and lanes incl. collapsed pools, group and annotation artifacts.",
+      "validation": [
+        "event trigger/position semantics (DDN-PJ175)",
+        "gateway rules (DDN-PJ176)",
+        "activity marker rules (DDN-PJ177)",
+        "data association endpoints (DDN-PJ180)",
+        "pool message flow (DDN-PJ116)"
+      ],
+      "unsupported": [
+        "BPMN XML/DI interchange",
+        "execution semantics",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "bpmn.choreography@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "BPMN choreography diagram"
+      ],
+      "scope": "BPMN 2.0.2 choreography: choreography tasks with two or more participant bands (x_bands), multi-instance bands, choreography subprocesses and gateways, sequence flows between task bands.",
+      "validation": [
+        "choreography task bands (DDN-PJ178)",
+        "event/gateway/activity rules (DDN-PJ175/PJ176/PJ177)"
+      ],
+      "unsupported": [
+        "BPMN XML/DI interchange",
+        "execution semantics",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "bpmn.conversation@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "BPMN conversation diagram"
+      ],
+      "scope": "BPMN 2.0.2 conversation: conversation/sub-conversation/call-conversation hexagon nodes, conversation links to participants (pool machinery), participant bands.",
+      "validation": [
+        "conversation links connect participants to conversation nodes (DDN-PJ179)"
+      ],
+      "unsupported": [
+        "BPMN XML/DI interchange",
+        "execution semantics",
+        "formal OMG certification"
       ]
     },
     {

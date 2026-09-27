@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 0126 — BPMN 2.0.2 notation compliance — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo"><span class="name">ScratchWeaver<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 0126 — BPMN 2.0.2 notation compliance</h1>
+<p>Status: implemented   Authors/reviewers: B1-063 work item   Language/registry impact: additive registry entries within the 0.7 draft; new profiles <code>bpmn.process@1</code>, <code>bpmn.choreography@1</code>, <code>bpmn.conversation@1</code>; <code>bpmn.basic@1</code> immutable; no grammar change; runtime/specification 0.7 line.</p>
+<h2>Problem and motivating example</h2>
+<p><code>bpmn.basic@1</code> covers pools/lanes, three event triggers as text, three gateway types as text prefixes, plain sequence/message flow. BPMN 2.0.2 additionally specifies: the full event system (start/intermediate/end × 14 triggers, boundary interrupting/non-interrupting), six gateway types with true glyphs, the full activity set (call, ad-hoc, transaction, event subprocess, loop/multi-instance/compensation markers), data objects/inputs/outputs/stores with associations, sequence-flow variants (default/conditional), collapsed pools, choreography (participant bands) and conversation diagrams, and group/text-annotation artifacts.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Additive kinds, relations, and closed extension contracts; a shared renderer <strong>decorator layer</strong> (ring styles, trigger icons, boundary attachment, task badges) that is profile-neutral — CMMN or other notations can drive it later:</p>
+<ol><li><strong><code>x_event</code> extended</strong>: <code>type</code> grows to <code>none, message, timer, signal, error, escalation, compensation, conditional, link, terminate, cancel, multiple, parallel_multiple</code>; new <code>position: start|intermediate|end|boundary</code>, <code>interrupting: boolean</code>, <code>on: @ref</code> (boundary host). New kind <code>flow.intermediate</code>. Under the new profiles, <code>flow.start</code>/<code>flow.intermediate</code>/<code>flow.end</code> render as BPMN event circles (single/double/thick rings) with trigger icons; boundary events attach to their host's border. <code>bpmn.basic@1</code> rendering is unchanged.</li><li><strong><code>x_gateway</code> extended</strong>: <code>exclusive, parallel, inclusive, complex, event, event_exclusive</code>, rendered as true inner glyphs (X, +, O, star, pentagon) instead of text prefixes under the new profiles.</li><li><strong><code>x_activity</code> (new, object target)</strong>: <code>{ call?, transaction?, adhoc?, event_subprocess?, collapsed?, markers?: [loop, parallel, sequential, compensation] }</code> — badges row at the task's bottom-left, thick/double/dashed borders.</li><li><strong>Data</strong>: new kinds <code>flow.dataobject</code>, <code>flow.datainput</code>, <code>flow.dataoutput</code>, <code>flow.datastore</code>; new relation <code>bpmn.association</code> (dashed open arrow between data nodes and activities); <code>x_io: { set: true }</code> marks an input/output set (collection badge).</li><li><strong>Flows</strong>: sequence flow variants via new endpoint marks <code>slash</code> (default flow tick at source) and <code>diamond</code> (conditional flow marker at source) on <code>uml.flow</code>; message flow unchanged (<code>bpmn.messageflow</code>).</li><li><strong>Pools/lanes</strong>: collapsed pool via frame flag <code>x_collapsed: true</code> (black-box band); lanes nest via nested frames (existing).</li><li><strong>Choreography (<code>bpmn.choreography@1</code>)</strong>: new kind <code>flow.choreotask</code> with <code>x_bands: [participant names]</code> rendered as participant bands; multi-instance band marker via <code>~</code> suffix; choreography subprocess via <code>x_activity.collapsed</code> and markers; gateways and sequence flows shared.</li><li><strong>Conversation (<code>bpmn.conversation@1</code>)</strong>: new kinds <code>flow.conversation</code> (hexagon), <code>flow.subconversation</code> (hexagon with +), <code>flow.callconversation</code> (thick-border hexagon); new relation <code>bpmn.conversationlink</code> (participant → conversation node); participant bands reuse the pool frame machinery.</li><li><strong>Artifacts</strong>: <code>flow.group</code> (dashed rounded rectangle element) and the existing <code>flow.annotation</code> bracket.</li></ol>
+<h2>Decorator layer design</h2>
+<p><code>ddn-shapes.js</code> gains a generic decoration pass applied by kind profile hooks: event ring + trigger icon (<code>x_event</code>), gateway inner glyph (<code>x_gateway</code>), activity border modes and marker badges (<code>x_activity</code>), boundary attachment (<code>x_event.position: boundary</code> relocates the event onto its host border, port-square precedent). Each decorator is driven by the extension contract, not by profile id, so a future CMMN profile reuses it unchanged.</p>
+<h2>Semantic normalization and identity effects</h2>
+<p>None — notation over the existing element/relation identities.</p>
+<h2>Alternatives considered</h2>
+<ol><li><strong>One <code>bpmn.complete@2</code> bump</strong>: rejected — choreography and conversation are distinct diagram families with distinct participant rules; three named profiles follow the registry's per-family convention (uml.* precedent).</li><li><strong>Event kinds per trigger</strong>: rejected — trigger is a decoration of the event vertex, exactly what <code>x_event</code> models; 14 kinds would flood the palette.</li><li><strong>Boundary events as ports</strong>: rejected — boundary events have their own identity and outgoing flows; they are nodes visually attached to a host border, not member endpoints.</li></ol>
+<h2>Compatibility and migration</h2>
+<p>Fully additive. <code>bpmn.basic@1</code> fixtures render byte-identically (new rendering paths are profile-gated). <code>x_event</code>/<code>x_gateway</code> contract growth is additive for new values; previously-invalid trigger/gateway names were rejected, so no valid source changes meaning.</p>
+<h2>Machine schema and diagnostic changes</h2>
+<ul><li>Registry: +9 kinds, +2 relations, +3 profiles; regenerated assets.</li><li>Contracts: <code>x_event</code>/<code>x_gateway</code> extended; new <code>x_activity</code>, <code>x_io</code>, <code>x_bands</code>.</li><li>New endpoint marks: <code>slash</code> (control family), <code>diamond</code> admitted on control-family BPMN flows.</li><li>New error codes (ceilings re-grepped: PJ174, PJW05): <code>DDN-PJ175</code> (event trigger/position semantics), <code>DDN-PJ176</code> (gateway rules), <code>DDN-PJ177</code> (x_activity misuse), <code>DDN-PJ178</code> (choreography bands), <code>DDN-PJ179</code> (conversation links), <code>DDN-PJ180</code> (data associations).</li></ul>
+<h2>Non-goals (declared unsupported)</h2>
+<p>BPMN XML/DI interchange, execution semantics, formal OMG certification.</p>
+<h2>Positive and negative fixtures</h2>
+<p><code>notation/tests/bpmn-compliance.js</code> + the BPMN family sweep <code>notation/tests/bpmn-showcase.js</code> (process, collaboration, choreography, conversation). Gallery fixture <code>website/examples/basics/82-bpmn-complete.ddn</code>.</p>
+<h2>Open questions and decision record</h2>
+<ul><li>Profile split: <strong>decided</strong> — process/collaboration, choreography, conversation.</li><li>Default/conditional sequence markers ride <code>source_mark</code> (the existing endpoint-mark channel) rather than a new property.</li></ul>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ScratchWeaver 0.7.0 — the DDN toolkit · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

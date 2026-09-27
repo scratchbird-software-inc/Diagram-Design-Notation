@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 209,
+  "kindCount": 219,
   "kinds": [
     {
       "kind": "object",
@@ -6654,6 +6654,356 @@
         "flow.basic@1",
         "flow.documented@2",
         "uml.activity@2"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.intermediate",
+      "name": "Intermediate event",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.dataobject",
+      "name": "Data object",
+      "source": "profile",
+      "palette_group": "Data",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.datainput",
+      "name": "Data input",
+      "source": "profile",
+      "palette_group": "Data",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.dataoutput",
+      "name": "Data output",
+      "source": "profile",
+      "palette_group": "Data",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.datastore",
+      "name": "Data store",
+      "source": "profile",
+      "palette_group": "Data",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.group",
+      "name": "Group",
+      "source": "profile",
+      "palette_group": "Notes & evidence",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.choreotask",
+      "name": "Choreography task",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.conversation",
+      "name": "Conversation",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.subconversation",
+      "name": "Sub-conversation",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.callconversation",
+      "name": "Call conversation",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "bpmn.process@1",
+        "bpmn.choreography@1",
+        "bpmn.conversation@1"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",

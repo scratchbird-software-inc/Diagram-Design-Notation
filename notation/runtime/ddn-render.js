@@ -155,6 +155,7 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  else if(type==='hollow_diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc(surface)}"/>`;
  else if(type==='triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc(surface)}"/>`;
  else if(type==='filled_triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc(ink)}"/>`;
+ else if(type==='slash')s+=`<path d="M-9 -6L-3 6" stroke-width="2.4"/>`;
  else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc(surface)}"/>`;
  else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
  else if(['one','zeroone','many','zeromany'].includes(type)){
@@ -216,6 +217,12 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  
  if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=legendPlacement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
+ /* B1-063: BPMN boundary events attach to their host's bottom border (port
+  * attachment precedent — visual anchor, the node keeps its identity). */
+ {const byIdPre=new Map(geoms.map(g=>[g.id,g]));
+  for(const g of geoms){const xe=g.n.properties.x_event;
+   if(xe?.position==='boundary'&&xe.on){const host=byIdPre.get(xe.on.$ref);
+    if(host){g.x=host.x+host.w/2-g.w/2;g.y=host.y+host.h-g.h*0.30;g.x_boundaryOf=host.id;}}}}
  let maxW=geoms.reduce((m,g)=>Math.max(m,g.w),270),maxH=geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
  let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
@@ -270,6 +277,8 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    * structured/expansion region keyword. */
   if(f.x_interruptible===true)diagram+=`<rect data-interruptible="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="18" fill="none" stroke="${t.rule}" stroke-dasharray="7 5"/>`;
   if(f.x_structured?.mode)diagram+=text(f.x+15,f.y+46,'«'+f.x_structured.mode+'»',11,t.muted,650);
+  /* B1-063: collapsed pool — black-box participant band. */
+  if(f.x_pool===true&&f.x_collapsed===true)diagram+=`<rect data-collapsed-pool="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="${esc(t.surface)}" stroke="${esc(t.ink)}" stroke-width="2.4"/>`;
   diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();

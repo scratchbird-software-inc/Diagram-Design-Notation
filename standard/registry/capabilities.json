@@ -2178,6 +2178,30 @@
       ]
     },
     {
+      "id": "bpmn.process@1",
+      "projection": "graph",
+      "diagramFamilies": ["BPMN process diagram", "BPMN collaboration diagram"],
+      "scope": "Full BPMN 2.0.2 process and collaboration notation: complete event system (14 triggers, boundary interrupting/non-interrupting), six gateway types, call/ad-hoc/transaction/event subprocesses, markers, data objects/stores, flow variants, pools/lanes incl. collapsed, artifacts.",
+      "validation": ["event trigger/position semantics (DDN-PJ175)", "gateway rules (DDN-PJ176)", "activity marker rules (DDN-PJ177)", "data association endpoints (DDN-PJ180)", "pool message flow (DDN-PJ116)"],
+      "unsupported": ["BPMN XML/DI interchange", "execution semantics", "formal OMG certification"]
+    },
+    {
+      "id": "bpmn.choreography@1",
+      "projection": "graph",
+      "diagramFamilies": ["BPMN choreography diagram"],
+      "scope": "BPMN 2.0.2 choreography: choreography tasks with participant bands (x_bands), multi-instance bands, choreography subprocesses and gateways.",
+      "validation": ["choreography task bands (DDN-PJ178)", "event/gateway/activity rules (DDN-PJ175/PJ176/PJ177)"],
+      "unsupported": ["BPMN XML/DI interchange", "execution semantics", "formal OMG certification"]
+    },
+    {
+      "id": "bpmn.conversation@1",
+      "projection": "graph",
+      "diagramFamilies": ["BPMN conversation diagram"],
+      "scope": "BPMN 2.0.2 conversation: conversation/sub-conversation/call-conversation hexagon nodes, conversation links to participants (pool machinery).",
+      "validation": ["conversation links connect participants to conversation nodes (DDN-PJ179)"],
+      "unsupported": ["BPMN XML/DI interchange", "execution semantics", "formal OMG certification"]
+    },
+    {
       "id": "c4.context@1",
       "projection": "graph",
       "diagramFamilies": [

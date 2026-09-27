@@ -133,6 +133,12 @@
     "DDN-PJ171": "x_pack.visibility is meaningful only inside a uml.package frame \u2014 add the frame or drop the property",
     "DDN-PJ172": "Communication fragments reference visible uml.message relations; time/duration use {\u2026} form",
     "DDN-PJ173": "Timing annotations/constraints use {\u2026} form; lifeline messages need x_message.at (finite) and participant endpoints",
-    "DDN-PJ174": "Interaction-use gates must be uniquely named; inline expansion supports one level"
+    "DDN-PJ174": "Interaction-use gates must be uniquely named; inline expansion supports one level",
+    "DDN-PJ175": "x_event: event kinds only; terminate on end events; cancel/compensation on boundary/end; boundary events need x_event.on \u2192 task/subprocess",
+    "DDN-PJ176": "complex/event gateway types require a BPMN process/choreography/conversation profile; event-based gateways need \u22652 outgoing flows",
+    "DDN-PJ177": "x_activity markers apply to task/subprocess kinds; call/transaction are not choreography bands",
+    "DDN-PJ178": "x_bands is flow.choreotask-only; a choreography task needs at least two participant bands",
+    "DDN-PJ179": "bpmn.conversationlink must target a flow.conversation/subconversation/callconversation node",
+    "DDN-PJ180": "bpmn.association needs a data node (dataobject/datainput/dataoutput/datastore) on one side and an activity on the other"
   }
 }

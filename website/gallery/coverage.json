@@ -33,6 +33,30 @@
       "wiki": "Diagrams-Flowcharts",
       "svg": "profiles/bpmn-basic-1.svg"
     },
+    "bpmn.choreography@1": {
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "choreography",
+      "title": "Choreography",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/bpmn-choreography-1.svg"
+    },
+    "bpmn.conversation@1": {
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "conversation",
+      "title": "Conversation",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/bpmn-conversation-1.svg"
+    },
+    "bpmn.process@1": {
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "process",
+      "title": "Process",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/bpmn-process-1.svg"
+    },
     "c4.component@1": {
       "entry": "website/examples/basics/25-c4-views.ddn",
       "view": "component",
@@ -3140,6 +3164,33 @@
       "profile": "uml.object@2",
       "kind": "graph",
       "svg": "corpus/basics-81-uml-remainder.svg"
+    },
+    {
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "process",
+      "title": "Process",
+      "views": [
+        {
+          "id": "process",
+          "title": "Process"
+        },
+        {
+          "id": "collaboration",
+          "title": "Collaboration"
+        },
+        {
+          "id": "choreography",
+          "title": "Choreography"
+        },
+        {
+          "id": "conversation",
+          "title": "Conversation"
+        }
+      ],
+      "profile": "bpmn.process@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-82-bpmn-complete.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

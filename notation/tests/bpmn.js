@@ -66,9 +66,12 @@ test('bpmn.messageflow with both endpoints outside every pool is rejected as DDN
 test('flow.gateway without x_gateway is rejected as DDN-PJ117',()=>{
  throws(()=>run(edit(' { kind: "flow.gateway"; x_gateway: { "type": "exclusive" }; }',' { kind: "flow.gateway"; }')),'DDN-PJ117',
   e=>assert.ok(e.message.includes('decide'),'message must name the gateway'));});
-test('x_gateway:{type:"complex"} and x_event:{type:"signal"} fail the extension contracts as DDN105',()=>{
- throws(()=>run(edit('x_gateway: { "type": "exclusive" }','x_gateway: { "type": "complex" }')),'DDN105');
- throws(()=>run(edit('x_event: { "type": "timer" }','x_event: { "type": "signal" }')),'DDN105');});
+test('x_gateway/x_event contracts still reject unregistered values as DDN105',()=>{
+ /* The BPMN 2.0.2 profiles extended both enums additively (complex/event/
+  * event_exclusive gateways; the full 14-trigger event set incl. signal), so
+  * those values are now legal; truly unknown values still fail. */
+ throws(()=>run(edit('x_gateway: { "type": "exclusive" }','x_gateway: { "type": "quantum" }')),'DDN105');
+ throws(()=>run(edit('x_event: { "type": "timer" }','x_event: { "type": "weather" }')),'DDN105');});
 test('Repeated render is deterministic',()=>{assert.equal(sha(run().svg),sha(run().svg));});
 test('Multi-view file: the same model renders under bpmn.basic@1 and under the plain graph profile',()=>{
  const plain=`view plain "Plain graph view" {

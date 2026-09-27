@@ -28,7 +28,7 @@ Appearance-only settings must not write semantic properties. Changing a type cal
 | Note/example | Text, Describes | Sample bindings, provenance, review state |
 | Analysis/view | Projection, Source, Template | Measures, rules, series, scales, child views |
 
-The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 209 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
+The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 219 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
 
 > Implementation status (B1-055, RFC-119): the palette now includes `uml.enumeration` (Meaning group, classifier inspector with a LITERALS compartment; members carry `x_member: { kind: literal }`) and the `uml.provided`/`uml.required` relations in the relation map. `uml.structure@2` is the hinted profile for UML classifier kinds. Template parameters (`x_template`) edit as a string list on the class inspector; association-end roles, multiplicities and qualifiers (`x_endlabels`), association-class attachment, n-ary ends and generalization-set membership edit on the relation inspector as structured records — never as free-form label text.
 
@@ -55,3 +55,5 @@ Choosing Table creates a table definition with an auto-generated stable ID, a na
 > Implementation status (B1-060, RFC-124): the palette adds the five UML activity kinds (`flow.merge`/`sendsignal`/`acceptsignal`/`timeevent`/`flowfinal`, Process group) for `uml.activity@2`, hinted on all flow.* kinds. Pins edit as port rows with `x_pin` set/streaming; interrupt/exception are edge toggles on `uml.flow`; interruptible and structured regions are frame assignments with `x_interruptible`/`x_structured.mode`; `DDN-PJ167`–`DDN-PJ169` are the commit-time authorities.
 
 > Implementation status (B1-061, RFC-125): the palette adds `uml.metaclass`/`uml.stereotype` (profile diagrams) and the package/link/profile relations (`uml.import`/`uml.access`/`uml.merge`/`uml.link`/`uml.extension`/`uml.application`). Instance styling and slot checking are validation/render behavior of `uml.object@2`; packaged-element visibility edits as `x_pack` on the element; interaction-use gates/arguments edit as `x_use` lists; timing annotations/constraints edit on `x_states` rows and `x_timeconstraint`. `DDN-PJ170`–`DDN-PJ174` are the commit-time authorities.
+
+> Implementation status (B1-063): the palette adds the BPMN 2.0.2 kinds (`flow.intermediate`, data nodes, `flow.group`, choreography/conversation kinds) for `bpmn.process@1`/`bpmn.choreography@1`/`bpmn.conversation@1`, plus `bpmn.association`/`bpmn.conversationlink`. Event trigger/position, gateway type, activity markers, io sets and bands edit as structured pickers writing `x_event`/`x_gateway`/`x_activity`/`x_io`/`x_bands`; `DDN-PJ175`–`DDN-PJ180` are the commit-time authorities.

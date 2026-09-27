@@ -1,0 +1,89 @@
+ddn "0.5";
+module "ddn.examples.bpmn";
+
+// B1-063: full BPMN 2.0.2 notation. process view: events (triggers, boundary,
+// non-interrupting), gateways, activity markers, data nodes, flow variants.
+// collaboration view: two pools, message flow, collapsed pool. choreography
+// and conversation views cover the remaining families. No pinned layout.
+
+data proc {
+    object start "Order received" { kind: "flow.start"; x_event: { type: message; }; }
+    object review "Review order" { kind: "flow.process"; x_activity: { markers: [loop]; }; }
+    object escalate "" { kind: "flow.intermediate"; x_event: { type: escalation; position: boundary; interrupting: false; on: @proc.review; }; }
+    object dec "" { kind: "flow.gateway"; x_gateway: { type: exclusive }; }
+    object pack "Pack" { kind: "flow.process"; x_activity: { markers: [parallel]; }; }
+    object call "Billing" { kind: "flow.process"; x_activity: { call: true; }; }
+    object tx "Reserve stock" { kind: "flow.subprocess"; x_activity: { transaction: true; }; }
+    object adhoc "Fix up" { kind: "flow.process"; x_activity: { adhoc: true; }; }
+    object evsub "Timeout handler" { kind: "flow.subprocess"; x_activity: { event_subprocess: true }; }
+    object data "Order data" { kind: "flow.dataobject"; }
+    object din "Credit check" { kind: "flow.datainput"; }
+    object dout "Invoice" { kind: "flow.dataoutput"; x_io: { set: true; }; }
+    object store "Order store" { kind: "flow.datastore"; }
+    object grp "Notes" { kind: "flow.group"; }
+    object cancel_end "Cancelled" { kind: "flow.end"; x_event: { type: cancel; }; }
+    object done "Shipped" { kind: "flow.end"; x_event: { type: terminate; }; }
+
+    relation f1 "" @start -> @review { kind: "uml.flow"; }
+    relation f2 "" @review -> @dec { kind: "uml.flow"; }
+    relation f3 "ok" @dec -> @pack { kind: "uml.flow"; source_mark: slash; }
+    relation f4 "big" @dec -> @tx { kind: "uml.flow"; source_mark: diamond; }
+    relation f5 "" @pack -> @call { kind: "uml.flow"; }
+    relation f6 "" @tx -> @call { kind: "uml.flow"; }
+    relation f7 "" @call -> @done { kind: "uml.flow"; }
+    relation f8 "" @review -> @cancel_end { kind: "uml.flow"; }
+    relation f9 "" @escalate -> @adhoc { kind: "uml.flow"; }
+    relation f10 "" @adhoc -> @done { kind: "uml.flow"; }
+    relation f11 "" @evsub -> @adhoc { kind: "uml.flow"; }
+    relation a1 "" @data -> @review { kind: "bpmn.association"; }
+    relation a2 "" @review -> @dout { kind: "bpmn.association"; }
+    relation a3 "" @din -> @call { kind: "bpmn.association"; }
+    relation a4 "" @call -> @store { kind: "bpmn.association"; }
+    relation msg "billing status" @pack -> @call { kind: "bpmn.messageflow"; }
+}
+
+data choreo {
+    object ship_order "Ship order" { kind: "flow.choreotask"; x_bands: [ "Shop", "Carrier" ]; }
+    object pay "Pay" { kind: "flow.choreotask"; x_bands: [ "Shop", "Bank *" ]; }
+    object gw "" { kind: "flow.gateway"; x_gateway: { type: parallel }; }
+    relation c1 "" @ship_order -> @gw { kind: "uml.flow"; }
+    relation c2 "" @gw -> @pay { kind: "uml.flow"; }
+}
+
+data conv {
+    object shop "Shop" { kind: "uml.actor"; }
+    object sup "Supplier" { kind: "uml.actor"; }
+    object talk "Ordering" { kind: "flow.conversation"; }
+    object sub "Payment" { kind: "flow.subconversation"; }
+    object shared "Shared billing" { kind: "flow.callconversation"; }
+    relation l1 "" @shop -> @talk { kind: "bpmn.conversationlink"; }
+    relation l2 "" @sup -> @talk { kind: "bpmn.conversationlink"; }
+    relation l3 "" @shop -> @sub { kind: "bpmn.conversationlink"; }
+    relation l4 "" @sup -> @shared { kind: "bpmn.conversationlink"; }
+}
+
+view process "Process" {
+    data: [@proc];
+    projection { profile: "bpmn.process@1"; }
+    frame pool "Webshop" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }
+    publication { size: content; fit: none; minimum_text: 6pt; }
+}
+view collaboration "Collaboration" {
+    data: [@proc];
+    projection { profile: "bpmn.process@1"; }
+    frame shop "Webshop" { members: [@proc.start, @proc.review, @proc.dec, @proc.pack, @proc.done]; x_pool: true; }
+    frame erp "ERP (black box)" { members: [@proc.call, @proc.tx]; x_pool: true; x_collapsed: true; }
+    publication { size: content; fit: none; }
+}
+
+view choreography "Choreography" {
+    data: [@choreo];
+    projection { profile: "bpmn.choreography@1"; }
+    publication { size: content; fit: none; minimum_text: 6pt; }
+}
+view conversation "Conversation" {
+    data: [@conv];
+    layout { algorithm: layered; routing: straight; }
+    projection { profile: "bpmn.conversation@1"; }
+    publication { size: content; fit: none; minimum_text: 6pt; }
+}

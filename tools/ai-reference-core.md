@@ -181,6 +181,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_part` | field | `{classifier?, multiplicity?}` — internal part row `role: Classifier [mult]` (RFC-123; DDN-PJ166) |
 | `x_pin` | port | `{set?, streaming?}` — activity pin parameter set/streaming (RFC-124; DDN-PJ169) |
 | `x_interrupt` / `x_exception` | relation | boolean — lightning-bolt activity edges (RFC-124; DDN-PJ168) |
+| `x_activity` | object | `{call?, transaction?, adhoc?, event_subprocess?, collapsed?, markers?}` BPMN task decorations (DDN-PJ177) |
+| `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
 | `x_pack` | object | `{visibility: public|private}` — packaged element +/− (RFC-125; DDN-PJ171) |
 | `x_use` | object | `{arguments?, gates?}` — interaction-use detail (RFC-125; DDN-PJ174) |
 | `x_timeconstraint` | object | `["{…}", …]` timing constraints (RFC-125; DDN-PJ173) |
@@ -194,8 +196,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_activation` | object | `[{from: @msg, to: @msg}]` explicit execution bars (DDN-PJ158) |
 | `x_instance` | object | requires `classifier` (ref) |
 | `x_partition` | object | `{lane: string}` exactly |
-| `x_event` | object | `{type: none|message|timer|error}` |
-| `x_gateway` | object | `{type: exclusive|parallel|inclusive}` |
+| `x_event` | object | `{type: none|message|…|parallel_multiple, position?, interrupting?, on?}` on event kinds |
+| `x_gateway` | object | `{type: exclusive|parallel|inclusive|complex|event|event_exclusive}` on flow.gateway |
 | `x_states` | object | array of `{at: number, state: string}` (timing; strictly increasing `at`) |
 | `x_subdiagram` | object | `{view: string}` (interaction-overview node → view id) |
 | `x_sentry` | object | `{on: entry|exit}` |
@@ -251,7 +253,9 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | database schema / ERD | graph | `erd.crowfoot@1` | `table` kinds + `ref` with BOTH `source_mark`/`target_mark`; Chen style → kind chen, `chen.basic@1`/`chen.binary@2` |
 | flowchart | graph | `flow.basic@1` | `flow.*` kinds, `flow.next`, one start/end, `x_diagram.branch` on decision outlets; annotations/off-page → `flow.documented@2` |
 | data flow diagram | graph | `dfd.gane_sarson@1` / `dfd.yourdon@1` | `dfd.process/store/external` + `dfd.data`; unique `x_diagram.number` per process |
-| process map (BPMN) | graph | `bpmn.basic@1` | pools = `x_pool` frames, `x_gateway.type`, `bpmn.messageflow` across pools |
+| BPMN process/collaboration | graph | `bpmn.basic@1` / `bpmn.process@1` | pools = `x_pool` frames, `x_gateway.type`, `bpmn.messageflow` across pools; process@1: full event system, 6 gateways, activity markers, data nodes, flow variants |
+| BPMN choreography | graph | `bpmn.choreography@1` | `flow.choreotask` + `x_bands` participant bands |
+| BPMN conversation | graph | `bpmn.conversation@1` | conversation hexagons + `bpmn.conversationlink` |
 | process chain (EPC) | graph | `epc.basic@1` | alternating `epk.event`/`epk.function`, `x_epc.operator` on connectors |
 | activity diagram / swimlanes | graph | `uml.activity@1` / `uml.activity@2` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars; @2 (RFC-124): merge, pins (x_pin), signals/time events, flow final, interruptible/structured regions, exception handlers |
 | state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `x_transition.event`; regions = `x_region` frames; uml.statemachine@1: activities/internal/submachines, pseudostates, effects, time events |
@@ -384,6 +388,7 @@ Per-profile:
 - **state.composite@1**: `x_region: true` frames = parallel regions; at most one `state.initial` per region/composite (DDN-PJ113); labels from `x_transition`.
 - **uml.activity@1** (+ flow rules): `x_partition.lane` names an existing frame (DDN-PJ114); fork count = join count on `flow.forkjoin` bars (DDN-PJ115).
 - **bpmn.basic@1**: pools = frames `x_pool: true`; `bpmn.messageflow` only across pools (DDN-PJ116); every `flow.gateway` needs `x_gateway.type` exclusive|parallel|inclusive (DDN-PJ117).
+- **bpmn.process@1 / choreography@1 / conversation@1**: event trigger/position rules (DDN-PJ175); extended gateways + event-gateway fan-out (PJ176); activity markers on task kinds (PJ177); choreography bands (PJ178); conversation links to conversation nodes (PJ179); data associations pair data nodes with activities (PJ180).
 - **uml.interaction_overview@1**: nodes referencing sub-views via `x_subdiagram.view` must name an existing view (DDN-PJ119); @2: unique gate names, one expansion level (DDN-PJ174).
 - **uml.object@2** (RFC-125): slot values match classifier field datatypes (DDN-PJ170).
 - **uml.communication@2** (RFC-125): fragment refs resolve to visible messages; constraints in {…} (DDN-PJ172).

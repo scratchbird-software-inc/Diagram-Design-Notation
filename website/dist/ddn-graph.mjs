@@ -254,10 +254,14 @@ publishNamespace('DDNSketch',api$6);
 const esc$2=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const f=x=>Math.round(x*1000)/1000;
 const slug$1=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile==='dfd.yourdon@1'?'circle':'round';return k.silhouette;}
+function shapeOf(k,p){if(k.keyword==='dfd.process')return p.projection?.profile==='dfd.yourdon@1'?'circle':'round';
+ /* B1-063: BPMN 2.0.2 profiles render event kinds as rings; bpmn.basic@1 keeps
+  * its stadium markers. */
+ if(/^bpmn\.(process|choreography|conversation)@/.test(p.projection?.profile||'')&&['flow.start','flow.intermediate','flow.end'].includes(k.keyword))return 'bpmevent';
+ return k.silhouette;}
 function measure(g,p){
  const s=g.scale,n=g.n,k=g.k;g.silhouette=shapeOf(k,p);
- const compact=['ellipse','circle','diamond','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
+ const compact=['ellipse','circle','diamond','bpmevent','choreotask','groupbox','dataobject','datainput','dataoutput','actor','terminal','parallelogram','document','store','subprocess','round','hexagon','sendpent','acceptpent','hourglass','flowfinal'].includes(g.silhouette);
  if(compact&&!n.fields.length){
   const proportion=g.silhouette==='diamond'?.60:['ellipse','circle'].includes(g.silhouette)?.68:.78;
   g.titleLines=api$7.wrap(n.name,g.w*proportion,16*s,p.style.font,600);
@@ -379,6 +383,62 @@ function render$2(g,p,theme){
   else if(shape==='forkbar')out+=`<rect x="${f(cx-32*s)}" y="${f(cy-4*s)}" width="${f(64*s)}" height="${f(8*s)}" rx="${f(2*s)}" fill="${ink}"/>`;
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
+ /* B1-063: BPMN 2.0.2 decorator layer — event rings + trigger icons, data
+  * documents, choreography bands, group artifacts. Driven by the extension
+  * contracts (x_event/x_activity/x_io/x_bands), not profile ids, so other
+  * notations (CMMN) can reuse the layer. */
+ function triggerIcon(type,cx,cy,r,ink){
+  const u=r/8;
+  switch(type){
+   case 'message':return `<rect x="${f(cx-4*u)}" y="${f(cy-3*u)}" width="${f(8*u)}" height="${f(6*u)}" fill="none" stroke="${ink}" stroke-width="1.4"/><path d="M${f(cx-4*u)} ${f(cy-3*u)}L${f(cx)} ${f(cy+0.5*u)}L${f(cx+4*u)} ${f(cy-3*u)}" fill="none" stroke="${ink}" stroke-width="1.4"/>`;
+   case 'timer':return `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(4*u)}" fill="none" stroke="${ink}" stroke-width="1.4"/><path d="M${f(cx)} ${f(cy)}V${f(cy-2.6*u)}M${f(cx)} ${f(cy)}L${f(cx+1.8*u)} ${f(cy+1*u)}" stroke="${ink}" stroke-width="1.4" fill="none"/>`;
+   case 'signal':return `<path d="M${f(cx)} ${f(cy-4*u)}L${f(cx+3.5*u)} ${f(cy+2.5*u)}L${f(cx-3.5*u)} ${f(cy+2.5*u)}Z" fill="${ink}"/>`;
+   case 'error':return `<path d="M${f(cx+1.5*u)} ${f(cy-4.5*u)}L${f(cx-2*u)} ${f(cy+0.5*u)}L${f(cx+0.5*u)} ${f(cy+0.5*u)}L${f(cx-1.5*u)} ${f(cy+4.5*u)}L${f(cx+2*u)} ${f(cy-1*u)}L${f(cx-0.5*u)} ${f(cy-1*u)}Z" fill="${ink}"/>`;
+   case 'escalation':return `<path d="M${f(cx-3*u)} ${f(cy+2.5*u)}L${f(cx)} ${f(cy-2.5*u)}L${f(cx+3*u)} ${f(cy+2.5*u)}" fill="none" stroke="${ink}" stroke-width="1.6"/><path d="M${f(cx-3*u)} ${f(cy+4*u)}L${f(cx)} ${f(cy-1*u)}L${f(cx+3*u)} ${f(cy+4*u)}" fill="none" stroke="${ink}" stroke-width="1.6"/>`;
+   case 'compensation':return `<path d="M${f(cx-4*u)} ${f(cy-3*u)}L${f(cx-4*u)} ${f(cy+3*u)}L${f(cx-0.5*u)} ${f(cy)}Z" fill="none" stroke="${ink}" stroke-width="1.4"/><path d="M${f(cx)} ${f(cy-3*u)}L${f(cx)} ${f(cy+3*u)}L${f(cx+3.5*u)} ${f(cy)}Z" fill="none" stroke="${ink}" stroke-width="1.4"/>`;
+   case 'conditional':return `<rect x="${f(cx-3.5*u)}" y="${f(cy-3.5*u)}" width="${f(7*u)}" height="${f(7*u)}" fill="none" stroke="${ink}" stroke-width="1.3"/><path d="M${f(cx-2*u)} ${f(cy-1.5*u)}H${f(cx+2*u)}M${f(cx-2*u)} ${f(cy)}H${f(cx+2*u)}M${f(cx-2*u)} ${f(cy+1.5*u)}H${f(cx+2*u)}" stroke="${ink}" stroke-width="1.2" fill="none"/>`;
+   case 'link':return `<path d="M${f(cx-3.5*u)} ${f(cy+2.5*u)}L${f(cx+2.5*u)} ${f(cy-3.5*u)}" stroke="${ink}" stroke-width="1.6" fill="none"/><path d="M${f(cx+0.5*u)} ${f(cy-3.5*u)}H${f(cx+2.5*u)}V${f(cy-1.5*u)}" fill="none" stroke="${ink}" stroke-width="1.6"/>`;
+   case 'terminate':return `<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(3.6*u)}" fill="${ink}"/>`;
+   case 'cancel':return `<path d="M${f(cx-3*u)} ${f(cy-3*u)}L${f(cx+3*u)} ${f(cy+3*u)}M${f(cx+3*u)} ${f(cy-3*u)}L${f(cx-3*u)} ${f(cy+3*u)}" stroke="${ink}" stroke-width="1.8" fill="none"/>`;
+   case 'multiple':return `<path d="M${f(cx-3.5*u)} ${f(cy-3.5*u)}L${f(cx+3.5*u)} ${f(cy+3.5*u)}M${f(cx+3.5*u)} ${f(cy-3.5*u)}L${f(cx-3.5*u)} ${f(cy+3.5*u)}" stroke="${ink}" stroke-width="1.3" fill="none"/><path d="M${f(cx)} ${f(cy-4*u)}L${f(cx+3*u)} ${f(cy)}L${f(cx)} ${f(cy+4*u)}L${f(cx-3*u)} ${f(cy)}Z" fill="none" stroke="${ink}" stroke-width="1.3"/>`;
+   case 'parallel_multiple':return `<path d="M${f(cx-3.5*u)} ${f(cy-2*u)}H${f(cx+3.5*u)}M${f(cx-3.5*u)} ${f(cy+2*u)}H${f(cx+3.5*u)}" stroke="${ink}" stroke-width="1.8" fill="none"/>`;
+   default:return '';
+  }
+ }
+ if(shape==='bpmevent'){
+  const xe=n.properties.x_event||{},cx=x+w/2,cy=y+h/2-10*s,r=16*s;
+  const pos=xe.position||(n.kind==='flow.start'?'start':n.kind==='flow.end'?'end':'intermediate');
+  const dash=xe.position==='boundary'&&xe.interrupting===false?' stroke-dasharray="4 3"':'';
+  if(pos==='end')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="${f(3.6*s)}"${dash}/>`;
+  else {out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"${dash}/>`;
+   if(pos==='intermediate')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r-3.5*s)}" fill="none" stroke="${ink}" stroke-width="1.4"${dash}/>`;}
+  out+=`<g class="ddn-trigger" data-trigger="${esc$2(xe.type||'none')}">`+triggerIcon(xe.type||'none',cx,cy,r-4*s,ink)+'</g>';
+  out+=text(cx,y+h-4*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+ }
+ if(['dataobject','datainput','dataoutput'].includes(shape)){
+  const ear=12*s;
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-ear)}L${f(x+w)} ${f(y+ear)}V${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.6"/>`;
+  out+=line(x+w-ear,y,x+w-ear,y+ear,1.2)+line(x+w-ear,y+ear,x+w,y+ear,1.2);
+  const ay=y+h-14*s;
+  if(shape==='datainput')out+=`<path d="M${f(x+w/2)} ${f(ay-8*s)}L${f(x+w/2-4*s)} ${f(ay)}H${f(x+w/2+4*s)}Z" fill="${ink}"/>`;
+  if(shape==='dataoutput')out+=`<path d="M${f(x+w/2)} ${f(ay+2*s)}L${f(x+w/2-4*s)} ${f(ay-6*s)}H${f(x+w/2+4*s)}Z" fill="${ink}"/>`;
+  if(n.properties.x_io?.set)out+=`<path d="M${f(x+w/2-6*s)} ${f(y+10*s)}H${f(x+w/2+6*s)}M${f(x+w/2-6*s)} ${f(y+14*s)}H${f(x+w/2+6*s)}M${f(x+w/2-6*s)} ${f(y+18*s)}H${f(x+w/2+6*s)}" stroke="${ink}" stroke-width="1.4" fill="none"/>`;
+  out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s,15,600);
+  return out+'</g>';
+ }
+ if(shape==='groupbox'){
+  out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(10*s)}" fill="none" stroke="${ink}" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+  out+=lines(g.titleLines,x+w/2,y+h-10*s,12,500);
+  return out+'</g>';
+ }
+ if(shape==='choreotask'){
+  const bands=n.properties.x_bands||[],bh=22*s;
+  out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(6*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  if(bands.length){out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(bh)}" rx="${f(6*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.5"/>`+text(x+w/2,y+bh-7*s,bands[0],11,600,'text-anchor="middle"');}
+  if(bands.length>1){out+=`<rect x="${f(x)}" y="${f(y+h-bh)}" width="${f(w)}" height="${f(bh)}" rx="${f(6*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.5"/>`+bands.slice(1).map((b,i)=>{const mi=b.endsWith(' *');return text(x+w/2,y+h-bh+bh-7*s+i*0,b.replace(/ \*$/,''),11,600,'text-anchor="middle"')+(mi?`<path d="M${f(x+w-20*s)} ${f(y+h-bh+6*s)}V${f(y+h-6*s)}M${f(x+w-16*s)} ${f(y+h-bh+6*s)}V${f(y+h-6*s)}M${f(x+w-12*s)} ${f(y+h-bh+6*s)}V${f(y+h-6*s)}" stroke="${ink}" stroke-width="1.4" fill="none"/>`:'');}).join('');}
+  out+=lines(g.titleLines,x+w/2,y+(bands.length?bh+(h-2*bh)/2+4*s:h/2+5*s),14,600);
+  return out+'</g>';
+ }
  /* B1-059 (RFC-123): collaboration occurrence — dashed ellipse with keyword. */
  if(shape==='collab'){
   out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
@@ -470,6 +530,36 @@ function render$2(g,p,theme){
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
  }
  if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,api$7.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
+ /* B1-063: BPMN decorators — gateway inner glyphs and activity border
+  * modes/markers. Driven by x_gateway/x_activity contracts; profile-neutral. */
+ const bpmnProfile=/^bpmn\.(process|choreography|conversation)@/.test(p.projection?.profile||'');
+ const xg=n.properties.x_gateway;
+ if(xg&&bpmnProfile){
+  const cx=x+w/2,cy=y+h/2,u=8*s;
+  const G={
+   exclusive:`<path d="M${f(cx-u)} ${f(cy-u)}L${f(cx+u)} ${f(cy+u)}M${f(cx+u)} ${f(cy-u)}L${f(cx-u)} ${f(cy+u)}" stroke="${ink}" stroke-width="2.6" fill="none"/>`,
+   parallel:`<path d="M${f(cx)} ${f(cy-u)}V${f(cy+u)}M${f(cx-u)} ${f(cy)}H${f(cx+u)}" stroke="${ink}" stroke-width="2.6" fill="none"/>`,
+   inclusive:`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(u)}" fill="none" stroke="${ink}" stroke-width="2.4"/>`,
+   complex:`<path d="M${f(cx)} ${f(cy-u)}V${f(cy+u)}M${f(cx-u)} ${f(cy)}H${f(cx+u)}M${f(cx-u*.7)} ${f(cy-u*.7)}L${f(cx+u*.7)} ${f(cy+u*.7)}M${f(cx+u*.7)} ${f(cy-u*.7)}L${f(cx-u*.7)} ${f(cy+u*.7)}" stroke="${ink}" stroke-width="1.6" fill="none"/>`,
+   event:`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(u)}" fill="none" stroke="${ink}" stroke-width="1.3"/><path d="M${f(cx)} ${f(cy-u*.6)}L${f(cx+u*.55)} ${f(cy-u*.2)}L${f(cx+u*.34)} ${f(cy+u*.5)}L${f(cx-u*.34)} ${f(cy+u*.5)}L${f(cx-u*.55)} ${f(cy-u*.2)}Z" fill="none" stroke="${ink}" stroke-width="1.4"/>`,
+   event_exclusive:`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(u)}" fill="none" stroke="${ink}" stroke-width="1.3"/><path d="M${f(cx)} ${f(cy-u*.6)}L${f(cx+u*.55)} ${f(cy-u*.2)}L${f(cx+u*.34)} ${f(cy+u*.5)}L${f(cx-u*.34)} ${f(cy+u*.5)}L${f(cx-u*.55)} ${f(cy-u*.2)}Z" fill="none" stroke="${ink}" stroke-width="1.4"/><path d="M${f(cx-u*.3)} ${f(cy-u*.3)}L${f(cx+u*.3)} ${f(cy+u*.3)}M${f(cx+u*.3)} ${f(cy-u*.3)}L${f(cx-u*.3)} ${f(cy+u*.3)}" stroke="${ink}" stroke-width="1.4" fill="none"/>`,
+  };
+  out+=`<g class="ddn-gateway" data-gateway="${esc$2(xg.type)}">`+(G[xg.type]||'')+'</g>';
+ }
+ const xa=n.properties.x_activity;
+ if(xa&&bpmnProfile&&['flow.process','flow.subprocess','flow.choreotask'].includes(n.kind)){
+  if(xa.call)out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(6*s)}" fill="none" stroke="${ink}" stroke-width="${f(3.6*s)}"/>`;
+  if(xa.transaction)out+=`<rect x="${f(x+4*s)}" y="${f(y+4*s)}" width="${f(w-8*s)}" height="${f(h-8*s)}" rx="${f(5*s)}" fill="none" stroke="${ink}" stroke-width="1.4"/>`;
+  if(xa.event_subprocess)out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(6*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+  const badges=[...(xa.markers||[]),...(xa.adhoc?['adhoc']:[])];
+  badges.forEach((m,i)=>{const bx=x+12*s+i*20*s,by=y+h-13*s;
+   if(m==='loop')out+=`<g class="ddn-marker" data-marker="loop"><circle cx="${f(bx)}" cy="${f(by)}" r="${f(6*s)}" fill="none" stroke="${ink}" stroke-width="1.6"/><path d="M${f(bx+6*s)} ${f(by)}L${f(bx+3*s)} ${f(by-3*s)}L${f(bx+3*s)} ${f(by+3*s)}Z" fill="${ink}"/></g>`;
+   else if(m==='parallel')out+=`<g class="ddn-marker" data-marker="parallel"><path d="M${f(bx-4*s)} ${f(by-5*s)}V${f(by+5*s)}M${f(bx)} ${f(by-5*s)}V${f(by+5*s)}M${f(bx+4*s)} ${f(by-5*s)}V${f(by+5*s)}" stroke="${ink}" stroke-width="1.8" fill="none"/></g>`;
+   else if(m==='sequential')out+=`<g class="ddn-marker" data-marker="sequential"><path d="M${f(bx-5*s)} ${f(by-4*s)}H${f(bx+5*s)}M${f(bx-5*s)} ${f(by)}H${f(bx+5*s)}M${f(bx-5*s)} ${f(by+4*s)}H${f(bx+5*s)}" stroke="${ink}" stroke-width="1.8" fill="none"/></g>`;
+   else if(m==='compensation')out+=`<g class="ddn-marker" data-marker="compensation"><path d="M${f(bx-6*s)} ${f(by-4*s)}L${f(bx-6*s)} ${f(by+4*s)}L${f(bx-1*s)} ${f(by)}Z" fill="none" stroke="${ink}" stroke-width="1.3"/><path d="M${f(bx-1*s)} ${f(by-4*s)}L${f(bx-1*s)} ${f(by+4*s)}L${f(bx+4*s)} ${f(by)}Z" fill="none" stroke="${ink}" stroke-width="1.3"/></g>`;
+   else if(m==='adhoc')out+=`<g class="ddn-marker" data-marker="adhoc">`+text(bx,by+4*s,'~',16,600,'text-anchor="middle"')+'</g>';
+  });
+ }
  if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
  /* B1-055 (RFC-119): template signature box — dashed rect centred on the
   * top-right corner, one parameter name per line. */
@@ -877,7 +967,7 @@ function routing(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Error,extr
 }
 function inspect(nodes,routes,labels=[],routeRecs=null){const errors=[],overlaps=[],through=[],shared=[],masking=[];
  const recs=routeRecs||routes.map(r=>routeSegRecs(r.points)),nodeBoxes=nodes.map(n=>box(n,1)),labelBoxes=labels.map(l=>box(l,2));
- for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)if(overlap(nodes[i],nodes[j]))overlaps.push([nodes[i].id,nodes[j].id]);
+ for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){if(!overlap(nodes[i],nodes[j]))continue; /* B1-063: a boundary event attached to its host's border is not an overlap. */ if(nodes[i].x_boundaryOf===nodes[j].id||nodes[j].x_boundaryOf===nodes[i].id)continue; overlaps.push([nodes[i].id,nodes[j].id]);}
  for(let i=0;i<routes.length;i++){const r=routes[i];for(const s of recs[i])for(let k=0;k<nodes.length;k++){const n=nodes[k];if(n.id===r.r?.from.element||n.id===r.r?.to.element)continue;const b=nodeBoxes[k];if(s.maxx<=b.x+EPS||s.minx>=b.x+b.w-EPS||s.maxy<=b.y+EPS||s.miny>=b.y+b.h-EPS)continue;if(segHitsBox(s.ax,s.ay,s.bx,s.by,b))through.push([r.id,n.id]);}}
  for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++)if(recs[i].some(s=>recs[j].some(t=>collinearRec(s,t,.1))))shared.push([routes[i].id,routes[j].id]);
  for(let li=0;li<labels.length;li++)for(let i=0;i<routes.length;i++)if(labels[li].id!==routes[i].id&&recs[i].some(s=>segHitsBox(s.ax,s.ay,s.bx,s.by,labelBoxes[li])))masking.push([labels[li].id,routes[i].id]);
@@ -1327,6 +1417,7 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  else if(type==='hollow_diamond')s+=`<path d="M0 0L-8 -5L-16 0L-8 5Z" fill="${esc$1(surface)}"/>`;
  else if(type==='triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc$1(surface)}"/>`;
  else if(type==='filled_triangle')s+=`<path d="M0 0L-12 -7L-12 7Z" fill="${esc$1(ink)}"/>`;
+ else if(type==='slash')s+=`<path d="M-9 -6L-3 6" stroke-width="2.4"/>`;
  else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc$1(surface)}"/>`;
  else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
  else if(['one','zeroone','many','zeromany'].includes(type)){
@@ -1388,6 +1479,12 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  
  if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=legendPlacement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$4.round(q$1(p.layout.gap,100)*api$4.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=api$3.place(geoms,rels,ir,options);geoms=placed.nodes;
+ /* B1-063: BPMN boundary events attach to their host's bottom border (port
+  * attachment precedent — visual anchor, the node keeps its identity). */
+ {const byIdPre=new Map(geoms.map(g=>[g.id,g]));
+  for(const g of geoms){const xe=g.n.properties.x_event;
+   if(xe?.position==='boundary'&&xe.on){const host=byIdPre.get(xe.on.$ref);
+    if(host){g.x=host.x+host.w/2-g.w/2;g.y=host.y+host.h-g.h*0.30;g.x_boundaryOf=host.id;}}}}
  geoms.reduce((m,g)=>Math.max(m,g.w),270);geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
  let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q$1(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q$1(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q$1(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q$1(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
@@ -1442,6 +1539,8 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    * structured/expansion region keyword. */
   if(f.x_interruptible===true)diagram+=`<rect data-interruptible="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="18" fill="none" stroke="${t.rule}" stroke-dasharray="7 5"/>`;
   if(f.x_structured?.mode)diagram+=text$1(f.x+15,f.y+46,'«'+f.x_structured.mode+'»',11,t.muted,650);
+  /* B1-063: collapsed pool — black-box participant band. */
+  if(f.x_pool===true&&f.x_collapsed===true)diagram+=`<rect data-collapsed-pool="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="${esc$1(t.surface)}" stroke="${esc$1(t.ink)}" stroke-width="2.4"/>`;
   diagram+=`</g>`;}
  const routeColours={};
  const gensets=new Map();

@@ -77,3 +77,67 @@ process semantics, and full BPMN conformance are out of scope for
 `bpmn.basic@1`. The `capabilities.json` `unsupported[]` line "complete
 UML/SysML/BPMN/DMN metamodels or external interchange" remains true and
 untouched.
+
+# 32a. BPMN 2.0.2 full notation (bpmn.process@1 / bpmn.choreography@1 / bpmn.conversation@1)
+
+Status: implemented in runtime 0.7.0, governed by RFC-126
+(`standard/governance/rfcs/RFC-126-bpmn-compliance.md`). `bpmn.basic@1` stays
+installed and immutable; its fixtures render byte-identically.
+
+A shared **decorator layer** in `ddn-shapes.js` (event rings + trigger icons,
+gateway inner glyphs, activity border modes and marker badges, boundary
+attachment) is driven by the extension contracts, not profile ids, so other
+notations can reuse it.
+
+## Events — `x_event` extended
+
+`type`: `none, message, timer, signal, error, escalation, compensation,
+conditional, link, terminate, cancel, multiple, parallel_multiple`; plus
+`position: start|intermediate|end|boundary`, `interrupting: boolean`,
+`on: @ref`. New kind `flow.intermediate`. Under the new profiles, event kinds
+render as rings (start thin, intermediate double, end thick) with trigger
+icons; boundary events attach to the host task's border (dashed ring when
+non-interrupting). Trigger/position semantics: `DDN-PJ175` (x_event owner
+kind; terminate/cancel/compensation placement; boundary host must be a
+task/subprocess).
+
+## Gateways — `x_gateway` extended
+
+`exclusive` (X), `parallel` (+), `inclusive` (O), `complex` (star), `event`
+(pentagon), `event_exclusive` (pentagon + X) render as true inner glyphs.
+Event-based gateways need at least two outgoing sequence flows
+(`DDN-PJ176`); the extended types outside BPMN profiles are `DDN-PJ176`.
+
+## Activities — `x_activity` (new)
+
+`{ call?, transaction?, adhoc?, event_subprocess?, collapsed?, markers?:
+[loop, parallel, sequential, compensation] }` on task kinds
+(`DDN-PJ177`): thick border (call), double border (transaction), dashed
+border (event subprocess), badge row at bottom-left (loop, |||, ≡,
+compensation triangles, ~ ad-hoc).
+
+## Data, flows, pools
+
+`flow.dataobject` / `flow.datainput` / `flow.dataoutput` (folded documents;
+`x_io: { set: true }` collection badge) and `flow.datastore` (cylinder);
+`bpmn.association` is the dashed data association (data node on one side,
+activity on the other — `DDN-PJ180`). Sequence-flow variants use
+`source_mark`: `slash` (default flow) and `diamond` (conditional flow).
+Pools/lanes use frames (`x_pool`); a collapsed pool adds `x_collapsed: true`
+(black-box band — authors select the pool scope only). `flow.group` renders
+the dashed rounded group artifact; `flow.annotation` is the existing bracket.
+
+## Choreography and conversation
+
+`bpmn.choreography@1`: `flow.choreotask` with `x_bands: [participants]`
+renders participant bands (top/bottom); a band name ending in ` *` draws the
+multi-instance marker; gateways and sequence flows are shared; a choreography
+task needs at least two bands (`DDN-PJ178`). `bpmn.conversation@1`:
+`flow.conversation` / `flow.subconversation` / `flow.callconversation`
+hexagon nodes linked to participants by `bpmn.conversationlink`
+(`DDN-PJ179`); participant bands reuse the pool frame machinery.
+
+Fixtures: `website/examples/basics/82-bpmn-complete.ddn` (four views, one per
+BPMN diagram family), tests `notation/tests/bpmn-compliance.js` and the
+`bpmn-showcase.js` sweep. Out of scope, declared in the profiles: BPMN XML/DI
+interchange, execution semantics, formal OMG certification.

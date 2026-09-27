@@ -96,6 +96,48 @@ function validate(ir,E){
    if(f.scope&&sc&&!NODE.has(sc.kind))fail('DDN-PJ164','Deployment nesting frames must scope to a node kind (uml.node/device/executionenv); '+f.id+' scopes to '+sc.kind,f);
   }
  }
+ /* B1-063: BPMN 2.0.2 semantics — decorator contracts are profile-neutral,
+  * so the checks fire wherever the properties appear. */
+ {
+  const BPMN=/^bpmn\./.test(profile);
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   const xe=n.properties.x_event;
+   if(xe){
+    if(!['flow.start','flow.intermediate','flow.end'].includes(n.kind))fail('DDN-PJ175','x_event applies to event kinds (flow.start/intermediate/end); '+n.id+' is '+n.kind,n);
+    const pos=xe.position||(n.kind==='flow.start'?'start':n.kind==='flow.end'?'end':'intermediate');
+    if(xe.type==='terminate'&&pos!=='end')fail('DDN-PJ175','Terminate trigger belongs on end events; '+n.id+' is '+pos,n);
+    if(xe.interrupting===false&&!['boundary','intermediate'].includes(pos))fail('DDN-PJ175','Non-interrupting applies to boundary or intermediate events; '+n.id,n);
+    if(['cancel','compensation'].includes(xe.type)&&!['boundary','end'].includes(pos))fail('DDN-PJ175',xe.type+' trigger belongs on boundary or end events; '+n.id+' is '+pos,n);
+    if(xe.position==='boundary'){
+     const host=ns.get(xe.on?.$ref);
+     if(!host||!['flow.process','flow.subprocess'].includes(host.kind))fail('DDN-PJ175','Boundary event '+n.id+' must name x_event.on resolving to a task/subprocess',n);
+    }
+   }
+   const xg=n.properties.x_gateway;
+   if(xg&&['complex','event','event_exclusive'].includes(xg.type)&&!BPMN)fail('DDN-PJ176','Gateway type '+xg.type+' requires a BPMN process/choreography/conversation profile',n);
+   if(xg&&xg.type==='event'&&BPMN){
+    const out=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.from.element===n.id);
+    if(out.length<2)fail('DDN-PJ176','Event-based gateway '+n.id+' needs at least two outgoing sequence flows',n);
+   }
+   const xa=n.properties.x_activity;
+   if(xa!==undefined&&!['flow.process','flow.subprocess','flow.choreotask'].includes(n.kind))fail('DDN-PJ177','x_activity markers apply to task/subprocess kinds; '+n.id+' is '+n.kind,n);
+   if(xa&&(xa.call||xa.transaction)&&n.kind==='flow.choreotask')fail('DDN-PJ177','Call/transaction are process-diagram activities, not choreography bands',n);
+   if(n.properties.x_bands!==undefined&&n.kind!=='flow.choreotask')fail('DDN-PJ178','x_bands applies to flow.choreotask only; '+n.id+' is '+n.kind,n);
+   if(n.kind==='flow.choreotask'&&profile==='bpmn.choreography@1'&&(n.properties.x_bands||[]).length<2)fail('DDN-PJ178','Choreography task '+n.id+' needs at least two participant bands (x_bands)',n);
+  }
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id))){
+   if(r.kind==='bpmn.conversationlink'){
+    const t=ns.get(r.to.element);
+    if(!t||!t.kind.startsWith('flow.conversation')&&!['flow.subconversation','flow.callconversation'].includes(t.kind))fail('DDN-PJ179','Conversation link '+r.id+' must target a conversation node',r);
+   }
+   if(r.kind==='bpmn.association'){
+    const DATA=['flow.dataobject','flow.datainput','flow.dataoutput','flow.datastore'];
+    const a=ns.get(r.from.element),b=ns.get(r.to.element);
+    if(!(DATA.includes(a?.kind)||DATA.includes(b?.kind)))fail('DDN-PJ180','Data association '+r.id+' needs a data node on one side and an activity on the other',r);
+    if(DATA.includes(a?.kind)&&DATA.includes(b?.kind))fail('DDN-PJ180','Data association '+r.id+' connects two data nodes; one side must be an activity',r);
+   }
+  }
+ }
  /* B1-061 (RFC-125): UML remainder semantics. */
  if(profile==='uml.object@2'){
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.properties.x_instance)){

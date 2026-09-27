@@ -55,8 +55,8 @@ function registry(base){
  out.extension_contracts.x_activation=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['from','to'],properties:{from:ref,to:ref},additionalProperties:false}},['object']);
  out.extension_contracts.x_instance=def({type:'object',required:['classifier'],additionalProperties:true},['object']);
  out.extension_contracts.x_partition=def({type:'object',required:['lane'],properties:{lane:{type:'string',minLength:1}},additionalProperties:false},['object']);
- out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','error']}},additionalProperties:false},['object']);
- out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive']}},additionalProperties:false},['object']);
+ out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
+ out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
  out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']}},additionalProperties:false},['object']);
@@ -74,6 +74,10 @@ function registry(base){
  out.extension_contracts.x_pack=def({type:'object',properties:{visibility:{enum:['public','private']}},additionalProperties:false},['object']);
  out.extension_contracts.x_use=def({type:'object',properties:{arguments:{type:'array',maxItems:8,items:{type:'string',minLength:1}},gates:{type:'array',maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  out.extension_contracts.x_timeconstraint=def({type:'array',minItems:1,maxItems:6,items:{type:'string',minLength:1}},['object']);
+ /* B1-063: BPMN activity markers, input/output sets, choreography bands. */
+ out.extension_contracts.x_activity=def({type:'object',properties:{call:{type:'boolean'},transaction:{type:'boolean'},adhoc:{type:'boolean'},event_subprocess:{type:'boolean'},collapsed:{type:'boolean'},markers:{type:'array',maxItems:4,uniqueItems:true,items:{enum:['loop','parallel','sequential','compensation']}}},additionalProperties:false},['object']);
+ out.extension_contracts.x_io=def({type:'object',properties:{set:{type:'boolean'}},additionalProperties:false},['object']);
+ out.extension_contracts.x_bands=def({type:'array',minItems:1,maxItems:6,uniqueItems:true,items:{type:'string',minLength:1}},['object']);
  cache.set(base,out);cache.set(out,out);return out;
 }
 const get=id=>catalogue.profiles.find(x=>x.id===id);
