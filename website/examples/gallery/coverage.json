@@ -775,6 +775,13 @@
       "combined": "website/examples/basics/42-communication-diagram.combined.ddn",
       "svg": "profiles/uml-communication-1.svg"
     },
+    "uml.deployment@1": {
+      "entry": "website/examples/basics/78-uml-deployment.ddn",
+      "view": "main",
+      "title": "UML deployment / nodes and artifacts",
+      "kind": "graph",
+      "svg": "profiles/uml-deployment-1.svg"
+    },
     "uml.interaction_overview@1": {
       "entry": "website/examples/basics/48-interaction-overview.ddn",
       "view": "overview",
@@ -2977,6 +2984,24 @@
       "profile": "uml.statemachine@1",
       "kind": "graph",
       "svg": "corpus/basics-77-uml-statemachine-complete.svg"
+    },
+    {
+      "entry": "website/examples/basics/78-uml-deployment.ddn",
+      "view": "main",
+      "title": "UML deployment / nodes and artifacts",
+      "views": [
+        {
+          "id": "main",
+          "title": "UML deployment / nodes and artifacts"
+        },
+        {
+          "id": "nested",
+          "title": "UML deployment / nested nodes"
+        }
+      ],
+      "profile": "uml.deployment@1",
+      "kind": "graph",
+      "svg": "corpus/basics-78-uml-deployment.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

@@ -53,7 +53,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 </div></header>
 <div class="gallery-intro">
 <h1>DDN example gallery</h1>
-<p>Full notation coverage for Diagram Design Notation 0.7.0: 101 installed profiles across 12 projection kinds, 92 variation renders, and the complete example corpus (104 example files) — 297 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
+<p>Full notation coverage for Diagram Design Notation 0.7.0: 102 installed profiles across 12 projection kinds, 92 variation renders, and the complete example corpus (105 example files) — 299 SVGs, each produced by the reference CLI render path. This page is also the examples index: every runnable <code>.ddn</code> source the project ships is rendered below with its explanation, source and deep links.</p>
 <p>Static page: every diagram is a pre-rendered SVG; no runtime is inlined, so this page works from <code>file://</code>. Open <strong>Explanation, DDN source &amp; links</strong> under any figure for what the diagram shows, its browsable DDN source, a wiki page for the diagram type, and deep links that open the exact view in the unified tool (viewer or designer mode — multi-file examples open their verified combined single-file variant there). Flow animation is part of the live renders: open any flow view in the tool and use its animation drawer, for example the <a href="../tools/index.html?entry=../examples/live/adaptive-lab.ddn&amp;view=automatic&amp;mode=explore">adaptive flow lab</a>.</p>
 </div>
 <nav class="sections">
@@ -72,7 +72,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <a href="#coverage">Coverage table</a>
 </nav>
 <main class="gallery">
-<h2 id="profiles">Installed profiles (101)</h2>
+<h2 id="profiles">Installed profiles (102)</h2>
 <p>One render per installed profile from <code>standard/registry/profiles/catalogue.json</code>. Each entry reuses the nearest existing example under <code>website/examples/basics/</code> or <code>website/examples/projections/</code>; the coverage map is generated, not hand-written, and is enforced by <code>notation/tests/gallery-coverage.js</code>.</p>
 <section class="family" id="family-archimate">
 <h3>archimate</h3>
@@ -583,6 +583,10 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Communication view: objects and the numbered messages they exchange, laid out as a graph.</p>
 <p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/42-communication-diagram.combined.ddn&amp;view=communication&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/42-communication-diagram.combined.ddn&amp;view=communication&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-42-communication-diagram-ddn"><code>website/examples/basics/42-communication-diagram.ddn</code></a> (<a href="../examples/basics/42-communication-diagram.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/basics/42-communication-diagram.combined.ddn"><code>42-communication-diagram.combined.ddn</code></a></p></details></figcaption></figure>
+<figure id="profile-uml-deployment-1"><a href="profiles/uml-deployment-1.svg"><img src="profiles/uml-deployment-1.svg" alt="uml.deployment@1 — UML deployment / nodes and artifacts" loading="lazy"></a><figcaption><code>uml.deployment@1</code><br>UML deployment / nodes and artifacts<br><small>website/examples/basics/78-uml-deployment.ddn · view <code>main</code></small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">A UML-style view of the semantic model.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/78-uml-deployment.ddn&amp;view=main&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/78-uml-deployment.ddn&amp;view=main&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-78-uml-deployment-ddn"><code>website/examples/basics/78-uml-deployment.ddn</code></a> (<a href="../examples/basics/78-uml-deployment.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="profile-uml-interaction-overview-1"><a href="profiles/uml-interaction-overview-1.svg"><img src="profiles/uml-interaction-overview-1.svg" alt="uml.interaction_overview@1 — Checkout interaction overview" loading="lazy"></a><figcaption><code>uml.interaction_overview@1</code><br>Checkout interaction overview<br><small>website/examples/basics/48-interaction-overview.ddn · view <code>overview</code></small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Interaction overview: a flowchart whose nodes are whole interaction fragments.</p>
 <p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../tools/index.html?entry=../examples/basics/48-interaction-overview.combined.ddn&amp;view=overview&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/48-interaction-overview.combined.ddn&amp;view=overview&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
@@ -1054,8 +1058,8 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <p class="detail-src">Source: <a href="#src-website-examples-basics-73-iso-architecture-ddn"><code>website/examples/basics/73-iso-architecture.ddn</code></a> (<a href="../examples/basics/73-iso-architecture.ddn">raw .ddn</a>) · combined single-file variant: <a href="../examples/basics/73-iso-architecture.combined.ddn"><code>73-iso-architecture.combined.ddn</code></a></p></details></figcaption></figure>
 </div>
 </section>
-<h2 id="corpus">Example corpus (104)</h2>
-<p>Every view-bearing example file under <code>website/examples/</code> — the 104 sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): <code>website/examples/projections/formats.ddn</code> <code>website/examples/projections/model.ddn</code> <code>website/examples/quality/details.ddn</code> <code>website/examples/quality/formats.ddn</code> <code>website/examples/quality/model.ddn</code> <code>website/examples/use-cases/formats.ddn</code>.</p>
+<h2 id="corpus">Example corpus (105)</h2>
+<p>Every view-bearing example file under <code>website/examples/</code> — the 105 sources the retired examples index listed — rendered on its first view with the same detail treatment as the profiles above. Files declaring several views note them in their detail block; open the deep link and switch views in the tool. Combined single-file variants (<code>.combined.ddn</code>) of multi-file examples are covered by their original's detail block, and the <code>gallery/src/</code> sheet sources by the variation sheets above. Library files with no views of their own (imported by other examples, nothing to render): <code>website/examples/projections/formats.ddn</code> <code>website/examples/projections/model.ddn</code> <code>website/examples/quality/details.ddn</code> <code>website/examples/quality/formats.ddn</code> <code>website/examples/quality/model.ddn</code> <code>website/examples/use-cases/formats.ddn</code>.</p>
 <div class="grid">
 <figure id="corpus-basics-01-customer"><a href="corpus/basics-01-customer.svg"><img src="corpus/basics-01-customer.svg" alt="website/examples/basics/01-customer.ddn — Customer data / a shared model" loading="lazy"></a><figcaption><code>website/examples/basics/01-customer.ddn</code><br>Customer data / a shared model<br><small>view <code>overview</code> of 4</small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Free-form DDN graph: objects and relations from the semantic model drawn as boxes and links. This file declares 4 views: Customer data / a shared model (overview), Customer data / compact view (compact), Customer data / print rendition (print), Customer data / minimal chrome for embedding (embedded) — the deep links open the first; switch views in the tool’s view picker.</p>
@@ -1365,6 +1369,10 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">A UML-style view of the semantic model. This file declares 2 views: UML state machine / activities and pseudostates (pseudostates), UML state machine / composite, history, submachine (composite) — the deep links open the first; switch views in the tool’s view picker.</p>
 <p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/77-uml-statemachine-complete.ddn&amp;view=pseudostates&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/77-uml-statemachine-complete.ddn&amp;view=pseudostates&amp;mode=design">Open in designer</a></p>
 <p class="detail-src">Source: <a href="#src-website-examples-basics-77-uml-statemachine-complete-ddn"><code>website/examples/basics/77-uml-statemachine-complete.ddn</code></a> (<a href="../examples/basics/77-uml-statemachine-complete.ddn">raw .ddn</a>)</p></details></figcaption></figure>
+<figure id="corpus-basics-78-uml-deployment"><a href="corpus/basics-78-uml-deployment.svg"><img src="corpus/basics-78-uml-deployment.svg" alt="website/examples/basics/78-uml-deployment.ddn — UML deployment / nodes and artifacts" loading="lazy"></a><figcaption><code>website/examples/basics/78-uml-deployment.ddn</code><br>UML deployment / nodes and artifacts<br><small>view <code>main</code> of 2</small>
+<details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">A UML-style view of the semantic model. This file declares 2 views: UML deployment / nodes and artifacts (main), UML deployment / nested nodes (nested) — the deep links open the first; switch views in the tool’s view picker.</p>
+<p class="detail-links"><a href="../tools/index.html?entry=../examples/basics/78-uml-deployment.ddn&amp;view=main&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/basics/78-uml-deployment.ddn&amp;view=main&amp;mode=design">Open in designer</a></p>
+<p class="detail-src">Source: <a href="#src-website-examples-basics-78-uml-deployment-ddn"><code>website/examples/basics/78-uml-deployment.ddn</code></a> (<a href="../examples/basics/78-uml-deployment.ddn">raw .ddn</a>)</p></details></figcaption></figure>
 <figure id="corpus-projections-views"><a href="corpus/projections-views.svg"><img src="corpus/projections-views.svg" alt="website/examples/projections/views.ddn — 01 / Purchasing control flow" loading="lazy"></a><figcaption><code>website/examples/projections/views.ddn</code><br>01 / Purchasing control flow<br><small>view <code>flowchart</code> of 27</small>
 <details class="ddn-detail"><summary>Explanation, DDN source &amp; links</summary><p class="explain">Process flow: steps as boxes, decisions as diamonds, arrows showing order of execution. This file declares 27 views: 01 / Purchasing control flow (flowchart), 02 / Shared responsibility assignments (responsibility_graph), 03 / Model-derived RACI (raci), 04 / Model-derived CRUD (crud), 05 / Numbered Gane–Sarson-style DFD (dfd_gane), 06 / Yourdon-style DFD (dfd_yourdon), 07 / Declared class / interface subset (structure), 08 / Actor and use-case subset (usecases), 09 / Requirement traceability (requirements), 10 / Entity-field representation (erd), 11 / Chen binary projection (chen), 12 / Synthetic monthly value — bar (chart_bar), 13 / Synthetic monthly value — line (chart_line), 14 / Synthetic monthly value — area (chart_area), 15 / Synthetic monthly value — pie (chart_pie), 16 / Synthetic monthly value — donut (chart_donut), 17 / Cost versus recorded value (scatter), 18 / UTC monthly observations (time_series), 19 / Shared observation table (record_table), 20 / Declarative decision-table presentation (decision_table), 21 / Supplied-date procurement schedule (gantt), 22 / Schedule source records (schedule_table), 23 / Reusable SWOT panel template (swot), 24 / SIPOC from shared notes (sipoc), 25 / Service journey with spanning panels (journey), 26 / General relationship matrix (matrix_general), 27 / Composable semantic silhouettes (shape_atlas) — the deep links open the first; switch views in the tool’s view picker.</p>
 <p class="detail-links"><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Wiki: Flowcharts</a> · <a href="../tools/index.html?entry=../examples/projections/views.combined.ddn&amp;view=flowchart&amp;mode=view">Open in viewer</a> · <a href="../tools/index.html?entry=../examples/projections/views.combined.ddn&amp;view=flowchart&amp;mode=design">Open in designer</a> <small>(single-file variant of the multi-file example)</small></p>
@@ -1484,7 +1492,7 @@ footer.gen{padding:1.5rem 2rem;font-size:.8rem;color:#667;max-width:1500px;margi
 <tr><td><code>decision</code></td><td>1</td><td><a href="#profile-decision-rules-1"><code>decision.rules@1</code></a></td></tr>
 <tr><td><code>fishbone</code></td><td>1</td><td><a href="#profile-fishbone-basic-1"><code>fishbone.basic@1</code></a></td></tr>
 <tr><td><code>geo</code></td><td>3</td><td><a href="#profile-geo-choropleth-1"><code>geo.choropleth@1</code></a> <a href="#profile-geo-outline-1"><code>geo.outline@1</code></a> <a href="#profile-geo-symbols-1"><code>geo.symbols@1</code></a></td></tr>
-<tr><td><code>graph</code></td><td>39</td><td><a href="#profile-archimate-basic-1"><code>archimate.basic@1</code></a> <a href="#profile-bpmn-basic-1"><code>bpmn.basic@1</code></a> <a href="#profile-c4-component-1"><code>c4.component@1</code></a> <a href="#profile-c4-container-1"><code>c4.container@1</code></a> <a href="#profile-c4-context-1"><code>c4.context@1</code></a> <a href="#profile-cmmn-basic-1"><code>cmmn.basic@1</code></a> <a href="#profile-concept-map-1"><code>concept.map@1</code></a> <a href="#profile-ddn-1"><code>ddn@1</code></a> <a href="#profile-dfd-gane-sarson-1"><code>dfd.gane_sarson@1</code></a> <a href="#profile-dfd-yourdon-1"><code>dfd.yourdon@1</code></a> <a href="#profile-epc-basic-1"><code>epc.basic@1</code></a> <a href="#profile-erd-crowfoot-1"><code>erd.crowfoot@1</code></a> <a href="#profile-event-tree-1"><code>event.tree@1</code></a> <a href="#profile-family-tree-1"><code>family.tree@1</code></a> <a href="#profile-fault-tree-1"><code>fault.tree@1</code></a> <a href="#profile-flow-basic-1"><code>flow.basic@1</code></a> <a href="#profile-flow-documented-2"><code>flow.documented@2</code></a> <a href="#profile-mindmap-basic-1"><code>mindmap.basic@1</code></a> <a href="#profile-network-basic-1"><code>network.basic@1</code></a> <a href="#profile-network-rack-1"><code>network.rack@1</code></a> <a href="#profile-org-tree-1"><code>org.tree@1</code></a> <a href="#profile-pert-cpm-1"><code>pert.cpm@1</code></a> <a href="#profile-requirements-basic-1"><code>requirements.basic@1</code></a> <a href="#profile-state-composite-1"><code>state.composite@1</code></a> <a href="#profile-state-flat-1"><code>state.flat@1</code></a> <a href="#profile-sysml-bdd-1"><code>sysml.bdd@1</code></a> <a href="#profile-sysml-ibd-1"><code>sysml.ibd@1</code></a> <a href="#profile-sysml-parametric-1"><code>sysml.parametric@1</code></a> <a href="#profile-uml-activity-1"><code>uml.activity@1</code></a> <a href="#profile-uml-communication-1"><code>uml.communication@1</code></a> <a href="#profile-uml-interaction-overview-1"><code>uml.interaction_overview@1</code></a> <a href="#profile-uml-object-1"><code>uml.object@1</code></a> <a href="#profile-uml-statemachine-1"><code>uml.statemachine@1</code></a> <a href="#profile-uml-structure-1"><code>uml.structure@1</code></a> <a href="#profile-uml-structure-2"><code>uml.structure@2</code></a> <a href="#profile-uml-usecase-1"><code>uml.usecase@1</code></a> <a href="#profile-uml-usecase-2"><code>uml.usecase@2</code></a> <a href="#profile-wbs-tree-1"><code>wbs.tree@1</code></a> <a href="#profile-wireframe-ui-1"><code>wireframe.ui@1</code></a></td></tr>
+<tr><td><code>graph</code></td><td>40</td><td><a href="#profile-archimate-basic-1"><code>archimate.basic@1</code></a> <a href="#profile-bpmn-basic-1"><code>bpmn.basic@1</code></a> <a href="#profile-c4-component-1"><code>c4.component@1</code></a> <a href="#profile-c4-container-1"><code>c4.container@1</code></a> <a href="#profile-c4-context-1"><code>c4.context@1</code></a> <a href="#profile-cmmn-basic-1"><code>cmmn.basic@1</code></a> <a href="#profile-concept-map-1"><code>concept.map@1</code></a> <a href="#profile-ddn-1"><code>ddn@1</code></a> <a href="#profile-dfd-gane-sarson-1"><code>dfd.gane_sarson@1</code></a> <a href="#profile-dfd-yourdon-1"><code>dfd.yourdon@1</code></a> <a href="#profile-epc-basic-1"><code>epc.basic@1</code></a> <a href="#profile-erd-crowfoot-1"><code>erd.crowfoot@1</code></a> <a href="#profile-event-tree-1"><code>event.tree@1</code></a> <a href="#profile-family-tree-1"><code>family.tree@1</code></a> <a href="#profile-fault-tree-1"><code>fault.tree@1</code></a> <a href="#profile-flow-basic-1"><code>flow.basic@1</code></a> <a href="#profile-flow-documented-2"><code>flow.documented@2</code></a> <a href="#profile-mindmap-basic-1"><code>mindmap.basic@1</code></a> <a href="#profile-network-basic-1"><code>network.basic@1</code></a> <a href="#profile-network-rack-1"><code>network.rack@1</code></a> <a href="#profile-org-tree-1"><code>org.tree@1</code></a> <a href="#profile-pert-cpm-1"><code>pert.cpm@1</code></a> <a href="#profile-requirements-basic-1"><code>requirements.basic@1</code></a> <a href="#profile-state-composite-1"><code>state.composite@1</code></a> <a href="#profile-state-flat-1"><code>state.flat@1</code></a> <a href="#profile-sysml-bdd-1"><code>sysml.bdd@1</code></a> <a href="#profile-sysml-ibd-1"><code>sysml.ibd@1</code></a> <a href="#profile-sysml-parametric-1"><code>sysml.parametric@1</code></a> <a href="#profile-uml-activity-1"><code>uml.activity@1</code></a> <a href="#profile-uml-communication-1"><code>uml.communication@1</code></a> <a href="#profile-uml-deployment-1"><code>uml.deployment@1</code></a> <a href="#profile-uml-interaction-overview-1"><code>uml.interaction_overview@1</code></a> <a href="#profile-uml-object-1"><code>uml.object@1</code></a> <a href="#profile-uml-statemachine-1"><code>uml.statemachine@1</code></a> <a href="#profile-uml-structure-1"><code>uml.structure@1</code></a> <a href="#profile-uml-structure-2"><code>uml.structure@2</code></a> <a href="#profile-uml-usecase-1"><code>uml.usecase@1</code></a> <a href="#profile-uml-usecase-2"><code>uml.usecase@2</code></a> <a href="#profile-wbs-tree-1"><code>wbs.tree@1</code></a> <a href="#profile-wireframe-ui-1"><code>wireframe.ui@1</code></a></td></tr>
 <tr><td><code>matrix</code></td><td>8</td><td><a href="#profile-matrix-ansoff-1"><code>matrix.ansoff@1</code></a> <a href="#profile-matrix-bcg-1"><code>matrix.bcg@1</code></a> <a href="#profile-matrix-crud-1"><code>matrix.crud@1</code></a> <a href="#profile-matrix-heatmap-1"><code>matrix.heatmap@1</code></a> <a href="#profile-matrix-raci-1"><code>matrix.raci@1</code></a> <a href="#profile-matrix-relations-1"><code>matrix.relations@1</code></a> <a href="#profile-matrix-storymap-1"><code>matrix.storymap@1</code></a> <a href="#profile-matrix-tows-1"><code>matrix.tows@1</code></a></td></tr>
 <tr><td><code>panels</code></td><td>12</td><td><a href="#profile-canvas-bmc-1"><code>canvas.bmc@1</code></a> <a href="#profile-canvas-empathy-1"><code>canvas.empathy@1</code></a> <a href="#profile-canvas-lean-1"><code>canvas.lean@1</code></a> <a href="#profile-canvas-pest-1"><code>canvas.pest@1</code></a> <a href="#profile-canvas-pestle-1"><code>canvas.pestle@1</code></a> <a href="#profile-canvas-porter5-1"><code>canvas.porter5@1</code></a> <a href="#profile-canvas-scorecard-1"><code>canvas.scorecard@1</code></a> <a href="#profile-panels-basic-1"><code>panels.basic@1</code></a> <a href="#profile-panels-composed-1"><code>panels.composed@1</code></a> <a href="#profile-panels-journey-1"><code>panels.journey@1</code></a> <a href="#profile-panels-pyramid-1"><code>panels.pyramid@1</code></a> <a href="#profile-panels-venn-1"><code>panels.venn@1</code></a></td></tr>
 <tr><td><code>sequence</code></td><td>2</td><td><a href="#profile-uml-sequence-1"><code>uml.sequence@1</code></a> <a href="#profile-uml-sequence-2"><code>uml.sequence@2</code></a></td></tr>
@@ -11470,15 +11478,77 @@ data machine {
 
 view pseudostates &quot;UML state machine / activities and pseudostates&quot; {
     data: [@player];
-    projection { kind: graph; profile: &quot;uml.statemachine@1&quot;; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    projection { profile: &quot;uml.statemachine@1&quot;; }
+    publication { size: content; fit: none; }
 }
 
 view composite &quot;UML state machine / composite, history, submachine&quot; {
     data: [@machine];
-    projection { kind: graph; profile: &quot;uml.statemachine@1&quot;; }
+    projection { profile: &quot;uml.statemachine@1&quot;; }
     frame boundary &quot;Active&quot; { scope: @machine.active; members: [@machine.hist, @machine.deep_hist, @machine.ep_in, @machine.ep_out, @machine.ui_idle, @machine.ui_busy, @machine.net_idle, @machine.net_sync]; }
-    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }
+    publication { size: content; fit: none; }
+}
+</code></pre>
+
+</details>
+<details class="ddn-source" id="src-website-examples-basics-78-uml-deployment-ddn"><summary><code>website/examples/basics/78-uml-deployment.ddn</code></summary>
+<h4><code>website/examples/basics/78-uml-deployment.ddn</code></h4>
+<pre class="ddn-src"><code>ddn &quot;0.5&quot;;
+module &quot;ddn.examples.umldep&quot;;
+
+// B1-058 (RFC-122): UML 2.5.1 deployment diagrams on uml.deployment@1.
+// View 1: devices, execution environment, artifacts, deploy/manifest,
+// communication paths with multiplicity. View 2: node nesting via frames.
+// Minimal current-dialect style, no pinned layout.
+
+data shop {
+    object lb &quot;Load balancer&quot; { kind: &quot;uml.device&quot;; }
+    object appsrv &quot;App server&quot; { kind: &quot;uml.device&quot;; }
+    object jvm &quot;Tomcat 10&quot; { kind: &quot;uml.executionenv&quot;; }
+    object war &quot;shop.war&quot; { kind: &quot;uml.artifact&quot;; }
+    object cart &quot;Cart component&quot; { kind: &quot;uml.component&quot;; }
+    object dbnode &quot;DB server&quot; { kind: &quot;uml.node&quot;; }
+    object jar &quot;persistence.jar&quot; { kind: &quot;uml.artifact&quot;; }
+
+    relation lan &quot;https&quot; @lb -&gt; @appsrv { kind: &quot;uml.commpath&quot;;
+        x_endlabels: { source: { multiplicity: &quot;1&quot;; }; target: { multiplicity: &quot;1..*&quot;; }; };
+    }
+    relation dep1 &quot;&quot; @war -&gt; @jvm { kind: &quot;uml.deploy&quot;; }
+    relation dep2 &quot;&quot; @cart -&gt; @jvm { kind: &quot;uml.deploy&quot;; }
+    relation dep3 &quot;&quot; @jar -&gt; @dbnode { kind: &quot;uml.deploy&quot;; }
+    relation man &quot;&quot; @war -&gt; @cart { kind: &quot;uml.manifest&quot;; }
+    relation sql &quot;jdbc&quot; @appsrv -&gt; @dbnode { kind: &quot;uml.commpath&quot;; }
+}
+
+data cluster {
+    object zone &quot;Failover zone&quot; { kind: &quot;uml.node&quot;; }
+    object node_a &quot;Node A&quot; { kind: &quot;uml.device&quot;; }
+    object node_b &quot;Node B&quot; { kind: &quot;uml.device&quot;; }
+    object ee_a &quot;JVM&quot; { kind: &quot;uml.executionenv&quot;; }
+    object ee_b &quot;JVM&quot; { kind: &quot;uml.executionenv&quot;; }
+    object app_a &quot;orders.ear&quot; { kind: &quot;uml.artifact&quot;; }
+    object app_b &quot;orders.ear&quot; { kind: &quot;uml.artifact&quot;; }
+
+    relation ha &quot;&quot; @node_a -&gt; @node_b { kind: &quot;uml.commpath&quot;;
+        x_endlabels: { source: { multiplicity: &quot;1&quot;; }; target: { multiplicity: &quot;1&quot;; }; };
+    }
+    relation za &quot;&quot; @app_a -&gt; @ee_a { kind: &quot;uml.deploy&quot;; }
+    relation zb &quot;&quot; @app_b -&gt; @ee_b { kind: &quot;uml.deploy&quot;; }
+}
+
+view main &quot;UML deployment / nodes and artifacts&quot; {
+    data: [@shop];
+    projection { profile: &quot;uml.deployment@1&quot;; }
+    publication { size: content; fit: none; }
+}
+
+view nested &quot;UML deployment / nested nodes&quot; {
+    data: [@cluster];
+    projection { profile: &quot;uml.deployment@1&quot;; }
+    frame f_zone &quot;Failover zone&quot; { scope: @cluster.zone; members: [@cluster.node_a, @cluster.node_b]; }
+    frame f_a &quot;Node A&quot; { scope: @cluster.node_a; members: [@cluster.ee_a, @cluster.app_a]; }
+    frame f_b &quot;Node B&quot; { scope: @cluster.node_b; members: [@cluster.ee_b, @cluster.app_b]; }
+    publication { size: content; fit: none; }
 }
 </code></pre>
 
@@ -18688,6 +18758,7 @@ format shared {
 <tr><td><code>timeline.basic@1</code></td><td><a href="#profile-timeline-basic-1">21 / Supplied-date procurement schedule</a></td><td><code>timeline</code></td><td><code>website/examples/projections/views.ddn</code></td><td><a href="profiles/timeline-basic-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Timelines">wiki</a></td></tr>
 <tr><td><code>uml.activity@1</code></td><td><a href="#profile-uml-activity-1">Order fulfilment activity</a></td><td><code>graph</code></td><td><code>website/examples/basics/45-activity-diagram.ddn</code></td><td><a href="profiles/uml-activity-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>
 <tr><td><code>uml.communication@1</code></td><td><a href="#profile-uml-communication-1">Synthetic order flow / communication</a></td><td><code>graph</code></td><td><code>website/examples/basics/42-communication-diagram.ddn</code></td><td><a href="profiles/uml-communication-1.svg">SVG</a></td><td></td></tr>
+<tr><td><code>uml.deployment@1</code></td><td><a href="#profile-uml-deployment-1">UML deployment / nodes and artifacts</a></td><td><code>graph</code></td><td><code>website/examples/basics/78-uml-deployment.ddn</code></td><td><a href="profiles/uml-deployment-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>uml.interaction_overview@1</code></td><td><a href="#profile-uml-interaction-overview-1">Checkout interaction overview</a></td><td><code>graph</code></td><td><code>website/examples/basics/48-interaction-overview.ddn</code></td><td><a href="profiles/uml-interaction-overview-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">wiki</a></td></tr>
 <tr><td><code>uml.object@1</code></td><td><a href="#profile-uml-object-1">Synthetic snapshot / objects</a></td><td><code>graph</code></td><td><code>website/examples/basics/43-object-diagram.ddn</code></td><td><a href="profiles/uml-object-1.svg">SVG</a></td><td></td></tr>
 <tr><td><code>uml.sequence@1</code></td><td><a href="#profile-uml-sequence-1">Synthetic order flow / sequence</a></td><td><code>sequence</code></td><td><code>website/examples/basics/41-sequence-diagram.ddn</code></td><td><a href="profiles/uml-sequence-1.svg">SVG</a></td><td><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Sequence">wiki</a></td></tr>

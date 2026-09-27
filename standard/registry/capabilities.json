@@ -1474,7 +1474,7 @@
       "id": "dfd.gane_sarson@1",
       "projection": "graph",
       "diagramFamilies": [
-        "Gane–Sarson DFD"
+        "Gane\u2013Sarson DFD"
       ],
       "scope": "Numbered three-compartment processes; open-ended stores and external entities.",
       "validation": [
@@ -1495,7 +1495,7 @@
       ],
       "scope": "Circular processes; parallel-line stores; rectangular external entities.",
       "validation": [
-        "same structural checks as Gane–Sarson"
+        "same structural checks as Gane\u2013Sarson"
       ],
       "unsupported": [
         "complete SSADM lifecycle",
@@ -1533,24 +1533,40 @@
         "UML package subset",
         "UML component subset"
       ],
-      "scope": "uml.structure@1 plus UML 2.5.1 class-diagram notation (RFC-119): association-end multiplicity/role labels and qualifiers (x_endlabels), aggregation (hollow_diamond) and composition (diamond) marks, navigability arrowheads, association classes (x_association_class), n-ary associations (x_nary diamond junction), generalization sets (x_genset), templates (x_template), enumeration kind with literals, provided/required interfaces (uml.provided lollipop / uml.required socket), derived properties and property strings on members (x_member).",
+      "scope": "uml.structure@1 plus UML 2.5.1 class notation (RFC-119): end roles/multiplicity/qualifiers (x_endlabels), aggregation/composition/navigability marks, association classes, n-ary junction (x_nary), generalization sets, templates, enumerations, provided/required interfaces, member adornments (x_member).",
       "validation": [
         "profile endpoint restrictions",
-        "acyclic generalization",
-        "same-kind generalization",
-        "operation/attribute visibility enumeration",
-        "x_endlabels only on uml.association with well-formed multiplicity (DDN-PJ149)",
-        "association class resolves to a uml.class (DDN-PJ150)",
-        "n-ary association has three or more distinct classifier ends (DDN-PJ151)",
-        "generalization sets share one name per target (DDN-PJ152)",
-        "x_template only on uml.class (DDN-PJ153)",
-        "enumeration literals only on uml.enumeration members (DDN-PJ154)"
+        "acyclic, same-kind generalization",
+        "x_endlabels/multiplicity rules (DDN-PJ149)",
+        "association class (PJ150)",
+        "n-ary ends (PJ151)",
+        "generalization sets (PJ152)",
+        "template owner (PJ153)",
+        "enumeration literals (PJ154)"
       ],
       "unsupported": [
         "XMI",
         "OCL",
         "full UML type/parameter model",
         "assembly/delegation connectors (B1-059 scope)",
+        "formal UML conformance"
+      ]
+    },
+    {
+      "id": "uml.deployment@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML deployment diagram"
+      ],
+      "scope": "UML 2.5.1 deployment diagrams (RFC-122): nodes/devices/execution environments (3D-box), artifacts (document icon), deploy/manifest dependencies, communication paths with multiplicity, node nesting via frames, deployed components.",
+      "validation": [
+        "profile endpoint restrictions (DDN102)",
+        "commpath labels carry no qualifiers; nesting frames scope to node kinds (DDN-PJ164)"
+      ],
+      "unsupported": [
+        "middleware-specific deployment models",
+        "artifact content descriptors",
+        "topology discovery",
         "formal UML conformance"
       ]
     },
@@ -2112,7 +2128,7 @@
       "diagramFamilies": [
         "Sankey/flow diagram"
       ],
-      "scope": "Explicit source→target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
+      "scope": "Explicit source\u2192target flows; depth columns from pure sources; ribbon thickness encodes value; record provenance. Duplicate (source,target) pairs are allowed: ribbons stack in declaration order.",
       "validation": [
         "target is a property binding, not a numeric reference (DDN-PJ030)",
         "categorical x only (DDN-PJ030)",
@@ -2192,7 +2208,7 @@
         "participants limited to organization, team, role, analysis.role (DDN-PF007)",
         "reports_to links only (DDN-PF007)",
         "reporting hierarchy is acyclic (DDN-PF004)",
-        "exactly one root — one node with no incoming reports_to edge (DDN-PJ102)",
+        "exactly one root \u2014 one node with no incoming reports_to edge (DDN-PJ102)",
         "no node has multiple managers (DDN201, layout stage)"
       ],
       "unsupported": [
@@ -2212,7 +2228,7 @@
         "participants limited to analysis.task (DDN-PF007)",
         "analysis.decomposes links only (DDN-PF007)",
         "decomposition is acyclic (DDN-PF004)",
-        "exactly one root — one node with no incoming analysis.decomposes edge (DDN-PJ102)",
+        "exactly one root \u2014 one node with no incoming analysis.decomposes edge (DDN-PJ102)",
         "no node has multiple parents (DDN201, layout stage)"
       ],
       "unsupported": [
@@ -2233,7 +2249,7 @@
         "assoc links only (DDN-PF007)",
         "layout algorithm must be mindmap (DDN-PF007)",
         "branch hierarchy is acyclic (DDN-PF004)",
-        "exactly one root — one node with no incoming assoc edge (DDN-PJ102)",
+        "exactly one root \u2014 one node with no incoming assoc edge (DDN-PJ102)",
         "no node has multiple parents; declared root must be a hierarchy root (DDN201, DDN202, layout stage)"
       ],
       "unsupported": [
@@ -2441,15 +2457,15 @@
       "diagramFamilies": [
         "UML sequence diagram"
       ],
-      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (alt/opt/loop/break/par/neg/critical/seq/strict/ignore/consider/assert, nested, operands with guards — x_fragment), gates on fragment boundaries, «create» headers and ✕ destruction, synchronous/asynchronous arrowheads, explicit replies, lost/found messages, authorable execution occurrences (x_activation), time/duration constraints, state invariants (x_invariant).",
+      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (nested, guards \u2014 x_fragment), gates, create/delete, synch/asynch/reply/lost/found message sorts, authorable activations, time/duration constraints, state invariants.",
       "validation": [
-        "message endpoints are selected participant objects (DDN-PJ110)",
-        "participants without messages warn (DDN-PJW03)",
-        "fragment operands are contiguous, non-overlapping, strictly nested message spans (DDN-PJ155)",
-        "message sort/gate semantics (DDN-PJ156)",
-        "state invariants reference incident view messages (DDN-PJ157)",
-        "explicit activations reference incident, ordered view messages (DDN-PJ158)",
-        "time/duration annotations use {constraint} form (DDN-PJ159)"
+        "message endpoints are selected participants (DDN-PJ110)",
+        "empty lifelines warn (DDN-PJW03)",
+        "fragment span rules (DDN-PJ155)",
+        "sort/gate semantics (PJ156)",
+        "invariants (PJ157)",
+        "activations (PJ158)",
+        "time/duration form (PJ159)"
       ],
       "unsupported": [
         "region-local independent lifelines inside par operands (RFC-120 decision)",
@@ -2513,12 +2529,12 @@
       "diagramFamilies": [
         "UML state machine diagram"
       ],
-      "scope": "Full UML 2.5.1 state machines (RFC-121): state.flat@1/state.composite@1 vocabulary plus entry/exit/do activities and internal transitions (x_state), shallow/deep history, junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, trigger [guard] / effect transition labels, submachine states, after/at/when time events, composite states and parallel regions.",
+      "scope": "Full UML 2.5.1 state machines (RFC-121): flat/composite vocabulary plus entry/exit/do activities and internal transitions, history/junction/choice/entry-exit-point/fork-join/terminate pseudostates, trigger [guard] / effect labels, submachines, time events.",
       "validation": [
         "per-region single initial (DDN-PJ113)",
         "x_state owner/submachine rules (DDN-PJ160)",
-        "pseudostate endpoint and membership rules (DDN-PJ161)",
-        "transition label and time-trigger form (DDN-PJ162)"
+        "pseudostate rules (DDN-PJ161)",
+        "transition/time-trigger form (DDN-PJ162)"
       ],
       "unsupported": [
         "executable actions/behaviors",
@@ -2667,7 +2683,7 @@
       ],
       "scope": "Fixed nine-kind business/application/technology vocabulary; family-palette layer colours; viewpoints as named views; serving links upward only. Profile-level coverage, not ArchiMate conformance.",
       "validation": [
-        "relation layer pair must be legal per the fixed 3×3 table (DDN-PJ123)"
+        "relation layer pair must be legal per the fixed 3\u00d73 table (DDN-PJ123)"
       ],
       "unsupported": [
         "ArchiMate exchange format",
@@ -3352,7 +3368,7 @@
     "PEST/PESTLE and Porter five-forces canvas profiles (canvas.pest@1, canvas.pestle@1, canvas.porter5@1)",
     "empathy-map and balanced-scorecard canvas profiles (canvas.empathy@1, canvas.scorecard@1) with required-panel validation",
     "customer journey maps with emotion polylines via panels.journey@1 (phase grid, DDN-PJ084/PJ085)",
-    "user story maps via matrix.storymap@1 (release rows × backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
+    "user story maps via matrix.storymap@1 (release rows \u00d7 backbone columns, analysis.task cells, DDN-PJ086/PJ093)",
     "crow's-foot cardinality ERD profile erd.crowfoot@1 (obligatory one/zeroone/many/zeromany endpoint marks, DDN-PJ087)",
     "allowlisted SQL DDL export (export format sql: CREATE TABLE/PRIMARY KEY/FOREIGN KEY, DDN-PJ088/PJ092)",
     "pyramid/tier diagrams via panels.pyramid@1 (3..5 trapezoid bands, side annotations, DDN-PJ089)",
@@ -3374,21 +3390,21 @@
     "low-fidelity UI wireframes via wireframe.ui@1 (seven-control stencil, scoped-frame nesting, orphan-control warning)",
     "family tree / genealogy views via family.tree@1 (union join nodes, acyclic two-parent lineage)",
     "registry-driven element defaults on every kind (kinds[].defaults; public defaults.forKind; designer creation populates them, explicit properties win; renderer never applies them)",
-    "ES module runtime sources with a Rollup-built distribution: five bundles × IIFE/ESM/minified formats, explicit cross-bundle module registry, tree-shakeable .mjs entry points (B1-019)",
+    "ES module runtime sources with a Rollup-built distribution: five bundles \u00d7 IIFE/ESM/minified formats, explicit cross-bundle module registry, tree-shakeable .mjs entry points (B1-019)",
     "deterministic CSS class hooks on every rendered SVG mark (ddn-svg/node/kind/rel/verb/field/label/panel/frame/mark scheme) plus optional dist/ddn.css and component theme attribute; page CSS < script-level overrides",
     "modular runtime bundles (dist/ddn-core.js parse/validate/export, ddn-graph.js, ddn-projections.js, ddn-quality.js with load-order guards and DDNEngine renderer registry; unregistered kinds throw DDN-E010 naming the providing bundle; ddn.global.js unchanged all-in-one)",
-    "optional geographic module ddn-geo.js (B1-025): mercator/equirectangular/albers/equalEarth projection math, GeoJSON ingestion (Polygon/MultiPolygon/Point/MultiPoint), geo.choropleth@1/geo.symbols@1/geo.outline@1 renderers with record provenance; geography ships as the separate optional assets/geo/world-110m.json asset (~96 KB Natural Earth 110m) or inline @record GeoJSON; the geo kind registers optional:true so a missing module renders a visible inline placeholder (\"Map view requires ddn-geo.js\") plus a coded DDN-E010 diagnostic — never silent; new codes DDN-PJ143..DDN-PJ148, DDN-PJW05; never embedded in ddn.global.js",
-    "data refresh API: ws.replaceData(name, records) rewrites only a named data block's record lines with the canonical authoring serializer; keyed transactional contract (B1-029): optional per-record key matches declaration ids (positional fallback is order-sensitive), transactional validation of every affected view before commit (DDN-E012 diagnostics name view/record/field on type-mismatch, removed-record-referenced, view/source-validation; nothing commits on failure), removal of view-referenced records rejected, selector-vs-explicit membership re-resolution with DDN-W015 addedRecordsNotVisible reporting, empty refresh allowed with declared empty states (empty chart plot with axes for bar/line/area/point, header-only table, empty graph canvas; filter-to-empty still fails DDN-PJ012); returns {committed, revision, added, removed, updated, diagnostics} — a strict superset of the old {revision, diagnostics}; DDN-E002 unknown/ambiguous block, DDN-E011 field-shape violations with source untouched; same-values refresh renders every view byte-identical, changed values move only data-driven marks; deterministic in (source, name, records)",
-    "single-file end-user viewer (notation/viewer/ddn-viewer.html, deterministic build:viewer): open/drag-drop/paste a .ddn source, view picker from declared views, fit page/width/height/100% + step zoom with % display, font-family override, colour overrides per kind-class/relation-class/clicked object, SVG + 2× PNG export; presentation-only (source never modified), file:// safe in Chrome and Firefox (no Chrome-only APIs)",
+    "optional geographic module ddn-geo.js (B1-025): mercator/equirectangular/albers/equalEarth projection math, GeoJSON ingestion (Polygon/MultiPolygon/Point/MultiPoint), geo.choropleth@1/geo.symbols@1/geo.outline@1 renderers with record provenance; geography ships as the separate optional assets/geo/world-110m.json asset (~96 KB Natural Earth 110m) or inline @record GeoJSON; the geo kind registers optional:true so a missing module renders a visible inline placeholder (\"Map view requires ddn-geo.js\") plus a coded DDN-E010 diagnostic \u2014 never silent; new codes DDN-PJ143..DDN-PJ148, DDN-PJW05; never embedded in ddn.global.js",
+    "data refresh API: ws.replaceData(name, records) rewrites only a named data block's record lines with the canonical authoring serializer; keyed transactional contract (B1-029): optional per-record key matches declaration ids (positional fallback is order-sensitive), transactional validation of every affected view before commit (DDN-E012 diagnostics name view/record/field on type-mismatch, removed-record-referenced, view/source-validation; nothing commits on failure), removal of view-referenced records rejected, selector-vs-explicit membership re-resolution with DDN-W015 addedRecordsNotVisible reporting, empty refresh allowed with declared empty states (empty chart plot with axes for bar/line/area/point, header-only table, empty graph canvas; filter-to-empty still fails DDN-PJ012); returns {committed, revision, added, removed, updated, diagnostics} \u2014 a strict superset of the old {revision, diagnostics}; DDN-E002 unknown/ambiguous block, DDN-E011 field-shape violations with source untouched; same-values refresh renders every view byte-identical, changed values move only data-driven marks; deterministic in (source, name, records)",
+    "single-file end-user viewer (notation/viewer/ddn-viewer.html, deterministic build:viewer): open/drag-drop/paste a .ddn source, view picker from declared views, fit page/width/height/100% + step zoom with % display, font-family override, colour overrides per kind-class/relation-class/clicked object, SVG + 2\u00d7 PNG export; presentation-only (source never modified), file:// safe in Chrome and Firefox (no Chrome-only APIs)",
     "viewer typography + relation options (B1-011): global font family/size dropdowns through the reflow override channel, per-kind family/size dropdowns as CSS overlays on .ddn-kind-<code> text, master relation row (routing/curve tension/curve radius/crossings/endpoint ordering), per-verb routing rows, click-an-edge per-relation routing editor; render override keys relationRouting (verb-or-id keys, id wins, LIVE022/LIVE023) and curveTension/curveRadius (LIVE003) with LIVE021/LIVE020 guards; no junctions control by design (explicit junction semantics only, DDN046)",
-    "spacing hints: optional additive `spacing` enum (tight/normal/loose/expanded, factors 0.75/1.0/1.4/2.0) on views and format bundles (view wins; absent = normal byte-identical to historical output; bad value rejected as DDN033); scales graph-family inter-node gaps, layer/band spacing and route-label reservation margins only — fixed-grid projections ignore it by design",
-    "full-coverage example gallery (website/examples/gallery/, tools/build-gallery.js): one CLI-rendered SVG per installed profile (coverage map generated from basics/projections/quality examples; generator fails on an uncovered profile) plus variation sheets (12 chart marks, looks × palettes, routing × look, 11 layout algorithms, 4 spacing levels); static file://-safe index.html with no inlined runtime; permanent gate notation/tests/gallery-coverage.js",
+    "spacing hints: optional additive `spacing` enum (tight/normal/loose/expanded, factors 0.75/1.0/1.4/2.0) on views and format bundles (view wins; absent = normal byte-identical to historical output; bad value rejected as DDN033); scales graph-family inter-node gaps, layer/band spacing and route-label reservation margins only \u2014 fixed-grid projections ignore it by design",
+    "full-coverage example gallery (website/examples/gallery/, tools/build-gallery.js): one CLI-rendered SVG per installed profile (coverage map generated from basics/projections/quality examples; generator fails on an uncovered profile) plus variation sheets (12 chart marks, looks \u00d7 palettes, routing \u00d7 look, 11 layout algorithms, 4 spacing levels); static file://-safe index.html with no inlined runtime; permanent gate notation/tests/gallery-coverage.js",
     "designer prototype chrome (B1-012): --ui-* density system with persisted Compact/Comfortable toggle (Compact default), draggable persisted splitters with clamps and double-click reset, detach/re-attach floating shelf+inspector panels with canvas reflow (session-only), bottom-sheet collapse toggles, notation-plate palette glyphs via additive runtime accessor DDNLive.glyphs.forKind, descriptive tooltips on every control, and SVG/PNG(2x)/WebP(2x) export (WebP feature-detected, renderFailure-guarded, designer-prototype.{svg,png,webp})",
-    "self-contained multi-module files (RFC-117): a .ddn file may hold several module \"…\"; sections (model/data/views/formats in one file); file-level imports precede the first module header (legacy after-first-header position kept, DDN015 elsewhere); sibling sections resolve by module-qualified id without imports; identity guards DDN013/DDN014/DDN023/DDN024 unchanged; DDNLive.io.bundle(files, entry) and CLI bundle merge a workspace into one sectioned file — original bodies minus headers, comments preserved, inter-bundle alias references canonicalized to module ids, external imports kept with DDN-W013 — deterministic and render byte-identical (proof: notation/tests/bundle.js, 75 views across basics/projections/quality)",
+    "self-contained multi-module files (RFC-117): a .ddn file may hold several module \"\u2026\"; sections (model/data/views/formats in one file); file-level imports precede the first module header (legacy after-first-header position kept, DDN015 elsewhere); sibling sections resolve by module-qualified id without imports; identity guards DDN013/DDN014/DDN023/DDN024 unchanged; DDNLive.io.bundle(files, entry) and CLI bundle merge a workspace into one sectioned file \u2014 original bodies minus headers, comments preserved, inter-bundle alias references canonicalized to module ids, external imports kept with DDN-W013 \u2014 deterministic and render byte-identical (proof: notation/tests/bundle.js, 75 views across basics/projections/quality)",
     "designer display + panels (B1-014): presentation-only Display shelf tab (global/per-kind typography, kind/verb/object colours via CSS overlay persisted per view, relation options via the per-view override channel; never written to source); Download modal regrouped into Text (current file .ddn, single self-contained sectioned .ddn of the whole workspace via DDNLive.io.bundle, ZIP of all sources) and Image (SVG/PNG/WebP unchanged); floating panels resizable (resize:both, 220x160 min, grip, session-only); shelf/inspector pop out into a separate OS window via window.open+adoptNode with copied stylesheets (panelRoot live element references keep every panel path working across documents) and re-dock on child close (proof: designer/tests/b1-014-display-and-popout.js)",
     "deployable static website (B1-017): website/ is a self-contained static root (no ../ escapes; works from file:// and any static host) holding the moved examples/ and docs/ corpora, a redesigned homepage with inlined-runtime live render, and generated mirrors of the viewer/designer/studio standalone tools, the 130-SVG gallery, the notation plates, and the dist bundles; zero-dependency generator website/build-site.mjs renders all Markdown docs/standard/governance chapters to shell-wrapped HTML deterministically; permanent gates tests/website-links.js (link integrity, no escapes, no absolute local paths) and the committed-output freshness byte-compare, both in the root npm test chain",
-    "optional ddn-iso module (B1-034): axonometric 30° isometric depth — iso:true/depth on graph and chart views, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms with flat-computed routes projected onto the ground plane, per-element depth and depth:@data.record.field binding, refresh-driven SMIL depth transitions, visible placeholder + DDN-E010 when the bundle is absent",
-    "iso on multi-series quality charts (B1-036): series:/arrangement: bar/area views (chart.quality@1) extrude through the quality renderer — one column per series point / one ribbon per series, each series on its own depth plane (no z-fighting), total painter's order via DDNIso.paintOrder; unsupported layer marks and quality transforms (histogram/pareto/waterfall/boxplot) warn DDN-ISOW01 and render flat, never silent"
+    "optional ddn-iso module (B1-034): axonometric 30\u00b0 isometric depth \u2014 iso:true/depth on graph and chart views, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms with flat-computed routes projected onto the ground plane, per-element depth and depth:@data.record.field binding, refresh-driven SMIL depth transitions, visible placeholder + DDN-E010 when the bundle is absent",
+    "iso on multi-series quality charts (B1-036): series:/arrangement: bar/area views (chart.quality@1) extrude through the quality renderer \u2014 one column per series point / one ribbon per series, each series on its own depth plane (no z-fighting), total painter's order via DDNIso.paintOrder; unsupported layer marks and quality transforms (histogram/pareto/waterfall/boxplot) warn DDN-ISOW01 and render flat, never silent"
   ],
   "unsupported": [
     "profile-specific redacted occurrence/aggregate exports (DDN-PJ003)",

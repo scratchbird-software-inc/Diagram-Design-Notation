@@ -183,6 +183,54 @@
       "defaults": {}
     },
     {
+      "keyword": "uml.node",
+      "name": "Node",
+      "shape": "profile",
+      "silhouette": "node3d",
+      "fallback": "application",
+      "family": "concept",
+      "code": "NODE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uml.device",
+      "name": "Device",
+      "shape": "profile",
+      "silhouette": "node3d",
+      "fallback": "application",
+      "family": "concept",
+      "code": "DEVICE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uml.executionenv",
+      "name": "Execution environment",
+      "shape": "profile",
+      "silhouette": "node3d",
+      "fallback": "application",
+      "family": "concept",
+      "code": "EXECENV",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uml.artifact",
+      "name": "Artifact",
+      "shape": "profile",
+      "silhouette": "artifact",
+      "fallback": "application",
+      "family": "concept",
+      "code": "ARTIFACT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "uml.actor",
       "name": "Actor",
       "shape": "profile",
@@ -1201,6 +1249,73 @@
       "member_endpoints": false
     },
     {
+      "keyword": "uml.deploy",
+      "name": "\u00abdeploy\u00bb",
+      "verb": "Deploys",
+      "family": "dependency",
+      "code": "DEPLOY",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.artifact",
+        "uml.component",
+        "uml.node",
+        "uml.device",
+        "uml.executionenv"
+      ],
+      "target": [
+        "uml.node",
+        "uml.device",
+        "uml.executionenv"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uml.manifest",
+      "name": "\u00abmanifest\u00bb",
+      "verb": "Manifests",
+      "family": "dependency",
+      "code": "MANIFEST",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uml.artifact"
+      ],
+      "target": [
+        "uml.artifact",
+        "uml.component"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uml.commpath",
+      "name": "Communication path",
+      "verb": "Connects",
+      "family": "structural",
+      "code": "COMMPATH",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "uml.node",
+        "uml.device",
+        "uml.executionenv"
+      ],
+      "target": [
+        "uml.node",
+        "uml.device",
+        "uml.executionenv"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
       "keyword": "uml.dependency",
       "name": "Dependency",
       "verb": "Dependency",
@@ -1876,24 +1991,40 @@
         "UML package subset",
         "UML component subset"
       ],
-      "scope": "uml.structure@1 plus UML 2.5.1 class-diagram notation (RFC-119): association-end multiplicity/role labels and qualifiers (x_endlabels), aggregation (hollow_diamond) and composition (diamond) marks, navigability arrowheads, association classes (x_association_class), n-ary associations (x_nary diamond junction), generalization sets (x_genset), templates (x_template), enumeration kind with literals, provided/required interfaces (uml.provided lollipop / uml.required socket), derived properties and property strings on members (x_member).",
+      "scope": "uml.structure@1 plus UML 2.5.1 class notation (RFC-119): end roles/multiplicity/qualifiers (x_endlabels), aggregation/composition/navigability marks, association classes, n-ary junction (x_nary), generalization sets, templates, enumerations, provided/required interfaces, member adornments (x_member).",
       "validation": [
         "profile endpoint restrictions",
-        "acyclic generalization",
-        "same-kind generalization",
-        "operation/attribute visibility enumeration",
-        "x_endlabels only on uml.association with well-formed multiplicity (DDN-PJ149)",
-        "association class resolves to a uml.class (DDN-PJ150)",
-        "n-ary association has three or more distinct classifier ends (DDN-PJ151)",
-        "generalization sets share one name per target (DDN-PJ152)",
-        "x_template only on uml.class (DDN-PJ153)",
-        "enumeration literals only on uml.enumeration members (DDN-PJ154)"
+        "acyclic, same-kind generalization",
+        "x_endlabels/multiplicity rules (DDN-PJ149)",
+        "association class (PJ150)",
+        "n-ary ends (PJ151)",
+        "generalization sets (PJ152)",
+        "template owner (PJ153)",
+        "enumeration literals (PJ154)"
       ],
       "unsupported": [
         "XMI",
         "OCL",
         "full UML type/parameter model",
         "assembly/delegation connectors (B1-059 scope)",
+        "formal UML conformance"
+      ]
+    },
+    {
+      "id": "uml.deployment@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UML deployment diagram"
+      ],
+      "scope": "UML 2.5.1 deployment diagrams (RFC-122): nodes/devices/execution environments (3D-box), artifacts (document icon), deploy/manifest dependencies, communication paths with multiplicity, node nesting via frames, deployed components.",
+      "validation": [
+        "profile endpoint restrictions (DDN102)",
+        "commpath labels carry no qualifiers; nesting frames scope to node kinds (DDN-PJ164)"
+      ],
+      "unsupported": [
+        "middleware-specific deployment models",
+        "artifact content descriptors",
+        "topology discovery",
         "formal UML conformance"
       ]
     },
@@ -2784,15 +2915,15 @@
       "diagramFamilies": [
         "UML sequence diagram"
       ],
-      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (alt/opt/loop/break/par/neg/critical/seq/strict/ignore/consider/assert, nested, operands with guards \u2014 x_fragment), gates on fragment boundaries, \u00abcreate\u00bb headers and \u2715 destruction, synchronous/asynchronous arrowheads, explicit replies, lost/found messages, authorable execution occurrences (x_activation), time/duration constraints, state invariants (x_invariant).",
+      "scope": "uml.sequence@1 plus UML 2.5.1 interaction notation (RFC-120): combined fragments (nested, guards \u2014 x_fragment), gates, create/delete, synch/asynch/reply/lost/found message sorts, authorable activations, time/duration constraints, state invariants.",
       "validation": [
-        "message endpoints are selected participant objects (DDN-PJ110)",
-        "participants without messages warn (DDN-PJW03)",
-        "fragment operands are contiguous, non-overlapping, strictly nested message spans (DDN-PJ155)",
-        "message sort/gate semantics (DDN-PJ156)",
-        "state invariants reference incident view messages (DDN-PJ157)",
-        "explicit activations reference incident, ordered view messages (DDN-PJ158)",
-        "time/duration annotations use {constraint} form (DDN-PJ159)"
+        "message endpoints are selected participants (DDN-PJ110)",
+        "empty lifelines warn (DDN-PJW03)",
+        "fragment span rules (DDN-PJ155)",
+        "sort/gate semantics (PJ156)",
+        "invariants (PJ157)",
+        "activations (PJ158)",
+        "time/duration form (PJ159)"
       ],
       "unsupported": [
         "region-local independent lifelines inside par operands (RFC-120 decision)",
@@ -2856,12 +2987,12 @@
       "diagramFamilies": [
         "UML state machine diagram"
       ],
-      "scope": "Full UML 2.5.1 state machines (RFC-121): state.flat@1/state.composite@1 vocabulary plus entry/exit/do activities and internal transitions (x_state), shallow/deep history, junction/choice/entry-point/exit-point/fork/join/terminate pseudostates, trigger [guard] / effect transition labels, submachine states, after/at/when time events, composite states and parallel regions.",
+      "scope": "Full UML 2.5.1 state machines (RFC-121): flat/composite vocabulary plus entry/exit/do activities and internal transitions, history/junction/choice/entry-exit-point/fork-join/terminate pseudostates, trigger [guard] / effect labels, submachines, time events.",
       "validation": [
         "per-region single initial (DDN-PJ113)",
         "x_state owner/submachine rules (DDN-PJ160)",
-        "pseudostate endpoint and membership rules (DDN-PJ161)",
-        "transition label and time-trigger form (DDN-PJ162)"
+        "pseudostate rules (DDN-PJ161)",
+        "transition/time-trigger form (DDN-PJ162)"
       ],
       "unsupported": [
         "executable actions/behaviors",

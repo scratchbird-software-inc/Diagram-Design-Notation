@@ -9,7 +9,7 @@ Open `../DDN-Designer-Prototype.html` for the self-contained version. `index.htm
 ## Working actions
 
 - Select graph objects and named fields in the canvas or model list.
-- Click any palette kind for automatic placement, or drag/drop for an explicit position and pin. The Add shelf lists all 197 kinds from `../contracts/kind-ui-map.json`, grouped by its eight palette groups with name/keyword/code search; each kind's `creation_action` drives creation (plain semantic elements, fishbone causes under a selected parent, decision rule rows, Chen attributes as entity fields, Chen relationships through Connect).
+- Click any palette kind for automatic placement, or drag/drop for an explicit position and pin. The Add shelf lists all 201 kinds from `../contracts/kind-ui-map.json`, grouped by its eight palette groups with name/keyword/code search; each kind's `creation_action` drives creation (plain semantic elements, fishbone causes under a selected parent, decision rule rows, Chen attributes as entity fields, Chen relationships through Connect).
 - Drag an existing object header to pin it; alternatively use the numeric X/Y controls under This view.
 - Edit labels, descriptions and untyped fields. Labels are not stable-ID refactoring.
 - Create a relationship with two selected endpoints or through Connect's source/target selectors. Named fields remain the actual semantic endpoints.

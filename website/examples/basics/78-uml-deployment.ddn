@@ -1,0 +1,57 @@
+ddn "0.5";
+module "ddn.examples.umldep";
+
+// B1-058 (RFC-122): UML 2.5.1 deployment diagrams on uml.deployment@1.
+// View 1: devices, execution environment, artifacts, deploy/manifest,
+// communication paths with multiplicity. View 2: node nesting via frames.
+// Minimal current-dialect style, no pinned layout.
+
+data shop {
+    object lb "Load balancer" { kind: "uml.device"; }
+    object appsrv "App server" { kind: "uml.device"; }
+    object jvm "Tomcat 10" { kind: "uml.executionenv"; }
+    object war "shop.war" { kind: "uml.artifact"; }
+    object cart "Cart component" { kind: "uml.component"; }
+    object dbnode "DB server" { kind: "uml.node"; }
+    object jar "persistence.jar" { kind: "uml.artifact"; }
+
+    relation lan "https" @lb -> @appsrv { kind: "uml.commpath";
+        x_endlabels: { source: { multiplicity: "1"; }; target: { multiplicity: "1..*"; }; };
+    }
+    relation dep1 "" @war -> @jvm { kind: "uml.deploy"; }
+    relation dep2 "" @cart -> @jvm { kind: "uml.deploy"; }
+    relation dep3 "" @jar -> @dbnode { kind: "uml.deploy"; }
+    relation man "" @war -> @cart { kind: "uml.manifest"; }
+    relation sql "jdbc" @appsrv -> @dbnode { kind: "uml.commpath"; }
+}
+
+data cluster {
+    object zone "Failover zone" { kind: "uml.node"; }
+    object node_a "Node A" { kind: "uml.device"; }
+    object node_b "Node B" { kind: "uml.device"; }
+    object ee_a "JVM" { kind: "uml.executionenv"; }
+    object ee_b "JVM" { kind: "uml.executionenv"; }
+    object app_a "orders.ear" { kind: "uml.artifact"; }
+    object app_b "orders.ear" { kind: "uml.artifact"; }
+
+    relation ha "" @node_a -> @node_b { kind: "uml.commpath";
+        x_endlabels: { source: { multiplicity: "1"; }; target: { multiplicity: "1"; }; };
+    }
+    relation za "" @app_a -> @ee_a { kind: "uml.deploy"; }
+    relation zb "" @app_b -> @ee_b { kind: "uml.deploy"; }
+}
+
+view main "UML deployment / nodes and artifacts" {
+    data: [@shop];
+    projection { profile: "uml.deployment@1"; }
+    publication { size: content; fit: none; }
+}
+
+view nested "UML deployment / nested nodes" {
+    data: [@cluster];
+    projection { profile: "uml.deployment@1"; }
+    frame f_zone "Failover zone" { scope: @cluster.zone; members: [@cluster.node_a, @cluster.node_b]; }
+    frame f_a "Node A" { scope: @cluster.node_a; members: [@cluster.ee_a, @cluster.app_a]; }
+    frame f_b "Node B" { scope: @cluster.node_b; members: [@cluster.ee_b, @cluster.app_b]; }
+    publication { size: content; fit: none; }
+}

@@ -28,7 +28,7 @@ Appearance-only settings must not write semantic properties. Changing a type cal
 | Note/example | Text, Describes | Sample bindings, provenance, review state |
 | Analysis/view | Projection, Source, Template | Measures, rules, series, scales, child views |
 
-The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 197 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
+The selector is a fast access system, not another grammar. Its resulting source still uses existing exact kind IDs. All 201 kinds remain individually addressable and searchable in `contracts/kind-ui-map.json`.
 
 > Implementation status (B1-055, RFC-119): the palette now includes `uml.enumeration` (Meaning group, classifier inspector with a LITERALS compartment; members carry `x_member: { kind: literal }`) and the `uml.provided`/`uml.required` relations in the relation map. `uml.structure@2` is the hinted profile for UML classifier kinds. Template parameters (`x_template`) edit as a string list on the class inspector; association-end roles, multiplicities and qualifiers (`x_endlabels`), association-class attachment, n-ary ends and generalization-set membership edit on the relation inspector as structured records — never as free-form label text.
 
@@ -47,3 +47,5 @@ Table → view, activity → decision, or ordinary entity → weak entity is a p
 Choosing Table creates a table definition with an auto-generated stable ID, a name and optional empty field list; no datatype or database engine is required. Choosing a decision creates an incomplete decision plus visible tasks to add branches. Choosing Chart launches a source-binding wizard, not an ordinary box with adjustable height. Choosing Chen Attribute selects a field-creation workflow on its owning entity, not an unattached free-floating oval.
 
 > Implementation status (B1-057, RFC-121): the palette adds the eight UML state-machine pseudostate kinds (`state.history_shallow`/`history_deep`/`junction`/`choice`/`entrypoint`/`exitpoint`/`forkjoin`/`terminate`, Process group, state inspector) for the `uml.statemachine@1` profile. Entry/exit/do activities, internal transitions and the submachine binding edit as structured fields on the state inspector (`x_state`); transition trigger/guard/effect edit on the transition row (`x_transition` string guard or lifecycle predicate object); `DDN-PJ160`–`DDN-PJ162` are the commit-time authorities.
+
+> Implementation status (B1-058, RFC-122): the palette adds the deployment kinds (`uml.node`/`uml.device`/`uml.executionenv`/`uml.artifact`, Systems group) and relations (`uml.deploy`/`uml.manifest`/`uml.commpath`) for the `uml.deployment@1` profile. Communication-path multiplicity edits via the same endpoint-label control as UML associations (RFC-119); qualifiers stay association-only (`DDN-PJ164`); node nesting is frame assignment scoped to a node kind.

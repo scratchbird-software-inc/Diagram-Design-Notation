@@ -10961,6 +10961,128 @@
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
     },
     {
+      "id": "uml.deploy",
+      "label": "\u00abdeploy\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "uml.artifact",
+          "uml.component",
+          "uml.node",
+          "uml.device",
+          "uml.executionenv"
+        ],
+        "target": [
+          "uml.node",
+          "uml.device",
+          "uml.executionenv"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.manifest",
+      "label": "\u00abmanifest\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "uml.artifact"
+        ],
+        "target": [
+          "uml.artifact",
+          "uml.component"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uml.commpath",
+      "label": "Communication path",
+      "origin": "profile",
+      "family": "structural",
+      "semantic_contract": {
+        "source": [
+          "uml.node",
+          "uml.device",
+          "uml.executionenv"
+        ],
+        "target": [
+          "uml.node",
+          "uml.device",
+          "uml.executionenv"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
       "id": "uml.dependency",
       "label": "Dependency",
       "origin": "profile",

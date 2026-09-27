@@ -88,7 +88,9 @@ function validate(ir,reg,ErrorClass){
  for(const r of rels){
   const el=r.properties.x_endlabels;
   if(el!==undefined){
-   if(r.kind!=='uml.association')fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association only, not '+r.kind,r);
+   /* RFC-122: communication paths carry multiplicity end labels too; the
+    * qualifier stays association-only (DDN-PJ164 covers the misuse). */
+   if(!['uml.association','uml.commpath'].includes(r.kind))fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association and uml.commpath only, not '+r.kind,r);
    for(const side of ['source','target']){const e=el[side];if(!e)continue;
     if(e.multiplicity!==undefined&&!MULT.test(e.multiplicity))fail('DDN-PJ149','Association-end multiplicity must be a UML multiplicity (1, 0..1, 0..*, 1..*, *); found "'+e.multiplicity+'"',r);}
   }

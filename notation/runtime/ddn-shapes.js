@@ -129,6 +129,25 @@ function render(g,p,theme){
   else if(shape==='forkbar')out+=`<rect x="${f(cx-32*s)}" y="${f(cy-4*s)}" width="${f(64*s)}" height="${f(8*s)}" rx="${f(2*s)}" fill="${ink}"/>`;
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
+ /* B1-058 (RFC-122): deployment silhouettes — 3D-box node (top/right depth
+  * faces) and dog-eared artifact document. */
+ if(shape==='node3d'){
+  const dx=10*s,dy=-8*s,fx=x,fy=y+8*s,fw=w-10*s,fh=h-8*s;
+  out+=`<path d="M${f(fx)} ${f(fy)}L${f(fx+dx)} ${f(fy+dy)}L${f(fx+fw+dx)} ${f(fy+dy)}L${f(fx+fw)} ${f(fy)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<path d="M${f(fx+fw)} ${f(fy)}L${f(fx+fw+dx)} ${f(fy+dy)}L${f(fx+fw+dx)} ${f(fy+fh+dy)}L${f(fx+fw)} ${f(fy+fh)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=`<rect x="${f(fx)}" y="${f(fy)}" width="${f(fw)}" height="${f(fh)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  const stereo=n.kind==='uml.device'?'«device»':n.kind==='uml.executionenv'?'«execution environment»':'';
+  if(stereo)out+=text(x+fw/2,fy+22*s,stereo,11,500,'text-anchor="middle"');
+  out+=lines(g.titleLines,x+fw/2,fy+(stereo?48*s:Math.min(fh/2+5*s,40*s)),16,600);
+  return out+'</g>';
+ }
+ if(shape==='artifact'){
+  const ear=15*s;
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-ear)}L${f(x+w)} ${f(y+ear)}V${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=line(x+w-ear,y,x+w-ear,y+ear,1.4)+line(x+w-ear,y+ear,x+w,y+ear,1.4);
+  out+=text(x+w/2,y+24*s,'«artifact»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+52*s,16,600);
+  return out+'</g>';
+ }
  if(look==='neo'&&shape!=='actor')out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0]+4)+' '+f(v[1]+6)).join('')}Z" fill="#000" opacity=".14"/>`;
  if(shape==='actor'){
   const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;

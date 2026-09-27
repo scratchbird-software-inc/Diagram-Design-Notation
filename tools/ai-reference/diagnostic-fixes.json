@@ -109,19 +109,20 @@
     "DDN-E013": "Flow steps must follow existing visible relations in declared direction: add the missing relation or reorder steps (@a -> @b -> @c).",
     "DDN-E014": "Fix the motion property: motion flow|pulse|none; marker circle|square|rect; marker_size <=128px; speed <=10000; rate positive integer.",
     "DDN-E016": "records row width must equal the columns count; the message names the row and expected/actual counts \u2014 fix the row's values.",
-    "DDN-PJ149": "x_endlabels is legal on uml.association only; multiplicity must be a UML form (1, 0..1, 0..*, 1..*, *)",
+    "DDN-PJ149": "x_endlabels on uml.association/uml.commpath only; multiplicity must be a UML form (1, 0..1, 0..*, 1..*, *)",
     "DDN-PJ150": "x_association_class needs a reference to a declared uml.class that is not an endpoint of its own association",
     "DDN-PJ151": "x_nary needs at least three distinct classifier ends (uml.class/interface/enumeration) across anchors and x_nary.ends, each a UML multiplicity",
     "DDN-PJ152": "x_genset is legal on uml.generalization only; all relations of a set (same name) must share one target classifier",
     "DDN-PJ153": "x_template applies to uml.class/uml.interface only; move the parameter list to a classifier kind",
     "DDN-PJ154": "x_member kind literal belongs on uml.enumeration members only, and enumeration members must be literals (or plain fields)",
-    "DDN-PJ155": "Fragment operands must be contiguous, non-overlapping, one span, anchored on the first covered message; nest strictly inside one operand",
-    "DDN-PJ156": "x_message.sort rules: create = first message of target; delete ends the lifeline; lost/found self-anchored (@a -> @a); reply = x_return:true; gates need an enclosing fragment",
+    "DDN-PJ155": "Fragment operands: contiguous, non-overlapping, one span, anchored on the first covered message; nest strictly",
+    "DDN-PJ156": "x_message.sort rules: create = first message of target; delete ends the lifeline; lost/found self-anchored; reply = x_return:true; gates need a fragment",
     "DDN-PJ157": "State invariant after: must reference a visible message incident to that participant",
     "DDN-PJ158": "Activation from:/to: must reference visible messages incident to the participant, earlier to later row",
     "DDN-PJ159": "time/duration annotations use UML constraint form, wrapped in braces: \"{t..t+5}\"",
     "DDN-PJ160": "x_state applies to state kinds only; submachine must reference a distinct declared state.state",
-    "DDN-PJ161": "Pseudostate rules: choice fans out 2+, junction passes through, terminate no outgoing, history/entry/exit points inside a composite frame",
-    "DDN-PJ162": "Time/change triggers use after(\u2026), at(\u2026) or when(\u2026) with parentheses \u2014 fix the event text or drop the time-trigger prefix"
+    "DDN-PJ161": "Pseudostates: choice 2+ out, junction pass-through, terminate no outgoing, history/entry/exit points inside a composite frame",
+    "DDN-PJ162": "Time/change triggers use after(\u2026), at(\u2026) or when(\u2026) with parentheses \u2014 fix the event text or drop the time-trigger prefix",
+    "DDN-PJ164": "Commpaths carry role/multiplicity only (no qualifiers); deployment nesting frames scope to node kinds"
   }
 }

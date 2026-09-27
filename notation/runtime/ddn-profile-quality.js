@@ -85,6 +85,17 @@ function validate(ir,E){
   for(const r of es){const ev=r.properties.x_transition?.event;
    if(typeof ev==='string'&&/^(after|at|when)\b/.test(ev)&&!/^(after|at|when)\s*\(.+\)$/.test(ev))fail('DDN-PJ162','Time/change trigger '+JSON.stringify(ev)+' on '+r.id+' is malformed; use after(…), at(…) or when(…)',r);}
  }
+ /* B1-058 (RFC-122): UML deployment semantics beyond the endpoint contracts. */
+ {
+  const NODE=new Set(['uml.node','uml.device','uml.executionenv']);
+  for(const r of ir.relations){
+   if(r.kind==='uml.commpath'&&(r.properties.x_endlabels?.source?.qualifier||r.properties.x_endlabels?.target?.qualifier))fail('DDN-PJ164','Qualifiers are association-end notation; communication paths carry role/multiplicity only',r);
+  }
+  if(profile==='uml.deployment@1')for(const f of ir.view.frames||[]){
+   const sc=ns.get(f.scope);
+   if(f.scope&&sc&&!NODE.has(sc.kind))fail('DDN-PJ164','Deployment nesting frames must scope to a node kind (uml.node/device/executionenv); '+f.id+' scopes to '+sc.kind,f);
+  }
+ }
  if(profile==='uml.activity@1'){
   const frames=ir.view.frames||[],lanes=new Set(frames.flatMap(f=>[f.id,f.name,String(f.id).split('::').pop().split('.').pop()]));
   const shown2=new Set(ir.view.selected),es2=ir.relations.filter(r=>shown2.has(r.from.element)&&shown2.has(r.to.element)&&r.kind==='uml.flow');

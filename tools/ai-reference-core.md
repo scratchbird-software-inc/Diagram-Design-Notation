@@ -165,24 +165,24 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_record` | object, relation | object, additional properties allowed (record/metadata payload, e.g. `{month, value, unit}`) |
 | `x_story` | relation | object, requires `task`, additional properties allowed |
 | `x_rule` | object, relation | object (decision-table rule: `{when: {...}, then: {...}}`) |
-| `x_state` | object, relation | `{terminal?, entry?, exit?, do?, internal?: [string], submachine?: @ref}` (RFC-121; only on `state.*` kinds — DDN-PJ160) |
-| `x_transition` | object, relation | `{event?, guard?: object|string, effect?, actions?}` — label `trigger [guard] / effect`; time triggers `after(…)`/`at(…)`/`when(…)` (RFC-121; DDN-PJ162) |
+| `x_state` | object, relation | `{terminal?, entry?, exit?, do?, internal?, submachine?}` (RFC-121; `state.*` kinds only — DDN-PJ160) |
+| `x_transition` | object, relation | `{event?, guard?: object|string, effect?, actions?}` — label `trigger [guard] / effect` (RFC-121; DDN-PJ162) |
 | `x_usecase` | object, relation | object (`subjects` refs / `extension_points` on objects; `extension_point`, `condition`\|`condition_ref` on `uml.extend` relations) |
 | `x_chen` | object, field, relation | object (Chen metadata; §10) |
 | `x_continuation` | object, relation | object (`{key, side: in|out, page?}`) |
 | `x_assignment` | relation | `{code: string(1..12)}` only |
 | `x_category` | object | `{axis: string, level: string}` exactly |
 | `x_member` | field | `{kind: attribute|operation|literal, visibility?, static?, abstract?, derived?, multiplicity?, modifiers?}` |
-| `x_endlabels` | relation | `{source|target: {role?, multiplicity?, qualifier?}}` on `uml.association` (DDN-PJ149) |
+| `x_endlabels` | relation | `{source|target: {role?, multiplicity?, qualifier?}}` on uml.association/commpath (DDN-PJ149) |
 | `x_association_class` | relation | `{class: @ref}` uml.class on an association (DDN-PJ150) |
-| `x_nary` | relation | `{ends: [{element: @ref, role?, multiplicity?}]}` — n-ary ends beyond the binary anchors (DDN-PJ151) |
+| `x_nary` | relation | `{ends: [{element: @ref, role?, multiplicity?}]}` n-ary ends (DDN-PJ151) |
 | `x_genset` | relation | `{name, disjoint?, complete?}` on uml.generalization (DDN-PJ152) |
 | `x_template` | object | `{parameters: [string]}` on uml.class/interface (DDN-PJ153) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
 | `x_return` | relation | boolean (sequence/communication reply) |
-| `x_message` | relation | `{seq?, sort?: synch|asynch|create|delete|reply|lost|found, gate?: source|target, time?, duration? ("{…}")}` (RFC-120; seq enforced by uml.communication@1 DDN-PJ111) |
+| `x_message` | relation | `{seq?, sort?, gate?, time?, duration?}` (RFC-120; seq enforced by uml.communication@1 DDN-PJ111) |
 | `x_fragment` | relation | `{operator: alt|opt|loop|…|assert, operands: [{guard?, messages: [@msg…], fragments?}]}` on first covered uml.message (DDN-PJ155) |
 | `x_invariant` | object | `[{after: @msg, label}]` lifeline state invariant (DDN-PJ157) |
 | `x_activation` | object | `[{from: @msg, to: @msg}]` explicit execution bars (DDN-PJ158) |
@@ -248,10 +248,11 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | process map (BPMN) | graph | `bpmn.basic@1` | pools = frames `x_pool: true`, `x_gateway.type`, `bpmn.messageflow` across pools |
 | process chain (EPC) | graph | `epc.basic@1` | alternating `epk.event`/`epk.function`, `x_epc.operator` on connectors |
 | activity diagram / swimlanes | graph | `uml.activity@1` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars |
-| state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `state.transition` with `x_transition.event`; regions = `x_region` frames; uml.statemachine@1 (RFC-121): activities/internal/submachines (`x_state`), 8 pseudostates, `trigger [guard] / effect`, time events |
-| sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines, `x_return` replies; @2 (RFC-120): `x_fragment`, gates, `x_message.sort`, `{…}` constraints, `x_invariant`, `x_activation` |
+| state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `x_transition.event`; regions = `x_region` frames; uml.statemachine@1 (RFC-121): activities/internal/submachines, 8 pseudostates, `trigger [guard] / effect`, time events |
+| sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines; @2 (RFC-120): fragments, gates, message sorts, `{…}` constraints, invariants, activations |
 | communication/collaboration | graph | `uml.communication@1` | `uml.message` + `x_message.seq` dotted-decimal |
-| class diagram | graph | `uml.structure@1` / `uml.structure@2` | `uml.class/interface/enumeration`, `x_member` on fields, acyclic generalization; @2 (RFC-119): `x_endlabels`, diamonds, `x_association_class`, `x_nary`, `x_genset`, `x_template`, provided/required |
+| class diagram | graph | `uml.structure@1` / `uml.structure@2` | class/interface/enumeration, `x_member`; @2 (RFC-119): end labels, diamonds, association classes, n-ary, gensets, templates, provided/required |
+| deployment diagram | graph | `uml.deployment@1` | node/device/executionenv 3D boxes, artifacts, deploy/manifest, commpaths + multiplicity; nesting = node-scoped frames (RFC-122) |
 | use cases | graph | `uml.usecase@1` / `uml.usecase@2` | `uml.subject` boundaries + `x_usecase` for @2 |
 | object/instance diagram | graph | `uml.object@1` | `x_instance.classifier` |
 | timing diagram | timing | `uml.timing@1` | `x_states` per participant |
@@ -383,9 +384,10 @@ Per-profile:
 - **family.tree@1**: `family.parent_of` acyclic (DDN-PJ129); ≤2 distinct parents per person (DDN-PJ130).
 - **wireframe.ui@1**: `ui.*` controls outside any `ui.frame` frame → warning DDN-PJ128.
 - **pert.cpm@1**: tasks (`analysis.task`) need finite nonnegative `x_estimate` days (DDN-PJ125); `analysis.precedes` must be acyclic (DDN-PJ124); critical-path relations/labels are computed at render.
-- **uml.structure@2** (RFC-119): `x_endlabels` only on uml.association with UML multiplicity (DDN-PJ149); association class must resolve to a uml.class (PJ150); x_nary ≥3 distinct classifier ends (PJ151); genset shares one target per name (PJ152); x_template only on classifiers (PJ153); enumeration literals only on uml.enumeration members (PJ154).
-- **uml.sequence@2** (RFC-120): fragment operands contiguous, non-overlapping, strictly nested, anchored on first covered message (DDN-PJ155); sort/gate rules — create is the target's first message, delete ends the lifeline, lost/found self-anchored, gate needs an enclosing fragment (PJ156); invariant/activation refs must be incident (PJ157/158); time/duration in `{…}` (PJ159).
-- **uml.statemachine@1** (RFC-121): x_state only on state kinds; submachine references a distinct state.state (DDN-PJ160); choice fans out 2+, junction passes through, history/entry/exit points inside a composite frame (PJ161); after/at/when triggers need parentheses (PJ162); PJ113 per-region initial applies; traces stay state.flat@1-only (DDN-Q005).
+- **uml.deployment@1** (RFC-122): endpoint contracts do the work (DDN102); commpath labels never carry qualifiers; nesting frames scope to node kinds (DDN-PJ164).
+- **uml.structure@2** (RFC-119): end labels/multiplicity on associations (DDN-PJ149); association class resolves to uml.class (PJ150); n-ary ≥3 distinct classifier ends (PJ151); genset one target per name (PJ152); templates on classifiers (PJ153); enumeration literals (PJ154).
+- **uml.sequence@2** (RFC-120): fragment spans contiguous/nested, anchored on first message (DDN-PJ155); sort/gate rules — create first, delete final, lost/found self-anchored, gate needs a fragment (PJ156); invariant/activation refs incident (PJ157/158); `{…}` constraints (PJ159).
+- **uml.statemachine@1** (RFC-121): x_state on state kinds; submachine → distinct state.state (DDN-PJ160); choice 2+ out, junction pass-through, history/boundary points inside a composite frame (PJ161); after/at/when need parentheses (PJ162); traces stay state.flat@1-only (DDN-Q005).
 
 ## 11. Validation workflow (CLI)
 
@@ -424,8 +426,7 @@ ddn "0.5";                              // version header (newest source dialect
 module "ddn.examples.crows-foot";
 import "shared.ddn" as shared;          // legacy import position (after FIRST header)
 
-// erd.crowfoot@1: every ref/assoc relation MUST carry source_mark + target_mark
-// from one|zeroone|many|zeromany (else DDN-PJ087).
+// erd.crowfoot@1: every ref/assoc carries source_mark + target_mark (else DDN-PJ087).
 data sales {
     object customer "Customer" {
         kind: table;                    // core kind keyword, unquoted
@@ -1114,11 +1115,8 @@ module "ddn.examples.motion";
 
 import "shared.ddn" as shared;
 
-// Declarative motion: motion: flow sends markers along the edge; pulse animates
-// the edge stroke. rate/marker/speed/colours tune it (DDN-E014 on bad values).
-// The view-level flow block traces a multi-hop sequence: every hop must follow
-// an existing visible relation in its declared direction (DDN-E013). The
-// exported SVG animates autonomously; --no-motion renders static for print.
+// motion: flow = travelling markers; pulse = edge pulse (DDN-E014 on bad values).
+// flow blocks trace multi-hop sequences along visible relations (DDN-E013).
 data shop {
     object client "Storefront" { kind: application; }
     object cart "Cart service" { kind: service; }
@@ -1145,8 +1143,7 @@ view traces "Synthetic checkout / animated flow" {
 ```ddn
 ddn "0.5";
 
-// One file, three module sections. Sibling sections reference each other by
-// module-qualified id (@shop.data.records) with no import between them.
+// One file, three module sections; sibling sections reference by module-qualified id.
 
 module "shop.model";
 

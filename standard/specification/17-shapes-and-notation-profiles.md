@@ -93,6 +93,10 @@ All links use `epk.next` ("Control passes to", filled arrow) between any two EPC
 
 The installed catalogue feeds Studio's kind and relation selectors. Namespaced kinds are quoted when inserted. Guided edits invoke the same decoder/validators as source editing. Field visibility and static/abstract flags remain editable in source; this release has no dedicated graphical inspector for every profile property.
 
+## 17.8 Deployment diagrams (profile `uml.deployment@1`)
+
+`uml.deployment@1` (RFC-122) is the UML 2.5.1 deployment surface on the graph projection. Four kinds: `uml.node` (plain node), `uml.device` («device») and `uml.executionenv` («execution environment») drawn as 3D boxes — front rect plus top and right depth faces at a fixed 10s × −8s offset — and `uml.artifact` («artifact» keyword above the name, dog-eared top-right corner). Three relations: `uml.deploy` and `uml.manifest` (dashed open-arrow dependencies; endpoint contracts require node-kind deploy targets and artifact manifest sources, DDN102) and `uml.commpath` (solid structural link between node kinds), which carries RFC-119 `x_endlabels` role/multiplicity — the PJ149 rule names association *or* communication path, and qualifiers remain association-only (`DDN-PJ164`). Node nesting reuses view frames scoped to a node kind (`DDN-PJ164`); deployed components come from the existing `uml.component` vocabulary. Middleware-specific deployment models, artifact content descriptors, topology discovery and formal UML conformance remain outside the profile.
+
 Selecting a source-bound shape or matrix/chart mark navigates to its semantic source. Selecting a projected Chen connector maps to the underlying field or association. Graphical pins apply only to editable graph occurrences, not generated quantitative coordinates.
 
 ## Reference boundary
