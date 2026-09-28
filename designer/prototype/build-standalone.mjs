@@ -45,7 +45,7 @@ export function buildPages() {
   const sourceScript = '<script type="application/json" id="sourceFiles">' + json + '</script>';
 
   const indexBody = body.split(LOGO_SRC_PLACEHOLDER).join(LOGO_SRC);
-  const index = head('DDN Designer — interactive review prototype · DDN') + style + '</style></head><body>' + indexBody + '\n'
+  const index = head('ddn-designer — interactive review prototype · DDN') + style + '</style></head><body>' + indexBody + '\n'
     + sourceScript
     + '<script src="kind-ui-map.js"></script><script src="relation-ui-map.js"></script><script src="../../notation/dist/ddn.global.min.js"></script><script src="commands.js"></script><script src="app.js"></script></body></html>';
 
@@ -60,7 +60,7 @@ export function buildPages() {
     .replace(/\n$/, '');
   let inlines = inlineScript('../../notation/dist/ddn.global.min.js', runtime);
   for (const name of LOCAL_SCRIPTS) inlines += inlineScript(name, read(join(here, name)).replace(/\n$/, ''));
-  const standalone = head('DDN Designer — standalone prototype · DDN') + style + '</style></head><body>' + standaloneBody + '\n'
+  const standalone = head('ddn-designer — standalone prototype · DDN') + style + '</style></head><body>' + standaloneBody + '\n'
     + sourceScript + '\n' + inlines + '</body></html>';
 
   return { 'index.html': index, 'standalone.html': standalone };

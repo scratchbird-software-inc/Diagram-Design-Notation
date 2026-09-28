@@ -11,7 +11,7 @@
 </head>
 <body>
 <header class="site-header"><div class="bar">
-  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">DDN<small>Diagram Design Notation</small></span></a>
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
   <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
   <nav class="site-nav">
       <a href="../index.html">Home</a>
@@ -25,7 +25,7 @@
 </div></header>
 <main class="site-main">
 <h1 class="page-title">Download</h1>
-<p class="lede">DDN 0.7.0 — the open-source Diagram Design Notation project from ScratchBird Software Inc. — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>
+<p class="lede">ddn 0.7.0 — the open-source Diagram Design Notation project, sponsored by ScratchWeaver (ScratchBird Software Inc.) — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>
 <h2>Clone the repository</h2>
 <pre><code>git clone &lt;repo-url&gt; data-design-notation
 cd data-design-notation
@@ -82,8 +82,8 @@ npm test          # full verification suite, exit 0 expected</code></pre>
 <p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>
 </main>
 <footer class="site-footer"><div class="inner">
-  <span>DDN 0.7.0 — an open-source diagram dialect with a free viewer and designer · proposed standard, pre-1.0</span>
-  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
   <a href="../license/index.html">License: GPL-2.0-or-later</a>
   <a href="../docs/index.html">Docs</a>
   <a href="../standard/index.html">Standard</a>

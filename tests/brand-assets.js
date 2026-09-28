@@ -15,7 +15,7 @@ function* walk(dir) {
   }
 }
 
-const BRAND_FILES = ['ddn.svg', 'ddn.png', 'favicon.svg', 'favicon-32.png', 'favicon-64.png'];
+const BRAND_FILES = ['ddn.svg', 'ddn.png', 'scratchweaver.svg', 'scratchweaver.png', 'favicon.svg', 'favicon-32.png', 'favicon-64.png'];
 
 test('assets/brand/ contains the five brand files', () => {
   for (const f of BRAND_FILES) assert.ok(fs.statSync(path.join(root, 'assets/brand', f)).size > 0, f + ' missing or empty');
@@ -46,8 +46,10 @@ test('website shell pages carry the logo, favicons, wordmark, and ScratchBird fo
   const home = fs.readFileSync(path.join(root, 'website/index.html'), 'utf8');
   assert.ok(home.includes('assets/brand/ddn.svg'), 'logo missing from home header');
   assert.ok(home.includes('assets/brand/favicon.svg') && home.includes('assets/brand/favicon-32.png'), 'favicons missing');
-  assert.ok(home.includes('>DDN<small>Diagram Design Notation</small>'), 'wordmark missing');
-  assert.ok(home.includes('>ScratchBird Software Inc.</a> project · GPL-2.0-or-later') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
+  assert.ok(home.includes('>ddn<small>Diagram Design Notation</small>'), 'wordmark missing');
+  assert.ok(home.includes('assets/brand/scratchweaver.svg'), 'sponsor mark missing from footer');
+  assert.ok(home.includes('ScratchWeaver-sponsored') || home.includes('ScratchWeaver project'), 'ScratchWeaver sponsor framing missing');
+  assert.ok(home.includes('ScratchWeaver</strong>-sponsored open-source project') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
   const download = fs.readFileSync(path.join(root, 'website/download/index.html'), 'utf8');
   assert.ok(download.includes('open-source Diagram Design Notation project'), 'download page does not name the project');
 });
@@ -60,11 +62,11 @@ test('every HTML page under website/ has a favicon link', () => {
   assert.deepEqual(missing, [], 'pages without favicons:\n' + missing.slice(0, 20).join('\n'));
 });
 
-test('standalone tool pages carry the DDN brand and a favicon', () => {
+test('standalone tool pages carry the ddn-viewer/ddn-designer brand and a favicon', () => {
   for (const rel of ['tools/index.html', 'tools/designer/index.html',
     'tools/viewer/index.html', 'tools/studio/index.html', 'tools/studio/editor.html']) {
     const html = fs.readFileSync(path.join(root, 'website', rel), 'utf8');
-    assert.ok(html.includes('DDN'), rel + ' missing the project name');
+    assert.ok(html.includes('ddn'), rel + ' missing the project name');
     assert.ok(html.includes('rel="icon"'), rel + ' missing a favicon');
   }
 });

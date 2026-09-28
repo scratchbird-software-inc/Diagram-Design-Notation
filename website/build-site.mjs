@@ -173,13 +173,13 @@ function shell({ base, title, active, body, description }) {
     '<link rel="stylesheet" href="' + base + 'assets/site.css">\n</head>\n<body>\n' +
     '<header class="site-header"><div class="bar">\n' +
     '  <a class="wordmark" href="' + base + 'index.html"><img class="logo" src="' + base + 'assets/brand/ddn.svg" alt="DDN logo">' +
-    '<span class="name">DDN<small>Diagram Design Notation</small></span></a>\n' +
+    '<span class="name">ddn<small>Diagram Design Notation</small></span></a>\n' +
     '  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>\n' +
     '  <nav class="site-nav">\n      ' + nav + '\n  </nav>\n</div></header>\n' +
     body + '\n' +
     '<footer class="site-footer"><div class="inner">\n' +
-    '  <span>DDN ' + VERSION + ' — an open-source diagram dialect with a free viewer and designer · proposed standard, pre-1.0</span>\n' +
-    '  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>\n' +
+    '  <span>ddn ' + VERSION + ' — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>\n' +
+    '  <span><img src="' + base + 'assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>\n' +
     '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
@@ -236,8 +236,8 @@ function withSiteChrome(html, base, active) {
   const header = shell({ base, title: '', active, body: '', description: null })
     .match(/<header class="site-header">[\s\S]*?<\/header>/)[0];
   const footer = '<footer class="site-footer"><div class="inner">\n' +
-    '  <span>DDN ' + VERSION + ' — an open-source diagram dialect with a free viewer and designer · proposed standard, pre-1.0</span>\n' +
-    '  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>\n' +
+    '  <span>ddn ' + VERSION + ' — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>\n' +
+    '  <span><img src="' + base + 'assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>\n' +
     '  <a href="' + base + 'license/index.html">License: GPL-2.0-or-later</a>\n' +
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
@@ -401,12 +401,12 @@ const homeCards = [
 
 writeOut('index.html', shell({
   base: '', active: 'home',
-  title: 'DDN — the Diagram Design Notation project from ScratchBird Software Inc.',
+  title: 'ddn — the Diagram Design Notation project, a ScratchWeaver-sponsored open-source project',
   description: 'DDN: author data, format, and view declarations separately in plain-text .ddn files; one semantic model projects into ERDs, flowcharts, charts, timelines, matrices, and 70+ more diagram types. Zero-dependency JavaScript, deterministic SVG, GPL-2.0-or-later.',
   body:
     '<section class="hero"><div class="inner">\n' +
     '  <h1>One semantic model. Every diagram you need.</h1>\n' +
-    '  <p class="pitch"><strong>DDN</strong> — Diagram Design Notation — is an open-source diagram dialect from ScratchBird Software Inc., with a free viewer and a free designer. ' +
+    '  <p class="pitch"><strong>ddn</strong> — Diagram Design Notation — is an open-source diagram dialect sponsored by the <strong>ScratchWeaver</strong> project (ScratchBird Software Inc.), with the free <strong>ddn-viewer</strong> and free <strong>ddn-designer</strong> tools. ' +
     'It is a model-first diagram language and open standard proposal: ' +
     'declare data, format, and views separately in plain-text <code>.ddn</code> files, and project one model into ERDs, DFDs, ' +
     'flowcharts, C4 views, matrices, charts, timelines, fishbones, decision tables, wireframes, and dozens more — ' +
@@ -427,8 +427,8 @@ writeOut('index.html', shell({
       '    <a class="card" href="' + href + '"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p><small>' + esc(small) + '</small></a>').join('\n') +
     '\n  </div>\n</section>\n' +
     '<section>\n  <h2>The product family</h2>\n  <div class="grid">\n' +
-    '    <div class="card"><h3>DDN — open source (this project)</h3><p>The dialect itself, the reference runtime, the free <strong>viewer</strong> (display and verify .ddn diagrams) and the free <strong>designer</strong> (simple edits and small diagrams) — GPL-2.0-or-later, supported by ScratchBird Software Inc. The free tools ship the complete notation and rendering core; only tool depth differs from the commercial offerings.</p></div>\n' +
-    '    <div class="card"><h3>ScratchWeaver — subscription suite</h3><p>The full commercial diagramming suite (subscription, with some on-site licensing) built on DDN as its file storage and communication format. ScratchWeaver is a separate product — it is not the name of this open-source project.</p></div>\n' +
+    '    <div class="card"><h3>ddn · ddn-viewer · ddn-designer — open source (this project)</h3><p>The dialect itself (<strong>ddn</strong>), the reference runtime, the free <strong>ddn-viewer</strong> (display and verify .ddn diagrams) and the free <strong>ddn-designer</strong> (simple edits and small diagrams) — GPL-2.0-or-later. The free tools ship the complete notation and rendering core; only tool depth differs from the commercial offerings.</p></div>\n' +
+    '    <div class="card"><h3>ScratchWeaver — sponsoring project</h3><p>ScratchWeaver sponsors the open-source ddn family and is also the full commercial diagramming suite (subscription, with some on-site licensing) built on ddn as its file storage and communication format.</p></div>\n' +
     '    <div class="card"><h3>ScratchRobin — commercial console</h3><p>The database management console, BI and data-analytics package that uses DDN and owns backend capabilities such as KEEL. KEEL is not part of DDN, the viewer, or the designer, and never will be.</p></div>\n' +
     '\n  </div>\n</section>\n' +
     '<p><small>Draft proposal, pre-1.0 — the project provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</small></p>\n' +
@@ -543,7 +543,7 @@ const distRows = fs.readdirSync(path.join(REPO, 'notation/dist')).sort()
   .map(f => '<tr><td><a href="../dist/' + f + '"><code>' + f + '</code></a></td><td>' + fs.statSync(path.join(REPO, 'notation/dist', f)).size + '</td></tr>');
 writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<h1 class="page-title">Download</h1>\n' +
-  '<p class="lede">DDN ' + VERSION + ' — the open-source Diagram Design Notation project from ScratchBird Software Inc. — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>\n' +
+  '<p class="lede">ddn ' + VERSION + ' — the open-source Diagram Design Notation project, sponsored by ScratchWeaver (ScratchBird Software Inc.) — is pre-1.0 and <strong>not yet published to the npm registry</strong>. Today you get it by cloning the repository; the runtime bundles below are also served directly from this site, and <code>npm pack</code> in <code>notation/</code> produces the installable <code>@ddn/notation</code> tarball. The publish path is ready: CI runs <code>npm publish --dry-run</code> on every push and would publish on <code>v*</code> tags once the <code>NPM_TOKEN</code> secret is configured (it skips gracefully until then; the committed <code>private: true</code> is an accident guard stripped only by the tag-gated publish job). Embedding? Start from the <a href="../docs/developers/embedding.html">embedding quickstart</a>.</p>\n' +
   '<h2>Clone the repository</h2>\n' +
   '<pre><code>git clone &lt;repo-url&gt; data-design-notation\ncd data-design-notation\nnpm test          # full verification suite, exit 0 expected</code></pre>\n' +
   '<h2>Runtime bundles</h2>\n' +

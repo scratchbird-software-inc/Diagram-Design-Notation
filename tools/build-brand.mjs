@@ -97,8 +97,10 @@ const logoSvg = '<?xml version="1.0" encoding="UTF-8"?>\n' +
 fs.mkdirSync(OUT, { recursive: true });
 const write = (rel, content) => fs.writeFileSync(path.join(OUT, rel), content);
 write('ddn.svg', logoSvg);
+write('scratchweaver.svg', logoSvg.replace('DDN project logo','ScratchWeaver sponsor logo'));
 write('favicon.svg', logoSvg);
 fs.copyFileSync(SRC_PNG, path.join(OUT, 'ddn.png'));
+fs.copyFileSync(SRC_PNG, path.join(OUT, 'scratchweaver.png'));
 
 /* ----------------------------------------------- rasterize the PNG icons */
 const rasterizer = ['rsvg-convert', 'inkscape', 'convert'].find(c =>
@@ -114,4 +116,4 @@ for (const size of [32, 64]) {
     cp.execFileSync('convert', ['-background', 'none', path.join(OUT, 'ddn.svg'), '-resize', size + 'x' + size, out], { stdio: 'pipe' });
   }
 }
-console.log('build-brand: 5 files → ' + path.relative(REPO, OUT) + ' (viewBox ' + viewBox + ', rasterizer ' + rasterizer + ')');
+console.log('build-brand: 7 files → ' + path.relative(REPO, OUT) + ' (viewBox ' + viewBox + ', rasterizer ' + rasterizer + ')');
