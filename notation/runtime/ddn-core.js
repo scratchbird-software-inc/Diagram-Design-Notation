@@ -633,7 +633,7 @@ import RegistryCatalogue from './assets/catalogue.js';
   };
   const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
   const PROPERTIES={
-    projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','traces','geography','method','graticule','iso','depth'],
+    projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth'],
     notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
     layout:['algorithm','auto_place','center','grid_step','optimize','endpoint_ordering','frame_overflow','direction','routing','curve','curve_tension','curve_radius','crossings','gap','columns','port_clearance','object_clearance','edge_clearance','junctions','shared_segments','row_gap','route_policy','quality','root','hierarchy','group_by'],
     display:['fields','kind','maturity','badges','relations','samples','datatypes','domains','depth'],
@@ -833,6 +833,17 @@ import RegistryCatalogue from './assets/catalogue.js';
         ir.view.children.push({slot:panel.id,ir:child});
       }
       if(ir.view.children.length>12)throw new DDNError('DDN-QP003','At most twelve embedded child views are permitted',view.source,view.start);
+    }
+    if(p.projection.profile==='dmn.drd@1'){
+      /* B1-066 (RFC-129): DMN decision nodes bind decision-table views. */
+      for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;
+        if(typeof target!=='string')continue;
+        if(!n.kind.startsWith('dmn.'))throw new DDNError('DDN-PJ192','x_subdiagram on '+n.kind+' under dmn.drd@1; only dmn.* nodes bind views',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&(x.id===target||x.uid===target));
+        if(!tv)throw new DDNError('DDN-PJ192','DMN node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+        if(child.view.profiles.projection?.kind!=='decision')throw new DDNError('DDN-PJ192','DMN node '+(n.name||n.id)+' binds view '+target+' which is a '+child.view.profiles.projection?.kind+' projection; a dmn.decision binds a decision-projection (decision table) view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+      }
     }
     if(p.projection.profile==='uml.interaction_overview@1'||p.projection.profile==='uml.interaction_overview@2'){
       const viewIds=new Set();for(const n of ws.symbols.values())if(n.type==='view'){viewIds.add(n.id);viewIds.add(n.uid);}

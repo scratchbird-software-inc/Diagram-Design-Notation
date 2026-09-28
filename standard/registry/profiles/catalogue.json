@@ -1444,6 +1444,66 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "dmn.decision",
+      "name": "Decision",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "DMNDECISION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "dmn.bkm",
+      "name": "Business knowledge model",
+      "shape": "profile",
+      "silhouette": "clippedcorner",
+      "fallback": "application",
+      "family": "governance",
+      "code": "BKM",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "dmn.inputdata",
+      "name": "Input data",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "data",
+      "code": "INPUTDATA",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "dmn.knowledgesource",
+      "name": "Knowledge source",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "evidence",
+      "code": "KNOWLEDGESOURCE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "dmn.decisionservice",
+      "name": "Decision service",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "DECISIONSERVICE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -2781,6 +2841,62 @@
         "sysml.flowspec",
         "sysml.constraint",
         "req.requirement"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "dmn.inforeq",
+      "name": "Information requirement",
+      "verb": "Requires information",
+      "family": "control",
+      "code": "INFOREQ",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "dmn.knowledgereq",
+      "name": "Knowledge requirement",
+      "verb": "Requires knowledge",
+      "family": "control",
+      "code": "KNOWLEDGEREQ",
+      "start": "none",
+      "end": "open",
+      "pattern": "7 5",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "dmn.authorityreq",
+      "name": "Authority requirement",
+      "verb": "Has authority",
+      "family": "control",
+      "code": "AUTHORITYREQ",
+      "start": "circle",
+      "end": "open",
+      "pattern": "7 5",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -4933,6 +5049,24 @@
       "unsupported": [
         "SysML XMI interchange",
         "SysML 2.0",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "dmn.drd@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "DMN decision requirements diagram"
+      ],
+      "scope": "DMN 1.4 DRD notation: decision, business knowledge model (clipped corner), input data (rounded), knowledge source (document), decision service (band form); information/knowledge/authority requirement connectors; decision nodes bind decision-table views via x_subdiagram; boxed-expression presentation via x_boxed. NO expression language: FEEL is a host-application (backend) capability, not notation.",
+      "validation": [
+        "x_subdiagram on DMN nodes references a decision view (DDN-PJ192)",
+        "x_boxed contract shape (DDN-PJ193)",
+        "requirement connector endpoints (DDN-PJ194)"
+      ],
+      "unsupported": [
+        "FEEL and any expression evaluation (backend capability of host applications, e.g. ScratchRobin KEEL)",
+        "DMN XML interchange",
         "formal OMG certification"
       ]
     }

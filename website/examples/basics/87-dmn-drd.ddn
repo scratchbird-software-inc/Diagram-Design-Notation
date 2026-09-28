@@ -1,0 +1,50 @@
+ddn "0.5";
+module "ddn.examples.dmn";
+
+// B1-066: DMN 1.4 — decision requirements diagram plus decision-table
+// integration. The DRD shows decisions, a business knowledge model (clipped
+// corner), input data (rounded), a knowledge source (document), and a
+// decision service (band), wired with information/knowledge/authority
+// requirements. The decision binds the decision-table view via
+// x_subdiagram (the ↗ ref badge). The table uses the DMN-labelled hit
+// policies and the completeness cell. Boxed expressions render as text —
+// they are never evaluated (expression evaluation is a backend capability
+// of host applications, not the notation). All data is synthetic.
+
+data rules {
+    object high "High severity" { kind: "rule.row"; x_rule: { when: { severity: { op: "eq", value: "high" } }; then: { route: "senior review", fee: 100, flag: "urgent" } }; }
+    object low "Low severity" { kind: "rule.row"; x_rule: { when: { severity: { op: "eq", value: "low" } }; then: { route: "standard", fee: 20, flag: "none" } }; }
+}
+
+data d {
+    object claim "Claim data" { kind: "dmn.inputdata"; }
+    object policy "Claims policy manual" { kind: "dmn.knowledgesource"; }
+    object route "Route claim" { kind: "dmn.decision"; x_subdiagram: { view: "table" };
+        x_boxed: { form: "literal"; text: "if severity = high then senior review else standard" }; }
+    object feerules "Fee schedule" { kind: "dmn.bkm";
+        x_boxed: { form: "context"; entries: [ { name: "base"; text: "20" }, { name: "uplift"; text: "80" } ] }; }
+    object svc "Claim handling service" { kind: "dmn.decisionservice"; }
+
+    relation i1 "" @claim -> @route { kind: "dmn.inforeq"; }
+    relation k1 "" @feerules -> @route { kind: "dmn.knowledgereq"; }
+    relation a1 "" @policy -> @feerules { kind: "dmn.authorityreq"; }
+    relation a2 "" @policy -> @route { kind: "dmn.authorityreq"; }
+    relation i2 "" @route -> @svc { kind: "dmn.inforeq"; }
+}
+
+view drd "Claim handling DRD" {
+    data: [@d];
+    projection { profile: "dmn.drd@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+
+view table "Routing rules — priority" {
+    data: [@rules];
+    projection { kind: decision; profile: "decision.rules@1"; records: [@rules.high, @rules.low]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }]; outputs: ["route", "fee", "flag"]; hit_policy: "priority"; coverage: "complete"; analysis_budget: 4096; }
+}
+
+view table_collect "Routing rules — collect with completeness" {
+    data: [@rules];
+    projection { kind: decision; profile: "decision.rules@1"; records: [@rules.high, @rules.low]; inputs: [{ "key": "severity", "type": "enum", "values": ["low", "high"] }]; outputs: ["route", "fee", "flag"]; hit_policy: "collect"; coverage: "complete"; x_completeness: true; analysis_budget: 4096; }
+}

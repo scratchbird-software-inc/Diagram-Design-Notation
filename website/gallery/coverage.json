@@ -439,11 +439,10 @@
       "svg": "profiles/ddn-1.svg"
     },
     "decision.rules@1": {
-      "entry": "website/examples/quality/views.ddn",
-      "view": "decision_unique",
-      "title": "14 / Disposition policy — unique",
+      "entry": "website/examples/basics/87-dmn-drd.ddn",
+      "view": "table",
+      "title": "Routing rules — priority",
       "kind": "decision",
-      "combined": "website/examples/quality/views.combined.ddn",
       "wiki": "Diagrams-Decision-tables",
       "svg": "profiles/decision-rules-1.svg"
     },
@@ -464,6 +463,13 @@
       "combined": "website/examples/projections/views.combined.ddn",
       "wiki": "Diagrams-Data-flow",
       "svg": "profiles/dfd-yourdon-1.svg"
+    },
+    "dmn.drd@1": {
+      "entry": "website/examples/basics/87-dmn-drd.ddn",
+      "view": "drd",
+      "title": "Claim handling DRD",
+      "kind": "graph",
+      "svg": "profiles/dmn-drd-1.svg"
     },
     "epc.basic@1": {
       "entry": "website/examples/basics/30-epc.ddn",
@@ -3341,6 +3347,28 @@
       "profile": "sysml.usecase@1",
       "kind": "graph",
       "svg": "corpus/basics-86-sysml-behavioral.svg"
+    },
+    {
+      "entry": "website/examples/basics/87-dmn-drd.ddn",
+      "view": "drd",
+      "title": "Claim handling DRD",
+      "views": [
+        {
+          "id": "drd",
+          "title": "Claim handling DRD"
+        },
+        {
+          "id": "table",
+          "title": "Routing rules — priority"
+        },
+        {
+          "id": "table_collect",
+          "title": "Routing rules — collect with completeness"
+        }
+      ],
+      "profile": "dmn.drd@1",
+      "kind": "graph",
+      "svg": "corpus/basics-87-dmn-drd.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

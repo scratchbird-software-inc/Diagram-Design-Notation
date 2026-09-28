@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>45. DMN decision requirements diagrams (dmn.drd@1 on projection graph) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">DDN<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>45. DMN decision requirements diagrams (<code>dmn.drd@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.7.0, governed by RFC-129 (<code>standard/governance/rfcs/RFC-129-dmn-drd.md</code>). Source grammar remains DDN 0.5; the DRD kinds and requirement connectors are registry entries, the decision-table integration reuses <code>x_subdiagram</code>, and the hit-policy labels extend the existing decision engine — no grammar change.</p>
+<p><strong>Fixed boundary.</strong> DDN is a description dialect; the viewer and designer are free simple tools. Expression languages and evaluation (FEEL, KEEL) are backend capabilities of host applications — ScratchRobin owns KEEL — and are never part of DDN, the viewer, or the designer. This chapter is therefore notation plus the existing bounded decision-table engine only.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Decision</strong> — <code>dmn.decision</code> (rect).</li><li><strong>Business knowledge model</strong> — <code>dmn.bkm</code> (clipped-corner rect, new</li></ul>
+<p>  <code>clippedcorner</code> silhouette).</p>
+<ul><li><strong>Input data</strong> — <code>dmn.inputdata</code> (rounded rect).</li><li><strong>Knowledge source</strong> — <code>dmn.knowledgesource</code> (document/dog-ear).</li><li><strong>Decision service</strong> — <code>dmn.decisionservice</code> (rect with a divider band</li></ul>
+<p>  under the name; the collapsed band form).</p>
+<ul><li><strong>Information requirement</strong> — <code>dmn.inforeq</code>: solid line, filled arrowhead;</li></ul>
+<p>  from input data or a decision into a decision or decision service   (<code>DDN-PJ194</code>).</p>
+<ul><li><strong>Knowledge requirement</strong> — <code>dmn.knowledgereq</code>: dashed line, open</li></ul>
+<p>  arrowhead; from a BKM into a decision, BKM or service (<code>DDN-PJ194</code>).</p>
+<ul><li><strong>Authority requirement</strong> — <code>dmn.authorityreq</code>: dashed line, open circle at</li></ul>
+<p>  the authority end (new <code>circle</code> end mark); from a knowledge source or   decision (<code>DDN-PJ194</code>).</p>
+<h2>Decision-table binding</h2>
+<p>A <code>dmn.decision</code> node may declare <code>x_subdiagram: { view: &quot;…&quot; }</code> naming a sibling view whose projection kind is <code>decision</code> (typically <code>decision.rules@1</code>). The node renders the <code>↗ ref</code> badge (the interaction-overview pattern). An unknown view, a non-<code>dmn.*</code> owner, or a non-decision target view fails with <code>DDN-PJ192</code>.</p>
+<h2>Hit-policy labels and the completeness cell</h2>
+<p><code>decision.rules@1</code> projections additionally accept the DMN hit-policy labels <code>priority</code>, <code>any</code>, <code>output_order</code>, <code>rule_order</code> and <code>aggregation</code>. These are table annotations: the bounded partition analyzer still runs (coverage and overlap proofs are unchanged — <code>rule_order</code> is analyzed like <code>first</code>, the rest like <code>collect</code>), and <code>evaluateDecision()</code> returns matches in table order with an explicit note that final ordering/aggregation belongs to the host evaluation engine. Ordering by output-value priority lists and aggregation computation are not implemented — that is evaluation, not notation.</p>
+<p>The table header shows the DMN completeness cell — <code>C+</code> when <code>coverage: &quot;complete&quot;</code> is declared and the bounded analyzer proved no uncovered witnesses, <code>C−</code> otherwise. The cell renders when a DMN-labelled hit policy is used or the projection sets <code>x_completeness: true</code>; legacy unique/first/collect tables without the flag render byte-identically to before. Multi-output tables render one column per declared output (unchanged machinery, exercised by the DMN examples).</p>
+<h2>Boxed expressions (presentation only)</h2>
+<p><code>dmn.decision</code>, <code>dmn.bkm</code> and <code>dmn.decisionservice</code> accept <code>x_boxed: { form: literal|context|invocation|relation, text?, entries? }</code>, rendered as a compartment of text rows. The text is displayed, never parsed or evaluated (<code>DDN-PJ193</code> on other owners; the closed form is enforced by the extension contract).</p>
+<h2>Example</h2>
+<p>See <code>website/examples/basics/87-dmn-drd.ddn</code> (DRD view plus two decision-table views). Tests: <code>notation/tests/dmn-compliance.js</code> and the <code>dmn-showcase.js</code> sweep.</p>
+<h2>Out of scope</h2>
+<p>FEEL and any expression evaluation (a backend capability of host applications, e.g. ScratchRobin KEEL), DMN XML interchange, and formal OMG certification are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.7.0 — an open-source diagram dialect with a free viewer and designer · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

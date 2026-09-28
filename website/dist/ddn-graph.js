@@ -306,6 +306,14 @@
     }
     g.headerH=70*s;
    }
+   /* B1-066 (RFC-129): DMN boxed-expression presentation — text rows in a
+    * bottom compartment. Display only; the text is never parsed or evaluated. */
+   if(['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind)&&n.properties.x_boxed){
+    const xb=n.properties.x_boxed,rows=[...(xb.text?[xb.text]:[]),...(xb.entries||[]).map(e=>(e.name?e.name+': ':'')+e.text)];
+    const wrapped=rows.flatMap(r=>api$7.wrap(r,g.w-32*s,12.5*s,p.style.font,400));
+    g.boxedRows=wrapped;g.boxedH=wrapped.length*18*s+(rows.length?16*s:0);
+    g.h=Math.max(g.h,g.h+24*s+g.boxedH);
+   }
    if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
    /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
     * below; states with activities/internal transitions/submachine grow a
@@ -419,6 +427,30 @@
     out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/><circle cx="${f(cx)}" cy="${f(cy)}" r="${f(r-3.5*s)}" fill="none" stroke="${ink}" stroke-width="1.2"/>`;
     out+=`<circle cx="${f(cx)}" cy="${f(cy-3.5*s)}" r="${f(2.6*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/><path d="M${f(cx-4*s)} ${f(cy+5*s)}Q${f(cx)} ${f(cy-1*s)} ${f(cx+4*s)} ${f(cy+5*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/>`;
     out+=text(cx,y+h-4*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
+   }
+   /* B1-066 (RFC-129): DMN silhouettes — BKM is a rect with the top corners
+    * clipped; the decision service is a rect with a divider band under the
+    * name (the collapsed form). */
+   if(shape==='clippedcorner'){
+    const c=10*s;
+    out+=`<path d="M${f(x+c)} ${f(y)}H${f(x+w-c)}L${f(x+w)} ${f(y+c)}V${f(y+h-c)}L${f(x+w-c)} ${f(y+h)}H${f(x+c)}L${f(x)} ${f(y+h-c)}V${f(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    out+=lines(g.titleLines,x+w/2,y+30*s,16,650);
+    if(g.boxedRows?.length){const by=y+h-g.boxedH-8*s;out+=line(x,by-10*s,x+w,by-10*s)+g.boxedRows.map((v,i)=>text(x+14*s,by+8*s+i*18*s,v,12.5,400,'')).join('');}
+    return out+'</g>';
+   }
+   if(n.kind==='dmn.decisionservice'){
+    out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    out+=line(x,y+44*s,x+w,y+44*s,2.2);
+    out+=lines(g.titleLines,x+w/2,y+30*s,15,650);
+    if(g.boxedRows?.length){const by=y+60*s;out+=g.boxedRows.map((v,i)=>text(x+14*s,by+8*s+i*18*s,v,12.5,400,'')).join('');}
+    return out+'</g>';
+   }
+   /* B1-066 (RFC-129): plain dmn.decision — rect with optional boxed rows. */
+   if(n.kind==='dmn.decision'){
+    out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    out+=lines(g.titleLines,x+w/2,y+30*s,16,650);
+    if(g.boxedRows?.length){const by=y+h-g.boxedH-8*s;out+=line(x,by-10*s,x+w,by-10*s)+g.boxedRows.map((v,i)=>text(x+14*s,by+8*s+i*18*s,v,12.5,400,'')).join('');}
+    return out+'</g>';
    }
    /* B1-063: BPMN 2.0.2 decorator layer — event rings + trigger icons, data
     * documents, choreography bands, group artifacts. Driven by the extension
@@ -1483,6 +1515,7 @@
    else if(type==='slash')s+=`<path d="M-9 -6L-3 6" stroke-width="2.4"/>`;
    else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc$1(surface)}"/>`;
    else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
+   else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc$1(surface)}"/>`; /* B1-066 (RFC-129): DMN authority requirement */
    else if(['one','zeroone','many','zeromany'].includes(type)){
     if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
     else s+='<path d="M-4 -7V7"/>';

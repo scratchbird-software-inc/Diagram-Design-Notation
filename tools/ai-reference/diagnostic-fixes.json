@@ -151,6 +151,9 @@
     "DDN-PJ189": "sysml.parametric@2: each constraint binds at least one endpoint (the exactly-two rule is sysml.parametric@1/DDN-PJ122)",
     "DDN-PJ190": "Under sysml.* profiles composition/generalization connect block-family kinds",
     "DDN-PJ191": "sysml.flow endpoints are blocks or their ports (ibd@2); x_flow rate/probability/continuous annotate uml.flow under sysml.activity@1",
+    "DDN-PJ192": "x_subdiagram on a DMN node must name an existing decision-projection (decision table) view",
+    "DDN-PJ193": "x_boxed is presentation-only text on dmn.decision/dmn.bkm/dmn.decisionservice",
+    "DDN-PJ194": "DMN requirement connectors: information from input data/decision, knowledge from a BKM, authority from a knowledge source or decision",
     "DDN-PJW06": "Informational: sysml behavioral profile is a rebadge of the UML machinery"
   }
 }

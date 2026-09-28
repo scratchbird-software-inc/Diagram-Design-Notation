@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 0129 — DMN 1.4 DRD notation + decision-table integration (no expression language) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">DDN<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 0129 — DMN 1.4 DRD notation + decision-table integration (no expression language)</h1>
+<p>Status: implemented   Authors/reviewers: B1-066 work item   Language/registry impact: additive registry entries within the 0.7 draft; new profile <code>dmn.drd@1</code>; no grammar change; runtime/specification 0.7 line.</p>
+<h2>Problem and motivating example</h2>
+<p>DDN ships <code>decision.rules@1</code> (typed predicates, unique/first/collect hit policies, bounded coverage/shadowing proofs, <code>evaluateDecision()</code>), but has no DMN diagram surface: no decision requirements diagram (DRD), no DRD↔decision-table wiring, and only three of the DMN hit-policy labels. DMN 1.4 additionally specifies the DRD node/connector vocabulary, boxed-expression presentation forms, and the wider hit-policy label set.</p>
+<p><strong>Fixed boundary (user decision):</strong> FEEL and expression evaluation are backend capabilities (KEEL) owned by ScratchRobin — never part of DDN, the viewer, or the designer. DMN scope here is notation + the existing bounded decision-table engine only.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Additive kinds/relations/contracts:</p>
+<ol><li><strong>DRD profile <code>dmn.drd@1</code></strong> (graph projection) — kinds: <code>dmn.decision</code> (rect), <code>dmn.bkm</code> (business knowledge model; new clipped-corner silhouette), <code>dmn.inputdata</code> (rounded), <code>dmn.knowledgesource</code> (document/dog-ear), <code>dmn.decisionservice</code> (rect with a divider band — the cheap form). Relations: <code>dmn.inforeq</code> (solid, filled arrowhead), <code>dmn.knowledgereq</code> (dashed, open arrowhead), <code>dmn.authorityreq</code> (dashed, open circle at the authority end — new <code>circle</code> end mark).</li><li><strong>DRD↔table binding</strong> — a <code>dmn.decision</code> node may carry <code>x_subdiagram: { view }</code> referencing a <code>decision</code>-projection view; the existing ref badge (<code>↗ ref</code>) renders (interaction-overview pattern). The binding validates: target view exists and is a decision projection (DDN-PJ192).</li><li><strong>Hit-policy labels</strong> — <code>hit_policy</code> accepts <code>priority</code>, <code>any</code>, <code>output_order</code>, <code>rule_order</code>, <code>aggregation</code> (with <code>x_aggregation</code> ∈ sum/min/max/count on collect-family tables) in addition to unique/first/collect. These are <em>table annotations</em>: the bounded analyzer keeps running (overlaps/coverage reported, never evaluated as FEEL); <code>evaluateDecision()</code> answers <code>matched</code> in table order for the annotation policies and documents that final ordering/aggregation is the host application's job. <code>any</code>/<code>priority</code>/<code>output_order</code>/<code>rule_order</code> fail overlap proofs only where the policy claims disjointness (none of them do).</li><li><strong>Completeness indicator</strong> — the decision-table header shows the DMN completeness cell: <code>C+</code> when <code>coverage: &quot;complete&quot;</code> is declared and proved, <code>C−</code> otherwise (report/none).</li><li><strong>Multi-output presentation</strong> — <code>outputs</code> already renders one column per output; unchanged, now exercised in the DMN examples.</li><li><strong>Boxed expressions (presentation only)</strong> — <code>x_boxed: { form: literal|context|invocation|relation, text?, entries? }</code> on <code>dmn.decision</code>/<code>dmn.bkm</code>: rendered as a compartment of text rows under the node label. Display only — the text is never parsed or evaluated (DDN-PJ193 shapes the contract).</li></ol>
+<h2>Semantic normalization and identity effects</h2>
+<p>None — notation over existing element/relation identities. <code>decision.rules@1</code> fixtures render byte-identically (the header gains the completeness cell only when new policies/coverage annotations appear — no, see D2 below: the completeness cell is gated on the DMN-labelled policies and an opt-in property, so existing fixtures are untouched).</p>
+<p>D2 (recorded decision): the completeness cell renders only when the view opts in via the new hit-policy labels or <code>coverage</code> is explicitly declared <em>and</em> the view uses profile <code>decision.rules@1</code> with <code>hit_policy</code> — to keep goldens byte-identical the cell prints only for the new DMN labels or when <code>x_completeness: true</code> is set on the view projection properties. Existing three-policy tables without the flag keep the old header byte-for-byte.</p>
+<h2>Error codes (ceilings re-grepped: PJ191, PJW06)</h2>
+<ul><li><code>DDN-PJ192</code> — <code>x_subdiagram</code> on a DMN node must reference an existing view with a decision projection.</li><li><code>DDN-PJ193</code> — <code>x_boxed</code> contract shape (closed enum/form, entries ≤ 10 rows of text).</li><li><code>DDN-PJ194</code> — DRD connector endpoint rules (information/knowledge/authority requirement source/target kinds).</li></ul>
+<h2>Alternatives considered</h2>
+<ol><li><strong>Full hit-policy semantics in the engine</strong> (priority ordering, aggregation evaluation): rejected — that is expression/output evaluation, KEEL territory (ScratchRobin). Labels are notation; bounded analysis stays bounded.</li><li><strong>Boxed expressions as a new projection kind</strong>: rejected — presentation forms map onto text rows; a projection would invite evaluation scope creep.</li><li><strong><code>dmn.decisionservice</code> expanded/collapsed divider forms</strong>: only the collapsed band form ships (cheap); the expanded form is a future item.</li></ol>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>DDN 0.7.0 — an open-source diagram dialect with a free viewer and designer · proposed standard, pre-1.0</span>
+  <span>A <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> project · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

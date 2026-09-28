@@ -3403,6 +3403,14 @@
         "spline-tension controls",
         "directed bundles"
       ]
+    },
+    {
+      "id": "dmn.drd@1",
+      "projection": "graph",
+      "diagramFamilies": ["DMN decision requirements diagram"],
+      "scope": "DMN 1.4 DRD notation: decision, business knowledge model (clipped corner), input data (rounded), knowledge source (document), decision service (band form); information/knowledge/authority requirement connectors; decision nodes bind decision-table views via x_subdiagram; boxed-expression presentation via x_boxed. NO expression language: FEEL is a host-application (backend) capability, not notation.",
+      "validation": ["x_subdiagram on DMN nodes references a decision view (DDN-PJ192)", "x_boxed contract shape (DDN-PJ193)", "requirement connector endpoints (DDN-PJ194)"],
+      "unsupported": ["FEEL and any expression evaluation (backend capability of host applications, e.g. ScratchRobin KEEL)", "DMN XML interchange", "formal OMG certification"]
     }
   ],
   "projectionProperties": {

@@ -70,6 +70,7 @@
     "timeline.basic@1": "Timeline/Gantt: dated records with start/end and optional dependencies",
     "fishbone.basic@1": "Fishbone/Ishikawa: effect with categorized cause ribs",
     "decision.rules@1": "Decision table (DMN-like): inputs, outputs, x_rule rows, hit policy",
+    "dmn.drd@1": "DMN 1.4 DRD: decision/BKM/input-data/knowledge-source/decision-service nodes, three requirement connectors, decision-table binding, boxed-expression presentation (FEEL never evaluated)",
     "state.flat@1": "Flat state machine: one initial, terminals, guarded transitions, trace simulation",
     "state.composite@1": "Hierarchical state machine: composite states and parallel regions",
     "uml.statemachine@1": "UML 2.5.1 state machine (RFC-121): entry/exit/do activities, internal transitions, history/junction/choice/entry-exit-point/fork-join/terminate pseudostates, trigger [guard] / effect, submachines, time events",

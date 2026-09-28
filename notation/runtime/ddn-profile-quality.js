@@ -287,6 +287,22 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ /* B1-066 (RFC-129): DMN 1.4 DRD semantics. */
+ {
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   const xb=n.properties.x_boxed;
+   if(xb!==undefined&&!['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind))fail('DDN-PJ193','x_boxed boxed-expression presentation applies to dmn.decision/dmn.bkm/dmn.decisionservice; '+n.id+' is '+n.kind,n);
+  }
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind.startsWith('dmn.'))){
+   const a=ns.get(r.from.element),b=ns.get(r.to.element),ka=a?.kind,kb=b?.kind;
+   if(r.kind==='dmn.inforeq'&&!(['dmn.inputdata','dmn.decision','dmn.decisionservice'].includes(ka)&&['dmn.decision','dmn.decisionservice'].includes(kb)))
+    fail('DDN-PJ194','Information requirement '+r.id+' flows from input data/decision into a decision or decision service; found '+(ka||'?')+' -> '+(kb||'?'),r);
+   if(r.kind==='dmn.knowledgereq'&&!(ka==='dmn.bkm'&&['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(kb)))
+    fail('DDN-PJ194','Knowledge requirement '+r.id+' flows from a BKM into a decision/BKM/service; found '+(ka||'?')+' -> '+(kb||'?'),r);
+   if(r.kind==='dmn.authorityreq'&&!(['dmn.knowledgesource','dmn.decision'].includes(ka)&&['dmn.knowledgesource','dmn.decision','dmn.bkm','dmn.decisionservice'].includes(kb)))
+    fail('DDN-PJ194','Authority requirement '+r.id+' flows from a knowledge source or decision; found '+(ka||'?')+' -> '+(kb||'?'),r);
+  }
+ }
  /* B1-065 (RFC-128): SysML 1.6 semantics. */
  {
   const BLOCKY=['sysml.block','sysml.interfaceblock','sysml.valuetype','sysml.flowspec','sysml.constraint'];
