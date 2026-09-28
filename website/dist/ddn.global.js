@@ -5795,21 +5795,54 @@
   const ENGINES={name:'ddn-consolidated',core:D.VERSION,interaction:backend.Interaction?.VERSION??null,layout:backend.Placement?.VERSION??null,palette:'blue-grey@1'};
   class LiveError extends Error{constructor(code,message){super(message);this.name='DDNLiveError';this.code=code;}}
   const fail=(code,message)=>{throw new LiveError(code,message);};
-  const choices={endpointOrdering:['source','optimize','preserve'],mark:['source','bar','line','area','point','pie','donut'],theme:['source','default','base','neutral','dark','night','forest'],placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],center:['source','pins','content'],look:['classic','handDrawn','neo'],routing:['source','orthogonal','straight','curved','rounded'],crossings:['source','gap','bridge','square_bridge'],fields:['source','names','none'],domains:['source','show','hide'],datatypes:['source','show','hide'],labels:['source','numbers','text','tokens'],kind:['source','icon_token','icon','text','none'],legend:['source','on','off'],title:['source','on','off'],footer:['source','on','off'],page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],font:['source','sans','serif','mono','handwriting']};
-  const defaults={endpointOrdering:'source',autoPlace:null,center:'source',gridStep:null,theme:'source',placement:'source',look:null,routing:'source',crossings:'source',fields:'source',domains:'source',datatypes:'source',depth:null,mark:'source',labels:'source',kind:'source',legend:'source',title:'source',footer:'source',page:'source',font:'source',fontSize:null,width:1600,height:1000,roughness:null,hachure:null,relationRouting:null,curveTension:null,curveRadius:null};
+  const choices={
+   endpointOrdering:['source','optimize','preserve'],
+   mark:['source','bar','line','area','point','pie','donut'],
+   theme:['source','default','base','neutral','dark','night','forest'],
+   placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],
+   center:['source','pins','content'],
+   look:['classic','handDrawn','neo'],
+   routing:['source','orthogonal','straight','curved','rounded'],
+   crossings:['source','gap','bridge','square_bridge'],
+   fields:['source','names','none'],
+   domains:['source','show','hide'],
+   datatypes:['source','show','hide'],
+   labels:['source','numbers','text','tokens'],
+   kind:['source','icon_token','icon','text','none'],
+   legend:['source','on','off'],
+   title:['source','on','off'],
+   footer:['source','on','off'],
+   page:['source','content','web','a4-landscape','a4-portrait','letter-landscape','letter-portrait','custom'],
+   font:['source','sans','serif','mono','handwriting']};
+  const defaults={
+    endpointOrdering:'source', autoPlace:null, center:'source', gridStep:null,
+    theme:'source', placement:'source', look:null, routing:'source',
+    crossings:'source', fields:'source', domains:'source', datatypes:'source',
+    depth:null, mark:'source', labels:'source', kind:'source',
+    legend:'source', title:'source', footer:'source', page:'source',
+    font:'source', fontSize:null, width:1600, height:1000,
+    roughness:null, hachure:null, relationRouting:null, curveTension:null,
+    curveRadius:null
+  };
   const routingValues=['orthogonal','straight','curved','rounded'];
   function checkOptions(o={}){
    if(!o||typeof o!=='object'||Array.isArray(o))fail('LIVE001','Presentation options must be a record.');
    for(const k of Object.keys(o))if(!Object.hasOwn(defaults,k))fail('LIVE001','Unsupported presentation option: '+k);
    for(const [k,values]of Object.entries(choices))if(o[k]!=null&&!values.includes(o[k]))fail('LIVE002',`Unsupported ${k}: ${o[k]}`);
-   for(const [k,min,max]of [['width',400,32000],['height',400,32000],['roughness',0,3],['fontSize',8,64],['gridStep',8,512],['depth',0,64],['curveTension',0,1],['curveRadius',0,512]])if(o[k]!=null&&(!Number.isFinite(o[k])||o[k]<min||o[k]>max||(k==='depth'&&!Number.isInteger(o[k]))))fail('LIVE003',`${k} must be between ${min} and ${max}.`);
+   for(const [k,min,max]of [['width',400,32000],['height',400,32000],['roughness',0,3],['fontSize',8,64],['gridStep',8,512],['depth',0,64],['curveTension',0,1],['curveRadius',0,512]])
+    if(o[k]!=null&&(!Number.isFinite(o[k])||o[k]<min||o[k]>max||(k==='depth'&&!Number.isInteger(o[k]))))
+     fail('LIVE003',`${k} must be between ${min} and ${max}.`);
    for(const k of ['autoPlace','hachure'])if(o[k]!=null&&typeof o[k]!=='boolean')fail('LIVE003',k+' must be boolean or null.');
    if(o.relationRouting!=null){if(typeof o.relationRouting!=='object'||Array.isArray(o.relationRouting))fail('LIVE022','relationRouting must be a record keyed by verb or relation id.');
     for(const [key,value]of Object.entries(o.relationRouting))if(!routingValues.includes(value))fail('LIVE023',`Unsupported relationRouting value for ${key}: ${value}`);}
    return o;
   }
   function pathChecked(k){
-   if(typeof k!=='string'||!k||k.length>1024||k!==k.normalize('NFC')||k.startsWith('/')||/[\\\x00-\x1f\x7f]/.test(k)||/^[a-z]+:/i.test(k)||k.split('/').some(x=>!x||x==='.'||x==='..'||['__proto__','constructor','prototype'].includes(x))||!k.toLowerCase().endsWith('.ddn'))fail('LIVE010','Invalid workspace DDN path: '+k);
+   if(typeof k!=='string'||!k||k.length>1024||k!==k.normalize('NFC')||k.startsWith('/')
+    ||/[\\\x00-\x1f\x7f]/.test(k)||/^[a-z]+:/i.test(k)
+    ||k.split('/').some(x=>!x||x==='.'||x==='..'||['__proto__','constructor','prototype'].includes(x))
+    ||!k.toLowerCase().endsWith('.ddn'))
+    fail('LIVE010','Invalid workspace DDN path: '+k);
    return k;
   }
   function filesChecked(input){
@@ -5834,12 +5867,47 @@
   }
   const fingerprint=s=>{let a=2166136261,b=5381;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,16777619);b=Math.imul(b,33)^c;}return (a>>>0).toString(16).padStart(8,'0')+(b>>>0).toString(16).padStart(8,'0');};
   function freeze(v){if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.freeze(v);Object.values(v).forEach(freeze);}return v;}
-  function capabilities(ir){const projection=ir.view.profiles.projection?.kind||'graph',bound=!['graph','chen'].includes(projection);const sequence=!!ir.view.profiles.layout.x_interaction,redacted=ir.view.profiles.export.mode==='redacted';return {...ENGINES,sequence,projection,dataBound:bound,graphControls:!bound&&projection!=='chen',marks:projection==='chart'&&ir.view.profiles.projection.profile==='chart.quality@1'?(ir.view.profiles.projection.transform&&ir.view.profiles.projection.transform!=='identity'||ir.view.profiles.projection.layers?['source']:['source','bar','line','area','point']):projection==='chart'?(ir.view.profiles.projection.x_type==='number'?['source','point','line','area']:ir.view.profiles.projection.x_type==='date'?['source','line','area']:['source','bar','line','area','pie','donut']):['source'],sourceExport:!redacted,autoPlacement:!sequence&&!bound&&projection!=='chen',retainedPlacementState:!sequence&&!bound&&projection!=='chen',placement:sequence||bound||projection==='chen'?['source']:choices.placement,centers:sequence||bound||projection==='chen'?['source']:choices.center,routing:sequence||bound||projection==='chen'?['source']:choices.routing,fields:sequence||bound||projection==='chen'?['source']:choices.fields,labels:bound||projection==='chen'?['source']:sequence?['source','numbers']:choices.labels,page:sequence?['source']:choices.page,kind:sequence||bound||projection==='chen'?['source']:choices.kind,crossings:sequence||bound||projection==='chen'?['source']:choices.crossings,theme:choices.theme,looks:choices.look,notes:sequence?['Fixed participant lanes and ordered exchanges; free-node routing/page controls are disabled. Redacted interaction exports are rejected.']:['DDN 0.5 profiles and projections preserve core validation, native routing and publication checks. Layout search is deterministic and bounded; pins and explicit constraints can leave crossings.']};}
+  function capabilities(ir){
+   const projection=ir.view.profiles.projection?.kind||'graph',bound=!['graph','chen'].includes(projection);
+   const sequence=!!ir.view.profiles.layout.x_interaction,redacted=ir.view.profiles.export.mode==='redacted';
+   const proj=ir.view.profiles.projection;
+   const marks=projection==='chart'&&proj.profile==='chart.quality@1'
+    ?(proj.transform&&proj.transform!=='identity'||proj.layers?['source']:['source','bar','line','area','point'])
+    :projection==='chart'
+     ?(proj.x_type==='number'?['source','point','line','area']:proj.x_type==='date'?['source','line','area']:['source','bar','line','area','pie','donut'])
+     :['source'];
+   const opt=key=>sequence||bound||projection==='chen'?['source']:choices[key];
+   return {...ENGINES,sequence,projection,dataBound:bound,
+    graphControls:!bound&&projection!=='chen',
+    marks,
+    sourceExport:!redacted,
+    autoPlacement:!sequence&&!bound&&projection!=='chen',
+    retainedPlacementState:!sequence&&!bound&&projection!=='chen',
+    placement:opt('placement'),centers:opt('center'),routing:opt('routing'),fields:opt('fields'),
+    labels:bound||projection==='chen'?['source']:sequence?['source','numbers']:choices.labels,
+    page:sequence?['source']:choices.page,
+    kind:sequence||bound||projection==='chen'?['source']:choices.kind,
+    crossings:sequence||bound||projection==='chen'?['source']:choices.crossings,
+    theme:choices.theme,looks:choices.look,
+    notes:sequence
+     ?['Fixed participant lanes and ordered exchanges; free-node routing/page controls are disabled. Redacted interaction exports are rejected.']
+     :['DDN 0.5 profiles and projections preserve core validation, native routing and publication checks. Layout search is deterministic and bounded; pins and explicit constraints can leave crossings.']};
+  }
   function apply(base,overrides){
    const ir={...base,view:clone(base.view)},o={...defaults,...checkOptions(overrides)},p=ir.view.profiles,caps=capabilities(ir);
    if(o.mark!=='source'){if(caps.projection!=='chart'||!caps.marks.includes(o.mark))fail('LIVE021','Requested mark is not supported by this projection/transform');p.projection.mark=o.mark;}
-   if(caps.dataBound||caps.projection==='chen'){for(const key of ['placement','routing','crossings','fields','domains','datatypes','labels','kind','center','endpointOrdering'])if(o[key]!=='source')fail('LIVE021','This projection does not allow graph setting '+key);if(o.autoPlace!==null||o.gridStep!==null||o.depth!==null||o.relationRouting!==null)fail('LIVE021','Data-bound coordinates cannot be replaced with automatic graph placement');}
-   if(caps.sequence){for(const k of ['placement','routing','fields','labels','page','kind','crossings'])if(!caps[k].includes(o[k]))fail('LIVE020','Interaction projection does not support '+k+'='+o[k]);if(o.autoPlace!==null||o.gridStep!==null||o.center!=='source'||o.fontSize!==null||o.domains!=='source'||o.datatypes!=='source'||o.depth!==null||o.endpointOrdering!=='source'||o.relationRouting!==null)fail('LIVE020','Interaction projection retains its fixed lanes and typography.');}
+   if(caps.dataBound||caps.projection==='chen'){
+    for(const key of ['placement','routing','crossings','fields','domains','datatypes','labels','kind','center','endpointOrdering'])
+     if(o[key]!=='source')fail('LIVE021','This projection does not allow graph setting '+key);
+    if(o.autoPlace!==null||o.gridStep!==null||o.depth!==null||o.relationRouting!==null)
+     fail('LIVE021','Data-bound coordinates cannot be replaced with automatic graph placement');
+   }
+   if(caps.sequence){
+    for(const k of ['placement','routing','fields','labels','page','kind','crossings'])
+     if(!caps[k].includes(o[k]))fail('LIVE020','Interaction projection does not support '+k+'='+o[k]);
+    if(o.autoPlace!==null||o.gridStep!==null||o.center!=='source'||o.fontSize!==null||o.domains!=='source'||o.datatypes!=='source'||o.depth!==null||o.endpointOrdering!=='source'||o.relationRouting!==null)
+     fail('LIVE020','Interaction projection retains its fixed lanes and typography.');
+   }
    if(o.endpointOrdering!=='source')p.layout.endpoint_ordering=o.endpointOrdering;
    if(o.placement!=='source'){p.layout.algorithm=o.placement;if(o.center==='source')p.layout.center='pins';}
    if(o.autoPlace!==null)p.layout.auto_place=o.autoPlace;
@@ -5902,12 +5970,42 @@
    return {ir,options:o};
   }
   function relative(base,target){const a=base.split('/').slice(0,-1),b=target.split('/');while(a.length&&b.length&&a[0]===b[0]){a.shift();b.shift();}return [...a.map(()=> '..'),...b].join('/')||'./'+target.split('/').at(-1);}
-  function resolvePath(base,rel){if(/^(?:[a-z]+:|\/|\\)/i.test(rel)||rel.includes('\\'))fail('LIVE010','Imports must be workspace relative.');const a=base.split('/').slice(0,-1);for(const bit of rel.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!a.length)fail('LIVE010','Import escapes workspace.');a.pop();}else a.push(bit);}return a.join('/');}
-  function replaceSpans(text,edits){const sorted=[...edits].sort((a,b)=>b.start-a.start);let last=text.length+1;for(const e of sorted){if(!Number.isInteger(e.start)||!Number.isInteger(e.end)||e.start<0||e.end<e.start||e.end>text.length||e.end>last||typeof e.text!=='string')fail('LIVE031','Overlapping or invalid text edits.');text=text.slice(0,e.start)+e.text+text.slice(e.end);last=e.start;}return text;}
+  function resolvePath(base,rel){
+   if(/^(?:[a-z]+:|\/|\\)/i.test(rel)||rel.includes('\\'))fail('LIVE010','Imports must be workspace relative.');
+   const a=base.split('/').slice(0,-1);
+   for(const bit of rel.split('/')){
+    if(!bit||bit==='.')continue;
+    if(bit==='..'){if(!a.length)fail('LIVE010','Import escapes workspace.');a.pop();}else a.push(bit);
+   }
+   return a.join('/');
+  }
+  function replaceSpans(text,edits){
+   const sorted=[...edits].sort((a,b)=>b.start-a.start);
+   let last=text.length+1;
+   for(const e of sorted){
+    if(!Number.isInteger(e.start)||!Number.isInteger(e.end)||e.start<0||e.end<e.start||e.end>text.length||e.end>last||typeof e.text!=='string')
+     fail('LIVE031','Overlapping or invalid text edits.');
+    text=text.slice(0,e.start)+e.text+text.slice(e.end);last=e.start;
+   }
+   return text;
+  }
   function createWorkspace(input){
    let files=filesChecked(input),revision=0;const cache=new Map(),geometryCache=new Map(),listeners=new Set(),undo=[],redo=[];let historyBytes=0,destroyed=false;
    function notify(changed){revision++;cache.clear();geometryCache.clear();for(const fn of listeners){try{fn({revision,changedFiles:changed});}catch(e){console.error('DDN listener:',e);}}}
-   function commit(next,label='Edit source',record=true){if(destroyed)fail('LIVE016','Workspace destroyed.');next=filesChecked(next);const keys=[...new Set([...Object.keys(files),...Object.keys(next)])],patch=keys.filter(k=>files[k]!==next[k]).map(k=>({file:k,before:files[k],after:next[k]}));if(!patch.length)return revision;if(record){const bytes=patch.reduce((n,p)=>n+(p.before?.length||0)+(p.after?.length||0),0);undo.push({patch,label,bytes});historyBytes+=bytes;while(undo.length>60||historyBytes>16000000&&undo.length>1)historyBytes-=undo.shift().bytes;redo.length=0;}files=next;notify(patch.map(p=>p.file));return revision;}
+   function commit(next,label='Edit source',record=true){
+    if(destroyed)fail('LIVE016','Workspace destroyed.');
+    next=filesChecked(next);
+    const keys=[...new Set([...Object.keys(files),...Object.keys(next)])],
+     patch=keys.filter(k=>files[k]!==next[k]).map(k=>({file:k,before:files[k],after:next[k]}));
+    if(!patch.length)return revision;
+    if(record){
+     const bytes=patch.reduce((n,p)=>n+(p.before?.length||0)+(p.after?.length||0),0);
+     undo.push({patch,label,bytes});historyBytes+=bytes;
+     while(undo.length>60||historyBytes>16000000&&undo.length>1)historyBytes-=undo.shift().bytes;
+     redo.length=0;
+    }
+    files=next;notify(patch.map(p=>p.file));return revision;
+   }
    function compiled(entry,view){if(!Object.hasOwn(files,entry))fail('LIVE012','Missing entry: '+entry);const key=entry+'#'+(view||'');if(cache.has(key))return cache.get(key);const built=D.build(files,entry,view,assets.registry),ir=built.ir;
     if(ir.view.selected.length>128||ir.view.relations.length>384)fail('LIVE013','Live view limit: 128 elements and 384 relationships. Split the model into linked views.');
     freeze(ir.elements);freeze(ir.relations);const result={ir,dependencies:[...built.workspace.docs.keys()]};cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);return result;}
@@ -5923,9 +6021,28 @@
     removeFile(file,{force=false}={}){if(!Object.hasOwn(files,file))fail('LIVE012','Missing source file.');const deps=this.dependents(file);if(deps.length&&!force)fail('LIVE033','File is imported by: '+deps.join(', '));const next={...files};delete next[file];return commit(next,'Remove '+file);},
     dependents(file){const out=[];for(const [name,text]of Object.entries(files))try{if(D.parse(text,name).imports.some(i=>resolvePath(name,i.path)===file))out.push(name);}catch{}return out;},
     renameFile(oldName,newName){pathChecked(newName);if(!Object.hasOwn(files,oldName))fail('LIVE012','File not found.');if(Object.hasOwn(files,newName))fail('LIVE034','Destination already exists.');const next={...files};delete next[oldName];
-     for(const [name,text]of Object.entries(files)){const doc=D.parse(text,name),bound=doc.declarations[0]?.start??text.length,tokens=D.lex(text,name).filter(t=>t.start<bound),edits=[],newFile=name===oldName?newName:name;for(let i=0;i<tokens.length-1;i++)if(tokens[i].type==='id'&&tokens[i].value==='import'&&tokens[i+1].type==='string'){const tok=tokens[i+1],target=resolvePath(name,tok.value),newTarget=target===oldName?newName:target;if(name===oldName||target===oldName)edits.push({start:tok.start,end:tok.end,text:JSON.stringify(relative(newFile,newTarget))});}next[newFile]=replaceSpans(text,edits);}
+     for(const [name,text]of Object.entries(files)){
+      const doc=D.parse(text,name),bound=doc.declarations[0]?.start??text.length,
+       tokens=D.lex(text,name).filter(t=>t.start<bound),edits=[],newFile=name===oldName?newName:name;
+      for(let i=0;i<tokens.length-1;i++)if(tokens[i].type==='id'&&tokens[i].value==='import'&&tokens[i+1].type==='string'){
+       const tok=tokens[i+1],target=resolvePath(name,tok.value),newTarget=target===oldName?newName:target;
+       if(name===oldName||target===oldName)edits.push({start:tok.start,end:tok.end,text:JSON.stringify(relative(newFile,newTarget))});
+      }
+      next[newFile]=replaceSpans(text,edits);
+     }
      return commit(next,'Rename '+oldName+' to '+newName);},
-    applyEdits(edits,{expectedRevision=revision,entry,view}={}){if(expectedRevision!==revision)fail('LIVE030','Source changed since this edit was prepared.');const next={...files},groups=new Map();for(const e of edits){if(!Object.hasOwn(files,e.file))fail('LIVE012','Missing edited file.');if(!groups.has(e.file))groups.set(e.file,[]);groups.get(e.file).push(e);}for(const [f,list]of groups)next[f]=replaceSpans(next[f],list);if(entry)D.build(next,entry,view,assets.registry);else for(const f of groups.keys())D.parse(next[f],f);return commit(next,'Structured edit');},
+    applyEdits(edits,{expectedRevision=revision,entry,view}={}){
+     if(expectedRevision!==revision)fail('LIVE030','Source changed since this edit was prepared.');
+     const next={...files},groups=new Map();
+     for(const e of edits){
+      if(!Object.hasOwn(files,e.file))fail('LIVE012','Missing edited file.');
+      if(!groups.has(e.file))groups.set(e.file,[]);
+      groups.get(e.file).push(e);
+     }
+     for(const [f,list]of groups)next[f]=replaceSpans(next[f],list);
+     if(entry)D.build(next,entry,view,assets.registry);else for(const f of groups.keys())D.parse(next[f],f);
+     return commit(next,'Structured edit');
+    },
     replaceData(name,records){return api.authoring.replaceData(this,name,records);},
     history(){return {canUndo:undo.length>0,canRedo:redo.length>0,undoLabel:undo.at(-1)?.label||'',redoLabel:redo.at(-1)?.label||''};},
     undo(){const t=undo.pop();if(!t)return false;historyBytes-=t.bytes;const n={...files};for(const p of t.patch)if(p.before===undefined)delete n[p.file];else n[p.file]=p.before;commit(n,t.label,false);redo.push(t);return true;},
@@ -5961,7 +6078,12 @@
      const sourceMap=redacted?{}:Object.fromEntries(sourceNodes.filter(n=>n.source).map(n=>[n.id,{name:n.name,...n.source}]));
      for(const m of result.scene.projection?.mapping||[])if(sourceMap[m.source])sourceMap[m.occurrence]={...sourceMap[m.source],sourceId:m.source};
      const keys=clone((redacted?publicIR:v.ir).view.keys);
-     const out={svg:result.svg,scene:result.scene,layoutState:result.scene.layoutState||null,diagnostics:result.diagnostics||[],entry,view,modelFingerprint:fingerprint(JSON.stringify(D.semanticJSON(redacted?publicIR:base.ir))),revision,milliseconds:performance.now()-start,profiles:clone(redacted?publicIR.view.profiles:p),capabilities:capabilities(v.ir),overrides:v.options,keys,sourceMap,dependencies:redacted?[]:base.dependencies.slice()};
+     const out={svg:result.svg,scene:result.scene,layoutState:result.scene.layoutState||null,
+      diagnostics:result.diagnostics||[],entry,view,
+      modelFingerprint:fingerprint(JSON.stringify(D.semanticJSON(redacted?publicIR:base.ir))),
+      revision,milliseconds:performance.now()-start,
+      profiles:clone(redacted?publicIR.view.profiles:p),capabilities:capabilities(v.ir),
+      overrides:v.options,keys,sourceMap,dependencies:redacted?[]:base.dependencies.slice()};
      geometryCache.set(geometryKey,deepClone(out));while(geometryCache.size>4)geometryCache.delete(geometryCache.keys().next().value);
      return out;
     },
@@ -5993,7 +6115,14 @@
     evaluateDecision(entry,view,input){return clone(backend.ProjectionData.quality.evaluateDecision(backend.ProjectionData.plan(compiled(entry,view).ir,D.DDNError),input));},
     simulateLifecycle(entry,view,events,expected){return clone(backend.ProjectionData.quality.simulate(backend.ProjectionData.plan(compiled(entry,view).ir,D.DDNError).lifecycle,events,expected));},
     projectionPlan(entry,view){return clone(backend.Engine.plan(compiled(entry,view).ir,D.DDNError));},
-    exportModel({entry,view,overrides={}}){const v=apply(compiled(entry,view).ir,overrides);if(v.ir.view.profiles.layout.x_interaction&&v.ir.view.profiles.export.mode==='redacted'){if(!backend.Interaction)fail('DDN-E010','Interaction validation is provided by ddn-graph.js; load it after ddn-core.js.');backend.Interaction.validate(v.ir);}return backend.Export.serialize(v.ir);},
+    exportModel({entry,view,overrides={}}){
+     const v=apply(compiled(entry,view).ir,overrides);
+     if(v.ir.view.profiles.layout.x_interaction&&v.ir.view.profiles.export.mode==='redacted'){
+      if(!backend.Interaction)fail('DDN-E010','Interaction validation is provided by ddn-graph.js; load it after ddn-core.js.');
+      backend.Interaction.validate(v.ir);
+     }
+     return backend.Export.serialize(v.ir);
+    },
     snapshot(entry,view,overrides={},layoutState=null){checkOptions(overrides);return {format:'ddn-workspace@1',runtime:ENGINES,files:{...files},entry,view,overrides:clone(overrides),...(layoutState?{layoutState:clone(layoutState)}:{})};},
     destroy(){cache.clear();geometryCache.clear();listeners.clear();undo.length=redo.length=0;files=Object.create(null);destroyed=true;}
    };return ws;
@@ -6006,9 +6135,27 @@
    * rendering. */
   let renderBridge=null;
   function setRenderBridge(bridge){if(bridge!=null&&(typeof bridge!=='object'||typeof bridge.render!=='function'))fail('LIVE040','Render bridge must expose render(ir, engineOpts, flags).');renderBridge=bridge||null;}
-  function registerWorkspace(id,files){if(typeof id!=='string'||!id)fail('LIVE014','Workspace name is required.');const ws=files&&typeof files.renderSync==='function'?files:createWorkspace(files);workspaces.set(id,ws);if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('ddn-workspace-ready',{detail:{id}}));return ws;}
-  function fromSnapshot(s){if(!['ddn-workspace@1','ddn-live-snapshot@0.1'].includes(s?.format)||typeof s.entry!=='string'||typeof s.view!=='string')fail('LIVE015','Unknown saved workspace format.');checkOptions(s.overrides||{});pathChecked(s.entry);return {workspace:createWorkspace(s.files),entry:s.entry,view:s.view,overrides:clone(s.overrides||{}),...(s.layoutState?{layoutState:clone(s.layoutState)}:{})};}
-  const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,createWorkspace,registerWorkspace,workspaces,fromSnapshot,setRenderBridge,engineAssets:{registry:assets.registry,glyphs:assets.glyphs},defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,resolvePath,replaceSpans,kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,glyphs:{forKind:glyphForKind}};
+  function registerWorkspace(id,files){if(typeof id!=='string'||!id)fail('LIVE014','Workspace name is required.');
+   const ws=files&&typeof files.renderSync==='function'?files:createWorkspace(files);
+   workspaces.set(id,ws);
+   if(typeof window!=='undefined')window.dispatchEvent(new CustomEvent('ddn-workspace-ready',{detail:{id}}));
+   return ws;}
+  function fromSnapshot(s){
+   if(!['ddn-workspace@1','ddn-live-snapshot@0.1'].includes(s?.format)||typeof s.entry!=='string'||typeof s.view!=='string')
+    fail('LIVE015','Unknown saved workspace format.');
+   checkOptions(s.overrides||{});pathChecked(s.entry);
+   return {workspace:createWorkspace(s.files),entry:s.entry,view:s.view,overrides:clone(s.overrides||{}),...(s.layoutState?{layoutState:clone(s.layoutState)}:{})};
+  }
+  const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,LiveError,
+   createWorkspace,registerWorkspace,workspaces,fromSnapshot,setRenderBridge,
+   engineAssets:{registry:assets.registry,glyphs:assets.glyphs},
+   defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},
+   choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,
+   resolvePath,replaceSpans,
+   kinds:assets.registry.kinds.map(k=>({id:k.keyword,label:k.name,code:k.code})),
+   relations:assets.registry.relationships.map(k=>({id:k.keyword,label:k.name||k.verb,code:k.code})),
+   setTextMetrics:backend.Text?.setMetrics,setTextProvider:backend.Text?.setProvider,
+   glyphs:{forKind:glyphForKind}};
   return api;
   }
 
