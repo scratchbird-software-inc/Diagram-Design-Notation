@@ -3563,6 +3563,14 @@
       "scope": "IDEF0 (IEEE 1320.1) function modeling: activity boxes with side-typed ICOM ports (Inputs left, Controls top, Outputs right, Mechanisms bottom), A-0 context and decomposition node numbering, labeled flow arrows with fork/join, tunneled arrows (x_tunnel), and call arrows (idef0.call).",
       "validation": ["ICOM port type must match the port's declared side (DDN-PJ200)", "node numbers unique and decomposition-prefixed (DDN-PJ201)", "registry endpoint contracts (DDN102)"],
       "unsupported": ["IDEF0 interchange formats", "model execution/simulation", "formal IEEE certification"]
+    },
+    {
+      "id": "petri.basic@1",
+      "projection": "graph",
+      "diagramFamilies": ["Petri net"],
+      "scope": "ISO/IEC 15909 Petri net notation: places (circles) with token counts, transitions (bars), weighted arcs, inhibitor arcs (open-circle end), test/read arcs (dashed), markings via records. Bipartite graph enforced: places connect only to transitions and vice versa.",
+      "validation": ["bipartite graph: arcs only between a place and a transition (DDN-PJ202)", "arc weights and token counts are nonnegative integers (DDN-PJ203)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["reachability/coverability analysis", "PNML interchange", "net execution/simulation"]
     }
   ],
   "projectionProperties": {

@@ -500,7 +500,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(d.mode==='inline'&&d.child){const child=render(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc(d.target)}">`+inner+'</g>';}
   else{if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text(d.x+48,d.y+33,d.name,15,t.ink,600)+text(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
  }
- for(const a of routes){if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
+ for(const a of routes){
+  /* B1-079: Petri arc weights print at the target end of the arc. */
+  const wgt=a.r.properties.x_petri?.weight;
+  if(wgt>1&&p.detail!=='shapes'){
+   const sc=q(p.style.font_size,16)/16,[tx,ty]=a.points.at(-1),ang=Layout.curveDirection(a)*Math.PI/180;
+   diagram+=`<g class="ddn-petri-weight">`+text(tx-Math.cos(ang)*18*sc-Math.sin(ang)*10*sc,ty-Math.sin(ang)*18*sc+Math.cos(ang)*10*sc+4*sc,String(wgt),11*sc,t.ink,600)+'</g>';
+  }
+  if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
   else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
    /* B1-061: {…} time/duration constraints under the message label. */

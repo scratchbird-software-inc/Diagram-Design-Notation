@@ -58,6 +58,8 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-079: Petri nets — arc weights and place token counts. */
+ out.extension_contracts.x_petri=def({type:'object',properties:{weight:{type:'integer',minimum:1},tokens:{type:'integer',minimum:0}},additionalProperties:false},['object','relation']);
  /* B1-078: IDEF0 — ICOM port typing, node numbers, tunneled arrows. */
  out.extension_contracts.x_icom=def({type:'object',required:['type'],properties:{type:{enum:['input','control','output','mechanism']}},additionalProperties:false},['port']);
  out.extension_contracts.x_idef0=def({type:'object',required:['node'],properties:{node:{type:'string',minLength:2,pattern:'^A\\d+$'}},additionalProperties:false},['object']);

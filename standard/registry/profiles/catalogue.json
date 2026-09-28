@@ -2284,6 +2284,30 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "petri.place",
+      "name": "Place",
+      "shape": "profile",
+      "silhouette": "circle",
+      "fallback": "application",
+      "family": "concept",
+      "code": "PETRIPLACE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "petri.transition",
+      "name": "Transition",
+      "shape": "profile",
+      "silhouette": "forkbar",
+      "fallback": "application",
+      "family": "activity",
+      "code": "PETRITRANS",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -4160,6 +4184,65 @@
       "allow_self": false,
       "member_endpoints": true,
       "pattern": "7 5"
+    },
+    {
+      "keyword": "petri.arc",
+      "name": "Arc",
+      "verb": "Flows",
+      "family": "flow",
+      "code": "PETRIARC",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "petri.place",
+        "petri.transition"
+      ],
+      "target": [
+        "petri.place",
+        "petri.transition"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "petri.inhibitor",
+      "name": "Inhibits",
+      "verb": "Inhibits",
+      "family": "flow",
+      "code": "PETRIINHIB",
+      "start": "none",
+      "end": "circle",
+      "glyph": "link",
+      "source": [
+        "petri.place"
+      ],
+      "target": [
+        "petri.transition"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "petri.testarc",
+      "name": "Reads",
+      "verb": "Reads",
+      "family": "flow",
+      "code": "PETRITEST",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "petri.place",
+        "petri.transition"
+      ],
+      "target": [
+        "petri.place",
+        "petri.transition"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "5 4"
     }
   ],
   "profiles": [
@@ -6642,6 +6725,24 @@
         "IDEF0 interchange formats",
         "model execution/simulation",
         "formal IEEE certification"
+      ]
+    },
+    {
+      "id": "petri.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Petri net"
+      ],
+      "scope": "ISO/IEC 15909 Petri net notation: places (circles) with token counts, transitions (bars), weighted arcs, inhibitor arcs (open-circle end), test/read arcs (dashed), markings via records. Bipartite graph enforced: places connect only to transitions and vice versa.",
+      "validation": [
+        "bipartite graph: arcs only between a place and a transition (DDN-PJ202)",
+        "arc weights and token counts are nonnegative integers (DDN-PJ203)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "reachability/coverability analysis",
+        "PNML interchange",
+        "net execution/simulation"
       ]
     }
   ],

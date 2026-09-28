@@ -1,0 +1,26 @@
+ddn "0.5";
+module "ddn.examples.petri";
+
+// B1-079: a producer/consumer Petri net — places with token markings (dots,
+// or a count above five), transitions as bars, a weighted arc, an inhibitor
+// arc (open circle at the transition end), and a dashed read/test arc.
+// All data is synthetic.
+data m {
+    object idle "Idle producers" { kind: "petri.place"; x_petri: { tokens: 3 }; }
+    object produce "Produce" { kind: "petri.transition"; }
+    object buf "Buffer" { kind: "petri.place"; x_petri: { tokens: 1 }; }
+    object consume "Consume" { kind: "petri.transition"; }
+    object done "Done items" { kind: "petri.place"; x_petri: { tokens: 7 }; }
+    relation a1 "" @idle -> @produce { kind: "petri.arc"; }
+    relation a2 "" @produce -> @buf { kind: "petri.arc"; x_petri: { weight: 2 }; }
+    relation a3 "" @buf -> @consume { kind: "petri.arc"; }
+    relation a4 "" @consume -> @done { kind: "petri.arc"; }
+    relation inh "" @buf -> @produce { kind: "petri.inhibitor"; }
+    relation rd "" @idle -> @consume { kind: "petri.testarc"; }
+}
+view net "Producer/consumer net" {
+    data: [@m];
+    projection { profile: "petri.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}

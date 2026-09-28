@@ -211,3 +211,19 @@ at the tunneled end instead of an arrowhead. Interchange formats, model
 execution, and formal IEEE certification are out of scope. Example:
 `website/examples/basics/94-idef0.ddn`; tests `idef0-compliance.js` +
 `idef0-showcase.js`.
+
+## 17.18 Petri nets (petri.basic@1)
+
+`petri.basic@1` covers ISO/IEC 15909 Petri net notation. Places are circles
+with markings — `x_petri: { tokens: n }` draws up to five token dots inside
+the circle and a count text above five; transitions are bars. Arcs
+(`petri.arc`) carry `x_petri: { weight: n }` (n ≥ 1, printed near the target
+end when n > 1); `petri.inhibitor` runs from a place to a transition and ends
+with an open circle; `petri.testarc` (read/test arc) draws dashed. The graph
+is bipartite: arcs run only between a place and a transition (`DDN-PJ202`;
+the inhibitor's source must be a place). Weight and token shapes are
+contract-enforced nonnegative integers (tokens on places only, weights on
+arcs only — `DDN-PJ203`; the numeric bounds are the contract's `DDN105`).
+Reachability/coverability analysis, PNML interchange, and net execution are
+out of scope. Example: `website/examples/basics/95-petrinet.ddn`; tests
+`petri-compliance.js` + `petri-showcase.js`.

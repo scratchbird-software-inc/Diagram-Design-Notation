@@ -774,6 +774,13 @@
       "combined": "website/examples/basics/52-pert-cpm.combined.ddn",
       "svg": "profiles/pert-cpm-1.svg"
     },
+    "petri.basic@1": {
+      "entry": "website/examples/basics/95-petrinet.ddn",
+      "view": "net",
+      "title": "Producer/consumer net",
+      "kind": "graph",
+      "svg": "profiles/petri-basic-1.svg"
+    },
     "requirements.basic@1": {
       "entry": "website/examples/projections/views.ddn",
       "view": "requirements",
@@ -3675,6 +3682,20 @@
       "profile": "idef0.basic@1",
       "kind": "graph",
       "svg": "corpus/basics-94-idef0.svg"
+    },
+    {
+      "entry": "website/examples/basics/95-petrinet.ddn",
+      "view": "net",
+      "title": "Producer/consumer net",
+      "views": [
+        {
+          "id": "net",
+          "title": "Producer/consumer net"
+        }
+      ],
+      "profile": "petri.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-95-petrinet.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

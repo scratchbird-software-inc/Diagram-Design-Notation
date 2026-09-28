@@ -185,6 +185,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
 | `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
 | `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
+| `x_petri` | object/relation | `{tokens?: int≥0, weight?: int≥1}` — Petri markings on places, arc weights on arcs (DDN-PJ203) |
 | `x_icom` | port | `{type: input|control|output|mechanism}` — IDEF0 ICOM port typing; must match the port's `side` (DDN-PJ200) |
 | `x_idef0` | object | `{node: "A1"}` — IDEF0 node number; unique per view, decomposition-prefixed (DDN-PJ201) |
 | `x_tunnel` | relation | `{start?, end?}` — IDEF0 tunneled arrow; open parenthesis at the tunneled end |
@@ -214,6 +215,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_event` | object | `{type: none|message|…|parallel_multiple, position?, interrupting?, on?}` on event kinds |
 | `x_gateway` | object | `{type: exclusive|parallel|inclusive|complex|event|event_exclusive}` on flow.gateway |
 | `x_states` | object | array of `{at: number, state: string}` (timing; strictly increasing `at`) |
+| `x_petri` | object/relation | `{tokens?: int≥0, weight?: int≥1}` — Petri markings on places, arc weights on arcs (DDN-PJ203) |
 | `x_icom` | port | `{type: input|control|output|mechanism}` — IDEF0 ICOM port typing; must match the port's `side` (DDN-PJ200) |
 | `x_idef0` | object | `{node: "A1"}` — IDEF0 node number; unique per view, decomposition-prefixed (DDN-PJ201) |
 | `x_tunnel` | relation | `{start?, end?}` — IDEF0 tunneled arrow; open parenthesis at the tunneled end |
@@ -294,6 +296,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | UAF (12 domains) | graph | `uaf.<domain>@1` ×12 | strategic/operational/services/systems/personnel/resources/security/projects/standards/actualresources/dictionary/summary vocabularies; stereotyped verbs (capabilityDependency, exhibits, mapsTo, performs, assignedTo, compliesWith, mitigates, milestoneDependency, forecast, supports, owns) — endpoint contracts DDN102; capability draws the `tag` silhouette |
 | SoaML services | graph | `soaml.services@1` | participant/agent/serviceinterface/servicecontract/capability/message/milestone kinds, x_service port badges, x_contract choreography binding, assembly conformance (DDN-PJ195–PJ197) |
 | C4 deployment/dynamic | graph | `c4.deployment@1` / `c4.dynamic@1` | rebadges of uml.deployment@1 / uml.communication@2 (PJW06); numbered messages required (PJ111); tag chips via x_c4tag |
+| Petri nets | graph | `petri.basic@1` | places (x_petri.tokens), transitions, petri.arc (weight), petri.inhibitor (circle end), petri.testarc (dashed); bipartite validation (PJ202) |
 | IDEF0 | graph | `idef0.basic@1` | activity boxes with x_icom port typing + side contract, x_idef0 node numbering, idef0.flow/call arrows, x_tunnel tunneled arrows |
 | MSC (Z.120) | sequence | `msc.basic@1` | rebadge of uml.sequence@2 (PJW06); msc.hmscref «ref» participants binding views via x_subdiagram (PJ119); coreg fragment operator; create/delete (start/stop), lost/found (message loss) sorts; inline expressions via x_invariant |
 | Full EPC | graph | `epc.complete@1` | epk.event/function/connector + orgunit/role/infoobject/processlink; alternation PJ105, operator PJ106, split/join fan-balancing PJ199 |

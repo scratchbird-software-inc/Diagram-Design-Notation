@@ -162,6 +162,8 @@
     "DDN-PJ198": "Drill-down: frozen needs display thumbnail plus an SVG snapshot (max 512 KiB); inline/thumbnail children nest one level and cannot self-bind",
     "DDN-PJ199": "EPC fan-balancing: every connector split (>1 outgoing) needs a matching join (>1 incoming) of the same and/or/xor operator",
     "DDN-PJ200": "IDEF0: ICOM port type must match the port side (input west, control north, output east, mechanism south); ports on idef0.activity need a type",
-    "DDN-PJ201": "IDEF0: activities need a unique x_idef0.node number; a decomposition's children number under the parent node"
+    "DDN-PJ201": "IDEF0: activities need a unique x_idef0.node number; a decomposition's children number under the parent node",
+    "DDN-PJ202": "Petri nets are bipartite: arcs run only between a place and a transition; inhibitors start at a place",
+    "DDN-PJ203": "Petri tokens belong on places, weights on arcs (both nonnegative integers)"
   }
 }

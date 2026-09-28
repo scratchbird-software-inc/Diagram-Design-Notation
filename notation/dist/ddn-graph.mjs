@@ -655,6 +655,12 @@ function render$2(g,p,theme){
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
  }
  if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,api$7.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
+ /* B1-079: Petri markings — token dots inside a place (count text past 5). */
+ if(n.kind==='petri.place'){
+  const tok=n.properties.x_petri?.tokens||0,cx=x+w/2,cy=y+h/2-4*s;
+  if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
+  else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
+ }
  // B1-064: sentry if-part condition text inside the criterion diamond.
  if(n.kind==='cmmn.sentry'&&n.properties.x_sentry?.if_part)out+=text(x+w/2,y+h/2+4*s,n.properties.x_sentry.if_part,10.5,500,'text-anchor="middle"');
  /* B1-064: CMMN decorators (extending the B1-063 badge layer). */
@@ -1907,7 +1913,14 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(d.mode==='inline'&&d.child){const child=render$1(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc$1(d.target)}">`+inner+'</g>';}
   else {if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN$1.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc$1(d.target)}"><a href="${esc$1(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text$1(d.x+48,d.y+33,d.name,15,t.ink,600)+text$1(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
  }
- for(const a of routes){if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$1(v)):midpoint(a.points);let mode=p.legend.mode;
+ for(const a of routes){
+  /* B1-079: Petri arc weights print at the target end of the arc. */
+  const wgt=a.r.properties.x_petri?.weight;
+  if(wgt>1&&p.detail!=='shapes'){
+   const sc=q$1(p.style.font_size,16)/16,[tx,ty]=a.points.at(-1),ang=api$4.curveDirection(a)*Math.PI/180;
+   diagram+=`<g class="ddn-petri-weight">`+text$1(tx-Math.cos(ang)*18*sc-Math.sin(ang)*10*sc,ty-Math.sin(ang)*18*sc+Math.cos(ang)*10*sc+4*sc,String(wgt),11*sc,t.ink,600)+'</g>';
+  }
+  if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$1(v)):midpoint(a.points);let mode=p.legend.mode;
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$1(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
   else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$1(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
    /* B1-061: {…} time/duration constraints under the message label. */

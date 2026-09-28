@@ -288,6 +288,26 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ /* B1-079: Petri net semantics — bipartite graph + weight/token shapes. */
+ {
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   const xp=n.properties.x_petri;
+   if(xp?.tokens!==undefined&&n.kind!=='petri.place')fail('DDN-PJ203','x_petri.tokens belongs on petri.place; '+n.id+' is '+n.kind,n);
+  }
+  for(const r of ir.relations){
+   const xp=r.properties.x_petri;
+   if(xp?.weight!==undefined&&!['petri.arc','petri.testarc'].includes(r.kind))fail('DDN-PJ203','x_petri.weight applies to petri arcs; '+r.id+' is '+r.kind,r);
+  }
+  if(profile==='petri.basic@1'){
+   const es=ir.relations.filter(r=>ir.view.relations.includes(r.id));
+   for(const r of es.filter(r=>r.kind.startsWith('petri.'))){
+    const a=ns.get(r.from.element),b=ns.get(r.to.element);
+    if(!a||!b)continue;
+    if(a.kind===b.kind)fail('DDN-PJ202','Petri net is bipartite: '+r.kind+' '+r.id+' connects '+a.kind+' to '+b.kind+'; arcs run only between a place and a transition',r);
+    if(r.kind==='petri.inhibitor'&&a.kind!=='petri.place')fail('DDN-PJ202','Inhibitor arc '+r.id+' must start at a place and end at a transition',r);
+   }
+  }
+ }
  /* B1-078: IDEF0 semantics — ICOM side contract and node numbering. */
  {
   const SIDES={'input':'west','control':'north','output':'east','mechanism':'south'};

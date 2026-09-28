@@ -408,6 +408,12 @@ function render(g,p,theme){
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
  }
  if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,Text.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
+ /* B1-079: Petri markings — token dots inside a place (count text past 5). */
+ if(n.kind==='petri.place'){
+  const tok=n.properties.x_petri?.tokens||0,cx=x+w/2,cy=y+h/2-4*s;
+  if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
+  else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
+ }
  // B1-064: sentry if-part condition text inside the criterion diamond.
  if(n.kind==='cmmn.sentry'&&n.properties.x_sentry?.if_part)out+=text(x+w/2,y+h/2+4*s,n.properties.x_sentry.if_part,10.5,500,'text-anchor="middle"');
  /* B1-064: CMMN decorators (extending the B1-063 badge layer). */
