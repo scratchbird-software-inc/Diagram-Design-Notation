@@ -265,3 +265,24 @@ Ladder owner/shape rules validate as `DDN-PJ205`; numeric bounds are the
 contract's `DDN105`. Icon libraries, cycle-time simulation and interchange
 formats are out of scope. Example: `website/examples/basics/97-vsm.ddn`;
 tests `vsm-compliance.js` + `vsm-showcase.js`.
+
+## 17.21 Icon-library mechanism (x_icon, generic-demo@1)
+
+Named SVG icon asset sets bind to kinds: `standard/registry/icon-libraries.json`
+declares libraries; an icon entry names an SVG asset and may list kinds it
+binds to by default. Any node can also carry
+`x_icon: { library: "<id>", icon: "<id>" }` explicitly. The renderer draws the
+referenced icon inside the node's top area, ids namespaced per node
+(`ddn-icon` group). Because libraries are user-supplied SVG rendered into the
+page, every asset is **sanitized at load time** (`DDN-PJ207`): scripts,
+`foreignObject`, iframes/embeds/objects, images, event handlers
+(`on*=`/`onload`), `href`/`xlink:href` (including local `<use>` references —
+icons must inline everything), `javascript:` and CSS `url()` are all
+rejected, non-SVG payloads are rejected, and each icon is capped at 20 KiB.
+Unknown references fail as `DDN-PJ206`. The built-in `generic-demo@1` set
+(cloud, server, database, user — agent-drawn simple glyphs) proves the
+mechanism and binds to `network.bus`/`network.server`/`network.rack`.
+**Vendor packs (Cisco/AWS/Azure/GCP) are explicitly excluded** — their
+licensing diligence is a separate task. Example:
+`website/examples/basics/98-icons.ddn`; tests `icons-compliance.js` +
+`icons-showcase.js`.

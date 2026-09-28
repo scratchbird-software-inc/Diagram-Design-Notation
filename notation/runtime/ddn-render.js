@@ -2,6 +2,8 @@
  * Not a replacement for the production layout/conformance requirements in spec/.
  */
 import {publishNamespace} from './ddn-module-registry.js';
+import ICONLIBS from './assets/icon-libraries.js';
+import {sanitizedLibraries} from './ddn-icon-sanitize.js';
 import Sketch from './ddn-sketch.js';
 import Layout from './ddn-layout.js';
 import Text from './ddn-text.js';
@@ -74,8 +76,27 @@ function measureNode(n,registry,profiles,placement={},context={}){
  let h=Math.max(y+14*s,100*s,placement.size?q(placement.size[1]):0,(context.degrees?.[n.id]||1)>4?(context.degrees[n.id]*44+40):((context.degrees?.[n.id]||1)*20+40));
  const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample}; return k.profileKind?Shapes.measure(g,profiles):g;
 }
-function renderNode(g,p,theme){
+function renderNode(g,p,theme,registry){
  if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);
+  /* B1-082: icon binding — draw the referenced (pre-sanitized) library icon
+   * inside the node's top area; ids namespaced per node. */
+  const xi=g.n.properties?.x_icon||(((registry.icon_libraries||ICONLIBS.libraries).flatMap(l=>(l.icons||[]).filter(i=>(i.kinds||[]).includes(g.n.kind)).map(i=>({library:l.id,icon:i.id}))))[0]);
+  if(xi){
+   const libs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
+   const lib=libs.find(l=>l.id===xi.library);
+   const icon=lib?.icons?.find(i=>i.id===xi.icon||i.kinds?.includes(g.n.kind)&&i.id===xi.icon);
+   if(!lib||!icon)throw new DDN.DDNError('DDN-PJ206','Icon reference '+xi.library+'/'+xi.icon+' is not in the icon libraries registry',g.n.source?.file,g.n.source?.start);
+   const isz=26*g.scale,ix=g.x+g.w/2-isz/2,iy=g.y+7*g.scale;
+   const vb=(icon.svg.match(/viewBox="([^"]+)"/)||[])[1]||'0 0 24 24';
+   const iPrefix='ic-'+hash(g.id)+'-';
+   let inner=icon.svg.replace(/<\?xml[^>]*>/,'')
+    .replace(/ id="([^"]+)"/g,(m,id)=>` id="${iPrefix}${id}"`)
+    .replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${iPrefix}${id})`);
+   inner=inner.replace(/<svg /,`<svg x="${fmt(ix)}" y="${fmt(iy)}" width="${fmt(isz)}" height="${fmt(isz)}" viewBox="${vb}" `)
+    .replace(/\bviewBox="[^"]*"/,'');
+   shaped=shaped.slice(0,-4)+`<g class="ddn-icon" data-icon="${esc(xi.library+'/'+xi.icon)}">`+inner+'</g></g>';
+  }
+ 
   /* B1-076: C4 tag chip under the node (any silhouette, decorator layer). */
   if(g.n.properties.x_c4tag?.tags?.length&&p.detail!=='shapes'){const tg=g.n.properties.x_c4tag.tags.join(', ');shaped=shaped.slice(0,-4)+`<g class="ddn-c4tag">`+text(g.x+g.w/2,g.y+g.h-6*g.scale,'['+tg+']',10*g.scale,theme.muted,500,'text-anchor="middle" font-style="italic"')+'</g></g>';}
   if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
@@ -508,7 +529,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    flowScene.push({id:f.id,name:f.name,duration:durT,hops:hopScene});
   }
  }
- geoms.forEach(g=>diagram+=renderNode(g,p,t));
+ geoms.forEach(g=>diagram+=renderNode(g,p,t,registry));
  for(const d of subs){
   if(d.mode==='inline'&&d.child){const child=render(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc(d.target)}">`+inner+'</g>';}
   else{if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text(d.x+48,d.y+33,d.name,15,t.ink,600)+text(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}

@@ -16,6 +16,7 @@ const files = {
   'profiles-catalogue.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/profiles/catalogue.json'))) + ';\n',
   'glyphs.js': banner + 'export default ' + json(read('standard/registry/glyph-library.svg').match(/<defs>([\s\S]*?)<\/defs>/)[1]) + ';\n',
   'units.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/units.json'))) + ';\n',
+  'icon-libraries.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/icon-libraries.json'))) + ';\n',
 };
 for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(outDir, name), text);
 console.log('assets:', Object.keys(files).map(n => n + '=' + Buffer.byteLength(files[n])).join(' '));

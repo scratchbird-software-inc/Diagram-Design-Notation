@@ -3740,6 +3740,21 @@
       "svg": "corpus/basics-97-vsm.svg"
     },
     {
+      "entry": "website/examples/basics/98-icons.ddn",
+      "view": "net",
+      "title": "Icon network",
+      "views": [
+        {
+          "id": "net",
+          "title": "Icon network"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-98-icons.svg"
+    },
+    {
       "entry": "website/examples/projections/views.ddn",
       "view": "flowchart",
       "title": "01 / Purchasing control flow",

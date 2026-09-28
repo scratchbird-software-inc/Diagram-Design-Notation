@@ -1,10 +1,14 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later. DDN profile packs: data-only definitions and bounded validators. */
 import {publishNamespace} from './ddn-module-registry.js';
 import catalogue from './assets/profiles-catalogue.js';
+import ICONLIBS from './assets/icon-libraries.js';
+import {sanitizeIcon,sanitizedLibraries} from './ddn-icon-sanitize.js';
 import Bindings from './ddn-projection-data.js';
 import Extra from './ddn-profile-quality.js';
 'use strict';
 const VERSION='0.7.0';
+
+
 const cache=new WeakMap();
 function registry(base){
  if(cache.has(base))return cache.get(base);
@@ -12,6 +16,10 @@ function registry(base){
  for(const k of catalogue.kinds){const b=base.kinds.find(x=>x.keyword===k.fallback)||base.kinds[0],f=base.families[k.family]||base.families.concept;out.kinds.push({...b,...k,id:'profile-kind.'+k.keyword,aliases:k.alias?[k.alias]:(k.aliases||[]),colour:f.colour,fill:f.fill,text_label:k.name,slot:'NW',profileKind:true});}
  for(const r of catalogue.relationships){const family=r.family==='data_flow'?'flow':r.family,b=base.relationships.find(x=>x.family===family)||base.relationships[0];out.relationships.push({...b,...r,family,id:'profile-relation.'+r.keyword,pattern:r.pattern||(r.keyword==='uml.realization'?'7 5':r.keyword.startsWith('flow.')?'':b.pattern),aliases:r.alias?[r.alias]:(r.aliases||[]),endpoint_contract:{source:r.source,target:r.target,allow_self:r.allow_self,member_endpoints:r.member_endpoints}});}
  const def=(schema,targets=['object'])=>({targets:Object.fromEntries(targets.map(t=>[t,schema]))});
+
+
+
+ out.icon_libraries=sanitizedLibraries(ICONLIBS.libraries);
  out.extension_contracts.x_record=def({type:'object',additionalProperties:true},['object','relation']);
  out.extension_contracts.x_story=def({type:'object',required:['task'],additionalProperties:true},['relation']);
  for(const key of ['x_rule','x_usecase','x_chen','x_continuation'])out.extension_contracts[key]=def({type:'object',additionalProperties:true},key==='x_chen'?['object','field','relation']:['object','relation']);
@@ -58,6 +66,8 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-082: icon-library mechanism — per-node icon reference. */
+ out.extension_contracts.x_icon=def({type:'object',required:['library','icon'],properties:{library:{type:'string',minLength:1},icon:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-081: VSM timeline ladder values (VA/NVA). */
  out.extension_contracts.x_vsm=def({type:'object',properties:{va:{type:'number',minimum:0},nva:{type:'number',minimum:0},unit:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-080: ORM 2 — role decorations, value constraints, objectification,
@@ -276,6 +286,6 @@ function validate(ir,reg,ErrorClass){
  Bindings.plan(ir,ErrorClass);
  return diagnostics;
 }
-const api={VERSION,registry,validate,catalogue,get};
+const api={VERSION,registry,validate,catalogue,get,sanitizeIcon};
 publishNamespace('DDNProfiles',api);
 export default api;

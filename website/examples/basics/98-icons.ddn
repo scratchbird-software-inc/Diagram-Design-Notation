@@ -1,0 +1,22 @@
+ddn "0.5";
+module "ddn.examples.icons";
+
+// B1-082: the icon-library mechanism — the built-in generic demo set
+// (cloud/server/database/user) bound to network kinds, plus an explicit
+// per-node x_icon override (the guest user). Icons are simple generic
+// glyphs; vendor packs are excluded pending licensing diligence.
+// All data is synthetic.
+data m {
+    object lan "Office LAN" { kind: "network.bus"; }
+    object srv "App server" { kind: "network.server"; }
+    object rack "Data rack" { kind: "network.rack"; }
+    object guest "Guest user" { kind: "network.server"; x_icon: { library: "generic-demo@1", icon: "user" }; }
+    relation a1 "" @srv -> @lan { kind: "network.attaches"; }
+    relation a2 "" @rack -> @lan { kind: "network.attaches"; }
+    relation a3 "" @guest -> @lan { kind: "network.attaches"; }
+}
+view net "Icon network" {
+    data: [@m];
+    projection { profile: "network.basic@1"; }
+    publication { size: content; fit: none; }
+}

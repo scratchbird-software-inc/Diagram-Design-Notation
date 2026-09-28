@@ -185,6 +185,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
 | `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
 | `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
+| `x_icon` | object | `{library, icon}` — icon-library binding; draws the sanitized library SVG in the node (DDN-PJ206/PJ207) |
 | `x_vsm` | object | `{va?, nva?, unit?}` — VSM timeline-ladder values on process nodes (DDN-PJ205) |
 | `x_role` | field | `{uniqueness?, mandatory?}` — ORM role-box decorations (bar over box, dot at row edge; DDN-PJ204) |
 | `x_values` | object | `{values: [string]}` — ORM value constraint on value types |
@@ -219,6 +220,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_event` | object | `{type: none|message|…|parallel_multiple, position?, interrupting?, on?}` on event kinds |
 | `x_gateway` | object | `{type: exclusive|parallel|inclusive|complex|event|event_exclusive}` on flow.gateway |
 | `x_states` | object | array of `{at: number, state: string}` (timing; strictly increasing `at`) |
+| `x_icon` | object | `{library, icon}` — icon-library binding; draws the sanitized library SVG in the node (DDN-PJ206/PJ207) |
 | `x_vsm` | object | `{va?, nva?, unit?}` — VSM timeline-ladder values on process nodes (DDN-PJ205) |
 | `x_role` | field | `{uniqueness?, mandatory?}` — ORM role-box decorations (bar over box, dot at row edge; DDN-PJ204) |
 | `x_values` | object | `{values: [string]}` — ORM value constraint on value types |
@@ -304,6 +306,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | UAF (12 domains) | graph | `uaf.<domain>@1` ×12 | strategic/operational/services/systems/personnel/resources/security/projects/standards/actualresources/dictionary/summary vocabularies; stereotyped verbs (capabilityDependency, exhibits, mapsTo, performs, assignedTo, compliesWith, mitigates, milestoneDependency, forecast, supports, owns) — endpoint contracts DDN102; capability draws the `tag` silhouette |
 | SoaML services | graph | `soaml.services@1` | participant/agent/serviceinterface/servicecontract/capability/message/milestone kinds, x_service port badges, x_contract choreography binding, assembly conformance (DDN-PJ195–PJ197) |
 | C4 deployment/dynamic | graph | `c4.deployment@1` / `c4.dynamic@1` | rebadges of uml.deployment@1 / uml.communication@2 (PJW06); numbered messages required (PJ111); tag chips via x_c4tag |
+| Icon libraries | (any) | registry `icon-libraries.json` + `x_icon` | named SVG sets bound to kinds (default binding) or per-node (x_icon); sanitization PJ207 (scripts/foreignObject/handlers/external refs rejected, 20 KiB cap); generic-demo@1 ships cloud/server/database/user |
 | Value stream maps | graph | `vsm.basic@1` | process boxes (x_vsm va/nva ladder), inventory triangle, push/pull/material, einfo zigzag/minfo dashed, supermarket, kaizen burst, operator |
 | ORM 2 | graph | `orm.basic@1` | entitytype/valuetype ellipses, facttype role-box rows (x_role), plays member endpoints, subset/equality/exclusion arcs, x_values/x_objectified/x_derive (PJ204) |
 | Petri nets | graph | `petri.basic@1` | places (x_petri.tokens), transitions, petri.arc (weight), petri.inhibitor (circle end), petri.testarc (dashed); bipartite validation (PJ202) |
