@@ -723,6 +723,13 @@
       "wiki": "Diagrams-Trees",
       "svg": "profiles/org-tree-1.svg"
     },
+    "orm.basic@1": {
+      "entry": "website/examples/basics/96-orm.ddn",
+      "view": "model",
+      "title": "Customer fact model",
+      "kind": "graph",
+      "svg": "profiles/orm-basic-1.svg"
+    },
     "panels.basic@1": {
       "entry": "website/examples/projections/views.ddn",
       "view": "swot",
@@ -3696,6 +3703,20 @@
       "profile": "petri.basic@1",
       "kind": "graph",
       "svg": "corpus/basics-95-petrinet.svg"
+    },
+    {
+      "entry": "website/examples/basics/96-orm.ddn",
+      "view": "model",
+      "title": "Customer fact model",
+      "views": [
+        {
+          "id": "model",
+          "title": "Customer fact model"
+        }
+      ],
+      "profile": "orm.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-96-orm.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

@@ -288,6 +288,20 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ /* B1-080: ORM 2 semantics — role ownership and fact-type shape. */
+ {
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   for(const f of n.fields){
+    const xr=f.properties.x_role;
+    if(xr!==undefined&&n.kind!=='orm.facttype')fail('DDN-PJ204','x_role (uniqueness/mandatory) lives on orm.facttype role boxes; '+n.id+' is '+n.kind,f);
+   }
+   if(n.properties.x_values!==undefined&&n.kind!=='orm.valuetype')fail('DDN-PJ204','x_values value constraints belong to orm.valuetype; '+n.id+' is '+n.kind,n);
+   if(n.properties.x_objectified!==undefined&&n.kind!=='orm.facttype')fail('DDN-PJ204','x_objectified applies to orm.facttype; '+n.id+' is '+n.kind,n);
+   if(n.properties.x_derive!==undefined&&n.kind!=='orm.facttype')fail('DDN-PJ204','x_derive derivation text applies to orm.facttype; '+n.id+' is '+n.kind,n);
+  }
+  if(profile==='orm.basic@1')for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='orm.facttype'))
+   if(!n.fields.length)fail('DDN-PJ204','ORM fact type '+n.id+' needs at least one role box (a fields group)',n);
+ }
  /* B1-079: Petri net semantics — bipartite graph + weight/token shapes. */
  {
   for(const n of ir.elements.filter(n=>shown.has(n.id))){

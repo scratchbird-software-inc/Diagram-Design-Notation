@@ -141,6 +141,7 @@
     "msc.basic@1": "MSC (Z.120) message sequence charts: uml.sequence@2 machinery + HMSC refs, coregions, create/stop, message loss, inline expressions",
     "idef0.basic@1": "IDEF0 (IEEE 1320.1): activity boxes with side-typed ICOM ports, A-0 numbering, tunneled and call arrows",
     "petri.basic@1": "Petri nets (ISO/IEC 15909): places with tokens, transitions, weighted/inhibitor/test arcs, bipartite validation",
+    "orm.basic@1": "ORM 2 (ISO/IEC 19507): entity/value types, role-box fact types, uniqueness/mandatory, constraint arcs, objectification",
     "epc.complete@1": "Full EPC: alternation/connectors plus org units, roles, info objects, process links, fan-balancing",
     "geo.choropleth@1": "Choropleth map: regions coloured by a joined numeric value",
     "geo.symbols@1": "Symbol map: sized markers at lon/lat points",

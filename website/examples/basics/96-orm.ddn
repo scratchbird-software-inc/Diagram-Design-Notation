@@ -1,0 +1,32 @@
+ddn "0.5";
+module "ddn.examples.orm";
+
+// B1-080: a small ORM 2 fact model — entity types (solid ellipses), a value
+// type (dashed ellipse) with a value constraint, a fact type drawn as a
+// role-box predicate row (mandatory dot, uniqueness bar), a subset arc, an
+// exclusion arc, objectification and derivation text. All data is synthetic.
+data m {
+    object cust "Customer" { kind: "orm.entitytype"; }
+    object name "Name" { kind: "orm.valuetype"; x_values: { values: [ "short", "full" ]; }; }
+    object has "has / is of" { kind: "orm.facttype";
+        fields {
+            field who { x_role: { mandatory: true }; }
+            field what { x_role: { uniqueness: true }; }
+        }
+        x_derive: { text: "from CRM extract" };
+    }
+    object vip "VIP customer" { kind: "orm.entitytype"; }
+    object viporder "places priority order" { kind: "orm.facttype";
+        fields { field v; field o; }
+        x_objectified: { name: "PriorityOrder" };
+    }
+    relation p1 "" @has.who -> @cust { kind: "orm.plays"; }
+    relation p2 "" @has.what -> @name { kind: "orm.plays"; }
+    relation s1 "" @vip -> @cust { kind: "orm.subset"; }
+    relation x1 "" @viporder -> @has { kind: "orm.exclusion"; }
+}
+view model "Customer fact model" {
+    data: [@m];
+    projection { profile: "orm.basic@1"; }
+    publication { size: content; fit: none; }
+}

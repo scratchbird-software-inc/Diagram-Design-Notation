@@ -164,6 +164,7 @@
     "DDN-PJ200": "IDEF0: ICOM port type must match the port side (input west, control north, output east, mechanism south); ports on idef0.activity need a type",
     "DDN-PJ201": "IDEF0: activities need a unique x_idef0.node number; a decomposition's children number under the parent node",
     "DDN-PJ202": "Petri nets are bipartite: arcs run only between a place and a transition; inhibitors start at a place",
-    "DDN-PJ203": "Petri tokens belong on places, weights on arcs (both nonnegative integers)"
+    "DDN-PJ203": "Petri tokens belong on places, weights on arcs (both nonnegative integers)",
+    "DDN-PJ204": "ORM 2: roles (uniqueness/mandatory) live on orm.facttype role boxes; fact types need at least one role box; value constraints on value types only"
   }
 }

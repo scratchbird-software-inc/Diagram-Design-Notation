@@ -315,6 +315,15 @@
    /* B1-072 (RFC-131): UAF 1.2 domain vocabulary — keyword headers. */
    const UAF_KW={'uaf.capability':'Capability','uaf.enterprisegoal':'EnterpriseGoal','uaf.enterprisevision':'EnterpriseVision','uaf.strategicphase':'StrategicPhase','uaf.opperformer':'OperationalPerformer','uaf.opactivity':'OperationalActivity','uaf.opnode':'OperationalNode','uaf.opexchange':'OperationalExchange','uaf.servicespec':'ServiceSpecification','uaf.servicefunction':'ServiceFunction','uaf.servicepolicy':'ServicePolicy','uaf.system':'System','uaf.systemfunction':'SystemFunction','uaf.implementer':'Implementer','uaf.person':'Person','uaf.organization':'Organization','uaf.post':'Post','uaf.responsibility':'Responsibility','uaf.resourceperformer':'ResourcePerformer','uaf.resource':'Resource','uaf.resourcefunction':'ResourceFunction','uaf.technology':'Technology','uaf.securityelement':'SecurityElement','uaf.securitycontrol':'SecurityControl','uaf.threat':'Threat','uaf.asset':'Asset','uaf.project':'Project','uaf.projectmilestone':'ProjectMilestone','uaf.workpackage':'WorkPackage','uaf.standard':'Standard','uaf.standardcollection':'StandardCollection','uaf.protocol':'Protocol','uaf.actualresource':'ActualResource','uaf.actualorganization':'ActualOrganization','uaf.actualperson':'ActualPerson','uaf.dictionaryentry':'DictionaryEntry','uaf.archdesc':'ArchitectureDescription','uaf.viewpoint':'Viewpoint','uaf.modelref':'ModelReference'};
    if(UAF_KW[n.kind]){g.sysmlKeyword=UAF_KW[n.kind];g.headerH=70*s;}
+   /* B1-080: ORM role boxes — fact types lay their fields out as a horizontal
+    * row of role boxes instead of vertical field rows. */
+   if(n.kind==='orm.facttype'&&n.fields.length){
+    const widths=n.fields.map(f=>Math.max(60*s,api$7.measure(f.name,12*s,p.style.font,500).width+20*s));
+    g.roleRow={fields:n.fields,widths};
+    g.w=Math.max(g.w,widths.reduce((a,b)=>a+b,0)+24*s);
+    g.h=Math.max(g.h,120*s);
+    g.headerH=70*s;
+   }
    /* B1-066 (RFC-129): DMN boxed-expression presentation — text rows in a
     * bottom compartment. Display only; the text is never parsed or evaluated. */
    if(['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind)&&n.properties.x_boxed){
@@ -589,7 +598,7 @@
     else {out+=line(x+w,y,x,y,2)+line(x,y,x,y+h,2)+line(x,y+h,x+w,y+h,2)+line(x+35*s,y,x+35*s,y+h,1);out+=text(x+17*s,y+h/2+5*s,n.properties.x_diagram?.number||'D',12,600,'text-anchor="middle"');}
    }else if(look==='handDrawn'){
     out+=['round','terminal'].includes(shape)?api$6.box(x,y,w,h,{...opt,radius:shape==='terminal'?h/2:14*s}):api$6.polygon(polygon(g),opt);
-   }else if(['ellipse','circle'].includes(shape))out+=`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w/2}" ry="${h/2}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+   }else if(['ellipse','circle'].includes(shape))out+=`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w/2}" ry="${h/2}" fill="${fill}" stroke="${ink}" stroke-width="1.8"${n.kind==='orm.valuetype'?' stroke-dasharray="5 4"':''}/>`;
    else if(shape==='manualinput'){
     out+=`<path d="M${f(x)} ${f(y+h*.35)}L${f(x+w)} ${f(y)}V${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
    }else if(shape==='manualop'){
@@ -648,6 +657,17 @@
     out+=lines(g.titleLines,x+w/2,y+31*s,16,650)+line(x,y+50*s,x+w,y+50*s);
     let yy=y+72*s;for(const a of g.stateActs){out+=text(x+14*s,yy,a,12.5,400,'');yy+=20*s;}
     if(g.submachine){const ref=String(g.submachine.$ref||g.submachine);out+=(g.stateActs.length?line(x,yy-12*s,x+w,yy-12*s):'')+text(x+14*s,yy+4*s,'«submachine» '+ref.split(/[.:]/).pop(),12,500,'');}
+   }else if(g.roleRow){
+    /* B1-080: the role-box predicate row. */
+    out+=lines(g.titleLines,x+w/2,y+22*s,15,650);
+    let rx=x+12*s;
+    for(const [i,rf] of g.roleRow.fields.entries()){
+     const bw=g.roleRow.widths[i],by=y+38*s,bh=24*s;
+     if(rf.properties.x_role?.uniqueness)out+=`<g data-uniqueness="true">`+line(rx+4*s,by-6*s,rx+bw-4*s,by-6*s,2.4)+'</g>';
+     out+=`<rect data-role="${esc$2(rf.id)}" x="${f(rx)}" y="${f(by)}" width="${f(bw)}" height="${f(bh)}" fill="${fill}" stroke="${ink}" stroke-width="1.5"/>`+text(rx+bw/2,by+16*s,rf.name,12,500,'text-anchor="middle"');
+     rx+=bw;
+    }
+    if(g.roleRow.fields.some(rf=>rf.properties.x_role?.mandatory))out+=`<circle data-mandatory="true" cx="${f(x+5*s)}" cy="${f(y+50*s)}" r="${f(3.5*s)}" fill="${ink}"/>`;
    }else if(g.fieldRows.length){
     out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
    }else {
@@ -661,6 +681,13 @@
     if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
     else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
    }
+   /* B1-080: ORM decorations — value constraint text, objectification frame,
+    * derivation text. */
+   if(n.properties.x_values?.values?.length)out+=`<g class="ddn-orm-values">`+text(x+w/2,y+h-6*s,'{'+n.properties.x_values.values.join(', ')+'}',10.5,500,'text-anchor="middle"')+'</g>';
+   if(n.properties.x_objectified?.name){
+    out+=`<g class="ddn-objectified"><rect x="${f(x-6*s)}" y="${f(y-20*s)}" width="${f(w+12*s)}" height="${f(h+26*s)}" rx="${f(10*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`+text(x+4*s,y-7*s,n.properties.x_objectified.name,11,650,'')+'</g>';
+   }
+   if(n.properties.x_derive?.text)out+=`<g class="ddn-orm-derive">`+text(x+w/2,y+h-6*s,'* '+n.properties.x_derive.text,10.5,400,'text-anchor="middle" font-style="italic"')+'</g>';
    // B1-064: sentry if-part condition text inside the criterion diamond.
    if(n.kind==='cmmn.sentry'&&n.properties.x_sentry?.if_part)out+=text(x+w/2,y+h/2+4*s,n.properties.x_sentry.if_part,10.5,500,'text-anchor="middle"');
    /* B1-064: CMMN decorators (extending the B1-063 badge layer). */
@@ -1588,6 +1615,7 @@
    else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc$1(surface)}"/>`;
    else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
    else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc$1(surface)}"/>`; /* B1-066 (RFC-129): DMN authority requirement */
+   else if(type==='xcircle')s+=`<circle cx="-9" cy="0" r="6" fill="${esc$1(surface)}"/><path d="M-12 -3L-6 3M-6 -3L-12 3"/>`; /* B1-080: ORM exclusion */
    else if(['one','zeroone','many','zeromany'].includes(type)){
     if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
     else s+='<path d="M-4 -7V7"/>';

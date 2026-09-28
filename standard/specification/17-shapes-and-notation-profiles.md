@@ -227,3 +227,22 @@ arcs only — `DDN-PJ203`; the numeric bounds are the contract's `DDN105`).
 Reachability/coverability analysis, PNML interchange, and net execution are
 out of scope. Example: `website/examples/basics/95-petrinet.ddn`; tests
 `petri-compliance.js` + `petri-showcase.js`.
+
+## 17.19 ORM 2 object-role modeling (orm.basic@1)
+
+`orm.basic@1` covers ISO/IEC 19507 (ORM 2) notation. Entity types are solid
+ellipses; value types are dashed ellipses with optional value constraints
+(`x_values: { values: [ … ] }`, printed as `{a, b}` under the node). A fact
+type (`orm.facttype`) draws its fields as a **role-box predicate row** — a
+horizontal row of boxes, one per role (the new small rendering element on the
+field machinery): a uniqueness bar over a box (`x_role.uniqueness`), a
+mandatory dot at the row's outer edge (`x_role.mandatory`). Roles play to
+entity/value types with `orm.plays` (member endpoints); n-ary predicates are
+fact types with three or more roles. Constraint arcs are `orm.subset`,
+`orm.equality` (dashed «keyword» arcs) and `orm.exclusion` (circled-X end
+mark). Objectification frames (`x_objectified: { name }`) draw the dashed
+nesting frame; derivation text (`x_derive: { text }`) prints italic `* text`
+under the node. Role ownership and fact-type shape validate as `DDN-PJ204`.
+ORM2 XMI interchange, constraint formal verification, and model-to-schema
+mapping are out of scope. Example: `website/examples/basics/96-orm.ddn`;
+tests `orm-compliance.js` + `orm-showcase.js`.

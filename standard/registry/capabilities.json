@@ -3571,6 +3571,14 @@
       "scope": "ISO/IEC 15909 Petri net notation: places (circles) with token counts, transitions (bars), weighted arcs, inhibitor arcs (open-circle end), test/read arcs (dashed), markings via records. Bipartite graph enforced: places connect only to transitions and vice versa.",
       "validation": ["bipartite graph: arcs only between a place and a transition (DDN-PJ202)", "arc weights and token counts are nonnegative integers (DDN-PJ203)", "registry endpoint contracts (DDN102)"],
       "unsupported": ["reachability/coverability analysis", "PNML interchange", "net execution/simulation"]
+    },
+    {
+      "id": "orm.basic@1",
+      "projection": "graph",
+      "diagramFamilies": ["ORM 2 object-role model"],
+      "scope": "ORM 2 (ISO/IEC 19507) notation: entity types (solid ellipses), value types (dashed ellipses), fact types as role-box predicate rows with uniqueness bars and mandatory dots, n-ary predicates, subset/equality/exclusion constraint arcs, value constraints, objectification, derivation text. No projection beyond graph.",
+      "validation": ["roles live on fact types and play to entity/value types (DDN-PJ204)", "fact types carry at least one role box (DDN-PJ204)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["ORM2 XMI interchange", "constraint formal verification", "model-to-schema mapping"]
     }
   ],
   "projectionProperties": {

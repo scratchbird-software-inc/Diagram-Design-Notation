@@ -175,6 +175,7 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc(surface)}"/>`;
  else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
  else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc(surface)}"/>`; /* B1-066 (RFC-129): DMN authority requirement */
+ else if(type==='xcircle')s+=`<circle cx="-9" cy="0" r="6" fill="${esc(surface)}"/><path d="M-12 -3L-6 3M-6 -3L-12 3"/>`; /* B1-080: ORM exclusion */
  else if(['one','zeroone','many','zeromany'].includes(type)){
   if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
   else s+='<path d="M-4 -7V7"/>';

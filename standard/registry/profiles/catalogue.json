@@ -2308,6 +2308,42 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "orm.entitytype",
+      "name": "Entity type",
+      "shape": "profile",
+      "silhouette": "ellipse",
+      "fallback": "application",
+      "family": "concept",
+      "code": "ORMENTITY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "orm.valuetype",
+      "name": "Value type",
+      "shape": "profile",
+      "silhouette": "ellipse",
+      "fallback": "application",
+      "family": "data",
+      "code": "ORMVALUE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "orm.facttype",
+      "name": "Fact type",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "ORMFACT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -4239,6 +4275,84 @@
       "target": [
         "petri.place",
         "petri.transition"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "5 4"
+    },
+    {
+      "keyword": "orm.plays",
+      "name": "Plays",
+      "verb": "Plays",
+      "family": "structural",
+      "code": "ORMPLAYS",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "orm.facttype"
+      ],
+      "target": [
+        "orm.entitytype",
+        "orm.valuetype"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
+    },
+    {
+      "keyword": "orm.subset",
+      "name": "\u00absubset\u00bb",
+      "verb": "\u00absubset\u00bb",
+      "family": "structural",
+      "code": "ORMSUBSET",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "orm.facttype",
+        "orm.entitytype"
+      ],
+      "target": [
+        "orm.facttype",
+        "orm.entitytype"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "5 4"
+    },
+    {
+      "keyword": "orm.equality",
+      "name": "\u00abequality\u00bb",
+      "verb": "\u00abequality\u00bb",
+      "family": "structural",
+      "code": "ORMEQUALITY",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "orm.facttype"
+      ],
+      "target": [
+        "orm.facttype"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "5 4"
+    },
+    {
+      "keyword": "orm.exclusion",
+      "name": "\u00abexclusion\u00bb",
+      "verb": "\u00abexclusion\u00bb",
+      "family": "structural",
+      "code": "ORMEXCLUSION",
+      "start": "none",
+      "end": "xcircle",
+      "glyph": "link",
+      "source": [
+        "orm.facttype"
+      ],
+      "target": [
+        "orm.facttype"
       ],
       "allow_self": false,
       "member_endpoints": false,
@@ -6743,6 +6857,24 @@
         "reachability/coverability analysis",
         "PNML interchange",
         "net execution/simulation"
+      ]
+    },
+    {
+      "id": "orm.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "ORM 2 object-role model"
+      ],
+      "scope": "ORM 2 (ISO/IEC 19507) notation: entity types (solid ellipses), value types (dashed ellipses), fact types as role-box predicate rows with uniqueness bars and mandatory dots, n-ary predicates, subset/equality/exclusion constraint arcs, value constraints, objectification, derivation text. No projection beyond graph.",
+      "validation": [
+        "roles live on fact types and play to entity/value types (DDN-PJ204)",
+        "fact types carry at least one role box (DDN-PJ204)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "ORM2 XMI interchange",
+        "constraint formal verification",
+        "model-to-schema mapping"
       ]
     }
   ],
