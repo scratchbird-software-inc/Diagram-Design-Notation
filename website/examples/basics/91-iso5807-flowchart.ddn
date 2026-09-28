@@ -1,0 +1,48 @@
+ddn "0.5";
+module "ddn.examples.iso5807";
+
+// B1-075: the full ISO 5807 (1985) flowchart symbol set on flow.iso5807@1 —
+// the flow.basic@1 vocabulary plus manual input, manual operation,
+// preparation, display, delay, loop start/end, merge, extract, card,
+// collate, sort and parallel mode. All data is synthetic.
+
+data m {
+    object start "" { kind: "flow.start"; }
+    object manual "Enter shelf counts" { kind: "flow.manualinput"; }
+    object prep "Load picking rules" { kind: "flow.preparation"; }
+    object op "Pick by hand" { kind: "flow.manualop"; }
+    object disp "Show tote ID" { kind: "flow.display"; }
+    object wait "Cure time" { kind: "flow.delay"; }
+    object loopstart "For each tote" { kind: "flow.loopstart"; }
+    object card "Read card" { kind: "flow.card"; }
+    object coll "Collate lines" { kind: "flow.collate"; }
+    object sort "Sort by bin" { kind: "flow.sort"; }
+    object mrg "" { kind: "flow.isomerge"; }
+    object xtr "" { kind: "flow.isoextract"; }
+    object par "Parallel packing" { kind: "flow.parallelmode"; }
+    object loopend "Next tote" { kind: "flow.loopend"; }
+    object fin "" { kind: "flow.end"; }
+
+    relation f1 "" @start -> @manual { kind: "flow.next"; }
+    relation f2 "" @manual -> @prep { kind: "flow.next"; }
+    relation f3 "" @prep -> @op { kind: "flow.next"; }
+    relation f4 "" @op -> @disp { kind: "flow.next"; }
+    relation f5 "" @disp -> @wait { kind: "flow.next"; }
+    relation f6 "" @wait -> @loopstart { kind: "flow.next"; }
+    relation f7 "" @loopstart -> @card { kind: "flow.next"; }
+    relation f8 "" @card -> @coll { kind: "flow.next"; }
+    relation f9 "" @coll -> @sort { kind: "flow.next"; }
+    relation f10 "" @sort -> @mrg { kind: "flow.next"; }
+    relation f11 "" @mrg -> @xtr { kind: "flow.next"; }
+    relation f12 "" @xtr -> @par { kind: "flow.next"; }
+    relation f13 "" @par -> @loopend { kind: "flow.next"; }
+    relation f14 "" @loopend -> @loopstart { kind: "flow.next"; }
+    relation f15 "" @loopend -> @fin { kind: "flow.next"; }
+}
+
+view chart "ISO 5807 warehouse flow" {
+    data: [@m];
+    projection { kind: graph; profile: "flow.iso5807@1"; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; }
+}

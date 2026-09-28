@@ -3,6 +3,7 @@
   "annotations": {
     "ddn@1": "Default free-form graph; any kinds/verbs; use when no stricter profile fits",
     "flow.basic@1": "Simple flowchart: start/end, process, decision branches, one path logic",
+    "flow.iso5807@1": "ISO 5807 (1985) full flowchart symbol set: manual input/op, preparation, display, delay, loop limits, merge/extract, card, collate, sort, parallel mode",
     "flow.documented@2": "Flowchart with off-page connectors and annotation notes attached",
     "dfd.gane_sarson@1": "Data-flow diagram (Gane-Sarson): processes, stores, externals, data flows",
     "dfd.yourdon@1": "Data-flow diagram (Yourdon): same model, Yourdon silhouettes",

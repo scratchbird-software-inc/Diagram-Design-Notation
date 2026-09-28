@@ -542,6 +542,14 @@
       "wiki": "Diagrams-Flowcharts-Decisions",
       "svg": "profiles/flow-documented-2.svg"
     },
+    "flow.iso5807@1": {
+      "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+      "view": "chart",
+      "title": "ISO 5807 warehouse flow",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/flow-iso5807-1.svg"
+    },
     "geo.choropleth@1": {
       "entry": "website/examples/basics/67-geo-choropleth.ddn",
       "view": "choropleth",
@@ -3555,6 +3563,21 @@
       "kind": "graph",
       "wiki": "Diagrams-Flowcharts",
       "svg": "corpus/basics-90-drilldown.svg"
+    },
+    {
+      "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+      "view": "chart",
+      "title": "ISO 5807 warehouse flow",
+      "views": [
+        {
+          "id": "chart",
+          "title": "ISO 5807 warehouse flow"
+        }
+      ],
+      "profile": "flow.iso5807@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-91-iso5807-flowchart.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

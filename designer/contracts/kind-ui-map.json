@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 282,
+  "kindCount": 295,
   "kinds": [
     {
       "kind": "object",
@@ -9360,6 +9360,435 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "uaf.strategic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.manualinput",
+      "name": "Manual input",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "manualinput",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.manualop",
+      "name": "Manual operation",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "manualop",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.preparation",
+      "name": "Preparation",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "hexagon",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.display",
+      "name": "Display",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "display",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.delay",
+      "name": "Delay",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "delay",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.loopstart",
+      "name": "Loop start",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "hexagon",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.loopend",
+      "name": "Loop end",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "hexagon",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.isomerge",
+      "name": "Merge",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "triangledown",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.isoextract",
+      "name": "Extract",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "triangleup",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.card",
+      "name": "Card",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "card",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.collate",
+      "name": "Collate",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "xellipse",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.sort",
+      "name": "Sort",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "barellipse",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "flow.parallelmode",
+      "name": "Parallel mode",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "parallelmode",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "flow.iso5807@1"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",

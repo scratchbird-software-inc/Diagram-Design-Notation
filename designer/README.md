@@ -22,7 +22,7 @@ is the primary interface — distinct from the source-first Studio in
   changes, guidelines.
 - `contracts/` — proposed JSON Schemas (command, editor-descriptor,
   shape-recipe, session, change-plan), `kind-ui-map.json` and
-  `relation-ui-map.json` (all 282 kinds / 151 relation verbs),
+  `relation-ui-map.json` (all 295 kinds / 151 relation verbs),
   `ui-tokens.json`, `designer-api.d.ts`. **Proposals**, not implemented APIs.
 - `prototype/` — bounded working prototype (31/31 browser checks passed in
   the source package). The Add shelf renders the full 188-kind mapped palette

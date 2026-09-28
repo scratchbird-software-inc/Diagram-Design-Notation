@@ -97,6 +97,11 @@ function polygon(g){const{x,y,w,h,silhouette:t}=g;
  if(t==='acceptpent')return[[x,y],[x+w,y],[x+w*.82,y+h/2],[x+w,y+h],[x,y+h],[x+w*.18,y+h/2]];
  if(t==='diamond')return[[x+w/2,y],[x+w,y+h/2],[x+w/2,y+h],[x,y+h/2]];
  if(t==='hexagon')return[[x+w*.25,y],[x+w*.75,y],[x+w,y+h/2],[x+w*.75,y+h],[x+w*.25,y+h],[x,y+h/2]];
+ if(t==='manualinput')return[[x,y+h*.35],[x+w,y],[x+w,y+h],[x,y+h]];
+ if(t==='manualop')return[[x,y],[x+w,y],[x+w*.84,y+h],[x+w*.16,y+h]];
+ if(t==='triangledown')return[[x,y],[x+w,y],[x+w/2,y+h]];
+ if(t==='triangleup')return[[x+w/2,y],[x+w,y+h],[x,y+h]];
+ if(t==='card')return[[x+12*g.scale,y],[x+w,y],[x+w,y+h],[x,y+h],[x,y+12*g.scale]];
  if(t==='parallelogram')return[[x+w*.16,y],[x+w,y],[x+w*.84,y+h],[x,y+h]];
  if(t==='package')return[[x,y],[x+w*.43,y],[x+w*.49,y+20],[x+w,y+20],[x+w,y+h],[x,y+h]];
  if(t==='document'){const ps=[[x,y],[x+w,y],[x+w,y+h-14]];for(let i=1;i<=24;i++){const t=i/24;ps.push([x+w*(1-t),y+h-14+12*Math.sin(t*Math.PI*2)]);}return ps;}
@@ -338,7 +343,33 @@ function render(g,p,theme){
  }else if(look==='handDrawn'){
   out+=['round','terminal'].includes(shape)?Sketch.box(x,y,w,h,{...opt,radius:shape==='terminal'?h/2:14*s}):Sketch.polygon(polygon(g),opt);
  }else if(['ellipse','circle'].includes(shape))out+=`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w/2}" ry="${h/2}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
- else if(shape==='tag'){
+ else if(shape==='manualinput'){
+  out+=`<path d="M${f(x)} ${f(y+h*.35)}L${f(x+w)} ${f(y)}V${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='manualop'){
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w)}L${f(x+w*.84)} ${f(y+h)}H${f(x+w*.16)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='display'){
+  const c=18*s;
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-c)}Q${f(x+w)} ${f(y+h/2)} ${f(x+w-c)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='delay'){
+  const r=h/2;
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-r)}A${f(r)} ${f(r)} 0 0 1 ${f(x+w-r)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='triangledown'){
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w)}L${f(x+w/2)} ${f(y+h)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='triangleup'){
+  out+=`<path d="M${f(x+w/2)} ${f(y)}L${f(x+w)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='card'){
+  const c=12*s;
+  out+=`<path d="M${f(x+c)} ${f(y)}H${f(x+w)}V${f(y+h)}H${f(x)}V${f(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='xellipse'){
+  out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=line(x+w*.28,y+h*.28,x+w*.72,y+h*.72,1.6)+line(x+w*.72,y+h*.28,x+w*.28,y+h*.72,1.6);
+ }else if(shape==='barellipse'){
+  out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=line(x+w*.18,y+h/2,x+w*.82,y+h/2,1.6);
+ }else if(shape==='parallelmode'){
+  out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+  out+=line(x+6*s,y+10*s,x+w-6*s,y+10*s,2.2)+line(x+6*s,y+18*s,x+w-6*s,y+18*s,2.2);
+ }else if(shape==='tag'){
   /* B1-072 (RFC-131): UAF capability tag — the one genuinely new silhouette. */
   const c=16*s;
   out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-c)}L${f(x+w)} ${f(y+h/2)}L${f(x+w-c)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;

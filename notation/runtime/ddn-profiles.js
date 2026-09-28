@@ -162,9 +162,9 @@ function validate(ir,reg,ErrorClass){
  }
  if(ir.view.profiles.export.mode==='redacted'&&ir.elements.some(n=>n.kind.includes('.')))fail('DDN-PJ003','Profile-specific redacted projection is not qualified; provide a separately authorized workspace');
  const shown=new Set(ir.view.selected),ns=ir.elements.filter(n=>shown.has(n.id)),es=rels.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
- if(p.profile==='flow.basic@1'||p.profile==='flow.documented@2'||p.profile==='uml.activity@1'||p.profile==='uml.activity@2'||p.profile==='sysml.activity@1'){
+ if(p.profile==='flow.basic@1'||p.profile==='flow.documented@2'||p.profile==='flow.iso5807@1'||p.profile==='uml.activity@1'||p.profile==='uml.activity@2'||p.profile==='sysml.activity@1'){
   if(ns.some(n=>!n.kind.startsWith('flow.')))fail('DDN-PF007','Flowchart projection accepts flow.* participants only');
-  if(p.profile==='flow.basic@1'&&es.some(r=>r.kind!=='flow.next'))fail('DDN-PF007','Flowchart projection accepts flow.next links only');
+  if((p.profile==='flow.basic@1'||p.profile==='flow.iso5807@1')&&es.some(r=>r.kind!=='flow.next'))fail('DDN-PF007','Flowchart projection accepts flow.next links only');
   if(['uml.activity@1','uml.activity@2','sysml.activity@1'].includes(p.profile)&&es.some(r=>r.kind!=='uml.flow'))fail('DDN-PF007','Activity projection accepts uml.flow links only');
   const control=es.filter(r=>(['uml.activity@1','uml.activity@2','sysml.activity@1'].includes(p.profile)?['uml.flow']:['flow.next','flow.continues']).includes(r.kind)),activeNodes=ns.filter(n=>n.kind!=='flow.annotation');
   const incoming=id=>control.filter(r=>r.to.element===id),outgoing=id=>control.filter(r=>r.from.element===id),starts=ns.filter(n=>n.kind==='flow.start'),ends=ns.filter(n=>n.kind==='flow.end'||(['uml.activity@2','sysml.activity@1'].includes(p.profile)&&n.kind==='flow.flowfinal'));

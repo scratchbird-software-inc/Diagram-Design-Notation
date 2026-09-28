@@ -2056,6 +2056,162 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "flow.manualinput",
+      "name": "Manual input",
+      "shape": "profile",
+      "silhouette": "manualinput",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "MANUALINPUT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.manualop",
+      "name": "Manual operation",
+      "shape": "profile",
+      "silhouette": "manualop",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "MANUALOP",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.preparation",
+      "name": "Preparation",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "PREPARATION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.display",
+      "name": "Display",
+      "shape": "profile",
+      "silhouette": "display",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "DISPLAY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.delay",
+      "name": "Delay",
+      "shape": "profile",
+      "silhouette": "delay",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "DELAY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.loopstart",
+      "name": "Loop start",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "LOOPSTART",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.loopend",
+      "name": "Loop end",
+      "shape": "profile",
+      "silhouette": "hexagon",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "LOOPEND",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.isomerge",
+      "name": "Merge",
+      "shape": "profile",
+      "silhouette": "triangledown",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "ISOMERGE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.isoextract",
+      "name": "Extract",
+      "shape": "profile",
+      "silhouette": "triangleup",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "ISOEXTRACT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.card",
+      "name": "Card",
+      "shape": "profile",
+      "silhouette": "card",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "CARD",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.collate",
+      "name": "Collate",
+      "shape": "profile",
+      "silhouette": "xellipse",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "COLLATE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.sort",
+      "name": "Sort",
+      "shape": "profile",
+      "silhouette": "barellipse",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "SORT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "flow.parallelmode",
+      "name": "Parallel mode",
+      "shape": "profile",
+      "silhouette": "parallelmode",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "PARALLELMODE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -2078,7 +2234,20 @@
         "flow.subprocess",
         "flow.connector",
         "flow.offpage",
-        "flow.storage"
+        "flow.storage",
+        "flow.manualinput",
+        "flow.manualop",
+        "flow.preparation",
+        "flow.display",
+        "flow.delay",
+        "flow.loopstart",
+        "flow.loopend",
+        "flow.isomerge",
+        "flow.isoextract",
+        "flow.card",
+        "flow.collate",
+        "flow.sort",
+        "flow.parallelmode"
       ],
       "target": [
         "flow.start",
@@ -2090,7 +2259,20 @@
         "flow.subprocess",
         "flow.connector",
         "flow.offpage",
-        "flow.storage"
+        "flow.storage",
+        "flow.manualinput",
+        "flow.manualop",
+        "flow.preparation",
+        "flow.display",
+        "flow.delay",
+        "flow.loopstart",
+        "flow.loopend",
+        "flow.isomerge",
+        "flow.isoextract",
+        "flow.card",
+        "flow.collate",
+        "flow.sort",
+        "flow.parallelmode"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -2906,10 +3088,36 @@
       "end": "open",
       "glyph": "link",
       "source": [
-        "flow.offpage"
+        "flow.offpage",
+        "flow.manualinput",
+        "flow.manualop",
+        "flow.preparation",
+        "flow.display",
+        "flow.delay",
+        "flow.loopstart",
+        "flow.loopend",
+        "flow.isomerge",
+        "flow.isoextract",
+        "flow.card",
+        "flow.collate",
+        "flow.sort",
+        "flow.parallelmode"
       ],
       "target": [
-        "flow.offpage"
+        "flow.offpage",
+        "flow.manualinput",
+        "flow.manualop",
+        "flow.preparation",
+        "flow.display",
+        "flow.delay",
+        "flow.loopstart",
+        "flow.loopend",
+        "flow.isomerge",
+        "flow.isoextract",
+        "flow.card",
+        "flow.collate",
+        "flow.sort",
+        "flow.parallelmode"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -6151,6 +6359,23 @@
         "UAF XMI interchange",
         "architecture analysis/execution",
         "formal OMG certification"
+      ]
+    },
+    {
+      "id": "flow.iso5807@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "ISO 5807 flowchart"
+      ],
+      "scope": "Full ISO 5807 (1985) flowchart symbol set: the flow.basic@1 vocabulary plus manual input, manual operation, preparation, display, delay, loop start/end, merge/extract, card, collate, sort and parallel mode. Closed flowchart structure rules as flow.basic@1 (start+end, flow.next links, named decision branches).",
+      "validation": [
+        "flowchart structure rules as flow.basic@1 (DDN-PF007\u2013PF010)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "ISO interchange formats",
+        "flowchart execution",
+        "formal ISO certification"
       ]
     }
   ],

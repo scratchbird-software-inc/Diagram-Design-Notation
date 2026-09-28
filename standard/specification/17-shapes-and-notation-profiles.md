@@ -126,3 +126,22 @@ The new profile `uml.profile@1` covers UML 2.5.1 profile diagrams:
 «stereotype» headers and class compartments; `uml.extension` (stereotype →
 metaclass) carries the new filled-triangle end mark; `uml.application`
 («apply») is the dashed profile-application arrow between packages.
+
+## 17.13 ISO 5807 flowcharts (flow.iso5807@1)
+
+`flow.iso5807@1` ships the full ISO 5807 (1985) flowchart symbol set
+(B1-075). The `flow.basic@1` vocabulary (terminator, process, decision, IO,
+document, predefined process, connector, storage, annotation) is extended
+with thirteen kinds: `flow.manualinput` (sloped-top quadrilateral),
+`flow.manualop` (trapezoid), `flow.preparation` (hexagon, silhouette
+existed), `flow.display` (right-curve flag), `flow.delay` (D-shape),
+`flow.loopstart`/`flow.loopend` (hexagons), `flow.isomerge` (down triangle),
+`flow.isoextract` (up triangle), `flow.card` (clipped-corner), `flow.collate`
+(ellipse with X), `flow.sort` (ellipse with bar), `flow.parallelmode` (rect
+with twin bars). The same closed flowchart structure rules as `flow.basic@1`
+apply (start+end, `flow.next` links only, named decision branches,
+`DDN-PF007`–`DDN-PF010`); endpoint contracts report as `DDN102`.
+`flow.basic@1` and `flow.documented@2` are unchanged. Example:
+`website/examples/basics/91-iso5807-flowchart.ddn`; tests
+`notation/tests/iso5807-compliance.js` + `iso5807-showcase.js`. ISO
+interchange formats, execution, and certification are out of scope.

@@ -3515,6 +3515,14 @@
       "scope": "UAF Summary & Overview domain: architecture descriptions, viewpoints, model references; OV-1-style pictograms via frames and notes.",
       "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
       "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "flow.iso5807@1",
+      "projection": "graph",
+      "diagramFamilies": ["ISO 5807 flowchart"],
+      "scope": "Full ISO 5807 (1985) flowchart symbol set: the flow.basic@1 vocabulary plus manual input, manual operation, preparation, display, delay, loop start/end, merge/extract, card, collate, sort and parallel mode. Closed flowchart structure rules as flow.basic@1 (start+end, flow.next links, named decision branches).",
+      "validation": ["flowchart structure rules as flow.basic@1 (DDN-PF007\u2013PF010)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["ISO interchange formats", "flowchart execution", "formal ISO certification"]
     }
   ],
   "projectionProperties": {
