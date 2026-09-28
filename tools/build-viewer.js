@@ -16,7 +16,9 @@ const runtime = read(RUNTIME_SRC)
   // The source map ships in dist; the URL comment is meaningless once inlined.
   .replace(/\n\/\/# sourceMappingURL=\S+\n$/, '\n');
 const css = read('notation/viewer/src/viewer.css');
-const js = read('notation/viewer/src/viewer.js');
+/* B1-071: viewer.js shares the option tables from notation/tool/src/options.js
+ * (UMD; attaches to globalThis in the page, required in node tests). */
+const js = read('notation/tool/src/options.js') + '\n' + read('notation/viewer/src/viewer.js');
 const template = read('notation/viewer/src/template.html');
 // DDN brand (B1-020, renamed B1-067): inline logo + data-URI favicon keep the single file self-contained.
 const brandSvg = read('assets/brand/ddn.svg').replace(/<\?xml[^?]*\?>\s*/, '').replace(/<!--[\s\S]*?-->\s*/, '').trim();

@@ -17,7 +17,11 @@ const runtime = read(RUNTIME_SRC)
   .replace(/\n\/\/# sourceMappingURL=\S+\n$/, '\n');
 const data = read('notation/studio/assets/workspaces.js');
 const css = read('notation/tool/src/tool.css');
-const js = read('notation/tool/src/tool.js');
+/* B1-071: tool.js is decomposed into UMD modules under notation/tool/src/;
+ * they are inlined ahead of tool.js (each attaches to globalThis; tool.js
+ * picks them up via its __req helper's host fallback). */
+const TOOL_MODULES = ['options', 'params', 'pagefit', 'presentation', 'files', 'export', 'bridge'];
+const js = TOOL_MODULES.map(m => read('notation/tool/src/' + m + '.js')).join('\n') + '\n' + read('notation/tool/src/tool.js');
 const template = read('notation/tool/src/template.html');
 /* B1-043 (D6): the render worker is a Blob-URL worker built from a source
  * string the page already carries — the minified runtime plus the worker

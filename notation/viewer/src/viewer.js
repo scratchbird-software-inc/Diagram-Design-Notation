@@ -12,6 +12,10 @@
 'use strict';
 
 /* --- pure functions (unit tested in node) --- */
+/* B1-071: option tables (font stacks, routing/crossing values, size caps) are
+ * shared with the unified tool in notation/tool/src/options.js (inlined ahead
+ * of this file by tools/build-viewer.js; required in node). */
+const OPT = typeof module === 'object' && module.exports ? require('../../tool/src/options.js') : host.DDNOptions;
 
 /* Fit scale of an sw×sh SVG inside a cw×ch container.
  * 'page' = min(width,height) fit; 'width' = cw/sw; 'height' = ch/sh; '100' = 1. */
@@ -33,15 +37,7 @@ function cssString(s) {
 
 /* Runtime font stacks (notation/runtime/ddn-text.js FONTS) — the family
  * dropdowns display these real rendered names for the four runtime keywords. */
-const FONT_STACKS = {
-  sans: 'DejaVu Sans, Arial, sans-serif',
-  serif: 'DejaVu Serif, Georgia, serif',
-  mono: 'DejaVu Sans Mono, monospace',
-  handwriting: 'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'
-};
-const FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24];
-const ROUTING_VALUES = ['orthogonal', 'straight', 'curved', 'rounded'];
-const CROSSING_VALUES = ['gap', 'bridge', 'square_bridge'];
+const { FONT_STACKS, FONT_SIZES, ROUTING_VALUES, CROSSING_VALUES } = OPT;
 const ENDPOINT_ORDERING_VALUES = ['optimize', 'preserve'];
 
 /* One presentation-override CSS rule. CSS always beats SVG presentation
@@ -175,12 +171,11 @@ function isPlausibleSourceFile(f) {
 
 /* Dropped/selected files are read fully into memory before parsing, so cap
  * them; a multi-GB drop would otherwise hang or crash the tab. */
-const MAX_FILE_BYTES = 50_000_000;
+const { MAX_FILE_BYTES, MAX_RASTER_PX } = OPT;
 
 /* Raster export allocates a scale× canvas from the source-declared page size;
  * clamp each side so a hostile/buggy publication size cannot request an
  * enormous canvas. Throws on sizes beyond the cap. */
-const MAX_RASTER_PX = 16384;
 function rasterCanvasSize(w, h, scale) {
   const s = scale || 2;
   if (!(w > 0) || !(h > 0)) throw new Error('nothing rendered yet');

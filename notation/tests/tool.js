@@ -519,6 +519,15 @@ test('B1-050 D5 node-level round trip: serialized appearance re-renders byte-ide
   assert.strictEqual(after, before, 'source-serialized appearance renders the same bytes as the override channel');
 });
 
+/* B1-071: shared option tables (tool/src/options.js) must not drift from the
+ * runtime's own constants (ddn-text.js FONTS). */
+test('options.js drift guard: FONT_STACKS equals runtime DDNText.FONTS', () => {
+  const O = require('../tool/src/options.js');
+  const FONTS = globalThis.__DDN_MODULE_REGISTRY__.namespaces.DDNText.FONTS;
+  assert.deepEqual(O.FONT_STACKS, FONTS);
+  assert.deepEqual(O.ROUTING_VALUES, ['orthogonal', 'straight', 'curved', 'rounded']);
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;
