@@ -1,0 +1,76 @@
+ddn "0.5";
+module "ddn.examples.c4epc";
+
+// B1-076: C4 deployment + dynamic diagrams, and the full EPC notation.
+// All data is synthetic.
+
+data dep {
+    object cdn "Edge node" { kind: "uml.node"; x_c4tag: { tags: [ "infra", "edge" ]; }; }
+    object appbox "Shop server" { kind: "uml.device"; }
+    object db "Database host" { kind: "uml.device"; }
+    object war "shop.war" { kind: "uml.artifact"; }
+    relation deploy "" @war -> @appbox { kind: "uml.deploy"; }
+    relation path1 "" @cdn -> @appbox { kind: "uml.commpath"; x_endlabels: { target: { multiplicity: "1..2" } }; }
+    relation path2 "" @appbox -> @db { kind: "uml.commpath"; }
+}
+
+data dyn {
+    object cust "Customer" { kind: "c4.person"; }
+    object web "Web app" { kind: "c4.container"; x_c4tag: { tags: [ "web" ]; }; }
+    object api "API service" { kind: "c4.container"; }
+    relation m1 "browse catalog" @cust -> @web { kind: "uml.message"; x_message: { seq: "1" }; }
+    relation m2 "query products" @web -> @api { kind: "uml.message"; x_message: { seq: "2" }; }
+    relation m3 "product list" @api -> @web { kind: "uml.message"; x_message: { seq: "2.1" }; x_return: true; }
+    relation m4 "render page" @web -> @cust { kind: "uml.message"; x_message: { seq: "3" }; }
+}
+
+data e {
+    object ev "Order received" { kind: "epk.event"; }
+    object check "Check stock" { kind: "epk.function"; }
+    object c1 "" { kind: "epk.connector"; x_epc: { operator: "and" }; }
+    object reserve "Reserve items" { kind: "epk.function"; }
+    object pick "Pick items" { kind: "epk.function"; }
+    object c2 "" { kind: "epk.connector"; x_epc: { operator: "and" }; }
+    object ev2 "Order ready" { kind: "epk.event"; }
+    object ship "Ship order" { kind: "epk.function"; }
+    object ev3 "Order shipped" { kind: "epk.event"; }
+    object wh "Warehouse" { kind: "epk.orgunit"; }
+    object picker "Picker" { kind: "epk.role"; }
+    object list "Pick list" { kind: "epk.infoobject"; }
+    object billing "Billing process" { kind: "epk.processlink"; }
+
+    relation n1 "" @ev -> @check { kind: "epk.next"; }
+    relation n2 "" @check -> @c1 { kind: "epk.next"; }
+    relation n3 "" @c1 -> @reserve { kind: "epk.next"; }
+    relation n4 "" @c1 -> @pick { kind: "epk.next"; }
+    relation n5 "" @reserve -> @c2 { kind: "epk.next"; }
+    relation n6 "" @pick -> @c2 { kind: "epk.next"; }
+    relation n7 "" @c2 -> @ev2 { kind: "epk.next"; }
+    relation n8 "" @ev2 -> @ship { kind: "epk.next"; }
+    relation n9 "" @ship -> @ev3 { kind: "epk.next"; }
+    relation a1 "" @wh -> @pick { kind: "epk.assigned"; }
+    relation a2 "" @picker -> @pick { kind: "epk.assigned"; }
+    relation i1 "" @list -> @pick { kind: "epk.infoflow"; }
+    relation i2 "" @ship -> @list { kind: "epk.infoflow"; }
+    relation l1 "" @billing -> @ev3 { kind: "epk.links"; }
+}
+
+view deployment "Shop deployment" {
+    data: [@dep];
+    projection { profile: "c4.deployment@1"; }
+    frame rack "Shop server" { scope: @dep.appbox; members: [@dep.war]; }
+    publication { size: content; fit: none; }
+}
+
+view dynamic "Browse dynamic" {
+    data: [@dyn];
+    projection { profile: "c4.dynamic@1"; }
+    publication { size: content; fit: none; }
+}
+
+view epc "Fulfillment EPC" {
+    data: [@e];
+    projection { profile: "epc.complete@1"; }
+    frame lane "Warehouse lane" { scope: @e.wh; members: [@e.pick, @e.picker, @e.list]; }
+    publication { size: content; fit: none; }
+}

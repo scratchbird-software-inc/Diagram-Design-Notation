@@ -58,6 +58,8 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-076: C4 element tags — rendered as a tag chip under the node. */
+ out.extension_contracts.x_c4tag=def({type:'object',required:['tags'],properties:{tags:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  /* B1-074 (RFC-132): drill-down display modes + frozen snapshots. display
   * defaults to badge everywhere (interaction_overview@2 keeps its legacy
   * inline behavior when display is absent); frozen requires snapshot. */
@@ -203,7 +205,7 @@ function validate(ir,reg,ErrorClass){
   if(es.some(r=>!['assoc','ref'].includes(r.kind)))fail('DDN-PF007','concept.map@1 accepts assoc and ref links only');
   for(const r of es){const def=reg.relationships.find(k=>k.keyword===r.kind)?.name;if(!r.name||r.name===def)fail('DDN-PJ104','concept.map@1 relations need an explicit domain label; "'+def+'" is only the verb default',r);}
  }
- if(p.profile.startsWith('c4.')){
+ if(['c4.context@1','c4.container@1','c4.component@1'].includes(p.profile)){
   const ok={'c4.context@1':['c4.person','c4.system'],'c4.container@1':['c4.person','c4.system','c4.container','c4.store','c4.queue'],'c4.component@1':['c4.person','c4.system','c4.container','c4.store','c4.component']}[p.profile];
   const ext={'c4.container@1':['c4.person'],'c4.component@1':['c4.person','c4.system','c4.store']}[p.profile]||[];
   if(p.profile==='c4.context@1'&&es.some(r=>r.from.member||r.to.member))fail('DDN-PJ100','Context views show systems and people, not fields; remove member endpoints');
@@ -213,6 +215,16 @@ function validate(ir,reg,ErrorClass){
    const bkind=p.profile==='c4.container@1'?'c4.system':'c4.container',frames=ir.view.frames,f=frames.length===1?frames[0]:null,bn=f?ns.find(n=>n.id===f.scope&&n.kind===bkind):null,inner=bn?ns.filter(n=>n!==bn&&!ext.includes(n.kind)):[];
    if(!bn||inner.some(n=>!f.members.includes(n.id)))fail('DDN-PJ101',p.profile+' requires exactly one frame scoped to a selected '+bkind+' boundary object whose members cover every selected interior node');
   }
+ }
+ if(p.profile==='epc.complete@1'){
+  const EPCV=['epk.event','epk.function','epk.connector','epk.orgunit','epk.role','epk.infoobject','epk.processlink'];
+  if(ns.some(n=>!EPCV.includes(n.kind)))fail('DDN-PF007','epc.complete@1 accepts the epk.* vocabulary only');
+  if(es.some(r=>!['epk.next','epk.infoflow','epk.assigned','epk.links'].includes(r.kind)))fail('DDN-PF007','epc.complete@1 accepts epk.next/infoflow/assigned/links links only');
+  for(const r of es.filter(r=>r.kind==='epk.next')){const a=nodes.get(r.from.element).kind,b=nodes.get(r.to.element).kind;
+   if((a==='epk.event'&&b==='epk.event')||(a==='epk.function'&&b==='epk.function'))fail('DDN-PJ105','EPC events and functions must alternate; connect '+a+' to '+b+' through a connector or the other symbol type',r);}
+  for(const n of ns){const op=n.properties.x_epc?.operator;
+   if(n.kind==='epk.connector'){if(!['and','or','xor'].includes(op))fail('DDN-PJ106','EPC connector must carry x_epc.operator of and, or or xor',n);}
+   else if(op!==undefined)fail('DDN-PJ106','x_epc.operator belongs on epk.connector nodes only',n);}
  }
  if(p.profile==='epc.basic@1'){
   if(ns.some(n=>!['epk.event','epk.function','epk.connector'].includes(n.kind)))fail('DDN-PF007','epc.basic@1 accepts epk.event, epk.function, epk.connector participants only');

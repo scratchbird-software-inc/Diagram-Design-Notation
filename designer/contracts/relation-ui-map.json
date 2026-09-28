@@ -13084,6 +13084,123 @@
       ],
       "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "epk.infoflow",
+      "label": "informs",
+      "origin": "profile",
+      "family": "flow",
+      "semantic_contract": {
+        "source": [
+          "epk.infoobject",
+          "epk.function"
+        ],
+        "target": [
+          "epk.infoobject",
+          "epk.function"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "epk.assigned",
+      "label": "assigned to",
+      "origin": "profile",
+      "family": "structural",
+      "semantic_contract": {
+        "source": [
+          "epk.orgunit",
+          "epk.role"
+        ],
+        "target": [
+          "epk.function",
+          "epk.orgunit",
+          "epk.role"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "epk.links",
+      "label": "links process",
+      "origin": "profile",
+      "family": "control",
+      "semantic_contract": {
+        "source": [
+          "epk.processlink"
+        ],
+        "target": [
+          "epk.event",
+          "epk.function"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
     }
   ]
 }

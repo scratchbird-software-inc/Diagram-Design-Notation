@@ -84,6 +84,22 @@
       "wiki": "Diagrams-Architecture",
       "svg": "profiles/c4-context-1.svg"
     },
+    "c4.deployment@1": {
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "deployment",
+      "title": "Shop deployment",
+      "kind": "graph",
+      "wiki": "Diagrams-Architecture",
+      "svg": "profiles/c4-deployment-1.svg"
+    },
+    "c4.dynamic@1": {
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "dynamic",
+      "title": "Browse dynamic",
+      "kind": "graph",
+      "wiki": "Diagrams-Architecture",
+      "svg": "profiles/c4-dynamic-1.svg"
+    },
     "canvas.bmc@1": {
       "entry": "website/examples/basics/31-canvas-pack-a.ddn",
       "view": "bmc",
@@ -479,6 +495,14 @@
       "combined": "website/examples/basics/30-epc.combined.ddn",
       "wiki": "Diagrams-Flowcharts",
       "svg": "profiles/epc-basic-1.svg"
+    },
+    "epc.complete@1": {
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "epc",
+      "title": "Fulfillment EPC",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "profiles/epc-complete-1.svg"
     },
     "erd.crowfoot@1": {
       "entry": "website/examples/basics/37-crows-foot-erd.ddn",
@@ -3578,6 +3602,29 @@
       "kind": "graph",
       "wiki": "Diagrams-Flowcharts",
       "svg": "corpus/basics-91-iso5807-flowchart.svg"
+    },
+    {
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "deployment",
+      "title": "Shop deployment",
+      "views": [
+        {
+          "id": "deployment",
+          "title": "Shop deployment"
+        },
+        {
+          "id": "dynamic",
+          "title": "Browse dynamic"
+        },
+        {
+          "id": "epc",
+          "title": "Fulfillment EPC"
+        }
+      ],
+      "profile": "c4.deployment@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Architecture",
+      "svg": "corpus/basics-92-c4-epc.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

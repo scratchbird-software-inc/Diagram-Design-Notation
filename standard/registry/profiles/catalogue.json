@@ -2212,6 +2212,54 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "epk.orgunit",
+      "name": "Organizational unit",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "ORGUNIT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "epk.role",
+      "name": "Role",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "governance",
+      "code": "EPKROLE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "epk.infoobject",
+      "name": "Information object",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "data",
+      "code": "INFOOBJECT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "epk.processlink",
+      "name": "Process link",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "PROCESSLINK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -3180,12 +3228,20 @@
       "source": [
         "epk.event",
         "epk.function",
-        "epk.connector"
+        "epk.connector",
+        "epk.orgunit",
+        "epk.role",
+        "epk.infoobject",
+        "epk.processlink"
       ],
       "target": [
         "epk.event",
         "epk.function",
-        "epk.connector"
+        "epk.connector",
+        "epk.orgunit",
+        "epk.role",
+        "epk.infoobject",
+        "epk.processlink"
       ],
       "allow_self": false,
       "member_endpoints": false
@@ -3981,6 +4037,68 @@
       ],
       "allow_self": false,
       "member_endpoints": false
+    },
+    {
+      "keyword": "epk.infoflow",
+      "name": "Informs",
+      "verb": "Informs",
+      "family": "flow",
+      "code": "INFOFLOW",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "epk.infoobject",
+        "epk.function"
+      ],
+      "target": [
+        "epk.infoobject",
+        "epk.function"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "4 4"
+    },
+    {
+      "keyword": "epk.assigned",
+      "name": "Assigned to",
+      "verb": "Assigned to",
+      "family": "structural",
+      "code": "EPKASSIGNED",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "epk.orgunit",
+        "epk.role"
+      ],
+      "target": [
+        "epk.function",
+        "epk.orgunit",
+        "epk.role"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "epk.links",
+      "name": "Links process",
+      "verb": "Links process",
+      "family": "control",
+      "code": "EPKLINK",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "epk.processlink"
+      ],
+      "target": [
+        "epk.event",
+        "epk.function"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "4 4"
     }
   ],
   "profiles": [
@@ -6376,6 +6494,58 @@
         "ISO interchange formats",
         "flowchart execution",
         "formal ISO certification"
+      ]
+    },
+    {
+      "id": "c4.deployment@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 deployment diagram"
+      ],
+      "scope": "C4 deployment view: rebadge of the uml.deployment@1 machinery \u2014 nodes/devices/execution environments as 3D boxes, artifacts, deploy/manifest dependencies, communication paths with multiplicity, node nesting via frames.",
+      "validation": [
+        "uml.deployment@1 rules apply (nesting frames scope to node kinds, DDN-PJ164)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "middleware-specific deployment models",
+        "artifact content descriptors",
+        "topology discovery"
+      ]
+    },
+    {
+      "id": "c4.dynamic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "C4 dynamic diagram"
+      ],
+      "scope": "C4 dynamic view: rebadge of the uml.communication@2 machinery \u2014 numbered messages (x_message.seq ordering), combined fragments, time/duration constraints.",
+      "validation": [
+        "uml.communication@2 rules apply (message numbering, DDN-PJ111; fragments/constraints, DDN-PJ172)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "runtime execution",
+        "formal conformance"
+      ]
+    },
+    {
+      "id": "epc.complete@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Event-driven process chain (EPC), full"
+      ],
+      "scope": "Full EPC notation: epc.basic@1 alternation/connectors plus organizational units and roles (lanes via frames), information objects/documents, process-link symbols, and split/join fan-balancing validation.",
+      "validation": [
+        "participants limited to the epk.* vocabulary (DDN-PF007)",
+        "alternation (DDN-PJ105) and connector operator (DDN-PJ106) as epc.basic@1",
+        "split/join fan-balancing per operator (DDN-PJ199)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "process simulation",
+        "BPMN interchange",
+        "formal conformance"
       ]
     }
   ],

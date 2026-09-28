@@ -75,7 +75,10 @@ function measureNode(n,registry,profiles,placement={},context={}){
  const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample}; return k.profileKind?Shapes.measure(g,profiles):g;
 }
 function renderNode(g,p,theme){
- if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
+ if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);
+  /* B1-076: C4 tag chip under the node (any silhouette, decorator layer). */
+  if(g.n.properties.x_c4tag?.tags?.length&&p.detail!=='shapes'){const tg=g.n.properties.x_c4tag.tags.join(', ');shaped=shaped.slice(0,-4)+`<g class="ddn-c4tag">`+text(g.x+g.w/2,g.y+g.h-6*g.scale,'['+tg+']',10*g.scale,theme.muted,500,'text-anchor="middle" font-style="italic"')+'</g></g>';}
+  if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
   /* B1-074 (RFC-132): frozen drill-down — embed the stored snapshot verbatim
    * through the same namespacing pass; the child is never re-rendered. */
   const xf=g.n.properties.x_subdiagram?.frozen===true?g.n.properties.x_subdiagram:null;

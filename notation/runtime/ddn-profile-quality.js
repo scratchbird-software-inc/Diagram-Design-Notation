@@ -6,7 +6,7 @@ function validate(ir,E){
  const ns=new Map(ir.elements.map(n=>[n.id,n])),shown=new Set(ir.view.selected),profile=ir.view.profiles.projection.profile;
  /* B1-065 (RFC-128): SysML behavioral rebadges alias the completed UML
   * machinery — the gates below fire for the SysML profile ids too. */
- const REBADGE={'sysml.usecase@1':['uml.usecase@2','uml.usecase@3'],'sysml.activity@1':['uml.activity@1','uml.activity@2'],'sysml.statemachine@1':['uml.statemachine@1'],'sysml.sequence@1':['uml.sequence@2']};
+ const REBADGE={'sysml.usecase@1':['uml.usecase@2','uml.usecase@3'],'sysml.activity@1':['uml.activity@1','uml.activity@2'],'sysml.statemachine@1':['uml.statemachine@1'],'sysml.sequence@1':['uml.sequence@2'],'c4.deployment@1':['uml.deployment@1'],'c4.dynamic@1':['uml.communication@1','uml.communication@2']};
  const eff=new Set([profile,...(REBADGE[profile]||[])]);
  const fail=(c,m,n)=>{const e=new E(c,m,n?.source?.file||ir.view.source.file,n?.source?.start||ir.view.source.start);if(E===Error){e.code=c;e.message=m;}throw e;};
  const keys=(o,a,label,n)=>{if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).some(k=>!a.includes(k)))fail('DDN-PX001','Unknown or malformed '+label,n);};
@@ -54,7 +54,7 @@ function validate(ir,E){
    for(const f of n.fields)if(!names.has(f.name)&&!names.has(f.local))fail('DDN-PJ112','Instance '+n.id+' declares slot '+(f.name||f.local)+' not present on classifier '+c.id,n);
   }
  }
- if(profile==='uml.communication@1'){
+ if(eff.has('uml.communication@1')){
   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='uml.message')){
    const seq=r.properties.x_message?.seq,ret=r.properties.x_return===true,dotted=/^\d+(\.\d+)+$/.test(seq||'');
    if(typeof seq!=='string'||!seq)fail('DDN-PJ111','Message '+r.id+' lacks a declared sequence number (x_message.seq)',r);
@@ -310,6 +310,16 @@ function validate(ir,E){
      if(typeOf(pa)&&typeOf(pb)&&typeOf(pa)!==typeOf(pb))fail('DDN-PJ196','Connector '+r.id+' joins «Service»/'+'«Request» ports of different interface types ('+typeOf(pa)+' vs '+typeOf(pb)+'); both sides type the same service interface',r);
     }
    }
+  }
+ }
+ /* B1-076: full EPC — split/join fan-balancing per connector operator. */
+ if(profile==='epc.complete@1'){
+  const es2=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='epk.next');
+  const conns=ir.elements.filter(n=>shown.has(n.id)&&n.kind==='epk.connector');
+  for(const op of ['and','or','xor']){
+   const splits=conns.filter(n=>n.properties.x_epc?.operator===op&&es2.filter(r=>r.from.element===n.id).length>1).length;
+   const joins=conns.filter(n=>n.properties.x_epc?.operator===op&&es2.filter(r=>r.to.element===n.id).length>1).length;
+   if(splits!==joins)fail('DDN-PJ199','EPC fan-balancing: '+splits+' '+op.toUpperCase()+' split(s) (connector with >1 outgoing) versus '+joins+' '+op.toUpperCase()+' join(s) (>1 incoming); every split needs a matching join of the same operator');
   }
  }
  /* B1-066 (RFC-129): DMN 1.4 DRD semantics. */

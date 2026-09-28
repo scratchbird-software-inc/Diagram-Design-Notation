@@ -136,6 +136,9 @@
     "c4.context@1": "C4 system context: people and systems, no interior detail",
     "c4.container@1": "C4 container diagram: one system boundary with containers/stores/queues",
     "c4.component@1": "C4 component diagram: one container boundary with components",
+    "c4.deployment@1": "C4 deployment view: rebadge of uml.deployment@1 (3D nodes, artifacts, deploy paths)",
+    "c4.dynamic@1": "C4 dynamic view: rebadge of uml.communication@2 (numbered messages)",
+    "epc.complete@1": "Full EPC: alternation/connectors plus org units, roles, info objects, process links, fan-balancing",
     "geo.choropleth@1": "Choropleth map: regions coloured by a joined numeric value",
     "geo.symbols@1": "Symbol map: sized markers at lon/lat points",
     "geo.outline@1": "Outline map: geography only, no data binding"

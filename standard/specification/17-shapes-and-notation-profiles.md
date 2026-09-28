@@ -145,3 +145,34 @@ apply (start+end, `flow.next` links only, named decision branches,
 `website/examples/basics/91-iso5807-flowchart.ddn`; tests
 `notation/tests/iso5807-compliance.js` + `iso5807-showcase.js`. ISO
 interchange formats, execution, and certification are out of scope.
+
+## 17.14 C4 deployment and dynamic diagrams (c4.deployment@1, c4.dynamic@1)
+
+`c4.deployment@1` rebadges the `uml.deployment@1` machinery for the C4
+deployment view: nodes/devices/execution environments as 3D boxes, artifacts
+as documents, «deploy»/«manifest» dependencies, communication paths with
+multiplicity, and nesting frames (the rebadge is recorded at render time as
+the informational `DDN-PJW06`). `c4.dynamic@1` rebadges
+`uml.communication@2` for the C4 dynamic view: numbered messages
+(`x_message.seq` — required and validated as `DDN-PJ111`, replies dotted
+under their request) plus combined fragments and time/duration constraints.
+Element tags (`x_c4tag: { tags: [ … ] }`, 1–8 strings) render as an italic
+`[tag, …]` chip under any node — the C4 styling legend form. The three basic
+profiles `c4.context/container/component@1` are unchanged.
+
+## 17.15 Full EPC notation (epc.complete@1)
+
+`epc.complete@1` extends `epc.basic@1` with the full EPC vocabulary:
+organizational units (`epk.orgunit`) and roles (`epk.role`) — usable directly
+or as lane frames — information objects/documents (`epk.infoobject`,
+document silhouette, dashed `epk.infoflow` to and from functions),
+process-link symbols (`epk.processlink` with dashed `epk.links` into an
+event or function), and assignment lines (`epk.assigned`, plain lines from
+units/roles to functions). Alternation (`DDN-PJ105`) and connector operators
+(`DDN-PJ106`) apply as in the basic profile, and the new split/join
+fan-balancing rule (`DDN-PJ199`) requires each connector operator's splits
+(>1 outgoing `epk.next`) to be matched by the same count of joins (>1
+incoming) of that operator. `epc.basic@1` stays installed and immutable.
+Example: `website/examples/basics/92-c4-epc.ddn`; tests
+`c4epc-compliance.js` + `c4epc-showcase.js`. Process simulation, BPMN
+interchange, and formal conformance remain out of scope.
