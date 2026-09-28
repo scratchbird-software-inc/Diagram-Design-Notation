@@ -19,9 +19,7 @@ const root = path.resolve(__dirname, '..');
 const results = [];
 function test(name, fn) { try { fn(); results.push({ name, pass: true }); } catch (e) { results.push({ name, pass: false }); console.error('FAIL', name, e.stack); process.exitCode = 1; } }
 
-const shellDir = path.join(os.homedir(), '.cache', 'ms-playwright');
-const shell = fs.readdirSync(shellDir).filter(d => d.startsWith('chromium_headless_shell-')).sort().pop();
-const BIN = path.join(shellDir, shell, 'chrome-headless-shell-linux64', 'chrome-headless-shell');
+const BIN = require('./browser.js').findBrowser();
 const PORT = 8141;
 const BASE = 'http://127.0.0.1:' + PORT;
 

@@ -203,3 +203,22 @@ Documents imported from the 0.7.0 monolith and the designer specification 0.1 pa
 ## Contributing
 
 See `CONTRIBUTING.md`. Security reporting: `SECURITY.md`.
+
+### Running the browser test suites locally
+
+The root `npm test` includes browser-driven suites (`tests/viewer-src-http.js`,
+`tests/tool-worker-http.js`, `tests/tool-host-io-http.js`,
+`tests/example-links-http.js`) that drive the committed tool in headless
+Chromium. Prerequisite — install the pinned headless shell once:
+
+```sh
+npx playwright@1.49.1 install chromium
+```
+
+Discovery (`tests/browser.js`): the newest `chromium_headless_shell-*` under
+the playwright cache (`PLAYWRIGHT_BROWSERS_PATH` honoured, default
+`~/.cache/ms-playwright`), or an explicit executable via
+`DDN_BROWSER=/path/to/chrome-headless-shell` (any Chromium/Chrome binary
+works). Absent browser → a clear error naming the install command. CI runs
+these suites as a visible release gate (`.github/workflows/ci.yml`,
+`browser-integration` job, one step per suite).

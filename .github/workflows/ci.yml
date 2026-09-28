@@ -38,3 +38,43 @@ jobs:
               json.loads(p.read_text(encoding='utf-8'))
               print('ok', p)
           PY
+
+  browser-integration:
+    # B1-070: the root suite's browser + designer + site-crawl tests are a
+    # release gate. Each suite runs as its own step so a failure is visible
+    # per suite; `set -o pipefail` semantics apply (any failure fails the job).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install workspace dev dependencies
+        run: npm ci
+
+      - name: Install pinned headless Chromium
+        run: npx playwright@1.49.1 install --with-deps chromium
+
+      - name: Verify browser discovery
+        run: node -e "console.log(require('./tests/browser.js').findBrowser())"
+
+      - name: Designer tests
+        run: npm --prefix designer test
+
+      - name: Browser suite — viewer ?src= over HTTP
+        run: node tests/viewer-src-http.js
+
+      - name: Browser suite — tool worker rendering over HTTP
+        run: node tests/tool-worker-http.js
+
+      - name: Browser suite — tool host I/O over HTTP
+        run: node tests/tool-host-io-http.js
+
+      - name: Browser suite — example links over HTTP
+        run: node tests/example-links-http.js
+
+      - name: Website link crawl
+        run: node tests/website-links.js
