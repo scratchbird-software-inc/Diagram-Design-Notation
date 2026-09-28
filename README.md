@@ -135,19 +135,27 @@ boundaries is in
 | Publication page width/height | 64–100000 px, finite | `DDN046` | `notation/runtime/ddn-core.js` |
 | Source file size (viewer / unified tool) | 50 MB per source | plain `Error` | `MAX_FILE_BYTES` in `notation/tool/src/tool.js`, `notation/viewer/src/viewer.js` |
 | Raster (PNG) export side | 16384 px | plain `Error` | `MAX_RASTER_PX` in `notation/viewer/src/viewer.js`, `notation/tool/src/tool.js` |
+| Workspace source size (library API) | 2,000,000 chars per file; 12,000,000 total | `LIVE010` / `LIVE011` | `notation/studio/src/api.js` (`filesChecked()`) |
+| Workspace file count | 1,500 files | `LIVE011` | `notation/studio/src/api.js` (`filesChecked()`) |
 | Workspace undo history | 60 entries / 16 MB of patches | (oldest entry dropped) | `notation/studio/src/api.js` (`commit()`) |
 | Compiled-IR cache per workspace | 4 views (LRU) | (recompiles on eviction) | `notation/studio/src/api.js` (`compiled()`) |
 
-The library API (`createWorkspace`/`renderSync`) imposes no source-size cap of
-its own — you hand it text you already hold — so the 50 MB cap is a guard of
-the browser surfaces, not of the language.
+The library API (`createWorkspace`/`renderSync`) guards workspace size too:
+each source is at most 2,000,000 characters and a workspace totals at most
+12,000,000 characters across 1,500 files (`LIVE010`/`LIVE011` in
+`notation/studio/src/api.js` `filesChecked()`). The larger 50 MB per-source
+cap of the browser surfaces sits on top of that, not instead of it.
 
-**Rendering is synchronous and single-threaded.** `render()` is an async
-wrapper over the synchronous renderer (same thread, same tick — see
-`renderSync`/`render` in `notation/studio/src/api.js`); no worker offload
-exists today. Off-thread rendering is a roadmap item, not a current
-capability, so size views to the limits above instead of expecting the UI to
-stay responsive through an oversized render.
+**Rendering is synchronous by default; the unified tool can offload to a
+worker.** The core renderer is synchronous and deterministic
+(`renderSync` in `notation/studio/src/api.js`). In the browser tool,
+`render()` additionally supports worker-based rendering (the layout/routing/
+SVG computation crosses a worker boundary; results are verified against
+seeded text metrics and degrade to byte-identical synchronous output when
+the worker cannot be trusted — see `notation/tool/src/tool.js`
+`createRenderBridge`). A render prepared at one source revision is refused if
+the source moved on before it finalized (DDN-W953). Size views to the limits
+above so the interactive path stays responsive.
 
 **Working within the limits — guidance patterns:**
 

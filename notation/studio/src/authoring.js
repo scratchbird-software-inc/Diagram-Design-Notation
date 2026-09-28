@@ -21,6 +21,16 @@ function propSpan(text,n,key){if(n.bodyStart===undefined)return null;const ts=D.
 function property(text,n,key,newValue){const span=propSpan(text,n,key),render=newValue===undefined?'':key+': '+value(newValue)+';';if(span)return{file:n.source,...span,text:render};if(newValue===undefined)return null;if(n.bodyStart!==undefined)return{file:n.source,start:n.bodyStart,end:n.bodyStart,text:'\n    '+render+'\n'};return{file:n.source,start:n.end-1,end:n.end,text:' { '+render+' }'};}
 function labelEdit(text,n,label){const tokens=D.lex(text,n.source).filter(t=>t.start>=n.start&&t.end<=(n.bodyStart??n.end));const idIdx=tokens.findIndex((t,i)=>t.type==='id'&&t.value===n.id&&(tokens[i+1]?.type==='string'||[':','@','{',';'].includes(tokens[i+1]?.type)||i+1===tokens.length));const name=idIdx>=0?idIdx:tokens.findIndex((t,i)=>t.type==='id'&&i>0);const next=tokens[name+1];if(next?.type==='string')return{file:n.source,start:next.start,end:next.end,text:JSON.stringify(label)};const after=(tokens[name]||tokens[0]).end;return{file:n.source,start:after,end:after,text:' '+JSON.stringify(label)};}
 function apply(ws,b,edits,entry,view){return ws.applyEdits(edits.filter(Boolean),{expectedRevision:ws.revision,entry,view});}
+/* B1-069 Finding 1 (external review, CONFIRMED + fixed): replaceData inferred
+ * the record shape from the block's CURRENT record declarations, so a
+ * populated → empty → refill sequence died at the refill ("shape cannot be
+ * inferred"). The schema is now retained per workspace/data-block across
+ * refreshes: every refresh that sees live records re-learns shape and value
+ * tags from them; an emptied block consults the retained schema instead of
+ * failing. A workspace created directly on an already-empty block still has
+ * nothing to infer from — DDN-E011 stands there, as documented. */
+const recordSchemas=new WeakMap();
+function schemaFor(ws){let m=recordSchemas.get(ws);if(!m){m=new Map();recordSchemas.set(ws,m);}return m;}
 /* B1-040: a compact `row` desugars to a canonical record object whose x_record
  * lives in the row's value list, not in a source body — property-level edits
  * cannot target it. Rewrite the whole row statement as the equivalent
@@ -67,11 +77,22 @@ api.authoring={
   if(blocks.length>1)fail('DDN-E002','Data block name is ambiguous across the workspace: '+name+' ('+blocks.length+' blocks)');
   const block=blocks[0],text=files[block.source],recs=block.children.filter(n=>n.props.x_record&&typeof n.props.x_record==='object');
   const result=over=>({committed:false,revision:ws.revision,added:[],removed:[],updated:[],diagnostics:[],...over});
-  if(!recs.length){
-   if(records.length)fail('DDN-E011','Data block '+name+' declares no records; its field shape cannot be inferred.');
-   return result({committed:true});
+  /* B1-069: the record schema (shape + value-type tags) is retained across
+   * refreshes — it is declared by the block's last known records, independent
+   * of whether any records exist right now. */
+  const tag=v=>v===null?'null':Array.isArray(v)?'array':typeof v;
+  const schemas=schemaFor(ws),schemaKey=block.source+'::'+name;
+  let shape,types;
+  if(recs.length){
+   shape=Object.keys(recs[0].props.x_record).sort().join(' ');
+   types=new Map();for(const n of recs)for(const [k,v]of Object.entries(n.props.x_record)){if(!types.has(k))types.set(k,new Set());types.get(k).add(tag(v));}
+   schemas.set(schemaKey,{shape,types});
+  }else{
+   const kept=schemas.get(schemaKey);
+   if(records.length&&!kept)fail('DDN-E011','Data block '+name+' declares no records; its field shape cannot be inferred.');
+   if(!records.length)return result({committed:true});
+   shape=kept.shape;types=kept.types;
   }
-  const shape=Object.keys(recs[0].props.x_record).sort().join(' ');
   // D1 stable record keys: an optional refresh-level `key` names the target declaration id.
   // Positional fallback applies only when no keys are declared and is order-sensitive.
   const keyed=records.length>0&&Object.hasOwn(records[0],'key')&&!shape.split(' ').includes('key');
@@ -93,10 +114,9 @@ api.authoring={
    for(let i=keep;i<records.length;i++)added.push(records[i]);
    removed=recs.slice(keep);
   }
-  // D3 value-type validation: field tags are inferred from the block's existing records
-  // (null means UNKNOWN and accepts any later tag; incoming null is always legal).
-  const tag=v=>v===null?'null':Array.isArray(v)?'array':typeof v;
-  const types=new Map();for(const n of recs)for(const [k,v]of Object.entries(n.props.x_record)){if(!types.has(k))types.set(k,new Set());types.get(k).add(tag(v));}
+  // D3 value-type validation: field tags come from the retained schema
+  // (declared by the last known records; null means UNKNOWN and accepts any
+  // later tag; incoming null is always legal).
   const typeFailure=(rec,field,t,ts)=>({severity:'error',code:'DDN-E012',record:rec,field,failure:'type-mismatch',message:'Record '+rec+' field '+field+' must remain '+[...ts].join('|')+'; got '+t+'. Refresh commits nothing.'});
   let diagnostics=[];
   for(const [n,r]of pairs)for(const [k,v]of Object.entries(r)){const ts=types.get(k),t=tag(v);if(t!=='null'&&ts&&!ts.has('null')&&!ts.has(t))diagnostics.push(typeFailure(n.id,k,t,ts));}

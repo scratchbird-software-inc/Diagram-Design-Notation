@@ -27,9 +27,10 @@ The smallest useful snippet (global build, works from `file://`):
 </script>
 ```
 
-`render()` is also available and returns a Promise, but it resolves on the
-same thread in the same tick — rendering is synchronous; there is no worker
-offload today (roadmap only). Keep views inside the
+`render()` is also available and returns a Promise. The core render is
+synchronous; when a render bridge is installed (the unified tool does this),
+the heavy computation runs in a worker with byte-identical fallback to the
+synchronous path. Keep views inside the
 [limits](limits.md) so a synchronous render stays interactive.
 
 ## The web component

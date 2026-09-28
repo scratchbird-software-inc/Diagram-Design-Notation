@@ -158,10 +158,16 @@ function createWorkspace(input){
    const geometryKey=entry+'#'+view+'|'+JSON.stringify([overrides,layoutState,noMotion===true,isoFrom]);
    const hit=geometryCache.get(geometryKey);
    if(hit)return{hit};
-   return{hit:null,base,v,p,entry,view,geometryKey,
+   /* B1-069 Finding 2 (external review, CONFIRMED + fixed): carry the
+    * prepared revision through the async render so finalization can refuse
+    * obsolete work instead of caching it as current. */
+   return{hit:null,base,v,p,entry,view,geometryKey,preparedRevision:revision,
     engineOpts:{viewKey:entry+'#'+view,layoutState,noMotion:noMotion===true,...(isoFrom?{isoFrom}:{})}};
   },
   finalizeRender(prep,result,start){
+   /* B1-069: a source change between prepare and finalize invalidates the
+    * prepared IR — refuse instead of stamping/caching the stale result. */
+   if(prep.preparedRevision!==undefined&&prep.preparedRevision!==revision)fail('DDN-W953','Render prepared at source revision '+prep.preparedRevision+' finalized after the source moved to revision '+revision+'; the stale result was discarded, not cached. Re-render the current revision.');
    const {base,v,p,entry,view,geometryKey}=prep;
    const redacted=p.export.mode==='redacted',publicIR=result._ir||backend.Export.project(v.ir);
    const sourceNodes=[];function addSources(x){sourceNodes.push(...x.elements,...x.relations,...x.elements.flatMap(n=>n.fields||[]));for(const ch of x.view.children||[])addSources(ch.ir);}addSources(v.ir);

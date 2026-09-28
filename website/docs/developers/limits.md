@@ -18,20 +18,27 @@ is committed at `standard/registry/performance-baseline.json` (regenerate with
 | Publication page width/height | 64–100000 px, finite | `DDN046` | `notation/runtime/ddn-core.js` |
 | Source file size (viewer / unified tool) | 50 MB per source | plain `Error` | `MAX_FILE_BYTES` in `notation/tool/src/tool.js`, `notation/viewer/src/viewer.js` |
 | Raster (PNG) export side | 16384 px | plain `Error` | `MAX_RASTER_PX` in `notation/viewer/src/viewer.js`, `notation/tool/src/tool.js` |
+| Workspace source size (library API) | 2,000,000 chars per file; 12,000,000 total | `LIVE010` / `LIVE011` | `notation/studio/src/api.js` (`filesChecked()`) |
+| Workspace file count | 1,500 files | `LIVE011` | `notation/studio/src/api.js` (`filesChecked()`) |
 | Workspace undo history | 60 entries / 16 MB of patches | (oldest entry dropped) | `notation/studio/src/api.js` (`commit()`) |
 | Compiled-IR cache per workspace | 4 views (LRU) | (recompiles on eviction) | `notation/studio/src/api.js` (`compiled()`) |
 
-The library API (`createWorkspace`/`renderSync`) imposes no source-size cap of
-its own — you hand it text you already hold — so the 50 MB cap is a guard of
-the browser surfaces (see [viewer.md](viewer.md), [tool.md](tool.md)), not of
-the language.
+The library API (`createWorkspace`/`renderSync`) guards workspace size too:
+each source is at most 2,000,000 characters and a workspace totals at most
+12,000,000 characters across 1,500 files (`LIVE010`/`LIVE011` in
+`notation/studio/src/api.js` `filesChecked()`). The larger 50 MB per-source
+cap of the browser surfaces (see [viewer.md](viewer.md), [tool.md](tool.md))
+sits on top of that, not instead of it.
 
 ## Rendering model (honest)
 
-Rendering is **synchronous and single-threaded**. `render()` is an async
-wrapper over the synchronous renderer — same thread, same tick (see
-`renderSync`/`render` in `notation/studio/src/api.js`). There is no
-worker/off-thread rendering today; it is a roadmap item only. The designer
+Rendering is **synchronous by default**; `renderSync()` is the core path
+(see `notation/studio/src/api.js`). The unified tool additionally renders
+**off-thread in a worker** when the host supports it: `render()` crosses a
+worker boundary for layout/routing/SVG and degrades to byte-identical
+synchronous output when the worker is unavailable or unverifiable
+(`?worker=off` forces the synchronous path; a stale render prepared before a
+source change is refused with DDN-W953). The designer
 specification's responsiveness figures are annotated TARGET vs MEASURED in
 `designer/specification/16-performance.md`; the MEASURED numbers come from the
 committed baseline file above.

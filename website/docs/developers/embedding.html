@@ -36,7 +36,7 @@
   const r = ws.renderSync({ entry: &quot;model.ddn&quot;, view: &quot;overview&quot; });
   document.getElementById(&quot;out&quot;).innerHTML = r.svg;
 &lt;/script&gt;</code></pre>
-<p><code>render()</code> is also available and returns a Promise, but it resolves on the same thread in the same tick — rendering is synchronous; there is no worker offload today (roadmap only). Keep views inside the <a href="limits.html">limits</a> so a synchronous render stays interactive.</p>
+<p><code>render()</code> is also available and returns a Promise. The core render is synchronous; when a render bridge is installed (the unified tool does this), the heavy computation runs in a worker with byte-identical fallback to the synchronous path. Keep views inside the <a href="limits.html">limits</a> so a synchronous render stays interactive.</p>
 <h2>The web component</h2>
 <p><code>DDNLive.mount</code> upgrades a host element into a live diagram (<code>notation/studio/src/component.js</code> defines the <code>&lt;ddn-example&gt;</code> custom element behind it):</p>
 <pre><code>&lt;div id=&quot;d&quot;&gt;&lt;/div&gt;

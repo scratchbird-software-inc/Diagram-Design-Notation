@@ -154,6 +154,7 @@
     "DDN-PJ192": "x_subdiagram on a DMN node must name an existing decision-projection (decision table) view",
     "DDN-PJ193": "x_boxed is presentation-only text on dmn.decision/dmn.bkm/dmn.decisionservice",
     "DDN-PJ194": "DMN requirement connectors: information from input data/decision, knowledge from a BKM, authority from a knowledge source or decision",
-    "DDN-PJW06": "Informational: sysml behavioral profile is a rebadge of the UML machinery"
+    "DDN-PJW06": "Informational: sysml behavioral profile is a rebadge of the UML machinery",
+    "DDN-W953": "Stale render: the source changed after this render was prepared; re-render the current revision"
   }
 }

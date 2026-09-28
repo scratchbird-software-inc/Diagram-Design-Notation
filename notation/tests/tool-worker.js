@@ -231,6 +231,34 @@ test('D4 parity: DDN071 rejects identically via worker and sync rendering', asyn
   }
 });
 
+/* B1-069 Finding 2 (external review): async render revision race at the SDK
+ * level — prepare against revision A, source commits revision B while the
+ * worker computes, A's late result must NOT be finalized/cached as current.
+ * The bridge rejects superseded requests, but a source change between
+ * prepareRender and finalizeRender is an SDK-side race the bridge never sees. */
+test('sdk: render prepared at revision A is refused after the source moves to revision B', async () => {
+  const files = { 'main.ddn': 'ddn "0.5";\nmodule "m.race";\n\ndata model {\n object a "Alpha" { kind: application; }\n object b "Beta" { kind: application; }\n relation r "uses" @a -> @b { kind: flow; }\n}\nview v "V" { data: [@model]; }\n' };
+  const replies = [];
+  const w = fakeWorker((m, respond) => replies.push(() => respond({
+    type: 'rendered', rev: m.rev, ok: true, svg: '<svg>stale-rev-A</svg>', scene: {}, diagnostics: [],
+    used: T.packMetrics([])
+  })));
+  const bridge = T.createRenderBridge({ worker: w, measure });
+  A.setRenderBridge(bridge);
+  try {
+    const ws = A.createWorkspace(files);
+    const p = ws.render({ entry: 'main.ddn', view: 'v' });
+    await new Promise(r => setTimeout(r, 10)); // render of revision 0 is in flight
+    const src = ws.getFiles()['main.ddn'];
+    ws.applyEdits([{ file: 'main.ddn', start: src.indexOf('Alpha'), end: src.indexOf('Alpha') + 5, text: 'Aleph' }]);
+    assert.equal(ws.revision, 1);
+    for (const r of replies.splice(0)) r(); // the revision-0 response lands late
+    await assert.rejects(p, e => e.code === 'DDN-W953', 'stale render must be refused, not finalized as current');
+    const fresh = await ws.render({ entry: 'main.ddn', view: 'v' });
+    assert.ok(!String(fresh.svg).includes('stale-rev-A'), 'no stale SVG served from the geometry cache');
+  } finally { A.setRenderBridge(null); }
+});
+
 const n = results.length;
 Promise.all(pending).then(() => {
   const ok = results.filter(r => r.pass).length;

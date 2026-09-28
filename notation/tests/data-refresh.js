@@ -282,9 +282,25 @@ test('Declared-empty records render empty states: chart axes, table header, grap
  fail(()=>ws.renderSync({entry:'fixture.ddn',view:'chart_filtered'}),'DDN-PJ012');
 });
 
+/* B1-069 Finding 1 (external review): populated → empty → refill lifecycle.
+ * The reviewer claims the refill is rejected because the record shape can no
+ * longer be inferred once the block's records are gone. This test is the
+ * reproduction; it must PASS after the fix (schema retained across empties). */
+test('Empty then refill: shape survives the empty refresh and the refill commits',()=>{
+ const ws=A.createWorkspace({'fixture.ddn':graphOnly});
+ const empty=ws.replaceData('metrics',[]);
+ assert.equal(empty.committed,true);assert.deepEqual([...empty.removed].sort(),['m1','m2','m3']);
+ const refill=ws.replaceData('metrics',[{label:'Delta',value:30,unit:'ms'},{label:'Echo',value:40,unit:'ms'}]);
+ assert.equal(refill.committed,true,'refill after empty must commit; got diagnostics '+JSON.stringify(refill.diagnostics));
+ assert.deepEqual([...refill.added].sort(),['metrics_r1','metrics_r2']);
+ const svg=ws.renderSync({entry:'fixture.ddn',view:'graph_view'}).svg;
+ assert.ok(svg.includes('metrics_r1')&&svg.includes('metrics_r2'),'refilled records render');
+ // a wrong-shape refill must still be rejected (the retained shape is the guard)
+ fail(()=>ws.replaceData('metrics',[{label:'X',wrong:1}]),'DDN-E011');
+});
+
 // check() after refresh: CLI validation passes on the rewritten source.
-test('CLI check passes on refreshed source',()=>{
- const ws=fresh();
+test('CLI check passes on refreshed source',()=>{ const ws=fresh();
  ws.replaceData('metrics',[{label:'Alpha',value:16,unit:'ms'},{label:'Beta',value:8,unit:'ms'},{label:'Gamma',value:20,unit:'ms'}]);
  ws.replaceData('cells',[{score:9},{score:2},{score:6},{score:1}]);
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ddn-refresh-'));
