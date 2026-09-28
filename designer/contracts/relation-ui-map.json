@@ -12640,6 +12640,450 @@
       ],
       "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.capabilitydependency",
+      "label": "\u00abcapabilityDependency\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.exhibits",
+      "label": "\u00abexhibits\u00bb",
+      "origin": "profile",
+      "family": "mapping",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.mapsto",
+      "label": "\u00abmapsTo\u00bb",
+      "origin": "profile",
+      "family": "mapping",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.satisfiescapability",
+      "label": "\u00absatisfiesCapability\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.performs",
+      "label": "\u00abperforms\u00bb",
+      "origin": "profile",
+      "family": "mapping",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.assignedto",
+      "label": "\u00abassignedTo\u00bb",
+      "origin": "profile",
+      "family": "structural",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.complieswith",
+      "label": "\u00abcompliesWith\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.mitigates",
+      "label": "\u00abmitigates\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.milestonedependency",
+      "label": "\u00abmilestoneDependency\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.forecast",
+      "label": "\u00abforecast\u00bb",
+      "origin": "profile",
+      "family": "mapping",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.supports",
+      "label": "\u00absupports\u00bb",
+      "origin": "profile",
+      "family": "dependency",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "uaf.owns",
+      "label": "\u00abowns\u00bb",
+      "origin": "profile",
+      "family": "structural",
+      "semantic_contract": {
+        "source": [
+          "*"
+        ],
+        "target": [
+          "*"
+        ],
+        "allow_self": false,
+        "member_endpoints": false
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
     }
   ]
 }

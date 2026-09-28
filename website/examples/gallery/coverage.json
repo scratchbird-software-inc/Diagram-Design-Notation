@@ -865,6 +865,90 @@
       "wiki": "Diagrams-Timelines",
       "svg": "profiles/timeline-basic-1.svg"
     },
+    "uaf.actualresources@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "actualresources",
+      "title": "AR — Actual resources",
+      "kind": "graph",
+      "svg": "profiles/uaf-actualresources-1.svg"
+    },
+    "uaf.dictionary@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "dictionary",
+      "title": "Dct — Dictionary",
+      "kind": "graph",
+      "svg": "profiles/uaf-dictionary-1.svg"
+    },
+    "uaf.operational@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "operational",
+      "title": "Op — Operational",
+      "kind": "graph",
+      "svg": "profiles/uaf-operational-1.svg"
+    },
+    "uaf.personnel@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "personnel",
+      "title": "Pr — Personnel",
+      "kind": "graph",
+      "svg": "profiles/uaf-personnel-1.svg"
+    },
+    "uaf.projects@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "projects",
+      "title": "Pj — Projects",
+      "kind": "graph",
+      "svg": "profiles/uaf-projects-1.svg"
+    },
+    "uaf.resources@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "resources",
+      "title": "Rs — Resources",
+      "kind": "graph",
+      "svg": "profiles/uaf-resources-1.svg"
+    },
+    "uaf.security@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "security",
+      "title": "Sec — Security",
+      "kind": "graph",
+      "svg": "profiles/uaf-security-1.svg"
+    },
+    "uaf.services@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "services",
+      "title": "Svc — Services",
+      "kind": "graph",
+      "svg": "profiles/uaf-services-1.svg"
+    },
+    "uaf.standards@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "standards",
+      "title": "Std — Standards",
+      "kind": "graph",
+      "svg": "profiles/uaf-standards-1.svg"
+    },
+    "uaf.strategic@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "strategic",
+      "title": "St — Strategic",
+      "kind": "graph",
+      "svg": "profiles/uaf-strategic-1.svg"
+    },
+    "uaf.summary@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "summary",
+      "title": "S&O — Summary and overview",
+      "kind": "graph",
+      "svg": "profiles/uaf-summary-1.svg"
+    },
+    "uaf.systems@1": {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "systems",
+      "title": "Sys — Systems",
+      "kind": "graph",
+      "svg": "profiles/uaf-systems-1.svg"
+    },
     "uml.activity@1": {
       "entry": "website/examples/basics/45-activity-diagram.ddn",
       "view": "fulfilment",
@@ -3394,6 +3478,64 @@
       "profile": "soaml.services@1",
       "kind": "graph",
       "svg": "corpus/basics-88-soaml.svg"
+    },
+    {
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "strategic",
+      "title": "St — Strategic",
+      "views": [
+        {
+          "id": "strategic",
+          "title": "St — Strategic"
+        },
+        {
+          "id": "operational",
+          "title": "Op — Operational"
+        },
+        {
+          "id": "services",
+          "title": "Svc — Services"
+        },
+        {
+          "id": "systems",
+          "title": "Sys — Systems"
+        },
+        {
+          "id": "personnel",
+          "title": "Pr — Personnel"
+        },
+        {
+          "id": "resources",
+          "title": "Rs — Resources"
+        },
+        {
+          "id": "security",
+          "title": "Sec — Security"
+        },
+        {
+          "id": "projects",
+          "title": "Pj — Projects"
+        },
+        {
+          "id": "standards",
+          "title": "Std — Standards"
+        },
+        {
+          "id": "actualresources",
+          "title": "AR — Actual resources"
+        },
+        {
+          "id": "dictionary",
+          "title": "Dct — Dictionary"
+        },
+        {
+          "id": "summary",
+          "title": "S&O — Summary and overview"
+        }
+      ],
+      "profile": "uaf.strategic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-89-uaf.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

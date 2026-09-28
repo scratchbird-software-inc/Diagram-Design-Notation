@@ -3419,6 +3419,102 @@
       "scope": "Full SoaML 1.0.1 notation: participants and agents with \u00abService\u00bb/\u00abRequest\u00bb port decorations (conjugated interfaces), service interfaces and contracts (collaboration glyph with provider/consumer role rows), capabilities, message types, milestones, contract-typed assembly/delegation connectors with service\u2194request conformance, choreography binding to UML sequence or state machine views.",
       "validation": ["x_service/x_contract owner rules (DDN-PJ195)", "service/request port pairing and interface-type match (DDN-PJ196)", "choreography binding to a sequence/statemachine view (DDN-PJ197)"],
       "unsupported": ["SoaML XMI interchange", "service execution/runtime semantics", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.strategic@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Strategic domain view"],
+      "scope": "UAF Strategic domain: capabilities (tag), enterprise goals/vision, strategic phases; capability dependencies, exhibits, maps-to.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.operational@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Operational domain view"],
+      "scope": "UAF Operational domain: operational performers/nodes/activities and exchanges; performs and assignment relations.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.services@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Services domain view"],
+      "scope": "UAF Services domain: service specifications, service functions, service policies \u2014 over the SoaML machinery.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.systems@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Systems domain view"],
+      "scope": "UAF Systems domain: systems, system functions, implementers.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.personnel@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Personnel domain view"],
+      "scope": "UAF Personnel domain: persons, organizations, posts, responsibilities.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.resources@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Resources domain view"],
+      "scope": "UAF Resources domain: resource performers, resources, resource functions, technologies.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.security@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Security domain view"],
+      "scope": "UAF Security domain: security elements, controls, threats, assets; mitigation.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.projects@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Projects domain view"],
+      "scope": "UAF Projects domain: projects, milestones, work packages; milestone dependencies. Roadmap presentations use the timeline projection.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.standards@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Standards domain view"],
+      "scope": "UAF Standards domain: standards, collections, protocols; compliance and forecast. Forecast tables use the table projection.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.actualresources@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Actual Resources domain view"],
+      "scope": "UAF Actual Resources domain: actual resources, organizations, persons.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.dictionary@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Dictionary domain view"],
+      "scope": "UAF Dictionary domain: dictionary entries; the dictionary table uses the table projection.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+    },
+    {
+      "id": "uaf.summary@1",
+      "projection": "graph",
+      "diagramFamilies": ["UAF Summary & Overview domain view"],
+      "scope": "UAF Summary & Overview domain: architecture descriptions, viewpoints, model references; OV-1-style pictograms via frames and notes.",
+      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
+      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
     }
   ],
   "projectionProperties": {

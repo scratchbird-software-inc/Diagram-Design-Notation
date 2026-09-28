@@ -14,7 +14,7 @@ function test(name, fn) { try { fn(); pass++; console.log('PASS ' + name); } cat
 
 const GROUPS = ['Meaning', 'Data', 'Process', 'Systems', 'Scopes', 'People & control', 'Notes & evidence', 'Analysis'];
 const ACTIONS = ['create-semantic-element', 'edit-projection-source-not-free-node', 'add-cause-under-parent', 'add-rule-in-decision-editor'];
-const EXPECTED_GROUP_COUNTS = { 'Meaning': 18, 'Scopes': 28, 'Data': 65, 'Analysis': 15, 'Systems': 33, 'Process': 53, 'People & control': 16, 'Notes & evidence': 15 };
+const EXPECTED_GROUP_COUNTS = { 'Meaning': 19, 'Scopes': 28, 'Data': 67, 'Analysis': 15, 'Systems': 42, 'Process': 60, 'People & control': 22, 'Notes & evidence': 29 };
 
 const FORMAT = 'format f {\n    style s { look: classic; theme: default; font: sans; }\n    layout l { algorithm: grid; columns: 3; gap: 120px; row_gap: 90px; routing: orthogonal; }\n    publication p { size: content; fit: none; }\n    bundle b { style:@s; layout:@l; publication:@p; }\n}\n';
 function graphFiles() {
@@ -22,9 +22,9 @@ function graphFiles() {
 }
 
 // 1. Map integrity.
-test('kind-ui-map: 243 entries, all kinds registered, groups and actions known', () => {
-  assert.strictEqual(KINDMAP.kinds.length, 243);
-  assert.strictEqual(KINDMAP.kindCount, 243);
+test('kind-ui-map: 282 entries, all kinds registered, groups and actions known', () => {
+  assert.strictEqual(KINDMAP.kinds.length, 282);
+  assert.strictEqual(KINDMAP.kindCount, 282);
   const counts = {};
   for (const k of KINDMAP.kinds) {
     assert.ok(D.kinds.some(x => x.id === k.kind), 'kind not registered in runtime: ' + k.kind);
@@ -33,11 +33,11 @@ test('kind-ui-map: 243 entries, all kinds registered, groups and actions known',
     counts[k.palette_group] = (counts[k.palette_group] || 0) + 1;
   }
   assert.deepStrictEqual(counts, EXPECTED_GROUP_COUNTS);
-  assert.strictEqual(RELMAP.relations.length, 139);
+  assert.strictEqual(RELMAP.relations.length, 151);
 });
 
 // 2. VE-AC-002 / VE-AC-064 evidence loop: every mapped kind creates, resolves and renders.
-test('all 243 kinds: createInView creates, resolves and renders (VE-AC-002/064)', () => {
+test('all 282 kinds: createInView creates, resolves and renders (VE-AC-002/064)', () => {
   for (let i = 0; i < KINDMAP.kinds.length; i++) {
     const k = KINDMAP.kinds[i];
     const ws = D.createWorkspace(graphFiles());

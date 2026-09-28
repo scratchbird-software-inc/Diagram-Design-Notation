@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 0131 — UAF 1.2 notation compliance (twelve domain profiles) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 0131 — UAF 1.2 notation compliance (twelve domain profiles)</h1>
+<p>Status: implemented   Authors/reviewers: B1-073 work item   Language/registry impact: additive registry entries within the 0.7 draft; twelve new profiles <code>uaf.&lt;domain&gt;@1</code>; no grammar change; runtime/specification 0.7 line.</p>
+<h2>Problem and motivating example</h2>
+<p>The Unified Architecture Framework (UAF) 1.2 organizes architecture description into a grid of twelve domains (Strategic, Operational, Services, Systems, Personnel, Resources, Security, Projects, Standards, Actual Resources, Dictionary, Summary &amp; Overview) crossed with viewpoints. DDN already ships the heavy machinery: SysML 1.6 profiles and behavioral rebadges, UML 2.5.1 composites, matrix/table/timeline projections, SoaML services, decorator frames. Missing: the UAF kind and stereotyped-relation vocabulary, the domain profiles, and the domain×viewpoint mapping documentation.</p>
+<h2>Proposed syntax</h2>
+<p>No grammar change. Additive kinds/relations/profiles:</p>
+<ol><li><strong>Domains → profiles (recorded grouping decision)</strong>: one <code>uaf.&lt;domain&gt;@1</code> graph profile per domain — <code>uaf.strategic@1</code>, <code>uaf.operational@1</code>, <code>uaf.services@1</code>, <code>uaf.systems@1</code>, <code>uaf.personnel@1</code>, <code>uaf.resources@1</code>, <code>uaf.security@1</code>, <code>uaf.projects@1</code>, <code>uaf.standards@1</code>, <code>uaf.actualresources@1</code>, <code>uaf.dictionary@1</code>, <code>uaf.summary@1</code>. Twelve profiles because UAF's own organizing concept is the domain column; each profile's validation list names the registry endpoint contracts that police its vocabulary. Tabular/serial viewpoints (capability mapping matrices, standards forecasts, project roadmaps, the dictionary) are viewpoint <em>presentations</em> on the existing matrix/table/timeline projections — they do not need separate profiles; the grid artifact (chapter 47 + the example file) maps every domain×viewpoint cell to its profile or projection.</li><li><strong>Kinds (~45)</strong> across the domains, all with keyword headers from the existing branch and fallback silhouettes; exactly one new silhouette: <code>tag</code> (chevron label) for <code>uaf.capability</code>, the one UAF symbol with no near-match in the registry. OV-1-style pictogram views reuse existing frames + annotation notes (recorded decision — no new frame machinery).</li><li><strong>Stereotyped verbs (~12)</strong>: <code>uaf.capabilitydependency</code>, <code>uaf.exhibits</code>, <code>uaf.mapsto</code>, <code>uaf.satisfiescapability</code>, <code>uaf.performs</code>, <code>uaf.assignedto</code>, <code>uaf.complieswith</code>, <code>uaf.mitigates</code>, <code>uaf.milestonedependency</code>, <code>uaf.forecast</code>, <code>uaf.supports</code>, <code>uaf.owns</code> — registry relationships with guillemet default labels and endpoint contracts (enforced as DDN102).</li><li><strong>Validation</strong>: registry endpoint contracts throughout; no new PJ codes — UAF semantics beyond endpoint legality is architecture analysis (declared out of scope).</li></ol>
+<h2>Semantic normalization and identity effects</h2>
+<p>None — notation over existing element/relation identities.</p>
+<h2>Error codes</h2>
+<p>None new. Endpoint contracts report as DDN102.</p>
+<h2>Alternatives considered</h2>
+<ol><li><strong>One uaf.grid@1 mega-profile</strong>: rejected — a single profile could not give per-domain scopes/validation lists, and the showcase grid is clearer as one profile per domain.</li><li><strong>New projections for matrices/roadmaps</strong>: rejected — matrix.relations@1/table.records@1/timeline.basic@1 already render those cells; UAF adds vocabulary, not geometry.</li><li><strong>OV-1 pictogram frame machinery</strong>: rejected — the existing frame + note machinery draws high-level pictograms without new renderer concepts.</li></ol>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

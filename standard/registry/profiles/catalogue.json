@@ -1588,6 +1588,474 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "uaf.capability",
+      "name": "Capability",
+      "shape": "profile",
+      "silhouette": "tag",
+      "fallback": "application",
+      "family": "concept",
+      "code": "UAFCAPABILITY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.enterprisegoal",
+      "name": "Enterprise goal",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFENTGOAL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.enterprisevision",
+      "name": "Enterprise vision",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFENTVISION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.strategicphase",
+      "name": "Strategic phase",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "UAFSTRATPHASE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.opperformer",
+      "name": "Operational performer",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFOPPERFORMER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.opactivity",
+      "name": "Operational activity",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFOPACTIVITY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.opnode",
+      "name": "Operational node",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFOPNODE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.opexchange",
+      "name": "Operational exchange",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "data",
+      "code": "UAFEXCHANGE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.servicespec",
+      "name": "Service specification",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFSERVICESPEC",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.servicefunction",
+      "name": "Service function",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFSERVICEFN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.servicepolicy",
+      "name": "Service policy",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFSERVICEPOLICY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.system",
+      "name": "System",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFSYSTEM",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.systemfunction",
+      "name": "System function",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFSYSTEMFN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.implementer",
+      "name": "Implementer",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFIMPLEMENTER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.person",
+      "name": "Person",
+      "shape": "profile",
+      "silhouette": "actor",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFPERSON",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.organization",
+      "name": "Organization",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFORGANIZATION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.post",
+      "name": "Post",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFPOST",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.responsibility",
+      "name": "Responsibility",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFRESPONSIBILITY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.resourceperformer",
+      "name": "Resource performer",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFRESPERFORMER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.resource",
+      "name": "Resource",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFRESOURCE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.resourcefunction",
+      "name": "Resource function",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFRESOURCEFN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.technology",
+      "name": "Technology",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFTECHNOLOGY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.securityelement",
+      "name": "Security element",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFSECELEMENT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.securitycontrol",
+      "name": "Security control",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFSECCONTROL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.threat",
+      "name": "Threat",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFTHREAT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.asset",
+      "name": "Asset",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFASSET",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.project",
+      "name": "Project",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFPROJECT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.projectmilestone",
+      "name": "Project milestone",
+      "shape": "profile",
+      "silhouette": "round",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFPROJMILESTONE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.workpackage",
+      "name": "Work package",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "UAFWORKPACKAGE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.standard",
+      "name": "Standard",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFSTANDARD",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.standardcollection",
+      "name": "Standard collection",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFSTDCOLLECTION",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.protocol",
+      "name": "Protocol",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFPROTOCOL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.actualresource",
+      "name": "Actual resource",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "UAFACTRESOURCE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.actualorganization",
+      "name": "Actual organization",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFACTORG",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.actualperson",
+      "name": "Actual person",
+      "shape": "profile",
+      "silhouette": "actor",
+      "fallback": "application",
+      "family": "governance",
+      "code": "UAFACTPERSON",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.dictionaryentry",
+      "name": "Dictionary entry",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "data",
+      "code": "UAFDICTENTRY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.archdesc",
+      "name": "Architecture description",
+      "shape": "profile",
+      "silhouette": "document",
+      "fallback": "application",
+      "family": "concept",
+      "code": "UAFARCHDESC",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.viewpoint",
+      "name": "Viewpoint",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "UAFVIEWPOINT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "uaf.modelref",
+      "name": "Model reference",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "UAFMODELREF",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -2565,7 +3033,11 @@
         "flow.intermediate",
         "flow.choreotask",
         "flow.group",
-        "flow.subprocess"
+        "flow.subprocess",
+        "uaf.opactivity",
+        "uaf.servicefunction",
+        "uaf.systemfunction",
+        "uaf.resourcefunction"
       ],
       "target": [
         "flow.start",
@@ -2585,7 +3057,11 @@
         "flow.intermediate",
         "flow.choreotask",
         "flow.group",
-        "flow.subprocess"
+        "flow.subprocess",
+        "uaf.opactivity",
+        "uaf.servicefunction",
+        "uaf.systemfunction",
+        "uaf.resourcefunction"
       ],
       "allow_self": false,
       "member_endpoints": true
@@ -3036,6 +3512,261 @@
       "glyph": "link",
       "source": [
         "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uaf.capabilitydependency",
+      "name": "\u00abcapabilityDependency\u00bb",
+      "verb": "\u00abcapabilityDependency\u00bb",
+      "family": "dependency",
+      "code": "UAFCAPDEP",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.capability"
+      ],
+      "target": [
+        "uaf.capability"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uaf.exhibits",
+      "name": "\u00abexhibits\u00bb",
+      "verb": "\u00abexhibits\u00bb",
+      "family": "mapping",
+      "code": "UAFEXHIBITS",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.opperformer",
+        "uaf.opactivity",
+        "uaf.opnode",
+        "uaf.opexchange",
+        "uaf.resourceperformer",
+        "uaf.resource",
+        "uaf.resourcefunction",
+        "uaf.system",
+        "uaf.systemfunction",
+        "uaf.implementer",
+        "uaf.actualresource",
+        "uaf.servicespec"
+      ],
+      "target": [
+        "uaf.capability"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uaf.mapsto",
+      "name": "\u00abmapsTo\u00bb",
+      "verb": "\u00abmapsTo\u00bb",
+      "family": "mapping",
+      "code": "UAFMAPSTO",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uaf.satisfiescapability",
+      "name": "\u00absatisfiesCapability\u00bb",
+      "verb": "\u00absatisfiesCapability\u00bb",
+      "family": "dependency",
+      "code": "UAFSATISFIES",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "uaf.capability"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uaf.performs",
+      "name": "\u00abperforms\u00bb",
+      "verb": "\u00abperforms\u00bb",
+      "family": "mapping",
+      "code": "UAFPERFORMS",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.organization",
+        "uaf.post",
+        "uaf.person",
+        "uaf.actualorganization",
+        "uaf.actualperson",
+        "uaf.opperformer",
+        "uaf.resourceperformer",
+        "uaf.implementer",
+        "uaf.opnode"
+      ],
+      "target": [
+        "uaf.opactivity",
+        "uaf.systemfunction",
+        "uaf.resourcefunction",
+        "uaf.servicefunction"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uaf.assignedto",
+      "name": "\u00abassignedTo\u00bb",
+      "verb": "\u00abassignedTo\u00bb",
+      "family": "structural",
+      "code": "UAFASSIGNED",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.organization",
+        "uaf.post",
+        "uaf.person",
+        "uaf.actualorganization",
+        "uaf.actualperson"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uaf.complieswith",
+      "name": "\u00abcompliesWith\u00bb",
+      "verb": "\u00abcompliesWith\u00bb",
+      "family": "dependency",
+      "code": "UAFCOMPLIES",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "uaf.standard",
+        "uaf.standardcollection",
+        "uaf.servicepolicy"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uaf.mitigates",
+      "name": "\u00abmitigates\u00bb",
+      "verb": "\u00abmitigates\u00bb",
+      "family": "dependency",
+      "code": "UAFMITIGATES",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.securitycontrol"
+      ],
+      "target": [
+        "uaf.threat"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uaf.milestonedependency",
+      "name": "\u00abmilestoneDependency\u00bb",
+      "verb": "\u00abmilestoneDependency\u00bb",
+      "family": "dependency",
+      "code": "UAFMILEDEP",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.projectmilestone"
+      ],
+      "target": [
+        "uaf.projectmilestone",
+        "uaf.project"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uaf.forecast",
+      "name": "\u00abforecast\u00bb",
+      "verb": "\u00abforecast\u00bb",
+      "family": "mapping",
+      "code": "UAFFORECAST",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "uaf.supports",
+      "name": "\u00absupports\u00bb",
+      "verb": "\u00absupports\u00bb",
+      "family": "dependency",
+      "code": "UAFSUPPORTS",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "*"
+      ],
+      "target": [
+        "*"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "7 5"
+    },
+    {
+      "keyword": "uaf.owns",
+      "name": "\u00abowns\u00bb",
+      "verb": "\u00abowns\u00bb",
+      "family": "structural",
+      "code": "UAFOWNS",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "uaf.organization",
+        "uaf.post",
+        "uaf.person",
+        "uaf.actualorganization",
+        "uaf.actualperson"
       ],
       "target": [
         "*"
@@ -5227,6 +5958,198 @@
       "unsupported": [
         "SoaML XMI interchange",
         "service execution/runtime semantics",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.strategic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Strategic domain view"
+      ],
+      "scope": "UAF Strategic domain: capabilities (tag), enterprise goals/vision, strategic phases; capability dependencies, exhibits, maps-to.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.operational@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Operational domain view"
+      ],
+      "scope": "UAF Operational domain: operational performers/nodes/activities and exchanges; performs and assignment relations.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.services@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Services domain view"
+      ],
+      "scope": "UAF Services domain: service specifications, service functions, service policies \u2014 over the SoaML machinery.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.systems@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Systems domain view"
+      ],
+      "scope": "UAF Systems domain: systems, system functions, implementers.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.personnel@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Personnel domain view"
+      ],
+      "scope": "UAF Personnel domain: persons, organizations, posts, responsibilities.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.resources@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Resources domain view"
+      ],
+      "scope": "UAF Resources domain: resource performers, resources, resource functions, technologies.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.security@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Security domain view"
+      ],
+      "scope": "UAF Security domain: security elements, controls, threats, assets; mitigation.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.projects@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Projects domain view"
+      ],
+      "scope": "UAF Projects domain: projects, milestones, work packages; milestone dependencies. Roadmap presentations use the timeline projection.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.standards@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Standards domain view"
+      ],
+      "scope": "UAF Standards domain: standards, collections, protocols; compliance and forecast. Forecast tables use the table projection.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.actualresources@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Actual Resources domain view"
+      ],
+      "scope": "UAF Actual Resources domain: actual resources, organizations, persons.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.dictionary@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Dictionary domain view"
+      ],
+      "scope": "UAF Dictionary domain: dictionary entries; the dictionary table uses the table projection.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
+    },
+    {
+      "id": "uaf.summary@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "UAF Summary & Overview domain view"
+      ],
+      "scope": "UAF Summary & Overview domain: architecture descriptions, viewpoints, model references; OV-1-style pictograms via frames and notes.",
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
         "formal OMG certification"
       ]
     }

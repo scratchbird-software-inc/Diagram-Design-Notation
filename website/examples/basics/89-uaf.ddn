@@ -1,0 +1,126 @@
+ddn "0.5";
+module "ddn.examples.uaf";
+
+// B1-072/RFC-131: UAF 1.2 — one view per domain of the UAF grid, showing the
+// domain vocabulary and stereotyped verbs. Matrix/timeline viewpoints of the
+// grid reuse the existing matrix/timeline projections (see the grid doc in
+// specification chapter 47). All data is synthetic.
+
+data st {
+    object cap "Customer self-service" { kind: "uaf.capability"; }
+    object cap2 "Online retail" { kind: "uaf.capability"; }
+    object goal "Grow digital sales" { kind: "uaf.enterprisegoal"; }
+    object vision "Vision 2030" { kind: "uaf.enterprisevision"; }
+    object phase "Phase 2" { kind: "uaf.strategicphase"; }
+    relation d1 "" @cap -> @cap2 { kind: "uaf.capabilitydependency"; }
+    relation s1 "" @cap -> @goal { kind: "uaf.supports"; }
+    relation m1 "" @vision -> @cap { kind: "uaf.mapsto"; }
+}
+data op {
+    object desk "Order desk" { kind: "uaf.opperformer"; }
+    object hub "Fulfillment hub" { kind: "uaf.opnode"; }
+    object act "Take order" { kind: "uaf.opactivity"; }
+    object act2 "Pick items" { kind: "uaf.opactivity"; }
+    object ex "Order details" { kind: "uaf.opexchange"; }
+    relation p1 "" @desk -> @act { kind: "uaf.performs"; }
+    relation p2 "" @hub -> @act2 { kind: "uaf.performs"; }
+    relation m1 "" @act -> @ex { kind: "uaf.mapsto"; }
+    relation n1 "" @act -> @act2 { kind: "uml.flow"; }
+}
+data svc {
+    object spec "Billing service" { kind: "uaf.servicespec"; }
+    object fn "Compute charge" { kind: "uaf.servicefunction"; }
+    object pol "Refund policy" { kind: "uaf.servicepolicy"; }
+    object svcCap "Billing capability" { kind: "uaf.capability"; }
+    relation e1 "" @spec -> @svcCap { kind: "uaf.exhibits"; }
+    relation m1 "" @fn -> @spec { kind: "uaf.mapsto"; }
+    relation c1 "" @spec -> @pol { kind: "uaf.complieswith"; }
+}
+data sys {
+    object shop "Shop system" { kind: "uaf.system"; }
+    object sfn "Handle checkout" { kind: "uaf.systemfunction"; }
+    object impl "Commerce platform" { kind: "uaf.implementer"; }
+    relation p1 "" @impl -> @sfn { kind: "uaf.performs"; }
+    relation m1 "" @shop -> @sfn { kind: "uaf.mapsto"; }
+    relation s1 "" @sfn -> @shop { kind: "uaf.mapsto"; }
+}
+data per {
+    object alice "Alice" { kind: "uaf.person"; }
+    object retail "Retail org" { kind: "uaf.organization"; }
+    object mgr "Store manager" { kind: "uaf.post"; }
+    object resp "Daily reconciliation" { kind: "uaf.responsibility"; }
+    relation a1 "" @alice -> @mgr { kind: "uaf.assignedto"; }
+    relation o1 "" @retail -> @mgr { kind: "uaf.owns"; }
+    relation a2 "" @mgr -> @resp { kind: "uaf.assignedto"; }
+}
+data res {
+    object wh "Main warehouse" { kind: "uaf.resourceperformer"; }
+    object shelf "Shelving" { kind: "uaf.resource"; }
+    object rfn "Store stock" { kind: "uaf.resourcefunction"; }
+    object wms "Warehouse software" { kind: "uaf.technology"; }
+    relation p1 "" @wh -> @rfn { kind: "uaf.performs"; }
+    relation m1 "" @shelf -> @rfn { kind: "uaf.mapsto"; }
+    relation f1 "" @wms -> @wh { kind: "uaf.forecast"; }
+}
+data sec {
+    object zone "Customer zone" { kind: "uaf.securityelement"; }
+    object tls "TLS everywhere" { kind: "uaf.securitycontrol"; }
+    object fraud "Card fraud" { kind: "uaf.threat"; }
+    object data "Customer data" { kind: "uaf.asset"; }
+    relation m1 "" @tls -> @fraud { kind: "uaf.mitigates"; }
+    relation m2 "" @tls -> @data { kind: "uaf.mapsto"; }
+    relation m3 "" @zone -> @tls { kind: "uaf.mapsto"; }
+}
+data prj {
+    object p1 "Webshop rebuild" { kind: "uaf.project"; }
+    object ms1 "Beta launch" { kind: "uaf.projectmilestone"; }
+    object ms2 "General availability" { kind: "uaf.projectmilestone"; }
+    object wp "Payments work" { kind: "uaf.workpackage"; }
+    relation d1 "" @ms1 -> @ms2 { kind: "uaf.milestonedependency"; }
+    relation m1 "" @wp -> @ms1 { kind: "uaf.mapsto"; }
+    relation m2 "" @p1 -> @ms2 { kind: "uaf.mapsto"; }
+}
+data std {
+    object pci "PCI DSS" { kind: "uaf.standard"; }
+    object col "Retail standards" { kind: "uaf.standardcollection"; }
+    object proto "TLS 1.3" { kind: "uaf.protocol"; }
+    object shop2 "Shop system" { kind: "uaf.system"; }
+    relation c1 "" @shop2 -> @pci { kind: "uaf.complieswith"; }
+    relation m1 "" @col -> @pci { kind: "uaf.mapsto"; }
+    relation f1 "" @pci -> @proto { kind: "uaf.forecast"; }
+}
+data ar {
+    object w1 "Warehouse 7" { kind: "uaf.actualresource"; }
+    object acme "Acme Retail SE" { kind: "uaf.actualorganization"; }
+    object bob "Bob" { kind: "uaf.actualperson"; }
+    relation a1 "" @bob -> @acme { kind: "uaf.assignedto"; }
+    relation o1 "" @acme -> @w1 { kind: "uaf.owns"; }
+    relation m1 "" @w1 -> @acme { kind: "uaf.mapsto"; }
+}
+data dict {
+    object e1 "Capability" { kind: "uaf.dictionaryentry"; }
+    object e2 "Operational activity" { kind: "uaf.dictionaryentry"; }
+    object e3 "Service specification" { kind: "uaf.dictionaryentry"; }
+    relation m1 "" @e1 -> @e2 { kind: "uaf.mapsto"; }
+    relation m2 "" @e2 -> @e3 { kind: "uaf.mapsto"; }
+}
+data sum {
+    object ad "Retail architecture" { kind: "uaf.archdesc"; }
+    object vp "Strategic viewpoint" { kind: "uaf.viewpoint"; }
+    object mr "Capability model" { kind: "uaf.modelref"; }
+    relation m1 "" @vp -> @ad { kind: "uaf.mapsto"; }
+    relation m2 "" @ad -> @mr { kind: "uaf.mapsto"; }
+}
+
+view strategic "St — Strategic" { data: [@st]; projection { profile: "uaf.strategic@1"; } publication { size: content; fit: none; } }
+view operational "Op — Operational" { data: [@op]; projection { profile: "uaf.operational@1"; } publication { size: content; fit: none; } }
+view services "Svc — Services" { data: [@svc]; projection { profile: "uaf.services@1"; } publication { size: content; fit: none; } }
+view systems "Sys — Systems" { data: [@sys]; projection { profile: "uaf.systems@1"; } publication { size: content; fit: none; } }
+view personnel "Pr — Personnel" { data: [@per]; projection { profile: "uaf.personnel@1"; } publication { size: content; fit: none; } }
+view resources "Rs — Resources" { data: [@res]; projection { profile: "uaf.resources@1"; } publication { size: content; fit: none; } }
+view security "Sec — Security" { data: [@sec]; projection { profile: "uaf.security@1"; } publication { size: content; fit: none; } }
+view projects "Pj — Projects" { data: [@prj]; projection { profile: "uaf.projects@1"; } publication { size: content; fit: none; } }
+view standards "Std — Standards" { data: [@std]; projection { profile: "uaf.standards@1"; } publication { size: content; fit: none; } }
+view actualresources "AR — Actual resources" { data: [@ar]; projection { profile: "uaf.actualresources@1"; } publication { size: content; fit: none; } }
+view dictionary "Dct — Dictionary" { data: [@dict]; projection { profile: "uaf.dictionary@1"; } publication { size: content; fit: none; } }
+view summary "S&O — Summary and overview" { data: [@sum]; projection { profile: "uaf.summary@1"; } frame ov1 "OV-1 style high-level pictogram frame" { scope: @sum.ad; members: [@sum.vp, @sum.mr]; } publication { size: content; fit: none; } }

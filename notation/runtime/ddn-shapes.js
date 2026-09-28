@@ -65,6 +65,9 @@ function measure(g,p){
  if(SOAML_KW[n.kind]){
   g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=70*s;
  }
+ /* B1-072 (RFC-131): UAF 1.2 domain vocabulary — keyword headers. */
+ const UAF_KW={'uaf.capability':'Capability','uaf.enterprisegoal':'EnterpriseGoal','uaf.enterprisevision':'EnterpriseVision','uaf.strategicphase':'StrategicPhase','uaf.opperformer':'OperationalPerformer','uaf.opactivity':'OperationalActivity','uaf.opnode':'OperationalNode','uaf.opexchange':'OperationalExchange','uaf.servicespec':'ServiceSpecification','uaf.servicefunction':'ServiceFunction','uaf.servicepolicy':'ServicePolicy','uaf.system':'System','uaf.systemfunction':'SystemFunction','uaf.implementer':'Implementer','uaf.person':'Person','uaf.organization':'Organization','uaf.post':'Post','uaf.responsibility':'Responsibility','uaf.resourceperformer':'ResourcePerformer','uaf.resource':'Resource','uaf.resourcefunction':'ResourceFunction','uaf.technology':'Technology','uaf.securityelement':'SecurityElement','uaf.securitycontrol':'SecurityControl','uaf.threat':'Threat','uaf.asset':'Asset','uaf.project':'Project','uaf.projectmilestone':'ProjectMilestone','uaf.workpackage':'WorkPackage','uaf.standard':'Standard','uaf.standardcollection':'StandardCollection','uaf.protocol':'Protocol','uaf.actualresource':'ActualResource','uaf.actualorganization':'ActualOrganization','uaf.actualperson':'ActualPerson','uaf.dictionaryentry':'DictionaryEntry','uaf.archdesc':'ArchitectureDescription','uaf.viewpoint':'Viewpoint','uaf.modelref':'ModelReference'};
+ if(UAF_KW[n.kind]){g.sysmlKeyword=UAF_KW[n.kind];g.headerH=70*s;}
  /* B1-066 (RFC-129): DMN boxed-expression presentation — text rows in a
   * bottom compartment. Display only; the text is never parsed or evaluated. */
  if(['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind)&&n.properties.x_boxed){
@@ -333,7 +336,11 @@ function render(g,p,theme){
  }else if(look==='handDrawn'){
   out+=['round','terminal'].includes(shape)?Sketch.box(x,y,w,h,{...opt,radius:shape==='terminal'?h/2:14*s}):Sketch.polygon(polygon(g),opt);
  }else if(['ellipse','circle'].includes(shape))out+=`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w/2}" ry="${h/2}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
- else if(['rect','round','terminal','component','subprocess'].includes(shape))out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${shape==='terminal'?h/2:shape==='round'?14*s:0}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ else if(shape==='tag'){
+  /* B1-072 (RFC-131): UAF capability tag — the one genuinely new silhouette. */
+  const c=16*s;
+  out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-c)}L${f(x+w)} ${f(y+h/2)}L${f(x+w-c)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ } else if(['rect','round','terminal','component','subprocess'].includes(shape))out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${shape==='terminal'?h/2:shape==='round'?14*s:0}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  else out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0])+' '+f(v[1])).join('')}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  if(n.properties.x_chen?.derived)out=out.replace(/stroke-width="1.8"/g,'stroke-width="1.8" stroke-dasharray="6 4"');
  if(n.properties.x_chen?.weak||n.properties.x_chen?.identifying){const inset=7*s,inner={...g,x:x+inset,y:y+inset,w:w-2*inset,h:h-2*inset};out+=`<path d="${polygon(inner).map((v,i)=>(i?'L':'M')+f(v[0])+' '+f(v[1])).join('')}Z" fill="none" stroke="${ink}" stroke-width="1.5"/>`;}
