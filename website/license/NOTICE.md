@@ -3,7 +3,7 @@
 ddn (Diagram Design Notation) is an open-source project of ScratchBird Software Inc.
 (https://www.scratchbird.ca), sponsored by the ScratchWeaver project. The free tools
 are ddn-viewer and ddn-designer. ScratchWeaver is also the commercial diagramming
-suite built on ddn; ScratchRobin (commercial database console/BI) owns backend
+suite built on ddn; ScratchRobin (commercial database console/BI, https://github.com/scratchbird-software-inc/CDEadmin) owns backend
 capabilities such as KEEL, which are not part of ddn, ddn-viewer, or ddn-designer.
 
 DDN is an original proposed notation/language project. Original reference
