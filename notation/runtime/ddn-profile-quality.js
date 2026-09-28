@@ -288,6 +288,12 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ /* B1-081: VSM semantics — ladder owner/shape rules. */
+ for(const n of ir.elements.filter(n=>shown.has(n.id))){
+  const xv=n.properties.x_vsm;
+  if(xv!==undefined&&n.kind!=='vsm.process')fail('DDN-PJ205','x_vsm ladder values belong to vsm.process nodes; '+n.id+' is '+n.kind,n);
+  if(xv&&(xv.va===undefined&&xv.nva===undefined))fail('DDN-PJ205','x_vsm on '+n.id+' needs at least one of va/nva',n);
+ }
  /* B1-080: ORM 2 semantics — role ownership and fact-type shape. */
  {
   for(const n of ir.elements.filter(n=>shown.has(n.id))){

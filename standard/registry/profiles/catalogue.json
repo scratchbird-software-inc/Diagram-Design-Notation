@@ -2344,6 +2344,90 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "vsm.process",
+      "name": "Process",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "VSMPROCESS",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "vsm.customer",
+      "name": "Customer / supplier",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "VSMCUSTOMER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "vsm.control",
+      "name": "Production control",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "governance",
+      "code": "VSMCONTROL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "vsm.inventory",
+      "name": "Inventory",
+      "shape": "profile",
+      "silhouette": "triangledown",
+      "fallback": "application",
+      "family": "concept",
+      "code": "VSMINVENTORY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "vsm.supermarket",
+      "name": "Supermarket",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "VSMSUPERMARKET",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "vsm.kaizen",
+      "name": "Kaizen burst",
+      "shape": "profile",
+      "silhouette": "burst",
+      "fallback": "application",
+      "family": "concept",
+      "code": "VSMKAIZEN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "vsm.operator",
+      "name": "Operator",
+      "shape": "profile",
+      "silhouette": "actor",
+      "fallback": "application",
+      "family": "governance",
+      "code": "VSMOPERATOR",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -4357,6 +4441,158 @@
       "allow_self": false,
       "member_endpoints": false,
       "pattern": "5 4"
+    },
+    {
+      "keyword": "vsm.material",
+      "name": "Material flow",
+      "verb": "Flows",
+      "family": "flow",
+      "code": "VSMMATERIAL",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "target": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "vsm.push",
+      "name": "Push",
+      "verb": "Pushes",
+      "family": "flow",
+      "code": "VSMPUSH",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "target": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "vsm.pull",
+      "name": "Pull",
+      "verb": "Pulls",
+      "family": "flow",
+      "code": "VSMPULL",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "target": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "5 4"
+    },
+    {
+      "keyword": "vsm.einfo",
+      "name": "Electronic information",
+      "verb": "Informs (electronic)",
+      "family": "flow",
+      "code": "VSMEINFO",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "target": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
+    },
+    {
+      "keyword": "vsm.minfo",
+      "name": "Manual information",
+      "verb": "Informs",
+      "family": "flow",
+      "code": "VSMMINFO",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "target": [
+        "vsm.process",
+        "vsm.customer",
+        "vsm.control",
+        "vsm.inventory",
+        "vsm.supermarket",
+        "vsm.kaizen",
+        "vsm.operator"
+      ],
+      "allow_self": false,
+      "member_endpoints": false,
+      "pattern": "4 3"
     }
   ],
   "profiles": [
@@ -6875,6 +7111,23 @@
         "ORM2 XMI interchange",
         "constraint formal verification",
         "model-to-schema mapping"
+      ]
+    },
+    {
+      "id": "vsm.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "Value stream map"
+      ],
+      "scope": "Value stream mapping (machinery): process boxes with data rows, the VA/NVA timeline ladder strip, inventory triangles, push/pull and material arrows, electronic/manual information arrows, supermarket, kaizen burst and operator glyphs \u2014 simple generic glyphs only; detailed industry icon artwork is a separate excluded task.",
+      "validation": [
+        "ladder values are nonnegative numbers on vsm.process (DDN-PJ205)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "detailed VSM icon libraries",
+        "cycle-time simulation",
+        "VSM interchange formats"
       ]
     }
   ],

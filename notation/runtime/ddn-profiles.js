@@ -58,6 +58,8 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-081: VSM timeline ladder values (VA/NVA). */
+ out.extension_contracts.x_vsm=def({type:'object',properties:{va:{type:'number',minimum:0},nva:{type:'number',minimum:0},unit:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-080: ORM 2 — role decorations, value constraints, objectification,
   * derivation text. */
  out.extension_contracts.x_role=def({type:'object',properties:{uniqueness:{type:'boolean'},mandatory:{type:'boolean'}},additionalProperties:false},['field']);

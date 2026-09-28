@@ -246,3 +246,22 @@ under the node. Role ownership and fact-type shape validate as `DDN-PJ204`.
 ORM2 XMI interchange, constraint formal verification, and model-to-schema
 mapping are out of scope. Example: `website/examples/basics/96-orm.ddn`;
 tests `orm-compliance.js` + `orm-showcase.js`.
+
+## 17.20 Value stream mapping (vsm.basic@1)
+
+`vsm.basic@1` covers value stream mapping *machinery* with simple generic
+glyphs (detailed industry icon artwork is a separate, excluded task).
+Process boxes (`vsm.process`) carry data rows (ordinary fields) and
+`x_vsm: { va?, nva?, unit? }` values. The **VA/NVA timeline ladder strip**
+(the item's one new layout element) draws under the content: a zigzag strip
+in process x-order with VA values above the high segments, NVA below the low
+segments, and Σ totals at the right end. Inventory is a triangle with an `I`
+(`vsm.inventory`), supermarket a box with inner lines, kaizen a burst star
+(`burst` silhouette, new — a simple 16-point star polygon), and the operator
+reuses the actor glyph. Flow arrows: `vsm.material` (solid), `vsm.push`
+(solid), `vsm.pull` (dashed); information arrows: `vsm.einfo` (electronic —
+a zigzag over the route, `ddn-vsm-einfo`) and `vsm.minfo` (manual — dashed).
+Ladder owner/shape rules validate as `DDN-PJ205`; numeric bounds are the
+contract's `DDN105`. Icon libraries, cycle-time simulation and interchange
+formats are out of scope. Example: `website/examples/basics/97-vsm.ddn`;
+tests `vsm-compliance.js` + `vsm-showcase.js`.

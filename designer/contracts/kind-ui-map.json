@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 306,
+  "kindCount": 313,
   "kinds": [
     {
       "kind": "object",
@@ -10152,6 +10152,237 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "orm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.process",
+      "name": "Process",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "activity"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.customer",
+      "name": "Customer / supplier",
+      "source": "profile",
+      "palette_group": "People & control",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "governance"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.control",
+      "name": "Production control",
+      "source": "profile",
+      "palette_group": "People & control",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "governance"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.inventory",
+      "name": "Inventory",
+      "source": "profile",
+      "palette_group": "Meaning",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "triangledown",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.supermarket",
+      "name": "Supermarket",
+      "source": "profile",
+      "palette_group": "Meaning",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.kaizen",
+      "name": "Kaizen burst",
+      "source": "profile",
+      "palette_group": "Meaning",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "burst",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "vsm.operator",
+      "name": "Operator",
+      "source": "profile",
+      "palette_group": "People & control",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "actor",
+        "glyph": "object",
+        "family": "governance"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "vsm.basic@1"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",

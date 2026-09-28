@@ -279,6 +279,18 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  let maxX=allBoxes.reduce((m,g)=>Math.max(m,g.x+g.w),100),maxY=allBoxes.reduce((m,g)=>Math.max(m,g.y+g.h),100);for(const r of routes)for(const pt of r.points){maxX=Math.max(maxX,pt[0]);maxY=Math.max(maxY,pt[1]);}
  const pinFocus=p.layout.center==='pins'?placed.anchor:null;
  if(pinFocus){const b=Placement.centeredBounds({x:minX,y:minY,w:maxX-minX,h:maxY-minY},pinFocus);minX=b.x;minY=b.y;maxX=b.x+b.w;maxY=b.y+b.h;}
+ /* B1-081: VSM timeline ladder — reserve space below the content before the
+  * page bounds are computed; drawn after the labels. */
+ let vsmLadder=null;
+ if(p.projection.profile==='vsm.basic@1'){
+  const steps=geoms.filter(g=>g.n.kind==='vsm.process'&&g.n.properties.x_vsm).sort((a,b)=>a.x-b.x)
+   .map(g=>({x:g.x+g.w/2,va:g.n.properties.x_vsm.va,nva:g.n.properties.x_vsm.nva,unit:g.n.properties.x_vsm.unit||''}));
+  if(steps.length){
+   const ls=q(p.style.font_size,16)/16,ladderH=40*ls;
+   vsmLadder={steps,s:ls,h:ladderH};
+   maxY+=ladderH+52*ls;
+  }
+ }
  const width=maxX-minX+30,height=maxY-minY+30;
  let pageW=q(p.publication.width,1280),pageH=q(p.publication.height,800);
  if(['a4','letter'].includes(p.publication.size)){pageW=p.publication.size==='a4'?210*96/25.4:8.5*96;pageH=p.publication.size==='a4'?297*96/25.4:11*96;if(p.publication.orientation==='landscape')[pageW,pageH]=[pageH,pageW];}
@@ -508,12 +520,39 @@ function renderInner(ir,registry,glyphDefs='',options={}){
    const sc=q(p.style.font_size,16)/16,[tx,ty]=a.points.at(-1),ang=Layout.curveDirection(a)*Math.PI/180;
    diagram+=`<g class="ddn-petri-weight">`+text(tx-Math.cos(ang)*18*sc-Math.sin(ang)*10*sc,ty-Math.sin(ang)*18*sc+Math.cos(ang)*10*sc+4*sc,String(wgt),11*sc,t.ink,600)+'</g>';
   }
+  if(a.r.kind==='vsm.einfo'){
+   /* B1-081: einfo relations draw a zigzag over the route (electronic info). */
+   const bolt=[];let side=1;
+   for(const seg of segments(a.points)){const mx=(seg.a[0]+seg.b[0])/2,my=(seg.a[1]+seg.b[1])/2,dx=seg.b[0]-seg.a[0],dy=seg.b[1]-seg.a[1],len=Math.hypot(dx,dy)||1,nx=-dy/len*7,ny=dx/len*7;
+    bolt.push(seg.a,[mx+nx*side,my+ny*side]);side=-side;}
+   bolt.push(a.points.at(-1));
+   const ecolour=mono?'#383838':Palette.semantic(a.reg.colour,t);
+   diagram+=`<g class="ddn-vsm-einfo" data-zigzag="electronic"><path d="${pathD(bolt)}" fill="none" stroke="${esc(ecolour)}" stroke-width="1.6"/>`+endMark(a.points.at(-1),Layout.curveDirection(a),'open',ecolour,t.surface)+'</g>';
+   continue;
+  }
   if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
   else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
    /* B1-061: {…} time/duration constraints under the message label. */
    const cons=[a.r.properties.x_message?.time,a.r.properties.x_message?.duration].filter(Boolean);
    if(cons.length&&p.projection.profile==='uml.communication@2')diagram+=`<g class="ddn-timing-constraint">`+text(x,y+22,cons.join(' '),11,t.muted,500,'text-anchor="middle"')+'</g>';}
+ }
+ if(vsmLadder){
+  const L=vsmLadder,ls=L.s,top=maxY-L.h-16*ls,bot=top+L.h;
+  let lx=minX-24*ls,level=0,path=`M${fmt(lx)} ${fmt(top)}`;
+  const labels=[];
+  for(const step of L.steps){
+   path+=`L${fmt(step.x)} ${fmt(level?bot:top)}`;
+   level=1-level;
+   path+=`L${fmt(step.x)} ${fmt(level?bot:top)}`;
+   if(step.va!==undefined)labels.push(text(step.x,top-6*ls,String(step.va)+(step.unit?' '+step.unit:''),11*ls,t.ink,600,'text-anchor="middle"'));
+   if(step.nva!==undefined)labels.push(text(step.x,bot+16*ls,String(step.nva)+(step.unit?' '+step.unit:''),11*ls,t.muted,500,'text-anchor="middle"'));
+  }
+  const totVA=L.steps.reduce((n,st)=>n+(st.va||0),0),totNVA=L.steps.reduce((n,st)=>n+(st.nva||0),0);
+  path+=`L${fmt(maxX+24*ls)} ${fmt(level?bot:top)}`;
+  labels.push(text(maxX+8*ls,top-6*ls,'Σ '+totVA,11*ls,t.ink,650,''));
+  labels.push(text(maxX+8*ls,bot+16*ls,'Σ '+totNVA,11*ls,t.muted,650,''));
+  diagram+=`<g class="ddn-vsm-ladder"><path d="${path}" fill="none" stroke="${esc(t.ink)}" stroke-width="2"/>`+labels.join('')+text(lx,bot+34*ls,'VA / NVA timeline',10.5*ls,t.muted,500,'')+'</g>';
  }
  const scene={smallestText:fontSize,width:pageW,height:pageH,scale,origin:[tx,ty],nodes:geoms.map(({n,k,fieldRows,sample,...g})=>({...g,fields:g.fields.map(f=>f.id),fieldRows:fieldRows.map(({field,...row})=>row)})),routes:routes.map(({id,points,label,source_side,target_side,commands,routing,strategy,curveFamily,radius,appliedTension})=>({id,points,label:label.bounds,source_side,target_side,routing:routing||p.layout.routing,...(commands?{commands,strategy,curveFamily,...(radius!==undefined?{curveRadius:radius}:{}),...(appliedTension!==undefined?{appliedTension}:{}),flattenTolerance:Layout.CURVE_TOLERANCE}:{})})),crossings,frames,subdiagrams:subs,quality:routed.quality,layout:{...placed.telemetry,...routed.telemetry,algorithm:p.layout.algorithm,routing:p.layout.routing,engine:'ddn-native@'+DDN.VERSION},drawingBounds:{x:minX,y:minY,w:width,h:height},drawingArea:{x:margin,y:headBlock-20+extraHeader,w:availW,h:availH},...(motionScene.length?{motion:motionScene}:{}),...(flowScene.length?{flows:flowScene}:{}),...(pinFocus?{focus:{world:pinFocus,page:[tx+pinFocus[0]*scale,ty+pinFocus[1]*scale]}}:{})};
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';

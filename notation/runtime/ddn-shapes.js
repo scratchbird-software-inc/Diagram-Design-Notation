@@ -108,7 +108,8 @@ function polygon(g){const{x,y,w,h,silhouette:t}=g;
  if(t==='hexagon')return[[x+w*.25,y],[x+w*.75,y],[x+w,y+h/2],[x+w*.75,y+h],[x+w*.25,y+h],[x,y+h/2]];
  if(t==='manualinput')return[[x,y+h*.35],[x+w,y],[x+w,y+h],[x,y+h]];
  if(t==='manualop')return[[x,y],[x+w,y],[x+w*.84,y+h],[x+w*.16,y+h]];
- if(t==='triangledown')return[[x,y],[x+w,y],[x+w/2,y+h]];
+ if(t==='burst'){const ps=[],cx=x+w/2,cy=y+h/2;for(let i=0;i<16;i++){const a=i/16*Math.PI*2-Math.PI/2,r=i%2?Math.min(w,h)*.22:Math.min(w,h)*.48;ps.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r]);}return ps;}
+if(t==='triangledown')return[[x,y],[x+w,y],[x+w/2,y+h]];
  if(t==='triangleup')return[[x+w/2,y],[x+w,y+h],[x,y+h]];
  if(t==='card')return[[x+12*g.scale,y],[x+w,y],[x+w,y+h],[x,y+h],[x,y+12*g.scale]];
  if(t==='parallelogram')return[[x+w*.16,y],[x+w,y],[x+w*.84,y+h],[x,y+h]];
@@ -362,6 +363,9 @@ function render(g,p,theme){
  }else if(shape==='delay'){
   const r=h/2;
   out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-r)}A${f(r)} ${f(r)} 0 0 1 ${f(x+w-r)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+ }else if(shape==='burst'){
+  const pts=polygon(g).map((v,i)=>(i?'L':'M')+f(v[0])+' '+f(v[1])).join('');
+  out+=`<path d="${pts}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  }else if(shape==='triangledown'){
   out+=`<path d="M${f(x)} ${f(y)}H${f(x+w)}L${f(x+w/2)} ${f(y+h)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  }else if(shape==='triangleup'){
@@ -434,6 +438,9 @@ function render(g,p,theme){
   if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
   else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
  }
+ /* B1-081: VSM glyph details — inventory I, supermarket inner lines. */
+ if(n.kind==='vsm.inventory')out+=text(x+w/2,y+h/2+5*s,'I',14,650,'text-anchor="middle"');
+ if(n.kind==='vsm.supermarket'){out+=line(x+14*s,y+18*s,x+w-14*s,y+18*s,1.4)+line(x+14*s,y+26*s,x+w-14*s,y+26*s,1.4)+line(x+26*s,y+10*s,x+26*s,y+h-10*s,1.4);}
  /* B1-080: ORM decorations — value constraint text, objectification frame,
   * derivation text. */
  if(n.properties.x_values?.values?.length)out+=`<g class="ddn-orm-values">`+text(x+w/2,y+h-6*s,'{'+n.properties.x_values.values.join(', ')+'}',10.5,500,'text-anchor="middle"')+'</g>';

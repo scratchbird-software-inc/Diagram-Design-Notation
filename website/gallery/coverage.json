@@ -1173,6 +1173,13 @@
       "kind": "graph",
       "svg": "profiles/uml-usecase-3.svg"
     },
+    "vsm.basic@1": {
+      "entry": "website/examples/basics/97-vsm.ddn",
+      "view": "map",
+      "title": "Current state map",
+      "kind": "graph",
+      "svg": "profiles/vsm-basic-1.svg"
+    },
     "wbs.tree@1": {
       "entry": "website/examples/basics/27-wbs.ddn",
       "view": "wbs",
@@ -3717,6 +3724,20 @@
       "profile": "orm.basic@1",
       "kind": "graph",
       "svg": "corpus/basics-96-orm.svg"
+    },
+    {
+      "entry": "website/examples/basics/97-vsm.ddn",
+      "view": "map",
+      "title": "Current state map",
+      "views": [
+        {
+          "id": "map",
+          "title": "Current state map"
+        }
+      ],
+      "profile": "vsm.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-97-vsm.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",
