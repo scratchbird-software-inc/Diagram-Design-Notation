@@ -1343,6 +1343,19 @@
       "default": "inherit the view depth",
       "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
       "validation_stage": "logical"
+    },
+    {
+      "path": "side",
+      "group": "Geometry and layout",
+      "targets": [
+        "port",
+        "relation_endpoint"
+      ],
+      "value_shape": "enum: north | south | east | west",
+      "constraint": "Declares the edge of the owner an endpoint attaches to; layout honors it as a side hint, never silently reassigns it.",
+      "default": "absent — the router picks a side from the route direction",
+      "state_policy": "Undecided and not_applicable may be used only where applicability permits. Values and states are not interchangeable.",
+      "validation_stage": "logical"
     }
   ]
 }

@@ -3555,6 +3555,14 @@
       "scope": "Full Z.120 MSC notation via the uml.sequence@2 machinery: lifelines, message sorts (incl. lost/found = message loss), create/stop (instance creation/destruction), combined fragments and coregions, gates, time/duration constraints, state invariants as inline expressions, and HMSC references (msc.hmscref with x_subdiagram binding).",
       "validation": ["uml.sequence@2 rules apply (message sorts PJ156, invariants PJ157, fragments PJ155, constraints PJ159)", "HMSC reference must bind an existing view (DDN-PJ119)", "registry endpoint contracts (DDN102)"],
       "unsupported": ["MSC document interchange", "formal ITU conformance"]
+    },
+    {
+      "id": "idef0.basic@1",
+      "projection": "graph",
+      "diagramFamilies": ["IDEF0 function model"],
+      "scope": "IDEF0 (IEEE 1320.1) function modeling: activity boxes with side-typed ICOM ports (Inputs left, Controls top, Outputs right, Mechanisms bottom), A-0 context and decomposition node numbering, labeled flow arrows with fork/join, tunneled arrows (x_tunnel), and call arrows (idef0.call).",
+      "validation": ["ICOM port type must match the port's declared side (DDN-PJ200)", "node numbers unique and decomposition-prefixed (DDN-PJ201)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["IDEF0 interchange formats", "model execution/simulation", "formal IEEE certification"]
     }
   ],
   "projectionProperties": {

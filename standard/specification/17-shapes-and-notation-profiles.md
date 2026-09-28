@@ -193,3 +193,21 @@ the fragment operator enum); **message loss** — the `lost`/`found` sorts
 formal ITU conformance are out of scope. Example:
 `website/examples/basics/93-msc.ddn`; tests `msc-compliance.js` +
 `msc-showcase.js`.
+
+## 17.17 IDEF0 function modeling (idef0.basic@1)
+
+`idef0.basic@1` covers IEEE 1320.1 (IDEF0) function modeling. Activity boxes
+(`idef0.activity`) declare **ICOM ports** — every port carries
+`x_icom: { type: input|control|output|mechanism }` plus the existing port
+`side` property, and the type must match the side: Inputs west, Controls
+north, Outputs east, Mechanisms south (`DDN-PJ200`). Activities number with
+`x_idef0: { node: "A1" }` (closed pattern `A\d+`; required, unique,
+`DDN-PJ201`). A decomposition binds with `x_subdiagram`; the child view must
+be `idef0.basic@1` and its activities must number *under* the decomposed node
+(A1 → A11, A12, …). Arrows are `idef0.flow` (labeled; fork/join by fanning
+relations in and out) and `idef0.call` (dashed call arrow). **Tunneled
+arrows** carry `x_tunnel: { start|end: true }` and render an open parenthesis
+at the tunneled end instead of an arrowhead. Interchange formats, model
+execution, and formal IEEE certification are out of scope. Example:
+`website/examples/basics/94-idef0.ddn`; tests `idef0-compliance.js` +
+`idef0-showcase.js`.

@@ -182,6 +182,8 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  }
  return s+'</g>';
 }
+/* B1-078: IDEF0 tunnel end — a small open parenthesis at the endpoint. */
+function tunnelMark(point,angle,ink){return `<g transform="translate(${point[0]} ${point[1]}) rotate(${angle})" stroke="${esc(ink)}" stroke-width="1.7" fill="none"><path d="M-9 -6A9 9 0 0 0 -9 6"/></g>`;}
 function midpoint(points){const seg=segments(points).sort((a,b)=>Math.hypot(b.b[0]-b.a[0],b.b[1]-b.a[1])-Math.hypot(a.b[0]-a.a[0],a.b[1]-a.a[1]))[0];return[(seg.a[0]+seg.b[0])/2,(seg.a[1]+seg.b[1])/2];}
 /* B1-055: point where the ray from a box centre toward `toward` exits the box. */
 function rectAnchor(g,toward){const cx=g.x+g.w/2,cy=g.y+g.h/2,dx=toward[0]-cx,dy=toward[1]-cy;let t=Infinity;
@@ -348,7 +350,11 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(a.r.properties.x_chen_total){diagram+=`<g${mask} data-total-participation="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(colour)}" stroke-width="5"/><path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(t.surface)}" stroke-width="2"/>`).join('')+'</g>';}
   if(a.r.properties.x_critical){const s=q(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt(3*s)}"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
-  diagram+=endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface)+endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface);
+  /* B1-078: IDEF0 tunneled arrows — an open parenthesis at the tunneled end
+   * instead of the arrowhead. */
+  const tun=side=>{const xt=a.r.properties.x_tunnel||{};if(!xt[side])return false;return true;};
+  diagram+=(tun('start')?tunnelMark(a.points[0],Layout.curveDirection(a,true),colour):endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface))
+   +(tun('end')?tunnelMark(a.points.at(-1),Layout.curveDirection(a),colour):endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface));
   /* B1-060 (RFC-124): interrupting/exception edges draw a lightning-bolt
    * zigzag over the route (perpendicular jog per segment, alternating side). */
   if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){

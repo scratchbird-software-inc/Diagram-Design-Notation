@@ -847,6 +847,22 @@ import RegistryCatalogue from './assets/catalogue.js';
         if(!['uml.sequence@2','uml.statemachine@1'].includes(cp))throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' binds view '+target+' ('+cp+'); a choreography binds a uml.sequence@2 or uml.statemachine@1 view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
       }
     }
+    if(p.projection.profile==='idef0.basic@1'){
+      /* B1-078: decomposition numbering — a child view's activities number
+       * under the decomposed node's number (A1 -> A11, A12, ...). */
+      for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;
+       if(n.kind!=='idef0.activity'||typeof target!=='string')continue;
+       const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&(x.id===target||x.uid===target));
+       if(!tv)throw new DDNError('DDN-PJ119','IDEF0 node '+(n.name||n.id)+' references unknown decomposition view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       const parent=n.properties.x_idef0?.node||'';
+       const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+       if(child.view.profiles.projection?.profile!=='idef0.basic@1')throw new DDNError('DDN-PJ201','IDEF0 decomposition of '+(n.name||n.id)+' must target an idef0.basic@1 view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       for(const c of child.elements.filter(x=>x.kind==='idef0.activity')){
+        const num=c.properties.x_idef0?.node||'';
+        if(parent&&!num.startsWith(parent))throw new DDNError('DDN-PJ201','IDEF0 child activity '+(c.name||c.id)+' numbers '+JSON.stringify(num||'unset')+'; decomposition of '+parent+' must number under it ('+parent+'1, '+parent+'2, ...)',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       }
+      }
+    }
     if(p.projection.profile==='msc.basic@1'){
       /* B1-077: HMSC references must bind an existing view (PJ119). */
       const viewIds2=new Set();for(const x of ws.symbols.values())if(x.type==='view'){viewIds2.add(x.id);viewIds2.add(x.uid);}

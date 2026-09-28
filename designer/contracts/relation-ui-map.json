@@ -13201,6 +13201,81 @@
       ],
       "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "idef0.flow",
+      "label": "flows",
+      "origin": "profile",
+      "family": "flow",
+      "semantic_contract": {
+        "source": [
+          "idef0.activity"
+        ],
+        "target": [
+          "idef0.activity"
+        ],
+        "allow_self": false,
+        "member_endpoints": true
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "idef0.call",
+      "label": "calls",
+      "origin": "profile",
+      "family": "flow",
+      "semantic_contract": {
+        "source": [
+          "idef0.activity"
+        ],
+        "target": [
+          "idef0.activity"
+        ],
+        "allow_self": false,
+        "member_endpoints": true
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index",
+      "pattern": "7 5"
     }
   ]
 }

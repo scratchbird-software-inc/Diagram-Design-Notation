@@ -288,6 +288,29 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ /* B1-078: IDEF0 semantics — ICOM side contract and node numbering. */
+ {
+  const SIDES={'input':'west','control':'north','output':'east','mechanism':'south'};
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   for(const pt of n.ports||[]){
+    const xi=pt.properties.x_icom;
+    if(xi===undefined)continue;
+    if(n.kind!=='idef0.activity')fail('DDN-PJ200','x_icom port typing applies to idef0.activity ports; '+n.id+' is '+n.kind,pt);
+    const side=pt.properties.side;
+    if(SIDES[xi.type]!==side)fail('DDN-PJ200','ICOM '+xi.type+' port '+(pt.name||pt.id)+' must sit on the '+SIDES[xi.type]+' side of '+n.id+'; declared side is '+(side||'unset'),pt);
+   }
+   if(profile==='idef0.basic@1')for(const pt of n.ports||[])if(n.kind==='idef0.activity'&&!pt.properties.x_icom)fail('DDN-PJ200','IDEF0 port '+(pt.name||pt.id)+' on '+n.id+' lacks an ICOM type (input/control/output/mechanism)',pt);
+  }
+  if(profile==='idef0.basic@1'){
+   const nums=new Map();
+   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='idef0.activity')){
+    const num=n.properties.x_idef0?.node;
+    if(!num||!/^A\d+$/.test(num))fail('DDN-PJ201','IDEF0 activity '+n.id+' needs an x_idef0.node number like A1 or A21',n);
+    if(nums.has(num))fail('DDN-PJ201','IDEF0 node number '+num+' is used by both '+nums.get(num)+' and '+n.id,n);
+    nums.set(num,n.id);
+   }
+  }
+ }
  /* B1-072 (RFC-130): SoaML 1.0.1 semantics. */
  {
   const OWNERS=['soaml.participant','soaml.serviceinterface','soaml.agent','uml.component','sysml.block'];

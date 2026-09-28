@@ -51,7 +51,7 @@ function validate(ir,registry,ErrorClass){
  const allMembers=new Map(ir.elements.flatMap(x=>[...x.fields,...x.ports].map(f=>[f.id,{...f,owner:x}])));
  const kinds=new Map(registry.kinds.map(k=>[k.keyword,k]));
  const state=v=>isObject(v)&&Object.hasOwn(v,'$state');
- const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max']);
+ const reserved=new Set(['uid','description','aliases','kind','level','representation','platform','maturity','workload','role','temporal','time','distribution','location','meaning','scope','domain','datatype','key','nullable','presence','shape','unit','default','ordinal','classification','policy','owner','columns','rows','mode','capture','delivery','transport','enforcement','source_mark','target_mark','source_cardinality','target_cardinality','ordering','direction','side','payload','version','allow_extra','discriminator','variants','optional','dimension','target','min','max']);
  function props(item,target){
   for(const [key,value]of Object.entries(item.properties||{})){
    if(key.startsWith('x_')){

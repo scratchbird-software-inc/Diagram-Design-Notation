@@ -2272,6 +2272,18 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "idef0.activity",
+      "name": "Activity box",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "activity",
+      "family": "activity",
+      "code": "IDEFACTIVITY",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -4111,6 +4123,43 @@
       "allow_self": false,
       "member_endpoints": false,
       "pattern": "4 4"
+    },
+    {
+      "keyword": "idef0.flow",
+      "name": "Flow",
+      "verb": "Flows",
+      "family": "flow",
+      "code": "IDEFFLOW",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "idef0.activity"
+      ],
+      "target": [
+        "idef0.activity"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
+    },
+    {
+      "keyword": "idef0.call",
+      "name": "Call",
+      "verb": "Calls",
+      "family": "flow",
+      "code": "IDEFCALL",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "idef0.activity"
+      ],
+      "target": [
+        "idef0.activity"
+      ],
+      "allow_self": false,
+      "member_endpoints": true,
+      "pattern": "7 5"
     }
   ],
   "profiles": [
@@ -6575,6 +6624,24 @@
       "unsupported": [
         "MSC document interchange",
         "formal ITU conformance"
+      ]
+    },
+    {
+      "id": "idef0.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "IDEF0 function model"
+      ],
+      "scope": "IDEF0 (IEEE 1320.1) function modeling: activity boxes with side-typed ICOM ports (Inputs left, Controls top, Outputs right, Mechanisms bottom), A-0 context and decomposition node numbering, labeled flow arrows with fork/join, tunneled arrows (x_tunnel), and call arrows (idef0.call).",
+      "validation": [
+        "ICOM port type must match the port's declared side (DDN-PJ200)",
+        "node numbers unique and decomposition-prefixed (DDN-PJ201)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "IDEF0 interchange formats",
+        "model execution/simulation",
+        "formal IEEE certification"
       ]
     }
   ],

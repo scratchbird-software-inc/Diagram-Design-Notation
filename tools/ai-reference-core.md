@@ -185,6 +185,9 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
 | `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
 | `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
+| `x_icom` | port | `{type: input|control|output|mechanism}` — IDEF0 ICOM port typing; must match the port's `side` (DDN-PJ200) |
+| `x_idef0` | object | `{node: "A1"}` — IDEF0 node number; unique per view, decomposition-prefixed (DDN-PJ201) |
+| `x_tunnel` | relation | `{start?, end?}` — IDEF0 tunneled arrow; open parenthesis at the tunneled end |
 | `x_c4tag` | object | `{tags: [string]}` — C4 element tags, rendered as an italic [tag, …] chip under the node |
 | `x_subdiagram` | object | `{view, display?: badge|inline|thumbnail, frozen?, snapshot?, snapshot_at?}` — drill-down: badge (default), live inline, shapes-detail thumbnail (text suppressed), or frozen stored snapshot refreshed only by host rewrite (DDN-PJ119/PJ174/PJ198) |
 | `x_sentry` | object | `{on: entry|exit, attach?, on_part?, if_part?}` (B1-064: criterion attachment, on/if-parts; DDN-PJ182) |
@@ -211,6 +214,9 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_event` | object | `{type: none|message|…|parallel_multiple, position?, interrupting?, on?}` on event kinds |
 | `x_gateway` | object | `{type: exclusive|parallel|inclusive|complex|event|event_exclusive}` on flow.gateway |
 | `x_states` | object | array of `{at: number, state: string}` (timing; strictly increasing `at`) |
+| `x_icom` | port | `{type: input|control|output|mechanism}` — IDEF0 ICOM port typing; must match the port's `side` (DDN-PJ200) |
+| `x_idef0` | object | `{node: "A1"}` — IDEF0 node number; unique per view, decomposition-prefixed (DDN-PJ201) |
+| `x_tunnel` | relation | `{start?, end?}` — IDEF0 tunneled arrow; open parenthesis at the tunneled end |
 | `x_c4tag` | object | `{tags: [string]}` — C4 element tags, rendered as an italic [tag, …] chip under the node |
 | `x_subdiagram` | object | `{view: string}` (interaction-overview node → view id) |
 | `x_sentry` | object | `{on: entry|exit, attach?, on_part?, if_part?}` (DDN-PJ182) |
@@ -288,6 +294,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | UAF (12 domains) | graph | `uaf.<domain>@1` ×12 | strategic/operational/services/systems/personnel/resources/security/projects/standards/actualresources/dictionary/summary vocabularies; stereotyped verbs (capabilityDependency, exhibits, mapsTo, performs, assignedTo, compliesWith, mitigates, milestoneDependency, forecast, supports, owns) — endpoint contracts DDN102; capability draws the `tag` silhouette |
 | SoaML services | graph | `soaml.services@1` | participant/agent/serviceinterface/servicecontract/capability/message/milestone kinds, x_service port badges, x_contract choreography binding, assembly conformance (DDN-PJ195–PJ197) |
 | C4 deployment/dynamic | graph | `c4.deployment@1` / `c4.dynamic@1` | rebadges of uml.deployment@1 / uml.communication@2 (PJW06); numbered messages required (PJ111); tag chips via x_c4tag |
+| IDEF0 | graph | `idef0.basic@1` | activity boxes with x_icom port typing + side contract, x_idef0 node numbering, idef0.flow/call arrows, x_tunnel tunneled arrows |
 | MSC (Z.120) | sequence | `msc.basic@1` | rebadge of uml.sequence@2 (PJW06); msc.hmscref «ref» participants binding views via x_subdiagram (PJ119); coreg fragment operator; create/delete (start/stop), lost/found (message loss) sorts; inline expressions via x_invariant |
 | Full EPC | graph | `epc.complete@1` | epk.event/function/connector + orgunit/role/infoobject/processlink; alternation PJ105, operator PJ106, split/join fan-balancing PJ199 |
 | DMN DRD | graph | `dmn.drd@1` | decision/BKM/inputdata/knowledgesource/decisionservice kinds, inforeq/knowledgereq/authorityreq connectors, `x_subdiagram` binds decision-table views (DDN-PJ192), boxed expressions via `x_boxed`; FEEL never evaluated |

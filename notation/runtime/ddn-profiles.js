@@ -58,6 +58,10 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-078: IDEF0 — ICOM port typing, node numbers, tunneled arrows. */
+ out.extension_contracts.x_icom=def({type:'object',required:['type'],properties:{type:{enum:['input','control','output','mechanism']}},additionalProperties:false},['port']);
+ out.extension_contracts.x_idef0=def({type:'object',required:['node'],properties:{node:{type:'string',minLength:2,pattern:'^A\\d+$'}},additionalProperties:false},['object']);
+ out.extension_contracts.x_tunnel=def({type:'object',properties:{start:{type:'boolean'},end:{type:'boolean'}},additionalProperties:false},['relation']);
  /* B1-076: C4 element tags — rendered as a tag chip under the node. */
  out.extension_contracts.x_c4tag=def({type:'object',required:['tags'],properties:{tags:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  /* B1-074 (RFC-132): drill-down display modes + frozen snapshots. display

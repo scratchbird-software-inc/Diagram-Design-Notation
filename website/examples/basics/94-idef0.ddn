@@ -1,0 +1,48 @@
+ddn "0.5";
+module "ddn.examples.idef0";
+
+// B1-078: a small IDEF0 A-0 decomposition. The context view is the single A0
+// activity with its four ICOM sides (input west, control north, output east,
+// mechanism south) and a reference badge into the decomposition view, which
+// shows three numbered activities, a forked labeled arrow, a tunneled arrow
+// (parenthesis at the tunneled end), and a call arrow. All data is synthetic.
+data m {
+    object a0 "Manage shop" { kind: "idef0.activity"; x_idef0: { node: "A0" };
+        ports {
+            port orders { direction: in; side: west; x_icom: { type: "input" }; }
+            port policy { direction: in; side: north; x_icom: { type: "control" }; }
+            port service { direction: out; side: east; x_icom: { type: "output" }; }
+            port staff { direction: in; side: south; x_icom: { type: "mechanism" }; }
+        }
+        x_subdiagram: { view: "detail" };
+    }
+}
+data d {
+    object a1 "Take orders" { kind: "idef0.activity"; x_idef0: { node: "A01" };
+        ports { port packed { direction: out; side: east; x_icom: { type: "output" }; } }
+    }
+    object a3 "Stock shelves" { kind: "idef0.activity"; x_idef0: { node: "A03" };
+        ports { port packed { direction: in; side: west; x_icom: { type: "input" }; } }
+    }
+    object a2 "Ship orders" { kind: "idef0.activity"; x_idef0: { node: "A02" };
+        ports {
+            port packed { direction: in; side: west; x_icom: { type: "input" }; }
+            port carrier { direction: in; side: south; x_icom: { type: "mechanism" }; }
+            port shipped { direction: out; side: east; x_icom: { type: "output" }; }
+        }
+    }
+    relation f1 "packed orders" @a1.packed -> @a2.packed { kind: "idef0.flow"; }
+    relation f2 "packed orders" @a1.packed -> @a3.packed { kind: "idef0.flow"; }
+    relation f3 "returns" @a3.packed -> @a1.packed { kind: "idef0.flow"; x_tunnel: { start: true }; }
+    relation call1 "" @a2 -> @a1 { kind: "idef0.call"; x_tunnel: { end: true }; }
+}
+view context "A-0 context" {
+    data: [@m];
+    projection { profile: "idef0.basic@1"; }
+    publication { size: content; fit: none; }
+}
+view detail "A0 decomposition" {
+    data: [@d];
+    projection { profile: "idef0.basic@1"; }
+    publication { size: content; fit: none; }
+}
