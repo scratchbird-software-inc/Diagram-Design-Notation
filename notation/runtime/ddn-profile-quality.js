@@ -238,7 +238,8 @@ function validate(ir,E){
    const end=e=>members.get(e.member)||null;
    if(r.kind==='uml.assembly')for(const side of ['from','to']){
     const ep=r[side],mem=end(ep),kind=mem?mem.owner.kind:ns.get(ep.element)?.kind;
-    if(kind!=='uml.component')fail('DDN-PJ165','uml.assembly '+side+' endpoint must be a uml.component or a port of one; found '+(mem?'port on '+kind:kind),r);
+    /* B1-072 (RFC-130): SoaML participants/service interfaces assemble the same way. */
+    if(kind!=='uml.component'&&!['soaml.participant','soaml.serviceinterface','soaml.agent'].includes(kind))fail('DDN-PJ165','uml.assembly '+side+' endpoint must be a uml.component or a port of one; found '+(mem?'port on '+kind:kind),r);
     if(ep.member&&mem&&![...mem.owner.ports].some(pt=>pt.id===ep.member))fail('DDN-PJ165','uml.assembly '+side+' member must be a port, not a field/part',r);
    }
    if(r.kind==='uml.delegation'){
@@ -249,7 +250,7 @@ function validate(ir,E){
   for(const n of ir.elements)for(const f of n.fields){
    const xp=f.properties.x_part;
    if(xp!==undefined){
-    if(!['uml.class','uml.component','uml.collaboration'].includes(n.kind))fail('DDN-PJ166','x_part fields belong to uml.class/uml.component/uml.collaboration owners; '+n.id+' is '+n.kind,f);
+    if(!['uml.class','uml.component','uml.collaboration','soaml.servicecontract'].includes(n.kind))fail('DDN-PJ166','x_part fields belong to uml.class/uml.component/uml.collaboration owners; '+n.id+' is '+n.kind,f);
     if(xp.multiplicity!==undefined&&!/^(\d+|\*)(\.\.(\d+|\*))?$/.test(xp.multiplicity))fail('DDN-PJ166','Part multiplicity must be a UML multiplicity; found "'+xp.multiplicity+'"',f);
    }
   }
@@ -285,6 +286,30 @@ function validate(ir,E){
   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='sysml.constraint')){
    const count=es.filter(r=>r.from.element===n.id||r.to.element===n.id).length;
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
+  }
+ }
+ /* B1-072 (RFC-130): SoaML 1.0.1 semantics. */
+ {
+  const OWNERS=['soaml.participant','soaml.serviceinterface','soaml.agent','uml.component','sysml.block'];
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   for(const pt of n.ports||[]){
+    const xs=pt.properties.x_service;
+    if(xs!==undefined&&!OWNERS.includes(n.kind))fail('DDN-PJ195','x_service port decorations apply to participant/service-interface kinds; '+n.id+' is '+n.kind,pt);
+   }
+   const xc=n.properties.x_contract;
+   if(xc!==undefined&&n.kind!=='soaml.servicecontract')fail('DDN-PJ195','x_contract (choreography binding) applies to soaml.servicecontract; '+n.id+' is '+n.kind,n);
+  }
+  if(profile==='soaml.services@1'){
+   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&['uml.assembly','uml.delegation','uml.connector'].includes(r.kind))){
+    const typed=ep=>{if(!ep.member)return null;const owner=ns.get(ep.element);const pt=(owner?.ports||[]).find(x=>x.id===ep.member);return pt?.properties?.x_service?.kind||null;};
+    const a=typed(r.from),b=typed(r.to);
+    if(a&&b){
+     if(a===b)fail('DDN-PJ196','Connector '+r.id+' joins two «'+(a==='service'?'Service':'Request')+'» ports; a «Service» port connects to a «Request» port',r);
+     const ta=ns.get(r.from.element),tb=ns.get(r.to.element),pa=(ta?.ports||[]).find(x=>x.id===r.from.member),pb=(tb?.ports||[]).find(x=>x.id===r.to.member);
+     const typeOf=p=>p?.properties?.datatype||p?.properties?.type;
+     if(typeOf(pa)&&typeOf(pb)&&typeOf(pa)!==typeOf(pb))fail('DDN-PJ196','Connector '+r.id+' joins «Service»/'+'«Request» ports of different interface types ('+typeOf(pa)+' vs '+typeOf(pb)+'); both sides type the same service interface',r);
+    }
+   }
   }
  }
  /* B1-066 (RFC-129): DMN 1.4 DRD semantics. */

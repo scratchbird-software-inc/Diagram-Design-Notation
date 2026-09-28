@@ -84,6 +84,9 @@ function registry(base){
  out.extension_contracts.x_unit=def({type:'object',required:['unit'],properties:{unit:{type:'string',minLength:1},quantity:{type:'string',minLength:1}},additionalProperties:false},['field']);
  /* B1-066 (RFC-129): DMN boxed-expression presentation (text display only,
   * never evaluated) on DRD nodes. */
+ /* B1-072 (RFC-130): SoaML port decorations and service-contract binding. */
+ out.extension_contracts.x_service=def({type:'object',required:['kind'],properties:{kind:{enum:['service','request']}},additionalProperties:false},['port']);
+ out.extension_contracts.x_contract=def({type:'object',properties:{choreography:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_boxed=def({type:'object',required:['form'],properties:{form:{enum:['literal','context','invocation','relation']},text:{type:'string',minLength:1},entries:{type:'array',minItems:1,maxItems:10,items:{type:'object',required:['text'],properties:{name:{type:'string',minLength:1},text:{type:'string',minLength:1}},additionalProperties:false}}},additionalProperties:false},['object']);
  out.extension_contracts.x_flow=def({type:'object',properties:{rate:{type:'string',minLength:1},probability:{type:'number',minimum:0,maximum:1},continuous:{type:'boolean'}},additionalProperties:false},['relation']);
  /* B1-063: BPMN activity markers, input/output sets, choreography bands. */ out.extension_contracts.x_activity=def({type:'object',properties:{call:{type:'boolean'},transaction:{type:'boolean'},adhoc:{type:'boolean'},event_subprocess:{type:'boolean'},collapsed:{type:'boolean'},markers:{type:'array',maxItems:4,uniqueItems:true,items:{enum:['loop','parallel','sequential','compensation']}}},additionalProperties:false},['object']);

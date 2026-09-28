@@ -59,6 +59,12 @@ function measure(g,p){
   }
   g.headerH=70*s;
  }
+ /* B1-072 (RFC-130): SoaML kind keywords — header only (no compartments);
+  * servicecontract renders the collaboration glyph (see the collab branch). */
+ const SOAML_KW={'soaml.participant':'participant','soaml.agent':'agent','soaml.serviceinterface':'ServiceInterface','soaml.servicecontract':'ServiceContract','soaml.capability':'capability','soaml.message':'message','soaml.milestone':'milestone'};
+ if(SOAML_KW[n.kind]){
+  g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=70*s;
+ }
  /* B1-066 (RFC-129): DMN boxed-expression presentation — text rows in a
   * bottom compartment. Display only; the text is never parsed or evaluated. */
  if(['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind)&&n.properties.x_boxed){
@@ -265,7 +271,9 @@ function render(g,p,theme){
  if(shape==='collab'){
   out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
   const hasRows=(g.fieldRows||[]).length>0;
-  out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),'«collaboration»',11,500,'text-anchor="middle"');
+  /* B1-072 (RFC-130): the SoaML service contract reuses the collaboration
+   * glyph with its own keyword. */
+  out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),g.sysmlKeyword?'«'+g.sysmlKeyword+'»':'«collaboration»',11,500,'text-anchor="middle"');
   out+=lines(g.titleLines,x+w/2,y+(hasRows?48*s:h/2+14*s),16,600);
   if(hasRows){out+=line(x+w*.18,y+62*s,x+w*.82,y+62*s,1);
    for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+w/2,y+r.top+18*s,12.5,400)+'</g>';}
@@ -310,6 +318,8 @@ function render(g,p,theme){
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
  if(shape==='actor'){
+  /* B1-072 (RFC-130): SoaML agents are actors with a keyword header. */
+  if(g.sysmlKeyword)out+=text(x+w/2,y+16*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"');
   const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   for(const a of [[cx,head+14*s,cx,head+65*s],[cx-32*s,head+36*s,cx+32*s,head+36*s],[cx,head+65*s,cx-28*s,head+104*s],[cx,head+65*s,cx+28*s,head+104*s]])out+=line(...a,1.8);
   out+=lines(g.titleLines,cx,y+h-(g.titleLines.length-1)*21*s-8*s);

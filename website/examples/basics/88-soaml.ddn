@@ -1,0 +1,61 @@
+ddn "0.5";
+module "ddn.examples.soaml";
+
+// B1-072: SoaML 1.0.1 — a retail service architecture with a service
+// contract. Participants offer «Service» and consume through «Request» port
+// decorations; the assembly connector pairs a «Request» with a «Service»
+// port of the same interface type. The service contract is a collaboration
+// glyph with provider/consumer role rows and a choreography binding to the
+// sequence view below. All data is synthetic.
+
+data m {
+    object shop "Shop front" { kind: "soaml.participant";
+        ports { port billing { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
+    }
+    object warehouse "Warehouse" { kind: "soaml.participant";
+        ports { port stock { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
+    }
+    object billing "Billing service" { kind: "soaml.serviceinterface";
+        fields { field charge "charge(order)"; field invoice "issue(invoice)"; }
+        ports { port api { direction: in; x_service: { kind: "service" }; datatype: "Billing"; } }
+    }
+    object org "Retail group" { kind: "soaml.agent"; }
+    object cap "Online retail" { kind: "soaml.capability"; }
+    object msg "Invoice" { kind: "soaml.message"; }
+    object ms "Payment received" { kind: "soaml.milestone"; }
+    object contract "Billing terms" { kind: "soaml.servicecontract";
+        fields {
+            field provider { x_part: { classifier: "Billing" }; }
+            field consumer { x_part: { classifier: "Shop" }; }
+        }
+        x_contract: { choreography: @choreography };
+    }
+
+    relation a1 "" @shop.billing -> @billing.api { kind: "uml.assembly"; }
+    relation a2 "" @warehouse.stock -> @billing.api { kind: "uml.assembly"; }
+    relation realize "" @billing -> @cap { kind: "uml.realization"; }
+    relation offers "" @contract -> @billing { kind: "uml.provided"; }
+    relation doc "" @billing -> @msg { kind: "uml.dependency"; }
+    relation done "" @contract -> @ms { kind: "uml.dependency"; }
+    relation owns "" @org -> @shop { kind: "uml.connector"; }
+}
+
+data choreo {
+    object shopper "Shop" { kind: "uml.class"; }
+    object biller "Billing" { kind: "uml.class"; }
+    relation m1 "charge(order)" @shopper -> @biller { kind: "uml.message"; }
+    relation m2 "invoice" @biller -> @shopper { kind: "uml.message"; x_message: { sort: "reply" }; }
+}
+
+view arch "Retail service architecture" {
+    data: [@m];
+    projection { profile: "soaml.services@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}
+
+view choreography "Billing choreography" {
+    data: [@choreo];
+    projection { kind: sequence; profile: "uml.sequence@2"; }
+    publication { size: content; fit: none; }
+}

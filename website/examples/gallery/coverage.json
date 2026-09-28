@@ -736,6 +736,13 @@
       "combined": "website/examples/projections/views.combined.ddn",
       "svg": "profiles/requirements-basic-1.svg"
     },
+    "soaml.services@1": {
+      "entry": "website/examples/basics/88-soaml.ddn",
+      "view": "arch",
+      "title": "Retail service architecture",
+      "kind": "graph",
+      "svg": "profiles/soaml-services-1.svg"
+    },
     "state.composite@1": {
       "entry": "website/examples/basics/44-hierarchical-state.ddn",
       "view": "lifecycle",
@@ -3369,6 +3376,24 @@
       "profile": "dmn.drd@1",
       "kind": "graph",
       "svg": "corpus/basics-87-dmn-drd.svg"
+    },
+    {
+      "entry": "website/examples/basics/88-soaml.ddn",
+      "view": "arch",
+      "title": "Retail service architecture",
+      "views": [
+        {
+          "id": "arch",
+          "title": "Retail service architecture"
+        },
+        {
+          "id": "choreography",
+          "title": "Billing choreography"
+        }
+      ],
+      "profile": "soaml.services@1",
+      "kind": "graph",
+      "svg": "corpus/basics-88-soaml.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

@@ -154,6 +154,9 @@
     "DDN-PJ192": "x_subdiagram on a DMN node must name an existing decision-projection (decision table) view",
     "DDN-PJ193": "x_boxed is presentation-only text on dmn.decision/dmn.bkm/dmn.decisionservice",
     "DDN-PJ194": "DMN requirement connectors: information from input data/decision, knowledge from a BKM, authority from a knowledge source or decision",
+    "DDN-PJ195": "SoaML: x_service port badges belong to participant/service-interface kinds; x_contract to soaml.servicecontract",
+    "DDN-PJ196": "SoaML: a «Service» port connects to a «Request» port of the same interface type — not service-to-service, request-to-request, or mismatched types",
+    "DDN-PJ197": "SoaML: a service contract's choreography binding must name an existing uml.sequence@2 or uml.statemachine@1 view",
     "DDN-PJW06": "Informational: sysml behavioral profile is a rebadge of the UML machinery",
     "DDN-W953": "Stale render: the source changed after this render was prepared; re-render the current revision"
   }

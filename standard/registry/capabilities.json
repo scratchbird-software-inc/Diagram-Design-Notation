@@ -3411,6 +3411,14 @@
       "scope": "DMN 1.4 DRD notation: decision, business knowledge model (clipped corner), input data (rounded), knowledge source (document), decision service (band form); information/knowledge/authority requirement connectors; decision nodes bind decision-table views via x_subdiagram; boxed-expression presentation via x_boxed. NO expression language: FEEL is a host-application (backend) capability, not notation.",
       "validation": ["x_subdiagram on DMN nodes references a decision view (DDN-PJ192)", "x_boxed contract shape (DDN-PJ193)", "requirement connector endpoints (DDN-PJ194)"],
       "unsupported": ["FEEL and any expression evaluation (backend capability of host applications, e.g. ScratchRobin KEEL)", "DMN XML interchange", "formal OMG certification"]
+    },
+    {
+      "id": "soaml.services@1",
+      "projection": "graph",
+      "diagramFamilies": ["SoaML service architecture / service contract"],
+      "scope": "Full SoaML 1.0.1 notation: participants and agents with \u00abService\u00bb/\u00abRequest\u00bb port decorations (conjugated interfaces), service interfaces and contracts (collaboration glyph with provider/consumer role rows), capabilities, message types, milestones, contract-typed assembly/delegation connectors with service\u2194request conformance, choreography binding to UML sequence or state machine views.",
+      "validation": ["x_service/x_contract owner rules (DDN-PJ195)", "service/request port pairing and interface-type match (DDN-PJ196)", "choreography binding to a sequence/statemachine view (DDN-PJ197)"],
+      "unsupported": ["SoaML XMI interchange", "service execution/runtime semantics", "formal OMG certification"]
     }
   ],
   "projectionProperties": {

@@ -39,7 +39,9 @@ test('gate: RT-101 artifacts + ED-009 occurrences + baseline plan in declaration
   assert.ok(msg, 'GATE: uml.message relationship contract missing — RT-101 not landed');
   assert.strictEqual(msg.allow_self, true, 'GATE: uml.message allow_self is not true');
   assert.strictEqual(msg.member_endpoints, false, 'GATE: uml.message member_endpoints is not false');
-  assert.deepStrictEqual(msg.source, ['*']); assert.deepStrictEqual(msg.target, ['*']);
+  /* B1-072 (RFC-130): uml.message additionally admits the SoaML endpoint kinds. */
+  assert.deepStrictEqual(msg.source, ['*', 'soaml.message', 'soaml.participant', 'soaml.serviceinterface']);
+  assert.deepStrictEqual(msg.target, ['*', 'soaml.message', 'soaml.participant', 'soaml.serviceinterface']);
   const core = fs.readFileSync(path.join(ROOT, 'notation/runtime/ddn-core.js'), 'utf8');
   assert.ok(core.includes("'sequence'"), "GATE: 'sequence' missing from CHOICES.projection.kind");
   const pdata = fs.readFileSync(path.join(ROOT, 'notation/runtime/ddn-projection-data.js'), 'utf8');

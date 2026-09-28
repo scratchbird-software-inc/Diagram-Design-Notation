@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>46. SoaML service architectures (soaml.services@1 on projection graph) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>46. SoaML service architectures (<code>soaml.services@1</code> on projection <code>graph</code>)</h1>
+<p>Status: implemented in runtime 0.7.0, governed by RFC-130 (<code>standard/governance/rfcs/RFC-130-soaml-compliance.md</code>). Source grammar remains DDN 0.5; SoaML kinds and contracts are registry entries over the UML composite-structure machinery — no grammar change.</p>
+<p>SoaML 1.0.1 models service-oriented architectures: participants that offer and consume services through typed ports, service interfaces and contracts, capabilities, and choreography bindings. One profile covers the family (agent's call, recorded in RFC-130): the contract glyph and the architecture wiring share one canvas.</p>
+<h2>Metamodel</h2>
+<ul><li><strong>Participants</strong> — <code>soaml.participant</code> («participant» rect),</li></ul>
+<p>  <code>soaml.agent</code> («agent», actor glyph for organizational participants).</p>
+<ul><li><strong>Service interfaces</strong> — <code>soaml.serviceinterface</code> («ServiceInterface»</li></ul>
+<p>  rect; operation rows are ordinary fields).</p>
+<ul><li><strong>Service contracts</strong> — <code>soaml.servicecontract</code> («ServiceContract», the</li></ul>
+<p>  dashed-ellipse collaboration silhouette reused) with provider/consumer   role rows (<code>x_part</code> fields) and an optional <code>x_contract: { choreography:   @view }</code> binding.</p>
+<ul><li><strong>Capabilities / messages / milestones</strong> — <code>soaml.capability</code> (rounded),</li></ul>
+<p>  <code>soaml.message</code> (document dog-ear), <code>soaml.milestone</code> (rounded).</p>
+<ul><li><strong>Port decorations</strong> — port members carry</li></ul>
+<p>  <code>x_service: { kind: service|request }</code>: the renderer draws a   «Service»/«Request» badge beside the port square (same layer as the SysML   port labels). Conjugated service interfaces reuse <code>x_port.conjugated</code>.   Owner kinds are participants/interfaces/agents (<code>DDN-PJ195</code>).</p>
+<h2>Assembly and conformance</h2>
+<p>Wiring reuses <code>uml.assembly</code>, <code>uml.delegation</code> and <code>uml.connector</code> (their endpoint contracts now admit the SoaML participant/interface kinds, DDN102). Under <code>soaml.services@1</code>, a connector between two <code>x_service</code>-typed ports must pair «Service» with «Request» and both ports must declare the same interface type (<code>datatype</code> text); service-to-service, request-to-request, and mismatched types fail with <code>DDN-PJ196</code>.</p>
+<h2>Choreography binding</h2>
+<p>A service contract binds its choreography with <code>x_contract: { choreography: @view }</code> referencing a sibling <code>uml.sequence@2</code> or <code>uml.statemachine@1</code> view (unknown views, self-binding and other view kinds fail with <code>DDN-PJ197</code>). Recorded decision: protocol state machines ship at zero new machinery — a state-based choreography is a plain <code>uml.statemachine@1</code> view bound the same way; SoaML's transition restrictions are declaration-side guidance, not new validators.</p>
+<h2>Example</h2>
+<p>See <code>website/examples/basics/88-soaml.ddn</code> (architecture view plus the bound sequence choreography). Tests: <code>notation/tests/soaml-compliance.js</code> and the <code>soaml-showcase.js</code> sweep.</p>
+<h2>Out of scope</h2>
+<p>SoaML XMI interchange, service execution/runtime semantics, and formal OMG certification are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

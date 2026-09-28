@@ -834,6 +834,19 @@ import RegistryCatalogue from './assets/catalogue.js';
       }
       if(ir.view.children.length>12)throw new DDNError('DDN-QP003','At most twelve embedded child views are permitted',view.source,view.start);
     }
+    if(p.projection.profile==='soaml.services@1'){
+      /* B1-072 (RFC-130): service-contract choreography binding — the target
+       * view must be a uml.sequence@2 or uml.statemachine@1 choreography. */
+      for(const n of ir.elements){const target=n.properties&&n.properties.x_contract&&n.properties.x_contract.choreography&&n.properties.x_contract.choreography.$ref;
+        if(typeof target!=='string')continue;
+        const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x=>x.type==='view'&&(x.id===target||x.uid===target));
+        if(!tv)throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' references unknown choreography view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        if(tv.uid===view.uid||stack.includes(tv.uid))throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' choreography binding must reference a different view (self-reference is not a choreography)',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+        const cp=child.view.profiles.projection?.profile;
+        if(!['uml.sequence@2','uml.statemachine@1'].includes(cp))throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' binds view '+target+' ('+cp+'); a choreography binds a uml.sequence@2 or uml.statemachine@1 view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+      }
+    }
     if(p.projection.profile==='dmn.drd@1'){
       /* B1-066 (RFC-129): DMN decision nodes bind decision-table views. */
       for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;

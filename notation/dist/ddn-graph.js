@@ -306,6 +306,12 @@
     }
     g.headerH=70*s;
    }
+   /* B1-072 (RFC-130): SoaML kind keywords — header only (no compartments);
+    * servicecontract renders the collaboration glyph (see the collab branch). */
+   const SOAML_KW={'soaml.participant':'participant','soaml.agent':'agent','soaml.serviceinterface':'ServiceInterface','soaml.servicecontract':'ServiceContract','soaml.capability':'capability','soaml.message':'message','soaml.milestone':'milestone'};
+   if(SOAML_KW[n.kind]){
+    g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=70*s;
+   }
    /* B1-066 (RFC-129): DMN boxed-expression presentation — text rows in a
     * bottom compartment. Display only; the text is never parsed or evaluated. */
    if(['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind)&&n.properties.x_boxed){
@@ -512,7 +518,9 @@
    if(shape==='collab'){
     out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
     const hasRows=(g.fieldRows||[]).length>0;
-    out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),'«collaboration»',11,500,'text-anchor="middle"');
+    /* B1-072 (RFC-130): the SoaML service contract reuses the collaboration
+     * glyph with its own keyword. */
+    out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),g.sysmlKeyword?'«'+g.sysmlKeyword+'»':'«collaboration»',11,500,'text-anchor="middle"');
     out+=lines(g.titleLines,x+w/2,y+(hasRows?48*s:h/2+14*s),16,600);
     if(hasRows){out+=line(x+w*.18,y+62*s,x+w*.82,y+62*s,1);
      for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+w/2,y+r.top+18*s,12.5,400)+'</g>';}
@@ -557,6 +565,8 @@
     out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
    }
    if(shape==='actor'){
+    /* B1-072 (RFC-130): SoaML agents are actors with a keyword header. */
+    if(g.sysmlKeyword)out+=text(x+w/2,y+16*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"');
     const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
     for(const a of [[cx,head+14*s,cx,head+65*s],[cx-32*s,head+36*s,cx+32*s,head+36*s],[cx,head+65*s,cx-28*s,head+104*s],[cx,head+65*s,cx+28*s,head+104*s]])out+=line(...a,1.8);
     out+=lines(g.titleLines,cx,y+h-(g.titleLines.length-1)*21*s-8*s);
@@ -1702,11 +1712,13 @@
     const ac=a.r.properties.x_association_class;
     if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
      diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
+    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
      for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
-      const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{};
-      const filled=xp.streaming||xo.type==='full';
-      diagram+=`<rect data-port-square="${esc$1(ep.member)}"${xp.streaming?' data-streaming="true"':''}${xo.type?` data-port-type="${xo.type}"`:''}${xo.conjugated?' data-conjugated="true"':''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${filled?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+      const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{},xs=member?.properties?.x_service||null;
+      const filled=xp.streaming||xo.type==='full'||xs?.kind==='service';
+      diagram+=`<rect data-port-square="${esc$1(ep.member)}"${xp.streaming?' data-streaming="true"':''}${xo.type?` data-port-type="${xo.type}"`:''}${xo.conjugated?' data-conjugated="true"':''}${xs?` data-service="${xs.kind}"`:''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${filled?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+      /* B1-072 (RFC-130): SoaML «Service»/«Request» badge by the port square. */
+      if(xs)diagram+=`<g class="ddn-port-label ddn-service-badge">`+text$1(pt[0]+12*s,pt[1]+16*s,'«'+(xs.kind==='service'?'Service':'Request')+'»',10*s,colour,600)+'</g>';
       /* B1-065 (RFC-128): SysML port typing — «proxy»/«full» label, conjugation
        * tilde, multiplicity, nested port sub-squares. */
       const portNote=[xo.conjugated?'~':'',member?.name||'',xo.multiplicity?' ['+xo.multiplicity+']':''].join('');

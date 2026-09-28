@@ -191,6 +191,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_unit` | field | `{unit, quantity?}` — unit from `standard/registry/units.json`, renders `name: unit` (DDN-PJ188) |
 | `x_flow` | relation | `{rate?, probability?, continuous?}` — SysML activity-edge annotations under sysml.activity@1 (DDN-PJ191) |
 | `x_boxed` | object | `{form: literal|context|invocation|relation, text?, entries?}` — DMN boxed-expression presentation (text only, never evaluated; DDN-PJ193) |
+| `x_service` | port | `{kind: service|request}` — SoaML «Service»/«Request» port badges (DDN-PJ195/PJ196) |
+| `x_contract` | object | `{choreography?: @view}` — SoaML service-contract choreography binding (DDN-PJ197) |
 | `x_pack` | object | `{visibility: public|private}` — packaged element +/− (RFC-125; DDN-PJ171) |
 | `x_use` | object | `{arguments?, gates?}` — interaction-use detail (RFC-125; DDN-PJ174) |
 | `x_timeconstraint` | object | `["{…}", …]` timing constraints (RFC-125; DDN-PJ173) |
@@ -280,6 +282,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | C4 architecture | graph | `c4.context@1` / `c4.container@1` / `c4.component@1` | exactly one boundary frame |
 | system context/free architecture | graph | `ddn@1` | any kinds/verbs; no enforced profile rules |
 | requirements traceability | graph | `requirements.basic@1` | `req.*` kinds/verbs, `x_diagram.code`+`text` |
+| SoaML services | graph | `soaml.services@1` | participant/agent/serviceinterface/servicecontract/capability/message/milestone kinds, x_service port badges, x_contract choreography binding, assembly conformance (DDN-PJ195–PJ197) |
 | DMN DRD | graph | `dmn.drd@1` | decision/BKM/inputdata/knowledgesource/decisionservice kinds, inforeq/knowledgereq/authorityreq connectors, `x_subdiagram` binds decision-table views (DDN-PJ192), boxed expressions via `x_boxed`; FEEL never evaluated |
 | SysML | graph | `sysml.bdd@1/@2` / `sysml.ibd@1/@2` / `sysml.parametric@1/@2` / `sysml.requirements@1` / `sysml.package@1` | @2: block compartments, port typing, relaxed parametric bindings |
 | ArchiMate | graph | `archimate.basic@1` | `archi.*` kinds, same-layer or upward `archi.rel` |
@@ -403,6 +406,7 @@ Per-profile:
 - **uml.communication@2** (RFC-125): fragment refs resolve to visible messages; constraints in {…} (DDN-PJ172).
 - **uml.timing@2** (RFC-125): annotations/constraints in {…}; messages need x_message.at (DDN-PJ173).
 - **uml.structure@2 packages / uml.profile@1** (RFC-125): x_pack.visibility needs a package frame (DDN-PJ171); extension endpoints stereotype → metaclass (DDN102).
+- **soaml.services@1**: x_service owners (DDN-PJ195); assembly pairs «Service»↔«Request» of the same interface type (PJ196); choreography binding to uml.sequence@2/uml.statemachine@1 (PJ197).
 - **dmn.drd@1**: requirement connector endpoints (DDN-PJ194); x_subdiagram must bind a decision-projection view (PJ192); x_boxed owner/form (PJ193). decision.rules@1 also accepts DMN hit-policy labels priority/any/output_order/rule_order/aggregation as annotations (analysis unchanged; ordering/aggregation deferred to host engine); completeness cell C+/C− renders for those labels or `x_completeness: true`.
 - **sysml.***: only block-family kinds declare `ports` (DDN-PJ121; @1: `sysml.block` only); parametric@1: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122), parametric@2: at least one (DDN-PJ189). Requirements: dependency endpoint rules (DDN-PJ185); x_block compartments (PJ186); x_port typing/nesting (PJ187); x_unit resolves in the units registry (PJ188); composition/generalization on block-family kinds (PJ190); ibd@2 item-flow endpoints + x_flow edges (PJ191). Behavioral rebadges sysml.usecase/activity/sequence/statemachine@1 run the uml.* machinery (info DDN-PJW06).
 - **archimate.basic@1**: `archi.rel` endpoints among the nine `archi.*` kinds; links same-layer or upward (DDN-PJ123).
