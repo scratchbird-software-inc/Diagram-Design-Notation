@@ -158,6 +158,7 @@
     "DDN-PJ196": "SoaML: a «Service» port connects to a «Request» port of the same interface type — not service-to-service, request-to-request, or mismatched types",
     "DDN-PJ197": "SoaML: a service contract's choreography binding must name an existing uml.sequence@2 or uml.statemachine@1 view",
     "DDN-PJW06": "Informational: sysml behavioral profile is a rebadge of the UML machinery",
-    "DDN-W953": "Stale render: the source changed after this render was prepared; re-render the current revision"
+    "DDN-W953": "Stale render: the source changed after this render was prepared; re-render the current revision",
+    "DDN-PJ198": "Drill-down: frozen needs display thumbnail plus an SVG snapshot (max 512 KiB); inline/thumbnail children nest one level and cannot self-bind"
   }
 }

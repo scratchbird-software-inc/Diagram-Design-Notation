@@ -1315,7 +1315,10 @@
    out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
    out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
    out.extension_contracts.x_states=def({type:'array'},['object']);
-   out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1}},additionalProperties:false},['object']);
+   /* B1-074 (RFC-132): drill-down display modes + frozen snapshots. display
+    * defaults to badge everywhere (interaction_overview@2 keeps its legacy
+    * inline behavior when display is absent); frozen requires snapshot. */
+   out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1},display:{enum:['badge','inline','thumbnail']},frozen:{type:'boolean'},snapshot:{type:'string',minLength:1},snapshot_at:{type:'string',minLength:1}},additionalProperties:false},['object']);
    out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']},attach:{type:'object'},on_part:{type:'object'},if_part:{type:'string',minLength:1}},additionalProperties:false},['object']);
    /* B1-064: CMMN 1.1 — plan-item decorators and planning tables. */
    out.extension_contracts.x_cmmn=def({type:'object',properties:{discretionary:{type:'boolean'},nonblocking:{type:'boolean'},required:{type:'boolean'},repetition:{type:'boolean'},manual_activation:{type:'boolean'},completion:{type:'boolean'},collapsed:{type:'boolean'}},additionalProperties:false},['object']);
@@ -2643,6 +2646,36 @@
           }}
         if(Object.keys(ioChildren).length)ir.view.ioChildren=ioChildren;
       }
+      /* B1-074 (RFC-132): drill-down display modes on any node with
+       * x_subdiagram.display. interaction_overview@2 keeps its legacy
+       * display-absent inline behavior above; elsewhere display:'inline' builds
+       * a live child, display:'thumbnail' builds a shapes-detail child (rendered
+       * downstream), and frozen nodes embed their stored snapshot and are never
+       * re-rendered by the viewer. One nesting level, like PJ174. */
+      {
+       const drChildren={};
+       for(const n of ir.elements){
+        const x=n.properties&&n.properties.x_subdiagram;if(!x)continue;
+        const display=x.frozen===true?'thumbnail':(x.display||(p.projection.profile==='uml.interaction_overview@2'?'inline':'badge'));
+        if(x.frozen===true){
+         if(display!=='thumbnail')throw new DDNError('DDN-PJ198','frozen snapshots apply to display thumbnail; '+(n.name||n.id)+' declares display '+display,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+         if(typeof x.snapshot!=='string'||!x.snapshot)throw new DDNError('DDN-PJ198','Frozen drill-down '+(n.name||n.id)+' requires a snapshot SVG payload',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+         if(!/<svg[\s>]/.test(x.snapshot)||x.snapshot.length>524288)throw new DDNError('DDN-PJ198','Frozen snapshot on '+(n.name||n.id)+' must be an SVG document (max 512 KiB)',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+         if(x.snapshot_at!==undefined&&typeof x.snapshot_at!=='string')throw new DDNError('DDN-PJ198','snapshot_at must be a string timestamp',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+         continue; // viewer never re-renders frozen children
+        }
+        if(display==='badge')continue;
+        const target=x.view;if(typeof target!=='string')continue;
+        const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x2=>x2.type==='view'&&(x2.id===target||x2.uid===target));
+        if(!tv)throw new DDNError('DDN-PJ119','Drill-down node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        if(tv.uid===view.uid||stack.includes(tv.uid))throw new DDNError('DDN-PJ198','Drill-down node '+(n.name||n.id)+' cannot render its own view as a child',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+        if(child.elements.some(m=>{const mx=m.properties.x_subdiagram;return mx&&(mx.display==='inline'||mx.display==='thumbnail');}))throw new DDNError('DDN-PJ198','Drill-down children support one nesting level; '+(n.name||n.id)+"'s child declares its own inline/thumbnail node",n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+        if(child.view.selected.length>128||child.view.relations.length>384)throw new DDNError('DDN-PJ174','Drill-down child exceeds visible graph limits',view.source,view.start);
+        drChildren[n.id]=child;
+       }
+       if(Object.keys(drChildren).length)ir.view.ioChildren={...(ir.view.ioChildren||{}),...drChildren};
+      }
       if(!api$f)throw new DDNError('DDN099','Load ddn-contracts.js before ddn-core.js');ir.diagnostics.push(...api$f.validate(ir,registry,DDNError));
       ir.diagnostics.push(...api$g.validate(ir,registry,DDNError));
       return {ir,workspace:ws,viewNode:view};
@@ -3405,7 +3438,9 @@
    const {n,k,x,y,w,h}=g,s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral',nc=api$a.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,fg=nc.text;
    const opt={...p.style,id:n.id,stroke:ink,fill,width:1.8};
    const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$8.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f$2(x1)} ${f$2(y1)}L${f$2(x2)} ${f$2(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
-   const text=(xx,yy,txt,size=13,weight=400,extra='')=>{api$9.measure(txt,size*s,p.style.font,weight);return `<text x="${f$2(xx)}" y="${f$2(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc$4(txt)}</text>`;};
+   /* B1-074 (RFC-132): shapes-detail (thumbnails) suppresses every text run. */
+   const shapesOnly=p.detail==='shapes';
+   const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';api$9.measure(txt,size*s,p.style.font,weight);return `<text x="${f$2(xx)}" y="${f$2(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc$4(txt)}</text>`;};
    const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
    let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$4(n.id)}" data-ddn-id="${esc$4(n.id)}" data-shape="${esc$4(shape)}" tabindex="0" role="group" aria-label="${esc$4(n.name)}"><title>${esc$4(n.name+' — '+k.name)}</title>`;
    if(['initial','final'].includes(shape)){
@@ -4476,7 +4511,20 @@
   }
   function renderNode(g,p,theme){
    if(g.k.profileKind){let shaped=api$7.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt$1(g.x+g.w-b.w*g.scale)} ${fmt$1(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
-    if(g.ioChild){const c=g.ioChild,scale2=Math.min((g.w-24*g.scale)/c.scene.width,g.ioH/c.scene.height),cw2=c.scene.width*scale2,ch2=c.scene.height*scale2;
+    /* B1-074 (RFC-132): frozen drill-down — embed the stored snapshot verbatim
+     * through the same namespacing pass; the child is never re-rendered. */
+    const xf=g.n.properties.x_subdiagram?.frozen===true?g.n.properties.x_subdiagram:null;
+    if(xf){
+     const guesstimate=Math.max(40*g.scale,g.w-24*g.scale);
+     const prefix='io-'+hash(g.id)+'-';let inner=xf.snapshot.replace(/<\?xml[^>]*>/,'');
+     inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
+     const wm=inner.match(/<svg[^>]*\bwidth="([^"]+)"/),hm=inner.match(/<svg[^>]*\bheight="([^"]+)"/);
+     const sw=wm?parseFloat(wm[1]):guesstimate,sh=hm?parseFloat(hm[1]):guesstimate;
+     const scale2=Math.min((g.w-24*g.scale)/sw,g.ioH/sh),cw2=sw*scale2,ch2=sh*scale2;
+     inner=inner.replace(/<svg /,`<svg x="${fmt$1(g.x+(g.w-cw2)/2)}" y="${fmt$1(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt$1(cw2)}" height="${fmt$1(ch2)}"`);
+     shaped=shaped.slice(0,-4)+`<g class="ddn-io-inline ddn-frozen" data-view="${esc$3(xf.view)}"${xf.snapshot_at?` data-snapshot-at="${esc$3(xf.snapshot_at)}"`:''}>`+inner+'</g></g>';
+    }
+    else if(g.ioChild){const c=g.ioChild,scale2=Math.min((g.w-24*g.scale)/c.scene.width,g.ioH/c.scene.height),cw2=c.scene.width*scale2,ch2=c.scene.height*scale2;
      const prefix='io-'+hash(g.id)+'-';let inner=c.svg.replace(/<\?xml[^>]*>/,'');
      inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
      inner=inner.replace(/<svg /,`<svg x="${fmt$1(g.x+(g.w-cw2)/2)}" y="${fmt$1(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt$1(cw2)}" height="${fmt$1(ch2)}"`);
@@ -4570,13 +4618,17 @@
    if(!api$6||!api$9||!Export)throw new DDN$1.DDNError('DDN099','Load layout/text/export modules before rendering');
    ir=Export.project(ir);
    const textBefore=api$9.stats();
-   const p=ir.view.profiles,t=themes[p.style.theme],mono=p.style.theme==='neutral';
+   /* B1-074 (RFC-132): options.detail — 'full' (default) renders text as
+    * always; 'shapes' (drill-down thumbnails) suppresses every text run. */
+   const p={...ir.view.profiles,detail:options.detail||'full'},t=themes[p.style.theme],mono=p.style.theme==='neutral';
    /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
     * pre-option emission rules exactly. legend off behaves like placement none
     * for layout and emission; title off drops the header block and its reserved
     * band; footer off drops the footer line. */
-   const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
-   const legendPlacement=chrome.legend==='off'?'none':p.legend.placement;
+   const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},
+    titleOn=chrome.title!=='off'&&p.detail!=='shapes',
+    footerOn=chrome.footer!=='off'&&p.detail!=='shapes';
+   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'?'none':p.legend.placement;
    const headBlock=titleOn?110:20;
    const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
    const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
@@ -4589,9 +4641,20 @@
     * grows to fit. */
    const ioChildren=ir.view.ioChildren||{};
    for(const g of geoms){const child=ioChildren[g.id];if(!child)continue;
-    const c=render$2(child,registry,glyphDefs,options),s=q$2(p.style.font_size,16)/16;
+    /* B1-074 (RFC-132): display:'thumbnail' renders the child in shapes detail
+     * (silhouettes/edges/frames/ports, no text). */
+    const thumb=g.n.properties.x_subdiagram?.display==='thumbnail'||g.n.properties.x_subdiagram?.frozen===true;
+    const c=render$2(child,registry,glyphDefs,thumb?{...options,detail:'shapes'}:options),s=q$2(p.style.font_size,16)/16;
     const cw=Math.min(360*s,c.scene.width),ch=Math.min(200*s,c.scene.height);
     g.ioChild={scene:c,svg:c.svg};g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
+   }
+   /* B1-074 (RFC-132): frozen nodes carry their snapshot instead of a live
+    * child — grow the node around the snapshot's declared size the same way. */
+   for(const g of geoms){const xf=g.n.properties.x_subdiagram;if(xf?.frozen!==true)continue;
+    const s=q$2(p.style.font_size,16)/16;
+    const wm=xf.snapshot.match(/<svg[^>]*\bwidth="([^"]+)"/),hm=xf.snapshot.match(/<svg[^>]*\bheight="([^"]+)"/);
+    const cw=Math.min(360*s,wm?parseFloat(wm[1]):360*s),ch=Math.min(200*s,hm?parseFloat(hm[1]):200*s);
+    g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
    }
    
    if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$2(p.publication.width,1280),reserve=legendPlacement==='right'?q$2(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$2(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$6.round(q$2(p.layout.gap,100)*api$6.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
@@ -4841,7 +4904,7 @@
     if(d.mode==='inline'&&d.child){const child=render$2(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc$3(d.target)}">`+inner+'</g>';}
     else {if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN$1.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc$3(d.target)}"><a href="${esc$3(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text$1(d.x+48,d.y+33,d.name,15,t.ink,600)+text$1(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
    }
-   for(const a of routes){if(a.r._visualLabel===false)continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$2(v)):midpoint(a.points);let mode=p.legend.mode;
+   for(const a of routes){if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$2(v)):midpoint(a.points);let mode=p.legend.mode;
     if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$3(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
     else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$3(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
      /* B1-061: {…} time/duration constraints under the message label. */

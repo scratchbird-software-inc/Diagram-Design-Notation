@@ -58,7 +58,10 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
- out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1}},additionalProperties:false},['object']);
+ /* B1-074 (RFC-132): drill-down display modes + frozen snapshots. display
+  * defaults to badge everywhere (interaction_overview@2 keeps its legacy
+  * inline behavior when display is absent); frozen requires snapshot. */
+ out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1},display:{enum:['badge','inline','thumbnail']},frozen:{type:'boolean'},snapshot:{type:'string',minLength:1},snapshot_at:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']},attach:{type:'object'},on_part:{type:'object'},if_part:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-064: CMMN 1.1 — plan-item decorators and planning tables. */
  out.extension_contracts.x_cmmn=def({type:'object',properties:{discretionary:{type:'boolean'},nonblocking:{type:'boolean'},required:{type:'boolean'},repetition:{type:'boolean'},manual_activation:{type:'boolean'},completion:{type:'boolean'},collapsed:{type:'boolean'}},additionalProperties:false},['object']);

@@ -3538,6 +3538,25 @@
       "svg": "corpus/basics-89-uaf.svg"
     },
     {
+      "entry": "website/examples/basics/90-drilldown.ddn",
+      "view": "overview",
+      "title": "Fulfillment overview",
+      "views": [
+        {
+          "id": "overview",
+          "title": "Fulfillment overview"
+        },
+        {
+          "id": "detail",
+          "title": "Order handling detail"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "svg": "corpus/basics-90-drilldown.svg"
+    },
+    {
       "entry": "website/examples/projections/views.ddn",
       "view": "flowchart",
       "title": "01 / Purchasing control flow",

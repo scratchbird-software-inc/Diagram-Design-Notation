@@ -1304,7 +1304,10 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
- out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1}},additionalProperties:false},['object']);
+ /* B1-074 (RFC-132): drill-down display modes + frozen snapshots. display
+  * defaults to badge everywhere (interaction_overview@2 keeps its legacy
+  * inline behavior when display is absent); frozen requires snapshot. */
+ out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1},display:{enum:['badge','inline','thumbnail']},frozen:{type:'boolean'},snapshot:{type:'string',minLength:1},snapshot_at:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_sentry=def({type:'object',required:['on'],properties:{on:{enum:['entry','exit']},attach:{type:'object'},on_part:{type:'object'},if_part:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-064: CMMN 1.1 — plan-item decorators and planning tables. */
  out.extension_contracts.x_cmmn=def({type:'object',properties:{discretionary:{type:'boolean'},nonblocking:{type:'boolean'},required:{type:'boolean'},repetition:{type:'boolean'},manual_activation:{type:'boolean'},completion:{type:'boolean'},collapsed:{type:'boolean'}},additionalProperties:false},['object']);
@@ -2631,6 +2634,36 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
          ioChildren[n.id]=child;
         }}
       if(Object.keys(ioChildren).length)ir.view.ioChildren=ioChildren;
+    }
+    /* B1-074 (RFC-132): drill-down display modes on any node with
+     * x_subdiagram.display. interaction_overview@2 keeps its legacy
+     * display-absent inline behavior above; elsewhere display:'inline' builds
+     * a live child, display:'thumbnail' builds a shapes-detail child (rendered
+     * downstream), and frozen nodes embed their stored snapshot and are never
+     * re-rendered by the viewer. One nesting level, like PJ174. */
+    {
+     const drChildren={};
+     for(const n of ir.elements){
+      const x=n.properties&&n.properties.x_subdiagram;if(!x)continue;
+      const display=x.frozen===true?'thumbnail':(x.display||(p.projection.profile==='uml.interaction_overview@2'?'inline':'badge'));
+      if(x.frozen===true){
+       if(display!=='thumbnail')throw new DDNError('DDN-PJ198','frozen snapshots apply to display thumbnail; '+(n.name||n.id)+' declares display '+display,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       if(typeof x.snapshot!=='string'||!x.snapshot)throw new DDNError('DDN-PJ198','Frozen drill-down '+(n.name||n.id)+' requires a snapshot SVG payload',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       if(!/<svg[\s>]/.test(x.snapshot)||x.snapshot.length>524288)throw new DDNError('DDN-PJ198','Frozen snapshot on '+(n.name||n.id)+' must be an SVG document (max 512 KiB)',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       if(x.snapshot_at!==undefined&&typeof x.snapshot_at!=='string')throw new DDNError('DDN-PJ198','snapshot_at must be a string timestamp',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+       continue; // viewer never re-renders frozen children
+      }
+      if(display==='badge')continue;
+      const target=x.view;if(typeof target!=='string')continue;
+      const tv=ws.uidMap.get(target)||[...ws.symbols.values()].find(x2=>x2.type==='view'&&(x2.id===target||x2.uid===target));
+      if(!tv)throw new DDNError('DDN-PJ119','Drill-down node '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+      if(tv.uid===view.uid||stack.includes(tv.uid))throw new DDNError('DDN-PJ198','Drill-down node '+(n.name||n.id)+' cannot render its own view as a child',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+      const child=build(files,tv.source,tv.uid,registry,[...stack,view.uid]).ir;
+      if(child.elements.some(m=>{const mx=m.properties.x_subdiagram;return mx&&(mx.display==='inline'||mx.display==='thumbnail');}))throw new DDNError('DDN-PJ198','Drill-down children support one nesting level; '+(n.name||n.id)+"'s child declares its own inline/thumbnail node",n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
+      if(child.view.selected.length>128||child.view.relations.length>384)throw new DDNError('DDN-PJ174','Drill-down child exceeds visible graph limits',view.source,view.start);
+      drChildren[n.id]=child;
+     }
+     if(Object.keys(drChildren).length)ir.view.ioChildren={...(ir.view.ioChildren||{}),...drChildren};
     }
     if(!api$5)throw new DDNError('DDN099','Load ddn-contracts.js before ddn-core.js');ir.diagnostics.push(...api$5.validate(ir,registry,DDNError));
     ir.diagnostics.push(...api$6.validate(ir,registry,DDNError));

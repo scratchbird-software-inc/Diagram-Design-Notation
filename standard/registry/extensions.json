@@ -1212,6 +1212,20 @@
             "view": {
               "type": "string",
               "minLength": 1
+            },
+            "display": {
+              "enum": ["badge", "inline", "thumbnail"]
+            },
+            "frozen": {
+              "type": "boolean"
+            },
+            "snapshot": {
+              "type": "string",
+              "minLength": 1
+            },
+            "snapshot_at": {
+              "type": "string",
+              "minLength": 1
             }
           },
           "additionalProperties": false

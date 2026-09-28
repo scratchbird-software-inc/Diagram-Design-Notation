@@ -95,3 +95,35 @@ detail; @1 stays installed and immutable.
   on its left border; duplicate gate names are `DDN-PJ174`.
 
 Fixture: `website/examples/basics/81-uml-remainder.ddn` (view `overview`).
+
+# 34b. Drill-down display modes and frozen thumbnails (x_subdiagram v2)
+
+Status: implemented in runtime 0.7.0, governed by RFC-132
+(`standard/governance/rfcs/RFC-132-drilldown-thumbnails.md`). Additive
+properties on the `x_subdiagram` contract; the display-absent behavior of
+this chapter (badge here, legacy inline at `uml.interaction_overview@2`) is
+byte-identical.
+
+Any node binding a detail view with `x_subdiagram` may declare
+`display: "badge" | "inline" | "thumbnail"`:
+
+- **badge** — the `↗ ref` badge only (default outside
+  `uml.interaction_overview@2`).
+- **inline** — a live, full-fidelity child render inside the node (the
+  interaction-overview form, available on any node).
+- **thumbnail** — a live child rendered in *shapes detail*: silhouettes,
+  edges, frames and ports with every text run suppressed (child chrome,
+  relation labels and node text are all omitted; node `<title>` accessibility
+  metadata remains). Thumbnails never hit the DDN076 minimum-text failure
+  because no text is emitted.
+
+`frozen: true` (thumbnails only) embeds a stored `snapshot` SVG verbatim
+through the same `io-<hash>-` namespacing pass — the viewer never re-renders
+a frozen child. The host refreshes it by rewriting the `snapshot` property
+through the ordinary source transaction (the replaceData precedent);
+`snapshot_at` carries an optional string timestamp. Shape rules validate as
+`DDN-PJ198` (snapshot required, must parse as SVG, ≤ 512 KiB, one nesting
+level, no self-binding); unknown target views stay `DDN-PJ119`.
+
+See `website/examples/basics/90-drilldown.ddn` and
+`notation/tests/thumbnail-compliance.js`.

@@ -76,7 +76,20 @@ function measureNode(n,registry,profiles,placement={},context={}){
 }
 function renderNode(g,p,theme){
  if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
-  if(g.ioChild){const c=g.ioChild,scale2=Math.min((g.w-24*g.scale)/c.scene.width,g.ioH/c.scene.height),cw2=c.scene.width*scale2,ch2=c.scene.height*scale2;
+  /* B1-074 (RFC-132): frozen drill-down — embed the stored snapshot verbatim
+   * through the same namespacing pass; the child is never re-rendered. */
+  const xf=g.n.properties.x_subdiagram?.frozen===true?g.n.properties.x_subdiagram:null;
+  if(xf){
+   const guesstimate=Math.max(40*g.scale,g.w-24*g.scale);
+   const prefix='io-'+hash(g.id)+'-';let inner=xf.snapshot.replace(/<\?xml[^>]*>/,'');
+   inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
+   const wm=inner.match(/<svg[^>]*\bwidth="([^"]+)"/),hm=inner.match(/<svg[^>]*\bheight="([^"]+)"/);
+   const sw=wm?parseFloat(wm[1]):guesstimate,sh=hm?parseFloat(hm[1]):guesstimate;
+   const scale2=Math.min((g.w-24*g.scale)/sw,g.ioH/sh),cw2=sw*scale2,ch2=sh*scale2;
+   inner=inner.replace(/<svg /,`<svg x="${fmt(g.x+(g.w-cw2)/2)}" y="${fmt(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt(cw2)}" height="${fmt(ch2)}"`);
+   shaped=shaped.slice(0,-4)+`<g class="ddn-io-inline ddn-frozen" data-view="${esc(xf.view)}"${xf.snapshot_at?` data-snapshot-at="${esc(xf.snapshot_at)}"`:''}>`+inner+'</g></g>';
+  }
+  else if(g.ioChild){const c=g.ioChild,scale2=Math.min((g.w-24*g.scale)/c.scene.width,g.ioH/c.scene.height),cw2=c.scene.width*scale2,ch2=c.scene.height*scale2;
    const prefix='io-'+hash(g.id)+'-';let inner=c.svg.replace(/<\?xml[^>]*>/,'');
    inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
    inner=inner.replace(/<svg /,`<svg x="${fmt(g.x+(g.w-cw2)/2)}" y="${fmt(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt(cw2)}" height="${fmt(ch2)}"`);
@@ -192,13 +205,17 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(!Layout||!Text||!Export)throw new DDN.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
  const textBefore=Text.stats();
- const p=ir.view.profiles,t=themes[p.style.theme],mono=p.style.theme==='neutral';
+ /* B1-074 (RFC-132): options.detail — 'full' (default) renders text as
+  * always; 'shapes' (drill-down thumbnails) suppresses every text run. */
+ const p={...ir.view.profiles,detail:options.detail||'full'},t=themes[p.style.theme],mono=p.style.theme==='neutral';
  /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
   * pre-option emission rules exactly. legend off behaves like placement none
   * for layout and emission; title off drops the header block and its reserved
   * band; footer off drops the footer line. */
- const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},titleOn=chrome.title!=='off',footerOn=chrome.footer!=='off';
- const legendPlacement=chrome.legend==='off'?'none':p.legend.placement;
+ const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},
+  titleOn=chrome.title!=='off'&&p.detail!=='shapes',
+  footerOn=chrome.footer!=='off'&&p.detail!=='shapes';
+ const legendPlacement=chrome.legend==='off'||p.detail==='shapes'?'none':p.legend.placement;
  const headBlock=titleOn?110:20;
  const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
  const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
@@ -211,9 +228,20 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   * grows to fit. */
  const ioChildren=ir.view.ioChildren||{};
  for(const g of geoms){const child=ioChildren[g.id];if(!child)continue;
-  const c=render(child,registry,glyphDefs,options),s=q(p.style.font_size,16)/16;
+  /* B1-074 (RFC-132): display:'thumbnail' renders the child in shapes detail
+   * (silhouettes/edges/frames/ports, no text). */
+  const thumb=g.n.properties.x_subdiagram?.display==='thumbnail'||g.n.properties.x_subdiagram?.frozen===true;
+  const c=render(child,registry,glyphDefs,thumb?{...options,detail:'shapes'}:options),s=q(p.style.font_size,16)/16;
   const cw=Math.min(360*s,c.scene.width),ch=Math.min(200*s,c.scene.height);
   g.ioChild={scene:c,svg:c.svg};g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
+ }
+ /* B1-074 (RFC-132): frozen nodes carry their snapshot instead of a live
+  * child — grow the node around the snapshot's declared size the same way. */
+ for(const g of geoms){const xf=g.n.properties.x_subdiagram;if(xf?.frozen!==true)continue;
+  const s=q(p.style.font_size,16)/16;
+  const wm=xf.snapshot.match(/<svg[^>]*\bwidth="([^"]+)"/),hm=xf.snapshot.match(/<svg[^>]*\bheight="([^"]+)"/);
+  const cw=Math.min(360*s,wm?parseFloat(wm[1]):360*s),ch=Math.min(200*s,hm?parseFloat(hm[1]):200*s);
+  g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
  }
  
  if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=legendPlacement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
@@ -463,7 +491,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(d.mode==='inline'&&d.child){const child=render(d.child,registry,glyphDefs),childScale=Math.min(d.w/child.scene.width,d.h/child.scene.height)*scale*embeddingScale;const childMin=child.scene.smallestText*childScale;if(childMin<minFont){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN076','Inline child text is below final minimum; enlarge the child or link a detail view');diags.push({code:'DDN076',severity:'warning',message:'Inline child rendered below configured minimum'});}let inner=child.svg.replace(/<\?xml[^>]*>/,'');const prefix='sub-'+hash(d.id)+'-';inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a,id)=>`${a}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'').replace(/<svg /,`<svg x="${d.x}" y="${d.y}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${d.w}" height="${d.h}"`);diagram+=`<g class="ddn-inline" data-view="${esc(d.target)}">`+inner+'</g>';}
   else{if(!/^[A-Za-z0-9_.\/-]+$/.test(d.targetLocal)||d.targetLocal.startsWith('/')||d.targetLocal.includes('..'))throw new DDN.DDNError('DDN078','Subdiagram reference target must be a safe relative identifier: '+d.targetLocal);diagram+=`<g class="ddn-subdiagram" data-view="${esc(d.target)}"><a href="${esc(d.targetLocal)}.svg">`+rect(d.x,d.y,d.w,d.h,t.accent,t.surface,p.style.look,d.id,0,p.style)+glyph('frame',d.x+14,d.y+18,25,t.accent)+text(d.x+48,d.y+33,d.name,15,t.ink,600)+text(d.x+14,d.y+64,'↗ '+d.targetLocal+' · diagram reference',11,t.muted)+'</a></g>';}
  }
- for(const a of routes){if(a.r._visualLabel===false)continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
+ for(const a of routes){if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q(v)):midpoint(a.points);let mode=p.legend.mode;
   if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
   else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
    /* B1-061: {…} time/duration constraints under the message label. */

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RFC 0132 — Drill-down display modes and frozen thumbnails (x_subdiagram extension v2) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../../index.html"><img class="logo" src="../../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../features/index.html">Features</a>
+      <a href="../../../gallery/index.html">Gallery</a>
+      <a href="../../../docs/index.html">Docs</a>
+      <a href="../../../standard/index.html" class="active">Standard</a>
+      <a href="../../../tools/index.html">Tools</a>
+      <a href="../../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>RFC 0132 — Drill-down display modes and frozen thumbnails (<code>x_subdiagram</code> extension v2)</h1>
+<p>Status: implemented   Authors/reviewers: B1-074 work item   Language/registry impact: additive properties on the existing <code>x_subdiagram</code> extension contract; no grammar change; runtime/specification 0.7 line.</p>
+<h2>Problem and motivating example</h2>
+<p><code>x_subdiagram</code> binds a node to a detail view, but only two presentations exist: the <code>↗ ref</code> badge and the interaction-overview inline expansion (full fidelity, and actively rejected by the DDN076 minimum-text rule when the child shrinks too far). Hosts asked for drill-down nodes that show a <em>simplified</em> picture — silhouettes without text — and for <em>frozen</em> pictures that must not change until the host deliberately refreshes them (the replaceData precedent: refresh is a host transaction, never implicit).</p>
+<h2>Proposed syntax</h2>
+<p>Additive properties on <code>x_subdiagram</code> (still closed, still <code>object</code> target):</p>
+<ul><li><code>display</code>: <code>badge</code> (default everywhere except <code>uml.interaction_overview@2</code>, whose display-absent behavior stays legacy inline — byte-identical), <code>inline</code> (live full-fidelity child), <code>thumbnail</code> (live child rendered in <em>shapes detail</em>: silhouettes, edges, frames and ports; every text run suppressed).</li><li><code>frozen: true</code> with <code>snapshot</code> (the stored SVG document, max 512 KiB, must parse as <code>&lt;svg…</code>) and optional <code>snapshot_at</code> (string timestamp). A frozen node embeds the snapshot verbatim through the same <code>io-&lt;hash&gt;-</code> namespacing pass as inline children; the viewer never re-renders it. The host refreshes by rewriting the <code>snapshot</code> property through the ordinary source transaction (applyEdits/authoring), exactly like replaceData rewrites records.</li></ul>
+<p>Versioning note: this is an additive property extension on a closed contract — the previous shape (<code>{view}</code> only) remains valid and behaves byte-identically for existing uses (interaction overview @2, DMN bindings), satisfying the registry versioning rules for minor contract versions.</p>
+<h2>Semantics</h2>
+<ul><li><strong>Shapes detail</strong> threads a <code>detail: 'shapes'</code> flag through <code>render()</code>: the shared text helper in <code>ddn-shapes.js</code> returns empty for every run, relation labels are skipped, and child chrome (title/legend/footer) is suppressed. Silhouettes, edges, frames and ports draw as usual. Node <code>&lt;title&gt;</code> accessibility elements remain (metadata, not drawn text).</li><li><strong>One nesting level</strong> for inline/thumbnail children, matching the interaction-overview rule (DDN-PJ174/PJ198).</li><li>Validation: target view existence (DDN-PJ119), frozen shape rules (DDN-PJ198: frozen requires <code>display: thumbnail</code>, a snapshot that parses as SVG, snapshot_at string).</li></ul>
+<h2>Error codes (ceilings re-grepped: PJ197, PJW06)</h2>
+<ul><li><code>DDN-PJ198</code> — drill-down shape rules (frozen payload, nesting level, self-binding).</li></ul>
+<h2>Alternatives considered</h2>
+<ol><li><strong>A new <code>x_thumbnail</code> contract</strong>: rejected — one contract with display modes keeps all drill-down data in one place (x_sentry precedent).</li><li><strong>Renderer-level text-size threshold instead of a detail mode</strong>: rejected — implicit simplification would change pictures silently; the display mode is an explicit author choice.</li><li><strong>Server-side snapshot generation</strong>: rejected — the viewer stays zero-dependency; the host produces snapshots with the same public render API the viewer uses.</li></ol>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../../docs/index.html">Docs</a>
+  <a href="../../../standard/index.html">Standard</a>
+  <a href="../../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../../assets/site.js"></script>
+</body>
+</html>

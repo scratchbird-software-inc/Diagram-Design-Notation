@@ -185,6 +185,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
 | `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
 | `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
+| `x_subdiagram` | object | `{view, display?: badge|inline|thumbnail, frozen?, snapshot?, snapshot_at?}` — drill-down: badge (default), live inline, shapes-detail thumbnail (text suppressed), or frozen stored snapshot refreshed only by host rewrite (DDN-PJ119/PJ174/PJ198) |
 | `x_sentry` | object | `{on: entry|exit, attach?, on_part?, if_part?}` (B1-064: criterion attachment, on/if-parts; DDN-PJ182) |
 | `x_block` | field | `{compartment: values|parts|references|operations|constraints}` — SysML block compartment row (DDN-PJ186) |
 | `x_port` | port | `{type: proxy|full, conjugated?, multiplicity?, nested?}` — SysML port typing (DDN-PJ187) |

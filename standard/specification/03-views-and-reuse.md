@@ -36,6 +36,13 @@ Automatic layout is the normal path. `place` and `route` are optional view-speci
 
 `subdiagram {view:@detail;mode:reference;}` links a view. `mode:inline` embeds its own selected model and presentation. The child controls internal content; the parent controls its allotted space. Inline rendering namespaces SVG IDs and checks final text size. A link may return to an overview; inline cycles fail.
 
+For node-level drill-down, any element may bind a detail view with
+`x_subdiagram` and choose a presentation: `display: "badge"` (reference
+badge), `"inline"` (live full-fidelity child), or `"thumbnail"` (live child
+in shapes detail — silhouettes and edges only, all text suppressed).
+`frozen: true` with a stored `snapshot` SVG embeds a frozen thumbnail that
+only changes when the host rewrites the snapshot property. See chapter 34 §34b.
+
 Balanced process ports are separately represented by `x_boundary`. The native collapsed-process drawing mode remains unsupported; do not confuse the new contract validator with a fully implemented collapsed visual editor.
 
 Number assignments belong to the view or a shared keyset. They identify relationships, not time order. Protocol chronology uses explicit predecessor/reply metadata; workflow progression uses explicit transitions and guards.
