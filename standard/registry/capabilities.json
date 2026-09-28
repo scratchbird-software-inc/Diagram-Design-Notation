@@ -3547,6 +3547,14 @@
       "scope": "Full EPC notation: epc.basic@1 alternation/connectors plus organizational units and roles (lanes via frames), information objects/documents, process-link symbols, and split/join fan-balancing validation.",
       "validation": ["participants limited to the epk.* vocabulary (DDN-PF007)", "alternation (DDN-PJ105) and connector operator (DDN-PJ106) as epc.basic@1", "split/join fan-balancing per operator (DDN-PJ199)", "registry endpoint contracts (DDN102)"],
       "unsupported": ["process simulation", "BPMN interchange", "formal conformance"]
+    },
+    {
+      "id": "msc.basic@1",
+      "projection": "sequence",
+      "diagramFamilies": ["MSC (ITU-T Z.120) message sequence chart"],
+      "scope": "Full Z.120 MSC notation via the uml.sequence@2 machinery: lifelines, message sorts (incl. lost/found = message loss), create/stop (instance creation/destruction), combined fragments and coregions, gates, time/duration constraints, state invariants as inline expressions, and HMSC references (msc.hmscref with x_subdiagram binding).",
+      "validation": ["uml.sequence@2 rules apply (message sorts PJ156, invariants PJ157, fragments PJ155, constraints PJ159)", "HMSC reference must bind an existing view (DDN-PJ119)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["MSC document interchange", "formal ITU conformance"]
     }
   ],
   "projectionProperties": {

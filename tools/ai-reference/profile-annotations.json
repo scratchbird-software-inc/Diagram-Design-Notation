@@ -138,6 +138,7 @@
     "c4.component@1": "C4 component diagram: one container boundary with components",
     "c4.deployment@1": "C4 deployment view: rebadge of uml.deployment@1 (3D nodes, artifacts, deploy paths)",
     "c4.dynamic@1": "C4 dynamic view: rebadge of uml.communication@2 (numbered messages)",
+    "msc.basic@1": "MSC (Z.120) message sequence charts: uml.sequence@2 machinery + HMSC refs, coregions, create/stop, message loss, inline expressions",
     "epc.complete@1": "Full EPC: alternation/connectors plus org units, roles, info objects, process links, fan-balancing",
     "geo.choropleth@1": "Choropleth map: regions coloured by a joined numeric value",
     "geo.symbols@1": "Symbol map: sized markers at lon/lat points",

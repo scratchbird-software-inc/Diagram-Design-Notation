@@ -48,7 +48,7 @@ function registry(base){
   * guards and message refs and nest recursively. */
  out.extension_contracts.x_message=def({type:'object',properties:{seq:{type:'string',minLength:1},sort:{enum:['synch','asynch','create','delete','reply','lost','found']},gate:{enum:['source','target']},time:{type:'string',minLength:1},duration:{type:'string',minLength:1},at:{type:'number'}},additionalProperties:false},['relation']);
  const ref={type:'object'},msgList={type:'array',minItems:1,items:ref};
- const fragment={type:'object',required:['operator','operands'],properties:{operator:{enum:['alt','opt','loop','break','par','neg','critical','seq','strict','ignore','consider','assert']},operands:{type:'array',minItems:1,maxItems:12}},additionalProperties:false};
+ const fragment={type:'object',required:['operator','operands'],properties:{operator:{enum:['alt','opt','loop','break','par','neg','critical','seq','strict','ignore','consider','assert','coreg']},operands:{type:'array',minItems:1,maxItems:12}},additionalProperties:false};
  fragment.properties.operands.items={type:'object',required:['messages'],properties:{guard:{type:'string',minLength:1},messages:msgList,fragments:{type:'array',minItems:1,items:fragment}},additionalProperties:false};
  out.extension_contracts.x_fragment=def(fragment,['relation']);
  out.extension_contracts.x_invariant=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['after','label'],properties:{after:ref,label:{type:'string',minLength:1}},additionalProperties:false}},['object']);

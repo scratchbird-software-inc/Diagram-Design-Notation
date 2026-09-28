@@ -176,3 +176,20 @@ incoming) of that operator. `epc.basic@1` stays installed and immutable.
 Example: `website/examples/basics/92-c4-epc.ddn`; tests
 `c4epc-compliance.js` + `c4epc-showcase.js`. Process simulation, BPMN
 interchange, and formal conformance remain out of scope.
+
+## 17.16 MSC — message sequence charts (msc.basic@1)
+
+`msc.basic@1` covers ITU-T Z.120 message sequence charts as a rebadge of the
+`uml.sequence@2` machinery (recorded at render time as `DDN-PJW06`):
+lifelines, message sorts, combined fragments, gates and time/duration
+constraints. Where Z.120 differs, the mappings are: **HMSC references** —
+the `msc.hmscref` participant kind draws a `«ref»` box and binds a detail
+view with `x_subdiagram` (unknown views fail `DDN-PJ119`); **inline
+expressions** — state invariants (`x_invariant` stadium boxes on a lifeline);
+**instance creation / stop** — the `create` and `delete` message sorts;
+**coregions** — the `coreg` combined-fragment operator (added additively to
+the fragment operator enum); **message loss** — the `lost`/`found` sorts
+(self-anchored with a free end, `DDN-PJ156`). MSC document interchange and
+formal ITU conformance are out of scope. Example:
+`website/examples/basics/93-msc.ddn`; tests `msc-compliance.js` +
+`msc-showcase.js`.

@@ -6,7 +6,7 @@ function validate(ir,E){
  const ns=new Map(ir.elements.map(n=>[n.id,n])),shown=new Set(ir.view.selected),profile=ir.view.profiles.projection.profile;
  /* B1-065 (RFC-128): SysML behavioral rebadges alias the completed UML
   * machinery — the gates below fire for the SysML profile ids too. */
- const REBADGE={'sysml.usecase@1':['uml.usecase@2','uml.usecase@3'],'sysml.activity@1':['uml.activity@1','uml.activity@2'],'sysml.statemachine@1':['uml.statemachine@1'],'sysml.sequence@1':['uml.sequence@2'],'c4.deployment@1':['uml.deployment@1'],'c4.dynamic@1':['uml.communication@1','uml.communication@2']};
+ const REBADGE={'sysml.usecase@1':['uml.usecase@2','uml.usecase@3'],'sysml.activity@1':['uml.activity@1','uml.activity@2'],'sysml.statemachine@1':['uml.statemachine@1'],'sysml.sequence@1':['uml.sequence@2'],'c4.deployment@1':['uml.deployment@1'],'c4.dynamic@1':['uml.communication@1','uml.communication@2'],'msc.basic@1':['uml.sequence@2']};
  const eff=new Set([profile,...(REBADGE[profile]||[])]);
  const fail=(c,m,n)=>{const e=new E(c,m,n?.source?.file||ir.view.source.file,n?.source?.start||ir.view.source.start);if(E===Error){e.code=c;e.message=m;}throw e;};
  const keys=(o,a,label,n)=>{if(!o||typeof o!=='object'||Array.isArray(o)||Object.keys(o).some(k=>!a.includes(k)))fail('DDN-PX001','Unknown or malformed '+label,n);};

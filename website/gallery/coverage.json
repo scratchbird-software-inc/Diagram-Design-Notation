@@ -682,6 +682,13 @@
       "wiki": "Diagrams-Trees",
       "svg": "profiles/mindmap-basic-1.svg"
     },
+    "msc.basic@1": {
+      "entry": "website/examples/basics/93-msc.ddn",
+      "view": "chart",
+      "title": "Order MSC",
+      "kind": "sequence",
+      "svg": "profiles/msc-basic-1.svg"
+    },
     "network.basic@1": {
       "entry": "website/examples/basics/54-network-diagram.ddn",
       "view": "lan",
@@ -3625,6 +3632,24 @@
       "kind": "graph",
       "wiki": "Diagrams-Architecture",
       "svg": "corpus/basics-92-c4-epc.svg"
+    },
+    {
+      "entry": "website/examples/basics/93-msc.ddn",
+      "view": "chart",
+      "title": "Order MSC",
+      "views": [
+        {
+          "id": "chart",
+          "title": "Order MSC"
+        },
+        {
+          "id": "billing",
+          "title": "Billing HMSC detail"
+        }
+      ],
+      "profile": "msc.basic@1",
+      "kind": "sequence",
+      "svg": "corpus/basics-93-msc.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

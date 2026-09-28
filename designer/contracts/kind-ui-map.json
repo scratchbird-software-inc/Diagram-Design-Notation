@@ -1,7 +1,7 @@
 {
   "version": "designer-ui@0.1",
   "baseline": "0.7.0 + field-guide.1",
-  "kindCount": 299,
+  "kindCount": 300,
   "kinds": [
     {
       "kind": "object",
@@ -9921,6 +9921,39 @@
       "creation_action": "create-semantic-element",
       "profiles_hint": [
         "epc.complete@1"
+      ],
+      "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
+      "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",
+      "recipe_switch": "Only approved profile variants; kind changes require ConversionPlan",
+      "default_expanded_control_count": 4
+    },
+    {
+      "kind": "msc.hmscref",
+      "name": "HMSC reference",
+      "source": "profile",
+      "palette_group": "Process",
+      "inspector_template": "activity",
+      "basic_controls": [
+        "name",
+        "kind",
+        "inputs_outputs",
+        "rules"
+      ],
+      "advanced_groups": [
+        "meaning",
+        "implementation",
+        "ownership",
+        "evidence"
+      ],
+      "rendering_recipe": {
+        "base": "profile",
+        "silhouette": "rect",
+        "glyph": "object",
+        "family": "concept"
+      },
+      "creation_action": "create-semantic-element",
+      "profiles_hint": [
+        "msc.basic@1"
       ],
       "mapping_status": "proposed UI mapping; exact semantic kinds unchanged",
       "properties_editing": "Commands and registry contracts; no free-form style text or arbitrary semantic aliases",

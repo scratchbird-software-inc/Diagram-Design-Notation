@@ -1,0 +1,33 @@
+ddn "0.5";
+module "ddn.examples.msc";
+
+// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference, a
+// coregion, a lost message, instance creation (start) and stop (delete), and
+// reply messages. All data is synthetic.
+data m {
+    object cli "Client" { kind: "uml.class"; }
+    object srv "Server" { kind: "uml.class"; }
+    object worker "Worker" { kind: "uml.class"; }
+    object billing "Billing HMSC" { kind: "msc.hmscref"; x_subdiagram: { view: "billing" }; }
+    relation c1 "start" @cli -> @worker { kind: "uml.message"; x_message: { sort: "create" }; }
+    relation m1 "request" @cli -> @srv { kind: "uml.message"; x_fragment: { operator: "coreg"; operands: [ { messages: [ @m.m1, @m.m2 ] } ] }; }
+    relation m2 "query" @worker -> @srv { kind: "uml.message"; }
+    relation m3 "lost packet" @srv -> @srv { kind: "uml.message"; x_message: { sort: "lost" }; }
+    relation m4 "reply" @srv -> @cli { kind: "uml.message"; x_message: { sort: "reply" }; }
+    relation m5 "stop" @worker -> @worker { kind: "uml.message"; x_message: { sort: "delete" }; }
+}
+data b {
+    object a "A" { kind: "uml.class"; }
+    object bb "B" { kind: "uml.class"; }
+    relation q1 "charge" @a -> @bb { kind: "uml.message"; }
+}
+view chart "Order MSC" {
+    data: [@m];
+    projection { kind: sequence; profile: "msc.basic@1"; }
+    publication { size: content; fit: none; }
+}
+view billing "Billing HMSC detail" {
+    data: [@b];
+    projection { kind: sequence; profile: "msc.basic@1"; }
+    publication { size: content; fit: none; }
+}

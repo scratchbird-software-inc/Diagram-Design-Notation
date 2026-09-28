@@ -582,7 +582,9 @@
      if(!used)diagnostics.push({code:'DDN-PJW03',severity:'warning',message:'Sequence participant '+n.name+' has no incident messages; it is drawn with an empty lifeline.'});
      const cr=createdRow.get(n.id),dr=destroyedRow.get(n.id);
      const headY=cr!==undefined?firstRow+cr*pitch-headH/2:0,lifeEnd=dr!==undefined?firstRow+dr*pitch:bottom;
-     body+=group(n.id,[n.id],rect(x-hw/2,headY,hw,headH,t.surface,t.ink)+lines(wrap(n.name,hw-20*s,13,600),x,headY+headH/2+5*s,13,600,'middle')+line(x,headY+headH,x,lifeEnd,t.rule,1.2,'5 5'),{x:x-hw/2,y:headY,w:hw,h:lifeEnd-headY});
+     /* B1-077: HMSC references render the «ref» keyword in the participant box. */
+    const refKw=n.kind==='msc.hmscref'?text(x,headY+16*s,'«ref»',11,500,'middle'):'';
+    body+=group(n.id,[n.id],rect(x-hw/2,headY,hw,headH,t.surface,t.ink)+refKw+lines(wrap(n.name,hw-20*s,13,600),x,headY+headH/2+5*s,13,600,'middle')+line(x,headY+headH,x,lifeEnd,t.rule,1.2,'5 5'),{x:x-hw/2,y:headY,w:hw,h:lifeEnd-headY});
      if(dr!==undefined){const dy=firstRow+dr*pitch;body+=group(n.id,[n.id],`<g class="ddn-destruction" data-participant="${esc(n.id)}"><path d="M${f(x-7*s)} ${f(dy-7*s)}L${f(x+7*s)} ${f(dy+7*s)}M${f(x+7*s)} ${f(dy-7*s)}L${f(x-7*s)} ${f(dy+7*s)}" stroke="${t.ink}" stroke-width="2.2"/></g>`,{x:x-7*s,y:dy-7*s,w:14*s,h:14*s});}
     }
     const bars=new Map();

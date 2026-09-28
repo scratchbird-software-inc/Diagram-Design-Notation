@@ -6,13 +6,13 @@ terser) is a pinned devDependency and never ships inside these bundles.
 
 | Bundle | Contains | Requires loaded first | .js bytes | .mjs bytes | .min.js bytes | .min.js gzip |
 |---|---|---|---|---|---|
-| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 852099 | 844658 | 715796 | 159349 |
+| `ddn-core.js` / `.mjs` / `.min.js` | Parse/build/validate/export plus the workspace API (no rendering). | — | 853751 | 846296 | 717218 | 159760 |
 | `ddn-graph.js` / `.mjs` / `.min.js` | Graph renderer (ERD/flow/native layout, routing, interaction). Registers the "graph" projection kind. | ddn-core.js | 208827 | 204827 | 149166 | 50451 |
 | `ddn-quality.js` / `.mjs` / `.min.js` | Quality renderers (quality charts, decision tables, fishbone). Registers the "fishbone" and "decision" kinds; they compose through ddn-projections.js. | ddn-core.js + ddn-graph.js | 25039 | 24488 | 18413 | 7987 |
-| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 98960 | 97363 | 80613 | 29524 |
+| `ddn-projections.js` / `.mjs` / `.min.js` | Data-bound projections: chart/matrix/panels/timeline/table/sequence/timing/chen. | ddn-core.js + ddn-graph.js | 99139 | 97538 | 80686 | 29553 |
 | `ddn-geo.js` / `.mjs` / `.min.js` | Optional geographic module: map projections, GeoJSON ingestion, choropleth/symbol/outline rendering. Registers the "geo" kind (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 24217 | 23580 | 16355 | 6925 |
 | `ddn-iso.js` / `.mjs` / `.min.js` | Optional isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap) and iso graph prisms (optional: visible placeholder when absent). | ddn-core.js + ddn-graph.js | 23644 | 23025 | 14483 | 6055 |
-| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo and ddn-iso, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 1207657 | 1194460 | 988486 | 251507 |
+| `ddn.global.js` / `.mjs` / `.min.js` | All-in-one: every bundle above except the optional ddn-geo and ddn-iso, plus the Studio web component. Unchanged name and behavior; this is what the test suites and standalone pages embed. | — | 1209488 | 1196273 | 989981 | 251923 |
 
 Every bundle ships three formats: a readable browser IIFE (`.js`, publishes
 the documented globals `DDNLive`, `DDNRender`, `DDNProjections`,

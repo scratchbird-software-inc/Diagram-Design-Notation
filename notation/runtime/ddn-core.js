@@ -847,6 +847,13 @@ import RegistryCatalogue from './assets/catalogue.js';
         if(!['uml.sequence@2','uml.statemachine@1'].includes(cp))throw new DDNError('DDN-PJ197','Service contract '+(n.name||n.id)+' binds view '+target+' ('+cp+'); a choreography binds a uml.sequence@2 or uml.statemachine@1 view',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
       }
     }
+    if(p.projection.profile==='msc.basic@1'){
+      /* B1-077: HMSC references must bind an existing view (PJ119). */
+      const viewIds2=new Set();for(const x of ws.symbols.values())if(x.type==='view'){viewIds2.add(x.id);viewIds2.add(x.uid);}
+      for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;
+        if(n.kind==='msc.hmscref'&&typeof target==='string'&&!viewIds2.has(target))
+         throw new DDNError('DDN-PJ119','HMSC reference '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);}
+    }
     if(p.projection.profile==='dmn.drd@1'){
       /* B1-066 (RFC-129): DMN decision nodes bind decision-table views. */
       for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;
