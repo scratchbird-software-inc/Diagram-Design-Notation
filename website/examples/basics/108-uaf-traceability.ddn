@@ -1,0 +1,26 @@
+ddn "0.5";
+module "retail.strat";
+
+// B1-090: cross-file addressing — an architecture container groups this
+// file and 108-uaf-operations.ddn into one described architecture (ISO
+// 42010: the container is the description, each view is governed by its
+// profile). UAF cross-domain traceability relations then address elements
+// in the base file by module-qualified identity; an endpoint outside the
+// view renders as an off-page badge. All data is synthetic.
+architecture retail "Retail architecture" {
+    files: ["108-uaf-operations.ddn", "108-uaf-governance.ddn"];
+    description: "One described architecture: strategic capabilities here, operational activities and services in the base file.";
+}
+data strat {
+    object fulfill "Order fulfillment" { kind: "uaf.capability"; }
+    object brand "Trusted retailer" { kind: "uaf.enterprisevision"; }
+    relation t1 "" @fulfill -> @retail.ops.ops.deliver { kind: "uaf.mapsto"; }
+    relation t2 "" @fulfill -> @retail.ops.ops.ship { kind: "uaf.mapsto"; }
+    relation t3 "" @brand -> @fulfill { kind: "uaf.mapsto"; }
+    relation x1 "" @fulfill -> @brand { kind: "uaf.mapsto"; x_link: { file: "108-uaf-governance.ddn", target: "retail.gov.gov.policy1" }; }
+}
+view sv "Strategic capabilities" {
+    data: [@strat];
+    projection { profile: "uaf.strategic@1"; }
+    publication { size: content; fit: none; }
+}

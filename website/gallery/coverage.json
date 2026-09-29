@@ -967,9 +967,9 @@
       "svg": "profiles/uaf-dictionary-1.svg"
     },
     "uaf.operational@1": {
-      "entry": "website/examples/basics/89-uaf.ddn",
-      "view": "operational",
-      "title": "Op — Operational",
+      "entry": "website/examples/basics/108-uaf-operations.ddn",
+      "view": "ov",
+      "title": "Operational activities",
       "kind": "graph",
       "svg": "profiles/uaf-operational-1.svg"
     },
@@ -1009,16 +1009,16 @@
       "svg": "profiles/uaf-services-1.svg"
     },
     "uaf.standards@1": {
-      "entry": "website/examples/basics/89-uaf.ddn",
-      "view": "standards",
-      "title": "Std — Standards",
+      "entry": "website/examples/basics/108-uaf-governance.ddn",
+      "view": "gv",
+      "title": "Governance",
       "kind": "graph",
       "svg": "profiles/uaf-standards-1.svg"
     },
     "uaf.strategic@1": {
-      "entry": "website/examples/basics/89-uaf.ddn",
-      "view": "strategic",
-      "title": "St — Strategic",
+      "entry": "website/examples/basics/108-uaf-traceability.ddn",
+      "view": "sv",
+      "title": "Strategic capabilities",
       "kind": "graph",
       "svg": "profiles/uaf-strategic-1.svg"
     },
@@ -2096,6 +2096,48 @@
       "kind": "graph",
       "wiki": "Diagrams-Networks",
       "svg": "corpus/basics-107-iconoir-icons.svg"
+    },
+    {
+      "entry": "website/examples/basics/108-uaf-governance.ddn",
+      "view": "gv",
+      "title": "Governance",
+      "views": [
+        {
+          "id": "gv",
+          "title": "Governance"
+        }
+      ],
+      "profile": "uaf.standards@1",
+      "kind": "graph",
+      "svg": "corpus/basics-108-uaf-governance.svg"
+    },
+    {
+      "entry": "website/examples/basics/108-uaf-operations.ddn",
+      "view": "ov",
+      "title": "Operational activities",
+      "views": [
+        {
+          "id": "ov",
+          "title": "Operational activities"
+        }
+      ],
+      "profile": "uaf.operational@1",
+      "kind": "graph",
+      "svg": "corpus/basics-108-uaf-operations.svg"
+    },
+    {
+      "entry": "website/examples/basics/108-uaf-traceability.ddn",
+      "view": "sv",
+      "title": "Strategic capabilities",
+      "views": [
+        {
+          "id": "sv",
+          "title": "Strategic capabilities"
+        }
+      ],
+      "profile": "uaf.strategic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-108-uaf-traceability.svg"
     },
     {
       "entry": "website/examples/basics/11-native-layouts.ddn",

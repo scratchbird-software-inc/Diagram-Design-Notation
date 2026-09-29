@@ -1,0 +1,15 @@
+ddn "0.5";
+module "retail.gov";
+
+// B1-090: governance base of the cross-file UAF traceability example —
+// joined to the described architecture through the x_link reference from
+// 108-uaf-traceability.ddn (x_link files load as bases too). All data is
+// synthetic.
+data gov {
+    object policy1 "Data protection policy" { kind: "uaf.standard"; }
+}
+view gv "Governance" {
+    data: [@gov];
+    projection { profile: "uaf.standards@1"; }
+    publication { size: content; fit: none; }
+}

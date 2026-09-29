@@ -71,6 +71,9 @@ function registry(base){
  out.extension_contracts.x_sdl=def({type:'object',properties:{signals:{type:'array',minItems:1,maxItems:24,items:ref},nodelay:{type:'boolean'},priority:{type:'string',minLength:1},spontaneous:{type:'boolean'},continuous:{type:'string',minLength:1},active:ref,timer:ref,duration:{type:'string',minLength:1}},additionalProperties:false},['object','relation']);
  /* B1-089: MSC HMSC reference semantics — actual parameter lists (Z.120 §7.3). */
  out.extension_contracts.x_hmscref=def({type:'object',properties:{params:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
+ /* B1-090: cross-file association metadata (ignorable to DDN-only tools;
+  * resolution through architecture bases — DDN-PJ216/PJW07). */
+ out.extension_contracts.x_link=def({type:'object',required:['file','target'],properties:{file:{type:'string',minLength:1},target:{type:'string',minLength:1}},additionalProperties:false},['relation']);
  /* B1-089: SoaML ServiceChannel compatibility mode (SoaML §6.4.15); absent = same-type rule. */
  out.extension_contracts.x_compatibility=def({type:'object',required:['mode'],properties:{mode:{enum:['same','specialization','realization','operation-coverage']}},additionalProperties:false},['relation']);
  /* B1-085: ladder contacts, coils and jump targets. */

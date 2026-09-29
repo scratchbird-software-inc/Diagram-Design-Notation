@@ -25,7 +25,11 @@ function main(){
  const root=path.resolve(get('--workspace')||'.'),absolute=path.resolve(file),entry=path.relative(root,absolute).split(path.sep).join('/');
  if(entry.startsWith('../'))throw new Error('Entry is outside workspace');
  const files={},visited=new Set();
- function load(name){if(visited.has(name))return;visited.add(name);const full=path.resolve(root,name),real=fs.realpathSync(full);if(real!==root&&!real.startsWith(root+path.sep))throw new Error('Import or symlink escapes workspace');const bytes=fs.readFileSync(real);const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);files[name]=text;const ast=DDN.parse(text,name);for(const imp of ast.imports){const next=path.posix.normalize(path.posix.join(path.posix.dirname(name),imp.path));if(next.startsWith('../')||path.isAbsolute(imp.path)||/^[a-z]+:/i.test(imp.path))throw new Error('Unsafe import path');load(next);}}
+ function load(name){if(visited.has(name))return;visited.add(name);const full=path.resolve(root,name),real=fs.realpathSync(full);if(real!==root&&!real.startsWith(root+path.sep))throw new Error('Import or symlink escapes workspace');const bytes=fs.readFileSync(real);const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);files[name]=text;const ast=DDN.parse(text,name);for(const imp of ast.imports){const next=path.posix.normalize(path.posix.join(path.posix.dirname(name),imp.path));if(next.startsWith('../')||path.isAbsolute(imp.path)||/^[a-z]+:/i.test(imp.path))throw new Error('Unsafe import path');load(next);}
+  /* B1-090: architecture bases and x_link files join the workspace too. */
+  const extra=(rel=>{if(!rel||rel.startsWith('../')||path.isAbsolute(rel)||/^[a-z]+:/i.test(rel))throw new Error('Unsafe architecture/x_link path');load(path.posix.normalize(path.posix.join(path.posix.dirname(name),rel)));});
+  const walk=n=>{if(n.type==='architecture')for(const f of n.props?.files||[])extra(f);if(n.props?.x_link?.file)extra(n.props.x_link.file);for(const c of n.children||[])walk(c);};
+  for(const sec of ast.sections||[])for(const d of sec.declarations||[])walk(d);}
  load(entry);
  if(command==='bundle'){
   const result=DDN.bundle(files,entry);

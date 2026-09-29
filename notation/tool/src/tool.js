@@ -1674,7 +1674,17 @@ function loadFromSrc(src) {
   status('loading ' + src + ' …');
   srcImportClosure(src, host.location.href,
     url => fetch(url),
-    (text, name) => A.parse(text, name).imports.map(imp => imp.path),
+    (text, name) => {
+        const ast = A.parse(text, name), out = ast.imports.map(imp => imp.path);
+        /* B1-090: architecture bases and x_link files join the fetch closure. */
+        const walk = n => {
+          if (n.type === 'architecture') for (const f of (n.props && n.props.files) || []) out.push(f);
+          if (n.props && n.props.x_link && n.props.x_link.file) out.push(n.props.x_link.file);
+          for (const c of n.children || []) walk(c);
+        };
+        for (const sec of ast.sections || []) for (const d of sec.declarations || []) walk(d);
+        return out;
+      },
     (name, p) => A.resolvePath(name, p))
     .then(({ files, entryName }) => { state.catalogueIndex = -1; load(files, entryName); })
     .catch(e => fail(srcFetchErrorMessage(e, host.location && host.location.protocol, src)));
@@ -1705,7 +1715,17 @@ function boot() {
       status('loading ' + entry + ' …');
       srcImportClosure(entry, host.location.href,
         url => fetch(url),
-        (text, name) => A.parse(text, name).imports.map(imp => imp.path),
+        (text, name) => {
+        const ast = A.parse(text, name), out = ast.imports.map(imp => imp.path);
+        /* B1-090: architecture bases and x_link files join the fetch closure. */
+        const walk = n => {
+          if (n.type === 'architecture') for (const f of (n.props && n.props.files) || []) out.push(f);
+          if (n.props && n.props.x_link && n.props.x_link.file) out.push(n.props.x_link.file);
+          for (const c of n.children || []) walk(c);
+        };
+        for (const sec of ast.sections || []) for (const d of sec.declarations || []) walk(d);
+        return out;
+      },
         (name, p) => A.resolvePath(name, p))
         .then(({ files, entryName }) => load(files, entryName, view || undefined))
         .catch(e => fail(srcFetchErrorMessage(e, host.location && host.location.protocol, entry)));

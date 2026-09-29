@@ -1,0 +1,18 @@
+ddn "0.5";
+module "retail.ops";
+
+// B1-090: operational base of the cross-file UAF traceability example —
+// the architecture container in 108-uaf-traceability.ddn names this file as
+// a base, so its module-qualified identities are addressable from the host.
+// All data is synthetic.
+data ops {
+    object deliver "Deliver order" { kind: "uaf.opactivity"; }
+    object ship "Ship goods" { kind: "uaf.opactivity"; }
+    object osvc "Order service" { kind: "uaf.servicespec"; }
+    relation m1 "" @osvc -> @deliver { kind: "uaf.mapsto"; }
+}
+view ov "Operational activities" {
+    data: [@ops];
+    projection { profile: "uaf.operational@1"; }
+    publication { size: content; fit: none; }
+}

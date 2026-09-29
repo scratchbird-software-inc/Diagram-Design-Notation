@@ -11,7 +11,7 @@ concept already has a faithful DDN home, the annex points at it.
 
 | 42010 concept | DDN machinery | Where |
 | --- | --- | --- |
-| Architecture description | A DDN module — the data blocks (the model) plus the views that frame it. When the description itself must appear *inside* a diagram, «ArchitectureDescription» (`uaf.archdesc`) is the explicit node. | chapters 1–3; `uaf.summary@1` (47) |
+| Architecture description | A DDN module — the data blocks (the model) plus the views that frame it. Across files, the `architecture` container declaration groups the bases of one described architecture (17.25). When the description itself must appear *inside* a diagram, «ArchitectureDescription» (`uaf.archdesc`) is the explicit node. | chapters 1–3; `uaf.summary@1` (47); 17.25 |
 | Stakeholder | Core `role`, `team` and `organization` kinds for general diagrams; «Person», «Organization», «Post», «Responsibility» (`uaf.personnel@1`) for enterprise views. | registry core kinds; 47 |
 | Concern | `issue` and `note` kinds with the annotation relations for free-form concerns; `req.requirement` for formalized ones; «EnterpriseGoal»/«EnterpriseVision» (`uaf.strategic@1`) for motivational concerns. | 47 |
 | Viewpoint | «Viewpoint» (`uaf.viewpoint`) records the viewpoint as a first-class element — its name, framed concerns and stakeholders live on the node. | `uaf.summary@1` (47) |

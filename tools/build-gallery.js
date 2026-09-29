@@ -270,7 +270,15 @@ function filesFor(entry) {
   const visit = name => {
     if (Object.hasOwn(files, name)) return;
     files[name] = fs.readFileSync(path.join(ROOT, name), 'utf8');
-    for (const imp of A.parse(files[name], name).imports) visit(A.resolvePath(name, imp.path));
+    const ast = A.parse(files[name], name);
+    for (const imp of ast.imports) visit(A.resolvePath(name, imp.path));
+    /* B1-090: architecture bases and x_link files join the workspace too. */
+    const walk = n => {
+      if (n.type === 'architecture') for (const f of n.props?.files || []) visit(A.resolvePath(name, f));
+      if (n.props?.x_link?.file) visit(A.resolvePath(name, n.props.x_link.file));
+      for (const c of n.children || []) walk(c);
+    };
+    for (const sec of ast.sections || []) for (const d of sec.declarations || []) walk(d);
   };
   visit(entry);
   return files;

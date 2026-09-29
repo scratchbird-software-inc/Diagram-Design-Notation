@@ -58,7 +58,10 @@
     "DDN-PJ212",
     "DDN-PJ213",
     "DDN-PJ214",
-    "DDN-PJ215"
+    "DDN-PJ215",
+    "DDN-PJ216",
+    "DDN-PJ217",
+    "DDN-PJW07"
   ],
   "fixes": {
     "DDN001": "Split the file (>2,000,000 chars): move data blocks into imported files, or replace verbose object lists with a records block.",
@@ -181,6 +184,9 @@
     "DDN-PJ212": "Ladder: ladder.series endpoints must belong to the same rung (data block)",
     "DDN-PJ213": "Ladder: ladder.jump must target a selected ladder.label; x_jump belongs to ladder.jump",
     "DDN-PJ214": "Ladder: ladder.basic@1 requires layout { algorithm: ladder }",
-    "DDN-PJ215": "SDL/MSC: x_sdl timer/channel/marker owner and reference rules; x_hmscref belongs to msc.hmscref"
+    "DDN-PJ215": "SDL/MSC: x_sdl timer/channel/marker owner and reference rules; x_hmscref belongs to msc.hmscref",
+    "DDN-PJ216": "Cross-file: unknown architecture base file, unknown x_link target identity, or identity collision across bases",
+    "DDN-PJ217": "Cross-file: a relation spanning architecture bases needs an architecture container covering the base(s)",
+    "DDN-PJW07": "Cross-file: x_link target file absent from the workspace; rendered as an unresolved external note (warning, not an error)"
   }
 }

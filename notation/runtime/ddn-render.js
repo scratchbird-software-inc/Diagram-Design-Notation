@@ -392,6 +392,12 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
   const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?Layout.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
   diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?Sketch.curve:Sketch.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(colour)}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${esc(a.reg.pattern)}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
+  /* B1-090: cross-file relations — the badge edge draws dashed and muted. */
+  if(a.r.properties.x_external)diagram+=`<g data-external="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(t.muted)}" stroke-width="${a.reg.width}" stroke-dasharray="7 5"/>`).join('')+'</g>';
+  /* B1-090: x_link — external association note at the route's target end. */
+  const xl=a.r.properties.x_link;
+  if(xl){const s2=q(p.style.font_size,16)/16,xpt=a.points.at(-1);
+   diagram+=`<g class="ddn-xlink" data-file="${esc(xl.file)}" data-target="${esc(xl.target)}"${a.r.properties._xlink==='unresolved'?' data-unresolved="true"':''}>`+text(xpt[0]+10*s2,xpt[1]-8*s2,'→ '+xl.file+': '+xl.target+(a.r.properties._xlink==='unresolved'?' (unresolved)':''),10*s2,t.muted,500)+'</g>';}
   if(a.r.properties.x_chen_total){diagram+=`<g${mask} data-total-participation="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(colour)}" stroke-width="5"/><path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(t.surface)}" stroke-width="2"/>`).join('')+'</g>';}
   if(a.r.properties.x_critical){const s=q(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt(3*s)}"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;

@@ -578,7 +578,17 @@ function loadFromSrc(src) {
   status('loading ' + src + ' …');
   srcImportClosure(src, host.location.href,
     url => fetch(url),
-    (text, name) => DDNLive.parse(text, name).imports.map(imp => imp.path),
+    (text, name) => {
+        const ast = DDNLive.parse(text, name), out = ast.imports.map(imp => imp.path);
+        /* B1-090: architecture bases and x_link files join the fetch closure. */
+        const walk = n => {
+          if (n.type === 'architecture') for (const f of (n.props && n.props.files) || []) out.push(f);
+          if (n.props && n.props.x_link && n.props.x_link.file) out.push(n.props.x_link.file);
+          for (const c of n.children || []) walk(c);
+        };
+        for (const sec of ast.sections || []) for (const d of sec.declarations || []) walk(d);
+        return out;
+      },
     (name, p) => DDNLive.resolvePath(name, p))
     .then(({ files, entryName }) => {
       els.paste.value = files[entryName];

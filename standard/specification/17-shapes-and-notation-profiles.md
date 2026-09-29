@@ -360,3 +360,37 @@ predecessor barycentre. PLC execution/compilation, IEC XML interchange and
 formal certification are out of scope. Example:
 `website/examples/basics/101-ladder.ddn`; tests `ladder-compliance.js` +
 `ladder-showcase.js`.
+
+## 17.25 Cross-file addressing and architecture containers
+
+DDN's identity machinery is module-scoped (`module::path`, unique across the
+workspace, DDN023–DDN026) with `import "…" as alias` for cross-file
+references. Cross-file addressing builds on exactly that machinery — it adds
+no parallel mechanism:
+
+- **Architecture containers** — a top-level declaration
+  `architecture id "Label" { files: ["a.ddn", …]; description: "…"; }`
+  groups the declaring file and the named base files into one described
+  architecture (the ISO 42010 mapping of chapter 48: the container is the
+  description, each view inside remains governed by its profile). Base
+  files join the shared symbol machinery; the
+  no-identity-collision-across-bases rule fails any duplicate module,
+  declaration or uid with `DDN-PJ216`, so **module-qualified references**
+  (`@module.id.path`) into bases stay unambiguous. Bare ids never resolve
+  cross-file (`DDN031` as before).
+- **Traceability relations** — a relation endpoint may address an element
+  in a base file by module-qualified identity. Every base named by an
+  endpoint must be covered by a declared container (`DDN-PJ217`); the host
+  workspace file is implicitly covered. An endpoint outside the current
+  view renders as an off-page badge naming the module-qualified identity,
+  joined by a dashed muted edge.
+- **Associations as metadata** — `x_link: { file, target }` on any relation
+  is the lightweight cross-file association (ignorable to DDN-only tools).
+  The file loads as a base when present, so unknown target identities fail
+  `DDN-PJ216`; when the file is absent from the workspace the reference is
+  a `DDN-PJW07` warning and renders as an unresolved external note — never
+  an error, matching the drill-down semantics of showing rather than
+  failing.
+
+Example: `website/examples/basics/108-uaf-traceability.ddn` (multi-file UAF
+cross-domain traceability); tests `xref-compliance.js` + `xref-showcase.js`.

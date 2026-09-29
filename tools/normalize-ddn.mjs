@@ -73,7 +73,15 @@ function loadWorkspace(abs) {
     if (visited.has(name)) return; visited.add(name);
     const text = fs.readFileSync(path.join(root, name), 'utf8');
     files[name] = text;
-    for (const imp of DDN.parse(text, name).imports) load(path.posix.normalize(path.posix.join(path.posix.dirname(name), imp.path)));
+    const ast = DDN.parse(text, name);
+    for (const imp of ast.imports) load(path.posix.normalize(path.posix.join(path.posix.dirname(name), imp.path)));
+    /* B1-090: architecture bases and x_link files join the workspace too. */
+    const walk = n => {
+      if (n.type === 'architecture') for (const f of n.props?.files || []) load(path.posix.normalize(path.posix.join(path.posix.dirname(name), f)));
+      if (n.props?.x_link?.file) load(path.posix.normalize(path.posix.join(path.posix.dirname(name), n.props.x_link.file)));
+      for (const c of n.children || []) walk(c);
+    };
+    for (const sec of ast.sections || []) for (const d of sec.declarations || []) walk(d);
   };
   load(entry);
   return { files, entry };

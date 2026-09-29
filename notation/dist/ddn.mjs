@@ -1555,6 +1555,9 @@ function registry(base){
  out.extension_contracts.x_sdl=def({type:'object',properties:{signals:{type:'array',minItems:1,maxItems:24,items:ref},nodelay:{type:'boolean'},priority:{type:'string',minLength:1},spontaneous:{type:'boolean'},continuous:{type:'string',minLength:1},active:ref,timer:ref,duration:{type:'string',minLength:1}},additionalProperties:false},['object','relation']);
  /* B1-089: MSC HMSC reference semantics — actual parameter lists (Z.120 §7.3). */
  out.extension_contracts.x_hmscref=def({type:'object',properties:{params:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
+ /* B1-090: cross-file association metadata (ignorable to DDN-only tools;
+  * resolution through architecture bases — DDN-PJ216/PJW07). */
+ out.extension_contracts.x_link=def({type:'object',required:['file','target'],properties:{file:{type:'string',minLength:1},target:{type:'string',minLength:1}},additionalProperties:false},['relation']);
  /* B1-089: SoaML ServiceChannel compatibility mode (SoaML §6.4.15); absent = same-type rule. */
  out.extension_contracts.x_compatibility=def({type:'object',required:['mode'],properties:{mode:{enum:['same','specialization','realization','operation-coverage']}},additionalProperties:false},['relation']);
  /* B1-085: ladder contacts, coils and jump targets. */
@@ -2570,6 +2573,36 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       return docs.get(path);
     }
     const main=load(entry).moduleRecords[0];
+    /* B1-090: architecture containers and x_link cross-file references declare
+     * additional files (bases) that join the shared symbol machinery. The
+     * no-identity-collision-across-bases rule keeps module-qualified
+     * references unambiguous; collisions surface as DDN-PJ216. */
+    const archPaths=new Set(),archContainers=[];
+    {
+     const queue=[];
+     const scan=d=>{for(const n of d.declarations){
+      if(n.type==='architecture'){
+       const list=Array.isArray(n.props.files)?n.props.files:[];
+       const bases=list.map(f=>{if(typeof f!=='string')throw new DDNError('DDN-PJ216','architecture files: entries must be workspace-relative path strings',d.source,n.start);return normalizePath(d.source,f);});
+       archContainers.push({decl:n,bases});
+       for(const b of bases)queue.push([b,n,'Architecture '+n.id+' base file']);
+      }
+      const walk=x=>{if(x.props?.x_link){const xl=x.props.x_link;if(typeof xl.file!=='string'||typeof xl.target!=='string')throw new DDNError('DDN-PJ216','x_link needs file and target strings',x.source,x.start);queue.push([normalizePath(d.source,xl.file),x,'x_link target file']);}for(const c of x.children||[])walk(c);};
+      walk(n);
+     }};
+     for(const d of modules.values())scan(d);
+     for(const [b,n,what]of queue){
+      if(!Object.hasOwn(files,b)){
+       if(what.startsWith('x_link')){n.props._xlink='unresolved';continue;} // graceful: badge, not error (DDN-PJW07 at build)
+       throw new DDNError('DDN-PJ216',what+' is not in the workspace: '+b,n.source,n.start);
+      }
+      if(docs.has(b)){archPaths.add(b);continue;}
+      const before=new Set(modules.keys());
+      try{load(b);}catch(e){throw new DDNError('DDN-PJ216',what+' failed to load: '+b+' ('+e.message+')',n.source,n.start);}
+      archPaths.add(b);
+      for(const [k,rec]of modules)if(!before.has(k)){rec.archBase=true;}
+     }
+    }
     /* B1-041: preset/fragment definitions are module-scope templates. They
      * are pre-indexed (so `use:` references resolve, including across
      * imports), then every application expands to the identical canonical
@@ -2640,11 +2673,11 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     function index(n,d,parent=''){
       n.doc=d;n.path=parent?(parent+'.'+n.id):n.id;n.uid=n.props.uid||`${d.module}::${n.path}`;
       if(PRESET_DEFS.has(n.type)&&!n.group)return; // pre-indexed template
-      if(!n.group&&!['place','route'].includes(n.type)){let key=d.module+'::'+n.path;if(symbols.has(key))throw new DDNError('DDN024','Duplicate declaration '+n.path,d.source,n.start);symbols.set(key,n);}
+      if(!n.group&&!['place','route'].includes(n.type)){let key=d.module+'::'+n.path;if(symbols.has(key))throw new DDNError(d.archBase?'DDN-PJ216':'DDN024',(d.archBase?'Identity collision across architecture bases: ':'Duplicate declaration ')+n.path,d.source,n.start);symbols.set(key,n);}
       for(const c of n.children)index(c,d,n.group?parent:n.path);
     }
-    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view',...PRESET_DEFS].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format, view, or a reuse definition (fields, ports, relation_props, preset, fragment)',d.source,n.start);index(n,d);}
-    const uidMap=new Map();for(const n of symbols.values()){if(uidMap.has(n.uid))throw new DDNError('DDN026','Duplicate stable uid '+n.uid,n.source,n.start);uidMap.set(n.uid,n);}
+    for(const d of modules.values())for(const n of d.declarations){if(!['data','format','view','architecture',...PRESET_DEFS].includes(n.type))throw new DDNError('DDN025','Top-level declaration must be data, format, view, an architecture container, or a reuse definition (fields, ports, relation_props, preset, fragment)',d.source,n.start);index(n,d);}
+    const uidMap=new Map();for(const n of symbols.values()){if(uidMap.has(n.uid))throw new DDNError(n.doc?.archBase?'DDN-PJ216':'DDN026',(n.doc?.archBase?'Identity collision across architecture bases (uid ':'Duplicate stable uid ')+n.uid+')',n.source,n.start);uidMap.set(n.uid,n);}
     function resolve(r,context){if(!r||!r.$ref)throw new DDNError('DDN030','Expected a reference',context?.source,context?.start);const parts=r.$ref.split('.');let doc=context.doc;
       if(doc.imported.has(parts[0])){const f=doc.imported.get(parts.shift());for(const rec of f.moduleRecords){let node=symbols.get(rec.module+'::'+parts.join('.'));if(node)return node;}}
       else {
@@ -2654,10 +2687,15 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
           const sib=doc.file.moduleById.get(parts.slice(0,k).join('.'));
           if(sib){const node=symbols.get(sib.module+'::'+parts.slice(k).join('.'));if(node)return node;}
         }
-        let base=context.path.split('.');base.pop();for(let k=base.length;k>=0;k--){let path=[...base.slice(0,k),...parts].join('.'),n=symbols.get(doc.module+'::'+path);if(n)return n;}}
+        let base=context.path.split('.');base.pop();for(let k=base.length;k>=0;k--){let path=[...base.slice(0,k),...parts].join('.'),n=symbols.get(doc.module+'::'+path);if(n)return n;}
+        /* B1-090: module-qualified references into architecture bases. Module
+         * ids are globally unique (DDN023), so a longest-prefix match is
+         * unambiguous; bare ids never leave their own file. */
+        if(parts.length>1){for(let k=parts.length-1;k>=1;k--){const mid=parts.slice(0,k).join('.'),rec=modules.get(mid);
+         if(rec?.archBase){const node=symbols.get(rec.module+'::'+parts.slice(k).join('.'));if(node)return node;}}}}
       throw new DDNError('DDN031','Unresolved reference @'+r.$ref,context.source,r.$offset||context.start);
     }
-    return {main,docs,modules,symbols,uidMap,resolve,files};
+    return {main,docs,modules,symbols,uidMap,resolve,files,archPaths,archContainers};
   }
   function children(n,type){return n.children.filter(c=>c.type===type);}
   function group(n,name){return n.children.find(c=>c.group&&c.type===name);}
@@ -2700,6 +2738,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     junction:['at','relations','network'],
     keyset:['keys','scope'],
     flow:['label','steps','marker','marker_color','marker_size','speed','rate','uid'],
+    architecture:['files','views','description','uid'],
   };
   function validateKnown(n,allowed){for(const key of Object.keys(n.props))if(!allowed.includes(key)&&!key.startsWith('x_'))throw new DDNError('DDN033',`Unknown ${n.type} property ${key}`,n.source,n.start);}
   function build(files,entry,viewName,registry,stack=[]){
@@ -2813,7 +2852,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       return {id:n.uid,ref:n.path,local:n.id,name:n.label||n.id,type:n.type,kind:k.keyword,kindCode:k.code,properties,fields,ports,source:{file:n.source,start:n.start,end:n.end}};
     });
     const elementIds=new Set(elements.map(n=>n.id));
-    function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
+    function endpoint(r,n){let t=ws.resolve(r,n);if(['field','port'].includes(t.type)){const path=t.path.split('.');path.pop();let owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));while(owner?.type==='field'){path.pop();owner=ws.symbols.get(t.doc.module+'::'+path.join('.'));}if(!owner||!elementIds.has(owner.uid)&&!ws.archPaths.has(owner.doc?.source))throw new DDNError('DDN054','Endpoint owner is outside the selected data modules',n.source,n.start);return {element:owner.uid,member:t.uid,role:t.type};}if(!elementIds.has(t.uid)&&!ws.archPaths.has(t.doc?.source))throw new DDNError('DDN054','Relation endpoint is not a data element in scope',n.source,n.start);return {element:t.uid};}
     const relations=rawRelations.map(n=>{if(!n.from||!n.to)throw new DDNError('DDN055','Relation requires two endpoints',n.source,n.start);let r=relationEntry(registry,n.props.kind||'assoc');if(!r)throw new DDNError('DDN056','Unknown relationship kind '+n.props.kind,n.source,n.start);return {id:n.uid,ref:n.path,name:n.label||r.name,kind:r.keyword,kindCode:r.code,from:endpoint(n.from,n),to:endpoint(n.to,n),properties:resolveValue(n.props,n),source:{file:n.source,start:n.start,end:n.end}};});
     // B1-033: declarative motion vocabulary (D2). Values are validated here;
     // emission is the renderer's job. rate beyond the DOM-honest cap is a
@@ -2836,6 +2875,41 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
     const excluded=(view.props.exclude||[]).map(r=>ws.resolve(r,view).uid);selected=[...new Set(selected)].filter(id=>!excluded.includes(id));
     if(p.display.samples==='hide')selected=selected.filter(id=>elements.find(n=>n.id===id).type!=='sample');
     const shown=new Set(selected),visibleRelations=p.display.relations==='none'?[]:relations.filter(r=>shown.has(r.from.element)&&shown.has(r.to.element));
+    /* B1-090: cross-file traceability. Relations spanning architecture bases
+     * require a covering container (DDN-PJ217); an outside endpoint renders as
+     * an off-page badge naming its module-qualified identity. x_link metadata
+     * resolves against the loaded bases (unknown identity: DDN-PJ216; absent
+     * file: DDN-PJW07 note, never an error). */
+    const xrefDiags=[];
+    const archOf=id=>ws.uidMap.get(id)?.doc?.source;
+    for(const r of relations){
+     const fa=archOf(r.from.element),fb=archOf(r.to.element);
+     if(fa&&fb&&fa!==fb&&(ws.archPaths.has(fa)||ws.archPaths.has(fb))){
+      /* The host workspace file is implicitly covered; every base named by an
+       * endpoint must be covered by a declared container. */
+      const cover=p=>!ws.archPaths.has(p)||ws.archContainers.some(c=>c.bases.includes(p));
+      if(!cover(fa)||!cover(fb))
+       throw new DDNError('DDN-PJ217','Cross-file relation '+r.id+' links '+fa+' and '+fb+'; an architecture container covering the base(s) is required',r.source,r.start);
+     }
+     const xl=r.properties.x_link;
+     if(xl&&r.properties._xlink!=='unresolved'){
+      try{ws.resolve({$ref:xl.target,$offset:r.start},ws.symbols.get(r.from.element)||view);}
+      catch(e){throw new DDNError('DDN-PJ216','x_link on '+r.id+' targets unknown identity '+JSON.stringify(xl.target)+' in '+xl.file,r.source,r.start);}
+     }
+     if(xl&&r.properties._xlink==='unresolved')xrefDiags.push({code:'DDN-PJW07',severity:'warning',message:'x_link on '+r.id+': target file '+xl.file+' is not in the workspace; rendered as an unresolved external note.',source:r.source.file,start:r.source.start});
+    }
+    for(const r of relations.slice()){
+     const inF=shown.has(r.from.element),inT=shown.has(r.to.element);
+     if(inF===inT)continue;
+     const outEp=inF?r.to:r.from,outNode=ws.uidMap.get(outEp.element);
+     if(!outNode||outEp.member||!ws.archPaths.has(outNode.doc?.source))continue;
+     const badgeId=r.id+'::__external',offpage=kindEntry(registry,'flow.offpage');
+     elements.push({id:badgeId,ref:badgeId,local:'__external',name:outNode.doc.module+'::'+outNode.path,type:'object',kind:'flow.offpage',kindCode:offpage.code,properties:{x_external:{file:outNode.doc.source,target:outNode.uid}},fields:[],ports:[],source:r.source});
+     selected.push(badgeId);shown.add(badgeId);
+     if(inF)r.to={element:badgeId};else r.from={element:badgeId};
+     r.properties={...r.properties,x_external:{file:outNode.doc.source,target:outNode.uid}};
+     visibleRelations.push(r);
+    }
     const keys=Object.create(null),seen=new Map();
     for(const [ref,num] of Object.entries(p.legend.keys||{})){
       let matches=relations.filter(r=>r.id===ref||r.ref===ref||r.ref.split('.').at(-1)===ref);if(matches.length>1)throw new DDNError('DDN058','Ambiguous legend key '+ref,view.source,view.start);let target=matches[0];
@@ -2869,7 +2943,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
       }
       else throw new DDNError('DDN900','Reference renderer does not implement view declaration '+n.type,n.source,n.start);
     }
-    const diagnostics=[...motionDiagnostics];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
+    const diagnostics=[...motionDiagnostics,...xrefDiags];if([...ws.docs.values()].some(d=>d.version==='0.2'))diagnostics.push({code:'DDN-W012',severity:'warning',message:'0.2 source accepted through compatibility reader. Migrate headers and review new semantic/routing diagnostics.'});
     const currentLanguage=[...ws.docs.values()].some(d=>d.version==='0.5')?'0.5':[...ws.docs.values()].some(d=>d.version==='0.4')?'0.4':'0.3';
     const ir={format:'ddn-resolved@'+currentLanguage,language:currentLanguage,registry:'ddn-core@0.3',entry,view:{id:view.uid,name:view.label||view.id,local:view.id,selected,relations:visibleRelations.map(r=>r.id),profiles:p,keys,placements,routes,subdiagrams,frames,flows,source:{file:view.source,start:view.start,end:view.end,bodyEnd:view.bodyEnd}},elements,relations,diagnostics};
     if(p.projection.kind==='panels' && Array.isArray(p.projection.panels)){
@@ -5243,6 +5317,12 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc$3(a.id)}"><title>${esc$3(a.r.name)}</title>`;
   const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?api$6.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
   diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?api$8.curve:api$8.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(colour)}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${esc$3(a.reg.pattern)}" stroke-dashoffset="${fmt$1(-piece.distance)}"`:''}/>`).join('')+'</g>';
+  /* B1-090: cross-file relations — the badge edge draws dashed and muted. */
+  if(a.r.properties.x_external)diagram+=`<g data-external="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(t.muted)}" stroke-width="${a.reg.width}" stroke-dasharray="7 5"/>`).join('')+'</g>';
+  /* B1-090: x_link — external association note at the route's target end. */
+  const xl=a.r.properties.x_link;
+  if(xl){const s2=q$2(p.style.font_size,16)/16,xpt=a.points.at(-1);
+   diagram+=`<g class="ddn-xlink" data-file="${esc$3(xl.file)}" data-target="${esc$3(xl.target)}"${a.r.properties._xlink==='unresolved'?' data-unresolved="true"':''}>`+text$1(xpt[0]+10*s2,xpt[1]-8*s2,'→ '+xl.file+': '+xl.target+(a.r.properties._xlink==='unresolved'?' (unresolved)':''),10*s2,t.muted,500)+'</g>';}
   if(a.r.properties.x_chen_total){diagram+=`<g${mask} data-total-participation="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(colour)}" stroke-width="5"/><path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc$3(t.surface)}" stroke-width="2"/>`).join('')+'</g>';}
   if(a.r.properties.x_critical){const s=q$2(p.style.font_size,16)/16;diagram+=`<g${mask} data-critical-path="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${t.accent}" stroke-width="${fmt$1(3*s)}"/>`).join('')+'</g>';}
   const startType=a.r.properties.source_mark||a.reg.start,endType=a.r.properties.target_mark||a.reg.end;
