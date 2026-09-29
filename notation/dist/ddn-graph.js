@@ -679,6 +679,8 @@
     out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
    }else {
     let yy=y+h/2-(g.titleLines.length-1)*10.5*s+5*s;if(shape==='package')yy+=10*s;
+    /* B1-085: contact/coil names sit above the glyph, not at node centre. */
+    if(['ladder.contact','ladder.coil'].includes(n.kind))yy=y+17*s;
     out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
    }
    if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,api$7.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
@@ -693,6 +695,22 @@
     const tp=n.properties.datatype||n.properties.type||'';
     if(tp)out+=text(x+w/2,y+16*s,tp,11,650,'text-anchor="middle"');
    }
+   /* B1-085: ladder glyphs — IEC 61131-3 contact bars and coil parentheses. */
+   if(n.kind==='ladder.contact'){
+    const cx=x+w/2,form=n.properties.x_contact?.form||'no';
+    out+=`<g class="ddn-ladder-contact" data-form="${form}">`+line(cx-8*s,y+26*s,cx-8*s,y+h-10*s,2.2)+line(cx+8*s,y+26*s,cx+8*s,y+h-10*s,2.2);
+    if(form==='nc')out+=line(cx-11*s,y+h-10*s,cx+11*s,y+26*s,2.2);
+    out+='</g>';
+   }
+   if(n.kind==='ladder.coil'){
+    const cx=x+w/2,cy=y+(26*s+h-10*s)/2,ry=(h-36*s)/2,rx=11*s,mode=n.properties.x_coil?.mode||'normal';
+    out+=`<g class="ddn-ladder-coil" data-mode="${mode}"><path d="M${f(cx-rx)} ${f(cy-ry)}Q${f(cx-rx-9*s)} ${f(cy)} ${f(cx-rx)} ${f(cy+ry)}" fill="none" stroke="${ink}" stroke-width="2"/><path d="M${f(cx+rx)} ${f(cy-ry)}Q${f(cx+rx+9*s)} ${f(cy)} ${f(cx+rx)} ${f(cy+ry)}" fill="none" stroke="${ink}" stroke-width="2"/>`;
+    if(mode==='set'||mode==='reset')out+=text(cx,cy+4.5*s,mode==='set'?'S':'R',13,650,'text-anchor="middle"');
+    if(mode==='negated')out+=line(cx-rx-4*s,cy+ry,cx+rx+4*s,cy-ry,2);
+    out+='</g>';
+   }
+   if(n.kind==='ladder.jump')out+=text(x+12*s,y+h/2+4.5*s,'»',14,650,'');
+   if(n.kind==='ladder.return')out+=text(x+12*s,y+h/2+4.5*s,'RET',10.5,650,'');
    /* B1-083: SDL create symbol — dashed border. */
    if(n.kind==='sdl.create')out+=`<rect x="${f(x+4*s)}" y="${f(y+4*s)}" width="${f(w-8*s)}" height="${f(h-8*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
    /* B1-081: VSM glyph details — inventory I, supermarket inner lines. */
@@ -932,6 +950,42 @@
    }else if(p.algorithm==='grouped'){
     const path=String(p.group_by||'kind').split('.'),read=n=>path.reduce((v,k)=>v?.[k],n.properties)??path.reduce((v,k)=>v?.[k],n.n?.properties)??n.n?.kind??'unassigned';
     const groups=new Map();for(const n of nodes){let key=String(read(n));if(!groups.has(key))groups.set(key,[]);groups.get(key).push(n);}let x=0;for(const [label,ns]of groups){grid(ns,x,50);x=maxOf(ns,n=>n.x+n.w,0)+gap*2;ns.forEach(n=>n.group=label);}
+   }else if(p.algorithm==='ladder'){
+    /* B1-085: IEC 61131-3 rung layout. One data block per rung (declaration
+     * order, top to bottom); series wiring forms a left-to-right DAG; parallel
+     * OR branches fall out of shared junctions as extra tracks; coils, jumps
+     * and returns hug the right rail, labels the left. */
+    const RIGHT=['ladder.coil','ladder.jump','ladder.return'];
+    const rungOf=n=>String(n.n?.ref??n.id).split('::').pop().split('.')[0];
+    const rungs=[],byRung=new Map();
+    for(const n of nodes){const k=rungOf(n);if(!byRung.has(k)){byRung.set(k,[]);rungs.push(k);}byRung.get(k).push(n);}
+    let rungY=0;
+    for(const rk of rungs){
+     const ns=byRung.get(rk),member=new Set(ns.map(n=>n.id));
+     const es=edges.filter(e=>e.kind==='ladder.series'&&member.has(e.from.element)&&member.has(e.to.element));
+     const pred=new Map(ns.map(n=>[n.id,[]]));
+     for(const e of es)pred.get(e.to.element).push(e.from.element);
+     const col=new Map(ns.map(n=>[n.id,0]));
+     for(let pass=0;pass<=ns.length;pass++){let moved=false;
+      for(const e of es){const c=col.get(e.from.element)+1;if(c>col.get(e.to.element)){col.set(e.to.element,c);moved=true;}}
+      if(!moved)break;}
+     if(ns.some(n=>col.get(n.id)>ns.length)){diag.push({code:'DDN-LW02',severity:'info',message:'Ladder rung '+rk+' contains a series cycle; column assignment is approximate.'});for(const n of ns)if(col.get(n.id)>ns.length)col.set(n.id,0);}
+     Math.max(0,...ns.map(n=>col.get(n.id)));
+     for(const n of ns)if(n.n?.kind==='ladder.label')col.set(n.id,-1);
+     for(const n of ns)if(RIGHT.includes(n.n?.kind))col.set(n.id,Math.max(...ns.map(m=>m.n?.kind==='ladder.label'?-1:col.get(m.id)),0));
+     const minCol=ns.some(n=>n.n?.kind==='ladder.label')?-1:0;
+     const track=new Map();
+     for(let c=minCol;c<=Math.max(...ns.map(n=>col.get(n.id)));c++){
+      const layer=ns.filter(n=>col.get(n.id)===c).sort((a,b)=>{
+       const bary=x=>pred.get(x.id).length?pred.get(x.id).reduce((t,id)=>t+(track.get(id)??0),0)/pred.get(x.id).length:order.get(x.id)%7;
+       return bary(a)-bary(b)||order.get(a.id)-order.get(b.id);});
+      layer.forEach((n,i)=>track.set(n.id,i));
+     }
+     const trackCount=Math.max(1,...ns.map(n=>track.get(n.id)+1));
+     const colW=maxOf(ns,n=>n.w,90)+gap,rowH=maxOf(ns,n=>n.h,60)+Math.round(rowGap*.6);
+     for(const n of ns){n.x=(col.get(n.id)-minCol)*colW;n.y=rungY+track.get(n.id)*rowH;}
+     rungY+=trackCount*rowH;
+    }
    }else throw new ErrorClass('DDN203','No native placement algorithm '+p.algorithm);
    if(p.algorithm==='layered'&&['left','up'].includes(p.direction)){if(horizontal){const max=maxOf(nodes,n=>n.x+n.w,0);nodes.forEach(n=>n.x=max-n.x-n.w);}else {const max=maxOf(nodes,n=>n.y+n.h,0);nodes.forEach(n=>n.y=max-n.y-n.h);}}
    const pinned=[];for(const n of nodes){const at=placements[n.id]?.at;if(at){n.x=q$3(at[0]);n.y=q$3(at[1]);pinned.push(n);}}
@@ -1466,7 +1520,7 @@
       if(best&&score(best).crossings===0)break;
       const a=free[i],b=free[j],sa=slots[a.id],sb=slots[b.id];
       if(placed.pattern&&(!sa||!sb||sa.key!==sb.key))continue;
-      if(!placed.pattern&&['mindmap','tree','layered','grouped'].includes(p.layout.algorithm))continue;
+      if(!placed.pattern&&['mindmap','tree','layered','grouped','ladder'].includes(p.layout.algorithm))continue;
       const oldA=[a.x,a.y],oldB=[b.x,b.y],ca=center(a),cb=center(b);a.x=cb[0]-a.w/2;a.y=cb[1]-a.h/2;b.x=ca[0]-b.w/2;b.y=ca[1]-b.h/2;
       const clear=nodes.every((x,k)=>nodes.slice(k+1).every(y=>!api$4.overlap(x,y,16)));
       nt++;
@@ -1766,11 +1820,18 @@
    // at the standard padding; when members already fit this is a no-op.
    if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
    return {...f,x,y,w,h};});
+   /* B1-085: IEC 61131-3 power rails flank the rung area under the ladder profile. */
+   let ladderRails=null;
+   if(p.projection.profile==='ladder.basic@1'&&geoms.length){
+    const gx0=geoms.reduce((m,g)=>Math.min(m,g.x),Infinity),gx1=geoms.reduce((m,g)=>Math.max(m,g.x+g.w),-Infinity),gy0=geoms.reduce((m,g)=>Math.min(m,g.y),Infinity),gy1=geoms.reduce((m,g)=>Math.max(m,g.y+g.h),-Infinity);
+    ladderRails={x0:gx0-56,x1:gx1+56,y0:gy0-28,y1:gy1+28};
+   }
    let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q$1(d.at?.[0],i*310),y:q$1(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q$1(d.size?.[0],270),h:q$1(d.size?.[1],95)}));
    const labelMeasure=r=>{if(r._visualLabel===false)return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$7.measure(str,12,p.style.font,500).width+20,h:28};};
    const routed=api$3.route(geoms,rels,ir,labelMeasure,subs,placed);
    const routes=routed.routes.map(a=>({...a,reg:DDN$1.relationEntry(registry,a.r.kind)})),crossings=routed.crossings;
    const allBoxes=[...geoms,...frames,...subs,...routed.labels];
+   if(ladderRails)allBoxes.push({x:ladderRails.x0-4,y:ladderRails.y0,w:8,h:ladderRails.y1-ladderRails.y0},{x:ladderRails.x1-4,y:ladderRails.y0,w:8,h:ladderRails.y1-ladderRails.y0});
    let minX=allBoxes.reduce((m,g)=>Math.min(m,g.x),0),minY=allBoxes.reduce((m,g)=>Math.min(m,g.y),0);for(const r of routes)for(const pt of r.points){minX=Math.min(minX,pt[0]);minY=Math.min(minY,pt[1]);}
    let maxX=allBoxes.reduce((m,g)=>Math.max(m,g.x+g.w),100),maxY=allBoxes.reduce((m,g)=>Math.max(m,g.y+g.h),100);for(const r of routes)for(const pt of r.points){maxX=Math.max(maxX,pt[0]);maxY=Math.max(maxY,pt[1]);}
    const pinFocus=p.layout.center==='pins'?placed.anchor:null;
@@ -1819,6 +1880,7 @@
    if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN$1.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
    const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
    let diagram='';
+   if(ladderRails)diagram+=`<g class="ddn-ladder-rails"><path d="M${fmt(ladderRails.x0)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/><path d="M${fmt(ladderRails.x1)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/></g>`;
    for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$1(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);
     if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;
     /* B1-060 (RFC-124): interruptible activity region (dashed roundrect) and
@@ -1891,7 +1953,7 @@
     const ac=a.r.properties.x_association_class;
     if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
      diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1','fbd.basic@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
+    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1','fbd.basic@1','ladder.basic@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
      for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
       const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{},xs=member?.properties?.x_service||null;
       const filled=xp.streaming||xo.type==='full'||xs?.kind==='service';

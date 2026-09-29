@@ -167,6 +167,42 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
  }else if(p.algorithm==='grouped'){
   const path=String(p.group_by||'kind').split('.'),read=n=>path.reduce((v,k)=>v?.[k],n.properties)??path.reduce((v,k)=>v?.[k],n.n?.properties)??n.n?.kind??'unassigned';
   const groups=new Map();for(const n of nodes){let key=String(read(n));if(!groups.has(key))groups.set(key,[]);groups.get(key).push(n);}let x=0;for(const [label,ns]of groups){grid(ns,x,50);x=maxOf(ns,n=>n.x+n.w,0)+gap*2;ns.forEach(n=>n.group=label);}
+ }else if(p.algorithm==='ladder'){
+  /* B1-085: IEC 61131-3 rung layout. One data block per rung (declaration
+   * order, top to bottom); series wiring forms a left-to-right DAG; parallel
+   * OR branches fall out of shared junctions as extra tracks; coils, jumps
+   * and returns hug the right rail, labels the left. */
+  const RIGHT=['ladder.coil','ladder.jump','ladder.return'];
+  const rungOf=n=>String(n.n?.ref??n.id).split('::').pop().split('.')[0];
+  const rungs=[],byRung=new Map();
+  for(const n of nodes){const k=rungOf(n);if(!byRung.has(k)){byRung.set(k,[]);rungs.push(k);}byRung.get(k).push(n);}
+  let rungY=0;
+  for(const rk of rungs){
+   const ns=byRung.get(rk),member=new Set(ns.map(n=>n.id));
+   const es=edges.filter(e=>e.kind==='ladder.series'&&member.has(e.from.element)&&member.has(e.to.element));
+   const pred=new Map(ns.map(n=>[n.id,[]]));
+   for(const e of es)pred.get(e.to.element).push(e.from.element);
+   const col=new Map(ns.map(n=>[n.id,0]));
+   for(let pass=0;pass<=ns.length;pass++){let moved=false;
+    for(const e of es){const c=col.get(e.from.element)+1;if(c>col.get(e.to.element)){col.set(e.to.element,c);moved=true;}}
+    if(!moved)break;}
+   if(ns.some(n=>col.get(n.id)>ns.length)){diag.push({code:'DDN-LW02',severity:'info',message:'Ladder rung '+rk+' contains a series cycle; column assignment is approximate.'});for(const n of ns)if(col.get(n.id)>ns.length)col.set(n.id,0);}
+   const maxCol=Math.max(0,...ns.map(n=>col.get(n.id)));
+   for(const n of ns)if(n.n?.kind==='ladder.label')col.set(n.id,-1);
+   for(const n of ns)if(RIGHT.includes(n.n?.kind))col.set(n.id,Math.max(...ns.map(m=>m.n?.kind==='ladder.label'?-1:col.get(m.id)),0));
+   const minCol=ns.some(n=>n.n?.kind==='ladder.label')?-1:0;
+   const track=new Map();
+   for(let c=minCol;c<=Math.max(...ns.map(n=>col.get(n.id)));c++){
+    const layer=ns.filter(n=>col.get(n.id)===c).sort((a,b)=>{
+     const bary=x=>pred.get(x.id).length?pred.get(x.id).reduce((t,id)=>t+(track.get(id)??0),0)/pred.get(x.id).length:order.get(x.id)%7;
+     return bary(a)-bary(b)||order.get(a.id)-order.get(b.id);});
+    layer.forEach((n,i)=>track.set(n.id,i));
+   }
+   const trackCount=Math.max(1,...ns.map(n=>track.get(n.id)+1));
+   const colW=maxOf(ns,n=>n.w,90)+gap,rowH=maxOf(ns,n=>n.h,60)+Math.round(rowGap*.6);
+   for(const n of ns){n.x=(col.get(n.id)-minCol)*colW;n.y=rungY+track.get(n.id)*rowH;}
+   rungY+=trackCount*rowH;
+  }
  }else throw new ErrorClass('DDN203','No native placement algorithm '+p.algorithm);
  if(p.algorithm==='layered'&&['left','up'].includes(p.direction)){if(horizontal){const max=maxOf(nodes,n=>n.x+n.w,0);nodes.forEach(n=>n.x=max-n.x-n.w);}else{const max=maxOf(nodes,n=>n.y+n.h,0);nodes.forEach(n=>n.y=max-n.y-n.h);}}
  const pinned=[];for(const n of nodes){const at=placements[n.id]?.at;if(at){n.x=q(at[0]);n.y=q(at[1]);pinned.push(n);}}

@@ -13908,6 +13908,55 @@
       ],
       "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
       "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
+    },
+    {
+      "id": "ladder.series",
+      "label": "wires in series",
+      "origin": "profile",
+      "family": "flow",
+      "semantic_contract": {
+        "source": [
+          "ladder.contact",
+          "ladder.coil",
+          "ladder.label",
+          "ladder.jump",
+          "ladder.return",
+          "fbd.block",
+          "fbd.variable"
+        ],
+        "target": [
+          "ladder.contact",
+          "ladder.coil",
+          "ladder.label",
+          "ladder.jump",
+          "ladder.return",
+          "fbd.block",
+          "fbd.variable"
+        ],
+        "allow_self": false,
+        "member_endpoints": true
+      },
+      "basic_controls": [
+        "meaning",
+        "from",
+        "to",
+        "description"
+      ],
+      "detail_controls": [
+        "multiplicity",
+        "enforcement",
+        "payload",
+        "condition",
+        "evidence"
+      ],
+      "view_controls": [
+        "path",
+        "label_mode",
+        "crossing_treatment",
+        "end_placement"
+      ],
+      "recommendation": "Filter by profile + endpoint contracts; qualify field/port identity separately. Missing evidence is not false.",
+      "availability": "Filter then validate proposed source transaction; no green validity indicator based only on this index"
     }
   ]
 }

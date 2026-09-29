@@ -189,7 +189,7 @@ function route(nodes,rels,ir,labelMeasure,obstacles,placed){
     if(best&&score(best).crossings===0)break;
     const a=free[i],b=free[j],sa=slots[a.id],sb=slots[b.id];
     if(placed.pattern&&(!sa||!sb||sa.key!==sb.key))continue;
-    if(!placed.pattern&&['mindmap','tree','layered','grouped'].includes(p.layout.algorithm))continue;
+    if(!placed.pattern&&['mindmap','tree','layered','grouped','ladder'].includes(p.layout.algorithm))continue;
     const oldA=[a.x,a.y],oldB=[b.x,b.y],ca=center(a),cb=center(b);a.x=cb[0]-a.w/2;a.y=cb[1]-a.h/2;b.x=ca[0]-b.w/2;b.y=ca[1]-b.h/2;
     const clear=nodes.every((x,k)=>nodes.slice(k+1).every(y=>!Layout.overlap(x,y,16)));
     nt++;

@@ -1,0 +1,44 @@
+ddn "0.5";
+module "ddn.examples.ladder";
+
+// B1-085: an IEC 61131-3 ladder diagram — three rungs between the power
+// rails. Rung 1: a NO start contact in series with a NC stop contact drives
+// the motor coil. Rung 2: AUTO and MANUAL contacts in parallel (an OR branch
+// inferred from the shared junction) set a latch. Rung 3: a hosted FBD TON
+// timer block with typed pins resets a DONE coil, and a jump returns to the
+// L1 label on rung 1. All data is synthetic.
+data rung1 {
+    object l1 "L1" { kind: "ladder.label"; }
+    object start "START" { kind: "ladder.contact"; x_contact: { form: "no" }; }
+    object stop "STOP" { kind: "ladder.contact"; x_contact: { form: "nc" }; }
+    object motor "MOTOR" { kind: "ladder.coil"; x_coil: { mode: "normal" }; }
+    relation s1 "" @start -> @stop { kind: "ladder.series"; }
+    relation s2 "" @stop -> @motor { kind: "ladder.series"; }
+}
+data rung2 {
+    object auto_start "AUTO" { kind: "ladder.contact"; }
+    object manual_start "MANUAL" { kind: "ladder.contact"; }
+    object latch "LATCH" { kind: "ladder.coil"; x_coil: { mode: "set" }; }
+    relation s3 "" @auto_start -> @latch { kind: "ladder.series"; }
+    relation s4 "" @manual_start -> @latch { kind: "ladder.series"; }
+}
+data rung3 {
+    object run "RUN" { kind: "ladder.contact"; }
+    object t1 "T1" { kind: "fbd.block"; datatype: "TON";
+        ports {
+            port in1 { direction: in; x_fbd: { type: "BOOL" }; }
+            port pt { direction: in; x_fbd: { type: "TIME" }; }
+            port q { direction: out; x_fbd: { type: "BOOL" }; }
+        }
+    }
+    object done "DONE" { kind: "ladder.coil"; x_coil: { mode: "reset" }; }
+    object j1 "NEXT" { kind: "ladder.jump"; x_jump: { target: @rung1.l1 }; }
+    relation s5 "" @run -> @t1.in1 { kind: "ladder.series"; }
+    relation s6 "" @t1.q -> @done { kind: "ladder.series"; }
+}
+view d "Motor control ladder" {
+    data: [@rung1, @rung2, @rung3];
+    projection { profile: "ladder.basic@1"; }
+    layout { algorithm: ladder; }
+    publication { size: content; fit: none; }
+}

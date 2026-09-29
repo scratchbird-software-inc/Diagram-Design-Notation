@@ -291,11 +291,18 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  // at the standard padding; when members already fit this is a no-op.
  if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
  return{...f,x,y,w,h};});
+ /* B1-085: IEC 61131-3 power rails flank the rung area under the ladder profile. */
+ let ladderRails=null;
+ if(p.projection.profile==='ladder.basic@1'&&geoms.length){
+  const gx0=geoms.reduce((m,g)=>Math.min(m,g.x),Infinity),gx1=geoms.reduce((m,g)=>Math.max(m,g.x+g.w),-Infinity),gy0=geoms.reduce((m,g)=>Math.min(m,g.y),Infinity),gy1=geoms.reduce((m,g)=>Math.max(m,g.y+g.h),-Infinity);
+  ladderRails={x0:gx0-56,x1:gx1+56,y0:gy0-28,y1:gy1+28};
+ }
  let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q(d.at?.[0],i*310),y:q(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q(d.size?.[0],270),h:q(d.size?.[1],95)}));
  const labelMeasure=r=>{if(r._visualLabel===false)return{w:0,h:0};const reg=DDN.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return{w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return{w:Text.measure(str,12,p.style.font,500).width+20,h:28};};
  const routed=Placement.route(geoms,rels,ir,labelMeasure,subs,placed);
  const routes=routed.routes.map(a=>({...a,reg:DDN.relationEntry(registry,a.r.kind)})),crossings=routed.crossings;
  const allBoxes=[...geoms,...frames,...subs,...routed.labels];
+ if(ladderRails)allBoxes.push({x:ladderRails.x0-4,y:ladderRails.y0,w:8,h:ladderRails.y1-ladderRails.y0},{x:ladderRails.x1-4,y:ladderRails.y0,w:8,h:ladderRails.y1-ladderRails.y0});
  let minX=allBoxes.reduce((m,g)=>Math.min(m,g.x),0),minY=allBoxes.reduce((m,g)=>Math.min(m,g.y),0);for(const r of routes)for(const pt of r.points){minX=Math.min(minX,pt[0]);minY=Math.min(minY,pt[1]);}
  let maxX=allBoxes.reduce((m,g)=>Math.max(m,g.x+g.w),100),maxY=allBoxes.reduce((m,g)=>Math.max(m,g.y+g.h),100);for(const r of routes)for(const pt of r.points){maxX=Math.max(maxX,pt[0]);maxY=Math.max(maxY,pt[1]);}
  const pinFocus=p.layout.center==='pins'?placed.anchor:null;
@@ -344,6 +351,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(p.publication.fit==='none'&&(width>availW+.1||height>availH+.1)){if(p.publication.overflow==='error')throw new DDN.DDNError('DDN074','Unscaled drawing exceeds publication area; choose reflow or a larger page');diags.push({code:'DDN074',severity:'warning',message:'Unscaled drawing exceeds publication area'});}
  const tx=pinFocus?margin+availW/2-pinFocus[0]*scale:margin-minX*scale+10,ty=pinFocus?headBlock-20+extraHeader+availH/2-pinFocus[1]*scale:headBlock-20+extraHeader-minY*scale+10;
  let diagram='';
+ if(ladderRails)diagram+=`<g class="ddn-ladder-rails"><path d="M${fmt(ladderRails.x0)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/><path d="M${fmt(ladderRails.x1)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/></g>`;
  for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);
   if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;
   /* B1-060 (RFC-124): interruptible activity region (dashed roundrect) and
@@ -416,7 +424,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const ac=a.r.properties.x_association_class;
   if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
    diagram+=`<g class="ddn-association-class" data-class="${esc(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1','fbd.basic@1'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
+  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1','fbd.basic@1','ladder.basic@1'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
    for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
     const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{},xs=member?.properties?.x_service||null;
     const filled=xp.streaming||xo.type==='full'||xs?.kind==='service';

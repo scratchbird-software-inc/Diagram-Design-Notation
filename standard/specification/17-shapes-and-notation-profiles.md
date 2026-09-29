@@ -320,3 +320,33 @@ the kind and contract are designed for it. PLC execution/compilation, IEC XML
 interchange and formal certification are out of scope. Example:
 `website/examples/basics/100-fbd.ddn`; tests `fbd-compliance.js` +
 `fbd-showcase.js`.
+
+## 17.24 IEC 61131-3 ladder diagrams (ladder.basic@1)
+
+`ladder.basic@1` covers IEC 61131-3 ladder diagrams (LD). The profile is a
+contained addition: it keeps `projection { kind: graph }` and adds a
+dedicated rung layout algorithm (`layout { algorithm: ladder }`, required —
+`DDN-PJ214`) plus profile rendering. One `data` block is one rung; rungs
+stack top to bottom in declaration order, and power rails flank the rung
+area. Elements on a rung wire left to right with `ladder.series` (member
+endpoints allowed, so FBD pins connect directly). Contacts
+(`ladder.contact`, `x_contact: { form: no|nc }`) draw the `—| |—` bars with
+the name above, NC adds the slash. Exactly one output coil per rung
+(`ladder.coil`, `x_coil: { mode: normal|set|reset|negated }` — S/R letter
+inside the parentheses, slash for negated) validates as `DDN-PJ211`;
+`x_contact`/`x_coil` on other kinds fail the same code. Parallel OR branches
+are inferred from the series topology — contacts sharing the same junctions
+stack as parallel tracks; there is no branch relation to author.
+`fbd.block`/`fbd.variable` (17.23) host on rungs unchanged. `ladder.label`
+(tag), `ladder.jump` (`x_jump: { target: @label }`, must resolve to a
+selected `ladder.label` — `DDN-PJ213`) and `ladder.return` cover program
+flow. Series wiring may not cross rungs (`DDN-PJ212`); a series cycle is
+reported (`DDN-LW02`) and column assignment degrades gracefully.
+
+Layout: per rung, columns are longest-path distances over the series DAG;
+the coil/jump/return hug the rightmost column at the rail, a label takes the
+leftmost column, and branch contacts fan out into sub-tracks ordered by
+predecessor barycentre. PLC execution/compilation, IEC XML interchange and
+formal certification are out of scope. Example:
+`website/examples/basics/101-ladder.ddn`; tests `ladder-compliance.js` +
+`ladder-showcase.js`.

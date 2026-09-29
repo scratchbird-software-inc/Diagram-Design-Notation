@@ -304,6 +304,34 @@ function validate(ir,E){
     fail('DDN-PJ210','fbd.wire '+r.id+' connects '+pa.properties.x_fbd.type+' to '+pb.properties.x_fbd.type+'; wire endpoints must share a type',r);
   }
  }
+ /* B1-085: IEC 61131-3 ladder semantics — rungs, coils, jumps. */
+ {
+  const LADDER=['ladder.contact','ladder.coil','ladder.label','ladder.jump','ladder.return'];
+  const rungOf=n=>String(n.ref??n.id).split('::').pop().split('.')[0];
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   if(n.properties.x_contact!==undefined&&n.kind!=='ladder.contact')fail('DDN-PJ211','x_contact applies to ladder.contact; '+n.id+' is '+n.kind,n);
+   if(n.properties.x_coil!==undefined&&n.kind!=='ladder.coil')fail('DDN-PJ211','x_coil applies to ladder.coil; '+n.id+' is '+n.kind,n);
+   if(n.properties.x_jump!==undefined&&n.kind!=='ladder.jump')fail('DDN-PJ213','x_jump applies to ladder.jump; '+n.id+' is '+n.kind,n);
+  }
+  if(profile==='ladder.basic@1'){
+   if(ir.view.profiles.layout.algorithm!=='ladder')fail('DDN-PJ214','ladder.basic@1 requires layout { algorithm: ladder }; found '+ir.view.profiles.layout.algorithm);
+   const groups=new Map();
+   for(const n of ir.elements.filter(n=>shown.has(n.id))){const k=rungOf(n);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(n);}
+   for(const [rk,members]of groups){
+    if(!members.some(n=>LADDER.includes(n.kind)||n.kind.startsWith('fbd.')))continue;
+    const coils=members.filter(n=>n.kind==='ladder.coil');
+    if(coils.length!==1)fail('DDN-PJ211','Rung '+rk+' drives '+coils.length+' output coil(s); an IEC 61131-3 rung has exactly one ladder.coil',coils[0]||members[0]);
+   }
+   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='ladder.series')){
+    const a=ns.get(r.from.element),b=ns.get(r.to.element);
+    if(a&&b&&rungOf(a)!==rungOf(b))fail('DDN-PJ212','ladder.series '+r.id+' crosses rungs ('+rungOf(a)+' → '+rungOf(b)+'); series wiring stays within one rung',r);
+   }
+   for(const n of ir.elements.filter(n=>shown.has(n.id)&&n.kind==='ladder.jump')){
+    const tn=ns.get(n.properties.x_jump?.target?.$ref);
+    if(!tn||tn.kind!=='ladder.label'||!shown.has(tn.id))fail('DDN-PJ213','ladder.jump '+n.id+' must target a ladder.label selected in this view',n);
+   }
+  }
+ }
  /* B1-083: SDL process-level semantics. */
  if(profile==='sdl.process@1'){
   const SYMS=['sdl.input','sdl.output','sdl.task','sdl.save','sdl.create'];

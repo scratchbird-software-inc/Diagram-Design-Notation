@@ -2572,6 +2572,66 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "ladder.contact",
+      "name": "Contact",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "LDCONTACT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "ladder.coil",
+      "name": "Coil",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "LDCOIL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "ladder.label",
+      "name": "Label",
+      "shape": "profile",
+      "silhouette": "tag",
+      "fallback": "application",
+      "family": "data",
+      "code": "LDLABEL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "ladder.jump",
+      "name": "Jump",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "LDJUMP",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "ladder.return",
+      "name": "Return",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "LDRETURN",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -4808,6 +4868,36 @@
         "fbd.variable"
       ],
       "target": [
+        "fbd.block",
+        "fbd.variable"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
+    },
+    {
+      "keyword": "ladder.series",
+      "name": "Series connection",
+      "verb": "Wires in series",
+      "family": "flow",
+      "code": "LDSERIES",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "ladder.contact",
+        "ladder.coil",
+        "ladder.label",
+        "ladder.jump",
+        "ladder.return",
+        "fbd.block",
+        "fbd.variable"
+      ],
+      "target": [
+        "ladder.contact",
+        "ladder.coil",
+        "ladder.label",
+        "ladder.jump",
+        "ladder.return",
         "fbd.block",
         "fbd.variable"
       ],
@@ -7395,6 +7485,26 @@
       "validation": [
         "negation only on BOOL pins (DDN-PJ209)",
         "wire endpoints' pin types must match (DDN-PJ210)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "PLC execution/compilation",
+        "IEC interchange (XML) formats",
+        "formal IEC certification"
+      ]
+    },
+    {
+      "id": "ladder.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "IEC 61131-3 ladder diagram"
+      ],
+      "scope": "IEC 61131-3 LD: power rails, rungs (one data block per rung, declaration order top to bottom), NO/NC contacts, output coils (normal/set/reset/negated) right-aligned at the rail, parallel OR branches inferred from series topology, fbd.block/fbd.variable hosted on rungs, labels/jumps/returns. Dedicated rung layout algorithm (layout.algorithm: ladder).",
+      "validation": [
+        "each rung drives exactly one ladder.coil (DDN-PJ211)",
+        "ladder.series endpoints stay within one rung (DDN-PJ212)",
+        "ladder.jump targets a selected ladder.label (DDN-PJ213)",
+        "the profile requires layout.algorithm: ladder (DDN-PJ214)",
         "registry endpoint contracts (DDN102)"
       ],
       "unsupported": [

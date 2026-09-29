@@ -432,6 +432,8 @@ function render(g,p,theme){
   out+=lines(g.titleLines,x+16*s,y+31*s,16,600,'')+line(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s);for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc(r.id)}">`+lines(r.labelLines,x+16*s,y+r.top+18*s,13.5,400,'')+'</g>';
  }else{
   let yy=y+h/2-(g.titleLines.length-1)*10.5*s+5*s;if(shape==='package')yy+=10*s;
+  /* B1-085: contact/coil names sit above the glyph, not at node centre. */
+  if(['ladder.contact','ladder.coil'].includes(n.kind))yy=y+17*s;
   out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
  }
  if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,Text.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
@@ -446,6 +448,22 @@ function render(g,p,theme){
   const tp=n.properties.datatype||n.properties.type||'';
   if(tp)out+=text(x+w/2,y+16*s,tp,11,650,'text-anchor="middle"');
  }
+ /* B1-085: ladder glyphs — IEC 61131-3 contact bars and coil parentheses. */
+ if(n.kind==='ladder.contact'){
+  const cx=x+w/2,form=n.properties.x_contact?.form||'no';
+  out+=`<g class="ddn-ladder-contact" data-form="${form}">`+line(cx-8*s,y+26*s,cx-8*s,y+h-10*s,2.2)+line(cx+8*s,y+26*s,cx+8*s,y+h-10*s,2.2);
+  if(form==='nc')out+=line(cx-11*s,y+h-10*s,cx+11*s,y+26*s,2.2);
+  out+='</g>';
+ }
+ if(n.kind==='ladder.coil'){
+  const cx=x+w/2,cy=y+(26*s+h-10*s)/2,ry=(h-36*s)/2,rx=11*s,mode=n.properties.x_coil?.mode||'normal';
+  out+=`<g class="ddn-ladder-coil" data-mode="${mode}"><path d="M${f(cx-rx)} ${f(cy-ry)}Q${f(cx-rx-9*s)} ${f(cy)} ${f(cx-rx)} ${f(cy+ry)}" fill="none" stroke="${ink}" stroke-width="2"/><path d="M${f(cx+rx)} ${f(cy-ry)}Q${f(cx+rx+9*s)} ${f(cy)} ${f(cx+rx)} ${f(cy+ry)}" fill="none" stroke="${ink}" stroke-width="2"/>`;
+  if(mode==='set'||mode==='reset')out+=text(cx,cy+4.5*s,mode==='set'?'S':'R',13,650,'text-anchor="middle"');
+  if(mode==='negated')out+=line(cx-rx-4*s,cy+ry,cx+rx+4*s,cy-ry,2);
+  out+='</g>';
+ }
+ if(n.kind==='ladder.jump')out+=text(x+12*s,y+h/2+4.5*s,'»',14,650,'');
+ if(n.kind==='ladder.return')out+=text(x+12*s,y+h/2+4.5*s,'RET',10.5,650,'');
  /* B1-083: SDL create symbol — dashed border. */
  if(n.kind==='sdl.create')out+=`<rect x="${f(x+4*s)}" y="${f(y+4*s)}" width="${f(w-8*s)}" height="${f(h-8*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
  /* B1-081: VSM glyph details — inventory I, supermarket inner lines. */

@@ -615,6 +615,13 @@
       "kind": "graph",
       "svg": "profiles/idef0-basic-1.svg"
     },
+    "ladder.basic@1": {
+      "entry": "website/examples/basics/101-ladder.ddn",
+      "view": "d",
+      "title": "Motor control ladder",
+      "kind": "graph",
+      "svg": "profiles/ladder-basic-1.svg"
+    },
     "matrix.ansoff@1": {
       "entry": "website/examples/basics/33-matrix-pack.ddn",
       "view": "ansoff",
@@ -1987,6 +1994,20 @@
       "profile": "fbd.basic@1",
       "kind": "graph",
       "svg": "corpus/basics-100-fbd.svg"
+    },
+    {
+      "entry": "website/examples/basics/101-ladder.ddn",
+      "view": "d",
+      "title": "Motor control ladder",
+      "views": [
+        {
+          "id": "d",
+          "title": "Motor control ladder"
+        }
+      ],
+      "profile": "ladder.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-101-ladder.svg"
     },
     {
       "entry": "website/examples/basics/11-native-layouts.ddn",
