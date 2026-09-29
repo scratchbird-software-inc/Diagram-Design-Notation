@@ -35,9 +35,10 @@ uncovered inventory entries of that hole.
 1. **DATA A-vs-C final selection** — the one deferred runtime choice
    (chapter 7 §7.2); to be settled as the per-family chapters show which
    facets are actually distinct.
-2. **Per-family chapter authoring** — the stub outlines in this skeleton
-   are the approved scope; the per-family work item turns them into
-   chapters and assigns core/optional tags in chapter 8 their final form.
+2. **Per-family chapter authoring** — batch 1 (EM-1..EM-3) landed under
+   `ddna/families/` (six chapters); batch 2 (EM-4..EM-6 plus the
+   no-standard one-pagers) remains, then core/optional tags in chapter 8
+   get their final form.
 3. **Interactive view state** — out of v1 (D2), with an explicit
    revisit-after-replay note.
 4. **Shared converter core licensing** — open vs dual-licensed (D9 names

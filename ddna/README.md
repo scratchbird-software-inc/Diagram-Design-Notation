@@ -1,7 +1,7 @@
 # DDNA — DDN with Automation · proposed open standard (draft, pre-1.0)
 
 **Status:** full draft skeleton, 2026-09-29. All twelve chapters and the
-appendix are full drafts. Per-family chapters are a follow-on work item.
+appendix are full drafts. Per-family chapters: batch 1 (EM-1..EM-3) landed under `ddna/families/`; batch 2 (EM-4..EM-6 + no-standard one-pagers) is a follow-on work item.
 
 ## Scope
 
@@ -57,6 +57,12 @@ inert metadata to a DDN-only tool.
 | `11-alien-format-import.md` | Alien-format import policy | full draft |
 | `12-what-remains.md` | What remains | full draft |
 | `appendix-known-errata.md` | Known errata in upstream standards | appendix |
+| `families/uml-state-machines.md` | Family chapter: UML state machines (EM-1, state) | full draft |
+| `families/uml-activities.md` | Family chapter: UML activities (EM-1, token) | full draft |
+| `families/bpmn.md` | Family chapter: BPMN 2.0.2 (EM-1, token) | full draft |
+| `families/sdl.md` | Family chapter: SDL-2010 (special position) | full draft |
+| `families/dmn.md` | Family chapter: DMN 1.4 (EM-2) | full draft |
+| `families/cmmn.md` | Family chapter: CMMN 1.1 (EM-3) | full draft |
 
 Citation convention: normative claims cite the analysis file in the DDNA
 analysis corpus and, through it, the underlying standard's clause, e.g.

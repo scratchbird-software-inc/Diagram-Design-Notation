@@ -99,6 +99,7 @@ generalized (runtime-models.md §6 hole 1).
 | Family | Class | Basis |
 | --- | --- | --- |
 | BPMN 2.0.2 | EM-1 | §13.2–13.5 token semantics; §13.3.1 token not required |
+| UML state machines | EM-1 (state) | SCXML Appendix D deterministic algorithm (verified); UML ch.14 informal RTC (added when the EM-1 family chapter landed) |
 | UML activity | EM-1 | 15.2.3.2; fUML Clause 8 |
 | Flowcharts / EPC / Petri nets / IDEF0 | EM-1 (transfer) | exclusion-sweep.md Part 1A |
 | DMN 1.4 / decision tables | EM-2 | §7.1; §8.2.7 |

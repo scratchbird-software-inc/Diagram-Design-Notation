@@ -23,6 +23,8 @@ owner's.
 
 ## 8.2 EM-1 — token-runtime families
 
+*Normative family chapters for this class: `families/uml-state-machines.md`, `families/uml-activities.md`, `families/bpmn.md`; SDL's special position is `families/sdl.md`.*
+
 **BPMN:** F-BPMN-1 token simulation engine (§13.2–13.5) [DT] core ·
 F-BPMN-2 message/correlation bus for collaborations (key-based routing)
 [DT] core · F-BPMN-3 compensation/transaction scope analysis [DT] optional ·
@@ -45,6 +47,8 @@ under a declared profile [DT] core.
 
 ## 8.3 EM-2 — declarative families (DMN)
 
+*Normative family chapter: `families/dmn.md`.*
+
 F-DMN-1 live decision evaluation hook (host engine incl. full-FEEL tables)
 [DT] core · F-DMN-2 hit-policy completion (all 7 DMN policies; priority
 lists + Collect operators as declared data) [DT] core · F-DMN-3
@@ -53,6 +57,8 @@ optional · F-DMN-4 BPMN↔DMN call-site linkage (cross-family trace
 stitching) [DT; display VS once recorded] core.
 
 ## 8.4 EM-3 — lifecycle-FSM family (CMMN)
+
+*Normative family chapter: `families/cmmn.md`.*
 
 F-CMMN-1 case engine / sentry evaluation runtime [DT] core · F-CMMN-2
 human-decision interaction surface (role-checked work items) [DT] core —
