@@ -143,6 +143,8 @@
     "petri.basic@1": "Petri nets (ISO/IEC 15909): places with tokens, transitions, weighted/inhibitor/test arcs, bipartite validation",
     "orm.basic@1": "ORM 2 (ISO/IEC 19507): entity/value types, role-box fact types, uniqueness/mandatory, constraint arcs, objectification",
     "vsm.basic@1": "Value stream mapping: process boxes with data rows, VA/NVA timeline ladder, inventory/push/pull/info arrows, supermarket, kaizen, operator",
+    "sdl.basic@1": "SDL (Z.100) structural: blocks/agents, gates, channels with signal lists, signal/signalset vocabulary",
+    "sdl.process@1": "SDL (Z.100) process: rebadge of uml.statemachine@1 with SDL symbols (input/output flags, task, save, create, procedure)",
     "epc.complete@1": "Full EPC: alternation/connectors plus org units, roles, info objects, process links, fan-balancing",
     "geo.choropleth@1": "Choropleth map: regions coloured by a joined numeric value",
     "geo.symbols@1": "Symbol map: sized markers at lon/lat points",

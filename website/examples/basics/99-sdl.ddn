@@ -1,0 +1,53 @@
+ddn "0.5";
+module "ddn.examples.sdl";
+
+// B1-083: ITU-T Z.100 SDL — a system view (blocks with gates, a channel with
+// its signal list, signal and signal-set vocabulary) and an SDL process
+// diagram (start, state, input/output flags, decision, task, save, create,
+// procedure reference). All data is synthetic.
+data sys {
+    object net "Network block" { kind: "sdl.block";
+        ports { port g1 { direction: inout; } }
+    }
+    object app "Application block" { kind: "sdl.block";
+        ports { port g2 { direction: inout; } }
+    }
+    object sig "OrderReq" { kind: "sdl.signal"; }
+    object sigs "Order signals" { kind: "sdl.signalset"; }
+    relation ch "[OrderReq, OrderAck]" @net.g1 -> @app.g2 { kind: "sdl.channel"; }
+    relation l1 "" @sig -> @net { kind: "sdl.links"; }
+    relation l2 "" @sigs -> @app { kind: "sdl.links"; }
+}
+data p {
+    object start "" { kind: "state.initial"; }
+    object idle "Idle" { kind: "state.state"; }
+    object in1 "OrderReq" { kind: "sdl.input"; }
+    object work "Process order" { kind: "sdl.task"; }
+    object dec "" { kind: "state.junction"; }
+    object out1 "OrderAck" { kind: "sdl.output"; }
+    object store "Save order" { kind: "sdl.save"; }
+    object proc "Billing" { kind: "sdl.procedure"; }
+    object newstate "Tracking" { kind: "sdl.create"; }
+    object done "" { kind: "state.final"; }
+    relation t1 "" @start -> @idle { kind: "state.transition"; }
+    relation t2 "OrderReq" @idle -> @in1 { kind: "state.transition"; }
+    relation t3 "" @in1 -> @work { kind: "state.transition"; }
+    relation t4 "" @work -> @dec { kind: "state.transition"; }
+    relation t5 "ok" @dec -> @out1 { kind: "state.transition"; }
+    relation t6 "hold" @dec -> @store { kind: "state.transition"; }
+    relation t7 "" @out1 -> @proc { kind: "state.transition"; }
+    relation t8 "" @store -> @proc { kind: "state.transition"; }
+    relation t9 "" @proc -> @newstate { kind: "state.transition"; }
+    relation t10 "" @newstate -> @done { kind: "state.transition"; }
+}
+view system "SDL system" {
+    data: [@sys];
+    projection { profile: "sdl.basic@1"; }
+    frame nb "Network" { scope: @sys.net; members: [@sys.sig]; }
+    publication { size: content; fit: none; }
+}
+view process "Order process" {
+    data: [@p];
+    projection { profile: "sdl.process@1"; }
+    publication { size: content; fit: none; }
+}

@@ -313,7 +313,10 @@
     g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=70*s;
    }
    /* B1-072 (RFC-131): UAF 1.2 domain vocabulary — keyword headers. */
-   const UAF_KW={'uaf.capability':'Capability','uaf.enterprisegoal':'EnterpriseGoal','uaf.enterprisevision':'EnterpriseVision','uaf.strategicphase':'StrategicPhase','uaf.opperformer':'OperationalPerformer','uaf.opactivity':'OperationalActivity','uaf.opnode':'OperationalNode','uaf.opexchange':'OperationalExchange','uaf.servicespec':'ServiceSpecification','uaf.servicefunction':'ServiceFunction','uaf.servicepolicy':'ServicePolicy','uaf.system':'System','uaf.systemfunction':'SystemFunction','uaf.implementer':'Implementer','uaf.person':'Person','uaf.organization':'Organization','uaf.post':'Post','uaf.responsibility':'Responsibility','uaf.resourceperformer':'ResourcePerformer','uaf.resource':'Resource','uaf.resourcefunction':'ResourceFunction','uaf.technology':'Technology','uaf.securityelement':'SecurityElement','uaf.securitycontrol':'SecurityControl','uaf.threat':'Threat','uaf.asset':'Asset','uaf.project':'Project','uaf.projectmilestone':'ProjectMilestone','uaf.workpackage':'WorkPackage','uaf.standard':'Standard','uaf.standardcollection':'StandardCollection','uaf.protocol':'Protocol','uaf.actualresource':'ActualResource','uaf.actualorganization':'ActualOrganization','uaf.actualperson':'ActualPerson','uaf.dictionaryentry':'DictionaryEntry','uaf.archdesc':'ArchitectureDescription','uaf.viewpoint':'Viewpoint','uaf.modelref':'ModelReference'};
+   /* B1-083: SDL — flag shapes carry their name; keyword headers on the rest. */
+   const SDL_KW={'sdl.block':'block','sdl.agent':'agent','sdl.signalset':'signalset','sdl.procedure':'procedure'};
+   if(SDL_KW[n.kind]){g.sysmlKeyword=SDL_KW[n.kind];g.headerH=70*s;}
+    const UAF_KW={'uaf.capability':'Capability','uaf.enterprisegoal':'EnterpriseGoal','uaf.enterprisevision':'EnterpriseVision','uaf.strategicphase':'StrategicPhase','uaf.opperformer':'OperationalPerformer','uaf.opactivity':'OperationalActivity','uaf.opnode':'OperationalNode','uaf.opexchange':'OperationalExchange','uaf.servicespec':'ServiceSpecification','uaf.servicefunction':'ServiceFunction','uaf.servicepolicy':'ServicePolicy','uaf.system':'System','uaf.systemfunction':'SystemFunction','uaf.implementer':'Implementer','uaf.person':'Person','uaf.organization':'Organization','uaf.post':'Post','uaf.responsibility':'Responsibility','uaf.resourceperformer':'ResourcePerformer','uaf.resource':'Resource','uaf.resourcefunction':'ResourceFunction','uaf.technology':'Technology','uaf.securityelement':'SecurityElement','uaf.securitycontrol':'SecurityControl','uaf.threat':'Threat','uaf.asset':'Asset','uaf.project':'Project','uaf.projectmilestone':'ProjectMilestone','uaf.workpackage':'WorkPackage','uaf.standard':'Standard','uaf.standardcollection':'StandardCollection','uaf.protocol':'Protocol','uaf.actualresource':'ActualResource','uaf.actualorganization':'ActualOrganization','uaf.actualperson':'ActualPerson','uaf.dictionaryentry':'DictionaryEntry','uaf.archdesc':'ArchitectureDescription','uaf.viewpoint':'Viewpoint','uaf.modelref':'ModelReference'};
    if(UAF_KW[n.kind]){g.sysmlKeyword=UAF_KW[n.kind];g.headerH=70*s;}
    /* B1-080: ORM role boxes — fact types lay their fields out as a horizontal
     * row of role boxes instead of vertical field rows. */
@@ -685,6 +688,8 @@
     if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
     else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
    }
+   /* B1-083: SDL create symbol — dashed border. */
+   if(n.kind==='sdl.create')out+=`<rect x="${f(x+4*s)}" y="${f(y+4*s)}" width="${f(w-8*s)}" height="${f(h-8*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
    /* B1-081: VSM glyph details — inventory I, supermarket inner lines. */
    if(n.kind==='vsm.inventory')out+=text(x+w/2,y+h/2+5*s,'I',14,650,'text-anchor="middle"');
    if(n.kind==='vsm.supermarket'){out+=line(x+14*s,y+18*s,x+w-14*s,y+18*s,1.4)+line(x+14*s,y+26*s,x+w-14*s,y+26*s,1.4)+line(x+26*s,y+10*s,x+26*s,y+h-10*s,1.4);}
@@ -1881,7 +1886,7 @@
     const ac=a.r.properties.x_association_class;
     if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
      diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
+    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
      for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
       const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{},xs=member?.properties?.x_service||null;
       const filled=xp.streaming||xo.type==='full'||xs?.kind==='service';

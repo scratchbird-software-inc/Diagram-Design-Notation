@@ -3587,6 +3587,22 @@
       "scope": "Value stream mapping (machinery): process boxes with data rows, the VA/NVA timeline ladder strip, inventory triangles, push/pull and material arrows, electronic/manual information arrows, supermarket, kaizen burst and operator glyphs \u2014 simple generic glyphs only; detailed industry icon artwork is a separate excluded task.",
       "validation": ["ladder values are nonnegative numbers on vsm.process (DDN-PJ205)", "registry endpoint contracts (DDN102)"],
       "unsupported": ["detailed VSM icon libraries", "cycle-time simulation", "VSM interchange formats"]
+    },
+    {
+      "id": "sdl.basic@1",
+      "projection": "graph",
+      "diagramFamilies": ["SDL system/block diagram"],
+      "scope": "SDL (ITU-T Z.100) structural level: block and agent kinds, channels with signal lists, signal and signal-set vocabulary, gates as block ports.",
+      "validation": ["channels connect blocks/agents or their signals (DDN102)", "gates are block ports (DDN102)"],
+      "unsupported": ["SDL interchange formats", "system simulation", "formal ITU conformance"]
+    },
+    {
+      "id": "sdl.process@1",
+      "projection": "graph",
+      "diagramFamilies": ["SDL process diagram"],
+      "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag), output (send flag), decision, task, save, create; procedure references as subprocess silhouettes.",
+      "validation": ["exactly one start symbol (DDN-PJ208)", "input/output/task/save/create symbols have at least one outgoing transition (DDN-PJ208)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["SDL interchange formats", "process simulation", "formal ITU conformance"]
     }
   ],
   "projectionProperties": {

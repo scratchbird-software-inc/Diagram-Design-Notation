@@ -416,7 +416,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const ac=a.r.properties.x_association_class;
   if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
    diagram+=`<g class="ddn-association-class" data-class="${esc(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
+  if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1'].includes(p.projection.profile)){const s=q(p.style.font_size,16)/16;
    for(const[ep,pt]of[[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
     const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{},xs=member?.properties?.x_service||null;
     const filled=xp.streaming||xo.type==='full'||xs?.kind==='service';

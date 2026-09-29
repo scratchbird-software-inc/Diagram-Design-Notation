@@ -286,3 +286,21 @@ mechanism and binds to `network.bus`/`network.server`/`network.rack`.
 licensing diligence is a separate task. Example:
 `website/examples/basics/98-icons.ddn`; tests `icons-compliance.js` +
 `icons-showcase.js`.
+
+## 17.22 SDL — system and process diagrams (sdl.basic@1, sdl.process@1)
+
+`sdl.basic@1` covers the ITU-T Z.100 structural level: `sdl.block` and
+`sdl.agent` («block»/«agent» headers) with gates as block ports (port squares
+render under this profile), `sdl.channel` relations whose label carries the
+signal list in brackets, and the `sdl.signal` (send-flag) / `sdl.signalset`
+vocabulary linked with `sdl.links`. `sdl.process@1` rebadges the
+`uml.statemachine@1` machinery (`DDN-PJW06` at render time) with the SDL
+process symbols: start (state.initial), state (state.state), input (accept
+flag `sdl.input`), output (send flag `sdl.output`), decision (junction),
+task (`sdl.task`), save (tag `sdl.save`), create (`sdl.create`, dashed
+border) and procedure references (`sdl.procedure`, subprocess silhouette).
+Exactly one start symbol and at least one outgoing transition per process
+symbol validate as `DDN-PJ208`. SDL interchange formats, simulation and
+formal ITU conformance are out of scope. Example:
+`website/examples/basics/99-sdl.ddn`; tests `sdl-compliance.js` +
+`sdl-showcase.js`.

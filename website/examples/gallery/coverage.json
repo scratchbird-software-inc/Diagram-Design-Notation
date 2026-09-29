@@ -796,6 +796,20 @@
       "combined": "website/examples/projections/views.combined.ddn",
       "svg": "profiles/requirements-basic-1.svg"
     },
+    "sdl.basic@1": {
+      "entry": "website/examples/basics/99-sdl.ddn",
+      "view": "system",
+      "title": "SDL system",
+      "kind": "graph",
+      "svg": "profiles/sdl-basic-1.svg"
+    },
+    "sdl.process@1": {
+      "entry": "website/examples/basics/99-sdl.ddn",
+      "view": "process",
+      "title": "Order process",
+      "kind": "graph",
+      "svg": "profiles/sdl-process-1.svg"
+    },
     "soaml.services@1": {
       "entry": "website/examples/basics/88-soaml.ddn",
       "view": "arch",
@@ -3753,6 +3767,24 @@
       "kind": "graph",
       "wiki": "Diagrams-Networks",
       "svg": "corpus/basics-98-icons.svg"
+    },
+    {
+      "entry": "website/examples/basics/99-sdl.ddn",
+      "view": "system",
+      "title": "SDL system",
+      "views": [
+        {
+          "id": "system",
+          "title": "SDL system"
+        },
+        {
+          "id": "process",
+          "title": "Order process"
+        }
+      ],
+      "profile": "sdl.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-99-sdl.svg"
     },
     {
       "entry": "website/examples/projections/views.ddn",

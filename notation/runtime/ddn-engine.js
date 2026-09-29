@@ -22,7 +22,7 @@ function placeholder(ir,kind){
  return{svg,scene,diagnostics:[...(ir.diagnostics||[]),diag],_ir:ir};
 }
 function render(ir,registry,glyphs,options={}){/* B1-065 (RFC-128): SysML behavioral rebadges reuse the UML machinery. */
- const rebadge={'sysml.usecase@1':'uml.usecase@3','sysml.activity@1':'uml.activity@2','sysml.statemachine@1':'uml.statemachine@1','sysml.sequence@1':'uml.sequence@2','c4.deployment@1':'uml.deployment@1','c4.dynamic@1':'uml.communication@2','msc.basic@1':'uml.sequence@2'}[ir.view.profiles.projection.profile];
+ const rebadge={'sysml.usecase@1':'uml.usecase@3','sysml.activity@1':'uml.activity@2','sysml.statemachine@1':'uml.statemachine@1','sysml.sequence@1':'uml.sequence@2','c4.deployment@1':'uml.deployment@1','c4.dynamic@1':'uml.communication@2','msc.basic@1':'uml.sequence@2','sdl.process@1':'uml.statemachine@1'}[ir.view.profiles.projection.profile];
  if(rebadge)ir={...ir,diagnostics:[...(ir.diagnostics||[]),{code:'DDN-PJW06',severity:'info',message:ir.view.profiles.projection.profile+' is a SysML rebadge of the '+rebadge+' machinery; SysML-specific extensions (x_flow on activity edges, x_port typing) apply on top.'}]};
  if(['state.flat@1','state.composite@1','uml.statemachine@1','sysml.statemachine@1'].includes(ir.view.profiles.projection.profile)){
  const next={...ir,relations:ir.relations.map(r=>{const x=r.properties.x_transition;if(!x?.event)return r;const guard=typeof x.guard==='string'?x.guard:x.guard?Object.entries(x.guard).map(([k,v])=>k+' '+(v.op==='eq'?'= '+JSON.stringify(v.value):v.op==='interval'?'['+v.min+','+v.max+']':v.op)).join(' and '):'';return{...r,name:x.event+(guard?' ['+guard+']':'')+(x.effect?' / '+x.effect:'')};})};ir=next;}

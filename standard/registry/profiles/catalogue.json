@@ -2428,6 +2428,126 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "sdl.block",
+      "name": "Block",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "SDLBLOCK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.agent",
+      "name": "Agent",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "interface",
+      "code": "SDLAGENT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.signal",
+      "name": "Signal",
+      "shape": "profile",
+      "silhouette": "sendpent",
+      "fallback": "application",
+      "family": "concept",
+      "code": "SDLSIGNAL",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.signalset",
+      "name": "Signal set",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "concept",
+      "code": "SDLSIGNALSET",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.input",
+      "name": "Input",
+      "shape": "profile",
+      "silhouette": "acceptpent",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLINPUT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.output",
+      "name": "Output",
+      "shape": "profile",
+      "silhouette": "sendpent",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLOUTPUT",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.task",
+      "name": "Task",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLTASK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.save",
+      "name": "Save",
+      "shape": "profile",
+      "silhouette": "tag",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLSAVE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.create",
+      "name": "Create",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLCREATE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.procedure",
+      "name": "Procedure",
+      "shape": "profile",
+      "silhouette": "subprocess",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLPROC",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -3250,7 +3370,13 @@
         "state.choice",
         "state.entrypoint",
         "state.exitpoint",
-        "state.forkjoin"
+        "state.forkjoin",
+        "sdl.input",
+        "sdl.output",
+        "sdl.task",
+        "sdl.save",
+        "sdl.create",
+        "sdl.procedure"
       ],
       "target": [
         "state.state",
@@ -3262,7 +3388,13 @@
         "state.forkjoin",
         "state.terminate",
         "state.history_shallow",
-        "state.history_deep"
+        "state.history_deep",
+        "sdl.input",
+        "sdl.output",
+        "sdl.task",
+        "sdl.save",
+        "sdl.create",
+        "sdl.procedure"
       ],
       "allow_self": true,
       "member_endpoints": false
@@ -4593,6 +4725,50 @@
       "allow_self": false,
       "member_endpoints": false,
       "pattern": "4 3"
+    },
+    {
+      "keyword": "sdl.channel",
+      "name": "Channel",
+      "verb": "Carries",
+      "family": "control",
+      "code": "SDLCHANNEL",
+      "start": "none",
+      "end": "open",
+      "glyph": "link",
+      "source": [
+        "sdl.block",
+        "sdl.agent",
+        "sdl.signal",
+        "sdl.signalset"
+      ],
+      "target": [
+        "sdl.block",
+        "sdl.agent",
+        "sdl.signal",
+        "sdl.signalset"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
+    },
+    {
+      "keyword": "sdl.links",
+      "name": "Links",
+      "verb": "Links",
+      "family": "flow",
+      "code": "SDLLINK",
+      "start": "none",
+      "end": "none",
+      "glyph": "link",
+      "source": [
+        "sdl.signal",
+        "sdl.signalset"
+      ],
+      "target": [
+        "sdl.block",
+        "sdl.agent"
+      ],
+      "allow_self": false,
+      "member_endpoints": false
     }
   ],
   "profiles": [
@@ -7128,6 +7304,41 @@
         "detailed VSM icon libraries",
         "cycle-time simulation",
         "VSM interchange formats"
+      ]
+    },
+    {
+      "id": "sdl.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SDL system/block diagram"
+      ],
+      "scope": "SDL (ITU-T Z.100) structural level: block and agent kinds, channels with signal lists, signal and signal-set vocabulary, gates as block ports.",
+      "validation": [
+        "channels connect blocks/agents or their signals (DDN102)",
+        "gates are block ports (DDN102)"
+      ],
+      "unsupported": [
+        "SDL interchange formats",
+        "system simulation",
+        "formal ITU conformance"
+      ]
+    },
+    {
+      "id": "sdl.process@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "SDL process diagram"
+      ],
+      "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag), output (send flag), decision, task, save, create; procedure references as subprocess silhouettes.",
+      "validation": [
+        "exactly one start symbol (DDN-PJ208)",
+        "input/output/task/save/create symbols have at least one outgoing transition (DDN-PJ208)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "SDL interchange formats",
+        "process simulation",
+        "formal ITU conformance"
       ]
     }
   ],
