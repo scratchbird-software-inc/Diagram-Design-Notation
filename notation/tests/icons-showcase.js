@@ -7,7 +7,16 @@ function filesFor(entry){const files={};const visit=name=>{if(Object.hasOwn(file
 
 const SWEEP=[
  ['icons','website/examples/basics/98-icons.ddn','net','network.basic@1',
-  ['data-icon="generic-demo@1/cloud"','data-icon="generic-demo@1/server"','data-icon="generic-demo@1/database"','data-icon="generic-demo@1/user"','ddn-icon','ic-']],
+  ['data-icon="network-generic@1/cloud"','data-icon="network-generic@1/server"','data-icon="network-generic@1/database"','data-icon="generic-demo@1/user"','ddn-icon','ic-']],
+ /* B1-087: one rendered gallery example per shipped production library. */
+ ['vsm-symbols','website/examples/basics/102-vsm-symbols.ddn','map','vsm.basic@1',
+  ['data-icon="vsm-symbols@1/truck"','data-icon="vsm-symbols@1/fifo-lane"','data-icon="vsm-symbols@1/supplier"','data-icon="vsm-symbols@1/safety-stock"','data-icon="vsm-symbols@1/einfo"','ddn-icon']],
+ ['network-symbols','website/examples/basics/103-network-symbols.ddn','net','network.basic@1',
+  ['data-icon="network-generic@1/firewall"','data-icon="network-generic@1/router"','data-icon="network-generic@1/load-balancer"','data-icon="network-generic@1/wifi-ap"','data-icon="network-generic@1/switch"','ddn-icon']],
+ ['pid-symbols','website/examples/basics/104-pid-symbols.ddn','pid','network.basic@1',
+  ['data-icon="pid-common@1/instrument-dcs"','data-icon="pid-common@1/valve-control"','data-icon="pid-common@1/pump-centrifugal"','data-icon="pid-common@1/vessel-vertical"','data-icon="pid-common@1/heat-exchanger"','ddn-icon']],
+ ['electrical-symbols','website/examples/basics/105-electrical-symbols.ddn','sch','network.basic@1',
+  ['data-icon="electrical-common@1/resistor"','data-icon="electrical-common@1/led"','data-icon="electrical-common@1/transistor-npn"','data-icon="electrical-common@1/gate-xor"','data-icon="electrical-common@1/op-amp"','ddn-icon']],
 ];
 for(const [family,entry,view,profile,marks] of SWEEP){
  test('Icon family '+family+': '+entry+'#view '+view+' checks and renders ('+profile+')',()=>{

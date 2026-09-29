@@ -21,7 +21,8 @@ const edit=(before,after)=>{assert.ok(SRC.includes(before),'Mutation target miss
 const throws=(fn,code)=>assert.throws(fn,e=>{if(code&&e.code!==code)console.error('Expected',code,'got',e.code,e.message);return code?e.code===code:typeof e.code==='string';});
 
 test('default bindings draw icons on network kinds (bus→cloud, server→server, rack→database)',()=>{const r=run();
- for(const ic of ['generic-demo@1/cloud','generic-demo@1/server','generic-demo@1/database'])assert.ok(r.svg.includes('data-icon="'+ic+'"'),'missing binding: '+ic);});
+ /* B1-087: network-generic@1 precedes the demo set, so its bindings win. */
+ for(const ic of ['network-generic@1/cloud','network-generic@1/server','network-generic@1/database'])assert.ok(r.svg.includes('data-icon="'+ic+'"'),'missing binding: '+ic);});
 test('explicit x_icon override renders the named icon',()=>{const r=run();
  assert.ok(r.svg.includes('data-icon="generic-demo@1/user"'),'user icon missing');});
 test('icon ids are namespaced per node (no id collisions)',()=>{const r=run();
@@ -46,6 +47,29 @@ test('sanitization rejects scripts, foreignObject, handlers, external refs',()=>
 test('sanitization rejects non-SVG and oversized assets',()=>{
  assert.ok(P.sanitizeIcon({id:'lib'},{id:'x',svg:'not svg'}),'non-SVG must be rejected');
  assert.ok(P.sanitizeIcon({id:'lib'},{id:'x',svg:'<svg>'+'x'.repeat(21000)+'</svg>'}),'oversize must be rejected');});
+
+/* B1-087: every icon in every shipped library — sanitize, size, render smoke. */
+const fs2=require('node:fs'),path2=require('node:path');
+const LIBS=JSON.parse(fs2.readFileSync(path2.resolve(__dirname,'..','..','standard','registry','icon-libraries.json'),'utf8')).libraries;
+test('every shipped icon passes PJ207 sanitization and the 20 KiB cap',()=>{
+ for(const lib of LIBS)for(const icon of lib.icons){
+  assert.ok(icon.svg.length<=20480,lib.id+'/'+icon.id+' exceeds 20 KiB');
+  assert.ok(icon.svg.length<=4096,lib.id+'/'+icon.id+' exceeds the 4 KiB quality bar');
+  const bad=P.sanitizeIcon({id:lib.id},icon);
+  assert.ok(!bad,lib.id+'/'+icon.id+' rejected: '+bad);
+ }});
+test('every icon renders inside a node (one smoke view per library)',()=>{
+ for(const lib of LIBS){
+  const objects=lib.icons.map((ic,i)=>`    object n${i} "${ic.name.replace(/"/g,'')}" { kind: "network.server"; x_icon: { library: "${lib.id}", icon: "${ic.id}" }; }`).join('\n');
+  const src=`ddn "0.5";\nmodule "test.iconsmoke";\ndata m {\n${objects}\n}\nview d "D" { data: [@m]; projection { kind: graph; profile: "network.basic@1"; } layout { algorithm: grid; columns: 6; } publication { size: content; fit: none; } }\n`;
+  const r=A.createWorkspace({'main.ddn':src}).renderSync({entry:'main.ddn',view:'d'});
+  for(const ic of lib.icons)assert.ok(r.svg.includes('data-icon="'+lib.id+'/'+ic.id+'"'),lib.id+'/'+ic.id+' did not render');
+ }});
+test('library kind bindings point at registered kinds',()=>{
+ const cat=JSON.parse(fs2.readFileSync(path2.resolve(__dirname,'..','..','standard','registry','profiles','catalogue.json'),'utf8'));
+ const known=new Set(cat.kinds.map(k=>k.keyword));
+ for(const lib of LIBS)for(const icon of lib.icons)for(const k of icon.kinds||[])assert.ok(known.has(k),lib.id+'/'+icon.id+' binds unknown kind '+k);
+});
 
 const failed=results.filter(r=>!r.pass);
 console.log('icons-compliance:',results.length-failed.length+'/'+results.length,'passed');

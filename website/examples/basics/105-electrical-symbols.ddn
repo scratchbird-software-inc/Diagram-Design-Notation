@@ -1,0 +1,43 @@
+ddn "0.5";
+module "ddn.examples.electricalsymbols";
+
+// B1-087: the electrical-common@1 icon library — an IEC 60617-style common
+// set (passives, semiconductors, sources, switchgear, logic gates in
+// distinct-shape form). Electrical symbols have no dedicated DDN profile;
+// they bind per node via x_icon on any profile-kind node (network.server
+// serves as the neutral host here). Common-practice rendering — IEC 60617
+// is not in hand, so compliance against the standard is pending document
+// review. Primary orientation only; rotate at bind time if needed.
+// All data is synthetic.
+data m {
+    object bat "Battery" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "battery" }; }
+    object sw "Main switch" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "switch-no" }; }
+    object fu "Fuse" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "fuse" }; }
+    object r1 "R1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "resistor" }; }
+    object c1 "C1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "capacitor" }; }
+    object l1 "L1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "inductor" }; }
+    object d1 "D1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "diode" }; }
+    object led "LED1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "led" }; }
+    object q1 "Q1" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "transistor-npn" }; }
+    object gnd "GND" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "ground" }; }
+    object u1 "AND gate" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "gate-and" }; }
+    object u2 "XOR gate" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "gate-xor" }; }
+    object u3 "Op-amp" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "op-amp" }; }
+    relation w1 "" @bat -> @sw { kind: "assoc"; }
+    relation w2 "" @sw -> @fu { kind: "assoc"; }
+    relation w3 "" @fu -> @r1 { kind: "assoc"; }
+    relation w4 "" @r1 -> @led { kind: "assoc"; }
+    relation w5 "" @led -> @gnd { kind: "assoc"; }
+    relation w6 "" @c1 -> @gnd { kind: "assoc"; }
+    relation w7 "" @l1 -> @c1 { kind: "assoc"; }
+    relation w8 "" @d1 -> @q1 { kind: "assoc"; }
+    relation w9 "" @q1 -> @gnd { kind: "assoc"; }
+    relation w10 "" @u1 -> @u2 { kind: "assoc"; }
+    relation w11 "" @u2 -> @u3 { kind: "assoc"; }
+}
+view sch "Electrical symbol library" {
+    data: [@m];
+    projection { profile: "network.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}

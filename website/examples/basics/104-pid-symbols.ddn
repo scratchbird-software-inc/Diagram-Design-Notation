@@ -1,0 +1,37 @@
+ddn "0.5";
+module "ddn.examples.pidsymbols";
+
+// B1-087: the pid-common@1 icon library — an ISA-5.1-style common set.
+// P&ID symbols have no dedicated DDN profile; they bind per node via
+// x_icon on any profile-kind node (network.server serves as the neutral
+// host here). Common-practice rendering — ISA-5.1 is not in hand, so
+// compliance against the standard is pending document review. All data is
+// synthetic.
+data m {
+    object tk "Feed tank" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "tank-roof" }; }
+    object p1 "Feed pump" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "pump-centrifugal" }; }
+    object fv "Flow control valve" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-control" }; }
+    object ft "FT 101" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-field" }; }
+    object fic "FIC 101" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-dcs" }; }
+    object hx "Preheater" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "heat-exchanger" }; }
+    object v1 "Separator" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "vessel-vertical" }; }
+    object xv "Shutoff valve" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-gate" }; }
+    object li "LI 201" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-panel" }; }
+    object psv "PSV 202" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-relief" }; }
+    relation f1 "" @tk -> @p1 { kind: "assoc"; }
+    relation f2 "" @p1 -> @fv { kind: "assoc"; }
+    relation f3 "" @fv -> @hx { kind: "assoc"; }
+    relation f4 "" @hx -> @v1 { kind: "assoc"; }
+    relation f5 "" @v1 -> @xv { kind: "assoc"; }
+    relation s1 "" @ft -> @fic { kind: "assoc"; }
+    relation s2 "" @fic -> @fv { kind: "assoc"; }
+    relation s3 "" @li -> @v1 { kind: "assoc"; }
+    relation s4 "" @psv -> @v1 { kind: "assoc"; }
+    relation s5 "" @ft -> @fv { kind: "assoc"; }
+}
+view pid "P&ID symbol library" {
+    data: [@m];
+    projection { profile: "network.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}

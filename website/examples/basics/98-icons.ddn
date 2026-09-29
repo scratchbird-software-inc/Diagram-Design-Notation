@@ -1,10 +1,11 @@
 ddn "0.5";
 module "ddn.examples.icons";
 
-// B1-082: the icon-library mechanism — the built-in generic demo set
-// (cloud/server/database/user) bound to network kinds, plus an explicit
-// per-node x_icon override (the guest user). Icons are simple generic
-// glyphs; vendor packs are excluded pending licensing diligence.
+// B1-082: the icon-library mechanism — default kind bindings (B1-087's
+// network-generic@1 set now wins for network kinds) plus an explicit
+// per-node x_icon override (the guest user, drawn from the original demo
+// set). Icons are simple generic glyphs; vendor packs are excluded pending
+// licensing diligence.
 // All data is synthetic.
 data m {
     object lan "Office LAN" { kind: "network.bus"; }

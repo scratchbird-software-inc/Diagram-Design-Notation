@@ -711,11 +711,10 @@
       "svg": "profiles/msc-basic-1.svg"
     },
     "network.basic@1": {
-      "entry": "website/examples/basics/54-network-diagram.ddn",
-      "view": "lan",
-      "title": "Office LAN",
+      "entry": "website/examples/basics/103-network-symbols.ddn",
+      "view": "net",
+      "title": "Network symbol library",
       "kind": "graph",
-      "combined": "website/examples/basics/54-network-diagram.combined.ddn",
       "wiki": "Diagrams-Networks",
       "svg": "profiles/network-basic-1.svg"
     },
@@ -1202,9 +1201,9 @@
       "svg": "profiles/uml-usecase-3.svg"
     },
     "vsm.basic@1": {
-      "entry": "website/examples/basics/97-vsm.ddn",
+      "entry": "website/examples/basics/102-vsm-symbols.ddn",
       "view": "map",
-      "title": "Current state map",
+      "title": "VSM symbol library",
       "kind": "graph",
       "svg": "profiles/vsm-basic-1.svg"
     },
@@ -2008,6 +2007,65 @@
       "profile": "ladder.basic@1",
       "kind": "graph",
       "svg": "corpus/basics-101-ladder.svg"
+    },
+    {
+      "entry": "website/examples/basics/102-vsm-symbols.ddn",
+      "view": "map",
+      "title": "VSM symbol library",
+      "views": [
+        {
+          "id": "map",
+          "title": "VSM symbol library"
+        }
+      ],
+      "profile": "vsm.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-102-vsm-symbols.svg"
+    },
+    {
+      "entry": "website/examples/basics/103-network-symbols.ddn",
+      "view": "net",
+      "title": "Network symbol library",
+      "views": [
+        {
+          "id": "net",
+          "title": "Network symbol library"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-103-network-symbols.svg"
+    },
+    {
+      "entry": "website/examples/basics/104-pid-symbols.ddn",
+      "view": "pid",
+      "title": "P&ID symbol library",
+      "views": [
+        {
+          "id": "pid",
+          "title": "P&ID symbol library"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-104-pid-symbols.svg"
+    },
+    {
+      "entry": "website/examples/basics/105-electrical-symbols.ddn",
+      "view": "sch",
+      "title": "Electrical symbol library",
+      "views": [
+        {
+          "id": "sch",
+          "title": "Electrical symbol library"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-105-electrical-symbols.svg"
     },
     {
       "entry": "website/examples/basics/11-native-layouts.ddn",
