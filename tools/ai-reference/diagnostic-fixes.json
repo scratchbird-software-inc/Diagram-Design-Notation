@@ -169,6 +169,8 @@
     "DDN-PJ205": "VSM: x_vsm ladder values belong to vsm.process nodes and need at least one of va/nva (nonnegative numbers)",
     "DDN-PJ206": "Icon reference must name a library and icon from the icon-libraries registry",
     "DDN-PJ207": "Icon assets are sanitized: no scripts, foreignObject, event handlers, external references (href/url/images), non-SVG payloads, or assets over 20 KiB",
-    "DDN-PJ208": "SDL process diagrams: exactly one start symbol; input/output/task/save/create symbols need at least one outgoing transition"
+    "DDN-PJ208": "SDL process diagrams: exactly one start symbol; input/output/task/save/create symbols need at least one outgoing transition",
+    "DDN-PJ209": "FBD: x_fbd pin typing applies to fbd kinds; negation bubbles are BOOL-only",
+    "DDN-PJ210": "FBD: wire endpoints must share a pin type"
   }
 }

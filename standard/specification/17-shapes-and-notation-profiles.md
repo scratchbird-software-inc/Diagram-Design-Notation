@@ -304,3 +304,19 @@ symbol validate as `DDN-PJ208`. SDL interchange formats, simulation and
 formal ITU conformance are out of scope. Example:
 `website/examples/basics/99-sdl.ddn`; tests `sdl-compliance.js` +
 `sdl-showcase.js`.
+
+## 17.23 IEC 61131-3 FBD (fbd.basic@1)
+
+`fbd.basic@1` covers IEC 61131-3 function block diagrams. A `fbd.block` is a
+rect with a name/type header (`datatype` prints above the instance name —
+`T1 / TON`); `fbd.variable` holds the inputs/outputs. Pins are block ports
+with `x_fbd: { type: BOOL|INT|DINT|REAL|TIME|STRING|WORD, negated? }` — the
+type prints at the pin, and a negated BOOL pin draws an open negation bubble
+at the endpoint. Wires (`fbd.wire`) connect pins; endpoints must share a type
+(`DDN-PJ210`). Negation applies to BOOL pins only (`DDN-PJ209`). Feedback
+wires between blocks are allowed. Unwired pins do not draw endpoints
+(documented). Ladder (LD) hosting for fbd blocks follows in a later item —
+the kind and contract are designed for it. PLC execution/compilation, IEC XML
+interchange and formal certification are out of scope. Example:
+`website/examples/basics/100-fbd.ddn`; tests `fbd-compliance.js` +
+`fbd-showcase.js`.

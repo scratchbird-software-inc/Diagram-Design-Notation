@@ -688,6 +688,11 @@
     if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
     else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
    }
+   /* B1-084: FBD block header — type above the instance name. */
+   if(n.kind==='fbd.block'){
+    const tp=n.properties.datatype||n.properties.type||'';
+    if(tp)out+=text(x+w/2,y+16*s,tp,11,650,'text-anchor="middle"');
+   }
    /* B1-083: SDL create symbol — dashed border. */
    if(n.kind==='sdl.create')out+=`<rect x="${f(x+4*s)}" y="${f(y+4*s)}" width="${f(w-8*s)}" height="${f(h-8*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
    /* B1-081: VSM glyph details — inventory I, supermarket inner lines. */
@@ -1886,11 +1891,17 @@
     const ac=a.r.properties.x_association_class;
     if(ac){const g=byId.get(ac.class?.$ref);if(g){const [mx,my]=midpoint(a.points),pt=rectAnchor(g,[mx,my]);
      diagram+=`<g class="ddn-association-class" data-class="${esc$1(ac.class.$ref)}"><path d="M${fmt(mx)} ${fmt(my)}L${fmt(pt[0])} ${fmt(pt[1])}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.3" stroke-dasharray="6 4"/></g>`;}}
-    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
+    if(p.projection.profile?.startsWith('sysml.')||['uml.composite@1','uml.activity@2','sysml.activity@1','soaml.services@1','sdl.basic@1','fbd.basic@1'].includes(p.projection.profile)){const s=q$1(p.style.font_size,16)/16;
      for(const[ep,pt]of [[a.r.from,a.points[0]],[a.r.to,a.points.at(-1)]])if(ep.member&&portIds.has(ep.member)){
       const member=context.members.get(ep.member),xp=member?.properties?.x_pin||{},xo=member?.properties?.x_port||{},xs=member?.properties?.x_service||null;
       const filled=xp.streaming||xo.type==='full'||xs?.kind==='service';
       diagram+=`<rect data-port-square="${esc$1(ep.member)}"${xp.streaming?' data-streaming="true"':''}${xo.type?` data-port-type="${xo.type}"`:''}${xo.conjugated?' data-conjugated="true"':''}${xs?` data-service="${xs.kind}"`:''} x="${fmt(pt[0]-5*s)}" y="${fmt(pt[1]-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${filled?esc$1(colour):esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+      /* B1-084: FBD pin type label and negation bubble. */
+      const xf=member?.properties?.x_fbd;
+      if(xf){
+       diagram+=`<g class="ddn-fbd-pin">`+text$1(pt[0]+(ep===a.r.from?-12*s:12*s),pt[1]+4*s,xf.type,9.5*s,colour,500,ep===a.r.from?'text-anchor="end"':'')+'</g>';
+       if(xf.negated)diagram+=`<circle data-negated="true" cx="${fmt(pt[0])}" cy="${fmt(pt[1])}" r="${fmt(4*s)}" fill="${esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
+      }
       /* B1-072 (RFC-130): SoaML «Service»/«Request» badge by the port square. */
       if(xs)diagram+=`<g class="ddn-port-label ddn-service-badge">`+text$1(pt[0]+12*s,pt[1]+16*s,'«'+(xs.kind==='service'?'Service':'Request')+'»',10*s,colour,600)+'</g>';
       /* B1-065 (RFC-128): SysML port typing — «proxy»/«full» label, conjugation

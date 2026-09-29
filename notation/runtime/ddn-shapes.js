@@ -441,6 +441,11 @@ function render(g,p,theme){
   if(tok>0&&tok<=5)for(let i=0;i<tok;i++){const a=-Math.PI/2+i*(Math.PI*2/Math.max(tok,1));out+=`<circle data-token="true" cx="${f(cx+9*s*Math.cos(a))}" cy="${f(cy+9*s*Math.sin(a))}" r="${f(3.2*s)}" fill="${ink}"/>`;}
   else if(tok>5)out+=text(cx,cy+4*s,String(tok),13,700,'text-anchor="middle"');
  }
+ /* B1-084: FBD block header — type above the instance name. */
+ if(n.kind==='fbd.block'){
+  const tp=n.properties.datatype||n.properties.type||'';
+  if(tp)out+=text(x+w/2,y+16*s,tp,11,650,'text-anchor="middle"');
+ }
  /* B1-083: SDL create symbol — dashed border. */
  if(n.kind==='sdl.create')out+=`<rect x="${f(x+4*s)}" y="${f(y+4*s)}" width="${f(w-8*s)}" height="${f(h-8*s)}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-dasharray="5 4"/>`;
  /* B1-081: VSM glyph details — inventory I, supermarket inner lines. */

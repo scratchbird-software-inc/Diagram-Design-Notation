@@ -3603,6 +3603,14 @@
       "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag), output (send flag), decision, task, save, create; procedure references as subprocess silhouettes.",
       "validation": ["exactly one start symbol (DDN-PJ208)", "input/output/task/save/create symbols have at least one outgoing transition (DDN-PJ208)", "registry endpoint contracts (DDN102)"],
       "unsupported": ["SDL interchange formats", "process simulation", "formal ITU conformance"]
+    },
+    {
+      "id": "fbd.basic@1",
+      "projection": "graph",
+      "diagramFamilies": ["IEC 61131-3 function block diagram"],
+      "scope": "IEC 61131-3 FBD: function blocks (rect with name/type header and typed pins), typed wire connections (BOOL/INT/DINT/REAL/TIME/STRING/WORD), negation bubbles on BOOL pins, feedback loops allowed. Ladder (LD) hosting follows in a later item.",
+      "validation": ["negation only on BOOL pins (DDN-PJ209)", "wire endpoints' pin types must match (DDN-PJ210)", "registry endpoint contracts (DDN102)"],
+      "unsupported": ["PLC execution/compilation", "IEC interchange (XML) formats", "formal IEC certification"]
     }
   ],
   "projectionProperties": {

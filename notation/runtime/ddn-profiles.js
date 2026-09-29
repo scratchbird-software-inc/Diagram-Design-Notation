@@ -66,6 +66,8 @@ function registry(base){
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-084: FBD pin typing and negation. */
+ out.extension_contracts.x_fbd=def({type:'object',required:['type'],properties:{type:{enum:['BOOL','INT','DINT','REAL','TIME','STRING','WORD']},negated:{type:'boolean'}},additionalProperties:false},['port']);
  /* B1-082: icon-library mechanism — per-node icon reference. */
  out.extension_contracts.x_icon=def({type:'object',required:['library','icon'],properties:{library:{type:'string',minLength:1},icon:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-081: VSM timeline ladder values (VA/NVA). */

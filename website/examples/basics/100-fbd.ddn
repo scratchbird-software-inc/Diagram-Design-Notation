@@ -1,0 +1,38 @@
+ddn "0.5";
+module "ddn.examples.fbd";
+
+// B1-084: an IEC 61131-3 FBD motor-control diagram — a TON timer and an AND
+// block with name/type headers, typed pins (BOOL/TIME), a negation bubble on
+// the STOP input, and a feedback wire from the timer output back into the
+// AND input. All data is synthetic.
+data m {
+    object start_btn "START" { kind: "fbd.variable"; }
+    object stop_btn "STOP" { kind: "fbd.variable"; }
+    object t1 "T1" { kind: "fbd.block"; datatype: "TON";
+        ports {
+            port in1 { direction: in; x_fbd: { type: "BOOL" }; }
+            port pt { direction: in; x_fbd: { type: "TIME" }; }
+            port q { direction: out; x_fbd: { type: "BOOL" }; }
+            port et { direction: out; x_fbd: { type: "TIME" }; }
+        }
+    }
+    object a1 "A1" { kind: "fbd.block"; datatype: "AND";
+        ports {
+            port ina { direction: in; x_fbd: { type: "BOOL" }; }
+            port inb { direction: in; x_fbd: { type: "BOOL", negated: true }; }
+            port out1 { direction: out; x_fbd: { type: "BOOL" }; }
+        }
+    }
+    object motor "MOTOR" { kind: "fbd.variable"; }
+    relation w1 "" @start_btn -> @a1.ina { kind: "fbd.wire"; }
+    relation w2 "" @stop_btn -> @a1.inb { kind: "fbd.wire"; }
+    relation w3 "" @a1.out1 -> @t1.in1 { kind: "fbd.wire"; }
+    relation w4 "" @t1.q -> @motor { kind: "fbd.wire"; }
+    relation fb "" @t1.q -> @a1.ina { kind: "fbd.wire"; }
+}
+view d "Motor control FBD" {
+    data: [@m];
+    projection { profile: "fbd.basic@1"; }
+    layout { algorithm: layered; }
+    publication { size: content; fit: none; }
+}

@@ -288,6 +288,22 @@ function validate(ir,E){
    if(count!==2)fail('DDN-PJ122','Constraint '+(n.name||n.id)+' is touched by '+count+' visible relation(s); a parametric constraint binds exactly two endpoints',n);
   }
  }
+ /* B1-084: FBD semantics — negation and typed wiring. */
+ {
+  const memberOf=id=>{for(const n of ir.elements){const pt=(n.ports||[]).find(p=>p.id===id);if(pt)return[n,pt];}return[null,null];};
+  for(const n of ir.elements.filter(n=>shown.has(n.id)))for(const pt of n.ports||[]){
+   const xf=pt.properties.x_fbd;
+   if(xf!==undefined){
+    if(!['fbd.block','fbd.variable'].includes(n.kind))fail('DDN-PJ209','x_fbd pin typing applies to fbd.block/fbd.variable pins; '+n.id+' is '+n.kind,pt);
+    if(xf.negated&&xf.type!=='BOOL')fail('DDN-PJ209','Negation bubbles apply to BOOL pins only; '+(pt.name||pt.id)+' on '+n.id+' is '+xf.type,pt);
+   }
+  }
+  if(profile==='fbd.basic@1')for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='fbd.wire')){
+   const[,pa]=memberOf(r.from.member),[,pb]=memberOf(r.to.member);
+   if(pa?.properties.x_fbd&&pb?.properties.x_fbd&&pa.properties.x_fbd.type!==pb.properties.x_fbd.type)
+    fail('DDN-PJ210','fbd.wire '+r.id+' connects '+pa.properties.x_fbd.type+' to '+pb.properties.x_fbd.type+'; wire endpoints must share a type',r);
+  }
+ }
  /* B1-083: SDL process-level semantics. */
  if(profile==='sdl.process@1'){
   const SYMS=['sdl.input','sdl.output','sdl.task','sdl.save','sdl.create'];

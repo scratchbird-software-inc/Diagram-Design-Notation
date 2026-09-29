@@ -539,6 +539,13 @@
       "wiki": "Diagrams-Trees",
       "svg": "profiles/fault-tree-1.svg"
     },
+    "fbd.basic@1": {
+      "entry": "website/examples/basics/100-fbd.ddn",
+      "view": "d",
+      "title": "Motor control FBD",
+      "kind": "graph",
+      "svg": "profiles/fbd-basic-1.svg"
+    },
     "fishbone.basic@1": {
       "entry": "website/examples/quality/views.ddn",
       "view": "fishbone",
@@ -1966,6 +1973,20 @@
       "wiki": "Diagrams-Flowcharts",
       "combined": "website/examples/basics/10-handdrawn-routing.combined.ddn",
       "svg": "corpus/basics-10-handdrawn-routing.svg"
+    },
+    {
+      "entry": "website/examples/basics/100-fbd.ddn",
+      "view": "d",
+      "title": "Motor control FBD",
+      "views": [
+        {
+          "id": "d",
+          "title": "Motor control FBD"
+        }
+      ],
+      "profile": "fbd.basic@1",
+      "kind": "graph",
+      "svg": "corpus/basics-100-fbd.svg"
     },
     {
       "entry": "website/examples/basics/11-native-layouts.ddn",

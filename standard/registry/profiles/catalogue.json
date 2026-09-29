@@ -2548,6 +2548,30 @@
       "glyph": "object",
       "aliases": [],
       "defaults": {}
+    },
+    {
+      "keyword": "fbd.block",
+      "name": "Function block",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "FBDBLOCK",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "fbd.variable",
+      "name": "Variable",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "data",
+      "code": "FBDVARIABLE",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
     }
   ],
   "relationships": [
@@ -4769,6 +4793,26 @@
       ],
       "allow_self": false,
       "member_endpoints": false
+    },
+    {
+      "keyword": "fbd.wire",
+      "name": "Wire",
+      "verb": "Connects",
+      "family": "flow",
+      "code": "FBDWIRE",
+      "start": "none",
+      "end": "filled",
+      "glyph": "link",
+      "source": [
+        "fbd.block",
+        "fbd.variable"
+      ],
+      "target": [
+        "fbd.block",
+        "fbd.variable"
+      ],
+      "allow_self": false,
+      "member_endpoints": true
     }
   ],
   "profiles": [
@@ -7339,6 +7383,24 @@
         "SDL interchange formats",
         "process simulation",
         "formal ITU conformance"
+      ]
+    },
+    {
+      "id": "fbd.basic@1",
+      "projection": "graph",
+      "diagramFamilies": [
+        "IEC 61131-3 function block diagram"
+      ],
+      "scope": "IEC 61131-3 FBD: function blocks (rect with name/type header and typed pins), typed wire connections (BOOL/INT/DINT/REAL/TIME/STRING/WORD), negation bubbles on BOOL pins, feedback loops allowed. Ladder (LD) hosting follows in a later item.",
+      "validation": [
+        "negation only on BOOL pins (DDN-PJ209)",
+        "wire endpoints' pin types must match (DDN-PJ210)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "PLC execution/compilation",
+        "IEC interchange (XML) formats",
+        "formal IEC certification"
       ]
     }
   ],
