@@ -1,8 +1,7 @@
 # DDNA — DDN with Automation · proposed open standard (draft, pre-1.0)
 
-**Status:** draft skeleton, 2026-09-29. Chapters 01, 04, 05 and 07 are full
-drafts; the remaining chapters are stubs whose outlines are approved scope
-but not yet prose. Per-family chapters are a follow-on work item.
+**Status:** full draft skeleton, 2026-09-29. All twelve chapters and the
+appendix are full drafts. Per-family chapters are a follow-on work item.
 
 ## Scope
 
@@ -46,17 +45,17 @@ inert metadata to a DDN-only tool.
 | File | Chapter | Status |
 | --- | --- | --- |
 | `01-purpose-scope.md` | Purpose, scope, product/format architecture (architecture & file model) | full draft |
-| `02-execution-model-classes.md` | The six execution-model classes and family mapping | stub |
-| `03-normative-foundations.md` | Normative foundations inventory — the claims table | stub |
+| `02-execution-model-classes.md` | The six execution-model classes and family mapping | full draft |
+| `03-normative-foundations.md` | Normative foundations inventory — the claims table | full draft |
 | `04-trace-format.md` | The DDNA trace format | full draft |
 | `05-keel-reference-interface.md` | The KEEL reference interface | full draft |
-| `06-expression-behavior.md` | Expression behavior requirements per family | stub |
+| `06-expression-behavior.md` | Expression behavior requirements per family | full draft |
 | `07-runtime-models.md` | Runtime models (TIME / DATA / REPLAY / CONCURRENCY) | full draft |
-| `08-feature-catalog.md` | Feature catalog | stub |
-| `09-decisions.md` | Decisions register (D1–D13, ratified) | stub |
-| `10-conformance-claims.md` | Conformance & claims policy | stub |
-| `11-alien-format-import.md` | Alien-format import policy | stub |
-| `12-what-remains.md` | What remains | stub |
+| `08-feature-catalog.md` | Feature catalog | full draft |
+| `09-decisions.md` | Decisions register (D1–D13, ratified) | full draft |
+| `10-conformance-claims.md` | Conformance & claims policy | full draft |
+| `11-alien-format-import.md` | Alien-format import policy | full draft |
+| `12-what-remains.md` | What remains | full draft |
 | `appendix-known-errata.md` | Known errata in upstream standards | appendix |
 
 Citation convention: normative claims cite the analysis file in the DDNA
