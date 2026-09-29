@@ -1,0 +1,13 @@
+{
+  "format": "ddn-icon-pack-index@1",
+  "note": "Ordered shipped packs; order is default-binding precedence (first match wins).",
+  "packs": [
+    "network-generic__1.json",
+    "vsm-symbols__1.json",
+    "pid-common__1.json",
+    "electrical-common__1.json",
+    "tabler-infra__1.json",
+    "iconoir-infra__1.json",
+    "generic-demo__1.json"
+  ]
+}

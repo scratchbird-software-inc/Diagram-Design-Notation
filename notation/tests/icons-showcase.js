@@ -16,7 +16,10 @@ const SWEEP=[
  ['pid-symbols','website/examples/basics/104-pid-symbols.ddn','pid','network.basic@1',
   ['data-icon="pid-common@1/instrument-dcs"','data-icon="pid-common@1/valve-control"','data-icon="pid-common@1/pump-centrifugal"','data-icon="pid-common@1/vessel-vertical"','data-icon="pid-common@1/heat-exchanger"','ddn-icon']],
  ['electrical-symbols','website/examples/basics/105-electrical-symbols.ddn','sch','network.basic@1',
-  ['data-icon="electrical-common@1/resistor"','data-icon="electrical-common@1/led"','data-icon="electrical-common@1/transistor-npn"','data-icon="electrical-common@1/gate-xor"','data-icon="electrical-common@1/op-amp"','ddn-icon']],
+  ['data-icon="electrical-common@1/resistor"','data-icon="electrical-common@1/led"','data-icon="electrical-common@1/transistor-npn"','data-icon="electrical-common@1/gate-xor"','data-icon="electrical-common@1/op-amp"','ddn-icon']], ['tabler-pack','website/examples/basics/106-tabler-icons.ddn','net','network.basic@1',
+  ['data-icon="tabler-infra@1/router"','data-icon="tabler-infra@1/server"','data-icon="tabler-infra@1/database"','data-icon="tabler-infra@1/shield-lock"','ddn-icon']],
+ ['iconoir-pack','website/examples/basics/107-iconoir-icons.ddn','net','network.basic@1',
+  ['data-icon="iconoir-infra@1/database"','data-icon="iconoir-infra@1/cloud-sync"','data-icon="iconoir-infra@1/app-window"','data-icon="iconoir-infra@1/community"','ddn-icon']],
 ];
 for(const [family,entry,view,profile,marks] of SWEEP){
  test('Icon family '+family+': '+entry+'#view '+view+' checks and renders ('+profile+')',()=>{

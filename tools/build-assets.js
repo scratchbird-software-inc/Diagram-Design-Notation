@@ -16,7 +16,25 @@ const files = {
   'profiles-catalogue.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/profiles/catalogue.json'))) + ';\n',
   'glyphs.js': banner + 'export default ' + json(read('standard/registry/glyph-library.svg').match(/<defs>([\s\S]*?)<\/defs>/)[1]) + ';\n',
   'units.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/units.json'))) + ';\n',
-  'icon-libraries.js': banner + 'export default ' + json(JSON.parse(read('standard/registry/icon-libraries.json'))) + ';\n',
 };
+/* B1-088: icon packs — one ddn-icon-pack@1 file per pack under
+ * standard/registry/icon-packs/, ordered by index.json (default-binding
+ * precedence). Aggregated here into the runtime asset shape; the packs and
+ * their schema (standard/schemas/icon-pack.schema.json) are the normative
+ * source. */
+const packDir = path.join(root, 'standard/registry/icon-packs');
+const packIndex = JSON.parse(read('standard/registry/icon-packs/index.json'));
+const packLibraries = packIndex.packs.map(f => {
+  const p = JSON.parse(read('standard/registry/icon-packs/' + f));
+  const lib = { id: p.id, name: p.name, icons: p.icons };
+  if (p.note) lib.note = p.note;
+  lib.license = p.license; lib.attribution = p.attribution; lib.source = p.source;
+  return lib;
+});
+files['icon-libraries.js'] = banner + 'export default ' + json({
+  version: 'ddn-icon-libraries@1',
+  status: 'Aggregated from standard/registry/icon-packs/ (ddn-icon-pack@1 files, ordered by index.json). Edit the packs, not this file. Vendor packs (Cisco/AWS/Azure/GCP) excluded pending licensing diligence.',
+  libraries: packLibraries,
+}) + ';\n';
 for (const [name, text] of Object.entries(files)) fs.writeFileSync(path.join(outDir, name), text);
 console.log('assets:', Object.keys(files).map(n => n + '=' + Buffer.byteLength(files[n])).join(' '));

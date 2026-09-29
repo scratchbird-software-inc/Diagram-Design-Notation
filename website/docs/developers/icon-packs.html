@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Icon packs — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../docs/index.html" class="active">Docs</a>
+      <a href="../../standard/index.html">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>Icon packs</h1>
+<p>DDN renders named SVG symbols inside diagram nodes. The symbols ship in <strong>icon packs</strong> — self-contained JSON documents specified openly in <a href="../../standard/specification/49-icon-packs.html">specification chapter 49</a> (schema: <code>standard/schemas/icon-pack.schema.json</code>). The format is tool-agnostic: any producer or consumer can interoperate.</p>
+<h2>Shipped packs</h2>
+<table><thead><tr><th>Pack</th><th>Icons</th><th>License</th><th>Use</th></tr></thead><tbody><tr><td><code>network-generic@1</code></td><td>20</td><td>GPL-2.0-or-later</td><td>generic infrastructure; default-bound to <code>network.*</code> kinds</td></tr><tr><td><code>vsm-symbols@1</code></td><td>16</td><td>GPL-2.0-or-later</td><td>value-stream mapping; default-bound to <code>vsm.*</code> kinds</td></tr><tr><td><code>pid-common@1</code></td><td>36</td><td>GPL-2.0-or-later</td><td>ISA-5.1-style common set (common-practice, pending document review)</td></tr><tr><td><code>electrical-common@1</code></td><td>32</td><td>GPL-2.0-or-later</td><td>IEC 60617-style common set (common-practice, pending document review)</td></tr><tr><td><code>tabler-infra@1</code></td><td>50</td><td>MIT</td><td>curated Tabler infrastructure selection</td></tr><tr><td><code>iconoir-infra@1</code></td><td>49</td><td>MIT</td><td>curated Iconoir selection, complementing Tabler</td></tr><tr><td><code>generic-demo@1</code></td><td>4</td><td>GPL-2.0-or-later</td><td>mechanism demo set</td></tr></tbody></table>
+<p>Vendor packs (Cisco/AWS/Azure/GCP) are excluded pending licensing diligence.</p>
+<h2>Binding</h2>
+<ul><li><strong>Default</strong>: the first icon entry whose <code>kinds</code> lists the node's kind</li></ul>
+<p>  wins; pack registration order is precedence.</p>
+<ul><li><strong>Per node</strong>: <code>x_icon: { library: &quot;tabler-infra@1&quot;, icon: &quot;server&quot; }</code>.</li></ul>
+<p>Unknown references are <code>DDN-PJ206</code> errors, never silent fallbacks.</p>
+<h2>Authoring and loading your own pack</h2>
+<p>Author a single JSON document per the spec (manifest with license and attribution, one shared grid, inline stroke SVG ≤ 20 KiB per icon), then register it at runtime — it is validated and sanitized exactly like a shipped pack before it can render:</p>
+<pre><code>DDNLive.registerIconPack(pack);          // throws DDN-PJ206 (manifest) / DDN-PJ207 (unsafe SVG)
+DDNLive.hostIconPacks();                 // currently registered host packs
+DDNLive.unregisterIconPack('acme-symbols@1');</code></pre>
+<p>Host packs append after shipped packs in binding precedence, so they never shadow the built-in defaults accidentally. Every icon — shipped or host-supplied — is sanitized: no scripts, <code>foreignObject</code>, event handlers, or external references of any kind, and a 20 KiB cap per icon.</p>
+</article>
+<p><small>Rendered from <a href="icon-packs.md">icon-packs.md</a> by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <strong>ScratchWeaver</strong>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

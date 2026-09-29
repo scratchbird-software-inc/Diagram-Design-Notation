@@ -1,0 +1,235 @@
+{
+  "format": "ddn-icon-pack@1",
+  "id": "pid-common@1",
+  "name": "P&ID common symbols (agent-drawn)",
+  "version": "1.0.0",
+  "license": "GPL-2.0-or-later",
+  "attribution": "DDN contributors (agent-drawn artwork)",
+  "source": "https://github.com/scratchbird-software-inc/Diagram-Design-Notation",
+  "licenseText": "GPL-2.0-or-later. Agent-drawn for the Diagram Design Notation project; copyright the DDN contributors.",
+  "note": "Common-practice rendering \u2014 compliance against the governing standard pending document review. ISA-5.1-style common set; the ISA-5.1 document is not in hand, so forms follow well-known public renderings.",
+  "grid": {
+    "size": 24,
+    "strokeWidth": 1.6,
+    "linecap": "round",
+    "linejoin": "round"
+  },
+  "icons": [
+    {
+      "id": "instrument-field",
+      "name": "Instrument \u2014 field mounted",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M4 12h16\"/></svg>"
+    },
+    {
+      "id": "instrument-panel",
+      "name": "Instrument \u2014 panel mounted",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2.5\" y=\"2.5\" width=\"19\" height=\"19\"/><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M4 12h16\"/></svg>"
+    },
+    {
+      "id": "instrument-shared",
+      "name": "Instrument \u2014 shared display",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2.5\" y=\"2.5\" width=\"19\" height=\"19\" stroke-dasharray=\"3 2\"/><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M4 12h16\"/></svg>"
+    },
+    {
+      "id": "instrument-dcs",
+      "name": "Instrument \u2014 DCS",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M4 10.5h16M4 13.5h16\"/></svg>"
+    },
+    {
+      "id": "instrument-plc",
+      "name": "Instrument \u2014 PLC",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"M12 7l5 5-5 5-5-5z\"/></svg>"
+    },
+    {
+      "id": "instrument-inline",
+      "name": "Instrument \u2014 inline",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M1 12h3.5M19.5 12H23\"/><circle cx=\"12\" cy=\"12\" r=\"7.5\"/><path d=\"M4.5 12h15\"/></svg>"
+    },
+    {
+      "id": "valve-gate",
+      "name": "Gate valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4zM20 8l-8 4 8 4z\"/><path d=\"M12 12V4M8 4h8\"/></svg>"
+    },
+    {
+      "id": "valve-globe",
+      "name": "Globe valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4zM20 8l-8 4 8 4z\"/><circle cx=\"12\" cy=\"12\" r=\"1.6\" fill=\"currentColor\"/><path d=\"M12 12V4M8 4h8\"/></svg>"
+    },
+    {
+      "id": "valve-ball",
+      "name": "Ball valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4zM20 8l-8 4 8 4z\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\"/></svg>"
+    },
+    {
+      "id": "valve-butterfly",
+      "name": "Butterfly valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4zM20 8l-8 4 8 4z\"/><path d=\"M12 8v8\"/></svg>"
+    },
+    {
+      "id": "valve-check",
+      "name": "Check valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 8l8 4-8 4z\"/><path d=\"M15 7v10\"/></svg>"
+    },
+    {
+      "id": "valve-control",
+      "name": "Control valve (diaphragm actuator)",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4zM20 8l-8 4 8 4z\"/><path d=\"M12 12V7\"/><path d=\"M7 7a5 5 0 0 1 10 0\"/></svg>"
+    },
+    {
+      "id": "valve-needle",
+      "name": "Needle valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4zM20 8l-8 4 8 4z\"/><path d=\"M12 12V4M10 4l2 2 2-2\"/></svg>"
+    },
+    {
+      "id": "valve-three-way",
+      "name": "Three-way valve",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 9l6 3-6 3zM19 9l-6 3 6 3zM12 16l-3-3h6z\"/></svg>"
+    },
+    {
+      "id": "valve-relief",
+      "name": "Relief valve (spring)",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 9l6 3-6 3zM19 9l-6 3 6 3z\"/><path d=\"M12 9V7l-2-2 4-1.5L10 2\"/></svg>"
+    },
+    {
+      "id": "actuator-diaphragm",
+      "name": "Diaphragm actuator",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 9a6 6 0 0 1 12 0\"/><path d=\"M12 9v5M8 14h8\"/></svg>"
+    },
+    {
+      "id": "actuator-motor",
+      "name": "Motor actuator",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M8.5 15l1.5-5 2 3.5 2-3.5 1.5 5\"/></svg>"
+    },
+    {
+      "id": "actuator-solenoid",
+      "name": "Solenoid actuator",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"6\" y=\"8\" width=\"12\" height=\"9\"/><path d=\"M14 10h-3.2a1.6 1.6 0 0 0 0 3.2h2.4a1.6 1.6 0 0 1 0 3.2H10\"/></svg>"
+    },
+    {
+      "id": "actuator-manual",
+      "name": "Manual actuator (handwheel)",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"9\" r=\"3.5\"/><path d=\"M8.5 9h7M12 5.5v7M12 12.5V17\"/></svg>"
+    },
+    {
+      "id": "pump-centrifugal",
+      "name": "Centrifugal pump",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"13\" r=\"6.5\"/><path d=\"M11 6.5V2.5M17.5 13h4\"/></svg>"
+    },
+    {
+      "id": "pump-displacement",
+      "name": "Positive-displacement pump",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M9 9l6 3-6 3z\" fill=\"currentColor\"/></svg>"
+    },
+    {
+      "id": "compressor",
+      "name": "Compressor",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M8 14l4-5 4 5z\"/></svg>"
+    },
+    {
+      "id": "vessel-vertical",
+      "name": "Vertical vessel",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 4v16M17 4v16\"/><ellipse cx=\"12\" cy=\"4\" rx=\"5\" ry=\"1.8\"/><path d=\"M7 20a5 1.8 0 0 0 10 0\"/></svg>"
+    },
+    {
+      "id": "vessel-horizontal",
+      "name": "Horizontal vessel",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"8\" width=\"18\" height=\"8\" rx=\"4\"/></svg>"
+    },
+    {
+      "id": "tank-roof",
+      "name": "Tank with cone roof",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 9l7-4 7 4M5 9v11h14V9\"/></svg>"
+    },
+    {
+      "id": "heat-exchanger",
+      "name": "Heat exchanger",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M8 9l2 6 2-6 2 6 2-6\"/></svg>"
+    },
+    {
+      "id": "exchanger-plate",
+      "name": "Plate heat exchanger",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"5\" y=\"5\" width=\"14\" height=\"14\"/><path d=\"M5 19L19 5\"/></svg>"
+    },
+    {
+      "id": "mixer",
+      "name": "Agitated vessel",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 5v14M17 5v14\"/><ellipse cx=\"12\" cy=\"5\" rx=\"5\" ry=\"1.6\"/><path d=\"M12 5v8l-3 3M12 13l3 3\"/></svg>"
+    },
+    {
+      "id": "strainer",
+      "name": "Strainer / filter",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8l8 4-8 4z\"/><path d=\"M15 7v10\" stroke-dasharray=\"2 2\"/></svg>"
+    },
+    {
+      "id": "flow-arrow",
+      "name": "Flow direction arrow",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12h15M14 8l5 4-5 4\"/></svg>"
+    },
+    {
+      "id": "line-process",
+      "name": "Signal line \u2014 process (solid)",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12h18\"/></svg>"
+    },
+    {
+      "id": "line-pneumatic",
+      "name": "Signal line \u2014 pneumatic",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12h18\" stroke-dasharray=\"1.5 3.5\"/></svg>"
+    },
+    {
+      "id": "line-electric",
+      "name": "Signal line \u2014 electric",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12h18\" stroke-dasharray=\"5 3\"/></svg>"
+    },
+    {
+      "id": "line-hydraulic",
+      "name": "Signal line \u2014 hydraulic",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12h18\" stroke-dasharray=\"8 2 2 2\"/></svg>"
+    },
+    {
+      "id": "line-datalink",
+      "name": "Signal line \u2014 data link",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"5\" cy=\"12\" r=\"1.6\"/><circle cx=\"12\" cy=\"12\" r=\"1.6\"/><circle cx=\"19\" cy=\"12\" r=\"1.6\"/><path d=\"M6.6 12h3.8M13.6 12h3.8\"/></svg>"
+    },
+    {
+      "id": "tag-plate",
+      "name": "Tag plate (two compartments)",
+      "kinds": [],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"6\" width=\"18\" height=\"12\"/><path d=\"M3 12h18\"/></svg>"
+    }
+  ]
+}

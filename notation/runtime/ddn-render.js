@@ -3,7 +3,7 @@
  */
 import {publishNamespace} from './ddn-module-registry.js';
 import ICONLIBS from './assets/icon-libraries.js';
-import {sanitizedLibraries} from './ddn-icon-sanitize.js';
+import {sanitizedLibraries,hostIconPacks} from './ddn-icon-sanitize.js';
 import Sketch from './ddn-sketch.js';
 import Layout from './ddn-layout.js';
 import Text from './ddn-text.js';
@@ -79,10 +79,13 @@ function measureNode(n,registry,profiles,placement={},context={}){
 function renderNode(g,p,theme,registry){
  if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);
   /* B1-082: icon binding — draw the referenced (pre-sanitized) library icon
-   * inside the node's top area; ids namespaced per node. */
-  const xi=g.n.properties?.x_icon||(((registry.icon_libraries||ICONLIBS.libraries).flatMap(l=>(l.icons||[]).filter(i=>(i.kinds||[]).includes(g.n.kind)).map(i=>({library:l.id,icon:i.id}))))[0]);
+   * inside the node's top area; ids namespaced per node. Host-registered
+   * packs (B1-088) append after the shipped registry. */
+  const baseLibs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
+  const allLibs=hostIconPacks().length?baseLibs.concat(hostIconPacks()):baseLibs;
+  const xi=g.n.properties?.x_icon||((allLibs.flatMap(l=>(l.icons||[]).filter(i=>(i.kinds||[]).includes(g.n.kind)).map(i=>({library:l.id,icon:i.id}))))[0]);
   if(xi){
-   const libs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
+   const libs=allLibs;
    const lib=libs.find(l=>l.id===xi.library);
    const icon=lib?.icons?.find(i=>i.id===xi.icon||i.kinds?.includes(g.n.kind)&&i.id===xi.icon);
    if(!lib||!icon)throw new DDN.DDNError('DDN-PJ206','Icon reference '+xi.library+'/'+xi.icon+' is not in the icon libraries registry',g.n.source?.file,g.n.source?.start);

@@ -2068,6 +2068,36 @@
       "svg": "corpus/basics-105-electrical-symbols.svg"
     },
     {
+      "entry": "website/examples/basics/106-tabler-icons.ddn",
+      "view": "net",
+      "title": "Tabler pack",
+      "views": [
+        {
+          "id": "net",
+          "title": "Tabler pack"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-106-tabler-icons.svg"
+    },
+    {
+      "entry": "website/examples/basics/107-iconoir-icons.ddn",
+      "view": "net",
+      "title": "Iconoir pack",
+      "views": [
+        {
+          "id": "net",
+          "title": "Iconoir pack"
+        }
+      ],
+      "profile": "network.basic@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Networks",
+      "svg": "corpus/basics-107-iconoir-icons.svg"
+    },
+    {
       "entry": "website/examples/basics/11-native-layouts.ddn",
       "view": "grid",
       "title": "Native grid / no coordinates",

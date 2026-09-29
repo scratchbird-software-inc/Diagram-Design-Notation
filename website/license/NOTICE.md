@@ -29,3 +29,17 @@ Python rebuild utilities (optional) use locally installed `markdown-it-py`,
 licenses apply to their distributions. The prebuilt website and JavaScript
 reference commands do not require them. External specifications are cited,
 not copied wholesale.
+
+## Bundled third-party icon artwork
+
+Two shipped icon packs contain curated selections of MIT-licensed artwork,
+each with its license text included in the pack manifest
+(`standard/registry/icon-packs/`):
+
+- **Tabler Icons** (`tabler-infra@1`) — Copyright (c) 2020-2026 Paweł Kuna,
+  MIT License — https://github.com/tabler/tabler-icons
+- **Iconoir** (`iconoir-infra@1`) — Copyright (c) 2021 Luca Burgio,
+  MIT License — https://github.com/iconoir-icons/iconoir
+
+Both are diagram-relevant subsets; the full sets are not vendored. Their
+names do not imply endorsement or affiliation.

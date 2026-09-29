@@ -1,0 +1,31 @@
+ddn "0.5";
+module "ddn.examples.tabler";
+
+// B1-088: the tabler-infra@1 icon pack — a curated infrastructure selection
+// from tabler-icons (MIT, license text and attribution in the pack
+// manifest; full set not vendored). Icons bind per node via x_icon.
+// All data is synthetic.
+data m {
+    object wan "WAN" { kind: "network.bus"; }
+    object rtr "Core router" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "router" }; }
+    object sw "Distribution switch" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "network" }; }
+    object srv "App server" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "server" }; }
+    object db "Database" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "database" }; }
+    object mon "Operator workstation" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "device-desktop" }; }
+    object lap "Field laptop" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "device-laptop" }; }
+    object sec "Secrets vault" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "shield-lock" }; }
+    object api "Public API" { kind: "network.server"; x_icon: { library: "tabler-infra@1", icon: "api" }; }
+    relation a1 "" @rtr -> @wan { kind: "network.attaches"; }
+    relation a2 "" @sw -> @wan { kind: "network.attaches"; }
+    relation a3 "" @srv -> @wan { kind: "network.attaches"; }
+    relation a4 "" @db -> @wan { kind: "network.attaches"; }
+    relation a5 "" @mon -> @wan { kind: "network.attaches"; }
+    relation a6 "" @lap -> @wan { kind: "network.attaches"; }
+    relation a7 "" @sec -> @wan { kind: "network.attaches"; }
+    relation a8 "" @api -> @wan { kind: "network.attaches"; }
+}
+view net "Tabler pack" {
+    data: [@m];
+    projection { profile: "network.basic@1"; }
+    publication { size: content; fit: none; }
+}

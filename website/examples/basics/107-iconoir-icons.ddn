@@ -1,0 +1,30 @@
+ddn "0.5";
+module "ddn.examples.iconoir";
+
+// B1-088: the iconoir-infra@1 icon pack — a curated infrastructure and
+// development selection from iconoir (MIT, license text and attribution in
+// the pack manifest; full set not vendored), chosen to complement the
+// Tabler selection. Icons bind per node via x_icon. All data is synthetic.
+data m {
+    object lan "Dev LAN" { kind: "network.bus"; }
+    object repo "Repository" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "archive" }; }
+    object ci "CI runner" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "terminal" }; }
+    object src "Source tree" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "code-brackets" }; }
+    object app "Application" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "app-window" }; }
+    object db "Database" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "database" }; }
+    object bak "Backups" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "database-backup" }; }
+    object cloud "Cloud sync" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "cloud-sync" }; }
+    object team "Team" { kind: "network.server"; x_icon: { library: "iconoir-infra@1", icon: "community" }; }
+    relation a1 "" @ci -> @lan { kind: "network.attaches"; }
+    relation a2 "" @src -> @lan { kind: "network.attaches"; }
+    relation a3 "" @app -> @lan { kind: "network.attaches"; }
+    relation a4 "" @db -> @lan { kind: "network.attaches"; }
+    relation a5 "" @bak -> @lan { kind: "network.attaches"; }
+    relation a6 "" @cloud -> @lan { kind: "network.attaches"; }
+    relation a7 "" @team -> @lan { kind: "network.attaches"; }
+}
+view net "Iconoir pack" {
+    data: [@m];
+    projection { profile: "network.basic@1"; }
+    publication { size: content; fit: none; }
+}
