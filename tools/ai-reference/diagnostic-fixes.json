@@ -57,7 +57,8 @@
     "DDN-PJ211",
     "DDN-PJ212",
     "DDN-PJ213",
-    "DDN-PJ214"
+    "DDN-PJ214",
+    "DDN-PJ215"
   ],
   "fixes": {
     "DDN001": "Split the file (>2,000,000 chars): move data blocks into imported files, or replace verbose object lists with a records block.",
@@ -159,7 +160,7 @@
     "DDN-PJ193": "x_boxed is presentation-only text on dmn.decision/dmn.bkm/dmn.decisionservice",
     "DDN-PJ194": "DMN requirement connectors: information from input data/decision, knowledge from a BKM, authority from a knowledge source or decision",
     "DDN-PJ195": "SoaML: x_service port badges belong to participant/service-interface kinds; x_contract to soaml.servicecontract",
-    "DDN-PJ196": "SoaML: a \u00abService\u00bb port connects to a \u00abRequest\u00bb port of the same interface type \u2014 not service-to-service, request-to-request, or mismatched types",
+    "DDN-PJ196": "SoaML: \u00abService\u00bb/\u00abRequest\u00bb pairing and interface compatibility \u2014 same-type default; x_compatibility modes (specialization/realization/operation-coverage) need matching model evidence",
     "DDN-PJ197": "SoaML: a service contract's choreography binding must name an existing uml.sequence@2 or uml.statemachine@1 view",
     "DDN-PJW06": "Informational: sysml behavioral profile is a rebadge of the UML machinery",
     "DDN-W953": "Stale render: the source changed after this render was prepared; re-render the current revision",
@@ -179,6 +180,7 @@
     "DDN-PJ211": "Ladder: each rung drives exactly one ladder.coil; x_contact/x_coil belong to ladder.contact/ladder.coil",
     "DDN-PJ212": "Ladder: ladder.series endpoints must belong to the same rung (data block)",
     "DDN-PJ213": "Ladder: ladder.jump must target a selected ladder.label; x_jump belongs to ladder.jump",
-    "DDN-PJ214": "Ladder: ladder.basic@1 requires layout { algorithm: ladder }"
+    "DDN-PJ214": "Ladder: ladder.basic@1 requires layout { algorithm: ladder }",
+    "DDN-PJ215": "SDL/MSC: x_sdl timer/channel/marker owner and reference rules; x_hmscref belongs to msc.hmscref"
   }
 }

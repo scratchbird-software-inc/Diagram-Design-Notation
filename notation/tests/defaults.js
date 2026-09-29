@@ -9,7 +9,7 @@ const defs=fs.readFileSync(path.join(root,'../standard/registry/glyph-library.sv
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}
 
 test('Every kind in both catalogues carries a defaults object and forKind resolves it without throwing',()=>{
- assert.equal(reg.kinds.length,152);assert.equal(profileReg.kinds.length,219);
+ assert.equal(reg.kinds.length,152);assert.equal(profileReg.kinds.length,222);
  for(const k of [...reg.kinds,...profileReg.kinds]){
   assert.ok(k.defaults&&typeof k.defaults==='object'&&!Array.isArray(k.defaults),'defaults missing on '+k.keyword);
   const d=Defaults.forKind(k.keyword,reg.kinds.includes(k)?reg:profileReg);

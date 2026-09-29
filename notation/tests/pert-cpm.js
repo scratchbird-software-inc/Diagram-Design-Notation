@@ -39,7 +39,7 @@ test('Negative x_estimate rejected as DDN-PJ125',()=>throws(()=>run('plan',editF
 test('Lifecycle traces on this profile rejected as DDN-Q005',()=>throws(()=>run('plan',editFile('profile: "pert.cpm@1"; }','profile: "pert.cpm@1"; traces:[{events:[],expected:"x"}]; }')),'DDN-Q005'));
 test('Capabilities bookkeeping: clause removed, remainder kept, implemented line added',()=>{const c=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../standard/registry/capabilities.json'),'utf8'));
  assert.ok(!c.unsupported.includes('critical-path scheduling, arbitrary/DMN-FEEL rule execution and engineering solvers'),'old combined line must be gone');
- assert.ok(c.unsupported.includes('arbitrary/DMN-FEEL rule execution and engineering solvers'),'DMN-FEEL/solver remainder stays');
+ assert.ok(c.unsupported.some(x=>x.startsWith('arbitrary host-language rule execution and general-purpose engineering solvers.')&&x.includes('Bounded decision-table/rule evaluation IS supported')&&x.includes('host-supplied FEEL reference engine')),'DMN-FEEL/solver tier statement (B1-089 ratified wording)');
  assert.ok(c.implemented.some(x=>x.includes('pert.cpm@1')),'implemented mentions pert.cpm@1');
  const tl=c.installedProfiles.find(p=>p.id==='timeline.basic@1');
  assert.ok(tl.unsupported.includes('critical-path computation'),'timeline.basic@1 unsupported list immutable');});

@@ -12065,11 +12065,15 @@
       "semantic_contract": {
         "source": [
           "state.initial",
-          "state.state"
+          "state.state",
+          "sdl.set",
+          "sdl.reset"
         ],
         "target": [
           "state.state",
-          "state.final"
+          "state.final",
+          "sdl.set",
+          "sdl.reset"
         ],
         "allow_self": true,
         "member_endpoints": false

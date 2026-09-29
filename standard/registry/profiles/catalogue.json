@@ -2550,6 +2550,42 @@
       "defaults": {}
     },
     {
+      "keyword": "sdl.timer",
+      "name": "Timer",
+      "shape": "profile",
+      "silhouette": "hourglass",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLTIMER",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.set",
+      "name": "Timer set",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLSET",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
+      "keyword": "sdl.reset",
+      "name": "Timer reset",
+      "shape": "profile",
+      "silhouette": "rect",
+      "fallback": "application",
+      "family": "activity",
+      "code": "SDLRESET",
+      "glyph": "object",
+      "aliases": [],
+      "defaults": {}
+    },
+    {
       "keyword": "fbd.block",
       "name": "Function block",
       "shape": "profile",
@@ -3460,7 +3496,9 @@
         "sdl.task",
         "sdl.save",
         "sdl.create",
-        "sdl.procedure"
+        "sdl.procedure",
+        "sdl.set",
+        "sdl.reset"
       ],
       "target": [
         "state.state",
@@ -3478,7 +3516,9 @@
         "sdl.task",
         "sdl.save",
         "sdl.create",
-        "sdl.procedure"
+        "sdl.procedure",
+        "sdl.set",
+        "sdl.reset"
       ],
       "allow_self": true,
       "member_endpoints": false
@@ -6910,7 +6950,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "requirement formal verification",
         "formal OMG certification"
       ]
@@ -6930,7 +6970,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "constraint evaluation",
         "formal OMG certification"
       ]
@@ -6949,7 +6989,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "flow property propagation/evaluation",
         "formal OMG certification"
       ]
@@ -6967,7 +7007,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "equation solving/evaluation",
         "formal OMG certification"
       ]
@@ -6984,7 +7024,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "model library resolution semantics",
         "formal OMG certification"
       ]
@@ -7001,7 +7041,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "formal OMG certification"
       ]
     },
@@ -7018,7 +7058,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "rate/probability evaluation",
         "formal OMG certification"
       ]
@@ -7035,7 +7075,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "formal OMG certification"
       ]
     },
@@ -7051,7 +7091,7 @@
       ],
       "unsupported": [
         "SysML XMI interchange",
-        "SysML 2.0",
+        "SysML 2.0 deferred to a future profile family",
         "formal OMG certification"
       ]
     },
@@ -7081,9 +7121,10 @@
       ],
       "scope": "Full SoaML 1.0.1 notation: participants and agents with \u00abService\u00bb/\u00abRequest\u00bb port decorations (conjugated interfaces), service interfaces and contracts (collaboration glyph with provider/consumer role rows), capabilities, message types, milestones, contract-typed assembly/delegation connectors with service\u2194request conformance, choreography binding to UML sequence or state machine views.",
       "validation": [
+        "\u00abService\u00bb/\u00abRequest\u00bb port pairing with interface-type match (DDN-PJ196), extended to the four ServiceChannel compatibility modes via x_compatibility (same/specialization/realization/operation-coverage)",
         "x_service/x_contract owner rules (DDN-PJ195)",
-        "service/request port pairing and interface-type match (DDN-PJ196)",
-        "choreography binding to a sequence/statemachine view (DDN-PJ197)"
+        "choreography binding (DDN-PJ197)",
+        "registry endpoint contracts (DDN102)"
       ],
       "unsupported": [
         "SoaML XMI interchange",
@@ -7358,14 +7399,15 @@
       "diagramFamilies": [
         "MSC (ITU-T Z.120) message sequence chart"
       ],
-      "scope": "Full Z.120 MSC notation via the uml.sequence@2 machinery: lifelines, message sorts (incl. lost/found = message loss), create/stop (instance creation/destruction), combined fragments and coregions, gates, time/duration constraints, state invariants as inline expressions, and HMSC references (msc.hmscref with x_subdiagram binding).",
+      "scope": "Full Z.120 MSC notation via the uml.sequence@2 machinery: lifelines, message sorts (incl. lost/found = message loss), create/stop (instance creation/destruction), combined fragments and coregions, gates, time/duration constraints, state invariants as inline expressions with the setting/guarding role split (x_invariant role), and HMSC references (msc.hmscref with x_subdiagram binding and x_hmscref actual parameter lists).",
       "validation": [
         "uml.sequence@2 rules apply (message sorts PJ156, invariants PJ157, fragments PJ155, constraints PJ159)",
-        "HMSC reference must bind an existing view (DDN-PJ119)",
+        "HMSC reference must bind an existing view (DDN-PJ119); x_hmscref belongs to msc.hmscref (DDN-PJ215)",
         "registry endpoint contracts (DDN102)"
       ],
       "unsupported": [
         "MSC document interchange",
+        "execution semantics/simulation",
         "formal ITU conformance"
       ]
     },
@@ -7446,10 +7488,11 @@
       "diagramFamilies": [
         "SDL system/block diagram"
       ],
-      "scope": "SDL (ITU-T Z.100) structural level: block and agent kinds, channels with signal lists, signal and signal-set vocabulary, gates as block ports.",
+      "scope": "SDL (ITU-T Z.100) structural level: block and agent kinds, channels with signal lists (text or x_sdl signal references, NODELAY flag), signal and signal-set vocabulary, gates as block ports.",
       "validation": [
         "channels connect blocks/agents or their signals (DDN102)",
-        "gates are block ports (DDN102)"
+        "gates are block ports (DDN102)",
+        "x_sdl channel signal references resolve to sdl.signal (DDN-PJ215)"
       ],
       "unsupported": [
         "SDL interchange formats",
@@ -7463,10 +7506,11 @@
       "diagramFamilies": [
         "SDL process diagram"
       ],
-      "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag), output (send flag), decision, task, save, create; procedure references as subprocess silhouettes.",
+      "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag, priority/spontaneous/continuous/active markers via x_sdl), output (send flag), decision, task, save, create, timer declarations (sdl.timer) with set/reset nodes; procedure references as subprocess silhouettes.",
       "validation": [
         "exactly one start symbol (DDN-PJ208)",
-        "input/output/task/save/create symbols have at least one outgoing transition (DDN-PJ208)",
+        "input/output/task/save/create/set/reset symbols have at least one outgoing transition (DDN-PJ208)",
+        "x_sdl timer references, marker owners and channel signals (DDN-PJ215)",
         "registry endpoint contracts (DDN102)"
       ],
       "unsupported": [

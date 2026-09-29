@@ -59,13 +59,20 @@ function registry(base){
  const fragment={type:'object',required:['operator','operands'],properties:{operator:{enum:['alt','opt','loop','break','par','neg','critical','seq','strict','ignore','consider','assert','coreg']},operands:{type:'array',minItems:1,maxItems:12}},additionalProperties:false};
  fragment.properties.operands.items={type:'object',required:['messages'],properties:{guard:{type:'string',minLength:1},messages:msgList,fragments:{type:'array',minItems:1,items:fragment}},additionalProperties:false};
  out.extension_contracts.x_fragment=def(fragment,['relation']);
- out.extension_contracts.x_invariant=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['after','label'],properties:{after:ref,label:{type:'string',minLength:1}},additionalProperties:false}},['object']);
+ out.extension_contracts.x_invariant=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['after','label'],properties:{after:ref,label:{type:'string',minLength:1},role:{enum:['setting','guarding']}},additionalProperties:false}},['object']);
  out.extension_contracts.x_activation=def({type:'array',minItems:1,maxItems:8,items:{type:'object',required:['from','to'],properties:{from:ref,to:ref},additionalProperties:false}},['object']);
  out.extension_contracts.x_instance=def({type:'object',required:['classifier'],additionalProperties:true},['object']);
  out.extension_contracts.x_partition=def({type:'object',required:['lane'],properties:{lane:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_event=def({type:'object',required:['type'],properties:{type:{enum:['none','message','timer','signal','error','escalation','compensation','conditional','link','terminate','cancel','multiple','parallel_multiple']},position:{enum:['start','intermediate','end','boundary']},interrupting:{type:'boolean'},on:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_gateway=def({type:'object',required:['type'],properties:{type:{enum:['exclusive','parallel','inclusive','complex','event','event_exclusive']}},additionalProperties:false},['object']);
  out.extension_contracts.x_states=def({type:'array'},['object']);
+ /* B1-089: SDL timer declarations, channel signal references, and
+  * priority/spontaneous/continuous markers (Z.101 §11.15, Z.102 §11.4-11.9). */
+ out.extension_contracts.x_sdl=def({type:'object',properties:{signals:{type:'array',minItems:1,maxItems:24,items:ref},nodelay:{type:'boolean'},priority:{type:'string',minLength:1},spontaneous:{type:'boolean'},continuous:{type:'string',minLength:1},active:ref,timer:ref,duration:{type:'string',minLength:1}},additionalProperties:false},['object','relation']);
+ /* B1-089: MSC HMSC reference semantics — actual parameter lists (Z.120 §7.3). */
+ out.extension_contracts.x_hmscref=def({type:'object',properties:{params:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
+ /* B1-089: SoaML ServiceChannel compatibility mode (SoaML §6.4.15); absent = same-type rule. */
+ out.extension_contracts.x_compatibility=def({type:'object',required:['mode'],properties:{mode:{enum:['same','specialization','realization','operation-coverage']}},additionalProperties:false},['relation']);
  /* B1-085: ladder contacts, coils and jump targets. */
  out.extension_contracts.x_contact=def({type:'object',properties:{form:{enum:['no','nc']}},additionalProperties:false},['object']);
  out.extension_contracts.x_coil=def({type:'object',properties:{mode:{enum:['normal','set','reset','negated']}},additionalProperties:false},['object']);

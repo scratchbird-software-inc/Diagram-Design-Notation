@@ -2180,26 +2180,56 @@
     {
       "id": "bpmn.process@1",
       "projection": "graph",
-      "diagramFamilies": ["BPMN process diagram", "BPMN collaboration diagram"],
+      "diagramFamilies": [
+        "BPMN process diagram",
+        "BPMN collaboration diagram"
+      ],
       "scope": "Full BPMN 2.0.2 process and collaboration notation: complete event system (14 triggers, boundary interrupting/non-interrupting), six gateway types, call/ad-hoc/transaction/event subprocesses, markers, data objects/stores, flow variants, pools/lanes incl. collapsed, artifacts.",
-      "validation": ["event trigger/position semantics (DDN-PJ175)", "gateway rules (DDN-PJ176)", "activity marker rules (DDN-PJ177)", "data association endpoints (DDN-PJ180)", "pool message flow (DDN-PJ116)"],
-      "unsupported": ["BPMN XML/DI interchange", "execution semantics", "formal OMG certification"]
+      "validation": [
+        "event trigger/position semantics (DDN-PJ175)",
+        "gateway rules (DDN-PJ176)",
+        "activity marker rules (DDN-PJ177)",
+        "data association endpoints (DDN-PJ180)",
+        "pool message flow (DDN-PJ116)"
+      ],
+      "unsupported": [
+        "BPMN XML/DI interchange",
+        "execution semantics",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "bpmn.choreography@1",
       "projection": "graph",
-      "diagramFamilies": ["BPMN choreography diagram"],
+      "diagramFamilies": [
+        "BPMN choreography diagram"
+      ],
       "scope": "BPMN 2.0.2 choreography: choreography tasks with participant bands (x_bands), multi-instance bands, choreography subprocesses and gateways.",
-      "validation": ["choreography task bands (DDN-PJ178)", "event/gateway/activity rules (DDN-PJ175/PJ176/PJ177)"],
-      "unsupported": ["BPMN XML/DI interchange", "execution semantics", "formal OMG certification"]
+      "validation": [
+        "choreography task bands (DDN-PJ178)",
+        "event/gateway/activity rules (DDN-PJ175/PJ176/PJ177)"
+      ],
+      "unsupported": [
+        "BPMN XML/DI interchange",
+        "execution semantics",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "bpmn.conversation@1",
       "projection": "graph",
-      "diagramFamilies": ["BPMN conversation diagram"],
+      "diagramFamilies": [
+        "BPMN conversation diagram"
+      ],
       "scope": "BPMN 2.0.2 conversation: conversation/sub-conversation/call-conversation hexagon nodes, conversation links to participants (pool machinery).",
-      "validation": ["conversation links connect participants to conversation nodes (DDN-PJ179)"],
-      "unsupported": ["BPMN XML/DI interchange", "execution semantics", "formal OMG certification"]
+      "validation": [
+        "conversation links connect participants to conversation nodes (DDN-PJ179)"
+      ],
+      "unsupported": [
+        "BPMN XML/DI interchange",
+        "execution semantics",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "c4.context@1",
@@ -2771,10 +2801,22 @@
     {
       "id": "cmmn.complete@1",
       "projection": "graph",
-      "diagramFamilies": ["CMMN case diagram"],
+      "diagramFamilies": [
+        "CMMN case diagram"
+      ],
       "scope": "Full CMMN 1.1 notation: case plan model container, typed tasks (human/process/decision, blocking, discretionary), timer/user event listeners, stage variants, milestones, sentries with on-part/if-part and criterion attachment, plan-item decorators, case file items, planning tables, dependency and on-part connectors.",
-      "validation": ["sentries belong to a stage frame and declare entry/exit (DDN-PJ120)", "x_cmmn owner/decorator rules (DDN-PJ181)", "sentry attachment and on-part references (DDN-PJ182)", "planning-table rules (DDN-PJ183)", "one case plan per view (DDN-PJ184)"],
-      "unsupported": ["CMMN XML interchange", "case engine/execution semantics", "formal OMG certification"]
+      "validation": [
+        "sentries belong to a stage frame and declare entry/exit (DDN-PJ120)",
+        "x_cmmn owner/decorator rules (DDN-PJ181)",
+        "sentry attachment and on-part references (DDN-PJ182)",
+        "planning-table rules (DDN-PJ183)",
+        "one case plan per view (DDN-PJ184)"
+      ],
+      "unsupported": [
+        "CMMN XML interchange",
+        "case engine/execution semantics",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "cmmn.basic@1",
@@ -2845,74 +2887,160 @@
     {
       "id": "sysml.requirements@1",
       "projection": "graph",
-      "diagramFamilies": ["SysML requirements diagram"],
+      "diagramFamilies": [
+        "SysML requirements diagram"
+      ],
       "scope": "SysML 1.6 requirements diagram: requirements with id/text compartments, test cases, \u00abderiveReqt\u00bb/\u00absatisfy\u00bb/\u00abverify\u00bb/\u00abrefine\u00bb/\u00abtrace\u00bb/\u00abcopy\u00bb/\u00abmaster\u00bb dependencies, composition containment.",
-      "validation": ["requirement codes unique + text nonempty (DDN-PF014)", "dependency endpoint rules (DDN-PJ185)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "requirement formal verification", "formal OMG certification"]
+      "validation": [
+        "requirement codes unique + text nonempty (DDN-PF014)",
+        "dependency endpoint rules (DDN-PJ185)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "requirement formal verification",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.bdd@2",
       "projection": "graph",
-      "diagramFamilies": ["SysML block definition diagram"],
+      "diagramFamilies": [
+        "SysML block definition diagram"
+      ],
       "scope": "sysml.bdd@1 plus SysML 1.6 BDD notation: block compartments (values/parts/references/operations/constraints) via x_block, \u00abblock\u00bb keyword, composition and generalization between blocks, value types, interface blocks, flow specifications.",
-      "validation": ["ports on block-family kinds (DDN-PJ121 @2 set)", "x_block compartment rules (DDN-PJ186)", "composition/generalization endpoint kinds (DDN-PJ190)", "x_unit resolves in the units registry (DDN-PJ188)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "constraint evaluation", "formal OMG certification"]
+      "validation": [
+        "ports on block-family kinds (DDN-PJ121 @2 set)",
+        "x_block compartment rules (DDN-PJ186)",
+        "composition/generalization endpoint kinds (DDN-PJ190)",
+        "x_unit resolves in the units registry (DDN-PJ188)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "constraint evaluation",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.ibd@2",
       "projection": "graph",
-      "diagramFamilies": ["SysML internal block diagram"],
+      "diagramFamilies": [
+        "SysML internal block diagram"
+      ],
       "scope": "sysml.ibd@1 plus SysML 1.6 port notation: proxy/full/conjugated port glyph variants, port multiplicity, nested ports (x_port), flow properties with direction on interface blocks and flow specifications.",
-      "validation": ["ports on block-family kinds (DDN-PJ121 @2 set)", "x_port typing/nesting rules (DDN-PJ187)", "item flow endpoints (DDN-PJ191)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "flow property propagation/evaluation", "formal OMG certification"]
+      "validation": [
+        "ports on block-family kinds (DDN-PJ121 @2 set)",
+        "x_port typing/nesting rules (DDN-PJ187)",
+        "item flow endpoints (DDN-PJ191)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "flow property propagation/evaluation",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.parametric@2",
       "projection": "graph",
-      "diagramFamilies": ["SysML parametric diagram"],
+      "diagramFamilies": [
+        "SysML parametric diagram"
+      ],
       "scope": "sysml.parametric@1 with the two-binding limit relaxed: constraints bind one or more endpoints; constraint parameters display as a compartment.",
-      "validation": ["ports on block-family kinds (DDN-PJ121 @2 set)", "constraints bind at least one endpoint (DDN-PJ189)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "equation solving/evaluation", "formal OMG certification"]
+      "validation": [
+        "ports on block-family kinds (DDN-PJ121 @2 set)",
+        "constraints bind at least one endpoint (DDN-PJ189)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "equation solving/evaluation",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.package@1",
       "projection": "graph",
-      "diagramFamilies": ["SysML package diagram"],
+      "diagramFamilies": [
+        "SysML package diagram"
+      ],
       "scope": "SysML 1.6 package diagram: uml.package vocabulary with uml.import/uml.access/uml.merge; thin profile over the UML package machinery.",
-      "validation": ["package/profile relation contracts (DDN102 endpoint kinds)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "model library resolution semantics", "formal OMG certification"]
+      "validation": [
+        "package/profile relation contracts (DDN102 endpoint kinds)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "model library resolution semantics",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.usecase@1",
       "projection": "graph",
-      "diagramFamilies": ["SysML use case diagram"],
+      "diagramFamilies": [
+        "SysML use case diagram"
+      ],
       "scope": "SysML 1.6 use case diagram: rebadge of the uml.usecase@3 machinery (subjects, extension points, include/extend, generalization).",
-      "validation": ["uml.usecase@3 rules apply (DDN-PX002/PX004/PX006)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "formal OMG certification"]
+      "validation": [
+        "uml.usecase@3 rules apply (DDN-PX002/PX004/PX006)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.activity@1",
       "projection": "graph",
-      "diagramFamilies": ["SysML activity diagram"],
+      "diagramFamilies": [
+        "SysML activity diagram"
+      ],
       "scope": "SysML 1.6 activity diagram: rebadge of the uml.activity@2 machinery plus SysML edge annotations \u2014 x_flow rate/probability/continuous on activity edges; streaming pins via x_pin.",
-      "validation": ["uml.activity@2 rules apply", "x_flow owner/shape rules (DDN-PJ191)"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "rate/probability evaluation", "formal OMG certification"]
+      "validation": [
+        "uml.activity@2 rules apply",
+        "x_flow owner/shape rules (DDN-PJ191)"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "rate/probability evaluation",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.sequence@1",
       "projection": "sequence",
-      "diagramFamilies": ["SysML sequence diagram"],
+      "diagramFamilies": [
+        "SysML sequence diagram"
+      ],
       "scope": "SysML 1.6 sequence diagram: rebadge of the uml.sequence@2 interaction machinery (fragments, gates, message sorts, constraints).",
-      "validation": ["uml.sequence@2 rules apply"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "formal OMG certification"]
+      "validation": [
+        "uml.sequence@2 rules apply"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "sysml.statemachine@1",
       "projection": "graph",
-      "diagramFamilies": ["SysML state machine diagram"],
+      "diagramFamilies": [
+        "SysML state machine diagram"
+      ],
       "scope": "SysML 1.6 state machine diagram: rebadge of the uml.statemachine@1 machinery (regions, pseudostates, triggers/guards/effects, submachines).",
-      "validation": ["uml.statemachine@1 rules apply"],
-      "unsupported": ["SysML XMI interchange", "SysML 2.0", "formal OMG certification"]
+      "validation": [
+        "uml.statemachine@1 rules apply"
+      ],
+      "unsupported": [
+        "SysML XMI interchange",
+        "SysML 2.0 deferred to a future profile family",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "archimate.basic@1",
@@ -3407,218 +3535,464 @@
     {
       "id": "dmn.drd@1",
       "projection": "graph",
-      "diagramFamilies": ["DMN decision requirements diagram"],
+      "diagramFamilies": [
+        "DMN decision requirements diagram"
+      ],
       "scope": "DMN 1.4 DRD notation: decision, business knowledge model (clipped corner), input data (rounded), knowledge source (document), decision service (band form); information/knowledge/authority requirement connectors; decision nodes bind decision-table views via x_subdiagram; boxed-expression presentation via x_boxed. NO expression language: FEEL is a host-application (backend) capability, not notation.",
-      "validation": ["x_subdiagram on DMN nodes references a decision view (DDN-PJ192)", "x_boxed contract shape (DDN-PJ193)", "requirement connector endpoints (DDN-PJ194)"],
-      "unsupported": ["FEEL and any expression evaluation (backend capability of host applications, e.g. ScratchRobin KEEL)", "DMN XML interchange", "formal OMG certification"]
+      "validation": [
+        "x_subdiagram on DMN nodes references a decision view (DDN-PJ192)",
+        "x_boxed contract shape (DDN-PJ193)",
+        "requirement connector endpoints (DDN-PJ194)"
+      ],
+      "unsupported": [
+        "FEEL and any expression evaluation (backend capability of host applications, e.g. ScratchRobin KEEL)",
+        "DMN XML interchange",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "soaml.services@1",
       "projection": "graph",
-      "diagramFamilies": ["SoaML service architecture / service contract"],
+      "diagramFamilies": [
+        "SoaML service architecture / service contract"
+      ],
       "scope": "Full SoaML 1.0.1 notation: participants and agents with \u00abService\u00bb/\u00abRequest\u00bb port decorations (conjugated interfaces), service interfaces and contracts (collaboration glyph with provider/consumer role rows), capabilities, message types, milestones, contract-typed assembly/delegation connectors with service\u2194request conformance, choreography binding to UML sequence or state machine views.",
-      "validation": ["x_service/x_contract owner rules (DDN-PJ195)", "service/request port pairing and interface-type match (DDN-PJ196)", "choreography binding to a sequence/statemachine view (DDN-PJ197)"],
-      "unsupported": ["SoaML XMI interchange", "service execution/runtime semantics", "formal OMG certification"]
+      "validation": [
+        "\u00abService\u00bb/\u00abRequest\u00bb port pairing with interface-type match (DDN-PJ196), extended to the four ServiceChannel compatibility modes via x_compatibility (same/specialization/realization/operation-coverage)",
+        "x_service/x_contract owner rules (DDN-PJ195)",
+        "choreography binding (DDN-PJ197)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "SoaML XMI interchange",
+        "service execution/runtime semantics",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.strategic@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Strategic domain view"],
+      "diagramFamilies": [
+        "UAF Strategic domain view"
+      ],
       "scope": "UAF Strategic domain: capabilities (tag), enterprise goals/vision, strategic phases; capability dependencies, exhibits, maps-to.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.operational@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Operational domain view"],
+      "diagramFamilies": [
+        "UAF Operational domain view"
+      ],
       "scope": "UAF Operational domain: operational performers/nodes/activities and exchanges; performs and assignment relations.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.services@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Services domain view"],
+      "diagramFamilies": [
+        "UAF Services domain view"
+      ],
       "scope": "UAF Services domain: service specifications, service functions, service policies \u2014 over the SoaML machinery.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.systems@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Systems domain view"],
+      "diagramFamilies": [
+        "UAF Systems domain view"
+      ],
       "scope": "UAF Systems domain: systems, system functions, implementers.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.personnel@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Personnel domain view"],
+      "diagramFamilies": [
+        "UAF Personnel domain view"
+      ],
       "scope": "UAF Personnel domain: persons, organizations, posts, responsibilities.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.resources@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Resources domain view"],
+      "diagramFamilies": [
+        "UAF Resources domain view"
+      ],
       "scope": "UAF Resources domain: resource performers, resources, resource functions, technologies.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.security@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Security domain view"],
+      "diagramFamilies": [
+        "UAF Security domain view"
+      ],
       "scope": "UAF Security domain: security elements, controls, threats, assets; mitigation.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.projects@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Projects domain view"],
+      "diagramFamilies": [
+        "UAF Projects domain view"
+      ],
       "scope": "UAF Projects domain: projects, milestones, work packages; milestone dependencies. Roadmap presentations use the timeline projection.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.standards@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Standards domain view"],
+      "diagramFamilies": [
+        "UAF Standards domain view"
+      ],
       "scope": "UAF Standards domain: standards, collections, protocols; compliance and forecast. Forecast tables use the table projection.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.actualresources@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Actual Resources domain view"],
+      "diagramFamilies": [
+        "UAF Actual Resources domain view"
+      ],
       "scope": "UAF Actual Resources domain: actual resources, organizations, persons.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.dictionary@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Dictionary domain view"],
+      "diagramFamilies": [
+        "UAF Dictionary domain view"
+      ],
       "scope": "UAF Dictionary domain: dictionary entries; the dictionary table uses the table projection.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "uaf.summary@1",
       "projection": "graph",
-      "diagramFamilies": ["UAF Summary & Overview domain view"],
+      "diagramFamilies": [
+        "UAF Summary & Overview domain view"
+      ],
       "scope": "UAF Summary & Overview domain: architecture descriptions, viewpoints, model references; OV-1-style pictograms via frames and notes.",
-      "validation": ["registry endpoint contracts for the domain vocabulary (DDN102)"],
-      "unsupported": ["UAF XMI interchange", "architecture analysis/execution", "formal OMG certification"]
+      "validation": [
+        "registry endpoint contracts for the domain vocabulary (DDN102)"
+      ],
+      "unsupported": [
+        "UAF XMI interchange",
+        "architecture analysis/execution",
+        "formal OMG certification"
+      ]
     },
     {
       "id": "flow.iso5807@1",
       "projection": "graph",
-      "diagramFamilies": ["ISO 5807 flowchart"],
+      "diagramFamilies": [
+        "ISO 5807 flowchart"
+      ],
       "scope": "Full ISO 5807 (1985) flowchart symbol set: the flow.basic@1 vocabulary plus manual input, manual operation, preparation, display, delay, loop start/end, merge/extract, card, collate, sort and parallel mode. Closed flowchart structure rules as flow.basic@1 (start+end, flow.next links, named decision branches).",
-      "validation": ["flowchart structure rules as flow.basic@1 (DDN-PF007\u2013PF010)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["ISO interchange formats", "flowchart execution", "formal ISO certification"]
+      "validation": [
+        "flowchart structure rules as flow.basic@1 (DDN-PF007\u2013PF010)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "ISO interchange formats",
+        "flowchart execution",
+        "formal ISO certification"
+      ]
     },
     {
       "id": "c4.deployment@1",
       "projection": "graph",
-      "diagramFamilies": ["C4 deployment diagram"],
+      "diagramFamilies": [
+        "C4 deployment diagram"
+      ],
       "scope": "C4 deployment view: rebadge of the uml.deployment@1 machinery \u2014 nodes/devices/execution environments as 3D boxes, artifacts, deploy/manifest dependencies, communication paths with multiplicity, node nesting via frames.",
-      "validation": ["uml.deployment@1 rules apply (nesting frames scope to node kinds, DDN-PJ164)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["middleware-specific deployment models", "artifact content descriptors", "topology discovery"]
+      "validation": [
+        "uml.deployment@1 rules apply (nesting frames scope to node kinds, DDN-PJ164)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "middleware-specific deployment models",
+        "artifact content descriptors",
+        "topology discovery"
+      ]
     },
     {
       "id": "c4.dynamic@1",
       "projection": "graph",
-      "diagramFamilies": ["C4 dynamic diagram"],
+      "diagramFamilies": [
+        "C4 dynamic diagram"
+      ],
       "scope": "C4 dynamic view: rebadge of the uml.communication@2 machinery \u2014 numbered messages (x_message.seq ordering), combined fragments, time/duration constraints.",
-      "validation": ["uml.communication@2 rules apply (message numbering, DDN-PJ111; fragments/constraints, DDN-PJ172)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["runtime execution", "formal conformance"]
+      "validation": [
+        "uml.communication@2 rules apply (message numbering, DDN-PJ111; fragments/constraints, DDN-PJ172)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "runtime execution",
+        "formal conformance"
+      ]
     },
     {
       "id": "epc.complete@1",
       "projection": "graph",
-      "diagramFamilies": ["Event-driven process chain (EPC), full"],
+      "diagramFamilies": [
+        "Event-driven process chain (EPC), full"
+      ],
       "scope": "Full EPC notation: epc.basic@1 alternation/connectors plus organizational units and roles (lanes via frames), information objects/documents, process-link symbols, and split/join fan-balancing validation.",
-      "validation": ["participants limited to the epk.* vocabulary (DDN-PF007)", "alternation (DDN-PJ105) and connector operator (DDN-PJ106) as epc.basic@1", "split/join fan-balancing per operator (DDN-PJ199)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["process simulation", "BPMN interchange", "formal conformance"]
+      "validation": [
+        "participants limited to the epk.* vocabulary (DDN-PF007)",
+        "alternation (DDN-PJ105) and connector operator (DDN-PJ106) as epc.basic@1",
+        "split/join fan-balancing per operator (DDN-PJ199)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "process simulation",
+        "BPMN interchange",
+        "formal conformance"
+      ]
     },
     {
       "id": "msc.basic@1",
       "projection": "sequence",
-      "diagramFamilies": ["MSC (ITU-T Z.120) message sequence chart"],
-      "scope": "Full Z.120 MSC notation via the uml.sequence@2 machinery: lifelines, message sorts (incl. lost/found = message loss), create/stop (instance creation/destruction), combined fragments and coregions, gates, time/duration constraints, state invariants as inline expressions, and HMSC references (msc.hmscref with x_subdiagram binding).",
-      "validation": ["uml.sequence@2 rules apply (message sorts PJ156, invariants PJ157, fragments PJ155, constraints PJ159)", "HMSC reference must bind an existing view (DDN-PJ119)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["MSC document interchange", "formal ITU conformance"]
+      "diagramFamilies": [
+        "MSC (ITU-T Z.120) message sequence chart"
+      ],
+      "scope": "Full Z.120 MSC notation via the uml.sequence@2 machinery: lifelines, message sorts (incl. lost/found = message loss), create/stop (instance creation/destruction), combined fragments and coregions, gates, time/duration constraints, state invariants as inline expressions with the setting/guarding role split (x_invariant role), and HMSC references (msc.hmscref with x_subdiagram binding and x_hmscref actual parameter lists).",
+      "validation": [
+        "uml.sequence@2 rules apply (message sorts PJ156, invariants PJ157, fragments PJ155, constraints PJ159)",
+        "HMSC reference must bind an existing view (DDN-PJ119); x_hmscref belongs to msc.hmscref (DDN-PJ215)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "MSC document interchange",
+        "execution semantics/simulation",
+        "formal ITU conformance"
+      ]
     },
     {
       "id": "idef0.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["IDEF0 function model"],
+      "diagramFamilies": [
+        "IDEF0 function model"
+      ],
       "scope": "IDEF0 (IEEE 1320.1) function modeling: activity boxes with side-typed ICOM ports (Inputs left, Controls top, Outputs right, Mechanisms bottom), A-0 context and decomposition node numbering, labeled flow arrows with fork/join, tunneled arrows (x_tunnel), and call arrows (idef0.call).",
-      "validation": ["ICOM port type must match the port's declared side (DDN-PJ200)", "node numbers unique and decomposition-prefixed (DDN-PJ201)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["IDEF0 interchange formats", "model execution/simulation", "formal IEEE certification"]
+      "validation": [
+        "ICOM port type must match the port's declared side (DDN-PJ200)",
+        "node numbers unique and decomposition-prefixed (DDN-PJ201)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "IDEF0 interchange formats",
+        "model execution/simulation",
+        "formal IEEE certification"
+      ]
     },
     {
       "id": "petri.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["Petri net"],
+      "diagramFamilies": [
+        "Petri net"
+      ],
       "scope": "ISO/IEC 15909 Petri net notation: places (circles) with token counts, transitions (bars), weighted arcs, inhibitor arcs (open-circle end), test/read arcs (dashed), markings via records. Bipartite graph enforced: places connect only to transitions and vice versa.",
-      "validation": ["bipartite graph: arcs only between a place and a transition (DDN-PJ202)", "arc weights and token counts are nonnegative integers (DDN-PJ203)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["reachability/coverability analysis", "PNML interchange", "net execution/simulation"]
+      "validation": [
+        "bipartite graph: arcs only between a place and a transition (DDN-PJ202)",
+        "arc weights and token counts are nonnegative integers (DDN-PJ203)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "reachability/coverability analysis",
+        "PNML interchange",
+        "net execution/simulation"
+      ]
     },
     {
       "id": "orm.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["ORM 2 object-role model"],
+      "diagramFamilies": [
+        "ORM 2 object-role model"
+      ],
       "scope": "ORM 2 (ISO/IEC 19507) notation: entity types (solid ellipses), value types (dashed ellipses), fact types as role-box predicate rows with uniqueness bars and mandatory dots, n-ary predicates, subset/equality/exclusion constraint arcs, value constraints, objectification, derivation text. No projection beyond graph.",
-      "validation": ["roles live on fact types and play to entity/value types (DDN-PJ204)", "fact types carry at least one role box (DDN-PJ204)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["ORM2 XMI interchange", "constraint formal verification", "model-to-schema mapping"]
+      "validation": [
+        "roles live on fact types and play to entity/value types (DDN-PJ204)",
+        "fact types carry at least one role box (DDN-PJ204)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "ORM2 XMI interchange",
+        "constraint formal verification",
+        "model-to-schema mapping"
+      ]
     },
     {
       "id": "vsm.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["Value stream map"],
+      "diagramFamilies": [
+        "Value stream map"
+      ],
       "scope": "Value stream mapping (machinery): process boxes with data rows, the VA/NVA timeline ladder strip, inventory triangles, push/pull and material arrows, electronic/manual information arrows, supermarket, kaizen burst and operator glyphs \u2014 simple generic glyphs only; detailed industry icon artwork is a separate excluded task.",
-      "validation": ["ladder values are nonnegative numbers on vsm.process (DDN-PJ205)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["detailed VSM icon libraries", "cycle-time simulation", "VSM interchange formats"]
+      "validation": [
+        "ladder values are nonnegative numbers on vsm.process (DDN-PJ205)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "detailed VSM icon libraries",
+        "cycle-time simulation",
+        "VSM interchange formats"
+      ]
     },
     {
       "id": "sdl.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["SDL system/block diagram"],
-      "scope": "SDL (ITU-T Z.100) structural level: block and agent kinds, channels with signal lists, signal and signal-set vocabulary, gates as block ports.",
-      "validation": ["channels connect blocks/agents or their signals (DDN102)", "gates are block ports (DDN102)"],
-      "unsupported": ["SDL interchange formats", "system simulation", "formal ITU conformance"]
+      "diagramFamilies": [
+        "SDL system/block diagram"
+      ],
+      "scope": "SDL (ITU-T Z.100) structural level: block and agent kinds, channels with signal lists (text or x_sdl signal references, NODELAY flag), signal and signal-set vocabulary, gates as block ports.",
+      "validation": [
+        "channels connect blocks/agents or their signals (DDN102)",
+        "gates are block ports (DDN102)",
+        "x_sdl channel signal references resolve to sdl.signal (DDN-PJ215)"
+      ],
+      "unsupported": [
+        "SDL interchange formats",
+        "system simulation",
+        "formal ITU conformance"
+      ]
     },
     {
       "id": "sdl.process@1",
       "projection": "graph",
-      "diagramFamilies": ["SDL process diagram"],
-      "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag), output (send flag), decision, task, save, create; procedure references as subprocess silhouettes.",
-      "validation": ["exactly one start symbol (DDN-PJ208)", "input/output/task/save/create symbols have at least one outgoing transition (DDN-PJ208)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["SDL interchange formats", "process simulation", "formal ITU conformance"]
+      "diagramFamilies": [
+        "SDL process diagram"
+      ],
+      "scope": "SDL (ITU-T Z.100) process level: state-machine machinery with SDL process symbols \u2014 start, state, input (accept flag, priority/spontaneous/continuous/active markers via x_sdl), output (send flag), decision, task, save, create, timer declarations (sdl.timer) with set/reset nodes; procedure references as subprocess silhouettes.",
+      "validation": [
+        "exactly one start symbol (DDN-PJ208)",
+        "input/output/task/save/create/set/reset symbols have at least one outgoing transition (DDN-PJ208)",
+        "x_sdl timer references, marker owners and channel signals (DDN-PJ215)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "SDL interchange formats",
+        "process simulation",
+        "formal ITU conformance"
+      ]
     },
     {
       "id": "fbd.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["IEC 61131-3 function block diagram"],
+      "diagramFamilies": [
+        "IEC 61131-3 function block diagram"
+      ],
       "scope": "IEC 61131-3 FBD: function blocks (rect with name/type header and typed pins), typed wire connections (BOOL/INT/DINT/REAL/TIME/STRING/WORD), negation bubbles on BOOL pins, feedback loops allowed. Ladder (LD) hosting follows in a later item.",
-      "validation": ["negation only on BOOL pins (DDN-PJ209)", "wire endpoints' pin types must match (DDN-PJ210)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["PLC execution/compilation", "IEC interchange (XML) formats", "formal IEC certification"]
+      "validation": [
+        "negation only on BOOL pins (DDN-PJ209)",
+        "wire endpoints' pin types must match (DDN-PJ210)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "PLC execution/compilation",
+        "IEC interchange (XML) formats",
+        "formal IEC certification"
+      ]
     },
     {
       "id": "ladder.basic@1",
       "projection": "graph",
-      "diagramFamilies": ["IEC 61131-3 ladder diagram"],
+      "diagramFamilies": [
+        "IEC 61131-3 ladder diagram"
+      ],
       "scope": "IEC 61131-3 LD: power rails, rungs (one data block per rung, declaration order top to bottom), NO/NC contacts, output coils (normal/set/reset/negated) right-aligned at the rail, parallel OR branches inferred from series topology, fbd.block/fbd.variable hosted on rungs, labels/jumps/returns. Dedicated rung layout algorithm (layout.algorithm: ladder).",
-      "validation": ["each rung drives exactly one ladder.coil (DDN-PJ211)", "ladder.series endpoints stay within one rung (DDN-PJ212)", "ladder.jump targets a selected ladder.label (DDN-PJ213)", "the profile requires layout.algorithm: ladder (DDN-PJ214)", "registry endpoint contracts (DDN102)"],
-      "unsupported": ["PLC execution/compilation", "IEC interchange (XML) formats", "formal IEC certification"]
+      "validation": [
+        "each rung drives exactly one ladder.coil (DDN-PJ211)",
+        "ladder.series endpoints stay within one rung (DDN-PJ212)",
+        "ladder.jump targets a selected ladder.label (DDN-PJ213)",
+        "the profile requires layout.algorithm: ladder (DDN-PJ214)",
+        "registry endpoint contracts (DDN102)"
+      ],
+      "unsupported": [
+        "PLC execution/compilation",
+        "IEC interchange (XML) formats",
+        "formal IEC certification"
+      ]
     }
   ],
   "projectionProperties": {
@@ -3866,7 +4240,7 @@
     "arbitrary runtime profile code installation",
     "unrestricted nested dashboard/widget composition (one child-view level is implemented)",
     "complete UML/SysML/BPMN/DMN metamodels or external interchange",
-    "arbitrary/DMN-FEEL rule execution and engineering solvers",
+    "arbitrary host-language rule execution and general-purpose engineering solvers. Bounded decision-table/rule evaluation IS supported within the declared FEEL-equivalent capability tier. The full DMN-FEEL surface \u2014 including externally-defined functions (DMN \u00a710.3.2.13.3), which are carried as opaque references \u2014 is available only through a host-supplied FEEL reference engine identified in the file; engineering solvers (e.g. SysML constraint causality selection) remain host responsibilities behind the same solver contract",
     "third-party Vega runtime execution unverified in build environment",
     "curved routes in the fixed-lane experimental interaction profile (DDN-I031)",
     "redacted interaction SVG without an occurrence/payload closure (DDN-I032)",

@@ -30,6 +30,27 @@ licenses apply to their distributions. The prebuilt website and JavaScript
 reference commands do not require them. External specifications are cited,
 not copied wholesale.
 
+## Standards and notation attributions
+
+This project renders diagram notations defined by external standards bodies.
+Implementations are original work based on publicly described notation
+conventions; no standards-document text, figures, or symbol tables are
+reproduced. Support is profile-level coverage, not conformance or
+certification.
+
+- **C4 model** — the C4 model and c4model.com content by Simon Brown are
+  licensed under Creative Commons Attribution 4.0 (CC BY 4.0) —
+  https://c4model.com. C4 diagrams rendered by this project follow that
+  convention with thanks to the author.
+- UML, BPMN, CMMN, DMN, SysML, SoaML, and UAF are trademarks of the Object
+  Management Group (OMG). ArchiMate is a registered trademark of The Open
+  Group. ISA-5.1 (International Society of Automation), ISO 5807,
+  ISO/IEC 15909, ISO/IEC 19507, ISO/IEC/IEEE 42010 (ISO/IEC/IEEE),
+  IEC 60617 / IEC 61131-3 (IEC), ITU-T Z.100 / Z.120 (ITU), and IEEE 1320.1
+  (IEEE) are cited as standards references only. All trademarks remain the
+  property of their respective owners; use here is nominative and does not
+  imply endorsement, affiliation, or certification.
+
 ## Bundled third-party icon artwork
 
 Two shipped icon packs contain curated selections of MIT-licensed artwork,

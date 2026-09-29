@@ -1,14 +1,15 @@
 ddn "0.5";
 module "ddn.examples.msc";
 
-// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference, a
-// coregion, a lost message, instance creation (start) and stop (delete), and
-// reply messages. All data is synthetic.
+// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference
+// (with its actual parameter list), a guarding state invariant, a coregion,
+// a lost message, instance creation (start) and stop (delete), and reply
+// messages. All data is synthetic.
 data m {
     object cli "Client" { kind: "uml.class"; }
-    object srv "Server" { kind: "uml.class"; }
+    object srv "Server" { kind: "uml.class"; x_invariant: [ { label: "authenticated"; after: @m.m1, role: "guarding" } ]; }
     object worker "Worker" { kind: "uml.class"; }
-    object billing "Billing HMSC" { kind: "msc.hmscref"; x_subdiagram: { view: "billing" }; }
+    object billing "Billing HMSC" { kind: "msc.hmscref"; x_subdiagram: { view: "billing" }; x_hmscref: { params: [ "shop", "amount" ] }; }
     relation c1 "start" @cli -> @worker { kind: "uml.message"; x_message: { sort: "create" }; }
     relation m1 "request" @cli -> @srv { kind: "uml.message"; x_fragment: { operator: "coreg"; operands: [ { messages: [ @m.m1, @m.m2 ] } ] }; }
     relation m2 "query" @worker -> @srv { kind: "uml.message"; }

@@ -184,15 +184,18 @@ interchange, and formal conformance remain out of scope.
 lifelines, message sorts, combined fragments, gates and time/duration
 constraints. Where Z.120 differs, the mappings are: **HMSC references** —
 the `msc.hmscref` participant kind draws a `«ref»` box and binds a detail
-view with `x_subdiagram` (unknown views fail `DDN-PJ119`); **inline
-expressions** — state invariants (`x_invariant` stadium boxes on a lifeline);
+view with `x_subdiagram` (unknown views fail `DDN-PJ119`), with
+`x_hmscref: { params: […] }` carrying the reference's actual parameter list
+(Z.120 §7.3); **inline expressions** — state invariants (`x_invariant`
+stadium boxes on a lifeline), where each entry may declare the Z.120
+setting-vs-guarding split with `role: setting|guarding`;
 **instance creation / stop** — the `create` and `delete` message sorts;
 **coregions** — the `coreg` combined-fragment operator (added additively to
 the fragment operator enum); **message loss** — the `lost`/`found` sorts
 (self-anchored with a free end, `DDN-PJ156`). MSC document interchange and
-formal ITU conformance are out of scope. Example:
-`website/examples/basics/93-msc.ddn`; tests `msc-compliance.js` +
-`msc-showcase.js`.
+execution semantics/simulation and formal ITU conformance are out of
+scope. Example: `website/examples/basics/93-msc.ddn`; tests
+`msc-compliance.js` + `msc-showcase.js`.
 
 ## 17.17 IDEF0 function modeling (idef0.basic@1)
 
@@ -292,16 +295,23 @@ licensing diligence is a separate task. Example:
 `sdl.basic@1` covers the ITU-T Z.100 structural level: `sdl.block` and
 `sdl.agent` («block»/«agent» headers) with gates as block ports (port squares
 render under this profile), `sdl.channel` relations whose label carries the
-signal list in brackets, and the `sdl.signal` (send-flag) / `sdl.signalset`
-vocabulary linked with `sdl.links`. `sdl.process@1` rebadges the
-`uml.statemachine@1` machinery (`DDN-PJW06` at render time) with the SDL
+signal list in brackets — or as resolved references via
+`x_sdl: { signals: [ @signal… ], nodelay: true }` (references must resolve to
+`sdl.signal` objects, `DDN-PJ215`) — and the `sdl.signal` (send-flag) /
+`sdl.signalset` vocabulary linked with `sdl.links`. `sdl.process@1` rebadges
+the `uml.statemachine@1` machinery (`DDN-PJW06` at render time) with the SDL
 process symbols: start (state.initial), state (state.state), input (accept
 flag `sdl.input`), output (send flag `sdl.output`), decision (junction),
 task (`sdl.task`), save (tag `sdl.save`), create (`sdl.create`, dashed
 border) and procedure references (`sdl.procedure`, subprocess silhouette).
-Exactly one start symbol and at least one outgoing transition per process
-symbol validate as `DDN-PJ208`. SDL interchange formats, simulation and
-formal ITU conformance are out of scope. Example:
+Timer constructs (Z.101 §11.15) ship as `sdl.timer` declarations (hourglass
+silhouette) with `sdl.set`/`sdl.reset` nodes bound by
+`x_sdl: { timer: @t, duration: "…" }`; priority input, spontaneous
+transitions, continuous signals and the `active()` query are `x_sdl`
+markers on `sdl.input` (`DDN-PJ215` owner and reference rules). Exactly one
+start symbol and at least one outgoing transition per process symbol
+validate as `DDN-PJ208`. SDL interchange formats, simulation and formal ITU
+conformance are out of scope. Example:
 `website/examples/basics/99-sdl.ddn`; tests `sdl-compliance.js` +
 `sdl-showcase.js`.
 

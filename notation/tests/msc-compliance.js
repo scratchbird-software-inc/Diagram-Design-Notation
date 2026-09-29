@@ -62,6 +62,18 @@ view v "V" { data: [@m]; projection { kind: sequence; profile: "uml.sequence@2";
  const r=A.createWorkspace({'main.ddn':seq}).renderSync({entry:'main.ddn',view:'v'});
  assert.match(r.svg,/<svg/);});
 
+/* B1-089: invariant setting/guarding split + HMSC reference parameter lists. */
+test('x_invariant entries may declare the setting/guarding role split',()=>{
+ const r=run('chart',edit('x_invariant: [ { label: "authenticated"; after: @m.m4 } ]; }','x_invariant: [ { label: "authenticated"; after: @m.m4, role: "guarding" } ]; }'));
+ assert.ok(r.svg.includes('authenticated'),'invariant missing');
+ const r2=run('chart',edit('x_invariant: [ { label: "authenticated"; after: @m.m4 } ]; }','x_invariant: [ { label: "authenticated"; after: @m.m4, role: "setting" } ]; }'));
+ assert.ok(r2.svg.includes('authenticated'),'invariant missing');});
+test('HMSC reference carries actual parameter lists (x_hmscref)',()=>{
+ const r=run('chart',edit('object ref "Billing HMSC" { kind: "msc.hmscref"; x_subdiagram: { view: "billing" }; }','object ref "Billing HMSC" { kind: "msc.hmscref"; x_subdiagram: { view: "billing" }; x_hmscref: { params: [ "shop", "amount" ] }; }'));
+ assert.ok(r.svg.includes('Billing HMSC'),'hmsc ref missing');});
+test('x_hmscref applies to msc.hmscref only (DDN-PJ215)',()=>{
+ throws(()=>run('chart',edit('object srv "Server" { kind: "uml.class"; x_invariant: [ { label: "authenticated"; after: @m.m4 } ]; }','object srv "Server" { kind: "uml.class"; x_invariant: [ { label: "authenticated"; after: @m.m4 } ]; x_hmscref: { params: [ "x" ] }; }')),'DDN-PJ215');});
+
 const failed=results.filter(r=>!r.pass);
 console.log('msc-compliance:',results.length-failed.length+'/'+results.length,'passed');
 if(failed.length){console.error(failed.map(f=>f.name+' ['+f.code+'] '+f.message).join('\n'));process.exit(1);}

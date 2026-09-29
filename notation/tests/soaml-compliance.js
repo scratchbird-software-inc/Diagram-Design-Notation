@@ -64,6 +64,46 @@ test('choreography binding to a wrong view kind (DDN-PJ197)',()=>{
 test('assembly endpoint kinds are registry-enforced (DDN102)',()=>{
  throws(()=>run('arch',edit('relation a1 "" @shop.billing -> @billing.api','relation a1 "" @cap -> @billing.api')),'DDN102');});
 
+/* B1-089: SoaML §6.4.15 ServiceChannel compatibility modes (x_compatibility). */
+/* Mode fixtures: interface *elements* named exactly by their datatype text. */
+const MODES=`ddn "0.5";
+module "test.soaml.modes";
+data m {
+    object req "BillingSmall" { kind: "uml.interface"; fields { field charge "charge()"; } }
+    object svc "BillingFull" { kind: "uml.interface"; fields { field charge "charge()"; field refund "refund()"; } }
+    object shop "Shop" { kind: "soaml.participant";
+        ports { port billing { direction: out; x_service: { kind: "request" }; datatype: "BillingSmall"; } }
+    }
+    object prov "Provider" { kind: "soaml.participant";
+        ports { port api { direction: in; x_service: { kind: "service" }; datatype: "BillingFull"; } }
+    }
+    relation a1 "" @shop.billing -> @prov.api { kind: "uml.assembly"; x_compatibility: { mode: "operation-coverage" }; }
+}
+view arch "A" { data: [@m]; projection { kind: graph; profile: "soaml.services@1"; } publication { size: content; fit: none; overflow: error; minimum_text: 8pt; } }
+`;
+const runModes=changes=>A.createWorkspace({'main.ddn':MODES,...changes}).renderSync({entry:'main.ddn',view:'arch'});
+const medit=(before,after)=>{assert.ok(MODES.includes(before),'Mutation target missing: '+before);return{'main.ddn':MODES.replace(before,after)};};
+test('absent mode keeps the strict same-type rule (byte-identical default)',()=>{
+ throws(()=>run('arch',edit('x_service: { kind: "request" }; datatype: "Billing"','x_service: { kind: "request" }; datatype: "BillingSub"')),'DDN-PJ196');});
+test('operation-coverage: request operations covered by the service interface pass',()=>{
+ assert.match(runModes().svg,/<svg/);});
+test('operation-coverage: a missing operation fails (DDN-PJ196)',()=>{
+ throws(()=>runModes(medit('field charge "charge()"; field refund','field refund')),'DDN-PJ196');});
+test('operation-coverage: interfaces must name model elements (DDN-PJ196)',()=>{
+ throws(()=>runModes(medit('datatype: "BillingFull"; } }','datatype: "BillingOther"; } }')),'DDN-PJ196');});
+test('specialization mode: passes with a generalization from service type to request type',()=>{
+ const r=runModes(medit('relation a1 "" @shop.billing -> @prov.api { kind: "uml.assembly"; x_compatibility: { mode: "operation-coverage" }; }','relation g1 "" @svc -> @req { kind: "uml.generalization"; }\n    relation a1 "" @shop.billing -> @prov.api { kind: "uml.assembly"; x_compatibility: { mode: "specialization" }; }'));
+ assert.match(r.svg,/<svg/);});
+test('specialization mode without the generalization fails (DDN-PJ196)',()=>{
+ throws(()=>runModes(medit('x_compatibility: { mode: "operation-coverage" }; }','x_compatibility: { mode: "specialization" }; }')),'DDN-PJ196');});
+test('realization mode: uses uml.realization evidence',()=>{
+ const r=runModes({'main.ddn':MODES.replace('object svc "BillingFull" { kind: "uml.interface";','object svc "BillingFull" { kind: "uml.class";').replace('relation a1 "" @shop.billing -> @prov.api { kind: "uml.assembly"; x_compatibility: { mode: "operation-coverage" }; }','relation g1 "" @svc -> @req { kind: "uml.realization"; }\n    relation a1 "" @shop.billing -> @prov.api { kind: "uml.assembly"; x_compatibility: { mode: "realization" }; }')});
+ assert.match(r.svg,/<svg/);});
+test('realization mode without the realization fails (DDN-PJ196)',()=>{
+ throws(()=>runModes(medit('x_compatibility: { mode: "operation-coverage" }; }','x_compatibility: { mode: "realization" }; }')),'DDN-PJ196');});
+test('x_compatibility on a non-connector relation fails (DDN-PJ196)',()=>{
+ throws(()=>run('arch',edit('relation cap1 "" @billing -> @cap { kind: "uml.realization"; }','relation cap1 "" @billing -> @cap { kind: "uml.realization"; x_compatibility: { mode: "same" }; }')),'DDN-PJ196');});
+
 const failed=results.filter(r=>!r.pass);
 console.log('soaml-compliance:',results.length-failed.length+'/'+results.length,'passed');
 if(failed.length){console.error(failed.map(f=>f.name+' ['+f.code+'] '+f.message).join('\n'));process.exit(1);}

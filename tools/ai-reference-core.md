@@ -187,6 +187,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_planning` | object | `{items: [string]}` planning table on a stage/task (DDN-PJ183) |
 | `x_fbd` | port | `{type: BOOL|INT|DINT|REAL|TIME|STRING|WORD, negated?}` — FBD pin typing; negation bubble on BOOL pins (DDN-PJ209/PJ210) |
 | `x_contact` / `x_coil` / `x_jump` | object | `{form: no|nc}` / `{mode: normal|set|reset|negated}` / `{target: @label}` — ladder contact/coil/jump contracts (DDN-PJ211/PJ213) |
+| `x_sdl` / `x_hmscref` / `x_compatibility` | object / object / relation | `{signals: [@…], nodelay?}` on sdl.channel, `{priority?, spontaneous?, continuous?, active?}` on sdl.input, `{timer, duration?}` on sdl.set/reset (DDN-PJ215) / `{params: […]}` HMSC reference parameters (DDN-PJ215) / `{mode: same|specialization|realization|operation-coverage}` SoaML ServiceChannel compatibility (DDN-PJ196) |
 | `x_icon` | object | `{library, icon}` — icon-library binding; draws the sanitized library SVG in the node (DDN-PJ206/PJ207) |
 | `x_vsm` | object | `{va?, nva?, unit?}` — VSM timeline-ladder values on process nodes (DDN-PJ205) |
 | `x_role` | field | `{uniqueness?, mandatory?}` — ORM role-box decorations (bar over box, dot at row edge; DDN-PJ204) |
@@ -224,6 +225,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_states` | object | array of `{at: number, state: string}` (timing; strictly increasing `at`) |
 | `x_fbd` | port | `{type: BOOL|INT|DINT|REAL|TIME|STRING|WORD, negated?}` — FBD pin typing; negation bubble on BOOL pins (DDN-PJ209/PJ210) |
 | `x_contact` / `x_coil` / `x_jump` | object | `{form: no|nc}` / `{mode: normal|set|reset|negated}` / `{target: @label}` — ladder contact/coil/jump contracts (DDN-PJ211/PJ213) |
+| `x_sdl` / `x_hmscref` / `x_compatibility` | object / object / relation | `{signals: [@…], nodelay?}` on sdl.channel, `{priority?, spontaneous?, continuous?, active?}` on sdl.input, `{timer, duration?}` on sdl.set/reset (DDN-PJ215) / `{params: […]}` HMSC reference parameters (DDN-PJ215) / `{mode: same|specialization|realization|operation-coverage}` SoaML ServiceChannel compatibility (DDN-PJ196) |
 | `x_icon` | object | `{library, icon}` — icon-library binding; draws the sanitized library SVG in the node (DDN-PJ206/PJ207) |
 | `x_vsm` | object | `{va?, nva?, unit?}` — VSM timeline-ladder values on process nodes (DDN-PJ205) |
 | `x_role` | field | `{uniqueness?, mandatory?}` — ORM role-box decorations (bar over box, dot at row edge; DDN-PJ204) |

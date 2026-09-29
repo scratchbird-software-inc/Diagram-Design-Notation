@@ -2,9 +2,11 @@ ddn "0.5";
 module "ddn.examples.sdl";
 
 // B1-083: ITU-T Z.100 SDL — a system view (blocks with gates, a channel with
-// its signal list, signal and signal-set vocabulary) and an SDL process
-// diagram (start, state, input/output flags, decision, task, save, create,
-// procedure reference). All data is synthetic.
+// its signal list as resolved x_sdl references, signal and signal-set
+// vocabulary) and an SDL process diagram (start, state, input/output flags,
+// decision, task, save, create, procedure reference), plus B1-089 timer
+// constructs: a timer declaration with set/reset nodes, a priority input and
+// an active() query. All data is synthetic.
 data sys {
     object net "Network block" { kind: "sdl.block";
         ports { port g1 { direction: inout; } }
@@ -14,14 +16,19 @@ data sys {
     }
     object sig "OrderReq" { kind: "sdl.signal"; }
     object sigs "Order signals" { kind: "sdl.signalset"; }
-    relation ch "[OrderReq, OrderAck]" @net.g1 -> @app.g2 { kind: "sdl.channel"; }
+    object ack "OrderAck" { kind: "sdl.signal"; }
+    relation ch "[OrderReq, OrderAck]" @net.g1 -> @app.g2 { kind: "sdl.channel"; x_sdl: { signals: [ @sig, @ack ] }; }
     relation l1 "" @sig -> @net { kind: "sdl.links"; }
     relation l2 "" @sigs -> @app { kind: "sdl.links"; }
 }
 data p {
     object start "" { kind: "state.initial"; }
     object idle "Idle" { kind: "state.state"; }
-    object in1 "OrderReq" { kind: "sdl.input"; }
+    object in1 "OrderReq" { kind: "sdl.input"; x_sdl: { priority: "high" }; }
+    object tmr "T1" { kind: "sdl.timer"; }
+    object sett "set(now+5, T1)" { kind: "sdl.set"; x_sdl: { timer: @tmr, duration: "5s" }; }
+    object rstm "reset(T1)" { kind: "sdl.reset"; x_sdl: { timer: @tmr }; }
+    object waiting "waiting" { kind: "sdl.input"; x_sdl: { active: @tmr }; }
     object work "Process order" { kind: "sdl.task"; }
     object dec "" { kind: "state.junction"; }
     object out1 "OrderAck" { kind: "sdl.output"; }
@@ -31,7 +38,11 @@ data p {
     object done "" { kind: "state.final"; }
     relation t1 "" @start -> @idle { kind: "state.transition"; }
     relation t2 "OrderReq" @idle -> @in1 { kind: "state.transition"; }
-    relation t3 "" @in1 -> @work { kind: "state.transition"; }
+    relation t2b "timeout" @idle -> @waiting { kind: "state.transition"; }
+    relation t3 "" @in1 -> @sett { kind: "state.transition"; }
+    relation t3b "" @sett -> @work { kind: "state.transition"; }
+    relation t3c "" @waiting -> @rstm { kind: "state.transition"; }
+    relation t3d "" @rstm -> @work { kind: "state.transition"; }
     relation t4 "" @work -> @dec { kind: "state.transition"; }
     relation t5 "ok" @dec -> @out1 { kind: "state.transition"; }
     relation t6 "hold" @dec -> @store { kind: "state.transition"; }

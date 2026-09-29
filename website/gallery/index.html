@@ -13273,14 +13273,15 @@ view epc &quot;Fulfillment EPC&quot; {
 <pre class="ddn-src"><code>ddn &quot;0.5&quot;;
 module &quot;ddn.examples.msc&quot;;
 
-// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference, a
-// coregion, a lost message, instance creation (start) and stop (delete), and
-// reply messages. All data is synthetic.
+// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference
+// (with its actual parameter list), a guarding state invariant, a coregion,
+// a lost message, instance creation (start) and stop (delete), and reply
+// messages. All data is synthetic.
 data m {
     object cli &quot;Client&quot; { kind: &quot;uml.class&quot;; }
-    object srv &quot;Server&quot; { kind: &quot;uml.class&quot;; }
+    object srv &quot;Server&quot; { kind: &quot;uml.class&quot;; x_invariant: [ { label: &quot;authenticated&quot;; after: @m.m1, role: &quot;guarding&quot; } ]; }
     object worker &quot;Worker&quot; { kind: &quot;uml.class&quot;; }
-    object billing &quot;Billing HMSC&quot; { kind: &quot;msc.hmscref&quot;; x_subdiagram: { view: &quot;billing&quot; }; }
+    object billing &quot;Billing HMSC&quot; { kind: &quot;msc.hmscref&quot;; x_subdiagram: { view: &quot;billing&quot; }; x_hmscref: { params: [ &quot;shop&quot;, &quot;amount&quot; ] }; }
     relation c1 &quot;start&quot; @cli -&gt; @worker { kind: &quot;uml.message&quot;; x_message: { sort: &quot;create&quot; }; }
     relation m1 &quot;request&quot; @cli -&gt; @srv { kind: &quot;uml.message&quot;; x_fragment: { operator: &quot;coreg&quot;; operands: [ { messages: [ @m.m1, @m.m2 ] } ] }; }
     relation m2 &quot;query&quot; @worker -&gt; @srv { kind: &quot;uml.message&quot;; }
@@ -13504,9 +13505,11 @@ view net &quot;Icon network&quot; {
 module &quot;ddn.examples.sdl&quot;;
 
 // B1-083: ITU-T Z.100 SDL — a system view (blocks with gates, a channel with
-// its signal list, signal and signal-set vocabulary) and an SDL process
-// diagram (start, state, input/output flags, decision, task, save, create,
-// procedure reference). All data is synthetic.
+// its signal list as resolved x_sdl references, signal and signal-set
+// vocabulary) and an SDL process diagram (start, state, input/output flags,
+// decision, task, save, create, procedure reference), plus B1-089 timer
+// constructs: a timer declaration with set/reset nodes, a priority input and
+// an active() query. All data is synthetic.
 data sys {
     object net &quot;Network block&quot; { kind: &quot;sdl.block&quot;;
         ports { port g1 { direction: inout; } }
@@ -13516,14 +13519,19 @@ data sys {
     }
     object sig &quot;OrderReq&quot; { kind: &quot;sdl.signal&quot;; }
     object sigs &quot;Order signals&quot; { kind: &quot;sdl.signalset&quot;; }
-    relation ch &quot;[OrderReq, OrderAck]&quot; @net.g1 -&gt; @app.g2 { kind: &quot;sdl.channel&quot;; }
+    object ack &quot;OrderAck&quot; { kind: &quot;sdl.signal&quot;; }
+    relation ch &quot;[OrderReq, OrderAck]&quot; @net.g1 -&gt; @app.g2 { kind: &quot;sdl.channel&quot;; x_sdl: { signals: [ @sig, @ack ] }; }
     relation l1 &quot;&quot; @sig -&gt; @net { kind: &quot;sdl.links&quot;; }
     relation l2 &quot;&quot; @sigs -&gt; @app { kind: &quot;sdl.links&quot;; }
 }
 data p {
     object start &quot;&quot; { kind: &quot;state.initial&quot;; }
     object idle &quot;Idle&quot; { kind: &quot;state.state&quot;; }
-    object in1 &quot;OrderReq&quot; { kind: &quot;sdl.input&quot;; }
+    object in1 &quot;OrderReq&quot; { kind: &quot;sdl.input&quot;; x_sdl: { priority: &quot;high&quot; }; }
+    object tmr &quot;T1&quot; { kind: &quot;sdl.timer&quot;; }
+    object sett &quot;set(now+5, T1)&quot; { kind: &quot;sdl.set&quot;; x_sdl: { timer: @tmr, duration: &quot;5s&quot; }; }
+    object rstm &quot;reset(T1)&quot; { kind: &quot;sdl.reset&quot;; x_sdl: { timer: @tmr }; }
+    object waiting &quot;waiting&quot; { kind: &quot;sdl.input&quot;; x_sdl: { active: @tmr }; }
     object work &quot;Process order&quot; { kind: &quot;sdl.task&quot;; }
     object dec &quot;&quot; { kind: &quot;state.junction&quot;; }
     object out1 &quot;OrderAck&quot; { kind: &quot;sdl.output&quot;; }
@@ -13533,7 +13541,11 @@ data p {
     object done &quot;&quot; { kind: &quot;state.final&quot;; }
     relation t1 &quot;&quot; @start -&gt; @idle { kind: &quot;state.transition&quot;; }
     relation t2 &quot;OrderReq&quot; @idle -&gt; @in1 { kind: &quot;state.transition&quot;; }
-    relation t3 &quot;&quot; @in1 -&gt; @work { kind: &quot;state.transition&quot;; }
+    relation t2b &quot;timeout&quot; @idle -&gt; @waiting { kind: &quot;state.transition&quot;; }
+    relation t3 &quot;&quot; @in1 -&gt; @sett { kind: &quot;state.transition&quot;; }
+    relation t3b &quot;&quot; @sett -&gt; @work { kind: &quot;state.transition&quot;; }
+    relation t3c &quot;&quot; @waiting -&gt; @rstm { kind: &quot;state.transition&quot;; }
+    relation t3d &quot;&quot; @rstm -&gt; @work { kind: &quot;state.transition&quot;; }
     relation t4 &quot;&quot; @work -&gt; @dec { kind: &quot;state.transition&quot;; }
     relation t5 &quot;ok&quot; @dec -&gt; @out1 { kind: &quot;state.transition&quot;; }
     relation t6 &quot;hold&quot; @dec -&gt; @store { kind: &quot;state.transition&quot;; }

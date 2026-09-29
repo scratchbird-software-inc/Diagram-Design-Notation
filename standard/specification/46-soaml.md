@@ -38,6 +38,21 @@ must pair «Service» with «Request» and both ports must declare the same
 interface type (`datatype` text); service-to-service, request-to-request,
 and mismatched types fail with `DDN-PJ196`.
 
+A connector may instead declare its ServiceChannel compatibility mode
+(SoaML §6.4.15) with `x_compatibility: { mode: … }`; the default (absent)
+keeps the strict same-type rule byte-identical. The four modes:
+
+- `same` — identical interface type text (the default rule);
+- `specialization` — a `uml.generalization` relation runs from the
+  «Service»-side interface element to the «Request»-side one;
+- `realization` — a `uml.realization` relation runs between them;
+- `operation-coverage` — both type texts name interface elements in the
+  model, and every field of the «Request»-side interface is provided by the
+  «Service»-side one.
+
+Missing evidence fails `DDN-PJ196` with a mode-specific message;
+`x_compatibility` on any other relation kind is an error.
+
 ## Choreography binding
 
 A service contract binds its choreography with

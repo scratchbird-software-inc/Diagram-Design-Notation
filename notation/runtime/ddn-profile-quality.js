@@ -304,6 +304,31 @@ function validate(ir,E){
     fail('DDN-PJ210','fbd.wire '+r.id+' connects '+pa.properties.x_fbd.type+' to '+pb.properties.x_fbd.type+'; wire endpoints must share a type',r);
   }
  }
+ /* B1-089: SDL timer/channel/marker semantics and MSC reference contracts. */
+ {
+  for(const n of ir.elements.filter(n=>shown.has(n.id))){
+   const xs=n.properties.x_sdl;
+   if(xs!==undefined){
+    if(!n.kind.startsWith('sdl.'))fail('DDN-PJ215','x_sdl applies to SDL kinds; '+n.id+' is '+n.kind,n);
+    if(xs.signals!==undefined||xs.nodelay!==undefined)fail('DDN-PJ215','x_sdl signals/nodelay belong to sdl.channel relations; '+n.id+' is '+n.kind,n);
+    if(xs.priority!==undefined||xs.spontaneous!==undefined||xs.continuous!==undefined||xs.active!==undefined){
+     if(n.kind!=='sdl.input')fail('DDN-PJ215','x_sdl priority/spontaneous/continuous/active markers belong to sdl.input; '+n.id+' is '+n.kind,n);
+     if(xs.spontaneous&&(xs.priority||xs.continuous))fail('DDN-PJ215','A spontaneous transition (input none) takes no priority or continuous condition; '+n.id,n);
+     if(xs.active!==undefined){const t=ns.get(xs.active?.$ref);if(!t||t.kind!=='sdl.timer')fail('DDN-PJ215','active() query on '+n.id+' must reference an sdl.timer',n);}}
+    if(xs.timer!==undefined||xs.duration!==undefined){
+     if(!['sdl.set','sdl.reset'].includes(n.kind))fail('DDN-PJ215','x_sdl timer/duration belong to sdl.set/sdl.reset; '+n.id+' is '+n.kind,n);
+     if(xs.timer!==undefined){const t=ns.get(xs.timer?.$ref);if(!t||t.kind!=='sdl.timer')fail('DDN-PJ215','Timer set/reset '+n.id+' must reference a declared sdl.timer',n);}}
+   }
+   const xh=n.properties.x_hmscref;
+   if(xh!==undefined&&n.kind!=='msc.hmscref')fail('DDN-PJ215','x_hmscref (reference parameter lists) applies to msc.hmscref; '+n.id+' is '+n.kind,n);
+  }
+  for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.properties.x_sdl)){
+   const xs=r.properties.x_sdl;
+   if(r.kind!=='sdl.channel')fail('DDN-PJ215','x_sdl on relations belongs to sdl.channel; '+r.id+' is '+r.kind,r);
+   for(const k of Object.keys(xs))if(!['signals','nodelay'].includes(k))fail('DDN-PJ215','x_sdl '+k+' does not apply to a channel relation; '+r.id,r);
+   for(const sig of xs.signals||[]){const t=ns.get(sig?.$ref);if(!t||t.kind!=='sdl.signal')fail('DDN-PJ215','Channel '+r.id+' signal reference must resolve to an sdl.signal',r);}
+  }
+ }
  /* B1-085: IEC 61131-3 ladder semantics — rungs, coils, jumps. */
  {
   const LADDER=['ladder.contact','ladder.coil','ladder.label','ladder.jump','ladder.return'];
@@ -334,7 +359,7 @@ function validate(ir,E){
  }
  /* B1-083: SDL process-level semantics. */
  if(profile==='sdl.process@1'){
-  const SYMS=['sdl.input','sdl.output','sdl.task','sdl.save','sdl.create'];
+  const SYMS=['sdl.input','sdl.output','sdl.task','sdl.save','sdl.create','sdl.set','sdl.reset'];
   const starts=ir.elements.filter(n=>shown.has(n.id)&&n.kind==='state.initial');
   if(starts.length!==1)fail('DDN-PJ208','An SDL process diagram needs exactly one start symbol; found '+starts.length);
   const es=ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.kind==='state.transition');
@@ -417,6 +442,8 @@ function validate(ir,E){
    if(xc!==undefined&&n.kind!=='soaml.servicecontract')fail('DDN-PJ195','x_contract (choreography binding) applies to soaml.servicecontract; '+n.id+' is '+n.kind,n);
   }
   if(profile==='soaml.services@1'){
+   for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&r.properties.x_compatibility&&!['uml.assembly','uml.delegation','uml.connector'].includes(r.kind)))
+    fail('DDN-PJ196','x_compatibility applies to assembly/delegation/connector relations; '+r.id+' is '+r.kind,r);
    for(const r of ir.relations.filter(r=>ir.view.relations.includes(r.id)&&['uml.assembly','uml.delegation','uml.connector'].includes(r.kind))){
     const typed=ep=>{if(!ep.member)return null;const owner=ns.get(ep.element);const pt=(owner?.ports||[]).find(x=>x.id===ep.member);return pt?.properties?.x_service?.kind||null;};
     const a=typed(r.from),b=typed(r.to);
@@ -424,7 +451,27 @@ function validate(ir,E){
      if(a===b)fail('DDN-PJ196','Connector '+r.id+' joins two «'+(a==='service'?'Service':'Request')+'» ports; a «Service» port connects to a «Request» port',r);
      const ta=ns.get(r.from.element),tb=ns.get(r.to.element),pa=(ta?.ports||[]).find(x=>x.id===r.from.member),pb=(tb?.ports||[]).find(x=>x.id===r.to.member);
      const typeOf=p=>p?.properties?.datatype||p?.properties?.type;
-     if(typeOf(pa)&&typeOf(pb)&&typeOf(pa)!==typeOf(pb))fail('DDN-PJ196','Connector '+r.id+' joins «Service»/'+'«Request» ports of different interface types ('+typeOf(pa)+' vs '+typeOf(pb)+'); both sides type the same service interface',r);
+     /* B1-089: SoaML §6.4.15 compatibility modes. Absent x_compatibility keeps
+      * the strict same-type rule byte-identical; declared modes check the
+      * model for the matching evidence. */
+     const mode=r.properties.x_compatibility?.mode||'same';
+     if(typeOf(pa)&&typeOf(pb)&&typeOf(pa)!==typeOf(pb)&&mode==='same')fail('DDN-PJ196','Connector '+r.id+' joins «Service»/'+'«Request» ports of different interface types ('+typeOf(pa)+' vs '+typeOf(pb)+'); both sides type the same service interface',r);
+     if(mode!=='same'&&typeOf(pa)&&typeOf(pb)){
+      const svcEp=a==='service'?r.from:r.to,reqEp=a==='service'?r.to:r.from;
+      const svcPort=(ns.get(svcEp.element)?.ports||[]).find(x=>x.id===svcEp.member),reqPort=(ns.get(reqEp.element)?.ports||[]).find(x=>x.id===reqEp.member);
+      const svcType=typeOf(svcPort),reqType=typeOf(reqPort);
+      const iface=t=>ir.elements.find(n=>n.name===t);
+      const svcIface=iface(svcType),reqIface=iface(reqType);
+      if(mode==='specialization'||mode==='realization'){
+       const kind=mode==='specialization'?'uml.generalization':'uml.realization';
+       if(!svcIface||!reqIface||!ir.relations.some(x=>x.kind===kind&&x.from.element===svcIface.id&&x.to.element===reqIface.id))
+        fail('DDN-PJ196','Connector '+r.id+' declares '+mode+' compatibility but no '+kind+' relation runs from '+(svcIface?svcType+' ('+svcIface.id+')':JSON.stringify(svcType)+' — no such interface element')+' to '+(reqIface?reqType:'an element named '+JSON.stringify(reqType)),r);
+      }else if(mode==='operation-coverage'){
+       if(!svcIface||!reqIface)fail('DDN-PJ196','Connector '+r.id+' declares operation-coverage compatibility; both interface types ('+svcType+', '+reqType+') must name interface elements in the model',r);
+       const have=new Set((svcIface.fields||[]).map(f=>f.name));
+       for(const f of reqIface.fields||[])if(!have.has(f.name))fail('DDN-PJ196','Connector '+r.id+' declares operation-coverage compatibility but '+svcType+' provides no operation named '+f.name+' required by '+reqType,r);
+      }
+     }
     }
    }
   }
