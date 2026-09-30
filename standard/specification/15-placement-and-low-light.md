@@ -33,7 +33,7 @@ Renaming the earlier live value `tree` to `spanning_tree` preserves the stronger
 
 ## Frame overflow
 
-`layout.frame_overflow` is `expand` (default) or `confine` (RFC-118). It governs view `frame` rects relative to their members.
+`layout.frame_overflow` is `expand` (default) or `confine`. It governs view `frame` rects relative to their members.
 
 Under `expand`, the rendered frame rect grows to enclose the member bounding box plus the standard frame padding (20 CSS px left/right, 54 top, 22 bottom — the same padding used for member-derived frames). A declared `at`/`size` rect that already encloses its members is unchanged, so existing diagrams render identically; a member-derived frame is by construction already the expanded rect. Members never escape their frame and nothing is hidden.
 
@@ -59,21 +59,21 @@ them, and the route-label reservation margins (8/10 px at `normal`), rounded
 through the renderer's numeric helper. Node body sizes, font sizes, glyph sizes
 and the fixed canvas furniture never scale. `spacing` is a **graph-family
 hint**: fixed-grid projections (chart, matrix, panels, table, timeline,
-fishbone, decision, sequence, timing) ignore it entirely — `check()` emits no
+fishbone, decision, sequence, timing) ignore it entirely — `check` emits no
 warning, because ignoring it is the documented behavior. Factors are literal
 constants; the renderer stays deterministic.
 
 ```ddn
 format layouts {
-    layout orbit {
-        algorithm: circular;
-        center: pins;
-        auto_place: true;
-        routing: curved;
-        crossings: gap;
-        gap: 100px;
-    }
-    bundle roomy { layout: @orbit; spacing: loose; }
+ layout orbit {
+ algorithm: circular;
+ center: pins;
+ auto_place: true;
+ routing: curved;
+ crossings: gap;
+ gap: 100px;
+ }
+ bundle roomy { layout: @orbit; spacing: loose; }
 }
 ```
 

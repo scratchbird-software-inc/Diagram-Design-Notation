@@ -18,70 +18,70 @@ or through a `bundle`):
 
 ```
 view embedded "Minimal chrome for embedding" {
-    data: [@model];
-    legend: off;          // auto | on | off   (default auto)
-    title: off;           // on | off          (default on)
-    footer: off;          // on | off          (default on)
+ data: [@model];
+ legend: off; // auto | on | off (default auto)
+ title: off; // on | off (default on)
+ footer: off; // on | off (default on)
 }
 
 format styles {
-    chrome minimal { legend: off; title: off; footer: off; }
-    bundle embed { chrome: @minimal; }
+ chrome minimal { legend: off; title: off; footer: off; }
+ bundle embed { chrome: @minimal; }
 }
 view card "Card" { data: [@model]; format: @styles.embed; }
 view card2 "Card 2" { data: [@model]; chrome { legend: off; } }
 ```
 
 - `legend: auto` applies the per-view-kind emission rule that predates this
-  chapter (below). `on` pins today's emission explicitly, guarding the author
-  against future heuristic changes; under the current rules `on` and `auto`
-  emit identically for every view kind. `off` suppresses the legend and
-  reclaims its reserved band.
+ chapter (below). `on` pins today's emission explicitly, guarding the author
+ against future heuristic changes; under the current rules `on` and `auto`
+ emit identically for every view kind. `off` suppresses the legend and
+ reclaims its reserved band.
 - `title: off` suppresses the view title/header block (the
-  `DDN / …` eyebrow line, the wrapped view title or `publication.title`
-  override, the caption, and the look/theme tag) and its reserved band.
-  `publication.title` / `publication.caption` keep their text-override
-  meaning; this option only controls visibility (D2).
+ `DDN / …` eyebrow line, the wrapped view title or `publication.title`
+ override, the caption, and the look/theme tag) and its reserved band.
+ `publication.title` / `publication.caption` keep their text-override
+ meaning; this option only controls visibility (D2).
 - `footer: off` suppresses the footer line (the
-  `Same data · independent view …` / `One model · …` line and its page
-  reservation).
+ `Same data · independent view …` / `One model · …` line and its page
+ reservation).
 - A flat `legend:` keyword whose value is one of the three chrome words is
-  the chrome shorthand; a `legend: @reference` still names a legend profile.
-  When a view uses the string shorthand, a bundle-level legend profile
-  reference is not applied at that position (declare a `legend { … }` group
-  for keys/mode alongside the shorthand).
+ the chrome shorthand; a `legend: @reference` still names a legend profile.
+ When a view uses the string shorthand, a bundle-level legend profile
+ reference is not applied at that position (declare a `legend { … }` group
+ for keys/mode alongside the shorthand).
 - Numbered relationships need their key: `legend: off` with
-  `legend { mode: numbers }` is the coded error `DDN047`, matching the
-  existing `placement: none` rule.
+ `legend { mode: numbers }` is the coded error `DDN047`, matching the
+ existing `placement: none` rule.
 - Invalid values are coded errors: `DDN-E018` for a flat keyword
-  (`legend: sometimes`), `DDN046` for a `chrome` group/profile value outside
-  the choice lists.
+ (`legend: sometimes`), `DDN046` for a `chrome` group/profile value outside
+ the choice lists.
 
 ## Emission sites and the `auto` rule (D1 survey)
 
 Every chrome emission site in the runtime is under option control:
 
 - **Graph / chen views** (`ddn-render.js`): the `RELATIONSHIP KEY` block is
-  emitted when `legend.placement` is not `none` and at least one relation is
-  visible — independent of whether route labels already self-label the
-  relations (that duplication is exactly what `legend: off` answers). The
-  header block and the footer line were always emitted. `auto` = these rules.
+ emitted when `legend.placement` is not `none` and at least one relation is
+ visible — independent of whether route labels already self-label the
+ relations (that duplication is exactly what `legend: off` answers). The
+ header block and the footer line were always emitted. `auto` = these rules.
 - **Data-bound projections** (`ddn-projections.js`: chart, table, matrix,
-  panels, timeline, fishbone, decision, sequence, timing): one shared page
-  compositor emits the header (`DDN / 0.5 PROJECTION PREVIEW / …` plus the
-  view title) and the footer (`One model · source-bound occurrences · …`).
-  Relationship legends are already disabled for projected graph bodies.
+ panels, timeline, fishbone, decision, sequence, timing): one shared page
+ compositor emits the header (`DDN / 0.5 PROJECTION PREVIEW / …` plus the
+ view title) and the footer (`One model · source-bound occurrences · …`).
+ Relationship legends are already disabled for projected graph bodies.
 - **Quality projections** (`ddn-quality-render.js`): the matrix encoding
-  colour key (with the "Missing is not zero…" note) and the multi-series
-  chart colour key (identity transform) are `legend`-governed chrome and are
-  emitted whenever their data exists; `legend: off` suppresses them and their
-  reserved rows.
+ colour key (with the "Missing is not zero…" note) and the multi-series
+ chart colour key (identity transform) are `legend`-governed chrome and are
+ emitted whenever their data exists; `legend: off` suppresses them and their
+ reserved rows.
 - **Geographic views** (`ddn-geo.js`): the choropleth ramp key and the symbol
-  size key are `legend`-governed; the page header/footer match the
-  projection compositor. The in-drawing method caption
-  ("Geographic projection: …") is content, not chrome, and stays.
+ size key are `legend`-governed; the page header/footer match the
+ projection compositor. The in-drawing method caption
+ ("Geographic projection: …") is content, not chrome, and stays.
 - **Isometric views** (`ddn-iso.js`): the page header/footer match the
-  projection compositor; isometric views emit no relationship legend.
+ projection compositor; isometric views emit no relationship legend.
 
 The accessibility `<title>`/`<desc>` inside the SVG root are not chrome and
 are always emitted; the `<desc>` sentence pointing at the adjacent legend is

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-056 (RFC-120): UML 2.5.1 sequence-diagram completeness fixtures (uml.sequence@2). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-056 : UML 2.5.1 sequence-diagram completeness fixtures (uml.sequence@2). */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";

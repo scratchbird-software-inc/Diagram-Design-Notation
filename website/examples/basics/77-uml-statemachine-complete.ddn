@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umlsm";
 
-// B1-057 (RFC-121): UML 2.5.1 state-machine completeness on uml.statemachine@1.
+// B1-057 : UML 2.5.1 state-machine completeness on uml.statemachine@1.
 // View 1: activities, internal transitions, full transition syntax, time events,
 // choice/junction/fork-join/terminate. View 2: composite state with parallel
 // regions, history pseudostates, entry/exit points and a submachine binding.

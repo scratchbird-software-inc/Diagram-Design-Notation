@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umlseq";
 
-// B1-056 (RFC-120): UML 2.5.1 sequence-diagram completeness on uml.sequence@2.
+// B1-056 : UML 2.5.1 sequence-diagram completeness on uml.sequence@2.
 // View 1: combined fragments, gates, replies. View 2: creation/destruction,
 // lost/found, invariants, authorable activations, time/duration constraints.
 // Minimal current-dialect style, no pinned layout.

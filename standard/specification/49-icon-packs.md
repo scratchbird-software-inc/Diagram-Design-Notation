@@ -67,10 +67,10 @@ following holds (the DDN runtime reports rejection as `DDN-PJ207`):
 - the `svg` member is not a string beginning with `<svg`;
 - it exceeds **20 KiB** (20,480 characters);
 - it contains scripts (`<script>`, `javascript:`), embedded documents
-  (`<foreignObject>`, `<iframe>`, `<embed>`, `<object>`, `<image>`),
-  external references of any kind (`href`/`xlink:href` attributes, `url()`
-  paint servers, remote fonts), event-handler attributes (`on*=`),
-  or `<!doctype`/`<!entity` declarations.
+ (`<foreignObject>`, `<iframe>`, `<embed>`, `<object>`, `<image>`),
+ external references of any kind (`href`/`xlink:href` attributes, `url`
+ paint servers, remote fonts), event-handler attributes (`on*=`),
+ or `<!doctype`/`<!entity` declarations.
 
 Icons must inline everything they need. A pack that fails sanitization for
 any icon fails as a whole.
@@ -78,31 +78,31 @@ any icon fails as a whole.
 ## 6. Binding rules
 
 - **Default binding**: when a node has no explicit icon, the first icon
-  entry — across all registered packs, in pack registration order — whose
-  `kinds` contains the node's kind is drawn inside the node. Pack order is
-  therefore binding precedence; a curated, more specific pack should
-  register before a generic one.
+ entry — across all registered packs, in pack registration order — whose
+ `kinds` contains the node's kind is drawn inside the node. Pack order is
+ therefore binding precedence; a curated, more specific pack should
+ register before a generic one.
 - **Override**: the `x_icon` extension property on any element
-  (`x_icon: { library: "<pack-id>", icon: "<icon-id>" }`) binds a specific
-  icon to that node, regardless of `kinds`.
+ (`x_icon: { library: "<pack-id>", icon: "<icon-id>" }`) binds a specific
+ icon to that node, regardless of `kinds`.
 - **Unknown references** are errors (`DDN-PJ206`), never silent fallbacks.
 
 ## 7. Versioning and namespaces
 
 - The `@N` suffix in the pack id is the **major version**: removing an
-  icon, renaming an id, or redrawing an icon incompatibly requires a new
-  pack id (`acme-symbols@2`), so existing diagrams keep rendering exactly
-  as authored. In-place additions may bump `version` only.
+ icon, renaming an id, or redrawing an icon incompatibly requires a new
+ pack id (`acme-symbols@2`), so existing diagrams keep rendering exactly
+ as authored. In-place additions may bump `version` only.
 - Pack ids are a flat namespace. Host applications must refuse to register
-  a pack whose id is already registered (shipped or host-supplied) —
-  reported as `DDN-PJ206`.
+ a pack whose id is already registered (shipped or host-supplied) —
+ reported as `DDN-PJ206`.
 - Icon ids never change within a pack major version.
 
 ## 8. Host registration
 
 Hosts (viewers, editors, embedding applications) may accept packs at
 runtime. The DDN runtime exposes `registerIconPack(pack)` /
-`unregisterIconPack(id)` / `hostIconPacks()` on its public API: a pack is
+`unregisterIconPack(id)` / `hostIconPacks` on its public API: a pack is
 manifest-validated and sanitized exactly as in §5 before it can render, and
 host packs append after shipped packs in binding precedence. Malformed
 manifests fail `DDN-PJ206`; unsafe icons fail `DDN-PJ207`.
@@ -128,9 +128,9 @@ manifest and are recorded in the repository `NOTICE.md`. Vendor packs
 1. Draw stroke SVG icons on one square grid, one stroke width.
 2. Assemble the single JSON document per §2–§4 with honest license fields.
 3. Validate against `standard/schemas/icon-pack.schema.json` and the §5
-   sanitization rules.
+ sanitization rules.
 4. Load it: ship it to the registry for everyone, or register it at runtime
-   per §8.
+ per §8.
 
 Examples: every file under `standard/registry/icon-packs/` is a conforming
 worked example; the compliance suite validates all of them against the

@@ -437,7 +437,7 @@ function plan(ir,ErrorClass=Error){
    const n=byId.get(ep.element);
    if(!n||n.type!=='object'||!byParticipant.has(n.id))fail('DDN-PJ110','Sequence message '+(r.name||r.id)+' has a '+label+' endpoint that is not a selected object declaration: '+ep.element,r);
   }
-  /* B1-056 (RFC-120): UML 2.5.1 sequence completeness. Message sorts,
+  /* B1-056 : UML 2.5.1 sequence completeness. Message sorts,
    * combined fragments (contiguous, strictly nested operand spans), gates,
    * state invariants and authorable activations. Validators run for every
    * sequence profile when the new extensions are present; sources without
@@ -498,7 +498,7 @@ function plan(ir,ErrorClass=Error){
    const states=xs.map((e,i)=>{
     if(!e||typeof e!=='object'||!Number.isFinite(e.at)||typeof e.state!=='string'||!e.state.length)fail('DDN-PJ118','Timing participant '+n.name+' has a malformed x_states entry at index '+i+': at must be a finite number and state a nonempty string',n);
     if(i&&!(e.at>xs[i-1].at))fail('DDN-PJ118','Timing participant '+n.name+' x_states entry at index '+i+' (at='+e.at+') is not strictly after the previous entry (at='+xs[i-1].at+')',n);
-    /* B1-061 (RFC-125): duration/slew annotations, {…} form. */
+    /* B1-061 : duration/slew annotations, {…} form. */
     for(const key of ['duration','slew'])if(e[key]!==undefined){if(!t2)fail('DDN-PJ173','State '+key+' annotations require uml.timing@2',n);
      if(typeof e[key]!=='string'||!/^\{[^{}]+\}$/.test(e[key]))fail('DDN-PJ173','Timing state '+key+' on '+n.name+' must use constraint form {…}; found '+JSON.stringify(e[key]),n);}
     return{at:e.at,state:e.state,...(e.duration!==undefined?{duration:e.duration}:{}),...(e.slew!==undefined?{slew:e.slew}:[])};

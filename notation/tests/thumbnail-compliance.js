@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-074: drill-down thumbnails (RFC-132). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-074: drill-down thumbnails . */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,code:e.code,message:e.message});console.error('FAIL',name,e.stack);}}

@@ -47,8 +47,8 @@ A view-level `flow` block declares a step-traceable multi-hop sequence:
 
 ```ddn
 flow trace "Order path" {
-    steps: @model.client -> @model.service -> @model.orders;
-    marker: square; marker_color: "#d40000"; speed: 90; rate: 2;
+ steps: @model.client -> @model.service -> @model.orders;
+ marker: square; marker_color: "#d40000"; speed: 90; rate: 2;
 }
 ```
 
@@ -81,16 +81,16 @@ presets) with an icon in the toolbar. The icon is hidden when the rendered
 view contains no motion; the drawer then shows "No animation in this view".
 Controls:
 
-- start/stop via SMIL `pauseAnimations()`/`unpauseAnimations()`; default is
-  playing and the pause choice is remembered in memory for the session only;
+- start/stop via SMIL `pauseAnimations`/`unpauseAnimations`; default is
+ playing and the pause choice is remembered in memory for the session only;
 - step: pauses and advances the selected flow exactly one hop, or — for plain
-  `motion` relations without flows — one full traversal of the longest route.
-  Implemented by seeking with `setCurrentTime` to the route-length-derived hop
-  boundaries read from the `data-hop` attributes;
+ `motion` relations without flows — one full traversal of the longest route.
+ Implemented by seeking with `setCurrentTime` to the route-length-derived hop
+ boundaries read from the `data-hop` attributes;
 - a speed multiplier (0.5×/1×/2×/4×) implemented by re-setting the SMIL `dur`
-  attributes from cached base durations — chosen over `setCurrentTime` scaling
-  because it survives re-renders and needs no per-frame controller loop; the
-  playhead is not rescaled;
+ attributes from cached base durations — chosen over `setCurrentTime` scaling
+ because it survives re-renders and needs no per-frame controller loop; the
+ playhead is not rescaled;
 - a flow selector, shown when more than one flow exists.
 
 ## Accessibility and print (D8)

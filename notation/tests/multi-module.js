@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. RFC-117: multi-module (sectioned) .ddn files. */
+/* SPDX-License-Identifier: GPL-2.0-or-later. multi-module (sectioned) .ddn files. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false});console.error('FAIL',name,e.stack);process.exitCode=1;}}

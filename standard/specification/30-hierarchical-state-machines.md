@@ -1,7 +1,6 @@
 # 30. Hierarchical state machines (profile `state.composite@1` on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-104
-(`standard/governance/rfcs/RFC-104-hierarchical-state.md`). Source grammar
+Status: implemented in runtime 0.7.0. Source grammar
 remains DDN 0.5; frames and `x_*` properties are existing syntax, so this
 chapter is a semantic addition, not a grammar change.
 
@@ -17,36 +16,36 @@ This is profile-level coverage, not UML/SCXML conformance.
 ## Metamodel
 
 - **Composite state** — an ordinary `state.state` object referenced by a view
-  `frame`'s `scope`; the frame's `members` are its substates. The composite
-  renders as the existing frame box (rect + name).
+ `frame`'s `scope`; the frame's `members` are its substates. The composite
+ renders as the existing frame box (rect + name).
 - **Region** — a view `frame` carrying the pass-through flag `x_region: true`
-  whose members are states of one composite. Regions render as the same frame
-  box with a dashed border overlay (`stroke-dasharray="6 4"` in the theme rule
-  colour).
+ whose members are states of one composite. Regions render as the same frame
+ box with a dashed border overlay (`stroke-dasharray="6 4"` in the theme rule
+ colour).
 - **States and transitions** — the existing vocabulary
-  (`state.initial`, `state.state`, `state.final`, verb `state.transition`)
-  with the existing `x_transition` extension (`event`, optional `guard`).
-  Transition labels show `event [guard]` via the engine relabel branch, which
-  now also matches this profile.
+ (`state.initial`, `state.state`, `state.final`, verb `state.transition`)
+ with the existing `x_transition` extension (`event`, optional `guard`).
+ Transition labels show `event [guard]` via the engine relabel branch, which
+ now also matches this profile.
 - No new kinds, verbs, extension properties, or projection kinds.
 
 ## Declaration rules
 
 1. Frames are ordinary view declarations; `x_region: true` is an `x_*`
-   property and needs no registration (`validateKnown` exempts `x_` keys).
+ property and needs no registration (`validateKnown` exempts `x_` keys).
 2. Transitions are ordinary `state.transition` relations and MAY cross
-   composite/region boundaries — no restriction is added.
+ composite/region boundaries — no restriction is added.
 3. Each region contains at most one `state.initial`. Violations fail with
-   **`DDN-PJ113`** (error): two or more `state.initial` objects are members of
-   the same region frame, or of the same composite frame when it has no region
-   frames (a composite frame is one whose `scope` resolves to a `state.state`;
-   it is exempt when a region frame's members are all among its own). The
-   message names the frame and the colliding initials.
+ **`DDN-PJ113`** (error): two or more `state.initial` objects are members of
+ the same region frame, or of the same composite frame when it has no region
+ frames (a composite frame is one whose `scope` resolves to a `state.state`;
+ it is exempt when a region frame's members are all among its own). The
+ message names the frame and the colliding initials.
 4. Trace evaluation (`traces`, and likewise `inputs`/`analysis_budget`)
-   remains `state.flat@1`-only: on this profile it is rejected by the existing
-   **`DDN-Q005`** guard. This profile does not route into `Quality.lifecycle`,
-   whose single-initial and reachability rules (`DDN-QL001`…`QL005`) would
-   contradict parallel regions.
+ remains `state.flat@1`-only: on this profile it is rejected by the existing
+ **`DDN-Q005`** guard. This profile does not route into `Quality.lifecycle`,
+ whose single-initial and reachability rules (`DDN-QL001`…`QL005`) would
+ contradict parallel regions.
 
 ## Out of scope
 
@@ -65,8 +64,7 @@ transition `paid → closed`.
 
 # 30a. UML state machines (profile `uml.statemachine@1`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-121
-(`standard/governance/rfcs/RFC-121-uml-statemachine-completeness.md`).
+Status: implemented in runtime 0.7.0.
 `state.flat@1` and `state.composite@1` stay installed and immutable; their
 fixtures render byte-identically. `uml.statemachine@1` is the full UML 2.5.1
 state-machine surface on the same graph projection, composite frames and

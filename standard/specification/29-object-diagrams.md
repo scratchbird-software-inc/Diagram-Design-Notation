@@ -1,7 +1,6 @@
 # 29. Object diagrams (profile `uml.object@1` on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-103
-(`standard/governance/rfcs/RFC-103-object-diagram.md`). Source grammar remains
+Status: implemented in runtime 0.7.0. Source grammar remains
 DDN 0.5; profiles and extension properties are atom/record property values, so
 this chapter is a semantic addition, not a grammar change.
 
@@ -16,18 +15,18 @@ This is profile-level coverage, not UML conformance.
 ## Metamodel
 
 - **Classifier** — any referenced element, expected kind `uml.class`, possibly
-  declared in an imported module of the same workspace.
+ declared in an imported module of the same workspace.
 - **Instance** — a selected `object` of kind `record` carrying the registered
-  extension property `x_instance` (object target):
-  `{ "type":"object", "required":["classifier"], "additionalProperties":true }`.
-  The classifier is written as a reference, `x_instance: { classifier: @m.Order; };`,
-  and arrives at the validator resolved as `{ classifier: { $ref: "<uid>" } }`;
-  an unresolvable reference fails at build (`DDN031`-class).
+ extension property `x_instance` (object target):
+ `{ "type":"object", "required":["classifier"], "additionalProperties":true }`.
+ The classifier is written as a reference, `x_instance: { classifier: @m.Order; };`,
+ and arrives at the validator resolved as `{ classifier: { $ref: "<uid>" } }`;
+ an unresolvable reference fails at build (`DDN031`-class).
 - **Slots** — the instance's declared `fields`, rendered as ordinary field
-  rows on the record card (`measureNode`/`renderNode` in `ddn-render.js`); no
-  renderer change.
+ rows on the record card (`measureNode`/`renderNode` in `ddn-render.js`); no
+ renderer change.
 - **Links** — plain core relations between instances (verb `assoc`, whose
-  endpoint contract accepts any object endpoints).
+ endpoint contract accepts any object endpoints).
 
 ## Skip rule for fieldless classifiers
 
@@ -41,14 +40,14 @@ validation time.
 ## Validation and diagnostics
 
 - `DDN-PJ112` (error) — under `uml.object@1`, an instance declares a slot
-  (field) whose name matches no field of its classifier (matching accepts the
-  classifier field's display `name` or its `local` id), while the classifier
-  declares fields. The message names the instance, the slot and the classifier.
+ (field) whose name matches no field of its classifier (matching accepts the
+ classifier field's display `name` or its `local` id), while the classifier
+ declares fields. The message names the instance, the slot and the classifier.
 - `DDN105` (error) — `x_instance` without a `classifier` key violates the
-  registered extension contract.
+ registered extension contract.
 - Unregistered extension typos (e.g. `x_instnce`) warn `DDN-W103` in logical
-  mode and fail `DDN103` under `validation { mode: strict; }`, as for every
-  extension property.
+ mode and fail `DDN103` under `validation { mode: strict; }`, as for every
+ extension property.
 
 ## Visual encoding
 
@@ -62,14 +61,14 @@ good default).
 
 ```ddn
 object sample_order "sample_order : Order" {
-    kind: record; x_instance: { classifier: @model.order; };
-    fields { field order_id "O-4711"; field total "129.50"; }
+ kind: record; x_instance: { classifier: @model.order; };
+ fields { field order_id "O-4711"; field total "129.50"; }
 }
 
 view objects "Synthetic snapshot / objects" {
-    data: [@model];
-    projection { kind: graph; profile: "uml.object@1"; }
-    layout { algorithm: layered; }
+ data: [@model];
+ projection { kind: graph; profile: "uml.object@1"; }
+ layout { algorithm: layered; }
 }
 ```
 
@@ -81,18 +80,18 @@ classifiers, two record instances with matching slots, and one `assoc` link.
 Object identity semantics beyond labels; slot datatype checking (names only in
 v1); full UML conformance.
 
-# 29a. Object diagrams at uml.object@2 (RFC-125)
+# 29a. Object diagrams at uml.object@2
 
 `uml.object@2` adds the UML 2.5.1 object surface; @1 stays installed and
 immutable.
 
 - **Instance styling** — instance titles (`name : Classifier`) render
-  underlined.
+ underlined.
 - **Slot datatype checking** — slot values are checked against the
-  classifier's declared field datatypes (deterministic scalar cases: number /
-  boolean; richer datatypes pass through) as `DDN-PJ170`.
+ classifier's declared field datatypes (deterministic scalar cases: number /
+ boolean; richer datatypes pass through) as `DDN-PJ170`.
 - **Link multiplicity** — the new `uml.link` relation (record/classifier
-  endpoints) carries RFC-119 `x_endlabels` multiplicity (the PJ149 rule now
-  names association, communication path, connector or link).
+ endpoints) carries `x_endlabels` multiplicity (the PJ149 rule now
+ names association, communication path, connector or link).
 
 Fixture: `website/examples/basics/81-uml-remainder.ddn` (view `objects`).

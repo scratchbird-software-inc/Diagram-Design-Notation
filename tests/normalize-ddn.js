@@ -15,7 +15,7 @@ if (r.stderr.trim()) console.error(r.stderr.trim());
 if (r.status !== 0) { console.error('FAIL normalize-ddn --check (exit ' + r.status + '): corpus is not minimal — run `node tools/normalize-ddn.mjs`'); process.exit(1); }
 console.log('PASS normalize-ddn --check: corpus is minimal, current-dialect');
 
-/* B1-022: explicit `frame_overflow: expand` is the RFC-118 default and must be
+/* B1-022: explicit `frame_overflow: expand` is the default and must be
  * strippable; `confine` (non-default) must survive. */
 {
   const fs = require('node:fs'), os = require('node:os');

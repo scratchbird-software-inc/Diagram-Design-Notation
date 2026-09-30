@@ -1,7 +1,6 @@
 # 39. Fault tree and event tree profiles (`fault.tree@1`, `event.tree@1`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-113
-(`standard/governance/rfcs/RFC-113-fault-event-tree.md`). Source grammar
+Status: implemented in runtime 0.7.0. Source grammar
 remains DDN 0.5; the profiles, kinds, verb and extension property are
 registry entries, so this chapter is a semantic addition, not a grammar
 change.
@@ -17,15 +16,15 @@ notation coverage, not a reliability-engineering certification.
 ## Metamodel
 
 - Gates are `tree.gate` objects (silhouette `diamond`, fallback `gateway`,
-  family `activity`, code `GATE`). Every gate declares its type via the
-  registered extension `x_gate` on objects:
-  `{ "type":"object", "required":["type"], "properties":{ "type":{ "enum":["and","or"] } }, "additionalProperties":false }`.
-  Malformed `x_gate` values are rejected by the schema contract (`DDN105`).
+ family `activity`, code `GATE`). Every gate declares its type via the
+ registered extension `x_gate` on objects:
+ `{ "type":"object", "required":["type"], "properties":{ "type":{ "enum":["and","or"] } }, "additionalProperties":false }`.
+ Malformed `x_gate` values are rejected by the schema contract (`DDN105`).
 - Basic events are `tree.event` objects (silhouette `circle`, fallback
-  `object`, family `concept`, code `EVENT`).
+ `object`, family `concept`, code `EVENT`).
 - Inputs are `tree.input` relations ("has input", family `control`,
-  `start:'none'`, `end:'none'`), source `tree.gate`, target `tree.gate` or
-  `tree.event`. The endpoint contract is enforced as `DDN102`.
+ `start:'none'`, `end:'none'`), source `tree.gate`, target `tree.gate` or
+ `tree.event`. The endpoint contract is enforced as `DDN102`.
 
 ## Semantics
 

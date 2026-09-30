@@ -37,7 +37,7 @@ ddn "0.5";                          // version header; FIRST tokens of the file
 import "shared.ddn" as shared;      // file-level imports, zero or more
 module "shop.model";                // module section header; >= 1 per file
 <top-level declarations>
-module "shop.views";                // further sections (RFC-117 multi-module)
+module "shop.views";                // further sections (multi-module)
 <top-level declarations>
 ```
 
@@ -165,8 +165,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_record` | object, relation | object, additional properties allowed (record/metadata payload, e.g. `{month, value, unit}`) |
 | `x_story` | relation | object, requires `task`, additional properties allowed |
 | `x_rule` | object, relation | object (decision-table rule: `{when: {...}, then: {...}}`) |
-| `x_state` | object, relation | `{terminal?, entry?, exit?, do?, internal?, submachine?}` (RFC-121; `state.*` kinds only — DDN-PJ160) |
-| `x_transition` | object, relation | `{event?, guard?: object|string, effect?, actions?}` — label `trigger [guard] / effect` (RFC-121; DDN-PJ162) |
+| `x_state` | object, relation | `{terminal?, entry?, exit?, do?, internal?, submachine?}` (`state.*` kinds only — DDN-PJ160) |
+| `x_transition` | object, relation | `{event?, guard?: object|string, effect?, actions?}` — label `trigger [guard] / effect` (DDN-PJ162) |
 | `x_usecase` | object, relation | object (`subjects` refs / `extension_points` on objects; `extension_point`, `condition`\|`condition_ref` on `uml.extend` relations) |
 | `x_chen` | object, field, relation | object (Chen metadata; §10) |
 | `x_continuation` | object, relation | object (`{key, side: in|out, page?}`) |
@@ -178,9 +178,9 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_nary` | relation | `{ends: [{element: @ref, role?, multiplicity?}]}` n-ary ends (DDN-PJ151) |
 | `x_genset` | relation | `{name, disjoint?, complete?}` on uml.generalization (DDN-PJ152) |
 | `x_template` | object | `{parameters: [string]}` on uml.class/interface (DDN-PJ153) |
-| `x_part` | field | `{classifier?, multiplicity?}` — internal part row `role: Classifier [mult]` (RFC-123; DDN-PJ166) |
-| `x_pin` | port | `{set?, streaming?}` — activity pin parameter set/streaming (RFC-124; DDN-PJ169) |
-| `x_interrupt` / `x_exception` | relation | boolean — lightning-bolt activity edges (RFC-124; DDN-PJ168) |
+| `x_part` | field | `{classifier?, multiplicity?}` — internal part row `role: Classifier [mult]` (DDN-PJ166) |
+| `x_pin` | port | `{set?, streaming?}` — activity pin parameter set/streaming (DDN-PJ169) |
+| `x_interrupt` / `x_exception` | relation | boolean — lightning-bolt activity edges (DDN-PJ168) |
 | `x_activity` | object | `{call?, transaction?, adhoc?, event_subprocess?, collapsed?, markers?}` BPMN task decorations (DDN-PJ177) |
 | `x_io` / `x_bands` | object | `{set?}` io-set badge / `[participant…]` choreography bands (DDN-PJ178/PJ180) |
 | `x_cmmn` | object | `{discretionary?, nonblocking?, required?, repetition?, manual_activation?, completion?, collapsed?}` plan-item decorators (DDN-PJ181) |
@@ -208,14 +208,14 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_boxed` | object | `{form: literal|context|invocation|relation, text?, entries?}` — DMN boxed-expression presentation (text only, never evaluated; DDN-PJ193) |
 | `x_service` | port | `{kind: service|request}` — SoaML «Service»/«Request» port badges (DDN-PJ195/PJ196) |
 | `x_contract` | object | `{choreography?: @view}` — SoaML service-contract choreography binding (DDN-PJ197) |
-| `x_pack` | object | `{visibility: public|private}` — packaged element +/− (RFC-125; DDN-PJ171) |
-| `x_use` | object | `{arguments?, gates?}` — interaction-use detail (RFC-125; DDN-PJ174) |
-| `x_timeconstraint` | object | `["{…}", …]` timing constraints (RFC-125; DDN-PJ173) |
+| `x_pack` | object | `{visibility: public|private}` — packaged element +/− (DDN-PJ171) |
+| `x_use` | object | `{arguments?, gates?}` — interaction-use detail (DDN-PJ174) |
+| `x_timeconstraint` | object | `["{…}", …]` timing constraints (DDN-PJ173) |
 | `x_diagram` | object, relation | `{number?, owner?, code?, text?, branch?, stereotype?}` only |
 | `x_epc` | object | `{operator: string}` (must be `and|or|xor` on `epk.connector`; forbidden elsewhere) |
 | `x_sets` | object | array of 1..3 unique strings (venn membership) |
 | `x_return` | relation | boolean (sequence/communication reply) |
-| `x_message` | relation | `{seq?, sort?, gate?, time?, duration?}` (RFC-120; seq enforced by uml.communication@1 DDN-PJ111) |
+| `x_message` | relation | `{seq?, sort?, gate?, time?, duration?}` (seq enforced by uml.communication@1 DDN-PJ111) |
 | `x_fragment` | relation | `{operator: alt|opt|loop|…|assert, operands: [{guard?, messages: [@msg…], fragments?}]}` on first covered uml.message (DDN-PJ155) |
 | `x_invariant` | object | `[{after: @msg, label}]` lifeline state invariant (DDN-PJ157) |
 | `x_activation` | object | `[{from: @msg, to: @msg}]` explicit execution bars (DDN-PJ158) |
@@ -296,18 +296,18 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | BPMN choreography | graph | `bpmn.choreography@1` | `flow.choreotask` + `x_bands` participant bands |
 | BPMN conversation | graph | `bpmn.conversation@1` | conversation hexagons + `bpmn.conversationlink` |
 | process chain (EPC) | graph | `epc.basic@1` | alternating `epk.event`/`epk.function`, `x_epc.operator` on connectors |
-| activity diagram / swimlanes | graph | `uml.activity@1` / `uml.activity@2` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars; @2 (RFC-124): merge, pins (x_pin), signals/time events, flow final, interruptible/structured regions, exception handlers |
+| activity diagram / swimlanes | graph | `uml.activity@1` / `uml.activity@2` | `uml.flow`, `x_partition.lane` names a frame, fork=join bars; @2 : merge, pins (x_pin), signals/time events, flow final, interruptible/structured regions, exception handlers |
 | state machine / lifecycle | graph | `state.flat@1` / `state.composite@1` / `uml.statemachine@1` | `state.*` + `x_transition.event`; regions = `x_region` frames; uml.statemachine@1: activities/internal/submachines, pseudostates, effects, time events |
-| sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines; @2 (RFC-120): fragments, gates, message sorts, `{…}` constraints, invariants, activations |
-| communication | graph | `uml.communication@1` / `uml.communication@2` | `uml.message` + dotted `x_message.seq`; @2 (RFC-125): `x_fragment` frames, `{…}` constraints |
-| interaction overview | graph | `uml.interaction_overview@1` / `uml.interaction_overview@2` | `x_subdiagram.view` refs; @2 (RFC-125): inline expansion, `x_use` gates/arguments |
+| sequence diagram | sequence | `uml.sequence@1` / `uml.sequence@2` | declaration-order lifelines; @2 : fragments, gates, message sorts, `{…}` constraints, invariants, activations |
+| communication | graph | `uml.communication@1` / `uml.communication@2` | `uml.message` + dotted `x_message.seq`; @2 : `x_fragment` frames, `{…}` constraints |
+| interaction overview | graph | `uml.interaction_overview@1` / `uml.interaction_overview@2` | `x_subdiagram.view` refs; @2 : inline expansion, `x_use` gates/arguments |
 | profile diagram | graph | `uml.profile@1` | `uml.metaclass`/`uml.stereotype`, `uml.extension` (filled triangle), `uml.application` |
-| class diagram | graph | `uml.structure@1` / `uml.structure@2` | class/interface/enumeration, `x_member`; @2 (RFC-119): end labels, diamonds, association classes, n-ary, gensets, templates, provided/required |
-| deployment diagram | graph | `uml.deployment@1` | node/device/executionenv 3D boxes, artifacts, deploy/manifest, commpaths + multiplicity; nesting = node-scoped frames (RFC-122) |
-| component / composite structure | graph | `uml.composite@1` | ports on classifiers, `uml.assembly` (socket+lollipop), `uml.delegation`, `uml.connector` + `x_endlabels`, parts (`x_part`), `uml.collaboration` (RFC-123) |
+| class diagram | graph | `uml.structure@1` / `uml.structure@2` | class/interface/enumeration, `x_member`; @2 : end labels, diamonds, association classes, n-ary, gensets, templates, provided/required |
+| deployment diagram | graph | `uml.deployment@1` | node/device/executionenv 3D boxes, artifacts, deploy/manifest, commpaths + multiplicity; nesting = node-scoped frames  |
+| component / composite structure | graph | `uml.composite@1` | ports on classifiers, `uml.assembly` (socket+lollipop), `uml.delegation`, `uml.connector` + `x_endlabels`, parts (`x_part`), `uml.collaboration`  |
 | use cases | graph | `uml.usecase@1` / `uml.usecase@2` / `uml.usecase@3` | `uml.subject` boundaries + `x_usecase` (@2); @3: extend conditions on labels |
-| object diagram | graph | `uml.object@1` / `uml.object@2` | `x_instance.classifier`; @2 (RFC-125): underlined titles, slot datatype checks, `uml.link` multiplicity |
-| timing diagram | timing | `uml.timing@1` / `uml.timing@2` | `x_states` per participant; @2 (RFC-125): duration/slew, `x_timeconstraint`, compaction, lifeline messages |
+| object diagram | graph | `uml.object@1` / `uml.object@2` | `x_instance.classifier`; @2 : underlined titles, slot datatype checks, `uml.link` multiplicity |
+| timing diagram | timing | `uml.timing@1` / `uml.timing@2` | `x_states` per participant; @2 : duration/slew, `x_timeconstraint`, compaction, lifeline messages |
 | C4 architecture | graph | `c4.context@1` / `c4.container@1` / `c4.component@1` | exactly one boundary frame |
 | system context/free architecture | graph | `ddn@1` | any kinds/verbs; no enforced profile rules |
 | requirements traceability | graph | `requirements.basic@1` | `req.*` kinds/verbs, `x_diagram.code`+`text` |
@@ -443,10 +443,10 @@ Per-profile:
 - **bpmn.basic@1**: pools = frames `x_pool: true`; `bpmn.messageflow` only across pools (DDN-PJ116); every `flow.gateway` needs `x_gateway.type` exclusive|parallel|inclusive (DDN-PJ117).
 - **bpmn.process@1 / choreography@1 / conversation@1**: event trigger/position rules (DDN-PJ175); extended gateways + event-gateway fan-out (PJ176); activity markers on task kinds (PJ177); choreography bands (PJ178); conversation links to conversation nodes (PJ179); data associations pair data nodes with activities (PJ180).
 - **uml.interaction_overview@1**: nodes referencing sub-views via `x_subdiagram.view` must name an existing view (DDN-PJ119); @2: unique gate names, one expansion level (DDN-PJ174).
-- **uml.object@2** (RFC-125): slot values match classifier field datatypes (DDN-PJ170).
-- **uml.communication@2** (RFC-125): fragment refs resolve to visible messages; constraints in {…} (DDN-PJ172).
-- **uml.timing@2** (RFC-125): annotations/constraints in {…}; messages need x_message.at (DDN-PJ173).
-- **uml.structure@2 packages / uml.profile@1** (RFC-125): x_pack.visibility needs a package frame (DDN-PJ171); extension endpoints stereotype → metaclass (DDN102).
+- **uml.object@2** : slot values match classifier field datatypes (DDN-PJ170).
+- **uml.communication@2** : fragment refs resolve to visible messages; constraints in {…} (DDN-PJ172).
+- **uml.timing@2** : annotations/constraints in {…}; messages need x_message.at (DDN-PJ173).
+- **uml.structure@2 packages / uml.profile@1** : x_pack.visibility needs a package frame (DDN-PJ171); extension endpoints stereotype → metaclass (DDN102).
 - **soaml.services@1**: x_service owners (DDN-PJ195); assembly pairs «Service»↔«Request» of the same interface type (PJ196); choreography binding to uml.sequence@2/uml.statemachine@1 (PJ197).
 - **dmn.drd@1**: requirement connector endpoints (DDN-PJ194); x_subdiagram must bind a decision-projection view (PJ192); x_boxed owner/form (PJ193). decision.rules@1 also accepts DMN hit-policy labels priority/any/output_order/rule_order/aggregation as annotations (analysis unchanged; ordering/aggregation deferred to host engine); completeness cell C+/C− renders for those labels or `x_completeness: true`.
 - **sysml.***: only block-family kinds declare `ports` (DDN-PJ121; @1: `sysml.block` only); parametric@1: each `sysml.constraint` touched by exactly two visible relations (DDN-PJ122), parametric@2: at least one (DDN-PJ189). Requirements: dependency endpoint rules (DDN-PJ185); x_block compartments (PJ186); x_port typing/nesting (PJ187); x_unit resolves in the units registry (PJ188); composition/generalization on block-family kinds (PJ190); ibd@2 item-flow endpoints + x_flow edges (PJ191). Behavioral rebadges sysml.usecase/activity/sequence/statemachine@1 run the uml.* machinery (info DDN-PJW06).
@@ -457,12 +457,12 @@ Per-profile:
 - **family.tree@1**: `family.parent_of` acyclic (DDN-PJ129); ≤2 distinct parents per person (DDN-PJ130).
 - **wireframe.ui@1**: `ui.*` controls outside any `ui.frame` frame → warning DDN-PJ128.
 - **pert.cpm@1**: tasks (`analysis.task`) need finite nonnegative `x_estimate` days (DDN-PJ125); `analysis.precedes` must be acyclic (DDN-PJ124); critical-path relations/labels are computed at render.
-- **uml.deployment@1** (RFC-122): endpoint contracts do the work (DDN102); commpath labels never carry qualifiers; nesting frames scope to node kinds (DDN-PJ164).
-- **uml.composite@1** (RFC-123): assembly endpoints are components or their ports; delegation starts at a port member (DDN-PJ165); x_part owners/multiplicity (PJ166).
-- **uml.activity@2** (RFC-124): merge ≥2 in / 1 out (DDN-PJ167); interrupt inside x_interruptible frame, exception targets flow.process (PJ168); x_pin on action kinds (PJ169); flow.flowfinal counts as an end (DDN-PF008).
-- **uml.structure@2** (RFC-119): end labels/multiplicity on associations (DDN-PJ149); association class resolves to uml.class (PJ150); n-ary ≥3 distinct classifier ends (PJ151); genset one target per name (PJ152); templates on classifiers (PJ153); enumeration literals (PJ154).
-- **uml.sequence@2** (RFC-120): fragment spans contiguous/nested, anchored on first message (DDN-PJ155); sort/gate rules — create first, delete final, lost/found self-anchored, gate needs a fragment (PJ156); invariant/activation refs incident (PJ157/158); `{…}` constraints (PJ159).
-- **uml.statemachine@1** (RFC-121): x_state on state kinds; submachine → distinct state.state (DDN-PJ160); choice 2+ out, junction pass-through, history/boundary points inside a composite frame (PJ161); after/at/when need parentheses (PJ162); traces stay state.flat@1-only (DDN-Q005).
+- **uml.deployment@1** : endpoint contracts do the work (DDN102); commpath labels never carry qualifiers; nesting frames scope to node kinds (DDN-PJ164).
+- **uml.composite@1** : assembly endpoints are components or their ports; delegation starts at a port member (DDN-PJ165); x_part owners/multiplicity (PJ166).
+- **uml.activity@2** : merge ≥2 in / 1 out (DDN-PJ167); interrupt inside x_interruptible frame, exception targets flow.process (PJ168); x_pin on action kinds (PJ169); flow.flowfinal counts as an end (DDN-PF008).
+- **uml.structure@2** : end labels/multiplicity on associations (DDN-PJ149); association class resolves to uml.class (PJ150); n-ary ≥3 distinct classifier ends (PJ151); genset one target per name (PJ152); templates on classifiers (PJ153); enumeration literals (PJ154).
+- **uml.sequence@2** : fragment spans contiguous/nested, anchored on first message (DDN-PJ155); sort/gate rules — create first, delete final, lost/found self-anchored, gate needs a fragment (PJ156); invariant/activation refs incident (PJ157/158); `{…}` constraints (PJ159).
+- **uml.statemachine@1** : x_state on state kinds; submachine → distinct state.state (DDN-PJ160); choice 2+ out, junction pass-through, history/boundary points inside a composite frame (PJ161); after/at/when need parentheses (PJ162); traces stay state.flat@1-only (DDN-Q005).
 
 ## 11. Validation workflow (CLI)
 

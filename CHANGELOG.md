@@ -745,7 +745,7 @@ Component-level history predating the monorepo import lives in
   designer + 120 viewer links).
 
 - `layout.frame_overflow: expand | confine` for scoped frames (B1-022,
-  RFC-118): a view `frame` and its members can no longer disagree. Under the
+  ): a view `frame` and its members can no longer disagree. Under the
   default `expand`, a declared `at`/`size` frame rect grows to enclose the
   member bounding box plus the standard frame padding (20 CSS px left/right,
   54 top, 22 bottom) — a rect that already encloses its members is unchanged,
@@ -942,7 +942,7 @@ Component-level history predating the monorepo import lives in
   there (panel lookups go through live `panelRoot` element references across
   documents) and re-docking when the window closes. Covered by
   `designer/tests/b1-014-display-and-popout.js`.
-- B1-015 / RFC-117: self-contained multi-module `.ddn` files and bundling. A
+- B1-015 / self-contained multi-module `.ddn` files and bundling. A
   file may hold several `module "…";` sections — model, data, views and
   formats in one file (`examples/basics/61-self-contained.ddn`). File-level
   imports precede the first module header (canonical) or immediately follow
@@ -1231,53 +1231,53 @@ change — `ddn "0.5"` sources and `ddn-core@0.3` are untouched.
   and a Node-based designer test suite (ED-001).
 - Family tree / genealogy views via profile `family.tree@1`
   (`family.person`/`family.union`, `family.partner_of`/`family.parent_of`,
-  `x_birth`/`x_death`, `DDN-PJ129`/`DDN-PJ130`). RFC-116.
+  `x_birth`/`x_death`, `DDN-PJ129`/`DDN-PJ130`). .
 - Low-fidelity UI wireframes via profile `wireframe.ui@1` (seven-control
-  stencil, scoped-frame nesting, warning `DDN-PJ128`). RFC-115.
+  stencil, scoped-frame nesting, warning `DDN-PJ128`). .
 - Network/bus and rack views via profiles `network.basic@1`/`network.rack@1`
   (four original glyphs, `network.attaches`, `x_rack`, `DDN-PJ127`);
   removes 'native bus/junction-network drawing' from capabilities
-  `unsupported[]`. RFC-114.
+  `unsupported[]`. .
 - Fault tree and event tree views via profiles `fault.tree@1`/`event.tree@1`
-  (`tree.gate`/`tree.event`, `x_gate`, `DDN-PJ126`). RFC-113.
+  (`tree.gate`/`tree.event`, `x_gate`, `DDN-PJ126`). .
 - PERT/CPM critical-path views via profile `pert.cpm@1` (`x_estimate`,
   computed passes, `DDN-PJ124`/`DDN-PJ125`); removes 'critical-path
-  scheduling' from capabilities `unsupported[]`. RFC-112.
+  scheduling' from capabilities `unsupported[]`. .
 - ArchiMate-style layered views via profile `archimate.basic@1` (nine-kind
   vocabulary, `DDN-PJ123` layer-pair legality). Profile-level coverage, not
-  ArchiMate conformance. RFC-111.
+  ArchiMate conformance. .
 - SysML-style profiles `sysml.bdd@1`/`sysml.ibd@1`/`sysml.parametric@1`
   (blocks, ports, flows, constraints; `DDN-PJ121`/`DDN-PJ122`).
-  Profile-level coverage, not SysML conformance. RFC-110.
+  Profile-level coverage, not SysML conformance. .
 - CMMN-style case views via profile `cmmn.basic@1` (stages/milestones/
   sentries, `DDN-PJ120`). Profile-level coverage, not CMMN conformance.
-  RFC-109.
+  .
 
 - Interaction overview views via profile `uml.interaction_overview@1`
-  (`x_subdiagram` view references, `DDN-PJ119`). RFC-108.
+  (`x_subdiagram` view references, `DDN-PJ119`). .
 
 - Timing/state-over-time projection (`kind:timing`, profile `uml.timing@1`,
-  `x_states`), with `DDN-PJ118` validation. RFC-107.
+  `x_states`), with `DDN-PJ118` validation. .
 
 - BPMN-style process collaboration via profile `bpmn.basic@1` (pools/lanes,
   typed events/gateways, cross-pool message flow; `DDN-PJ116`/`DDN-PJ117`).
-  Profile-level coverage, not BPMN conformance. RFC-106.
+  Profile-level coverage, not BPMN conformance. .
 
 - Activity-style views with partitions, fork/join and object nodes via profile
-  `uml.activity@1` (`DDN-PJ114`/`DDN-PJ115`). RFC-105.
+  `uml.activity@1` (`DDN-PJ114`/`DDN-PJ115`). .
 
 - Hierarchical state views via profile `state.composite@1` (composite frames,
-  dashed regions, `DDN-PJ113`). RFC-104.
+  dashed regions, `DDN-PJ113`). .
 
 - Object/instance snapshots via profile `uml.object@1` (`x_instance` classifier
-  binding), `DDN-PJ112` slot validation. RFC-103.
+  binding), `DDN-PJ112` slot validation. .
 
 - Communication/collaboration views via profile `uml.communication@1` with
-  declared message numbers (`x_message.seq`), `DDN-PJ111` validation. RFC-102.
+  declared message numbers (`x_message.seq`), `DDN-PJ111` validation. .
 
 - Sequence-style interaction projection (`kind:sequence`, profile
   `uml.sequence@1`, verb `uml.message`, `x_return`), with
-  `DDN-PJ110`/`DDN-PJW03` validation. RFC-101.
+  `DDN-PJ110`/`DDN-PJW03` validation. .
 
 - Venn diagrams (2 or 3 sets) via new profile `panels.venn@1` with registered
   `x_sets` membership, fixed region-count geometry, and `DDN-PJ090`/`DDN-PJ091`

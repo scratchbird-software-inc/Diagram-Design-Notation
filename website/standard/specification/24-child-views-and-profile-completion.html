@@ -30,14 +30,14 @@
 <h2>24.1 Composed panels</h2>
 <p><code>projection.kind: panels</code>, <code>profile: &quot;panels.composed@1&quot;</code> accepts named slots containing either item references or a child <code>view</code>, never both. A child is another actual named DDN view. Its source model is not copied into the parent.</p>
 <pre><code>projection {
-    kind: panels; profile: &quot;panels.composed@1&quot;;
-    columns: 2;
-    panels: [
-        {id: pareto, title:&quot;Defect priorities&quot;, row:0, column:0, view:@pareto},
-        {id: spread, title:&quot;Measurement distribution&quot;, row:0, column:1, view:@histogram},
-        {id: score, title:&quot;Review scores&quot;, row:1, column:0, view:@heat_bands},
-        {id: state, title:&quot;Corrective action&quot;, row:1, column:1, view:@lifecycle}
-    ];
+ kind: panels; profile: &quot;panels.composed@1&quot;;
+ columns: 2;
+ panels: [
+ {id: pareto, title:&quot;Defect priorities&quot;, row:0, column:0, view:@pareto},
+ {id: spread, title:&quot;Measurement distribution&quot;, row:0, column:1, view:@histogram},
+ {id: score, title:&quot;Review scores&quot;, row:1, column:0, view:@heat_bands},
+ {id: state, title:&quot;Corrective action&quot;, row:1, column:1, view:@lifecycle}
+ ];
 }</code></pre>
 <p>The existing row/column/span validation still applies: positive bounded dimensions, no overlapping slots, unique slot IDs, legal spans and measured headings. Up to twelve child-view slots and one level of view composition are supported. A child may contain ordinary item panels, but it may not itself contain child views. Cycles are detected through the core view compilation stack before recursive rendering. A missing view cannot become a successful blank panel.</p>
 <p>The parent controls placement, column width, row height and its own publication. Each child retains its data selection, projection, metadata validation, graph constraints, chart scales, calendar coordinates and source identities. Parent look/theme are inherited for a coherent review page; other child policies are not silently overwritten. Children render at native content dimensions with no fit-to-small-slot scaling. The parent expands its grid as necessary. Its own page and minimum-text rules then evaluate the complete composed result. Consequently a dashboard may be larger than a small print sheet; split it or select a larger publication target instead of ignoring a rejection.</p>
@@ -57,15 +57,15 @@
 <p>The additive <code>uml.usecase@2</code> profile uses <code>uml.subject</code>, <code>uml.actor</code>, and <code>uml.usecase</code>, with existing participation, include, extend and same-kind generalization relations. Each selected use case declares a nonempty <code>x_usecase.subjects</code> list of distinct subject references. An actor is not a server or a data table.</p>
 <p>A use case may declare distinct named <code>extension_points</code>. An <code>uml.extend</code> relation must carry <code>x_usecase.extension_point</code> naming a point on its target plus either a nonempty prose <code>condition</code> or a resolvable <code>condition_ref</code>. It cannot carry both. Conditions are requirements, not evaluated guards. Include/extend endpoints share a declared subject in this installed profile. Include/generalization cycles and endpoint compatibility retain their existing checks. A subject frame may not contradict the use case's declared membership.</p>
 <pre><code>object review &quot;Review lot&quot; {
-    kind: &quot;uml.usecase&quot;;
-    x_usecase: {subjects:[@subject],extension_points:[&quot;before disposition&quot;]};
+ kind: &quot;uml.usecase&quot;;
+ x_usecase: {subjects:[@subject],extension_points:[&quot;before disposition&quot;]};
 }
 relation escalation &quot;Escalates when necessary&quot; @escalate -&gt; @review {
-    kind: &quot;uml.extend&quot;;
-    x_usecase: {
-        extension_point:&quot;before disposition&quot;,
-        condition:&quot;The declared review policy requires escalation.&quot;
-    };
+ kind: &quot;uml.extend&quot;;
+ x_usecase: {
+ extension_point:&quot;before disposition&quot;,
+ condition:&quot;The declared review policy requires escalation.&quot;
+ };
 }</code></pre>
 <p>Extension-point compartments are measured inside the ellipse. The supplied fixture groups actors separately so its subject frame does not visually claim to contain them. A graph frame is not a general compound-layout solver; profiles cannot guarantee every arbitrary placement choice communicates membership correctly. Hard placement constraints remain enforceable, and profile diagrams require review of boundary geometry.</p>
 <p>This is a useful explicit use-case subset aligned with selected concepts from UML [Q6], not full UML semantics, an XMI adapter, or an independent UML conformance certificate.</p>

@@ -26,26 +26,26 @@
 <main class="site-main">
 <article class="md-body">
 <h1>46. SoaML service architectures (<code>soaml.services@1</code> on projection <code>graph</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-130 (<code>standard/governance/rfcs/RFC-130-soaml-compliance.md</code>). Source grammar remains DDN 0.5; SoaML kinds and contracts are registry entries over the UML composite-structure machinery — no grammar change.</p>
-<p>SoaML 1.0.1 models service-oriented architectures: participants that offer and consume services through typed ports, service interfaces and contracts, capabilities, and choreography bindings. One profile covers the family (agent's call, recorded in RFC-130): the contract glyph and the architecture wiring share one canvas.</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; SoaML kinds and contracts are registry entries over the UML composite-structure machinery — no grammar change.</p>
+<p>SoaML 1.0.1 models service-oriented architectures: participants that offer and consume services through typed ports, service interfaces and contracts, capabilities, and choreography bindings. One profile covers the family (agent's call, recorded in ): the contract glyph and the architecture wiring share one canvas.</p>
 <h2>Metamodel</h2>
 <ul><li><strong>Participants</strong> — <code>soaml.participant</code> («participant» rect),</li></ul>
-<p>  <code>soaml.agent</code> («agent», actor glyph for organizational participants).</p>
+<p> <code>soaml.agent</code> («agent», actor glyph for organizational participants).</p>
 <ul><li><strong>Service interfaces</strong> — <code>soaml.serviceinterface</code> («ServiceInterface»</li></ul>
-<p>  rect; operation rows are ordinary fields).</p>
+<p> rect; operation rows are ordinary fields).</p>
 <ul><li><strong>Service contracts</strong> — <code>soaml.servicecontract</code> («ServiceContract», the</li></ul>
-<p>  dashed-ellipse collaboration silhouette reused) with provider/consumer   role rows (<code>x_part</code> fields) and an optional <code>x_contract: { choreography:   @view }</code> binding.</p>
+<p> dashed-ellipse collaboration silhouette reused) with provider/consumer  role rows (<code>x_part</code> fields) and an optional <code>x_contract: { choreography:  @view }</code> binding.</p>
 <ul><li><strong>Capabilities / messages / milestones</strong> — <code>soaml.capability</code> (rounded),</li></ul>
-<p>  <code>soaml.message</code> (document dog-ear), <code>soaml.milestone</code> (rounded).</p>
+<p> <code>soaml.message</code> (document dog-ear), <code>soaml.milestone</code> (rounded).</p>
 <ul><li><strong>Port decorations</strong> — port members carry</li></ul>
-<p>  <code>x_service: { kind: service|request }</code>: the renderer draws a   «Service»/«Request» badge beside the port square (same layer as the SysML   port labels). Conjugated service interfaces reuse <code>x_port.conjugated</code>.   Owner kinds are participants/interfaces/agents (<code>DDN-PJ195</code>).</p>
+<p> <code>x_service: { kind: service|request }</code>: the renderer draws a  «Service»/«Request» badge beside the port square (same layer as the SysML  port labels). Conjugated service interfaces reuse <code>x_port.conjugated</code>.  Owner kinds are participants/interfaces/agents (<code>DDN-PJ195</code>).</p>
 <h2>Assembly and conformance</h2>
 <p>Wiring reuses <code>uml.assembly</code>, <code>uml.delegation</code> and <code>uml.connector</code> (their endpoint contracts now admit the SoaML participant/interface kinds, DDN102). Under <code>soaml.services@1</code>, a connector between two <code>x_service</code>-typed ports must pair «Service» with «Request» and both ports must declare the same interface type (<code>datatype</code> text); service-to-service, request-to-request, and mismatched types fail with <code>DDN-PJ196</code>.</p>
 <p>A connector may instead declare its ServiceChannel compatibility mode (SoaML §6.4.15) with <code>x_compatibility: { mode: … }</code>; the default (absent) keeps the strict same-type rule byte-identical. The four modes:</p>
 <ul><li><code>same</code> — identical interface type text (the default rule);</li><li><code>specialization</code> — a <code>uml.generalization</code> relation runs from the</li></ul>
-<p>  «Service»-side interface element to the «Request»-side one;</p>
+<p> «Service»-side interface element to the «Request»-side one;</p>
 <ul><li><code>realization</code> — a <code>uml.realization</code> relation runs between them;</li><li><code>operation-coverage</code> — both type texts name interface elements in the</li></ul>
-<p>  model, and every field of the «Request»-side interface is provided by the   «Service»-side one.</p>
+<p> model, and every field of the «Request»-side interface is provided by the  «Service»-side one.</p>
 <p>Missing evidence fails <code>DDN-PJ196</code> with a mode-specific message; <code>x_compatibility</code> on any other relation kind is an error.</p>
 <h2>Choreography binding</h2>
 <p>A service contract binds its choreography with <code>x_contract: { choreography: @view }</code> referencing a sibling <code>uml.sequence@2</code> or <code>uml.statemachine@1</code> view (unknown views, self-binding and other view kinds fail with <code>DDN-PJ197</code>). Recorded decision: protocol state machines ship at zero new machinery — a state-based choreography is a plain <code>uml.statemachine@1</code> view bound the same way; SoaML's transition restrictions are declaration-side guidance, not new validators.</p>

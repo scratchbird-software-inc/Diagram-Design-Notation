@@ -1,6 +1,6 @@
 ddn "0.5";
 
-// RFC-117: a full design in one self-contained file. Three module sections —
+// a full design in one self-contained file. Three module sections —
 // model, data, views — no imports at all. Sibling sections reference each
 // other by module-qualified id (@shop.data.records), exactly as separate
 // files would through an import alias.

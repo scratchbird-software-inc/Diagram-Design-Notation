@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-072: SoaML 1.0.1 compliance fixtures (RFC-130). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-072: SoaML 1.0.1 compliance fixtures . */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";

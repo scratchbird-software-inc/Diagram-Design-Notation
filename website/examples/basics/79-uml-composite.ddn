@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umlcomp";
 
-// B1-059 (RFC-123): UML 2.5.1 component + composite structure on uml.composite@1.
+// B1-059 : UML 2.5.1 component + composite structure on uml.composite@1.
 // View 1: ports, assembly ball-and-socket, delegation, parts. View 2: plain
 // connectors with role names + multiplicity, collaboration occurrence.
 // Minimal current-dialect style, no pinned layout.

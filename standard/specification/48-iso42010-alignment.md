@@ -27,17 +27,17 @@ The brief allowed a new `arch.description@1` framing profile *only* if this
 annex surfaced a genuine gap. Row by row, it does not:
 
 - Description, viewpoint and model-reference nodes already exist as
-  «ArchitectureDescription», «Viewpoint» and «ModelReference» under
-  `uaf.summary@1` (chapter 47), designed for exactly this framing role;
-  reusing them keeps the vocabulary single-sourced.
+ «ArchitectureDescription», «Viewpoint» and «ModelReference» under
+ `uaf.summary@1` (chapter 47), designed for exactly this framing role;
+ reusing them keeps the vocabulary single-sourced.
 - Stakeholders, concerns and rationale are covered by core kinds (`role`,
-  `team`, `organization`, `issue`, `note`, `decision`) and the annotation
-  relation family — no notation gap.
+ `team`, `organization`, `issue`, `note`, `decision`) and the annotation
+ relation family — no notation gap.
 - Viewpoint-governs-view is a structural property of the DDN view mechanism
-  itself (profile + selection), not something a profile could add.
+ itself (profile + selection), not something a profile could add.
 - A new profile would duplicate existing registry entries without new
-  validation value, which the additive-only discipline reserves for real
-  notation gaps.
+ validation value, which the additive-only discipline reserves for real
+ notation gaps.
 
 Recorded decision: **documentation only**. If a future item needs 42010
 metadata that is *not* representable (for example machine-checked

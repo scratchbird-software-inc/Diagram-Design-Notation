@@ -1,13 +1,12 @@
 # 47. UAF architecture framework (twelve `uaf.<domain>@1` profiles on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-131
-(`standard/governance/rfcs/RFC-131-uaf-compliance.md`). Source grammar
+Status: implemented in runtime 0.7.0. Source grammar
 remains DDN 0.5; UAF domains are vocabulary profiles over the existing graph,
 matrix, table and timeline machinery — no grammar change.
 
 The Unified Architecture Framework 1.2 organizes architecture description
 into twelve domains crossed with viewpoints. DDN ships one graph profile per
-domain (recorded grouping, RFC-131) — the domain column is UAF's own
+domain (recorded grouping) — the domain column is UAF's own
 organizing concept — and wires the tabular/serial viewpoints to the existing
 projections.
 

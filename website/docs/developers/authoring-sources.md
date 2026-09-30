@@ -29,7 +29,7 @@ view overview "Orders / shared model" {
 - `ddn "0.5";` — language version stamp. See spec `01-language.md`.
 - `module` — namespace; every declaration id is module-qualified. See
   `01-language.md` and `02-data-model.md`. A file may hold several
-  `module "…";` sections (RFC-117), so a full design can live in one
+  `module "…";` sections , so a full design can live in one
   self-contained file; sibling sections reference each other by
   module-qualified id (`@otherModule.name`) with no import between them.
 - `import "…" as alias` — pulls another file's declarations in as

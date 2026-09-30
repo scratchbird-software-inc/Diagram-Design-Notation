@@ -31,8 +31,8 @@
 <p>The two profiles share an input-domain definition. Each input has a unique safe <code>key</code>, a <code>type</code> (<code>enum</code>, <code>boolean</code>, <code>number</code>), and optional boolean <code>nullable</code>/<code>optional</code> flags. Enum inputs declare distinct scalar <code>values</code>. Number inputs declare finite <code>min</code> and <code>max</code>, inclusive. There are one to eight declared inputs for a decision table; a lifecycle may have none when transitions need no guards.</p>
 <p>Missing and null are independent. An optional value can be omitted; a nullable value can explicitly be null. A numeric string is not a number. An undeclared input key fails evaluation rather than entering a hidden side channel.</p>
 <pre><code>inputs: [
-    {key: severity, type: enum, values: [&quot;low&quot;, &quot;high&quot;]},
-    {key: score, type: number, min: 0, max: 10}
+ {key: severity, type: enum, values: [&quot;low&quot;, &quot;high&quot;]},
+ {key: score, type: number, min: 0, max: 10}
 ];</code></pre>
 <p>A condition is a map from input name to one predicate. Predicates on different inputs are conjoined. An omitted input predicate is a wildcard over that input's declared domain. The predicate vocabulary is closed:</p>
 <table><thead><tr><th>Operator</th><th>Parameters</th><th>Meaning</th></tr></thead><tbody><tr><td><code>eq</code></td><td><code>value</code></td><td>Exact scalar equality within the input domain.</td></tr><tr><td><code>in</code></td><td><code>values</code></td><td>Membership in an explicit set of allowed scalar values.</td></tr><tr><td><code>interval</code></td><td><code>min</code>, <code>max</code>, optional <code>lower_closed</code>, <code>upper_closed</code></td><td>Numeric interval within the declared domain; both ends closed by default.</td></tr><tr><td><code>null</code></td><td>none</td><td>Present null value.</td></tr><tr><td><code>missing</code></td><td>none</td><td>Absent value.</td></tr></tbody></table>
@@ -40,25 +40,25 @@
 <h2>23.2 Decision rule data</h2>
 <p>Rules are objects with <code>kind: &quot;rule.row&quot;</code> and an <code>x_rule</code> record:</p>
 <pre><code>object low_pass &quot;Low severity within tolerance&quot; {
-    kind: &quot;rule.row&quot;;
-    x_rule: {
-        when: {
-            severity: {op: eq, value: &quot;low&quot;},
-            score: {op: interval, min: 0, max: 5, upper_closed: false}
-        },
-        then: {route: &quot;release&quot;, audit: false}
-    };
+ kind: &quot;rule.row&quot;;
+ x_rule: {
+ when: {
+ severity: {op: eq, value: &quot;low&quot;},
+ score: {op: interval, min: 0, max: 5, upper_closed: false}
+ },
+ then: {route: &quot;release&quot;, audit: false}
+ };
 }</code></pre>
 <p>A decision projection names its ordered rule records, domains, outputs and policy:</p>
 <pre><code>projection {
-    kind: decision; profile: &quot;decision.rules@1&quot;;
-    records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];
-    inputs: [{key: severity, type: enum, values:[&quot;low&quot;,&quot;high&quot;]},
-             {key: score, type:number, min:0, max:10}];
-    outputs: [route, audit];
-    hit_policy: unique;
-    coverage: complete;
-    analysis_budget: 4096;
+ kind: decision; profile: &quot;decision.rules@1&quot;;
+ records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];
+ inputs: [{key: severity, type: enum, values:[&quot;low&quot;,&quot;high&quot;]},
+ {key: score, type:number, min:0, max:10}];
+ outputs: [route, audit];
+ hit_policy: unique;
+ coverage: complete;
+ analysis_budget: 4096;
 }</code></pre>
 <p>Every rule must supply every declared output as a scalar; one to twenty outputs are supported. This version does not impose a separate common output-type declaration, calculate output expressions, or provide DMN result coercion. The rule's stable ID, rather than its row number, identifies it. Explicit record order controls <code>first</code>; changing layout order must not silently change rule priority.</p>
 <p><code>unique</code> permits at most one matching rule. <code>first</code> chooses the first match. <code>collect</code> returns all matching outcomes in declared order without implicit sum/min/max aggregation. A no-match evaluation returns <code>status: no_match</code> only when the declared coverage policy permits it.</p>
@@ -68,7 +68,7 @@
 <p>It enumerates the product of input atoms within <code>analysis_budget</code> (one to 50,000; default 4,096). Results expose the number of partitions and tests, policy, uncovered witnesses, overlaps, first-hit shadowed rows and unreachable rules. Witness collections retain at most twenty examples each; their lengths are not the total number of all uncovered inputs.</p>
 <p>For unique or complete claims, exhausting the budget <strong>fails closed</strong> with <code>DDN-QD008</code>. First/collect report mode can render with <code>status: budget_exceeded</code>; disjointness/coverage are explicitly not established. Invalid zero budgets do not fall back to a default. This is bounded proof over the specified predicate language and finite-number semantics, not unrestricted theorem proving or certification of a real business policy.</p>
 <pre><code>const result = workspace.evaluateDecision(&quot;views.ddn&quot;, &quot;decision_unique&quot;, {
-    severity: &quot;low&quot;, score: 5
+ severity: &quot;low&quot;, score: 5
 });
 // {policy, matched:[ruleIDs], selected:[ruleIDs], outputs:[records], status}</code></pre>
 <p>The live laboratory offers a JSON input field and an Evaluate button. Selecting a matching row is a transient UI highlight, not a hidden modification of the model. Source edits invalidate an old evaluation. Evaluation JSON can be downloaded separately. SVG export remains the declared diagram, not an implied evidence record that a production transaction was approved.</p>
@@ -76,11 +76,11 @@
 <p><code>state.flat@1</code> is a graph profile. Its selected nodes are <code>state.initial</code>, <code>state.state</code>, and <code>state.final</code>. A <code>state.state</code> can explicitly declare <code>x_state: {terminal:true}</code>. A state represents one lifecycle condition of the modeled object—not an activity performed by a process.</p>
 <p>Transitions use <code>state.transition</code> and <code>x_transition</code>:</p>
 <pre><code>relation accepted &quot;Accepted verification&quot; @correcting -&gt; @verified {
-    kind: &quot;state.transition&quot;;
-    x_transition: {
-        event: &quot;verify&quot;,
-        guard: {passed:{op:eq,value:true}}
-    };
+ kind: &quot;state.transition&quot;;
+ x_transition: {
+ event: &quot;verify&quot;,
+ guard: {passed:{op:eq,value:true}}
+ };
 }</code></pre>
 <p>The profile requires exactly one initial marker and at least one terminal outcome. The initial marker has no incoming and exactly one outgoing transition; that initial step is unconditional and action-free. Terminal states have no outgoing transitions. All states must be structurally reachable from the initial marker and have a structural path to a terminal outcome. These checks do not claim guards make every such path feasible under all environments.</p>
 <p>Every noninitial transition names a nonempty event. Optional guards use the typed domains above. For a given source state and event, guards must be disjoint; a bounded domain analysis validates them. Incomplete event handling is permitted and means that event is not accepted for some inputs. Without guard domains, multiple transitions for one source/event are rejected as ambiguous.</p>
@@ -88,10 +88,10 @@
 <h2>23.5 Trace verification</h2>
 <p>A trace contains at most 1,000 ordered records <code>{event, data?}</code>. Data defaults to an empty record and must satisfy the declared input domains; use optional inputs for events that omit them. The initial marker's automatic step chooses the initial active state. Each event must match exactly one outgoing transition whose guard holds.</p>
 <pre><code>const result = workspace.simulateLifecycle(&quot;views.ddn&quot;, &quot;lifecycle&quot;, [
-    {event:&quot;submit&quot;}, {event:&quot;accept&quot;}, {event:&quot;investigated&quot;},
-    {event:&quot;verify&quot;, data:{passed:false}},
-    {event:&quot;investigated&quot;}, {event:&quot;verify&quot;,data:{passed:true}},
-    {event:&quot;close&quot;}
+ {event:&quot;submit&quot;}, {event:&quot;accept&quot;}, {event:&quot;investigated&quot;},
+ {event:&quot;verify&quot;, data:{passed:false}},
+ {event:&quot;investigated&quot;}, {event:&quot;verify&quot;,data:{passed:true}},
+ {event:&quot;close&quot;}
 ], &quot;meridian.quality.review::lifecycle.closed&quot;);</code></pre>
 <p>The result reports final state, terminal status, each transition's IDs and recorded action references, and <code>actionsExecuted:false</code>. An unavailable event, ambiguous branch, malformed input or expected-final-state mismatch fails. Optional projection <code>traces</code> permit up to 100 named fixtures validated before rendering. Event sequence is semantic data; line positions and numeric legend keys do not define it.</p>
 <p>The lifecycle renderer uses conventional initial/final circular markers and state cards. Event/guard labels are derived from transition metadata. Outlines and annotations can be styled, but source endpoints and conditions do not change. Marker/actor contour escapes reach the outside of conservative node bounds without passing through another object; the existing short-route regression remains mandatory.</p>

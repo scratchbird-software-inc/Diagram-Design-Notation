@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-061 (RFC-125): the UML 2.5.1 sweep —
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-061 : the UML 2.5.1 sweep —
  * one end-to-end check+render per diagram family, fourteen families. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');

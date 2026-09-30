@@ -34,15 +34,15 @@
 <p><code>layout.endpoint_ordering</code> accepts <code>optimize</code> (default) and <code>preserve</code>. The latter retains the legacy stable-ID initial slot order and omits the coupled refinement; other independently enabled layout/routing optimizers can still operate. An <code>optimize:none</code> layout omits the new optimization as well. Unknown policy values are errors. The API overlay <code>endpointOrdering</code> accepts <code>source</code>, <code>optimize</code>, or <code>preserve</code> and cannot override data-bound or ordered-interaction coordinates.</p>
 <h2>Procedure</h2>
 <ol><li>Partition attachments by compatible side/row. Establish deterministic slots;</li></ol>
-<p>   order free slots by the opposite endpoint's row centre or object centre.    Fixed entries keep their assignment.</p>
+<p> order free slots by the opposite endpoint's row centre or object centre.  Fixed entries keep their assignment.</p>
 <ol><li>Route using the existing obstacle, label, and endpoint checks. Evaluate the</li></ol>
-<p>   actual rendered path samples, not just endpoint-to-endpoint chords.</p>
+<p> actual rendered path samples, not just endpoint-to-endpoint chords.</p>
 <ol><li>Identify crossing relations incident on a common element; prioritize crossings</li></ol>
-<p>   close to that element. Propose compatible pairwise permutations. For different    rows, retain the rows and try legal side combinations instead.</p>
+<p> close to that element. Propose compatible pairwise permutations. For different  rows, retain the rows and try legal side combinations instead.</p>
 <ol><li>Accept only a feasible reroute that improves the crossing/length criterion.</li></ol>
-<p>   The route-length increase per accepted trial is bounded, and cumulative length    is bounded relative to the pass's input. No element moves during this pass.</p>
+<p> The route-length increase per accepted trial is bounded, and cumulative length  is bounded relative to the pass's input. No element moves during this pass.</p>
 <ol><li>Run this before permitted free-node moves; recheck after accepted node moves.</li></ol>
-<p>   Residual crossings retain their declared gap/jump representation and warning.</p>
+<p> Residual crossings retain their declared gap/jump representation and warning.</p>
 <p>This local pass uses at most 32 trials for up to 16 relations, 12 for up to 48, and 4 for up to 96; larger inputs retain geometric initial ordering but skip the expensive paired pass. Each pass stops after at most eight improvement sweeps. It is not a globally optimal port-assignment or minimum-crossing solver.</p>
 <h2>Telemetry</h2>
 <p><code>scene.layout.endpointOrdering</code> reports the selected policy, trial budget, trials, accepted slot swaps/side changes, input/output crossing counts, local crossing counts, length and segment-derived bend counts. A skipped stage or a budget limit is not evidence of optimality. If node movement requires another pass, its prior record is retained. Source model identities, legend keys, and original text are unchanged by routing.</p>

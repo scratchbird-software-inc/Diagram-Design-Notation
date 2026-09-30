@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. RFC-117 D4/D5: io.bundle + CLI bundle, byte-identical render round-trip. */
+/* SPDX-License-Identifier: GPL-2.0-or-later. D4/D5: io.bundle + CLI bundle, byte-identical render round-trip. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false});console.error('FAIL',name,e.stack);process.exitCode=1;}}

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-059 (RFC-123): UML 2.5.1 component + composite-structure fixtures (uml.composite@1). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-059 : UML 2.5.1 component + composite-structure fixtures (uml.composite@1). */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";
@@ -51,7 +51,7 @@ test('Parts render as "role: Classifier [mult]" rows; collaboration renders dash
  for(const s of ['cart: Cart [1]','stock: Stock [0..*]','buyer: Customer','seller: Merchant'])assert.ok(r.svg.includes(s),'part row missing: '+s);
  assert.ok(r.svg.includes('«collaboration»'),'collaboration keyword missing');
  assert.ok(r.svg.includes('stroke-dasharray="6 4"'),'dashed collaboration ellipse missing');});
-test('Connector carries RFC-119 role names and multiplicity',()=>{const r=run();
+test('Connector carries role names and multiplicity',()=>{const r=run();
  for(const s of ['cart','stock','0..*'])assert.ok(r.svg.includes(s));
  assert.ok((r.svg.match(/ddn-endlabel-role/g)||[]).length>=2,'connector role labels missing');});
 

@@ -37,11 +37,11 @@ Payload names are relation labels. This subset does not prove transformation con
 
 Implemented links are association, generalization, realization and dependency. Generalization connects compatible classifier kinds and must be acyclic. Realization uses its declared endpoint contract and a hollow triangular marker. Package tabs and component indicators are actual silhouettes, but full package import/merge and component assembly/delegation semantics are not implemented.
 
-`uml.structure@2` (RFC-119) extends the same foundation to the UML 2.5.1 class-diagram surface:
+`uml.structure@2` extends the same foundation to the UML 2.5.1 class-diagram surface:
 
 - **Association ends** carry role names, multiplicity (`1`, `0..1`, `0..*`, `1..*`, `*`) and qualifiers via `x_endlabels: { source: {…}, target: {…} }`. Aggregation uses the `hollow_diamond` end mark at the whole; composition reuses the filled `diamond` mark; navigability uses the `open` arrowhead mark. Endpoint decorations apply to `uml.association` only (`DDN-PJ149`).
 - **Association classes** attach a named `uml.class` to an association with a dashed connector from the path midpoint (`x_association_class: { class: @ref }`, `DDN-PJ150`).
-- **N-ary associations** declare ends beyond the binary anchors in `x_nary.ends`; the renderer draws the UML diamond junction at the member centroid with one spoke per end, each carrying its role and multiplicity. Ends must be three or more distinct classifiers (`DDN-PJ151`). The data model stays a binary relation plus declared extra ends — see RFC-119 for the decision record.
+- **N-ary associations** declare ends beyond the binary anchors in `x_nary.ends`; the renderer draws the UML diamond junction at the member centroid with one spoke per end, each carrying its role and multiplicity. Ends must be three or more distinct classifiers (`DDN-PJ151`). The data model stays a binary relation plus declared extra ends — see for the decision record.
 - **Generalization sets** group `uml.generalization` relations by `x_genset.name` sharing one target and render the `{disjoint|overlapping, complete|incomplete}` constraint label at the shared target end (`DDN-PJ152`).
 - **Templates** draw the dashed parameter signature box on the top-right corner of a `uml.class`/`uml.interface` (`x_template: { parameters: […] }`, `DDN-PJ153`).
 - **Enumerations** use the `uml.enumeration` kind with a «enumeration» header and LITERALS compartment; members declare `x_member: { kind: literal }` (`DDN-PJ154`).
@@ -95,7 +95,7 @@ The installed catalogue feeds Studio's kind and relation selectors. Namespaced k
 
 ## 17.8 Deployment diagrams (profile `uml.deployment@1`)
 
-`uml.deployment@1` (RFC-122) is the UML 2.5.1 deployment surface on the graph projection. Four kinds: `uml.node` (plain node), `uml.device` («device») and `uml.executionenv` («execution environment») drawn as 3D boxes — front rect plus top and right depth faces at a fixed 10s × −8s offset — and `uml.artifact` («artifact» keyword above the name, dog-eared top-right corner). Three relations: `uml.deploy` and `uml.manifest` (dashed open-arrow dependencies; endpoint contracts require node-kind deploy targets and artifact manifest sources, DDN102) and `uml.commpath` (solid structural link between node kinds), which carries RFC-119 `x_endlabels` role/multiplicity — the PJ149 rule names association *or* communication path, and qualifiers remain association-only (`DDN-PJ164`). Node nesting reuses view frames scoped to a node kind (`DDN-PJ164`); deployed components come from the existing `uml.component` vocabulary. Middleware-specific deployment models, artifact content descriptors, topology discovery and formal UML conformance remain outside the profile.
+`uml.deployment@1` is the UML 2.5.1 deployment surface on the graph projection. Four kinds: `uml.node` (plain node), `uml.device` («device») and `uml.executionenv` («execution environment») drawn as 3D boxes — front rect plus top and right depth faces at a fixed 10s × −8s offset — and `uml.artifact` («artifact» keyword above the name, dog-eared top-right corner). Three relations: `uml.deploy` and `uml.manifest` (dashed open-arrow dependencies; endpoint contracts require node-kind deploy targets and artifact manifest sources, DDN102) and `uml.commpath` (solid structural link between node kinds), which carries `x_endlabels` role/multiplicity — the PJ149 rule names association *or* communication path, and qualifiers remain association-only (`DDN-PJ164`). Node nesting reuses view frames scoped to a node kind (`DDN-PJ164`); deployed components come from the existing `uml.component` vocabulary. Middleware-specific deployment models, artifact content descriptors, topology discovery and formal UML conformance remain outside the profile.
 
 Selecting a source-bound shape or matrix/chart mark navigates to its semantic source. Selecting a projected Chen connector maps to the underlying field or association. Graphical pins apply only to editable graph occurrences, not generated quantitative coordinates.
 
@@ -105,13 +105,13 @@ OMG UML 2.5.1 separately publishes its formal specification, abstract syntax and
 
 ## 17.9 Component and composite-structure diagrams (profile `uml.composite@1`)
 
-`uml.composite@1` (RFC-123) covers the UML 2.5.1 component and composite-structure families on the graph projection. Ports reuse the SysML port machinery (`ports { port x { direction: in|out|inout; } }` on `uml.component`/`uml.class`); the renderer's port-square attachment, previously sysml-only, also draws under this profile. Three relations: `uml.assembly` (socket at the requiring end, lollipop at the providing end — the RFC-119 marks; endpoints are components or their ports, field members are rejected as `DDN-PJ165`), `uml.delegation` (dashed open arrow from a boundary port inward, `DDN-PJ165` when it does not start at a port member) and `uml.connector` (plain connector with RFC-119 `x_endlabels` role names and multiplicity — the PJ149 rule now names association, communication path or connector). Internal parts are fields carrying `x_part: { classifier?, multiplicity? }`, rendered as `role: Classifier [mult]` rows; part owners are `uml.class`/`uml.component`/`uml.collaboration` and multiplicity uses the UML form (`DDN-PJ166`). `uml.collaboration` renders the dashed-ellipse collaboration symbol with «collaboration» keyword and its role bindings inside. Interface type-checking of assembly pairings, port protocol state machines and formal conformance remain outside the profile.
+`uml.composite@1` covers the UML 2.5.1 component and composite-structure families on the graph projection. Ports reuse the SysML port machinery (`ports { port x { direction: in|out|inout; } }` on `uml.component`/`uml.class`); the renderer's port-square attachment, previously sysml-only, also draws under this profile. Three relations: `uml.assembly` (socket at the requiring end, lollipop at the providing end — the marks; endpoints are components or their ports, field members are rejected as `DDN-PJ165`), `uml.delegation` (dashed open arrow from a boundary port inward, `DDN-PJ165` when it does not start at a port member) and `uml.connector` (plain connector with `x_endlabels` role names and multiplicity — the PJ149 rule now names association, communication path or connector). Internal parts are fields carrying `x_part: { classifier?, multiplicity? }`, rendered as `role: Classifier [mult]` rows; part owners are `uml.class`/`uml.component`/`uml.collaboration` and multiplicity uses the UML form (`DDN-PJ166`). `uml.collaboration` renders the dashed-ellipse collaboration symbol with «collaboration» keyword and its role bindings inside. Interface type-checking of assembly pairings, port protocol state machines and formal conformance remain outside the profile.
 
-## 17.10 Activity diagrams at uml.activity@2 (RFC-124)
+## 17.10 Activity diagrams at uml.activity@2
 
 `uml.activity@2` extends the activity profile to the UML 2.5.1 surface; @1 is immutable. Additions: `flow.merge` (merge diamond, ≥2 incoming / exactly one outgoing — `DDN-PJ167`; decisions keep the named-branch rule DDN-PF009); pins as ports on action kinds with `x_pin: { set?, streaming? }` (attached pins draw at edge endpoints, unattached pins draw on the action border, streaming pins filled, set names beside — `DDN-PJ169` on non-action owners; `uml.flow` gained `member_endpoints: true` so edges attach to pins); `flow.sendsignal`/`flow.acceptsignal` pentagons and the `flow.timeevent` hourglass; `flow.flowfinal` (⊗), which counts as an end under @2 (DDN-PF008); interruptible regions as frames with `x_interruptible: true` (dashed roundrect) and interrupting/exception edges as `uml.flow` with `x_interrupt`/`x_exception: true` drawn as lightning zigzags (source must be inside an interruptible region, exception must target a handler action — `DDN-PJ168`); structured/expansion regions as frames with `x_structured: { mode: structured|iterative|parallel }` («mode» keyword). Connector circles are the existing `flow.connector` kind (admitted to `uml.flow` endpoints). Activity execution semantics, object-flow type checking and expansion-region collections remain outside the profile.
 
-## 17.11 Package and profile diagrams (RFC-125)
+## 17.11 Package and profile diagrams
 
 Package dependencies land on the structure vocabulary: `uml.import`
 («import»), `uml.access` («access») and `uml.merge` («merge») are dashed
@@ -280,7 +280,7 @@ referenced icon inside the node's top area, ids namespaced per node
 page, every asset is **sanitized at load time** (`DDN-PJ207`): scripts,
 `foreignObject`, iframes/embeds/objects, images, event handlers
 (`on*=`/`onload`), `href`/`xlink:href` (including local `<use>` references —
-icons must inline everything), `javascript:` and CSS `url()` are all
+icons must inline everything), `javascript:` and CSS `url` are all
 rejected, non-SVG payloads are rejected, and each icon is capped at 20 KiB.
 Unknown references fail as `DDN-PJ206`. The built-in `generic-demo@1` set
 (cloud, server, database, user — agent-drawn simple glyphs) proves the
@@ -307,7 +307,7 @@ border) and procedure references (`sdl.procedure`, subprocess silhouette).
 Timer constructs (Z.101 §11.15) ship as `sdl.timer` declarations (hourglass
 silhouette) with `sdl.set`/`sdl.reset` nodes bound by
 `x_sdl: { timer: @t, duration: "…" }`; priority input, spontaneous
-transitions, continuous signals and the `active()` query are `x_sdl`
+transitions, continuous signals and the `active` query are `x_sdl`
 markers on `sdl.input` (`DDN-PJ215` owner and reference rules). Exactly one
 start symbol and at least one outgoing transition per process symbol
 validate as `DDN-PJ208`. SDL interchange formats, simulation and formal ITU
@@ -369,28 +369,28 @@ references. Cross-file addressing builds on exactly that machinery — it adds
 no parallel mechanism:
 
 - **Architecture containers** — a top-level declaration
-  `architecture id "Label" { files: ["a.ddn", …]; description: "…"; }`
-  groups the declaring file and the named base files into one described
-  architecture (the ISO 42010 mapping of chapter 48: the container is the
-  description, each view inside remains governed by its profile). Base
-  files join the shared symbol machinery; the
-  no-identity-collision-across-bases rule fails any duplicate module,
-  declaration or uid with `DDN-PJ216`, so **module-qualified references**
-  (`@module.id.path`) into bases stay unambiguous. Bare ids never resolve
-  cross-file (`DDN031` as before).
+ `architecture id "Label" { files: ["a.ddn", …]; description: "…"; }`
+ groups the declaring file and the named base files into one described
+ architecture (the ISO 42010 mapping of chapter 48: the container is the
+ description, each view inside remains governed by its profile). Base
+ files join the shared symbol machinery; the
+ no-identity-collision-across-bases rule fails any duplicate module,
+ declaration or uid with `DDN-PJ216`, so **module-qualified references**
+ (`@module.id.path`) into bases stay unambiguous. Bare ids never resolve
+ cross-file (`DDN031` as before).
 - **Traceability relations** — a relation endpoint may address an element
-  in a base file by module-qualified identity. Every base named by an
-  endpoint must be covered by a declared container (`DDN-PJ217`); the host
-  workspace file is implicitly covered. An endpoint outside the current
-  view renders as an off-page badge naming the module-qualified identity,
-  joined by a dashed muted edge.
+ in a base file by module-qualified identity. Every base named by an
+ endpoint must be covered by a declared container (`DDN-PJ217`); the host
+ workspace file is implicitly covered. An endpoint outside the current
+ view renders as an off-page badge naming the module-qualified identity,
+ joined by a dashed muted edge.
 - **Associations as metadata** — `x_link: { file, target }` on any relation
-  is the lightweight cross-file association (ignorable to DDN-only tools).
-  The file loads as a base when present, so unknown target identities fail
-  `DDN-PJ216`; when the file is absent from the workspace the reference is
-  a `DDN-PJW07` warning and renders as an unresolved external note — never
-  an error, matching the drill-down semantics of showing rather than
-  failing.
+ is the lightweight cross-file association (ignorable to DDN-only tools).
+ The file loads as a base when present, so unknown target identities fail
+ `DDN-PJ216`; when the file is absent from the workspace the reference is
+ a `DDN-PJW07` warning and renders as an unresolved external note — never
+ an error, matching the drill-down semantics of showing rather than
+ failing.
 
 Example: `website/examples/basics/108-uaf-traceability.ddn` (multi-file UAF
 cross-domain traceability); tests `xref-compliance.js` + `xref-showcase.js`.

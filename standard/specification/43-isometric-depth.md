@@ -15,10 +15,10 @@ the `DDNIso` namespace and registers no projection kind; the engine routes
 `iso: true` views through it. Missing module, never silent:
 
 - an `iso: true` view renders a visible inline placeholder ("Isometric view
-  requires ddn-iso.js") plus the coded `DDN-E010` diagnostic — the same
-  owner-directed exception path as the geographic module (B1-025);
+ requires ddn-iso.js") plus the coded `DDN-E010` diagnostic — the same
+ owner-directed exception path as the geographic module (B1-025);
 - a `depth` property without the module degrades to the flat render plus a
-  coded `DDN-E010` warning on the diagnostics channel — never a crash.
+ coded `DDN-E010` warning on the diagnostics channel — never a crash.
 
 ## Notation (D3)
 
@@ -41,13 +41,13 @@ ddn "0.5";
 module "example.iso";
 
 data tiers {
-    object web "Web" { kind: record; depth: 26px; x_record: { tier: "Web", value: 420, load: 26, unit: "req/s" }; }
-    object api "API" { kind: record; x_record: { tier: "API", value: 610, load: 34, unit: "req/s" }; }
+ object web "Web" { kind: record; depth: 26px; x_record: { tier: "Web", value: 420, load: 26, unit: "req/s" }; }
+ object api "API" { kind: record; x_record: { tier: "API", value: 610, load: 34, unit: "req/s" }; }
 }
 
 view iso_bar "Iso bar" {
-    data: [@tiers];
-    projection { kind: chart; profile: "chart.basic@1"; records: [@tiers.web, @tiers.api]; mark: bar; x: "x_record.tier"; y: "x_record.value"; unit: "req/s"; iso: true; depth: "x_record.load"; }
+ data: [@tiers];
+ projection { kind: chart; profile: "chart.basic@1"; records: [@tiers.web, @tiers.api]; mark: bar; x: "x_record.tier"; y: "x_record.value"; unit: "req/s"; iso: true; depth: "x_record.load"; }
 }
 ```
 

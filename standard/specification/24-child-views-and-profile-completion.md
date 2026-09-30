@@ -8,14 +8,14 @@
 
 ```ddn
 projection {
-    kind: panels; profile: "panels.composed@1";
-    columns: 2;
-    panels: [
-        {id: pareto, title:"Defect priorities", row:0, column:0, view:@pareto},
-        {id: spread, title:"Measurement distribution", row:0, column:1, view:@histogram},
-        {id: score, title:"Review scores", row:1, column:0, view:@heat_bands},
-        {id: state, title:"Corrective action", row:1, column:1, view:@lifecycle}
-    ];
+ kind: panels; profile: "panels.composed@1";
+ columns: 2;
+ panels: [
+ {id: pareto, title:"Defect priorities", row:0, column:0, view:@pareto},
+ {id: spread, title:"Measurement distribution", row:0, column:1, view:@histogram},
+ {id: score, title:"Review scores", row:1, column:0, view:@heat_bands},
+ {id: state, title:"Corrective action", row:1, column:1, view:@lifecycle}
+ ];
 }
 ```
 
@@ -64,15 +64,15 @@ A use case may declare distinct named `extension_points`. An `uml.extend` relati
 
 ```ddn
 object review "Review lot" {
-    kind: "uml.usecase";
-    x_usecase: {subjects:[@subject],extension_points:["before disposition"]};
+ kind: "uml.usecase";
+ x_usecase: {subjects:[@subject],extension_points:["before disposition"]};
 }
 relation escalation "Escalates when necessary" @escalate -> @review {
-    kind: "uml.extend";
-    x_usecase: {
-        extension_point:"before disposition",
-        condition:"The declared review policy requires escalation."
-    };
+ kind: "uml.extend";
+ x_usecase: {
+ extension_point:"before disposition",
+ condition:"The declared review policy requires escalation."
+ };
 }
 ```
 

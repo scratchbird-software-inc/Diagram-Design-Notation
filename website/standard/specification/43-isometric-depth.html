@@ -30,9 +30,9 @@
 <h2>Optional module (D1)</h2>
 <p>Isometric depth ships as the optional seventh bundle <code>dist/ddn-iso.js</code> (readable IIFE, <code>.min.js</code> + source map, <code>.mjs</code>, type copies; npm subpath <code>@ddn/notation/iso</code>). It is never part of <code>ddn.global.js</code>. The module publishes the <code>DDNIso</code> namespace and registers no projection kind; the engine routes <code>iso: true</code> views through it. Missing module, never silent:</p>
 <ul><li>an <code>iso: true</code> view renders a visible inline placeholder (&quot;Isometric view</li></ul>
-<p>  requires ddn-iso.js&quot;) plus the coded <code>DDN-E010</code> diagnostic — the same   owner-directed exception path as the geographic module (B1-025);</p>
+<p> requires ddn-iso.js&quot;) plus the coded <code>DDN-E010</code> diagnostic — the same  owner-directed exception path as the geographic module (B1-025);</p>
 <ul><li>a <code>depth</code> property without the module degrades to the flat render plus a</li></ul>
-<p>  coded <code>DDN-E010</code> warning on the diagnostics channel — never a crash.</p>
+<p> coded <code>DDN-E010</code> warning on the diagnostics channel — never a crash.</p>
 <h2>Notation (D3)</h2>
 <p>View/projection level, on <code>graph</code> and <code>chart</code> projections only:</p>
 <table><thead><tr><th>Property</th><th>Values</th><th>Default</th></tr></thead><tbody><tr><td><code>iso</code></td><td><code>true</code> \</td><td><code>false</code></td><td><code>false</code></td></tr><tr><td><code>depth</code></td><td>length (px) 0..2000, <code>&quot;x_record.field&quot;</code> per-record binding, or <code>@data.record.field</code></td><td><code>0</code> (flat); <code>18</code> when <code>iso: true</code> sets no explicit depth</td></tr></tbody></table>
@@ -41,13 +41,13 @@
 module &quot;example.iso&quot;;
 
 data tiers {
-    object web &quot;Web&quot; { kind: record; depth: 26px; x_record: { tier: &quot;Web&quot;, value: 420, load: 26, unit: &quot;req/s&quot; }; }
-    object api &quot;API&quot; { kind: record; x_record: { tier: &quot;API&quot;, value: 610, load: 34, unit: &quot;req/s&quot; }; }
+ object web &quot;Web&quot; { kind: record; depth: 26px; x_record: { tier: &quot;Web&quot;, value: 420, load: 26, unit: &quot;req/s&quot; }; }
+ object api &quot;API&quot; { kind: record; x_record: { tier: &quot;API&quot;, value: 610, load: 34, unit: &quot;req/s&quot; }; }
 }
 
 view iso_bar &quot;Iso bar&quot; {
-    data: [@tiers];
-    projection { kind: chart; profile: &quot;chart.basic@1&quot;; records: [@tiers.web, @tiers.api]; mark: bar; x: &quot;x_record.tier&quot;; y: &quot;x_record.value&quot;; unit: &quot;req/s&quot;; iso: true; depth: &quot;x_record.load&quot;; }
+ data: [@tiers];
+ projection { kind: chart; profile: &quot;chart.basic@1&quot;; records: [@tiers.web, @tiers.api]; mark: bar; x: &quot;x_record.tier&quot;; y: &quot;x_record.value&quot;; unit: &quot;req/s&quot;; iso: true; depth: &quot;x_record.load&quot;; }
 }</code></pre>
 <h2>Projection math and shading (D2)</h2>
 <p>Axonometric projection at 30°: <code>sx=(x−y)·cos30°</code>, <code>sy=(x+y)·sin30°−z</code>. Pure functions, unit-tested against independently computed reference values (<code>notation/tests/iso.js</code>). Face shading derives from the base colour: top = base, left = ×0.85, right = ×0.7 (<code>DDNIso.shade</code>). Painter's-algorithm z-order is a total order — footprint <code>x+y</code>, then height, then element id — so the same input always yields the same SVG (D7).</p>

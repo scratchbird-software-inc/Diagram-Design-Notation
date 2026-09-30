@@ -36,23 +36,23 @@
 <h2>Parameters and overrides</h2>
 <p><code>auto_place</code> is boolean (default true). <code>center</code> is <code>pins</code> or <code>content</code>. New pin-centred patterns default to pins; inherited original patterns keep their explicit centre. <code>grid_step</code> is a finite length 8–512 CSS px. The pattern gap is 16–2000 CSS px; the engine may enlarge it to honour element dimensions and native port clearance. <code>direction</code> is right/down/left/up where the underlying algorithm supports orientation.</p>
 <h2>Frame overflow</h2>
-<p><code>layout.frame_overflow</code> is <code>expand</code> (default) or <code>confine</code> (RFC-118). It governs view <code>frame</code> rects relative to their members.</p>
+<p><code>layout.frame_overflow</code> is <code>expand</code> (default) or <code>confine</code>. It governs view <code>frame</code> rects relative to their members.</p>
 <p>Under <code>expand</code>, the rendered frame rect grows to enclose the member bounding box plus the standard frame padding (20 CSS px left/right, 54 top, 22 bottom — the same padding used for member-derived frames). A declared <code>at</code>/<code>size</code> rect that already encloses its members is unchanged, so existing diagrams render identically; a member-derived frame is by construction already the expanded rect. Members never escape their frame and nothing is hidden.</p>
 <p>Under <code>confine</code>, the frame keeps its declared or computed rect. A frame with a declared <code>at</code>+<code>size</code> defines a fixed interior (the declared rect inset by the standard padding); unpinned members are clamped into that interior during placement — automatically what manual <code>place</code> pins achieved — and a member too large for the interior still fails (LIVE-P004). A frame without a declared <code>at</code>+<code>size</code> is member-computed, so confinement is already satisfied. Pins are never moved; a pinned member outside a fixed frame fails as before. Fixed-frame constraints bind placement only under <code>confine</code>; under <code>expand</code> the frame grows instead of constraining. Any other value fails DDN046.</p>
 <h2>Spacing hints</h2>
 <p>A view, or a <code>bundle</code> inside a format declaration, may carry one optional <code>spacing</code> property. The view value wins over the format value; when both are absent the hint is <code>normal</code>. It is an additive optional enum — an unknown value is rejected with <code>DDN033</code>, and it is not a language version gate.</p>
 <table><thead><tr><th>Value</th><th>Factor</th><th>Effect</th></tr></thead><tbody><tr><td><code>tight</code></td><td>0.75</td><td>Compacts inter-node gaps, layer/band spacing and the route-label reservation margin.</td></tr><tr><td><code>normal</code></td><td>1.0</td><td>The default. Exactly the historical output; omitting <code>spacing</code> is byte-identical to <code>spacing: normal</code>.</td></tr><tr><td><code>loose</code></td><td>1.4</td><td>Spreads gaps and label bands so long relation labels get room with shorter detours.</td></tr><tr><td><code>expanded</code></td><td>2.0</td><td>Maximum spread.</td></tr></tbody></table>
-<p>The factor multiplies the inter-node horizontal/vertical gaps (<code>gap</code>, <code>row_gap</code>, including the pin-pattern pitch), the layer/band spacing derived from them, and the route-label reservation margins (8/10 px at <code>normal</code>), rounded through the renderer's numeric helper. Node body sizes, font sizes, glyph sizes and the fixed canvas furniture never scale. <code>spacing</code> is a <strong>graph-family hint</strong>: fixed-grid projections (chart, matrix, panels, table, timeline, fishbone, decision, sequence, timing) ignore it entirely — <code>check()</code> emits no warning, because ignoring it is the documented behavior. Factors are literal constants; the renderer stays deterministic.</p>
+<p>The factor multiplies the inter-node horizontal/vertical gaps (<code>gap</code>, <code>row_gap</code>, including the pin-pattern pitch), the layer/band spacing derived from them, and the route-label reservation margins (8/10 px at <code>normal</code>), rounded through the renderer's numeric helper. Node body sizes, font sizes, glyph sizes and the fixed canvas furniture never scale. <code>spacing</code> is a <strong>graph-family hint</strong>: fixed-grid projections (chart, matrix, panels, table, timeline, fishbone, decision, sequence, timing) ignore it entirely — <code>check</code> emits no warning, because ignoring it is the documented behavior. Factors are literal constants; the renderer stays deterministic.</p>
 <pre><code>format layouts {
-    layout orbit {
-        algorithm: circular;
-        center: pins;
-        auto_place: true;
-        routing: curved;
-        crossings: gap;
-        gap: 100px;
-    }
-    bundle roomy { layout: @orbit; spacing: loose; }
+ layout orbit {
+ algorithm: circular;
+ center: pins;
+ auto_place: true;
+ routing: curved;
+ crossings: gap;
+ gap: 100px;
+ }
+ bundle roomy { layout: @orbit; spacing: loose; }
 }</code></pre>
 <p>A view uses <code>layout:@layouts.orbit;</code>. Placement, appearance and publication stay separate from semantic data. Relative frames and explicit routing guides remain constraints; under <code>frame_overflow: confine</code>, infeasible rings inside fixed frames fail rather than silently overflowing.</p>
 <h2>Pause and reflow</h2>

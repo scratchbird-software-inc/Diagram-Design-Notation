@@ -1,7 +1,6 @@
 # 28. Communication diagrams (profile `uml.communication@1` on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-102
-(`standard/governance/rfcs/RFC-102-communication-diagram.md`). Source grammar
+Status: implemented in runtime 0.7.0. Source grammar
 remains DDN 0.5; profiles and extension properties are atom/record property
 values, so this chapter is a semantic addition, not a grammar change.
 
@@ -16,18 +15,18 @@ This is profile-level coverage, not UML conformance.
 
 ## Metamodel
 
-Reuses the RFC-101 interaction metamodel unchanged:
+Reuses the interaction metamodel unchanged:
 
 - **Participants** are the view's selected `object`-type elements, laid out by
-  the graph layout algorithm.
+ the graph layout algorithm.
 - **Messages** are the view's visible relations of kind `uml.message` (the
-  RFC-101 verb: `family:'control'`, `start:'none'`, `end:'open'`,
-  `source:['*']`, `target:['*']`, `allow_self:true`,
-  `member_endpoints:false`).
-- A **reply** is a `uml.message` carrying `x_return:true` (RFC-101 extension).
+ verb: `family:'control'`, `start:'none'`, `end:'open'`,
+ `source:['*']`, `target:['*']`, `allow_self:true`,
+ `member_endpoints:false`).
+- A **reply** is a `uml.message` carrying `x_return:true` ( extension).
 - **Message numbers** are author-declared via the new registered extension
-  property `x_message` (relation target):
-  `{ "type":"object", "required":["seq"], "properties":{ "seq":{ "type":"string", "minLength":1 } }, "additionalProperties":false }`.
+ property `x_message` (relation target):
+ `{ "type":"object", "required":["seq"], "properties":{ "seq":{ "type":"string", "minLength":1 } }, "additionalProperties":false }`.
 
 ## Declared numbering rule
 
@@ -37,7 +36,7 @@ Numbers are data. Convention:
 - Top-level messages are numbered `1`, `2`, `3`, …
 - A reply is dotted under its request: request `2`, reply `2.1`.
 
-Derived numbering was rejected (RFC-102 D3): it would make the missing-number
+Derived numbering was rejected ( D3): it would make the missing-number
 error unreachable and would silently renumber messages when declarations are
 reordered.
 
@@ -53,9 +52,9 @@ in the same view keep their labels unchanged.
 
 ```ddn
 view communication "Synthetic order flow / communication" {
-    data: [@flow];
-    projection { kind: graph; profile: "uml.communication@1"; }
-    layout { algorithm: layered; }
+ data: [@flow];
+ projection { kind: graph; profile: "uml.communication@1"; }
+ layout { algorithm: layered; }
 }
 ```
 
@@ -67,16 +66,16 @@ RT-101 order flow.
 ## Validation and diagnostics
 
 - `DDN-PJ111` (error) — under `uml.communication@1`, a visible `uml.message`
-  relation:
-  1. lacks `x_message.seq`, or
-  2. carries a `seq` that does not match `/^\d+(\.\d+)*$/`, or
-  3. breaks the reply convention — a reply (`x_return:true`) with an undotted
-     `seq`, or a non-reply with a dotted `seq`.
+ relation:
+ 1. lacks `x_message.seq`, or
+ 2. carries a `seq` that does not match `/^\d+(\.\d+)*$/`, or
+ 3. breaks the reply convention — a reply (`x_return:true`) with an undotted
+ `seq`, or a non-reply with a dotted `seq`.
 
-  The message names the relation and the rule broken.
+ The message names the relation and the rule broken.
 - Unchanged existing guards apply as to every graph view (unknown properties,
-  page/extent guards, and so on). The sequence-only rules of chapter 27 do not
-  apply here, and a communication view does not require place/route geometry.
+ page/extent guards, and so on). The sequence-only rules of chapter 27 do not
+ apply here, and a communication view does not require place/route geometry.
 
 ## Unsupported
 
@@ -85,17 +84,17 @@ consistency (gap-free numbering, replies matching an existing request number)
 is deliberately not checked in `uml.communication@1` — numbers are validated
 for shape only.
 
-# 28a. Communication diagrams at uml.communication@2 (RFC-125)
+# 28a. Communication diagrams at uml.communication@2
 
 `uml.communication@2` adds combined fragments and timing constraints to the
 communication profile; @1 stays installed and immutable.
 
-- **Combined fragments** — `x_fragment` (RFC-120 contract) on a message: the
-  covered messages' routes are wrapped in a dashed fragment frame with the
-  operator pentagon; operand guards render at each operand's first message.
-  References must resolve to visible `uml.message` relations (`DDN-PJ172`);
-  declaration-order span rules (DDN-PJ155) remain sequence-projection business.
+- **Combined fragments** — `x_fragment` ( contract) on a message: the
+ covered messages' routes are wrapped in a dashed fragment frame with the
+ operator pentagon; operand guards render at each operand's first message.
+ References must resolve to visible `uml.message` relations (`DDN-PJ172`);
+ declaration-order span rules (DDN-PJ155) remain sequence-projection business.
 - **Timing constraints** — `x_message.time` / `x_message.duration` in `{…}`
-  form render under the message label (`DDN-PJ172` on other forms).
+ form render under the message label (`DDN-PJ172` on other forms).
 
 Fixture: `website/examples/basics/81-uml-remainder.ddn` (view `comms`).

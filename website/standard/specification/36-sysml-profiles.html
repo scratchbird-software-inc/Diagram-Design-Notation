@@ -26,69 +26,69 @@
 <main class="site-main">
 <article class="md-body">
 <h1>36. SysML-style block profiles (<code>sysml.bdd@1</code>, <code>sysml.ibd@1</code>, <code>sysml.parametric@1</code> on projection <code>graph</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-110 (<code>standard/governance/rfcs/RFC-110-sysml.md</code>). Source grammar remains DDN 0.5; blocks and constraints are registry kinds, the item flow is a registry verb, and ports reuse the existing <code>ports {}</code> group and member-endpoint syntax, so this chapter is a semantic addition, not a grammar change.</p>
-<p>SysML-style structural views model blocks, their border ports, typed item flows and formula-bearing constraints on the existing <code>graph</code> projection. Three profiles divide the coverage (D3 of RFC-110):</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; blocks and constraints are registry kinds, the item flow is a registry verb, and ports reuse the existing <code>ports {}</code> group and member-endpoint syntax, so this chapter is a semantic addition, not a grammar change.</p>
+<p>SysML-style structural views model blocks, their border ports, typed item flows and formula-bearing constraints on the existing <code>graph</code> projection. Three profiles divide the coverage (D3 of ):</p>
 <ul><li><code>sysml.bdd@1</code> — block definition-style view: blocks and their</li></ul>
-<p>  associations.</p>
+<p> associations.</p>
 <ul><li><code>sysml.ibd@1</code> — internal block-style view: blocks with declared border</li></ul>
-<p>  ports and typed item flows.</p>
+<p> ports and typed item flows.</p>
 <ul><li><code>sysml.parametric@1</code> — parametric constraint view: constraint blocks</li></ul>
-<p>  carrying formula text, each bound to exactly two endpoints.</p>
+<p> carrying formula text, each bound to exactly two endpoints.</p>
 <p>Users write <code>projection { kind:graph; profile:&quot;sysml.ibd@1&quot;; }</code> (or one of the other two profiles).</p>
 <p>This is profile-level coverage, not SysML conformance.</p>
 <h2>Metamodel</h2>
 <ul><li><strong>Blocks</strong> — <code>sysml.block</code> objects (silhouette <code>rect</code>, fallback</li></ul>
-<p>  <code>application</code>, family <code>interface</code>, code <code>BLOCK</code>), rendered as rect nodes.</p>
+<p> <code>application</code>, family <code>interface</code>, code <code>BLOCK</code>), rendered as rect nodes.</p>
 <ul><li><strong>Ports</strong> — declared members of a block's existing <code>ports {}</code> group (core</li></ul>
-<p>  syntax; see chapter 01). The core layout machinery (<code>portAssignments()</code> in   <code>ddn-layout.js</code>) already assigns port sides and slots, and relation   endpoints already resolve to port members (<code>@pump.out</code>). Under any of this   chapter's three profiles the renderer additionally draws a small square   (10×10·s) centred at each route attachment point that resolves to a port   member, making the border attachment visible. The square is guarded on   <code>sysml.*</code> profiles; every other profile renders ports exactly as before.</p>
+<p> syntax; see chapter 01). The core layout machinery (<code>portAssignments</code> in  <code>ddn-layout.js</code>) already assigns port sides and slots, and relation  endpoints already resolve to port members (<code>@pump.out</code>). Under any of this  chapter's three profiles the renderer additionally draws a small square  (10×10·s) centred at each route attachment point that resolves to a port  member, making the border attachment visible. The square is guarded on  <code>sysml.*</code> profiles; every other profile renders ports exactly as before.</p>
 <ul><li><strong>Flows</strong> — <code>sysml.flow</code> relations (verb &quot;Item flow&quot;, family <code>flow</code>, code</li></ul>
-<p>  <code>ITEMFLOW</code>, <code>start:'none'</code>, <code>end:'filled'</code>, <code>member_endpoints:true</code>). The   relation's label names the flowed item (built-in <code>name</code>, no extension   property). Flows may attach to port members.</p>
+<p> <code>ITEMFLOW</code>, <code>start:'none'</code>, <code>end:'filled'</code>, <code>member_endpoints:true</code>). The  relation's label names the flowed item (built-in <code>name</code>, no extension  property). Flows may attach to port members.</p>
 <ul><li><strong>Constraints</strong> — <code>sysml.constraint</code> objects (silhouette <code>rect</code>, fallback</li></ul>
-<p>  <code>object</code>, family <code>concept</code>, code <code>CONSTRAINT</code>), rendered as rect nodes   whose label (or <code>description</code> — both core properties) carries the formula   text, e.g. <code>{flow = pressure × area}</code>. DDN renders the formula text; it   never evaluates it.</p>
+<p> <code>object</code>, family <code>concept</code>, code <code>CONSTRAINT</code>), rendered as rect nodes  whose label (or <code>description</code> — both core properties) carries the formula  text, e.g. <code>{flow = pressure × area}</code>. DDN renders the formula text; it  never evaluates it.</p>
 <h2>Declaration rules</h2>
 <ul><li>Under any <code>sysml.*</code> profile of this chapter, a selected element that</li></ul>
-<p>  declares a <code>ports {}</code> group must be a <code>sysml.block</code>; otherwise the view is   rejected with <code>DDN-PJ121</code> (error; the message names the element and its   kind).</p>
+<p> declares a <code>ports {}</code> group must be a <code>sysml.block</code>; otherwise the view is  rejected with <code>DDN-PJ121</code> (error; the message names the element and its  kind).</p>
 <ul><li>Under <code>sysml.parametric@1</code>, every selected <code>sysml.constraint</code> must be</li></ul>
-<p>  touched by exactly two visible relations (<code>assoc</code> or <code>sysml.flow</code> — to   blocks or their ports); otherwise the view is rejected with <code>DDN-PJ122</code>   (error; the message names the constraint and the actual count).</p>
+<p> touched by exactly two visible relations (<code>assoc</code> or <code>sysml.flow</code> — to  blocks or their ports); otherwise the view is rejected with <code>DDN-PJ122</code>  (error; the message names the constraint and the actual count).</p>
 <ul><li><code>sysml.flow</code> endpoints resolve through the existing member-endpoint</li></ul>
-<p>  machinery: an unknown member reference fails at resolution as <code>DDN031</code>; a   declared field member is admitted by the verb contract   (<code>member_endpoints:true</code>, <code>source/target:['*']</code>) but draws no port square,   since it is not a port.</p>
+<p> machinery: an unknown member reference fails at resolution as <code>DDN031</code>; a  declared field member is admitted by the verb contract  (<code>member_endpoints:true</code>, <code>source/target:['*']</code>) but draws no port square,  since it is not a port.</p>
 <h2>Example</h2>
 <pre><code>data m {
-    object pump &quot;Pump&quot; { kind: &quot;sysml.block&quot;;
-        ports { port out { direction: out; } }
-    }
-    object reservoir &quot;Reservoir&quot; { kind: &quot;sysml.block&quot;;
-        ports { port in { direction: in; } }
-    }
-    object flow_balance &quot;{flow = pressure × area}&quot; { kind: &quot;sysml.constraint&quot;; }
+ object pump &quot;Pump&quot; { kind: &quot;sysml.block&quot;;
+ ports { port out { direction: out; } }
+ }
+ object reservoir &quot;Reservoir&quot; { kind: &quot;sysml.block&quot;;
+ ports { port in { direction: in; } }
+ }
+ object flow_balance &quot;{flow = pressure × area}&quot; { kind: &quot;sysml.constraint&quot;; }
 
-    relation water &quot;water&quot; @pump.out -&gt; @reservoir.in { kind: &quot;sysml.flow&quot;; }
-    relation bind_pump &quot;binds pump&quot; @flow_balance -&gt; @pump { kind: &quot;assoc&quot;; }
-    relation bind_reservoir &quot;binds reservoir&quot; @flow_balance -&gt; @reservoir { kind: &quot;assoc&quot;; }
+ relation water &quot;water&quot; @pump.out -&gt; @reservoir.in { kind: &quot;sysml.flow&quot;; }
+ relation bind_pump &quot;binds pump&quot; @flow_balance -&gt; @pump { kind: &quot;assoc&quot;; }
+ relation bind_reservoir &quot;binds reservoir&quot; @flow_balance -&gt; @reservoir { kind: &quot;assoc&quot;; }
 }
 
 view ibd &quot;Pump station internal block&quot; {
-    data: [@m];
-    projection { kind: graph; profile: &quot;sysml.ibd@1&quot;; }
-    exclude: [@m.flow_balance];
+ data: [@m];
+ projection { kind: graph; profile: &quot;sysml.ibd@1&quot;; }
+ exclude: [@m.flow_balance];
 }</code></pre>
 <p>See <code>website/examples/basics/50-sysml.ddn</code> for the full runnable example with all three views (<code>bdd</code>, <code>ibd</code>, <code>parametric</code>).</p>
 <h2>Out of scope</h2>
 <p>SysML XMI interchange, full SysML conformance, compartment typing beyond field rows, flow property propagation, and equation solving or evaluation are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
 <h1>36a. SysML 1.6 full notation (nine profiles)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-128 (<code>standard/governance/rfcs/RFC-128-sysml-compliance.md</code>). <code>sysml.bdd@1</code>, <code>sysml.ibd@1</code> and <code>sysml.parametric@1</code> stay installed and immutable; their fixtures render byte-identically.</p>
+<p>Status: implemented in runtime 0.7.0. <code>sysml.bdd@1</code>, <code>sysml.ibd@1</code> and <code>sysml.parametric@1</code> stay installed and immutable; their fixtures render byte-identically.</p>
 <ul><li><strong>Requirements diagram</strong> (<code>sysml.requirements@1</code>) — <code>req.requirement</code> (the</li></ul>
-<p>  «requirement» id/text compartment rendering already shipped with   <code>requirements.basic@1</code>) plus the new <code>sysml.testcase</code> kind («testCase») and   seven dashed dependency relations whose labels are the guillemet keywords:   <code>sysml.derive</code> («deriveReqt»), <code>sysml.satisfy</code>, <code>sysml.verify</code>,   <code>sysml.refine</code>, <code>sysml.trace</code>, <code>sysml.copy</code>, <code>sysml.master</code>. Endpoint rules   validate as <code>DDN-PJ185</code> (verify from a test case, satisfy from a block,   derive/copy/master between requirements). Containment via   <code>sysml.composition</code> (filled diamond at the whole); «allocate» is   <code>sysml.allocate</code> between any two distinct elements.</p>
+<p> «requirement» id/text compartment rendering already shipped with  <code>requirements.basic@1</code>) plus the new <code>sysml.testcase</code> kind («testCase») and  seven dashed dependency relations whose labels are the guillemet keywords:  <code>sysml.derive</code> («deriveReqt»), <code>sysml.satisfy</code>, <code>sysml.verify</code>,  <code>sysml.refine</code>, <code>sysml.trace</code>, <code>sysml.copy</code>, <code>sysml.master</code>. Endpoint rules  validate as <code>DDN-PJ185</code> (verify from a test case, satisfy from a block,  derive/copy/master between requirements). Containment via  <code>sysml.composition</code> (filled diamond at the whole); «allocate» is  <code>sysml.allocate</code> between any two distinct elements.</p>
 <ul><li><strong>BDD@2</strong> — <code>sysml.block</code> gains a «block» keyword header and named</li></ul>
-<p>  compartments: fields carry <code>x_block: { compartment: values|parts|   references|operations|constraints }</code> (<code>DDN-PJ186</code> on other owners). Value   rows display units from <code>x_unit: { unit: &quot;L/min&quot; }</code>, resolved against the   new units registry <code>standard/registry/units.json</code> (~40 SI/derived units   with symbol, name, quantity kind; <code>DDN-PJ188</code> on unknown symbols or   quantity mismatches). Composition (<code>sysml.composition</code>) and generalization   (<code>uml.generalization</code>) connect block-family kinds (<code>DDN-PJ190</code>). New kinds:   <code>sysml.valuetype</code> («valueType»), <code>sysml.interfaceblock</code> («interfaceBlock»),   <code>sysml.flowspec</code> («flowSpecification»; flow properties are <code>ports {}</code>   members with direction — the @2 profiles admit ports on interface blocks   and flow specifications, <code>DDN-PJ121</code>).</p>
+<p> compartments: fields carry <code>x_block: { compartment: values|parts|  references|operations|constraints }</code> (<code>DDN-PJ186</code> on other owners). Value  rows display units from <code>x_unit: { unit: &quot;L/min&quot; }</code>, resolved against the  new units registry <code>standard/registry/units.json</code> (~40 SI/derived units  with symbol, name, quantity kind; <code>DDN-PJ188</code> on unknown symbols or  quantity mismatches). Composition (<code>sysml.composition</code>) and generalization  (<code>uml.generalization</code>) connect block-family kinds (<code>DDN-PJ190</code>). New kinds:  <code>sysml.valuetype</code> («valueType»), <code>sysml.interfaceblock</code> («interfaceBlock»),  <code>sysml.flowspec</code> («flowSpecification»; flow properties are <code>ports {}</code>  members with direction — the @2 profiles admit ports on interface blocks  and flow specifications, <code>DDN-PJ121</code>).</p>
 <ul><li><strong>IBD@2</strong> — port members carry `x_port: { type: proxy|full, conjugated?,</li></ul>
-<p>  multiplicity?, nested? }<code>: the renderer draws the full port filled, the   proxy port hollow, a </code>~<code> for conjugation, a </code>[1..2]<code> multiplicity label and   nested ports as sub-squares on the port square (</code>DDN-PJ187<code>). Item flows   keep the </code>sysml.flow<code> verb; endpoints are blocks or their ports   (</code>DDN-PJ191`).</p>
+<p> multiplicity?, nested? }<code>: the renderer draws the full port filled, the  proxy port hollow, a </code>~<code> for conjugation, a </code>[1..2]<code> multiplicity label and  nested ports as sub-squares on the port square (</code>DDN-PJ187<code>). Item flows  keep the </code>sysml.flow<code> verb; endpoints are blocks or their ports  (</code>DDN-PJ191`).</p>
 <ul><li><strong>Parametric@2</strong> — the exactly-two-bindings rule (<code>DDN-PJ122</code>) stays the</li></ul>
-<p>  <code>@1</code> contract; <code>@2</code> admits one or more bindings (<code>DDN-PJ189</code> on zero) and   renders constraint parameters as a compartment with units.</p>
+<p> <code>@1</code> contract; <code>@2</code> admits one or more bindings (<code>DDN-PJ189</code> on zero) and  renders constraint parameters as a compartment with units.</p>
 <ul><li><strong>Package diagram</strong> (<code>sysml.package@1</code>) — thin over <code>uml.package</code> with</li></ul>
-<p>  <code>uml.import</code>/<code>uml.access</code>/<code>uml.merge</code>.</p>
+<p> <code>uml.import</code>/<code>uml.access</code>/<code>uml.merge</code>.</p>
 <ul><li><strong>Behavioral rebadges</strong> — <code>sysml.usecase@1</code>, <code>sysml.activity@1</code>,</li></ul>
-<p>  <code>sysml.sequence@1</code>, <code>sysml.statemachine@1</code> alias the completed   <code>uml.usecase@3</code>/<code>uml.activity@2</code>/<code>uml.sequence@2</code>/<code>uml.statemachine@1</code>   machinery (validators and renderer fire for the SysML ids; an info   diagnostic <code>DDN-PJW06</code> records the rebadge). SysML-specific extension:   <code>x_flow: { rate?, probability?, continuous? }</code> on <code>uml.flow</code> edges under   <code>sysml.activity@1</code> renders <code>{rate = 10 L/min, continuous, probability =   0.9}</code> on the edge label (<code>DDN-PJ191</code> elsewhere); streaming pins reuse   <code>x_pin</code>.</p>
+<p> <code>sysml.sequence@1</code>, <code>sysml.statemachine@1</code> alias the completed  <code>uml.usecase@3</code>/<code>uml.activity@2</code>/<code>uml.sequence@2</code>/<code>uml.statemachine@1</code>  machinery (validators and renderer fire for the SysML ids; an info  diagnostic <code>DDN-PJW06</code> records the rebadge). SysML-specific extension:  <code>x_flow: { rate?, probability?, continuous? }</code> on <code>uml.flow</code> edges under  <code>sysml.activity@1</code> renders <code>{rate = 10 L/min, continuous, probability =  0.9}</code> on the edge label (<code>DDN-PJ191</code> elsewhere); streaming pins reuse  <code>x_pin</code>.</p>
 <p>Fixtures: <code>website/examples/basics/84-sysml-requirements.ddn</code>, <code>85-sysml-blocks.ddn</code>, <code>86-sysml-behavioral.ddn</code>; tests <code>notation/tests/sysml-compliance.js</code> + the <code>sysml-showcase.js</code> sweep (one check+render per family). Out of scope, declared in the profiles: SysML XMI interchange, SysML 2.0, constraint/flow-property evaluation, formal OMG certification.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>

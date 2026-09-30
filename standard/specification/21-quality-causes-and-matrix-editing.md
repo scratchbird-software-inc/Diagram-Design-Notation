@@ -8,10 +8,10 @@
 
 ```ddn
 projection {
-    kind: fishbone;
-    profile: "fishbone.basic@1";
-    effect: @m.causes.effect;
-    relation: "quality.cause";
+ kind: fishbone;
+ profile: "fishbone.basic@1";
+ effect: @m.causes.effect;
+ relation: "quality.cause";
 }
 ```
 
@@ -29,14 +29,14 @@ The existing matrix planner derives each cell from a relationship kind and row/c
 
 ```ddn
 projection {
-    kind: matrix;
-    profile: "matrix.heatmap@1";
-    rows: [@m.responsibilities.inspect, @m.responsibilities.contain];
-    columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b];
-    relation: assoc;
-    value: "x_record.score";
-    write_data: @m.responsibilities;
-    encoding: {mode: numeric, domain: [0, 10], palette: blue};
+ kind: matrix;
+ profile: "matrix.heatmap@1";
+ rows: [@m.responsibilities.inspect, @m.responsibilities.contain];
+ columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b];
+ relation: assoc;
+ value: "x_record.score";
+ write_data: @m.responsibilities;
+ encoding: {mode: numeric, domain: [0, 10], palette: blue};
 }
 ```
 
@@ -56,12 +56,12 @@ A matrix view may select `write_data`, a reference to a shared data block explic
 
 ```javascript
 DDNLive.authoring.setMatrixCell(workspace, "views.ddn", "raci",
-    rowId, columnId, "C");
+ rowId, columnId, "C");
 DDNLive.authoring.setMatrixCell(workspace, "views.ddn", "raci",
-    rowId, columnId, null, {remove: true});
+ rowId, columnId, null, {remove: true});
 DDNLive.authoring.setMatrixCells(workspace, "views.ddn", "raci", [
-    {row: taskId, column: oldOwnerId, value: "C"},
-    {row: taskId, column: newOwnerId, value: "A"}
+ {row: taskId, column: oldOwnerId, value: "C"},
+ {row: taskId, column: newOwnerId, value: "A"}
 ]);
 ```
 

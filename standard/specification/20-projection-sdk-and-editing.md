@@ -14,7 +14,7 @@ const result = workspace.renderSync({entry:'views.ddn', view:'chart_bar'});
 const externalSpec = workspace.exportVegaLite({entry:'views.ddn', view:'chart_bar'});
 
 const diagram = DDNLive.mount(container, {
-    workspace, entry:'views.ddn', view:'chart_bar'
+ workspace, entry:'views.ddn', view:'chart_bar'
 });
 await diagram.setOptions({mark:'donut', theme:'night'});
 ```
@@ -33,9 +33,9 @@ The inspector can edit scalar `x_record` properties and existing `x_assignment.c
 
 ```javascript
 DDNLive.authoring.setRecordValue(workspace, 'views.ddn', 'chart_bar',
-    'meridian.procurement.review::facts.m1', 'value', 840);
+ 'meridian.procurement.review::facts.m1', 'value', 840);
 DDNLive.authoring.setAssignment(workspace, 'views.ddn', 'raci',
-    'meridian.procurement.review::responsibilities.post_c', 'I');
+ 'meridian.procurement.review::responsibilities.post_c', 'I');
 ```
 
 Guided changes validate against the current view before commit. They preserve unrelated source spans and comments, but replacing a structured literal may reformat that literal and does not guarantee preservation of comments within it. Other dependent views validate on subsequent render. A complete multi-view transactional consistency engine and semantic identifier refactoring remain future work.

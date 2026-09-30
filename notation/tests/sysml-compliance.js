@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-065: SysML 1.6 compliance fixtures (RFC-128). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-065: SysML 1.6 compliance fixtures . */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";

@@ -68,7 +68,7 @@ Geography data is separate from the bundles: `assets/geo/world-110m.json`
 (Natural Earth 110m country boundaries, ~96 KB, inside the ~100 KB budget,
 built by `tools/build-geo-assets.mjs`) is an optional asset file. A view names
 it with `geography:"assets/geo/world-110m.json"` or binds inline GeoJSON with
-`geography: @data.record` (self-contained files, RFC-117 ethos). Rendering is
+`geography: @data.record` (self-contained files, ethos). Rendering is
 synchronous, so URL/name geographies must be registered by the host first:
 `DDNGeo.registerGeography(name, geojson)` (fetch first, register, re-render).
 The reference CLI pre-registers `assets/geo/world-110m.json` under both that

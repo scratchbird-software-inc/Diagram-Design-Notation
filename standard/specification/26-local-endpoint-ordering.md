@@ -31,18 +31,18 @@ are errors. The API overlay `endpointOrdering` accepts `source`, `optimize`, or
 ## Procedure
 
 1. Partition attachments by compatible side/row. Establish deterministic slots;
-   order free slots by the opposite endpoint's row centre or object centre.
-   Fixed entries keep their assignment.
+ order free slots by the opposite endpoint's row centre or object centre.
+ Fixed entries keep their assignment.
 2. Route using the existing obstacle, label, and endpoint checks. Evaluate the
-   actual rendered path samples, not just endpoint-to-endpoint chords.
+ actual rendered path samples, not just endpoint-to-endpoint chords.
 3. Identify crossing relations incident on a common element; prioritize crossings
-   close to that element. Propose compatible pairwise permutations. For different
-   rows, retain the rows and try legal side combinations instead.
+ close to that element. Propose compatible pairwise permutations. For different
+ rows, retain the rows and try legal side combinations instead.
 4. Accept only a feasible reroute that improves the crossing/length criterion.
-   The route-length increase per accepted trial is bounded, and cumulative length
-   is bounded relative to the pass's input. No element moves during this pass.
+ The route-length increase per accepted trial is bounded, and cumulative length
+ is bounded relative to the pass's input. No element moves during this pass.
 5. Run this before permitted free-node moves; recheck after accepted node moves.
-   Residual crossings retain their declared gap/jump representation and warning.
+ Residual crossings retain their declared gap/jump representation and warning.
 
 This local pass uses at most 32 trials for up to 16 relations, 12 for up to 48,
 and 4 for up to 96; larger inputs retain geometric initial ordering but skip the

@@ -36,35 +36,35 @@
 <h2>2. Reusable policy and view composition</h2>
 <p>A reusable format concern can contain:</p>
 <pre><code>format styles {
-    layout concept_map {
-        algorithm: mindmap;
-        routing: curved;
-        curve: bezier;
-        curve_tension: 0.5;
-        crossings: gap;
-        gap: 150px;
-        row_gap: 100px;
-    }
+ layout concept_map {
+ algorithm: mindmap;
+ routing: curved;
+ curve: bezier;
+ curve_tension: 0.5;
+ crossings: gap;
+ gap: 150px;
+ row_gap: 100px;
+ }
 }</code></pre>
 <p>An existing view selects it with <code>layout: @styles.concept_map;</code>. The view can separately identify its root and hierarchy relation kinds. The policy references no copied model. <code>algorithm: mindmap</code> and <code>routing: curved</code> are independent: selecting the placement algorithm does not silently overwrite an explicitly chosen route geometry.</p>
 <p>In a view's <code>layout</code> override, authors can instead write:</p>
 <pre><code>layout {
-    routing: curved;
-    curve: rounded;
-    curve_radius: 36px;
+ routing: curved;
+ curve: rounded;
+ curve_radius: 36px;
 }</code></pre>
 <p>The <code>bezier</code> family prefers a broad cubic from a source port to a destination port with correctly aligned endpoint tangents. When obstacles, labels, self-relations, or explicit guides require a detour, it uses a checked piecewise-cubic corridor spline. The selected strategy is recorded in scene metadata.</p>
 <p>The <code>rounded</code> family keeps the corridor route but replaces bends with cubic corner transitions. It is deliberately different from a broad mind-map branch. <code>curve_radius</code> is a requested maximum corner-rounding reach, clamped by adjacent segment lengths and reduced when needed for clearance. A reduction is recorded; the requested radius is not a promise of a minimum physical radius.</p>
 <h2>3. Per-relation refinement</h2>
 <p>The same four geometry properties are permitted in an existing view's route hint:</p>
 <pre><code>route @model.receipt_flow {
-    routing: curved;
-    curve: bezier;
-    curve_tension: 0.6;
+ routing: curved;
+ curve: bezier;
+ curve_tension: 0.6;
 }
 
 route @model.foreign_reference {
-    routing: orthogonal;
+ routing: orthogonal;
 }</code></pre>
 <p>These are presentation overrides. They do not change the corresponding data declarations. Direct route properties override the shared layout policy for that one appearance. <code>via</code> remains an optional rectilinear corridor guide, not a list of Bézier control points. It is rounded after route repair/validation; exact unrounded passage through a bend is not implied by curve mode. A <code>strict</code> route policy rejects an unsafe or nonorthogonal guide. General arbitrary control-handle editing is not part of this draft.</p>
 <table><thead><tr><th>Property</th><th>Default</th><th>Allowed values</th></tr></thead><tbody><tr><td><code>layout.routing</code></td><td><code>orthogonal</code></td><td><code>straight</code>, <code>orthogonal</code>, <code>curved</code></td></tr><tr><td><code>layout.curve</code></td><td><code>bezier</code></td><td><code>bezier</code>, <code>rounded</code></td></tr><tr><td><code>layout.curve_tension</code></td><td><code>0.5</code></td><td>A finite number greater than zero and no greater than one.</td></tr><tr><td><code>layout.curve_radius</code></td><td><code>32px</code></td><td>A positive length no greater than 1,000px after unit conversion.</td></tr></tbody></table>
@@ -83,18 +83,18 @@ route @model.foreign_reference {
 <p>SVG path data uses cubic <code>C</code> commands and straight <code>L</code> commands. Source grammar does not require authors to type these vector coordinates. SVG itself defines these path primitives; DDN supplies routing and semantic rules above them. [S12]</p>
 <p>A curved scene route includes:</p>
 <pre><code>{
-  &quot;routing&quot;: &quot;curved&quot;,
-  &quot;strategy&quot;: &quot;direct-bezier&quot;,
-  &quot;flattenTolerance&quot;: 0.18,
-  &quot;commands&quot;: [
-    {
-      &quot;kind&quot;: &quot;cubic&quot;,
-      &quot;from&quot;: [100, 100],
-      &quot;c1&quot;: [200, 100],
-      &quot;c2&quot;: [250, 250],
-      &quot;to&quot;: [350, 250]
-    }
-  ]
+ &quot;routing&quot;: &quot;curved&quot;,
+ &quot;strategy&quot;: &quot;direct-bezier&quot;,
+ &quot;flattenTolerance&quot;: 0.18,
+ &quot;commands&quot;: [
+ {
+ &quot;kind&quot;: &quot;cubic&quot;,
+ &quot;from&quot;: [100, 100],
+ &quot;c1&quot;: [200, 100],
+ &quot;c2&quot;: [250, 250],
+ &quot;to&quot;: [350, 250]
+ }
+ ]
 }</code></pre>
 <p>This is an excerpt, not a complete scene record. Stable relation ID, endpoint-side information, label bounds, and an adaptively sampled <code>points</code> path remain available. <code>commands</code> is the canonical analytic shape for a curved route; <code>points</code> is an inspection/routing approximation, not a different relationship. The scene schema defines line and cubic command variants. Consumers must not treat sampled sloping segments as orthogonality failures on a route explicitly marked curved.</p>
 <p>Endpoint marks are oriented from the exact first/last control tangents, not from a distant box center. Legends, semantic hashes, member references and source navigation remain unchanged. Publication guards include the routed drawing and the final text scale; requesting curved routes does not waive paper readability.</p>

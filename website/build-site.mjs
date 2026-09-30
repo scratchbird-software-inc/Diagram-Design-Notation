@@ -396,7 +396,7 @@ const homeCards = [
   ['gallery/index.html', 'Gallery — full notation coverage and every example', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + '), variation sheets (every chart mark flat and isometric, look × palette, routing × style, layout algorithm, spacing level), and the complete example corpus — every runnable .ddn the project ships — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
   ['tools/index.html?mode=design', 'Designer — the tool in design mode', 'The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.', 'standalone · no server'],
   ['tools/index.html', 'Unified diagram tool', 'One page for viewing, exploring, editing and designing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets — view, explore, edit, design), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.', 'standalone · no server'],
-  ['standard/index.html', 'The open standard', SPEC_CHAPTER_COUNT + ' specification chapters, the EBNF grammar, JSON schemas, governance RFCs, and the machine-readable registry.', 'rendered from Markdown'],
+  ['standard/index.html', 'The open standard', SPEC_CHAPTER_COUNT + ' specification chapters, the EBNF grammar, JSON schemas, the versioning policy, and the machine-readable registry.', 'rendered from Markdown'],
 ];
 
 writeOut('index.html', shell({
@@ -524,12 +524,11 @@ writeOut('docs/index.html', page('../', 'docs', 'Documentation — DDN',
 // Standard landing.
 writeOut('standard/index.html', page('../', 'standard', 'The DDN standard — DDN',
   '<h1 class="page-title">The Diagram Design Notation standard</h1>\n' +
-  '<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>\n' +
+  '<p class="lede">A proposed open standard, pre-1.0: specification chapters, the versioning policy, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>\n' +
   '<h2>Specification (' + SPEC_CHAPTER_COUNT + ' chapters)</h2>\n' +
   docList(path.join(REPO, 'standard/specification'), 'standard/specification', 'specification/') +
   '<h2>Governance</h2>\n' +
   '<ul>\n  <li><a href="governance/VERSIONING.html">Versioning policy</a></li>\n  <li><a href="governance/RFC-TEMPLATE.html">RFC template</a></li>\n</ul>\n' +
-  '<h2>RFCs</h2>\n' + docList(path.join(REPO, 'standard/governance/rfcs'), 'standard/governance/rfcs', 'governance/rfcs/') +
   '<h2>Notation plates</h2>\n<p><a href="../plates/index.html">SVG plates of the full vocabulary</a> — object kinds, facets, relationship families, looks, and routing.</p>'));
 
 /* B1-053 addendum (D7): the examples browser is retired — the gallery now

@@ -1,7 +1,6 @@
 # 41. Wireframe stencil profile (`wireframe.ui@1`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-115
-(`standard/governance/rfcs/RFC-115-wireframes.md`). Source grammar remains
+Status: implemented in runtime 0.7.0. Source grammar remains
 DDN 0.5; the profile and its kinds are registry entries, so this chapter
 is a semantic addition, not a grammar change.
 
@@ -20,11 +19,11 @@ Seven profile kinds, all family `interface`, fallback `application`, glyph
 - `ui.input` (`rect`, `UI_INPUT`) — a text input box.
 - `ui.button` (`round`, `UI_BUTTON`) — a button.
 - `ui.image` (`rect`, `UI_IMAGE`) — an image placeholder; its content is
-  the object's label text (no image fetching — the runtime never
-  fetches).
+ the object's label text (no image fetching — the runtime never
+ fetches).
 - `ui.checkbox` (`rect`, `UI_CHECKBOX`) — a checkbox.
 - `ui.list` (`rect`, `UI_LIST`) — a list; shows its label plus field rows
-  when fields are declared.
+ when fields are declared.
 
 No new verbs (links, if any, use the core `assoc` relation) and no
 extension properties.
@@ -51,7 +50,7 @@ sketching workflow, while silence would hide a real organisational smell.
 
 Warnings are ordinary diagnostics with `severity:'warning'`. They travel
 in `ir.diagnostics` (the profile validator collects and returns them;
-`build()` pushes them into the IR) and surface in two places: the CLI
+`build` pushes them into the IR) and surface in two places: the CLI
 `check` command prints them as the JSON `warnings` array
 (`{status:'pass-core', …, warnings: ir.diagnostics}`), and the SDK
 `renderSync` result carries them in its `diagnostics[]` array. Thrown

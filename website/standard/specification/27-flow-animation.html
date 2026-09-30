@@ -37,20 +37,20 @@
 <h2>Flow blocks (D3)</h2>
 <p>A view-level <code>flow</code> block declares a step-traceable multi-hop sequence:</p>
 <pre><code>flow trace &quot;Order path&quot; {
-    steps: @model.client -&gt; @model.service -&gt; @model.orders;
-    marker: square; marker_color: &quot;#d40000&quot;; speed: 90; rate: 2;
+ steps: @model.client -&gt; @model.service -&gt; @model.orders;
+ marker: square; marker_color: &quot;#d40000&quot;; speed: 90; rate: 2;
 }</code></pre>
 <p>Steps reference declared elements. Each hop resolves to the existing visible relation between consecutive elements, following the relation's declared direction; a hop without one raises <code>DDN-E013</code>, as does a step that is not a selected element. Multiple flows per view are allowed. A flow renders its own marker travelling the concatenated hop route paths in one cycle: every hop marker owns its hop's path and shares the flow cycle duration, confined to its hop window by <code>keyTimes</code> and a discrete opacity animation, so the chain reads as a single marker hopping element to element.</p>
 <h2>Renderer contract (D4)</h2>
 <p>Markers carry stable hooks for controllers: motion groups are <code>g.ddn-motion[data-relation][data-hop][data-hop-start][data-hop-end][data-dur]</code>; flow groups are <code>g.ddn-flow.ddn-flow-&lt;local&gt;[data-flow][data-dur]</code> with per-hop <code>g.ddn-flow-hop[data-hop][data-hop-start][data-hop-end]</code> children. Hop boundary times are route-length/speed derived by the renderer and exposed on those attributes. Export SVG (tool export and CLI render) includes animation by default; the <code>--no-motion</code> CLI flag, the tool's &quot;Include animation&quot; export toggle, and the <code>noMotion</code> render option strip animation for print/static targets as a render option, never by text munging.</p>
 <h2>Tool playback controls (D5)</h2>
 <p>The unified tool (<code>notation/tool/</code>) carries an Animation drawer — a first-class drawer in the drawers configuration (open/closed/none, <code>?drawers=</code>, mode presets) with an icon in the toolbar. The icon is hidden when the rendered view contains no motion; the drawer then shows &quot;No animation in this view&quot;. Controls:</p>
-<ul><li>start/stop via SMIL <code>pauseAnimations()</code>/<code>unpauseAnimations()</code>; default is</li></ul>
-<p>  playing and the pause choice is remembered in memory for the session only;</p>
+<ul><li>start/stop via SMIL <code>pauseAnimations</code>/<code>unpauseAnimations</code>; default is</li></ul>
+<p> playing and the pause choice is remembered in memory for the session only;</p>
 <ul><li>step: pauses and advances the selected flow exactly one hop, or — for plain</li></ul>
-<p>  <code>motion</code> relations without flows — one full traversal of the longest route.   Implemented by seeking with <code>setCurrentTime</code> to the route-length-derived hop   boundaries read from the <code>data-hop</code> attributes;</p>
+<p> <code>motion</code> relations without flows — one full traversal of the longest route.  Implemented by seeking with <code>setCurrentTime</code> to the route-length-derived hop  boundaries read from the <code>data-hop</code> attributes;</p>
 <ul><li>a speed multiplier (0.5×/1×/2×/4×) implemented by re-setting the SMIL <code>dur</code></li></ul>
-<p>  attributes from cached base durations — chosen over <code>setCurrentTime</code> scaling   because it survives re-renders and needs no per-frame controller loop; the   playhead is not rescaled;</p>
+<p> attributes from cached base durations — chosen over <code>setCurrentTime</code> scaling  because it survives re-renders and needs no per-frame controller loop; the  playhead is not rescaled;</p>
 <ul><li>a flow selector, shown when more than one flow exists.</li></ul>
 <h2>Accessibility and print (D8)</h2>
 <p>The tool respects <code>prefers-reduced-motion</code> by auto-pausing playback at load; the user can still press Play, and that session choice then wins until reload. Print and other static targets are served by the static <code>--no-motion</code> export.</p>

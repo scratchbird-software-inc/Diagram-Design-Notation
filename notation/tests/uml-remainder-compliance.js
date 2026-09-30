@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-061 (RFC-125): UML 2.5.1 remainder fixtures. */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-061 : UML 2.5.1 remainder fixtures. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";

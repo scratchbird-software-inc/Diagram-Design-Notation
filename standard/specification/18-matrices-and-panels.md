@@ -9,12 +9,12 @@ A matrix projection declares ordered `rows`, ordered `columns`, `relation` and `
 
 ```ddn
 projection responsibilities {
-    kind: matrix;
-    profile: "matrix.raci@1";
-    rows: [@process.order, @process.receive];
-    columns: [@roles.buyer, @roles.manager, @roles.warehouse];
-    relation: "analysis.assignment";
-    value: "x_assignment.code";
+ kind: matrix;
+ profile: "matrix.raci@1";
+ rows: [@process.order, @process.receive];
+ columns: [@roles.buyer, @roles.manager, @roles.warehouse];
+ relation: "analysis.assignment";
+ value: "x_assignment.code";
 }
 ```
 
@@ -22,8 +22,8 @@ The referenced assignments are ordinary shared semantic relationships:
 
 ```ddn
 relation order_owner "Own purchase approval" @process.order -> @roles.manager {
-    kind: "analysis.assignment";
-    x_assignment: { code: "A" };
+ kind: "analysis.assignment";
+ x_assignment: { code: "A" };
 }
 ```
 

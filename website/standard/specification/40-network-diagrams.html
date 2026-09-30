@@ -26,23 +26,23 @@
 <main class="site-main">
 <article class="md-body">
 <h1>40. Network/bus and rack profiles (<code>network.basic@1</code>, <code>network.rack@1</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-114 (<code>standard/governance/rfcs/RFC-114-network.md</code>). Source grammar remains DDN 0.5; the profiles, kinds, verb, glyphs and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; the profiles, kinds, verb, glyphs and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
 <p>Small network overviews (a bus with attached devices) and rack elevations are everyday infrastructure sketches. Both profiles run on the existing <code>graph</code> projection. Users write <code>projection { kind:graph; profile:&quot;network.basic@1&quot;; }</code> (or <code>&quot;network.rack@1&quot;</code>). This is profile-level notation coverage, not a network-management or cloud-provider notation.</p>
 <h2>Metamodel</h2>
 <ul><li><code>network.bus</code> — a bus segment (silhouette <code>rect</code>, fallback <code>network</code>,</li></ul>
-<p>  family <code>deployment</code>, code <code>BUS</code>, glyph <code>network-bus</code>). The bus is an   ordinary node kind: the author sizes it (a wide thin rect) with   <code>place … { size:[w,h]; }</code>.</p>
+<p> family <code>deployment</code>, code <code>BUS</code>, glyph <code>network-bus</code>). The bus is an  ordinary node kind: the author sizes it (a wide thin rect) with  <code>place … { size:[w,h]; }</code>.</p>
 <ul><li><code>network.switch</code> (silhouette <code>rect</code>, fallback <code>router</code>, family</li></ul>
-<p>  <code>deployment</code>, code <code>SWITCH</code>, glyph <code>network-switch</code>).</p>
+<p> <code>deployment</code>, code <code>SWITCH</code>, glyph <code>network-switch</code>).</p>
 <ul><li><code>network.server</code> (silhouette <code>rect</code>, fallback <code>host</code>, family</li></ul>
-<p>  <code>deployment</code>, code <code>SERVER</code>, glyph <code>network-server</code>).</p>
+<p> <code>deployment</code>, code <code>SERVER</code>, glyph <code>network-server</code>).</p>
 <ul><li><code>network.rack</code> (silhouette <code>rect</code>, fallback <code>device</code>, family</li></ul>
-<p>  <code>deployment</code>, code <code>RACK</code>, glyph <code>network-rack</code>).</p>
+<p> <code>deployment</code>, code <code>RACK</code>, glyph <code>network-rack</code>).</p>
 <ul><li><code>network.attaches</code> — attachment verb (&quot;attaches to&quot;, family</li></ul>
-<p>  <code>structural</code>, code <code>ATTACHES</code>, <code>start:'none'</code>, <code>end:'none'</code>,   <code>source:['<em>']</code>, <code>target:['</em>']</code>, <code>allow_self:false</code>,   <code>member_endpoints:true</code>). An attachment may target a bus element or a   port member on any element.</p>
+<p> <code>structural</code>, code <code>ATTACHES</code>, <code>start:'none'</code>, <code>end:'none'</code>,  <code>source:['<em>']</code>, <code>target:['</em>']</code>, <code>allow_self:false</code>,  <code>member_endpoints:true</code>). An attachment may target a bus element or a  port member on any element.</p>
 <ul><li><code>x_rack</code> — registered extension on objects:</li></ul>
-<p>  <code>{ &quot;type&quot;:&quot;object&quot;, &quot;properties&quot;:{ &quot;units&quot;:{ &quot;type&quot;:&quot;integer&quot;, &quot;minimum&quot;:1 }, &quot;unit&quot;:{ &quot;type&quot;:&quot;integer&quot;, &quot;minimum&quot;:1 } }, &quot;additionalProperties&quot;:false }</code>.   <code>units</code> on the rack is its total U height; <code>unit</code> on a device is its   lowest slot. Malformed values are rejected by the schema contract   (<code>DDN105</code>).</p>
+<p> <code>{ &quot;type&quot;:&quot;object&quot;, &quot;properties&quot;:{ &quot;units&quot;:{ &quot;type&quot;:&quot;integer&quot;, &quot;minimum&quot;:1 }, &quot;unit&quot;:{ &quot;type&quot;:&quot;integer&quot;, &quot;minimum&quot;:1 } }, &quot;additionalProperties&quot;:false }</code>.  <code>units</code> on the rack is its total U height; <code>unit</code> on a device is its  lowest slot. Malformed values are rejected by the schema contract  (<code>DDN105</code>).</p>
 <h2>The bus is a declared node, not routing geometry</h2>
-<p>This item deliberately does not touch the routing junction machinery. The router still rejects <code>layout.junctions!=='explicit'</code> and <code>shared_segments!=='forbidden'</code> (<code>DDN046</code>; spec 05, spec 13): arbitrary routing-geometry bus/junction networks remain outside this release. The bus here is an ordinary node with declared many-to-one <code>network.attaches</code> relations — membership is declared data, not shared-trunk geometry. The <code>capabilities.json</code> <code>unsupported[]</code> line <code>native bus/junction-network drawing</code> was removed by RFC-114 for exactly this reason: the declared-node form is now covered, while routing-geometry junction networks stay rejected.</p>
+<p>This item deliberately does not touch the routing junction machinery. The router still rejects <code>layout.junctions!=='explicit'</code> and <code>shared_segments!=='forbidden'</code> (<code>DDN046</code>; spec 05, spec 13): arbitrary routing-geometry bus/junction networks remain outside this release. The bus here is an ordinary node with declared many-to-one <code>network.attaches</code> relations — membership is declared data, not shared-trunk geometry. The <code>capabilities.json</code> <code>unsupported[]</code> line <code>native bus/junction-network drawing</code> was removed by for exactly this reason: the declared-node form is now covered, while routing-geometry junction networks stay rejected.</p>
 <h2>The attachment rule (<code>DDN-PJ127</code>)</h2>
 <p>Under either profile, every visible <code>network.attaches</code> relation must TARGET a <code>network.bus</code> element or a port member (<code>to.member</code> set). Anything else — for example an element-level edge to a switch or server — is rejected as <code>DDN-PJ127</code>; the message names the relation and the rule.</p>
 <h2>The rack slot rule (<code>DDN-PJ127</code>)</h2>

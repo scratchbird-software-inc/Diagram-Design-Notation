@@ -59,7 +59,7 @@ function measureNode(n,registry,profiles,placement={},context={}){
   let h=(labelLines.length*18+detailLines.length*16+10)*s;h=Math.max(h,(context.degrees?.[f.id]||1)*18+10,(context.degrees?.[f.id]||1)>2?(context.degrees[f.id]*40+10):0);
   rows.push({id:f.id,field:f,top:y,h,labelLines,detailLines,depth});y+=h;
  }
- /* B1-061 (RFC-125): packaged-element visibility prefix. */
+ /* B1-061 : packaged-element visibility prefix. */
  if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
  let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=Text.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
  let noteLines=[];if(k.shape==='note'&&n.properties.description){noteLines=Text.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
@@ -99,11 +99,11 @@ function renderNode(g,p,theme,registry){
     .replace(/\bviewBox="[^"]*"/,'');
    shaped=shaped.slice(0,-4)+`<g class="ddn-icon" data-icon="${esc(xi.library+'/'+xi.icon)}">`+inner+'</g></g>';
   }
- 
+
   /* B1-076: C4 tag chip under the node (any silhouette, decorator layer). */
   if(g.n.properties.x_c4tag?.tags?.length&&p.detail!=='shapes'){const tg=g.n.properties.x_c4tag.tags.join(', ');shaped=shaped.slice(0,-4)+`<g class="ddn-c4tag">`+text(g.x+g.w/2,g.y+g.h-6*g.scale,'['+tg+']',10*g.scale,theme.muted,500,'text-anchor="middle" font-style="italic"')+'</g></g>';}
   if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
-  /* B1-074 (RFC-132): frozen drill-down — embed the stored snapshot verbatim
+  /* B1-074 : frozen drill-down — embed the stored snapshot verbatim
    * through the same namespacing pass; the child is never re-rendered. */
   const xf=g.n.properties.x_subdiagram?.frozen===true?g.n.properties.x_subdiagram:null;
   if(xf){
@@ -121,7 +121,7 @@ function renderNode(g,p,theme,registry){
    inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
    inner=inner.replace(/<svg /,`<svg x="${fmt(g.x+(g.w-cw2)/2)}" y="${fmt(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt(cw2)}" height="${fmt(ch2)}"`);
    shaped=shaped.slice(0,-4)+`<g class="ddn-io-inline" data-view="${esc(c.scene.projection?.profile||'')}">`+inner+'</g></g>';}
-  /* B1-061 (RFC-125): interaction-use gates (border squares) and arguments. */
+  /* B1-061 : interaction-use gates (border squares) and arguments. */
   const xu=g.n.properties?.x_use;
   if(xu){const s2=g.scale;
    if(xu.arguments?.length)shaped=shaped.slice(0,-4)+`<g class="ddn-io-arguments">`+text(g.x+g.w/2,g.y+g.h-8*s2,'('+xu.arguments.join(', ')+')',11*s2,theme.muted,500,'text-anchor="middle"')+'</g></g>';
@@ -198,7 +198,7 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  else if(type==='slash')s+=`<path d="M-9 -6L-3 6" stroke-width="2.4"/>`;
  else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc(surface)}"/>`;
  else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
- else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc(surface)}"/>`; /* B1-066 (RFC-129): DMN authority requirement */
+ else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc(surface)}"/>`; /* B1-066 : DMN authority requirement */
  else if(type==='xcircle')s+=`<circle cx="-9" cy="0" r="6" fill="${esc(surface)}"/><path d="M-12 -3L-6 3M-6 -3L-12 3"/>`; /* B1-080: ORM exclusion */
  else if(['one','zeroone','many','zeromany'].includes(type)){
   if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
@@ -235,7 +235,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(!Layout||!Text||!Export)throw new DDN.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
  const textBefore=Text.stats();
- /* B1-074 (RFC-132): options.detail — 'full' (default) renders text as
+ /* B1-074 : options.detail — 'full' (default) renders text as
   * always; 'shapes' (drill-down thumbnails) suppresses every text run. */
  const p={...ir.view.profiles,detail:options.detail||'full'},t=themes[p.style.theme],mono=p.style.theme==='neutral';
  /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
@@ -253,19 +253,19 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
- /* B1-061 (RFC-125): interaction-overview inline expansion. Child views render
+ /* B1-061 : interaction-overview inline expansion. Child views render
   * through the same recursive render() as inline subdiagrams; the owning node
   * grows to fit. */
  const ioChildren=ir.view.ioChildren||{};
  for(const g of geoms){const child=ioChildren[g.id];if(!child)continue;
-  /* B1-074 (RFC-132): display:'thumbnail' renders the child in shapes detail
+  /* B1-074 : display:'thumbnail' renders the child in shapes detail
    * (silhouettes/edges/frames/ports, no text). */
   const thumb=g.n.properties.x_subdiagram?.display==='thumbnail'||g.n.properties.x_subdiagram?.frozen===true;
   const c=render(child,registry,glyphDefs,thumb?{...options,detail:'shapes'}:options),s=q(p.style.font_size,16)/16;
   const cw=Math.min(360*s,c.scene.width),ch=Math.min(200*s,c.scene.height);
   g.ioChild={scene:c,svg:c.svg};g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
  }
- /* B1-074 (RFC-132): frozen nodes carry their snapshot instead of a live
+ /* B1-074 : frozen nodes carry their snapshot instead of a live
   * child — grow the node around the snapshot's declared size the same way. */
  for(const g of geoms){const xf=g.n.properties.x_subdiagram;if(xf?.frozen!==true)continue;
   const s=q(p.style.font_size,16)/16;
@@ -273,7 +273,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const cw=Math.min(360*s,wm?parseFloat(wm[1]):360*s),ch=Math.min(200*s,hm?parseFloat(hm[1]):200*s);
   g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
  }
- 
+
  if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q(p.publication.width,1280),reserve=legendPlacement==='right'?q(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+Layout.round(q(p.layout.gap,100)*Layout.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=Placement.place(geoms,rels,ir,options);geoms=placed.nodes;
  /* B1-063: BPMN boundary events attach to their host's bottom border (port
@@ -290,7 +290,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  let maxW=geoms.reduce((m,g)=>Math.max(m,g.w),270),maxH=geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
  let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
- // frame_overflow (RFC-118): expand grows a declared rect to enclose members
+ // frame_overflow : expand grows a declared rect to enclose members
  // at the standard padding; when members already fit this is a no-op.
  if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
  return{...f,x,y,w,h};});
@@ -357,7 +357,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(ladderRails)diagram+=`<g class="ddn-ladder-rails"><path d="M${fmt(ladderRails.x0)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/><path d="M${fmt(ladderRails.x1)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/></g>`;
  for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text(f.x+15,f.y+26,f.name,13,t.muted,650);
   if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;
-  /* B1-060 (RFC-124): interruptible activity region (dashed roundrect) and
+  /* B1-060 : interruptible activity region (dashed roundrect) and
    * structured/expansion region keyword. */
   if(f.x_interruptible===true)diagram+=`<rect data-interruptible="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="18" fill="none" stroke="${t.rule}" stroke-dasharray="7 5"/>`;
   if(f.x_structured?.mode)diagram+=text(f.x+15,f.y+46,'«'+f.x_structured.mode+'»',11,t.muted,650);
@@ -367,7 +367,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const routeColours={};
  const gensets=new Map();
  for(const a of routes){const colour=mono?'#383838':Palette.semantic(a.reg.colour,t);routeColours[a.id]=colour;
-  /* B1-055 (RFC-119): n-ary association — the binary route is suppressed and
+  /* B1-055 : n-ary association — the binary route is suppressed and
    * replaced by the UML diamond junction at the member centroid with one
    * straight spoke per end, each carrying its role/multiplicity labels. */
   const nary=a.r.properties.x_nary;
@@ -406,7 +406,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const tun=side=>{const xt=a.r.properties.x_tunnel||{};if(!xt[side])return false;return true;};
   diagram+=(tun('start')?tunnelMark(a.points[0],Layout.curveDirection(a,true),colour):endMark(a.points[0],Layout.curveDirection(a,true),startType,colour,t.surface))
    +(tun('end')?tunnelMark(a.points.at(-1),Layout.curveDirection(a),colour):endMark(a.points.at(-1),Layout.curveDirection(a),endType,colour,t.surface));
-  /* B1-060 (RFC-124): interrupting/exception edges draw a lightning-bolt
+  /* B1-060 : interrupting/exception edges draw a lightning-bolt
    * zigzag over the route (perpendicular jog per segment, alternating side). */
   if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){
    const bolt=[];let side=1;
@@ -414,7 +414,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     bolt.push(seg.a,[mx+nx*side,my+ny*side]);side=-side;}
    bolt.push(a.points.at(-1));
    diagram+=`<g data-lightning="${a.r.properties.x_exception===true?'exception':'interrupt'}"><path d="${pathD(bolt)}" fill="none" stroke="${esc(colour)}" stroke-width="1.7"/>`+endMark(a.points.at(-1),Layout.curveDirection(a),'filled',colour,t.surface)+'</g>';}
-  /* B1-055 (RFC-119): UML endpoint label slots. Role text sits above the line
+  /* B1-055 : UML endpoint label slots. Role text sits above the line
    * near the endpoint, multiplicity below it; a qualifier is the small rect at
    * the end. Angles point away from the endpoint along the route. */
   const el=a.r.properties.x_endlabels;
@@ -444,9 +444,9 @@ function renderInner(ir,registry,glyphDefs='',options={}){
      diagram+=`<g class="ddn-fbd-pin">`+text(pt[0]+(ep===a.r.from?-12*s:12*s),pt[1]+4*s,xf.type,9.5*s,colour,500,ep===a.r.from?'text-anchor="end"':'')+'</g>';
      if(xf.negated)diagram+=`<circle data-negated="true" cx="${fmt(pt[0])}" cy="${fmt(pt[1])}" r="${fmt(4*s)}" fill="${esc(t.surface)}" stroke="${esc(colour)}" stroke-width="1.5"/>`;
     }
-    /* B1-072 (RFC-130): SoaML «Service»/«Request» badge by the port square. */
+    /* B1-072 : SoaML «Service»/«Request» badge by the port square. */
     if(xs)diagram+=`<g class="ddn-port-label ddn-service-badge">`+text(pt[0]+12*s,pt[1]+16*s,'«'+(xs.kind==='service'?'Service':'Request')+'»',10*s,colour,600)+'</g>';
-    /* B1-065 (RFC-128): SysML port typing — «proxy»/«full» label, conjugation
+    /* B1-065 : SysML port typing — «proxy»/«full» label, conjugation
      * tilde, multiplicity, nested port sub-squares. */
     const portNote=[xo.conjugated?'~':'',member?.name||'',xo.multiplicity?' ['+xo.multiplicity+']':''].join('');
     if(xo.type||xo.conjugated||xo.multiplicity)diagram+=`<g class="ddn-port-label">`+text(pt[0]+12*s,pt[1]-8*s,(xo.type?'«'+xo.type+'» ':'')+portNote,10.5*s,colour,500)+'</g>';
@@ -454,7 +454,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     if(xp.set)diagram+=`<g class="ddn-pin-set">`+text(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
   diagram+='</g>';
  }
- /* B1-060 (RFC-124): pins with no incident edge still render on the action
+ /* B1-060 : pins with no incident edge still render on the action
   * border (in→west, out→east), streaming filled, set label beside. */
  if(p.projection.profile==='uml.activity@2'||p.projection.profile==='sysml.activity@1'){
   const s=q(p.style.font_size,16)/16,connected=new Set(rels.flatMap(r=>[r.from.member,r.to.member].filter(Boolean)));
@@ -466,7 +466,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     diagram+=`<g class="ddn-pin" data-port-square="${esc(pt.id)}"${xp.streaming?' data-streaming="true"':''}><rect x="${fmt(xx-5*s)}" y="${fmt(yy-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc(t.ink):esc(t.surface)}" stroke="${esc(t.ink)}" stroke-width="1.5"/>`+(xp.set?text(xx+(west?-8*s:8*s),yy-8*s,xp.set,10.5*s,t.muted,500,west?'text-anchor="end"':''):'')+'</g>';}
   }
  }
- // B1-061 (RFC-125): communication-diagram fragments — dashed frame with an
+ // B1-061 : communication-diagram fragments — dashed frame with an
  // operator pentagon over the covered message routes; guards at operand starts.
  if(p.projection.profile==='uml.communication@2'){
   const s=q(p.style.font_size,16)/16,byRelId=new Map(routes.map(a=>[a.r.id,a]));

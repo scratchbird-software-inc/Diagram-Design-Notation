@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umlact";
 
-// B1-060 (RFC-124): UML 2.5.1 activity-diagram completeness on uml.activity@2.
+// B1-060 : UML 2.5.1 activity-diagram completeness on uml.activity@2.
 // View 1: pins + parameter sets/streaming, decision vs merge, flow final.
 // View 2: signals, time event, interruptible region, exception handler,
 // structured region, connector circles.

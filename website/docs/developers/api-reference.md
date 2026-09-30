@@ -253,7 +253,7 @@ DDNLive.authoring.setLabel(ws, "model.ddn", "overview", "model.order", "Sales or
 `DDNLive.io` (`IO` in `public.d.ts`) — browser-side file exchange:
 `open(files)` (FileList → sources + snapshot), `toJSON(snapshot)`,
 `toZIP(snapshot)` / `unzip(bytes)`, `zipStore(files)`, `crc32(bytes)`,
-`download(name, data, type?)`, and `bundle(files, entry)` (RFC-117: merge a
+`download(name, data, type?)`, and `bundle(files, entry)` (merge a
 workspace into one self-contained multi-module `.ddn` source → `{text,
 diagnostics}`; deterministic, render byte-identical to the original
 workspace; external imports kept with a `DDN-W013` warning).

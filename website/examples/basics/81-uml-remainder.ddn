@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umlrem";
 
-// B1-061 (RFC-125): UML 2.5.1 remainder — object@2 (underlined instances, slot
+// B1-061 : UML 2.5.1 remainder — object@2 (underlined instances, slot
 // datatype checks, link multiplicity), packages («import»/«access»/«merge» +
 // visibility), profile diagram (uml.profile@1), communication@2 (fragments +
 // {…} constraints), interaction overview @2 (inline expansion, gates,

@@ -1,7 +1,6 @@
 # 38. PERT/CPM critical-path profile (`pert.cpm@1` on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-112
-(`standard/governance/rfcs/RFC-112-pert-cpm.md`). Source grammar remains DDN
+Status: implemented in runtime 0.7.0. Source grammar remains DDN
 0.5; the profile, the reused vocabulary and the extension property are
 registry entries, so this chapter is a semantic addition, not a grammar
 change.
@@ -16,33 +15,33 @@ accent stroke. Users write
 ## Metamodel
 
 - Tasks are shown `analysis.task` objects (existing kind; silhouette
-  `round`, family `activity`). No new kinds.
+ `round`, family `activity`). No new kinds.
 - Dependencies are visible `analysis.precedes` relations ("Must finish
-  before"). No new verbs.
+ before"). No new verbs.
 - New registered extension property `x_estimate` on objects:
-  `{ "type":"number" }` — task duration in days; finite and ≥ 0. The schema
-  subset declares only the number type; the finite/nonnegative range is
-  enforced by the planner (`DDN-PJ125`), not the schema.
+ `{ "type":"number" }` — task duration in days; finite and ≥ 0. The schema
+ subset declares only the number type; the finite/nonnegative range is
+ enforced by the planner (`DDN-PJ125`), not the schema.
 - No new projection properties; the graph `supported` list is unchanged and
-  the `DDN-Q005` guard still rejects `inputs`/`analysis_budget`/`traces` for
-  non-`state.flat@1` graph profiles.
+ the `DDN-Q005` guard still rejects `inputs`/`analysis_budget`/`traces` for
+ non-`state.flat@1` graph profiles.
 
 ## Pass and slack computation
 
 The planner (`Quality.cpm` in `notation/runtime/ddn-quality-data.js`, reached
-through the `pert.cpm@1` branch of `ddn-projection-data.js` `plan()`)
+through the `pert.cpm@1` branch of `ddn-projection-data.js` `plan`)
 computes, deterministically and on plain numbers (no dates, no calendars):
 
 - Forward pass in topological order: `ES = max(EF` of predecessors, default
-  0), `EF = ES + x_estimate`; project duration = max `EF`.
+ 0), `EF = ES + x_estimate`; project duration = max `EF`.
 - Backward pass in reverse topological order: `LF = min(LS` of successors,
-  default duration), `LS = LF - x_estimate`.
+ default duration), `LS = LF - x_estimate`.
 - `slack = LS - ES`; critical tasks have `slack === 0`.
 - An `analysis.precedes` relation is critical when both endpoints are
-  critical and `EF(source) === ES(target)`.
+ critical and `EF(source) === ES(target)`.
 - Topological order uses the active/seen DFS pattern of `acyclic` in
-  `ddn-profiles.js`; iteration follows declaration order, so results are
-  deterministic.
+ `ddn-profiles.js`; iteration follows declaration order, so results are
+ deterministic.
 
 The plan returns
 `{tasks:{id→{es,ef,ls,lf,slack,estimate}},criticalTasks:[ids],criticalRelations:[ids],duration}`
@@ -52,9 +51,9 @@ JSON-cloned public API (`workspace.projectionPlan`).
 ## Diagnostics
 
 - `DDN-PJ124` (error) — the task/dependency graph contains a cycle; the
-  message names a task on the cycle.
+ message names a task on the cycle.
 - `DDN-PJ125` (error) — a shown `analysis.task` lacks `x_estimate`, or it is
-  not a finite number ≥ 0; the message names the task.
+ not a finite number ≥ 0; the message names the task.
 
 ## Visual encoding
 
@@ -73,7 +72,7 @@ This profile removes one clause from
 `standard/registry/capabilities.json` `unsupported[]`:
 
 - before: `"critical-path scheduling, arbitrary/DMN-FEEL rule execution and
-  engineering solvers"`
+ engineering solvers"`
 - after: `"arbitrary/DMN-FEEL rule execution and engineering solvers"`
 
 Only the `"critical-path scheduling, "` clause is removed; the DMN-FEEL and

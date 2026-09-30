@@ -10,8 +10,8 @@ Missing and null are independent. An optional value can be omitted; a nullable v
 
 ```ddn
 inputs: [
-    {key: severity, type: enum, values: ["low", "high"]},
-    {key: score, type: number, min: 0, max: 10}
+ {key: severity, type: enum, values: ["low", "high"]},
+ {key: score, type: number, min: 0, max: 10}
 ];
 ```
 
@@ -33,14 +33,14 @@ Rules are objects with `kind: "rule.row"` and an `x_rule` record:
 
 ```ddn
 object low_pass "Low severity within tolerance" {
-    kind: "rule.row";
-    x_rule: {
-        when: {
-            severity: {op: eq, value: "low"},
-            score: {op: interval, min: 0, max: 5, upper_closed: false}
-        },
-        then: {route: "release", audit: false}
-    };
+ kind: "rule.row";
+ x_rule: {
+ when: {
+ severity: {op: eq, value: "low"},
+ score: {op: interval, min: 0, max: 5, upper_closed: false}
+ },
+ then: {route: "release", audit: false}
+ };
 }
 ```
 
@@ -48,14 +48,14 @@ A decision projection names its ordered rule records, domains, outputs and polic
 
 ```ddn
 projection {
-    kind: decision; profile: "decision.rules@1";
-    records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];
-    inputs: [{key: severity, type: enum, values:["low","high"]},
-             {key: score, type:number, min:0, max:10}];
-    outputs: [route, audit];
-    hit_policy: unique;
-    coverage: complete;
-    analysis_budget: 4096;
+ kind: decision; profile: "decision.rules@1";
+ records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];
+ inputs: [{key: severity, type: enum, values:["low","high"]},
+ {key: score, type:number, min:0, max:10}];
+ outputs: [route, audit];
+ hit_policy: unique;
+ coverage: complete;
+ analysis_budget: 4096;
 }
 ```
 
@@ -75,7 +75,7 @@ For unique or complete claims, exhausting the budget **fails closed** with `DDN-
 
 ```javascript
 const result = workspace.evaluateDecision("views.ddn", "decision_unique", {
-    severity: "low", score: 5
+ severity: "low", score: 5
 });
 // {policy, matched:[ruleIDs], selected:[ruleIDs], outputs:[records], status}
 ```
@@ -90,11 +90,11 @@ Transitions use `state.transition` and `x_transition`:
 
 ```ddn
 relation accepted "Accepted verification" @correcting -> @verified {
-    kind: "state.transition";
-    x_transition: {
-        event: "verify",
-        guard: {passed:{op:eq,value:true}}
-    };
+ kind: "state.transition";
+ x_transition: {
+ event: "verify",
+ guard: {passed:{op:eq,value:true}}
+ };
 }
 ```
 
@@ -110,10 +110,10 @@ A trace contains at most 1,000 ordered records `{event, data?}`. Data defaults t
 
 ```javascript
 const result = workspace.simulateLifecycle("views.ddn", "lifecycle", [
-    {event:"submit"}, {event:"accept"}, {event:"investigated"},
-    {event:"verify", data:{passed:false}},
-    {event:"investigated"}, {event:"verify",data:{passed:true}},
-    {event:"close"}
+ {event:"submit"}, {event:"accept"}, {event:"investigated"},
+ {event:"verify", data:{passed:false}},
+ {event:"investigated"}, {event:"verify",data:{passed:true}},
+ {event:"close"}
 ], "meridian.quality.review::lifecycle.closed");
 ```
 

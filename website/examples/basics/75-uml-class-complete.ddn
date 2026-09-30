@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umlclass";
 
-// B1-055 (RFC-119): UML 2.5.1 class-diagram completeness on uml.structure@2.
+// B1-055 : UML 2.5.1 class-diagram completeness on uml.structure@2.
 // View 1 exercises every association-end feature; view 2 the classifier
 // features. Minimal current-dialect style, no pinned layout.
 

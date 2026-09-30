@@ -21,31 +21,31 @@ The parser accepts a JSON-style quoted version and module identity followed by s
 ddn "0.4";
 module "example.review";
 data model {
-    object first "First observation" {
-        kind: record;
-        x_record: { month: "Jan", value: 420, unit: "CAD" };
-    }
-    object second "Second observation" {
-        kind: record;
-        x_record: { month: "Feb", value: 570, unit: "CAD" };
-    }
+ object first "First observation" {
+ kind: record;
+ x_record: { month: "Jan", value: 420, unit: "CAD" };
+ }
+ object second "Second observation" {
+ kind: record;
+ x_record: { month: "Feb", value: 570, unit: "CAD" };
+ }
 }
 format shared {
-    projection monthly {
-        kind: chart;
-        profile: "chart.basic@1";
-        records: [@model.first, @model.second];
-        mark: bar;
-        x: "x_record.month";
-        y: "x_record.value";
-        unit: "CAD";
-    }
-    publication screen { size: content; fit: none; }
+ projection monthly {
+ kind: chart;
+ profile: "chart.basic@1";
+ records: [@model.first, @model.second];
+ mark: bar;
+ x: "x_record.month";
+ y: "x_record.value";
+ unit: "CAD";
+ }
+ publication screen { size: content; fit: none; }
 }
 view monthly {
-    data: [@model];
-    projection: @shared.monthly;
-    publication: @shared.screen;
+ data: [@model];
+ projection: @shared.monthly;
+ publication: @shared.screen;
 }
 ```
 
@@ -55,8 +55,8 @@ Projection syntax in EBNF supplements the existing generic declaration grammar:
 
 ```text
 ProjectionDefinition = "projection", Identifier, "{", Property*, "}" ;
-ProjectionReference  = "projection", ":", Reference, ";" ;
-ProjectionOverride   = "projection", "{", Property*, "}" ;
+ProjectionReference = "projection", ":", Reference, ";" ;
+ProjectionOverride = "projection", "{", Property*, "}" ;
 ```
 
 The implementation's semantic validator is authoritative for property applicability. Merely parsing a property does not make it valid for all projections. For instance, `mark` is not legal on a matrix. No filter or binding executes JavaScript, SQL, FEEL or another expression language.

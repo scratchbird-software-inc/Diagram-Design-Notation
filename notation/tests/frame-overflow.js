@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-022 frame_overflow: expand|confine for scoped frames (RFC-118). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-022 frame_overflow: expand|confine for scoped frames . */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const results=[];function test(name,fn){try{fn();results.push({name,pass:true});console.log('PASS',name);}catch(e){results.push({name,pass:false});console.error('FAIL',name,e.stack);}}

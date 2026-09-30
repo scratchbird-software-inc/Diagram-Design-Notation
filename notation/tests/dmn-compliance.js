@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-066: DMN 1.4 DRD compliance fixtures (RFC-129). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-066: DMN 1.4 DRD compliance fixtures . */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";

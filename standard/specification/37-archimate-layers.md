@@ -1,7 +1,6 @@
 # 37. ArchiMate-style layered profile (`archimate.basic@1` on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-111
-(`standard/governance/rfcs/RFC-111-archimate.md`). Source grammar remains DDN
+Status: implemented in runtime 0.7.0. Source grammar remains DDN
 0.5; the nine element kinds and the relation verb are registry entries, so
 this chapter is a semantic addition, not a grammar change.
 
@@ -38,8 +37,8 @@ An element's layer is derived from its kind keyword prefix
 layer property. Layer colours come from the registered catalogue family of
 each kind — business kinds use family `governance`, application kinds family
 `interface`, technology kinds family `deployment` — stamped onto the profile
-kind by `ddn-profiles.js` `registry()` and rendered through the shared
-palette (`ddn-palette.js` `node()`), which follows the active theme preset
+kind by `ddn-profiles.js` `registry` and rendered through the shared
+palette (`ddn-palette.js` `node`), which follows the active theme preset
 and lightens hues deterministically for low-light themes. No per-kind colour
 fields exist.
 
@@ -58,7 +57,7 @@ Same-layer and upward links (technology→application→business, the "serving"
 direction) are allowed; downward links are rejected with `DDN-PJ123` (error).
 `DDN-PJ123` also fires when an `archi.rel` endpoint kind is outside the nine
 registered kinds. The message names the relation and both endpoint layers.
-The check is implemented in `ddn-profile-quality.js` `validate()` under
+The check is implemented in `ddn-profile-quality.js` `validate` under
 `profile==='archimate.basic@1'`; the core endpoint-kind contract defers to it
 for this verb under this profile so the diagnostic is always `DDN-PJ123`,
 never `DDN102`.

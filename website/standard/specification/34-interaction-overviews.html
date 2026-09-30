@@ -26,60 +26,60 @@
 <main class="site-main">
 <article class="md-body">
 <h1>34. Interaction overviews (profile <code>uml.interaction_overview@1</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-108 (<code>standard/governance/rfcs/RFC-108-interaction-overview.md</code>). Source grammar remains DDN 0.5; the extension value is a record of atoms, so this is a semantic/registry addition, not a grammar change.</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; the extension value is a record of atoms, so this is a semantic/registry addition, not a grammar change.</p>
 <p>An interaction overview is a flowchart on the existing <code>graph</code> projection in which some flow nodes stand for whole interaction diagrams kept in their own views of the same workspace. A node becomes a <em>ref node</em> by carrying the registered extension property <code>x_subdiagram:{view:&quot;&lt;local view id&gt;&quot;}</code> and renders with a small &quot;↗ ref&quot; badge at its top-right corner.</p>
 <p>This is profile-level coverage, not UML conformance.</p>
 <h2>Metamodel</h2>
 <ul><li><strong>Node vocabulary:</strong> <code>flow.start</code> / <code>flow.end</code> / <code>flow.process</code> /</li></ul>
-<p>  <code>flow.decision</code>. Edges are <code>flow.next</code>. All existing vocabulary; no new   kinds or verbs.</p>
+<p> <code>flow.decision</code>. Edges are <code>flow.next</code>. All existing vocabulary; no new  kinds or verbs.</p>
 <ul><li><strong>Ref nodes:</strong> a <code>flow.process</code> or <code>flow.subprocess</code> object carrying</li></ul>
-<p>  <code>x_subdiagram:{view:&quot;&lt;name&gt;&quot;}</code>. The contract is   <code>{ &quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;view&quot;], &quot;properties&quot;: { &quot;view&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;minLength&quot;: 1 } }, &quot;additionalProperties&quot;: false }</code>   on the <code>object</code> target; a malformed value (for example <code>x_subdiagram:{}</code>)   fails the extension contract as <code>DDN105</code>.</p>
+<p> <code>x_subdiagram:{view:&quot;&lt;name&gt;&quot;}</code>. The contract is  <code>{ &quot;type&quot;: &quot;object&quot;, &quot;required&quot;: [&quot;view&quot;], &quot;properties&quot;: { &quot;view&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;minLength&quot;: 1 } }, &quot;additionalProperties&quot;: false }</code>  on the <code>object</code> target; a malformed value (for example <code>x_subdiagram:{}</code>)  fails the extension contract as <code>DDN105</code>.</p>
 <ul><li><strong>The string-reference rule:</strong> <code>x_subdiagram.view</code> is a plain STRING naming</li></ul>
-<p>  the target view's local id in the same workspace — NOT a <code>@</code>-reference.   This is deliberate: <code>resolveValue</code> turns <code>@ref</code> values into <code>{$ref}</code> at   build time and fails the build on unresolvable refs, which would preempt   the dedicated missing-view diagnostic and make <code>DDN-PJ119</code> unreachable. The   string defers resolution to a workspace-level check in <code>build()</code>   (<code>ddn-core.js</code>), which matches the name against every view's local id and   uid. Profile validators receive only <code>ir</code> and cannot see other views, which   is why the check lives in <code>build()</code> beside the panels child-view checks.</p>
+<p> the target view's local id in the same workspace — NOT a <code>@</code>-reference.  This is deliberate: <code>resolveValue</code> turns <code>@ref</code> values into <code>{$ref}</code> at  build time and fails the build on unresolvable refs, which would preempt  the dedicated missing-view diagnostic and make <code>DDN-PJ119</code> unreachable. The  string defers resolution to a workspace-level check in <code>build</code>  (<code>ddn-core.js</code>), which matches the name against every view's local id and  uid. Profile validators receive only <code>ir</code> and cannot see other views, which  is why the check lives in <code>build</code> beside the panels child-view checks.</p>
 <ul><li><strong>No inline expansion:</strong> the referenced view is NOT expanded into the</li></ul>
-<p>  overview by this profile — reference semantics only. Composed rendering is   owned by <code>panels.composed@1</code>; the view-level   <code>subdiagram … { mode: reference|inline }</code> declaration (chapter on   subdiagrams, example <code>08-subdiagrams.ddn</code>) is unchanged and remains   available for floating reference boxes.</p>
+<p> overview by this profile — reference semantics only. Composed rendering is  owned by <code>panels.composed@1</code>; the view-level  <code>subdiagram … { mode: reference|inline }</code> declaration (chapter on  subdiagrams, example <code>08-subdiagrams.ddn</code>) is unchanged and remains  available for floating reference boxes.</p>
 <ul><li><strong>Endpoint rule:</strong> <code>flow.next</code>'s endpoint contract lists <code>flow.*</code> kinds</li></ul>
-<p>  only, so an <code>x_subdiagram</code> node of a non-<code>flow.*</code> kind used as a   <code>flow.next</code> endpoint fails with the existing <code>DDN102</code>. Ref nodes are   therefore <code>flow.process</code> (or <code>flow.subprocess</code>) objects.</p>
+<p> only, so an <code>x_subdiagram</code> node of a non-<code>flow.*</code> kind used as a  <code>flow.next</code> endpoint fails with the existing <code>DDN102</code>. Ref nodes are  therefore <code>flow.process</code> (or <code>flow.subprocess</code>) objects.</p>
 <h2>Diagnostics</h2>
 <ul><li><code>DDN-PJ119</code> (error) — an <code>x_subdiagram.view</code> string names no view in the</li></ul>
-<p>  workspace. The message names the node and the missing view id.</p>
+<p> workspace. The message names the node and the missing view id.</p>
 <ul><li><code>DDN105</code> — malformed <code>x_subdiagram</code> record (missing <code>view</code>, empty string,</li></ul>
-<p>  or extra properties).</p>
+<p> or extra properties).</p>
 <ul><li><code>DDN102</code> — a ref node outside the <code>flow.*</code> endpoint contract used as a</li></ul>
-<p>  <code>flow.next</code> endpoint.</p>
+<p> <code>flow.next</code> endpoint.</p>
 <h2>Visual encoding</h2>
-<p>Ref nodes render as ordinary flow nodes plus a small &quot;↗ ref&quot; badge at the node's top-right corner, drawn with the shared <code>badge()</code> helper in the theme accent/surface colours — echoing the view-level subdiagram badge style (&quot;↗ target · diagram reference&quot;). Layout, routing and every other rendering rule are exactly the graph projection's; the renderer stays deterministic.</p>
+<p>Ref nodes render as ordinary flow nodes plus a small &quot;↗ ref&quot; badge at the node's top-right corner, drawn with the shared <code>badge</code> helper in the theme accent/surface colours — echoing the view-level subdiagram badge style (&quot;↗ target · diagram reference&quot;). Layout, routing and every other rendering rule are exactly the graph projection's; the renderer stays deterministic.</p>
 <h2>Source example</h2>
 <pre><code>data checkout {
-    object pay &quot;Pay&quot; { kind: &quot;flow.process&quot;; x_subdiagram: { view: &quot;payment_flow&quot; }; }
+ object pay &quot;Pay&quot; { kind: &quot;flow.process&quot;; x_subdiagram: { view: &quot;payment_flow&quot; }; }
 }
 
 view overview &quot;Checkout interaction overview&quot; {
-    data: [@checkout];
-    projection { kind: graph; profile: &quot;uml.interaction_overview@1&quot;; }
+ data: [@checkout];
+ projection { kind: graph; profile: &quot;uml.interaction_overview@1&quot;; }
 }
 
 view payment_flow &quot;Payment flow detail&quot; {
-    data: [@payment];
-    projection { kind: graph; profile: &quot;ddn@1&quot;; }
+ data: [@payment];
+ projection { kind: graph; profile: &quot;ddn@1&quot;; }
 }</code></pre>
 <p>See <code>website/examples/basics/48-interaction-overview.ddn</code> for the full synthetic checkout example (overview plus <code>payment_flow</code> and <code>stock_flow</code> detail views in one file).</p>
-<h1>34a. Interaction overviews at uml.interaction_overview@2 (RFC-125)</h1>
+<h1>34a. Interaction overviews at uml.interaction_overview@2</h1>
 <p><code>uml.interaction_overview@2</code> adds inline expansion and interaction-use detail; @1 stays installed and immutable.</p>
 <ul><li><strong>Inline expansion</strong> — a node with <code>x_subdiagram.view</code> renders the</li></ul>
-<p>  referenced view inline inside the node box (one recursion level; child   limits shared with panels — <code>DDN-PJ174</code>); the badge reads <code>↗ inline</code>.</p>
+<p> referenced view inline inside the node box (one recursion level; child  limits shared with panels — <code>DDN-PJ174</code>); the badge reads <code>↗ inline</code>.</p>
 <ul><li><strong>Interaction-use gates/arguments</strong> — `x_use: { arguments?: [string],</li></ul>
-<p>  gates?: [string] }<code> renders arguments under the node and named gate squares   on its left border; duplicate gate names are </code>DDN-PJ174`.</p>
+<p> gates?: [string] }<code> renders arguments under the node and named gate squares  on its left border; duplicate gate names are </code>DDN-PJ174`.</p>
 <p>Fixture: <code>website/examples/basics/81-uml-remainder.ddn</code> (view <code>overview</code>).</p>
 <h1>34b. Drill-down display modes and frozen thumbnails (x_subdiagram v2)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-132 (<code>standard/governance/rfcs/RFC-132-drilldown-thumbnails.md</code>). Additive properties on the <code>x_subdiagram</code> contract; the display-absent behavior of this chapter (badge here, legacy inline at <code>uml.interaction_overview@2</code>) is byte-identical.</p>
+<p>Status: implemented in runtime 0.7.0. Additive properties on the <code>x_subdiagram</code> contract; the display-absent behavior of this chapter (badge here, legacy inline at <code>uml.interaction_overview@2</code>) is byte-identical.</p>
 <p>Any node binding a detail view with <code>x_subdiagram</code> may declare <code>display: &quot;badge&quot; | &quot;inline&quot; | &quot;thumbnail&quot;</code>:</p>
 <ul><li><strong>badge</strong> — the <code>↗ ref</code> badge only (default outside</li></ul>
-<p>  <code>uml.interaction_overview@2</code>).</p>
+<p> <code>uml.interaction_overview@2</code>).</p>
 <ul><li><strong>inline</strong> — a live, full-fidelity child render inside the node (the</li></ul>
-<p>  interaction-overview form, available on any node).</p>
+<p> interaction-overview form, available on any node).</p>
 <ul><li><strong>thumbnail</strong> — a live child rendered in <em>shapes detail</em>: silhouettes,</li></ul>
-<p>  edges, frames and ports with every text run suppressed (child chrome,   relation labels and node text are all omitted; node <code>&lt;title&gt;</code> accessibility   metadata remains). Thumbnails never hit the DDN076 minimum-text failure   because no text is emitted.</p>
+<p> edges, frames and ports with every text run suppressed (child chrome,  relation labels and node text are all omitted; node <code>&lt;title&gt;</code> accessibility  metadata remains). Thumbnails never hit the DDN076 minimum-text failure  because no text is emitted.</p>
 <p><code>frozen: true</code> (thumbnails only) embeds a stored <code>snapshot</code> SVG verbatim through the same <code>io-&lt;hash&gt;-</code> namespacing pass — the viewer never re-renders a frozen child. The host refreshes it by rewriting the <code>snapshot</code> property through the ordinary source transaction (the replaceData precedent); <code>snapshot_at</code> carries an optional string timestamp. Shape rules validate as <code>DDN-PJ198</code> (snapshot required, must parse as SVG, ≤ 512 KiB, one nesting level, no self-binding); unknown target views stay <code>DDN-PJ119</code>.</p>
 <p>See <code>website/examples/basics/90-drilldown.ddn</code> and <code>notation/tests/thumbnail-compliance.js</code>.</p>
 </article>

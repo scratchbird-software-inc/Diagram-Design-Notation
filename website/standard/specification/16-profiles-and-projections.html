@@ -37,37 +37,37 @@
 <pre><code>ddn &quot;0.4&quot;;
 module &quot;example.review&quot;;
 data model {
-    object first &quot;First observation&quot; {
-        kind: record;
-        x_record: { month: &quot;Jan&quot;, value: 420, unit: &quot;CAD&quot; };
-    }
-    object second &quot;Second observation&quot; {
-        kind: record;
-        x_record: { month: &quot;Feb&quot;, value: 570, unit: &quot;CAD&quot; };
-    }
+ object first &quot;First observation&quot; {
+ kind: record;
+ x_record: { month: &quot;Jan&quot;, value: 420, unit: &quot;CAD&quot; };
+ }
+ object second &quot;Second observation&quot; {
+ kind: record;
+ x_record: { month: &quot;Feb&quot;, value: 570, unit: &quot;CAD&quot; };
+ }
 }
 format shared {
-    projection monthly {
-        kind: chart;
-        profile: &quot;chart.basic@1&quot;;
-        records: [@model.first, @model.second];
-        mark: bar;
-        x: &quot;x_record.month&quot;;
-        y: &quot;x_record.value&quot;;
-        unit: &quot;CAD&quot;;
-    }
-    publication screen { size: content; fit: none; }
+ projection monthly {
+ kind: chart;
+ profile: &quot;chart.basic@1&quot;;
+ records: [@model.first, @model.second];
+ mark: bar;
+ x: &quot;x_record.month&quot;;
+ y: &quot;x_record.value&quot;;
+ unit: &quot;CAD&quot;;
+ }
+ publication screen { size: content; fit: none; }
 }
 view monthly {
-    data: [@model];
-    projection: @shared.monthly;
-    publication: @shared.screen;
+ data: [@model];
+ projection: @shared.monthly;
+ publication: @shared.screen;
 }</code></pre>
 <p>A reusable <code>projection</code> is a named declaration inside <code>format</code>, just like <code>layout</code>, <code>style</code> or <code>publication</code>. It can be referenced directly from <code>view</code> or through a <code>bundle</code>. A view-local <code>projection { ... }</code> block overrides the referenced projection's properties using the existing concern-resolution rules. The parser does not introduce a different statement keyword for every diagram kind.</p>
 <p>Projection syntax in EBNF supplements the existing generic declaration grammar:</p>
 <pre><code>ProjectionDefinition = &quot;projection&quot;, Identifier, &quot;{&quot;, Property*, &quot;}&quot; ;
-ProjectionReference  = &quot;projection&quot;, &quot;:&quot;, Reference, &quot;;&quot; ;
-ProjectionOverride   = &quot;projection&quot;, &quot;{&quot;, Property*, &quot;}&quot; ;</code></pre>
+ProjectionReference = &quot;projection&quot;, &quot;:&quot;, Reference, &quot;;&quot; ;
+ProjectionOverride = &quot;projection&quot;, &quot;{&quot;, Property*, &quot;}&quot; ;</code></pre>
 <p>The implementation's semantic validator is authoritative for property applicability. Merely parsing a property does not make it valid for all projections. For instance, <code>mark</code> is not legal on a matrix. No filter or binding executes JavaScript, SQL, FEEL or another expression language.</p>
 <h2>16.3 Installed profiles</h2>
 <p><code>profiles/catalogue.json</code> is the machine-readable profile catalogue. The shipped profiles are fixed trusted definitions bundled at build time. This release does NOT implement downloading or installing arbitrary user-defined plugin code from DDN source. Developers can extend the catalogue/source, rebuild the library and add fixtures. Unrecognized profile IDs and incompatible projection kinds are errors.</p>

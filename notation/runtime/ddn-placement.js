@@ -48,7 +48,7 @@ function place(nodes,rels,ir,options={}){
    if(!ok)fail('DDN-P003','No space for a new element without moving retained positions: '+n.id);occupied.push(n);
   }
  }
- // frame_overflow: confine (RFC-118) clamps unpinned, non-retained members
+ // frame_overflow: confine  clamps unpinned, non-retained members
  // into a fixed frame's interior — automatically what manual pins did. A
  // member larger than the interior is left for the fits check below.
  for(const n of nodes){const b=constraints.get(n.id);if(b&&!at[n.id]?.at&&!retained.includes(n.id)&&n.w<=b.w&&n.h<=b.h){n.x=Math.min(Math.max(n.x,b.x),b.x+b.w-n.w);n.y=Math.min(Math.max(n.y,b.y),b.y+b.h-n.h);}}

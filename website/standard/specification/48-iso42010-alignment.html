@@ -32,13 +32,13 @@
 <h2>Gap analysis — why no <code>arch.description@1</code> profile</h2>
 <p>The brief allowed a new <code>arch.description@1</code> framing profile <em>only</em> if this annex surfaced a genuine gap. Row by row, it does not:</p>
 <ul><li>Description, viewpoint and model-reference nodes already exist as</li></ul>
-<p>  «ArchitectureDescription», «Viewpoint» and «ModelReference» under   <code>uaf.summary@1</code> (chapter 47), designed for exactly this framing role;   reusing them keeps the vocabulary single-sourced.</p>
+<p> «ArchitectureDescription», «Viewpoint» and «ModelReference» under  <code>uaf.summary@1</code> (chapter 47), designed for exactly this framing role;  reusing them keeps the vocabulary single-sourced.</p>
 <ul><li>Stakeholders, concerns and rationale are covered by core kinds (<code>role</code>,</li></ul>
-<p>  <code>team</code>, <code>organization</code>, <code>issue</code>, <code>note</code>, <code>decision</code>) and the annotation   relation family — no notation gap.</p>
+<p> <code>team</code>, <code>organization</code>, <code>issue</code>, <code>note</code>, <code>decision</code>) and the annotation  relation family — no notation gap.</p>
 <ul><li>Viewpoint-governs-view is a structural property of the DDN view mechanism</li></ul>
-<p>  itself (profile + selection), not something a profile could add.</p>
+<p> itself (profile + selection), not something a profile could add.</p>
 <ul><li>A new profile would duplicate existing registry entries without new</li></ul>
-<p>  validation value, which the additive-only discipline reserves for real   notation gaps.</p>
+<p> validation value, which the additive-only discipline reserves for real  notation gaps.</p>
 <p>Recorded decision: <strong>documentation only</strong>. If a future item needs 42010 metadata that is <em>not</em> representable (for example machine-checked concern-to-view coverage), the gap must be demonstrated against this table first.</p>
 <h2>Worked example</h2>
 <p><code>website/examples/basics/89-uaf.ddn</code> shows the pattern end to end: one module holds the architecture model across domains, the summary view places «ArchitectureDescription», «Viewpoint» and «ModelReference» inside an OV-1-style frame, and each domain view is a governed view — its profile is the model kind, its <code>data:</code>/<code>select:</code> scope is the framing.</p>

@@ -284,7 +284,7 @@ function measure(g,p){
  if(n.kind==='req.requirement'){
   g.requirement=api$7.wrap(n.properties.x_diagram?.text||'',g.w-32*s,13*s,p.style.font);g.h=Math.max(g.h,(95+g.requirement.length*19)*s);
  }
- /* B1-065 (RFC-128): SysML block-family compartments and keyword headers.
+ /* B1-065 : SysML block-family compartments and keyword headers.
   * Opt-in per profile (@2) and per x_block field property, so sysml.*@1
   * fixtures render byte-identically. */
  const SYSML2=/^sysml\.(bdd|ibd|parametric)@2$/.test(p.projection?.profile||'');
@@ -306,13 +306,13 @@ function measure(g,p){
   }
   g.headerH=70*s;
  }
- /* B1-072 (RFC-130): SoaML kind keywords — header only (no compartments);
+ /* B1-072 : SoaML kind keywords — header only (no compartments);
   * servicecontract renders the collaboration glyph (see the collab branch). */
  const SOAML_KW={'soaml.participant':'participant','soaml.agent':'agent','soaml.serviceinterface':'ServiceInterface','soaml.servicecontract':'ServiceContract','soaml.capability':'capability','soaml.message':'message','soaml.milestone':'milestone'};
  if(SOAML_KW[n.kind]){
   g.sysmlKeyword=SOAML_KW[n.kind];g.headerH=70*s;
  }
- /* B1-072 (RFC-131): UAF 1.2 domain vocabulary — keyword headers. */
+ /* B1-072 : UAF 1.2 domain vocabulary — keyword headers. */
  /* B1-083: SDL — flag shapes carry their name; keyword headers on the rest. */
  const SDL_KW={'sdl.block':'block','sdl.agent':'agent','sdl.signalset':'signalset','sdl.procedure':'procedure'};
  if(SDL_KW[n.kind]){g.sysmlKeyword=SDL_KW[n.kind];g.headerH=70*s;}
@@ -327,7 +327,7 @@ function measure(g,p){
   g.h=Math.max(g.h,120*s);
   g.headerH=70*s;
  }
- /* B1-066 (RFC-129): DMN boxed-expression presentation — text rows in a
+ /* B1-066 : DMN boxed-expression presentation — text rows in a
   * bottom compartment. Display only; the text is never parsed or evaluated. */
  if(['dmn.decision','dmn.bkm','dmn.decisionservice'].includes(n.kind)&&n.properties.x_boxed){
   const xb=n.properties.x_boxed,rows=[...(xb.text?[xb.text]:[]),...(xb.entries||[]).map(e=>(e.name?e.name+': ':'')+e.text)];
@@ -336,7 +336,7 @@ function measure(g,p){
   g.h=Math.max(g.h,g.h+24*s+g.boxedH);
  }
  if(['initial','final'].includes(g.silhouette)){g.w=Math.max(125*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
- /* B1-057 (RFC-121): pseudostate glyphs are small fixed markers with the name
+ /* B1-057 : pseudostate glyphs are small fixed markers with the name
   * below; states with activities/internal transitions/submachine grow a
   * compartment under the name. */
  if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar','hourglass','flowfinal'].includes(g.silhouette)){g.w=Math.max(110*s,api$7.measure(n.name,12*s,p.style.font).width+24*s);g.h=85*s;g.fieldRows=[];g.titleLines=[n.name];}
@@ -419,7 +419,7 @@ function render$2(g,p,theme){
  const {n,k,x,y,w,h}=g,s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral',nc=api$8.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,fg=nc.text;
  const opt={...p.style,id:n.id,stroke:ink,fill,width:1.8};
  const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$6.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
- /* B1-074 (RFC-132): shapes-detail (thumbnails) suppresses every text run. */
+ /* B1-074 : shapes-detail (thumbnails) suppresses every text run. */
  const shapesOnly=p.detail==='shapes';
  const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';api$7.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc$2(txt)}</text>`;};
  const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
@@ -430,7 +430,7 @@ function render$2(g,p,theme){
   else out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${ink}" stroke-width="2"/><circle cx="${cx}" cy="${cy}" r="${r*.65}" fill="${ink}"/>`;
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
- /* B1-057 (RFC-121): UML pseudostate markers. */
+ /* B1-057 : UML pseudostate markers. */
  if(['junction','choice','entrypoint','exitpoint','terminate','history','forkbar'].includes(shape)){
   const cx=x+w/2,cy=y+h/2-8,r=12*s;
   if(shape==='junction')out+=`<circle cx="${f(cx)}" cy="${f(cy)}" r="${f(7*s)}" fill="${ink}"/>`;
@@ -457,7 +457,7 @@ function render$2(g,p,theme){
   out+=`<circle cx="${f(cx)}" cy="${f(cy-3.5*s)}" r="${f(2.6*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/><path d="M${f(cx-4*s)} ${f(cy+5*s)}Q${f(cx)} ${f(cy-1*s)} ${f(cx+4*s)} ${f(cy+5*s)}" fill="none" stroke="${ink}" stroke-width="1.5"/>`;
   out+=text(cx,y+h-4*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
- /* B1-066 (RFC-129): DMN silhouettes — BKM is a rect with the top corners
+ /* B1-066 : DMN silhouettes — BKM is a rect with the top corners
   * clipped; the decision service is a rect with a divider band under the
   * name (the collapsed form). */
  if(shape==='clippedcorner'){
@@ -474,7 +474,7 @@ function render$2(g,p,theme){
   if(g.boxedRows?.length){const by=y+60*s;out+=g.boxedRows.map((v,i)=>text(x+14*s,by+8*s+i*18*s,v,12.5,400,'')).join('');}
   return out+'</g>';
  }
- /* B1-066 (RFC-129): plain dmn.decision — rect with optional boxed rows. */
+ /* B1-066 : plain dmn.decision — rect with optional boxed rows. */
  if(n.kind==='dmn.decision'){
   out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   out+=lines(g.titleLines,x+w/2,y+30*s,16,650);
@@ -537,11 +537,11 @@ function render$2(g,p,theme){
   out+=lines(g.titleLines,x+w/2,y+(bands.length?bh+(h-2*bh)/2+4*s:h/2+5*s),14,600);
   return out+'</g>';
  }
- /* B1-059 (RFC-123): collaboration occurrence — dashed ellipse with keyword. */
+ /* B1-059 : collaboration occurrence — dashed ellipse with keyword. */
  if(shape==='collab'){
   out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
   const hasRows=(g.fieldRows||[]).length>0;
-  /* B1-072 (RFC-130): the SoaML service contract reuses the collaboration
+  /* B1-072 : the SoaML service contract reuses the collaboration
    * glyph with its own keyword. */
   out+=text(x+w/2,y+(hasRows?24*s:h/2-10*s),g.sysmlKeyword?'«'+g.sysmlKeyword+'»':'«collaboration»',11,500,'text-anchor="middle"');
   out+=lines(g.titleLines,x+w/2,y+(hasRows?48*s:h/2+14*s),16,600);
@@ -549,7 +549,7 @@ function render$2(g,p,theme){
    for(const r of g.fieldRows)out+=`<g class="ddn-field" data-member="${esc$2(r.id)}">`+lines(r.labelLines,x+w/2,y+r.top+18*s,12.5,400)+'</g>';}
   return out+'</g>';
  }
- /* B1-058 (RFC-122): deployment silhouettes — 3D-box node (top/right depth
+ /* B1-058 : deployment silhouettes — 3D-box node (top/right depth
   * faces) and dog-eared artifact document. */
  if(shape==='node3d'){
   const dx=10*s,dy=-8*s,fx=x,fy=y+8*s,fw=w-10*s,fh=h-8*s;
@@ -569,7 +569,7 @@ function render$2(g,p,theme){
   return out+'</g>';
  }
  if(look==='neo'&&shape!=='actor')out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0]+4)+' '+f(v[1]+6)).join('')}Z" fill="#000" opacity=".14"/>`;
- /* B1-060 (RFC-124): signal pentagons, time-event hourglass, flow final. */
+ /* B1-060 : signal pentagons, time-event hourglass, flow final. */
  if(['sendpent','acceptpent'].includes(shape)){
   out+=`<path d="${polygon(g).map((v,i)=>(i?'L':'M')+f(v[0])+' '+f(v[1])).join('')}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
@@ -588,7 +588,7 @@ function render$2(g,p,theme){
   out+=text(cx,y+h-5*s,n.name,12,600,'text-anchor="middle"');return out+'</g>';
  }
  if(shape==='actor'){
-  /* B1-072 (RFC-130): SoaML agents are actors with a keyword header. */
+  /* B1-072 : SoaML agents are actors with a keyword header. */
   if(g.sysmlKeyword)out+=text(x+w/2,y+16*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"');
   const cx=x+w/2,head=y+23*s;out+=`<circle cx="${cx}" cy="${head}" r="${14*s}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   for(const a of [[cx,head+14*s,cx,head+65*s],[cx-32*s,head+36*s,cx+32*s,head+36*s],[cx,head+65*s,cx-28*s,head+104*s],[cx,head+65*s,cx+28*s,head+104*s]])out+=line(...a,1.8);
@@ -633,7 +633,7 @@ function render$2(g,p,theme){
   out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   out+=line(x+6*s,y+10*s,x+w-6*s,y+10*s,2.2)+line(x+6*s,y+18*s,x+w-6*s,y+18*s,2.2);
  }else if(shape==='tag'){
-  /* B1-072 (RFC-131): UAF capability tag — the one genuinely new silhouette. */
+  /* B1-072 : UAF capability tag — the one genuinely new silhouette. */
   const c=16*s;
   out+=`<path d="M${f(x)} ${f(y)}H${f(x+w-c)}L${f(x+w)} ${f(y+h/2)}L${f(x+w-c)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  } else if(['rect','round','terminal','component','subprocess'].includes(shape))out+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${shape==='terminal'?h/2:shape==='round'?14*s:0}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
@@ -647,7 +647,7 @@ function render$2(g,p,theme){
  else if(n.kind==='dfd.process'&&p.projection.profile==='dfd.gane_sarson@1'){
   const num=n.properties.x_diagram?.number||'',owner=n.properties.x_diagram?.owner||'Process';out+=line(x,y+30*s,x+w,y+30*s)+line(x,y+h-30*s,x+w,y+h-30*s)+text(x+15*s,y+21*s,num,12,600)+text(x+15*s,y+h-10*s,owner,11);out+=lines(g.titleLines,x+w/2,y+h/2-(g.titleLines.length-1)*10.5*s+5*s);
  }else if(g.sysmlKeyword){
-  /* B1-065 (RFC-128): SysML block-family — «keyword» header plus named
+  /* B1-065 : SysML block-family — «keyword» header plus named
    * compartments (values/parts/references/operations/constraints). */
   out+=text(x+w/2,y+20*s,'«'+g.sysmlKeyword+'»',11,500,'text-anchor="middle"')+lines(g.titleLines,x+w/2,y+45*s,16,650);
   for(const c of g.compartments||[])out+=line(x,y+c.top,x+w,y+c.top)+text(x+13*s,y+c.top+17*s,c.label,10,500);
@@ -659,7 +659,7 @@ function render$2(g,p,theme){
  }else if(n.kind==='req.requirement'){
   out+=text(x+14*s,y+21*s,'«requirement» '+n.properties.x_diagram.code,11,600)+lines(g.titleLines,x+14*s,y+45*s,16,650,'')+line(x,y+68*s,x+w,y+68*s)+lines(g.requirement,x+14*s,y+90*s,13,400,'');
  }else if(n.kind==='state.state'&&(g.stateActs||g.submachine)){
-  /* B1-057 (RFC-121): state compartment — name header, then entry/exit/do and
+  /* B1-057 : state compartment — name header, then entry/exit/do and
    * internal-transition lines, then the «submachine» binding. */
   out+=lines(g.titleLines,x+w/2,y+31*s,16,650)+line(x,y+50*s,x+w,y+50*s);
   let yy=y+72*s;for(const a of g.stateActs){out+=text(x+14*s,yy,a,12.5,400,'');yy+=20*s;}
@@ -774,7 +774,7 @@ function render$2(g,p,theme){
   });
  }
  if(n.properties.x_continuation)out+=text(x+w/2,y+h-13*s,n.properties.x_continuation.key+' / '+n.properties.x_continuation.side,11,650,'text-anchor="middle"');
- /* B1-055 (RFC-119): template signature box — dashed rect centred on the
+ /* B1-055 : template signature box — dashed rect centred on the
   * top-right corner, one parameter name per line. */
  if(n.properties.x_template?.parameters?.length){const params=n.properties.x_template.parameters;
   const pw=Math.max(...params.map(v=>api$7.measure(v,11*s,p.style.font,400).width))+18*s,ph=params.length*15*s+10*s,px=x+w-pw/2,py=y-ph/2;
@@ -1379,7 +1379,7 @@ function place(nodes,rels,ir,options={}){
    if(!ok)fail$1('DDN-P003','No space for a new element without moving retained positions: '+n.id);occupied.push(n);
   }
  }
- // frame_overflow: confine (RFC-118) clamps unpinned, non-retained members
+ // frame_overflow: confine  clamps unpinned, non-retained members
  // into a fixed frame's interior — automatically what manual pins did. A
  // member larger than the interior is left for the fits check below.
  for(const n of nodes){const b=constraints.get(n.id);if(b&&!at[n.id]?.at&&!retained.includes(n.id)&&n.w<=b.w&&n.h<=b.h){n.x=Math.min(Math.max(n.x,b.x),b.x+b.w-n.w);n.y=Math.min(Math.max(n.y,b.y),b.y+b.h-n.h);}}
@@ -1612,7 +1612,7 @@ function measureNode(n,registry,profiles,placement={},context={}){
   let h=(labelLines.length*18+detailLines.length*16+10)*s;h=Math.max(h,(context.degrees?.[f.id]||1)*18+10,(context.degrees?.[f.id]||1)>2?(context.degrees[f.id]*40+10):0);
   rows.push({id:f.id,field:f,top:y,h,labelLines,detailLines,depth});y+=h;
  }
- /* B1-061 (RFC-125): packaged-element visibility prefix. */
+ /* B1-061 : packaged-element visibility prefix. */
  if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
  let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=api$7.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
  let noteLines=[];if(k.shape==='note'&&n.properties.description){noteLines=api$7.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
@@ -1652,11 +1652,11 @@ function renderNode(g,p,theme,registry){
     .replace(/\bviewBox="[^"]*"/,'');
    shaped=shaped.slice(0,-4)+`<g class="ddn-icon" data-icon="${esc$1(xi.library+'/'+xi.icon)}">`+inner+'</g></g>';
   }
- 
+
   /* B1-076: C4 tag chip under the node (any silhouette, decorator layer). */
   if(g.n.properties.x_c4tag?.tags?.length&&p.detail!=='shapes'){const tg=g.n.properties.x_c4tag.tags.join(', ');shaped=shaped.slice(0,-4)+`<g class="ddn-c4tag">`+text$1(g.x+g.w/2,g.y+g.h-6*g.scale,'['+tg+']',10*g.scale,theme.muted,500,'text-anchor="middle" font-style="italic"')+'</g></g>';}
   if(g.n.properties&&g.n.properties.x_subdiagram){const b=badge(g.ioChild?'↗ inline':'↗ ref',0,0,theme.surface,theme.accent);shaped=shaped.slice(0,-4)+`<g class="ddn-ref-badge" transform="translate(${fmt(g.x+g.w-b.w*g.scale)} ${fmt(g.y-10*g.scale)}) scale(${g.scale})">`+b.svg+'</g></g>';}
-  /* B1-074 (RFC-132): frozen drill-down — embed the stored snapshot verbatim
+  /* B1-074 : frozen drill-down — embed the stored snapshot verbatim
    * through the same namespacing pass; the child is never re-rendered. */
   const xf=g.n.properties.x_subdiagram?.frozen===true?g.n.properties.x_subdiagram:null;
   if(xf){
@@ -1674,7 +1674,7 @@ function renderNode(g,p,theme,registry){
    inner=inner.replace(/ id="([^"]+)"/g,(m,id)=>` id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${prefix}${id})`).replace(/(href|xlink:href)="#([^"]+)"/g,(m,a2,id)=>`${a2}="#${prefix}${id}"`).replace(/aria-labelledby="[^"]*"/g,'');
    inner=inner.replace(/<svg /,`<svg x="${fmt(g.x+(g.w-cw2)/2)}" y="${fmt(g.y+g.h-ch2-8*g.scale)}" `).replace(/width="[^"]*" height="[^"]*"/,`width="${fmt(cw2)}" height="${fmt(ch2)}"`);
    shaped=shaped.slice(0,-4)+`<g class="ddn-io-inline" data-view="${esc$1(c.scene.projection?.profile||'')}">`+inner+'</g></g>';}
-  /* B1-061 (RFC-125): interaction-use gates (border squares) and arguments. */
+  /* B1-061 : interaction-use gates (border squares) and arguments. */
   const xu=g.n.properties?.x_use;
   if(xu){const s2=g.scale;
    if(xu.arguments?.length)shaped=shaped.slice(0,-4)+`<g class="ddn-io-arguments">`+text$1(g.x+g.w/2,g.y+g.h-8*s2,'('+xu.arguments.join(', ')+')',11*s2,theme.muted,500,'text-anchor="middle"')+'</g></g>';
@@ -1729,7 +1729,7 @@ function endMark(point,angle,type,ink,surface='white'){if(!type||type==='none')r
  else if(type==='slash')s+=`<path d="M-9 -6L-3 6" stroke-width="2.4"/>`;
  else if(type==='lollipop')s+=`<circle cx="-7" cy="0" r="5" fill="${esc$1(surface)}"/>`;
  else if(type==='socket')s+=`<path d="M-11 -6A6.5 6.5 0 0 0 -11 6" fill="none"/>`;
- else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc$1(surface)}"/>`; /* B1-066 (RFC-129): DMN authority requirement */
+ else if(type==='circle')s+=`<circle cx="-8" cy="0" r="4.5" fill="${esc$1(surface)}"/>`; /* B1-066 : DMN authority requirement */
  else if(type==='xcircle')s+=`<circle cx="-9" cy="0" r="6" fill="${esc$1(surface)}"/><path d="M-12 -3L-6 3M-6 -3L-12 3"/>`; /* B1-080: ORM exclusion */
  else if(['one','zeroone','many','zeromany'].includes(type)){
   if(type.includes('many'))s+='<path d="M-13 0L0 -7M-13 0L0 7M-13 0L0 0"/>';
@@ -1766,7 +1766,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(!api$4||!api$7||!Export)throw new DDN$1.DDNError('DDN099','Load layout/text/export modules before rendering');
  ir=Export.project(ir);
  const textBefore=api$7.stats();
- /* B1-074 (RFC-132): options.detail — 'full' (default) renders text as
+ /* B1-074 : options.detail — 'full' (default) renders text as
   * always; 'shapes' (drill-down thumbnails) suppresses every text run. */
  const p={...ir.view.profiles,detail:options.detail||'full'},t=themes[p.style.theme],mono=p.style.theme==='neutral';
  /* B1-045 (D2): view chrome visibility. Defaults (auto/on) reproduce the
@@ -1784,19 +1784,19 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const portIds=new Set(ir.elements.flatMap(n=>n.ports.map(pt=>pt.id)));
  for(const r of rels)for(const ep of [r.from,r.to]){context.degrees[ep.element]=(context.degrees[ep.element]||0)+1;if(ep.member)context.degrees[ep.member]=(context.degrees[ep.member]||0)+1;}
  let geoms=elems.map(n=>measureNode(n,registry,p,ir.view.placements[n.id],context));
- /* B1-061 (RFC-125): interaction-overview inline expansion. Child views render
+ /* B1-061 : interaction-overview inline expansion. Child views render
   * through the same recursive render() as inline subdiagrams; the owning node
   * grows to fit. */
  const ioChildren=ir.view.ioChildren||{};
  for(const g of geoms){const child=ioChildren[g.id];if(!child)continue;
-  /* B1-074 (RFC-132): display:'thumbnail' renders the child in shapes detail
+  /* B1-074 : display:'thumbnail' renders the child in shapes detail
    * (silhouettes/edges/frames/ports, no text). */
   const thumb=g.n.properties.x_subdiagram?.display==='thumbnail'||g.n.properties.x_subdiagram?.frozen===true;
   const c=render$1(child,registry,glyphDefs,thumb?{...options,detail:'shapes'}:options),s=q$1(p.style.font_size,16)/16;
   const cw=Math.min(360*s,c.scene.width),ch=Math.min(200*s,c.scene.height);
   g.ioChild={scene:c,svg:c.svg};g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
  }
- /* B1-074 (RFC-132): frozen nodes carry their snapshot instead of a live
+ /* B1-074 : frozen nodes carry their snapshot instead of a live
   * child — grow the node around the snapshot's declared size the same way. */
  for(const g of geoms){const xf=g.n.properties.x_subdiagram;if(xf?.frozen!==true)continue;
   const s=q$1(p.style.font_size,16)/16;
@@ -1804,7 +1804,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const cw=Math.min(360*s,wm?parseFloat(wm[1]):360*s),ch=Math.min(200*s,hm?parseFloat(hm[1]):200*s);
   g.w=Math.max(g.w,cw+24*s);g.h+=ch+16*s;g.ioH=ch;
  }
- 
+
  if(p.publication.fit==='reflow'&&p.layout.algorithm==='grid'&&!Object.values(ir.view.placements).some(x=>x.at)){const pw=q$1(p.publication.width,1280),reserve=legendPlacement==='right'?q$1(p.legend.width,310)+25:0;let cols=Math.floor((pw-2*q$1(p.publication.margin,32)-reserve)/(geoms.reduce((m,g)=>Math.max(m,g.w),270)+api$4.round(q$1(p.layout.gap,100)*api$4.spacingScale(p.layout))));p.layout={...p.layout,columns:Math.max(1,Math.min(geoms.length,cols))};}
  const placed=api$3.place(geoms,rels,ir,options);geoms=placed.nodes;
  /* B1-063: BPMN boundary events attach to their host's bottom border (port
@@ -1821,7 +1821,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  geoms.reduce((m,g)=>Math.max(m,g.w),270);geoms.reduce((m,g)=>Math.max(m,g.h),130);
  const byId=new Map(geoms.map(g=>[g.id,g]));
  let frames=ir.view.frames.map(f=>{const m=f.members.map(id=>byId.get(id)).filter(Boolean);let x=f.at?q$1(f.at[0]):(m.length?m.reduce((v,g)=>Math.min(v,g.x),Infinity)-20:0),y=f.at?q$1(f.at[1]):(m.length?m.reduce((v,g)=>Math.min(v,g.y),Infinity)-54:0),w=f.size?q$1(f.size[0]):(m.length?m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20:300),h=f.size?q$1(f.size[1]):(m.length?m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22:170);
- // frame_overflow (RFC-118): expand grows a declared rect to enclose members
+ // frame_overflow : expand grows a declared rect to enclose members
  // at the standard padding; when members already fit this is a no-op.
  if(m.length&&p.layout.frame_overflow!=='confine'&&(f.at||f.size)){w=Math.max(w,m.reduce((v,g)=>Math.max(v,g.x+g.w),-Infinity)-x+20);h=Math.max(h,m.reduce((v,g)=>Math.max(v,g.y+g.h),-Infinity)-y+22);}
  return {...f,x,y,w,h};});
@@ -1888,7 +1888,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  if(ladderRails)diagram+=`<g class="ddn-ladder-rails"><path d="M${fmt(ladderRails.x0)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/><path d="M${fmt(ladderRails.x1)} ${fmt(ladderRails.y0)}V${fmt(ladderRails.y1)}" fill="none" stroke="${t.ink}" stroke-width="2.5"/></g>`;
  for(const f of frames){diagram+=`<g class="ddn-frame" data-frame="${esc$1(f.id)}">`+rect(f.x,f.y,f.w,f.h,t.rule,t.surface,p.style.look,f.id,0,{...p.style,hachure:false})+text$1(f.x+15,f.y+26,f.name,13,t.muted,650);
   if(f.x_region===true)diagram+=`<rect x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" fill="none" stroke="${t.rule}" stroke-dasharray="6 4"/>`;
-  /* B1-060 (RFC-124): interruptible activity region (dashed roundrect) and
+  /* B1-060 : interruptible activity region (dashed roundrect) and
    * structured/expansion region keyword. */
   if(f.x_interruptible===true)diagram+=`<rect data-interruptible="true" x="${f.x}" y="${f.y}" width="${f.w}" height="${f.h}" rx="18" fill="none" stroke="${t.rule}" stroke-dasharray="7 5"/>`;
   if(f.x_structured?.mode)diagram+=text$1(f.x+15,f.y+46,'«'+f.x_structured.mode+'»',11,t.muted,650);
@@ -1898,7 +1898,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const routeColours={};
  const gensets=new Map();
  for(const a of routes){const colour=mono?'#383838':api$8.semantic(a.reg.colour,t);routeColours[a.id]=colour;
-  /* B1-055 (RFC-119): n-ary association — the binary route is suppressed and
+  /* B1-055 : n-ary association — the binary route is suppressed and
    * replaced by the UML diamond junction at the member centroid with one
    * straight spoke per end, each carrying its role/multiplicity labels. */
   const nary=a.r.properties.x_nary;
@@ -1937,7 +1937,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   const tun=side=>{const xt=a.r.properties.x_tunnel||{};if(!xt[side])return false;return true;};
   diagram+=(tun('start')?tunnelMark(a.points[0],api$4.curveDirection(a,true),colour):endMark(a.points[0],api$4.curveDirection(a,true),startType,colour,t.surface))
    +(tun('end')?tunnelMark(a.points.at(-1),api$4.curveDirection(a),colour):endMark(a.points.at(-1),api$4.curveDirection(a),endType,colour,t.surface));
-  /* B1-060 (RFC-124): interrupting/exception edges draw a lightning-bolt
+  /* B1-060 : interrupting/exception edges draw a lightning-bolt
    * zigzag over the route (perpendicular jog per segment, alternating side). */
   if(a.r.properties.x_interrupt===true||a.r.properties.x_exception===true){
    const bolt=[];let side=1;
@@ -1945,7 +1945,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     bolt.push(seg.a,[mx+nx*side,my+ny*side]);side=-side;}
    bolt.push(a.points.at(-1));
    diagram+=`<g data-lightning="${a.r.properties.x_exception===true?'exception':'interrupt'}"><path d="${pathD(bolt)}" fill="none" stroke="${esc$1(colour)}" stroke-width="1.7"/>`+endMark(a.points.at(-1),api$4.curveDirection(a),'filled',colour,t.surface)+'</g>';}
-  /* B1-055 (RFC-119): UML endpoint label slots. Role text sits above the line
+  /* B1-055 : UML endpoint label slots. Role text sits above the line
    * near the endpoint, multiplicity below it; a qualifier is the small rect at
    * the end. Angles point away from the endpoint along the route. */
   const el=a.r.properties.x_endlabels;
@@ -1975,9 +1975,9 @@ function renderInner(ir,registry,glyphDefs='',options={}){
      diagram+=`<g class="ddn-fbd-pin">`+text$1(pt[0]+(ep===a.r.from?-12*s:12*s),pt[1]+4*s,xf.type,9.5*s,colour,500,ep===a.r.from?'text-anchor="end"':'')+'</g>';
      if(xf.negated)diagram+=`<circle data-negated="true" cx="${fmt(pt[0])}" cy="${fmt(pt[1])}" r="${fmt(4*s)}" fill="${esc$1(t.surface)}" stroke="${esc$1(colour)}" stroke-width="1.5"/>`;
     }
-    /* B1-072 (RFC-130): SoaML «Service»/«Request» badge by the port square. */
+    /* B1-072 : SoaML «Service»/«Request» badge by the port square. */
     if(xs)diagram+=`<g class="ddn-port-label ddn-service-badge">`+text$1(pt[0]+12*s,pt[1]+16*s,'«'+(xs.kind==='service'?'Service':'Request')+'»',10*s,colour,600)+'</g>';
-    /* B1-065 (RFC-128): SysML port typing — «proxy»/«full» label, conjugation
+    /* B1-065 : SysML port typing — «proxy»/«full» label, conjugation
      * tilde, multiplicity, nested port sub-squares. */
     const portNote=[xo.conjugated?'~':'',member?.name||'',xo.multiplicity?' ['+xo.multiplicity+']':''].join('');
     if(xo.type||xo.conjugated||xo.multiplicity)diagram+=`<g class="ddn-port-label">`+text$1(pt[0]+12*s,pt[1]-8*s,(xo.type?'«'+xo.type+'» ':'')+portNote,10.5*s,colour,500)+'</g>';
@@ -1985,7 +1985,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     if(xp.set)diagram+=`<g class="ddn-pin-set">`+text$1(pt[0]+12*s,pt[1]-8*s,xp.set,10.5*s,colour,500)+'</g>';}}
   diagram+='</g>';
  }
- /* B1-060 (RFC-124): pins with no incident edge still render on the action
+ /* B1-060 : pins with no incident edge still render on the action
   * border (in→west, out→east), streaming filled, set label beside. */
  if(p.projection.profile==='uml.activity@2'||p.projection.profile==='sysml.activity@1'){
   const s=q$1(p.style.font_size,16)/16,connected=new Set(rels.flatMap(r=>[r.from.member,r.to.member].filter(Boolean)));
@@ -1997,7 +1997,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
     diagram+=`<g class="ddn-pin" data-port-square="${esc$1(pt.id)}"${xp.streaming?' data-streaming="true"':''}><rect x="${fmt(xx-5*s)}" y="${fmt(yy-5*s)}" width="${fmt(10*s)}" height="${fmt(10*s)}" fill="${xp.streaming?esc$1(t.ink):esc$1(t.surface)}" stroke="${esc$1(t.ink)}" stroke-width="1.5"/>`+(xp.set?text$1(xx+(west?-8*s:8*s),yy-8*s,xp.set,10.5*s,t.muted,500,west?'text-anchor="end"':''):'')+'</g>';}
   }
  }
- // B1-061 (RFC-125): communication-diagram fragments — dashed frame with an
+ // B1-061 : communication-diagram fragments — dashed frame with an
  // operator pentagon over the covered message routes; guards at operand starts.
  if(p.projection.profile==='uml.communication@2'){
   const s=q$1(p.style.font_size,16)/16,byRelId=new Map(routes.map(a=>[a.r.id,a]));

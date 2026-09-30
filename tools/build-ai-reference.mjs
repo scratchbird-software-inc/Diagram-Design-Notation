@@ -23,7 +23,7 @@
  * growing the machine-extracted vocabulary; the file is generated, so the
  * growth is registry content, not prose bloat, and the alternative is
  * dropping coverage the completeness gates forbid).
- * (RFC-119…125) and BPMN registry growth added ~15 profile rows and ~30
+ * the UML completeness profiles and BPMN registry growth added ~15 profile rows and ~30
  * kind/relation rows to the machine-extracted tables; the hand-written
  * sections were trimmed to their teaching minimum first (B1-057…B1-061).)
  *

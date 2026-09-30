@@ -573,7 +573,7 @@ function render(ir,reg,glyphs='',options={}){
   const gap=Math.max(230*s,labelW+100*s),left=110*s;
   parts.forEach((n,i)=>px.set(n.id,left+i*gap));
   const bottom=firstRow+Math.max(msgs.length,1)*pitch-20*s;H=bottom+64*s;W=Math.max(W,left*2+(parts.length-1)*gap);
-  /* B1-056 (RFC-120): feature flags — every rule below is opt-in by property,
+  /* B1-056 : feature flags — every rule below is opt-in by property,
    * so uml.sequence@1 fixtures render byte-identically. */
   const fragments=plan.fragments||[];
   const sortOf=r=>r.properties.x_message?.sort;
@@ -675,7 +675,7 @@ function render(ir,reg,glyphs='',options={}){
     const x0=fx(e.at),x1=m+1<part.states.length?fx(part.states[m+1].at):fx(hi),yy=ly(level.get(e.state));
     d+=(m?'L':'M')+f(x0)+' '+f(yy)+'L'+f(x1)+' '+f(yy);
     const content=`<title>${esc(n.name+': '+e.state+' from '+fmtNumber(e.at))}</title><path class="ddn-timing-plateau" data-at="${e.at}" data-state="${esc(e.state)}" d="M${f(x0)} ${f(yy)}L${f(x1)} ${f(yy)}" stroke="${colour(level.get(e.state))}" stroke-width="2.5" fill="none"/>`;
-    /* B1-061 (RFC-125): duration/slew annotations beside the plateau. */
+    /* B1-061 : duration/slew annotations beside the plateau. */
     const ann=(e.duration||'')+(e.slew?' '+e.slew:'');
     body+=group(n.id,[n.id],content+text((x0+x1)/2,yy-8*s,e.state,11,400,'middle')+(ann?`<g class="ddn-timing-annotation">`+text((x0+x1)/2,yy+16*s,ann,10.5,500,'middle')+'</g>':''),{x:x0,y:yy-16*s,w:x1-x0,h:20*s,at:e.at,state:e.state},'x_states');
    });

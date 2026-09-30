@@ -366,7 +366,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
     const imports=[],sections=[],declarations=[];
     function importLine(){take();let path=expect('string').value;expect('id','as');let alias=expect('id').value;expect(';');if(imports.some(x=>x.alias===alias))fail('DDN014','Duplicate import alias',tokens[pos-2],source);imports.push({path,alias});}
     // File-level imports: canonical position before the first module header
-    // (RFC-117); the legacy position — right after the FIRST header — is also
+    // ; the legacy position — right after the FIRST header — is also
     // accepted so existing single-module files are unchanged.
     while(peek().type==='id'&&peek().value==='import')importLine();
     do{
@@ -387,7 +387,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
     if(/^(?:[a-z]+:|\/|\\)/i.test(relative)||relative.includes('\\'))throw new DDNError('DDN020','Imports must be workspace-relative POSIX paths: '+JSON.stringify(relative),base);
     const p=base.split('/').slice(0,-1);for(const bit of relative.split('/')){if(!bit||bit==='.')continue;if(bit==='..'){if(!p.length)throw new DDNError('DDN020','Import escapes workspace: '+JSON.stringify(relative),base);p.pop();}else p.push(bit);}return p.join('/');
   }
-  // RFC-117 D4: merge a workspace (entry + transitive imports) into one
+  // D4: merge a workspace (entry + transitive imports) into one
   // self-contained multi-module file. Section bodies are the original source
   // lines minus the header lines (version/module/import) — comments and
   // formatting preserved, no re-serialization. Deterministic: same workspace
@@ -395,7 +395,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
   // written through those aliases (@alias.path) are canonicalized to
   // module-qualified sibling references (@moduleId.path) — token-precise, so
   // strings and comments are untouched — because a dropped alias no longer
-  // resolves once the sections are siblings (see RFC-117 decision record).
+  // resolves once the sections are siblings (see decision record).
   function bundle(files,entry){
     if(!Object.hasOwn(files,entry))throw new DDNError('DDN022','Missing workspace file '+entry,entry);
     const set=new Set(),order=[];
@@ -500,7 +500,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
       const open=p=>{
         if(!Object.hasOwn(files,p))throw new DDNError('DDN022','Missing workspace file '+p,p);
         active.add(p);const d=parse(files[p],p,kindWords,relWords);docs.set(p,d);d.imported=new Map();
-        // A file registers ALL its module sections (RFC-117 D2). Module records
+        // A file registers ALL its module sections (D2). Module records
         // are what nodes carry as n.doc: identity, own declarations and the
         // file-level import map.
         d.moduleRecords=d.sections.map(s=>{
@@ -908,7 +908,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
       if(ir.view.children.length>12)throw new DDNError('DDN-QP003','At most twelve embedded child views are permitted',view.source,view.start);
     }
     if(p.projection.profile==='soaml.services@1'){
-      /* B1-072 (RFC-130): service-contract choreography binding — the target
+      /* B1-072 : service-contract choreography binding — the target
        * view must be a uml.sequence@2 or uml.statemachine@1 choreography. */
       for(const n of ir.elements){const target=n.properties&&n.properties.x_contract&&n.properties.x_contract.choreography&&n.properties.x_contract.choreography.$ref;
         if(typeof target!=='string')continue;
@@ -944,7 +944,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
          throw new DDNError('DDN-PJ119','HMSC reference '+(n.name||n.id)+' references unknown view '+target,n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);}
     }
     if(p.projection.profile==='dmn.drd@1'){
-      /* B1-066 (RFC-129): DMN decision nodes bind decision-table views. */
+      /* B1-066 : DMN decision nodes bind decision-table views. */
       for(const n of ir.elements){const target=n.properties&&n.properties.x_subdiagram&&n.properties.x_subdiagram.view;
         if(typeof target!=='string')continue;
         if(!n.kind.startsWith('dmn.'))throw new DDNError('DDN-PJ192','x_subdiagram on '+n.kind+' under dmn.drd@1; only dmn.* nodes bind views',n.source&&n.source.file||view.source,n.source&&n.source.start||view.start);
@@ -956,7 +956,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
     }
     if(p.projection.profile==='uml.interaction_overview@1'||p.projection.profile==='uml.interaction_overview@2'){
       const viewIds=new Set();for(const n of ws.symbols.values())if(n.type==='view'){viewIds.add(n.id);viewIds.add(n.uid);}
-      /* B1-061 (RFC-125): @2 expands referenced interactions inline — one
+      /* B1-061 : @2 expands referenced interactions inline — one
        * recursion level via build(), child IRs on ir.view.ioChildren (view-level
        * metadata; semanticJSON reads elements/relations only). */
       const ioChildren={};
@@ -971,7 +971,7 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
         }}
       if(Object.keys(ioChildren).length)ir.view.ioChildren=ioChildren;
     }
-    /* B1-074 (RFC-132): drill-down display modes on any node with
+    /* B1-074 : drill-down display modes on any node with
      * x_subdiagram.display. interaction_overview@2 keeps its legacy
      * display-absent inline behavior above; elsewhere display:'inline' builds
      * a live child, display:'thumbnail' builds a shapes-detail child (rendered

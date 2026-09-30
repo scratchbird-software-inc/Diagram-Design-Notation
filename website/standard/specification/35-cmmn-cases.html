@@ -26,65 +26,65 @@
 <main class="site-main">
 <article class="md-body">
 <h1>35. CMMN-style case diagrams (profile <code>cmmn.basic@1</code> on projection <code>graph</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-109 (<code>standard/governance/rfcs/RFC-109-cmmn.md</code>). Source grammar remains DDN 0.5; the kinds are registry entries, stage grouping is the existing view <code>frame</code> with a resolved <code>scope</code>, and sentry typing uses a registered <code>x_*</code> extension property, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; the kinds are registry entries, stage grouping is the existing view <code>frame</code> with a resolved <code>scope</code>, and sentry typing uses a registered <code>x_*</code> extension property, so this chapter is a semantic addition, not a grammar change.</p>
 <p>A CMMN-style case view models case-style planning — stages containing plan items, entry/exit criteria on stage borders, and milestones — on the existing <code>graph</code> projection. Users write <code>projection { kind:graph; profile:&quot;cmmn.basic@1&quot;; }</code>.</p>
 <p>This is profile-level coverage, not CMMN conformance.</p>
 <h2>Metamodel</h2>
 <ul><li><strong>Stages</strong> — a <code>cmmn.stage</code> object (silhouette <code>round</code>, fallback</li></ul>
-<p>  <code>activity</code>, family <code>activity</code>, code <code>STAGE</code>) plus a view <code>frame</code> whose   <code>scope</code> resolves to that stage element and whose <code>members</code> are the stage's   plan items (tasks, milestones, sentries). The frame renders as the existing   frame box; its scope object is the stage header. Membership is declared by   the frame's <code>members</code> list, never inferred from geometry.</p>
+<p> <code>activity</code>, family <code>activity</code>, code <code>STAGE</code>) plus a view <code>frame</code> whose  <code>scope</code> resolves to that stage element and whose <code>members</code> are the stage's  plan items (tasks, milestones, sentries). The frame renders as the existing  frame box; its scope object is the stage header. Membership is declared by  the frame's <code>members</code> list, never inferred from geometry.</p>
 <ul><li><strong>Milestones</strong> — <code>cmmn.milestone</code> nodes (silhouette <code>round</code>, fallback</li></ul>
-<p>  <code>activity</code>, family <code>activity</code>, code <code>MILESTONE</code>), rendered as rounded   nodes.</p>
+<p> <code>activity</code>, family <code>activity</code>, code <code>MILESTONE</code>), rendered as rounded  nodes.</p>
 <ul><li><strong>Sentries</strong> — <code>cmmn.sentry</code> nodes (silhouette <code>diamond</code>, fallback</li></ul>
-<p>  <code>activity</code>, family <code>activity</code>, code <code>SENTRY</code>), rendered as small diamond   nodes, carrying the registered extension <code>x_sentry:{on:…}</code> with <code>on</code> one of   <code>entry</code>, <code>exit</code> (schema:   <code>{type:'object', required:['on'], properties:{on:{enum:['entry','exit']}}, additionalProperties:false}</code>   on objects).</p>
+<p> <code>activity</code>, family <code>activity</code>, code <code>SENTRY</code>), rendered as small diamond  nodes, carrying the registered extension <code>x_sentry:{on:…}</code> with <code>on</code> one of  <code>entry</code>, <code>exit</code> (schema:  <code>{type:'object', required:['on'], properties:{on:{enum:['entry','exit']}}, additionalProperties:false}</code>  on objects).</p>
 <ul><li><strong>Tasks</strong> — the existing <code>analysis.task</code> kind, reused unchanged; no new</li></ul>
-<p>  task kind is registered.</p>
+<p> task kind is registered.</p>
 <ul><li><strong>Links</strong> — containment-free links inside a stage use the existing <code>assoc</code></li></ul>
-<p>  (structural) verb; ordering uses the existing <code>analysis.precedes</code> verb. No   new verbs are registered.</p>
+<p> (structural) verb; ordering uses the existing <code>analysis.precedes</code> verb. No  new verbs are registered.</p>
 <h2>Declaration rules</h2>
 <ul><li>&quot;On the stage border&quot; is a declared-membership notion in v1: a sentry is</li></ul>
-<p>  on a stage's border exactly when it is a member of the view frame whose   <code>scope</code> resolves to that <code>cmmn.stage</code> element.</p>
+<p> on a stage's border exactly when it is a member of the view frame whose  <code>scope</code> resolves to that <code>cmmn.stage</code> element.</p>
 <ul><li>Every selected <code>cmmn.sentry</code> must be a member of at least one such stage</li></ul>
-<p>  frame and must carry a valid <code>x_sentry.on</code>; otherwise the view is rejected   with <code>DDN-PJ120</code> (error; the message names the sentry). Malformed   <code>x_sentry</code> values — for example <code>x_sentry:{on:&quot;during&quot;}</code> — are caught   earlier by the extension schema contract as <code>DDN105</code>; <code>DDN-PJ120</code> covers   the membership and missing-property cases.</p>
+<p> frame and must carry a valid <code>x_sentry.on</code>; otherwise the view is rejected  with <code>DDN-PJ120</code> (error; the message names the sentry). Malformed  <code>x_sentry</code> values — for example <code>x_sentry:{on:&quot;during&quot;}</code> — are caught  earlier by the extension schema contract as <code>DDN105</code>; <code>DDN-PJ120</code> covers  the membership and missing-property cases.</p>
 <ul><li>A sentry that is a member of a frame whose scope resolves to a non-stage</li></ul>
-<p>  element is likewise rejected with <code>DDN-PJ120</code>.</p>
+<p> element is likewise rejected with <code>DDN-PJ120</code>.</p>
 <h2>Example</h2>
 <pre><code>data claim {
-    object review &quot;Review&quot; { kind: &quot;cmmn.stage&quot;; }
-    object gather_documents &quot;Gather documents&quot; { kind: &quot;analysis.task&quot;; }
-    object assess_claim &quot;Assess claim&quot; { kind: &quot;analysis.task&quot;; }
-    object docs_received &quot;Docs received?&quot; { kind: &quot;cmmn.sentry&quot;; x_sentry: { &quot;on&quot;: &quot;entry&quot; }; }
-    object claim_decided &quot;Claim decided&quot; { kind: &quot;cmmn.milestone&quot;; }
-    relation order &quot;order&quot; @gather_documents -&gt; @assess_claim { kind: &quot;analysis.precedes&quot;; }
+ object review &quot;Review&quot; { kind: &quot;cmmn.stage&quot;; }
+ object gather_documents &quot;Gather documents&quot; { kind: &quot;analysis.task&quot;; }
+ object assess_claim &quot;Assess claim&quot; { kind: &quot;analysis.task&quot;; }
+ object docs_received &quot;Docs received?&quot; { kind: &quot;cmmn.sentry&quot;; x_sentry: { &quot;on&quot;: &quot;entry&quot; }; }
+ object claim_decided &quot;Claim decided&quot; { kind: &quot;cmmn.milestone&quot;; }
+ relation order &quot;order&quot; @gather_documents -&gt; @assess_claim { kind: &quot;analysis.precedes&quot;; }
 }
 
 view case &quot;Claim handling&quot; {
-    data: [@claim];
-    projection { kind: graph; profile: &quot;cmmn.basic@1&quot;; }
-    frame review_frame &quot;Review&quot; {
-        scope: @claim.review;
-        members: [@claim.gather_documents, @claim.assess_claim, @claim.docs_received];
-    }
+ data: [@claim];
+ projection { kind: graph; profile: &quot;cmmn.basic@1&quot;; }
+ frame review_frame &quot;Review&quot; {
+ scope: @claim.review;
+ members: [@claim.gather_documents, @claim.assess_claim, @claim.docs_received];
+ }
 }</code></pre>
 <p>See <code>website/examples/basics/49-cmmn.ddn</code> for the full runnable example.</p>
 <h2>Out of scope</h2>
 <p>CMMN XML interchange, case execution semantics, discretionary items, and full CMMN conformance are unsupported (recorded in the profile catalogue and <code>capabilities.json</code>).</p>
 <h1>35a. CMMN 1.1 full notation (cmmn.complete@1)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-127 (<code>standard/governance/rfcs/RFC-127-cmmn-compliance.md</code>). <code>cmmn.basic@1</code> stays installed and immutable; its fixtures render byte-identically.</p>
+<p>Status: implemented in runtime 0.7.0. <code>cmmn.basic@1</code> stays installed and immutable; its fixtures render byte-identically.</p>
 <p>The full CMMN 1.1 surface, built on the generic decorator/badge layer (shared with the BPMN profiles, not forked):</p>
 <ul><li><strong>Case plan model</strong> — <code>cmmn.caseplan</code>, the clipboard/tab container; a case</li></ul>
-<p>  view declares exactly one (<code>DDN-PJ184</code>).</p>
+<p> view declares exactly one (<code>DDN-PJ184</code>).</p>
 <ul><li><strong>Typed tasks</strong> — <code>cmmn.task</code>, <code>cmmn.humantask</code>, <code>cmmn.processtask</code>,</li></ul>
-<p>  <code>cmmn.decisiontask</code>; <code>x_cmmn</code> marks discretionary (dashed border),   non-blocking (human tasks only, <code>DDN-PJ181</code>), required (<code>!</code>), repetition   (circular arrow), manual activation (hand), completion (check), and the   collapsed-stage <code>+</code> (stages only, <code>DDN-PJ181</code>).</p>
+<p> <code>cmmn.decisiontask</code>; <code>x_cmmn</code> marks discretionary (dashed border),  non-blocking (human tasks only, <code>DDN-PJ181</code>), required (<code>!</code>), repetition  (circular arrow), manual activation (hand), completion (check), and the  collapsed-stage <code>+</code> (stages only, <code>DDN-PJ181</code>).</p>
 <ul><li><strong>Event listeners</strong> — <code>cmmn.timerevent</code> (hourglass) and <code>cmmn.userevent</code></li></ul>
-<p>  (circle with person).</p>
+<p> (circle with person).</p>
 <ul><li><strong>Sentries</strong> — <code>x_sentry</code> grows <code>attach: @ref</code> (criterion attachment onto a</li></ul>
-<p>  plan item's border, same machinery as BPMN boundary events), <code>on_part: @ref</code>   (the event/case-file source) and <code>if_part: &quot;condition&quot;</code> (text inside the   criterion diamond); <code>cmmn.sentryref</code> is the on-part connector. Attachment   and on-part references validate as <code>DDN-PJ182</code>.</p>
+<p> plan item's border, same machinery as BPMN boundary events), <code>on_part: @ref</code>  (the event/case-file source) and <code>if_part: &quot;condition&quot;</code> (text inside the  criterion diamond); <code>cmmn.sentryref</code> is the on-part connector. Attachment  and on-part references validate as <code>DDN-PJ182</code>.</p>
 <ul><li><strong>Stages/milestones</strong> — existing frame machinery and rounded milestones;</li></ul>
-<p>  <code>x_cmmn.discretionary</code> renders the dashed variants.</p>
+<p> <code>x_cmmn.discretionary</code> renders the dashed variants.</p>
 <ul><li><strong>Case file items</strong> — <code>cmmn.casefile</code> (folded document), linked by</li></ul>
-<p>  <code>cmmn.dependency</code> dashed connectors.</p>
+<p> <code>cmmn.dependency</code> dashed connectors.</p>
 <ul><li><strong>Planning tables</strong> — <code>x_planning: { items: […] }</code> on a stage or task</li></ul>
-<p>  renders the dashed-rule discretionary-items table at its top edge   (<code>DDN-PJ183</code> on other owners).</p>
+<p> renders the dashed-rule discretionary-items table at its top edge  (<code>DDN-PJ183</code> on other owners).</p>
 <p>Fixture: <code>website/examples/basics/83-cmmn-complete.ddn</code>; tests <code>notation/tests/cmmn-compliance.js</code> + the <code>cmmn-showcase.js</code> sweep. Out of scope, declared in the profile: CMMN XML interchange, case engine/execution semantics, formal OMG certification.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>

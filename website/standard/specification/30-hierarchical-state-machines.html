@@ -26,32 +26,32 @@
 <main class="site-main">
 <article class="md-body">
 <h1>30. Hierarchical state machines (profile <code>state.composite@1</code> on projection <code>graph</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-104 (<code>standard/governance/rfcs/RFC-104-hierarchical-state.md</code>). Source grammar remains DDN 0.5; frames and <code>x_*</code> properties are existing syntax, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; frames and <code>x_*</code> properties are existing syntax, so this chapter is a semantic addition, not a grammar change.</p>
 <p>A hierarchical state view extends the flat lifecycle notation (<code>state.flat@1</code>, chapter 23) with composite states and parallel regions on the existing <code>graph</code> projection. A composite state is drawn as a frame containing substates; a region is a dashed box inside a composite; transitions may cross composite and region boundaries. Users write <code>projection { kind:graph; profile:&quot;state.composite@1&quot;; }</code>.</p>
 <p>This is profile-level coverage, not UML/SCXML conformance.</p>
 <h2>Metamodel</h2>
 <ul><li><strong>Composite state</strong> — an ordinary <code>state.state</code> object referenced by a view</li></ul>
-<p>  <code>frame</code>'s <code>scope</code>; the frame's <code>members</code> are its substates. The composite   renders as the existing frame box (rect + name).</p>
+<p> <code>frame</code>'s <code>scope</code>; the frame's <code>members</code> are its substates. The composite  renders as the existing frame box (rect + name).</p>
 <ul><li><strong>Region</strong> — a view <code>frame</code> carrying the pass-through flag <code>x_region: true</code></li></ul>
-<p>  whose members are states of one composite. Regions render as the same frame   box with a dashed border overlay (<code>stroke-dasharray=&quot;6 4&quot;</code> in the theme rule   colour).</p>
+<p> whose members are states of one composite. Regions render as the same frame  box with a dashed border overlay (<code>stroke-dasharray=&quot;6 4&quot;</code> in the theme rule  colour).</p>
 <ul><li><strong>States and transitions</strong> — the existing vocabulary</li></ul>
-<p>  (<code>state.initial</code>, <code>state.state</code>, <code>state.final</code>, verb <code>state.transition</code>)   with the existing <code>x_transition</code> extension (<code>event</code>, optional <code>guard</code>).   Transition labels show <code>event [guard]</code> via the engine relabel branch, which   now also matches this profile.</p>
+<p> (<code>state.initial</code>, <code>state.state</code>, <code>state.final</code>, verb <code>state.transition</code>)  with the existing <code>x_transition</code> extension (<code>event</code>, optional <code>guard</code>).  Transition labels show <code>event [guard]</code> via the engine relabel branch, which  now also matches this profile.</p>
 <ul><li>No new kinds, verbs, extension properties, or projection kinds.</li></ul>
 <h2>Declaration rules</h2>
 <ol><li>Frames are ordinary view declarations; <code>x_region: true</code> is an <code>x_*</code></li></ol>
-<p>   property and needs no registration (<code>validateKnown</code> exempts <code>x_</code> keys).</p>
+<p> property and needs no registration (<code>validateKnown</code> exempts <code>x_</code> keys).</p>
 <ol><li>Transitions are ordinary <code>state.transition</code> relations and MAY cross</li></ol>
-<p>   composite/region boundaries — no restriction is added.</p>
+<p> composite/region boundaries — no restriction is added.</p>
 <ol><li>Each region contains at most one <code>state.initial</code>. Violations fail with</li></ol>
-<p>   <strong><code>DDN-PJ113</code></strong> (error): two or more <code>state.initial</code> objects are members of    the same region frame, or of the same composite frame when it has no region    frames (a composite frame is one whose <code>scope</code> resolves to a <code>state.state</code>;    it is exempt when a region frame's members are all among its own). The    message names the frame and the colliding initials.</p>
+<p> <strong><code>DDN-PJ113</code></strong> (error): two or more <code>state.initial</code> objects are members of  the same region frame, or of the same composite frame when it has no region  frames (a composite frame is one whose <code>scope</code> resolves to a <code>state.state</code>;  it is exempt when a region frame's members are all among its own). The  message names the frame and the colliding initials.</p>
 <ol><li>Trace evaluation (<code>traces</code>, and likewise <code>inputs</code>/<code>analysis_budget</code>)</li></ol>
-<p>   remains <code>state.flat@1</code>-only: on this profile it is rejected by the existing    <strong><code>DDN-Q005</code></strong> guard. This profile does not route into <code>Quality.lifecycle</code>,    whose single-initial and reachability rules (<code>DDN-QL001</code>…<code>QL005</code>) would    contradict parallel regions.</p>
+<p> remains <code>state.flat@1</code>-only: on this profile it is rejected by the existing  <strong><code>DDN-Q005</code></strong> guard. This profile does not route into <code>Quality.lifecycle</code>,  whose single-initial and reachability rules (<code>DDN-QL001</code>…<code>QL005</code>) would  contradict parallel regions.</p>
 <h2>Out of scope</h2>
 <p>History pseudostates, timers, executable actions, and trace evaluation are unsupported (recorded in the profile's <code>unsupported[]</code>). <code>state.flat@1</code> is unchanged, including its own <code>unsupported: [&quot;hierarchical/parallel states&quot;]</code> entry — published profiles are immutable.</p>
 <h2>Example</h2>
 <p><code>website/examples/basics/44-hierarchical-state.ddn</code> — a synthetic order lifecycle with top-level states <code>draft</code>/<code>closed</code>, a composite <code>fulfillment</code> containing two parallel regions (<code>payment</code> with <code>awaiting</code>/<code>paid</code>, <code>packing</code> with <code>open</code>/<code>packed</code>), per-region initial/final pairs, and a boundary-crossing transition <code>paid → closed</code>.</p>
 <h1>30a. UML state machines (profile <code>uml.statemachine@1</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-121 (<code>standard/governance/rfcs/RFC-121-uml-statemachine-completeness.md</code>). <code>state.flat@1</code> and <code>state.composite@1</code> stay installed and immutable; their fixtures render byte-identically. <code>uml.statemachine@1</code> is the full UML 2.5.1 state-machine surface on the same graph projection, composite frames and region machinery (the per-region initial check DDN-PJ113 applies).</p>
+<p>Status: implemented in runtime 0.7.0. <code>state.flat@1</code> and <code>state.composite@1</code> stay installed and immutable; their fixtures render byte-identically. <code>uml.statemachine@1</code> is the full UML 2.5.1 state-machine surface on the same graph projection, composite frames and region machinery (the per-region initial check DDN-PJ113 applies).</p>
 <h2>Activities and internal transitions — <code>x_state</code></h2>
 <p><code>x_state</code> is now a closed contract: <code>{ terminal?, entry?, exit?, do?, internal?: [string], submachine?: @ref }</code> (<code>DDN105</code> on unknown keys). A <code>state.state</code> carrying activities, internal transitions or a submachine binding renders as a rounded rectangle with a name header and compartment lines (<code>entry / …</code>, <code>exit / …</code>, <code>do / …</code>, internal transitions verbatim, <code>«submachine» name</code>). Owner and reference rules are <code>DDN-PJ160</code>: <code>x_state</code> applies to state kinds only; <code>submachine</code> must reference a distinct <code>state.state</code>. Activity text is display text, never executed.</p>
 <h2>Pseudostates</h2>

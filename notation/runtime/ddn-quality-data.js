@@ -139,14 +139,14 @@ function decision(ir,E,get){
  const outputs=p.outputs;if(!Array.isArray(outputs)||!outputs.length||outputs.length>20||outputs.some(x=>typeof x!=='string'||!/^[_A-Za-z][_A-Za-z0-9]*$/.test(x)||['__proto__','constructor','prototype'].includes(x))||new Set(outputs).size!==outputs.length)fail('DDN-QD003','outputs must name 1..20 distinct keys');
  const rules=h.records().map(n=>{const rule=n.properties.x_rule;exactKeys(rule,['when','then'],fail,'rule');predicates(rule.when,ds,fail);exactKeys(rule.then,outputs,fail,'rule output');if(outputs.some(k=>!Object.hasOwn(rule.then,k)||!primitive(rule.then[k])||typeof rule.then[k]==='number'&&!Number.isFinite(rule.then[k])))fail('DDN-QD003','Every rule must provide every scalar output');return{id:n.id,node:n,when:rule.when,then:rule.then};});
  const analysis=analyze(ds,rules,p.hit_policy,coverage,p.analysis_budget??4096,fail);
- /* B1-066 (RFC-129): the DMN completeness cell (C+/C−) is opt-in — set
+ /* B1-066 : the DMN completeness cell (C+/C−) is opt-in — set
   * x_completeness: true on the projection, or use a DMN-labelled hit policy
   * — so decision.rules@1 fixtures render byte-identically. */
  const dmnPolicy=['priority','any','output_order','rule_order','aggregation'].includes(p.hit_policy);
  return{kind:'decision',profile:p.profile,inputs:ds,outputs,rules,policy:p.hit_policy,coverage,analysis,completenessCell:p.x_completeness===true||dmnPolicy,sourceIds:rules.map(r=>r.id)};
 }
 function evaluateDecision(plan,input){const fail=(c,m)=>{throw error(Error,c,m);};if(plan.kind!=='decision')fail('DDN-QD006','Not a rule-based decision projection');if(!input||typeof input!=='object'||Array.isArray(input))fail('DDN-QD006','Input must be a record');for(const k of Object.keys(input))if(!plan.inputs.some(d=>d.key===k))fail('DDN-QD006','Unknown input '+k);for(const d of plan.inputs)if(!inDomain(Object.hasOwn(input,d.key)?input[d.key]:MISSING,d))fail('DDN-QD006','Input outside declared domain: '+d.key);const matched=plan.rules.filter(r=>match(r.when,input)),chosen=['first','rule_order'].includes(plan.policy)?matched.slice(0,1):matched;if(plan.policy==='unique'&&chosen.length>1)fail('DDN-QD004','More than one matching rule');
- /* B1-066 (RFC-129): priority/output_order/aggregation are DMN table
+ /* B1-066 : priority/output_order/aggregation are DMN table
   * annotations — DDN returns matches in table order; final ordering and
   * aggregation are the host application's evaluation engine (KEEL), never
   * the notation layer. */

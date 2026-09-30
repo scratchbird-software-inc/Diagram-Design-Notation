@@ -26,15 +26,15 @@
 <main class="site-main">
 <article class="md-body">
 <h1>39. Fault tree and event tree profiles (<code>fault.tree@1</code>, <code>event.tree@1</code>)</h1>
-<p>Status: implemented in runtime 0.7.0, governed by RFC-113 (<code>standard/governance/rfcs/RFC-113-fault-event-tree.md</code>). Source grammar remains DDN 0.5; the profiles, kinds, verb and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
+<p>Status: implemented in runtime 0.7.0. Source grammar remains DDN 0.5; the profiles, kinds, verb and extension property are registry entries, so this chapter is a semantic addition, not a grammar change.</p>
 <p>Fault trees decompose a top event downward through AND/OR gates into basic events; event trees follow an initiating event forward through gate branches to outcomes. Both profiles run on the existing <code>graph</code> projection with the tree layout. Users write <code>projection { kind:graph; profile:&quot;fault.tree@1&quot;; }</code> (or <code>&quot;event.tree@1&quot;</code>) with <code>layout { algorithm:tree; direction:down; }</code>. This is profile-level notation coverage, not a reliability-engineering certification.</p>
 <h2>Metamodel</h2>
 <ul><li>Gates are <code>tree.gate</code> objects (silhouette <code>diamond</code>, fallback <code>gateway</code>,</li></ul>
-<p>  family <code>activity</code>, code <code>GATE</code>). Every gate declares its type via the   registered extension <code>x_gate</code> on objects:   <code>{ &quot;type&quot;:&quot;object&quot;, &quot;required&quot;:[&quot;type&quot;], &quot;properties&quot;:{ &quot;type&quot;:{ &quot;enum&quot;:[&quot;and&quot;,&quot;or&quot;] } }, &quot;additionalProperties&quot;:false }</code>.   Malformed <code>x_gate</code> values are rejected by the schema contract (<code>DDN105</code>).</p>
+<p> family <code>activity</code>, code <code>GATE</code>). Every gate declares its type via the  registered extension <code>x_gate</code> on objects:  <code>{ &quot;type&quot;:&quot;object&quot;, &quot;required&quot;:[&quot;type&quot;], &quot;properties&quot;:{ &quot;type&quot;:{ &quot;enum&quot;:[&quot;and&quot;,&quot;or&quot;] } }, &quot;additionalProperties&quot;:false }</code>.  Malformed <code>x_gate</code> values are rejected by the schema contract (<code>DDN105</code>).</p>
 <ul><li>Basic events are <code>tree.event</code> objects (silhouette <code>circle</code>, fallback</li></ul>
-<p>  <code>object</code>, family <code>concept</code>, code <code>EVENT</code>).</p>
+<p> <code>object</code>, family <code>concept</code>, code <code>EVENT</code>).</p>
 <ul><li>Inputs are <code>tree.input</code> relations (&quot;has input&quot;, family <code>control</code>,</li></ul>
-<p>  <code>start:'none'</code>, <code>end:'none'</code>), source <code>tree.gate</code>, target <code>tree.gate</code> or   <code>tree.event</code>. The endpoint contract is enforced as <code>DDN102</code>.</p>
+<p> <code>start:'none'</code>, <code>end:'none'</code>), source <code>tree.gate</code>, target <code>tree.gate</code> or  <code>tree.event</code>. The endpoint contract is enforced as <code>DDN102</code>.</p>
 <h2>Semantics</h2>
 <p>A <code>tree.input</code> relation points FROM a gate TO one of its inputs — a child gate or a basic event. A gate's input count is its number of visible outgoing <code>tree.input</code> relations. Both profiles share this machinery and differ in documented intent only: <code>fault.tree@1</code> decomposes a top event downward; <code>event.tree@1</code> follows an initiating event forward.</p>
 <h2>The two-input rule</h2>

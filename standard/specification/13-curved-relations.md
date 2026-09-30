@@ -24,15 +24,15 @@ A reusable format concern can contain:
 
 ```ddn
 format styles {
-    layout concept_map {
-        algorithm: mindmap;
-        routing: curved;
-        curve: bezier;
-        curve_tension: 0.5;
-        crossings: gap;
-        gap: 150px;
-        row_gap: 100px;
-    }
+ layout concept_map {
+ algorithm: mindmap;
+ routing: curved;
+ curve: bezier;
+ curve_tension: 0.5;
+ crossings: gap;
+ gap: 150px;
+ row_gap: 100px;
+ }
 }
 ```
 
@@ -42,9 +42,9 @@ In a view's `layout` override, authors can instead write:
 
 ```ddn
 layout {
-    routing: curved;
-    curve: rounded;
-    curve_radius: 36px;
+ routing: curved;
+ curve: rounded;
+ curve_radius: 36px;
 }
 ```
 
@@ -58,13 +58,13 @@ The same four geometry properties are permitted in an existing view's route hint
 
 ```ddn
 route @model.receipt_flow {
-    routing: curved;
-    curve: bezier;
-    curve_tension: 0.6;
+ routing: curved;
+ curve: bezier;
+ curve_tension: 0.6;
 }
 
 route @model.foreign_reference {
-    routing: orthogonal;
+ routing: orthogonal;
 }
 ```
 
@@ -107,18 +107,18 @@ A curved scene route includes:
 
 ```json
 {
-  "routing": "curved",
-  "strategy": "direct-bezier",
-  "flattenTolerance": 0.18,
-  "commands": [
-    {
-      "kind": "cubic",
-      "from": [100, 100],
-      "c1": [200, 100],
-      "c2": [250, 250],
-      "to": [350, 250]
-    }
-  ]
+ "routing": "curved",
+ "strategy": "direct-bezier",
+ "flattenTolerance": 0.18,
+ "commands": [
+ {
+ "kind": "cubic",
+ "from": [100, 100],
+ "c1": [200, 100],
+ "c2": [250, 250],
+ "to": [350, 250]
+ }
+ ]
 }
 ```
 

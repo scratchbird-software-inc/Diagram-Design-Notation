@@ -1,7 +1,6 @@
 # 45. DMN decision requirements diagrams (`dmn.drd@1` on projection `graph`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-129
-(`standard/governance/rfcs/RFC-129-dmn-drd.md`). Source grammar remains DDN
+Status: implemented in runtime 0.7.0. Source grammar remains DDN
 0.5; the DRD kinds and requirement connectors are registry entries, the
 decision-table integration reuses `x_subdiagram`, and the hit-policy labels
 extend the existing decision engine — no grammar change.
@@ -16,19 +15,19 @@ notation plus the existing bounded decision-table engine only.
 
 - **Decision** — `dmn.decision` (rect).
 - **Business knowledge model** — `dmn.bkm` (clipped-corner rect, new
-  `clippedcorner` silhouette).
+ `clippedcorner` silhouette).
 - **Input data** — `dmn.inputdata` (rounded rect).
 - **Knowledge source** — `dmn.knowledgesource` (document/dog-ear).
 - **Decision service** — `dmn.decisionservice` (rect with a divider band
-  under the name; the collapsed band form).
+ under the name; the collapsed band form).
 - **Information requirement** — `dmn.inforeq`: solid line, filled arrowhead;
-  from input data or a decision into a decision or decision service
-  (`DDN-PJ194`).
+ from input data or a decision into a decision or decision service
+ (`DDN-PJ194`).
 - **Knowledge requirement** — `dmn.knowledgereq`: dashed line, open
-  arrowhead; from a BKM into a decision, BKM or service (`DDN-PJ194`).
+ arrowhead; from a BKM into a decision, BKM or service (`DDN-PJ194`).
 - **Authority requirement** — `dmn.authorityreq`: dashed line, open circle at
-  the authority end (new `circle` end mark); from a knowledge source or
-  decision (`DDN-PJ194`).
+ the authority end (new `circle` end mark); from a knowledge source or
+ decision (`DDN-PJ194`).
 
 ## Decision-table binding
 
@@ -44,7 +43,7 @@ non-decision target view fails with `DDN-PJ192`.
 `priority`, `any`, `output_order`, `rule_order` and `aggregation`. These are
 table annotations: the bounded partition analyzer still runs (coverage and
 overlap proofs are unchanged — `rule_order` is analyzed like `first`, the
-rest like `collect`), and `evaluateDecision()` returns matches in table order
+rest like `collect`), and `evaluateDecision` returns matches in table order
 with an explicit note that final ordering/aggregation belongs to the host
 evaluation engine. Ordering by output-value priority lists and aggregation
 computation are not implemented — that is evaluation, not notation.

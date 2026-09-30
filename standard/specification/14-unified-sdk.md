@@ -30,7 +30,7 @@ Page size is an artboard request; viewport zoom is magnification only. Unreadabl
 
 ## Mounting and lifetime
 
-`mount(element,{workspace,entry,view,overrides})` creates the `ddn-example` element and returns it. `ready` tracks the current scheduled render. `destroy()` disconnects listeners/observers. The host owns separately created workspaces and calls their `destroy()` when no longer needed. Load one runtime version per page; repeated loading of the same version reuses the global, while a different version is rejected.
+`mount(element,{workspace,entry,view,overrides})` creates the `ddn-example` element and returns it. `ready` tracks the current scheduled render. `destroy` disconnects listeners/observers. The host owns separately created workspaces and calls their `destroy` when no longer needed. Load one runtime version per page; repeated loading of the same version reuses the global, while a different version is rejected.
 
 The element scopes SVG IDs and selectors before insertion, uses its own Shadow DOM, rejects active SVG content, and emits `ddn-render`, `ddn-error`, `ddn-select`, and `ddn-navigate`. A host resolves links between documents. The gallery resolves known view references without treating links as new data objects. This is not a complete strict-CSP/Trusted Types integration profile.
 

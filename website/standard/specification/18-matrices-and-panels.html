@@ -30,17 +30,17 @@
 <h2>18.1 Relationship matrices</h2>
 <p>A matrix projection declares ordered <code>rows</code>, ordered <code>columns</code>, <code>relation</code> and <code>value</code>. A relationship contributes only when its source is a declared row and its target is a declared column. Direction is not guessed or reversed. Matrix values come from properties of that relationship; row and column captions come from their source elements.</p>
 <pre><code>projection responsibilities {
-    kind: matrix;
-    profile: &quot;matrix.raci@1&quot;;
-    rows: [@process.order, @process.receive];
-    columns: [@roles.buyer, @roles.manager, @roles.warehouse];
-    relation: &quot;analysis.assignment&quot;;
-    value: &quot;x_assignment.code&quot;;
+ kind: matrix;
+ profile: &quot;matrix.raci@1&quot;;
+ rows: [@process.order, @process.receive];
+ columns: [@roles.buyer, @roles.manager, @roles.warehouse];
+ relation: &quot;analysis.assignment&quot;;
+ value: &quot;x_assignment.code&quot;;
 }</code></pre>
 <p>The referenced assignments are ordinary shared semantic relationships:</p>
 <pre><code>relation order_owner &quot;Own purchase approval&quot; @process.order -&gt; @roles.manager {
-    kind: &quot;analysis.assignment&quot;;
-    x_assignment: { code: &quot;A&quot; };
+ kind: &quot;analysis.assignment&quot;;
+ x_assignment: { code: &quot;A&quot; };
 }</code></pre>
 <p>The default duplicate-cell policy is <code>error</code>. <code>matrix.relations@1</code> can explicitly set <code>duplicates:join</code>, in which case all contributing IDs and values remain present. RACI/CRUD do not permit that escape hatch. Blank cells mean no matching assignment, not an invented empty relationship.</p>
 <p><code>matrix.raci@1</code> requires exactly one A and at least one R per row, with individual assignment codes R, A, C or I. This is this profile's policy; combined RA codes or alternative organizational policies require another reviewed profile. <code>matrix.crud@1</code> accepts distinct C/R/U/D letters and rejects repeats or unknown codes. These codes describe intended access; they do not issue database grants.</p>

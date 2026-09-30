@@ -6,15 +6,15 @@
 
 ```ddn
 projection {
-    kind: chart;
-    profile: "chart.quality@1";
-    records: [@m.series.s0_0, @m.series.s0_1, @m.series.s1_0, @m.series.s1_1];
-    x: "x_record.stage";
-    y: "x_record.count";
-    series: "x_record.series";
-    mark: bar;
-    arrangement: group;
-    unit: "defects";
+ kind: chart;
+ profile: "chart.quality@1";
+ records: [@m.series.s0_0, @m.series.s0_1, @m.series.s1_0, @m.series.s1_1];
+ x: "x_record.stage";
+ y: "x_record.count";
+ series: "x_record.series";
+ mark: bar;
+ arrangement: group;
+ unit: "defects";
 }
 ```
 
@@ -46,13 +46,13 @@ Line/area gaps are not bridged across missing observations. Layer identities, so
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.quality@1";
-    records: [@m.measurements.m0_0, @m.measurements.m0_1];
-    transform: histogram; mark: bar;
-    y: "x_record.value"; unit: "mm";
-    bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3];
-    normalize: density;
-    outside: error;
+ kind: chart; profile: "chart.quality@1";
+ records: [@m.measurements.m0_0, @m.measurements.m0_1];
+ transform: histogram; mark: bar;
+ y: "x_record.value"; unit: "mm";
+ bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3];
+ normalize: density;
+ outside: error;
 }
 ```
 
@@ -88,11 +88,11 @@ The plot reports sample sizes, quartile method and whisker rule. It does not for
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.radar@1";
-    records: [@facts.a1, @facts.a2, @facts.a3, @facts.n1, @facts.n2, @facts.n3];
-    mark: radar;
-    x: "x_record.criterion"; y: "x_record.score";
-    series: "x_record.product"; unit: "points";
+ kind: chart; profile: "chart.radar@1";
+ records: [@facts.a1, @facts.a2, @facts.a3, @facts.n1, @facts.n2, @facts.n3];
+ mark: radar;
+ x: "x_record.criterion"; y: "x_record.score";
+ series: "x_record.product"; unit: "points";
 }
 ```
 
@@ -104,11 +104,11 @@ Radar requires categorical `x` (`DDN-PJ030` otherwise), rejects aggregation (`DD
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.funnel@1";
-    records: [@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5];
-    mark: funnel;
-    x: "x_record.stage"; y: "x_record.value";
-    unit: "deals";
+ kind: chart; profile: "chart.funnel@1";
+ records: [@pipeline.s1, @pipeline.s2, @pipeline.s3, @pipeline.s4, @pipeline.s5];
+ mark: funnel;
+ x: "x_record.stage"; y: "x_record.value";
+ unit: "deals";
 }
 ```
 
@@ -120,11 +120,11 @@ Funnel requires categorical `x` (`DDN-PJ030` otherwise), rejects any `series` bi
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.gauge@1";
-    records: [@sla.q1];
-    mark: gauge;
-    x: "x_record.kpi"; y: "x_record.value";
-    unit: "%"; target: 95;
+ kind: chart; profile: "chart.gauge@1";
+ records: [@sla.q1];
+ mark: gauge;
+ x: "x_record.kpi"; y: "x_record.value";
+ unit: "%"; target: 95;
 }
 ```
 
@@ -138,13 +138,13 @@ Exactly one record must remain after any `filter` — the KPI — otherwise `DDN
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.candlestick@1";
-    records: [@trading.d1, @trading.d2, @trading.d3, @trading.d4];
-    mark: candlestick;
-    x: "x_record.day"; x_type: date;
-    open: "x_record.open"; high: "x_record.high";
-    low: "x_record.low"; close: "x_record.close";
-    unit: "CAD";
+ kind: chart; profile: "chart.candlestick@1";
+ records: [@trading.d1, @trading.d2, @trading.d3, @trading.d4];
+ mark: candlestick;
+ x: "x_record.day"; x_type: date;
+ open: "x_record.open"; high: "x_record.high";
+ low: "x_record.low"; close: "x_record.close";
+ unit: "CAD";
 }
 ```
 
@@ -158,11 +158,11 @@ Every record must supply finite numeric open/high/low/close values (`DDN-PJ076`)
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.treemap@1";
-    records: [@storage.r1, @storage.r2, @storage.r3];
-    mark: treemap;
-    x: "x_record.path"; y: "x_record.value";
-    unit: "GB";
+ kind: chart; profile: "chart.treemap@1";
+ records: [@storage.r1, @storage.r2, @storage.r3];
+ mark: treemap;
+ x: "x_record.path"; y: "x_record.value";
+ unit: "GB";
 }
 ```
 
@@ -178,11 +178,11 @@ Unsupported: squarified layout, zoomable/interactive drill-down, and colour-enco
 
 ```ddn
 projection {
-    kind: chart; profile: "chart.sankey@1";
-    records: [@energy.f1, @energy.f2, @energy.f3];
-    mark: sankey;
-    x: "x_record.source"; target: "x_record.target"; y: "x_record.value";
-    unit: "MWh";
+ kind: chart; profile: "chart.sankey@1";
+ records: [@energy.f1, @energy.f2, @energy.f3];
+ mark: sankey;
+ x: "x_record.source"; target: "x_record.target"; y: "x_record.value";
+ unit: "MWh";
 }
 ```
 

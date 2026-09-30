@@ -1,7 +1,6 @@
 # 40. Network/bus and rack profiles (`network.basic@1`, `network.rack@1`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-114
-(`standard/governance/rfcs/RFC-114-network.md`). Source grammar remains DDN
+Status: implemented in runtime 0.7.0. Source grammar remains DDN
 0.5; the profiles, kinds, verb, glyphs and extension property are registry
 entries, so this chapter is a semantic addition, not a grammar change.
 
@@ -15,25 +14,25 @@ network-management or cloud-provider notation.
 ## Metamodel
 
 - `network.bus` — a bus segment (silhouette `rect`, fallback `network`,
-  family `deployment`, code `BUS`, glyph `network-bus`). The bus is an
-  ordinary node kind: the author sizes it (a wide thin rect) with
-  `place … { size:[w,h]; }`.
+ family `deployment`, code `BUS`, glyph `network-bus`). The bus is an
+ ordinary node kind: the author sizes it (a wide thin rect) with
+ `place … { size:[w,h]; }`.
 - `network.switch` (silhouette `rect`, fallback `router`, family
-  `deployment`, code `SWITCH`, glyph `network-switch`).
+ `deployment`, code `SWITCH`, glyph `network-switch`).
 - `network.server` (silhouette `rect`, fallback `host`, family
-  `deployment`, code `SERVER`, glyph `network-server`).
+ `deployment`, code `SERVER`, glyph `network-server`).
 - `network.rack` (silhouette `rect`, fallback `device`, family
-  `deployment`, code `RACK`, glyph `network-rack`).
+ `deployment`, code `RACK`, glyph `network-rack`).
 - `network.attaches` — attachment verb ("attaches to", family
-  `structural`, code `ATTACHES`, `start:'none'`, `end:'none'`,
-  `source:['*']`, `target:['*']`, `allow_self:false`,
-  `member_endpoints:true`). An attachment may target a bus element or a
-  port member on any element.
+ `structural`, code `ATTACHES`, `start:'none'`, `end:'none'`,
+ `source:['*']`, `target:['*']`, `allow_self:false`,
+ `member_endpoints:true`). An attachment may target a bus element or a
+ port member on any element.
 - `x_rack` — registered extension on objects:
-  `{ "type":"object", "properties":{ "units":{ "type":"integer", "minimum":1 }, "unit":{ "type":"integer", "minimum":1 } }, "additionalProperties":false }`.
-  `units` on the rack is its total U height; `unit` on a device is its
-  lowest slot. Malformed values are rejected by the schema contract
-  (`DDN105`).
+ `{ "type":"object", "properties":{ "units":{ "type":"integer", "minimum":1 }, "unit":{ "type":"integer", "minimum":1 } }, "additionalProperties":false }`.
+ `units` on the rack is its total U height; `unit` on a device is its
+ lowest slot. Malformed values are rejected by the schema contract
+ (`DDN105`).
 
 ## The bus is a declared node, not routing geometry
 
@@ -44,7 +43,7 @@ routing-geometry bus/junction networks remain outside this release. The
 bus here is an ordinary node with declared many-to-one `network.attaches`
 relations — membership is declared data, not shared-trunk geometry. The
 `capabilities.json` `unsupported[]` line `native bus/junction-network
-drawing` was removed by RFC-114 for exactly this reason: the declared-node
+drawing` was removed by for exactly this reason: the declared-node
 form is now covered, while routing-geometry junction networks stay
 rejected.
 

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-058 (RFC-122): UML 2.5.1 deployment-diagram fixtures (uml.deployment@1). */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-058 : UML 2.5.1 deployment-diagram fixtures (uml.deployment@1). */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";
@@ -40,7 +40,7 @@ test('uml.deployment@1 renders node/device/executionenv 3D boxes and artifact do
  for(const s of ['«device»','«execution environment»','«artifact»'])assert.ok(r.svg.includes(s),'stereotype missing: '+s);
  const g0=r.svg.indexOf('data-shape="node3d"');assert.ok(g0>=0,'node3d group missing');
  assert.ok((r.svg.slice(g0,g0+900).match(/<path /g)||[]).length>=2,'3D depth faces missing');});
-test('Communication path carries RFC-119 multiplicity end labels',()=>{const r=run();
+test('Communication path carries multiplicity end labels',()=>{const r=run();
  assert.ok(r.svg.includes('1..*'),'commpath multiplicity missing');
  assert.ok((r.svg.match(/ddn-endlabel-multiplicity/g)||[]).length>=2,'end labels missing');});
 test('Deploy/manifest render as dashed «deploy»/«manifest» dependencies; nesting frame renders',()=>{const r=run();

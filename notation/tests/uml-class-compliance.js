@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later. B1-055 (RFC-119): UML 2.5.1 class-diagram completeness fixtures. */
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-055 : UML 2.5.1 class-diagram completeness fixtures. */
 'use strict';
 const A=require('../dist/ddn.global.js'),assert=require('node:assert/strict');
 const SRC=`ddn "0.5";

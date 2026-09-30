@@ -35,7 +35,7 @@ const result = workspace.renderSync({entry:'views.ddn', view:'chart_bar'});
 const externalSpec = workspace.exportVegaLite({entry:'views.ddn', view:'chart_bar'});
 
 const diagram = DDNLive.mount(container, {
-    workspace, entry:'views.ddn', view:'chart_bar'
+ workspace, entry:'views.ddn', view:'chart_bar'
 });
 await diagram.setOptions({mark:'donut', theme:'night'});</code></pre>
 <p>These methods execute real source resolution and validation. <code>render</code> remains an async-shaped interface over bounded synchronous work, not a web worker. Native and external chart export paths are distinct. The adapter does not inherit DDN page guards or editor control semantics.</p>
@@ -45,9 +45,9 @@ await diagram.setOptions({mark:'donut', theme:'night'});</code></pre>
 <p>The source editor accepts raw single/multiple DDN files, folder uploads, workspace ZIPs and workspace JSON. Downloads contain current source or the current successful SVG. Full source snapshots are internal artifacts. Invalid source drafts remain editable; a stale previous SVG is marked stale and cannot be exported as current.</p>
 <p>The inspector can edit scalar <code>x_record</code> properties and existing <code>x_assignment.code</code> assignments with validated, undoable source transactions. It updates the original shared definitions. A graph and RACI view of the same assignments, or a table and chart of the same observations, therefore resolve from the same truth.</p>
 <pre><code>DDNLive.authoring.setRecordValue(workspace, 'views.ddn', 'chart_bar',
-    'meridian.procurement.review::facts.m1', 'value', 840);
+ 'meridian.procurement.review::facts.m1', 'value', 840);
 DDNLive.authoring.setAssignment(workspace, 'views.ddn', 'raci',
-    'meridian.procurement.review::responsibilities.post_c', 'I');</code></pre>
+ 'meridian.procurement.review::responsibilities.post_c', 'I');</code></pre>
 <p>Guided changes validate against the current view before commit. They preserve unrelated source spans and comments, but replacing a structured literal may reformat that literal and does not guarantee preservation of comments within it. Other dependent views validate on subsequent render. A complete multi-view transactional consistency engine and semantic identifier refactoring remain future work.</p>
 <h2>Data refresh</h2>
 <p>A host page can replace the records of a named <code>data</code> block without touching the model, views, layout structure or any other declaration. <code>workspace.replaceData(name, records)</code> locates the named block across the workspace, rewrites only its record lines (declarations carrying an <code>x_record</code> value record) using the same canonical serializer as the other authoring writes — same key order as the incoming objects, same scalar formatting — and applies one validated source transaction, returning <code>{revision, diagnostics}</code>. There is no change-event API: hosts call <code>replaceData</code> and then render or mount again. The dashboard recipe is three lines:</p>

@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.umldep";
 
-// B1-058 (RFC-122): UML 2.5.1 deployment diagrams on uml.deployment@1.
+// B1-058 : UML 2.5.1 deployment diagrams on uml.deployment@1.
 // View 1: devices, execution environment, artifacts, deploy/manifest,
 // communication paths with multiplicity. View 2: node nesting via frames.
 // Minimal current-dialect style, no pinned layout.

@@ -92,7 +92,7 @@ function draw(plan,ir,c){
  }
  if(plan.kind==='decision'){
   const headers=['Rule',...plan.inputs.map(d=>d.key),...plan.outputs.map(k=>'→ '+k)],cw=Math.max(155*s,W/headers.length);W=cw*headers.length;const head=84*s;body+=rect(0,0,W,head)+text(14*s,24*s,'HIT POLICY: '+plan.policy.toUpperCase()+'  ·  coverage: '+plan.coverage,12,650);
-  /* B1-066 (RFC-129): DMN completeness cell — C+ only when coverage is
+  /* B1-066 : DMN completeness cell — C+ only when coverage is
    * declared complete AND the bounded analyzer proved it; else C−. */
   if(plan.completenessCell)body+=text(W-14*s,24*s,plan.coverage==='complete'&&plan.analysis.status==='proved-over-declared-domains'&&!plan.analysis.uncovered.length?'C+':'C−',13,650,'end');headers.forEach((v,i)=>body+=text(i*cw+12*s,61*s,v,12,650));let y=head;
   for(const rule of plan.rules){const vals=[rule.node.name,...plan.inputs.map(d=>Q.formatPredicate(rule.when[d.key])),...plan.outputs.map(k=>JSON.stringify(rule.then[k]))],ls=vals.map(v=>wrap(v,cw-24*s,12)),rh=Math.max(64*s,Math.max(...ls.map(x=>x.length))*18*s+24*s);body+=rect(0,y,W,rh);vals.forEach((v,i)=>{body+=line(i*cw,y,i*cw,y+rh)+group(rule.id,[rule.id],lines(ls[i],i*cw+12*s,y+26*s,12),{x:i*cw,y,w:cw,h:rh});});y+=rh;}

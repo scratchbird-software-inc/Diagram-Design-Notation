@@ -1,7 +1,7 @@
 ddn "0.5";
 module "ddn.examples.uaf";
 
-// B1-072/RFC-131: UAF 1.2 — one view per domain of the UAF grid, showing the
+// B1-072/UAF 1.2 — one view per domain of the UAF grid, showing the
 // domain vocabulary and stereotyped verbs. Matrix/timeline viewpoints of the
 // grid reuse the existing matrix/timeline projections (see the grid doc in
 // specification chapter 47). All data is synthetic.

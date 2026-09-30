@@ -23,7 +23,7 @@ function registry(base){
  out.extension_contracts.x_record=def({type:'object',additionalProperties:true},['object','relation']);
  out.extension_contracts.x_story=def({type:'object',required:['task'],additionalProperties:true},['relation']);
  for(const key of ['x_rule','x_usecase','x_chen','x_continuation'])out.extension_contracts[key]=def({type:'object',additionalProperties:true},key==='x_chen'?['object','field','relation']:['object','relation']);
- /* B1-057 (RFC-121): closed x_state/x_transition contracts for UML 2.5.1 state
+ /* B1-057 : closed x_state/x_transition contracts for UML 2.5.1 state
   * machines. Keys used by shipped lifecycle fixtures (terminal, event, guard,
   * actions) stay legal; string guards render verbatim; internal transitions
   * and activities are compartment text; submachine references a state.state. */
@@ -32,7 +32,7 @@ function registry(base){
  out.extension_contracts.x_assignment=def({type:'object',required:['code'],properties:{code:{type:'string',minLength:1,maxLength:12}},additionalProperties:false},['relation']);
  out.extension_contracts.x_category=def({type:'object',required:['axis','level'],properties:{axis:{type:'string',minLength:1},level:{type:'string',minLength:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_member=def({type:'object',properties:{kind:{enum:['attribute','operation','literal']},visibility:{enum:['public','private','protected','package']},static:{type:'boolean'},abstract:{type:'boolean'},derived:{type:'boolean'},multiplicity:{type:'string',minLength:1},modifiers:{type:'array',items:{enum:['ordered','unique','readOnly']},uniqueItems:true,maxItems:3}},additionalProperties:false},['field']);
- /* B1-055 (RFC-119): UML 2.5.1 class-diagram completeness. Endpoint labels
+ /* B1-055 : UML 2.5.1 class-diagram completeness. Endpoint labels
   * (role/multiplicity/qualifier) on association ends; association-class
   * attachment; n-ary ends beyond the binary anchors; generalization sets;
   * template parameter boxes. */
@@ -42,14 +42,14 @@ function registry(base){
  out.extension_contracts.x_nary=def({type:'object',required:['ends'],properties:{ends:{type:'array',minItems:1,maxItems:6,items:{type:'object',required:['element'],properties:{element:{type:'object'},role:{type:'string',minLength:1},multiplicity:{type:'string',minLength:1}},additionalProperties:false}}},additionalProperties:false},['relation']);
  out.extension_contracts.x_genset=def({type:'object',required:['name'],properties:{name:{type:'string',minLength:1},disjoint:{type:'boolean'},complete:{type:'boolean'}},additionalProperties:false},['relation']);
  out.extension_contracts.x_template=def({type:'object',required:['parameters'],properties:{parameters:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
- /* B1-059 (RFC-123): internal parts — field-level typed members of a
+ /* B1-059 : internal parts — field-level typed members of a
   * classifier, rendered "role: Classifier [mult]". */
  out.extension_contracts.x_part=def({type:'object',properties:{classifier:{type:'string',minLength:1},multiplicity:{type:'string',minLength:1}},additionalProperties:false},['field']);
  out.extension_contracts.x_diagram=def({type:'object',properties:{number:{type:'string',minLength:1},owner:{type:'string'},code:{type:'string'},text:{type:'string'},branch:{type:'string'},stereotype:{type:'string'}},additionalProperties:false},['object','relation']);
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
  out.extension_contracts.x_return=def({type:'boolean'},['relation']);
- /* B1-056 (RFC-120): UML 2.5.1 sequence diagrams. x_message grows the UML
+ /* B1-056 : UML 2.5.1 sequence diagrams. x_message grows the UML
   * message sort, gate and time/duration annotations (seq stays optional at
   * contract level; uml.communication@1 enforces it via DDN-PJ111). x_fragment
   * anchors a combined fragment to its first covered message; operands carry
@@ -103,7 +103,7 @@ function registry(base){
  out.extension_contracts.x_tunnel=def({type:'object',properties:{start:{type:'boolean'},end:{type:'boolean'}},additionalProperties:false},['relation']);
  /* B1-076: C4 element tags — rendered as a tag chip under the node. */
  out.extension_contracts.x_c4tag=def({type:'object',required:['tags'],properties:{tags:{type:'array',minItems:1,maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
- /* B1-074 (RFC-132): drill-down display modes + frozen snapshots. display
+ /* B1-074 : drill-down display modes + frozen snapshots. display
   * defaults to badge everywhere (interaction_overview@2 keeps its legacy
   * inline behavior when display is absent); frozen requires snapshot. */
  out.extension_contracts.x_subdiagram=def({type:'object',required:['view'],properties:{view:{type:'string',minLength:1},display:{enum:['badge','inline','thumbnail']},frozen:{type:'boolean'},snapshot:{type:'string',minLength:1},snapshot_at:{type:'string',minLength:1}},additionalProperties:false},['object']);
@@ -116,23 +116,23 @@ function registry(base){
  out.extension_contracts.x_rack=def({type:'object',properties:{units:{type:'integer',minimum:1},unit:{type:'integer',minimum:1}},additionalProperties:false},['object']);
  out.extension_contracts.x_birth=def({type:'integer'},['object']);
  out.extension_contracts.x_death=def({type:'integer'},['object']);
- /* B1-060 (RFC-124): activity pins, interrupt/exception edges. */
+ /* B1-060 : activity pins, interrupt/exception edges. */
  out.extension_contracts.x_pin=def({type:'object',properties:{set:{type:'string',minLength:1},streaming:{type:'boolean'}},additionalProperties:false},['port']);
  out.extension_contracts.x_interrupt=def({type:'boolean'},['relation']);
  out.extension_contracts.x_exception=def({type:'boolean'},['relation']);
- /* B1-061 (RFC-125): packaged-element visibility, interaction-use gates and
+ /* B1-061 : packaged-element visibility, interaction-use gates and
   * arguments, timing constraints. */
  out.extension_contracts.x_pack=def({type:'object',properties:{visibility:{enum:['public','private']}},additionalProperties:false},['object']);
  out.extension_contracts.x_use=def({type:'object',properties:{arguments:{type:'array',maxItems:8,items:{type:'string',minLength:1}},gates:{type:'array',maxItems:8,items:{type:'string',minLength:1}}},additionalProperties:false},['object']);
  out.extension_contracts.x_timeconstraint=def({type:'array',minItems:1,maxItems:6,items:{type:'string',minLength:1}},['object']);
- /* B1-065 (RFC-128): SysML 1.6 — block compartments, port typing, value
+ /* B1-065 : SysML 1.6 — block compartments, port typing, value
   * units and activity-edge rate/probability annotations. */
  out.extension_contracts.x_block=def({type:'object',required:['compartment'],properties:{compartment:{enum:['values','parts','references','operations','constraints']}},additionalProperties:false},['field']);
  out.extension_contracts.x_port=def({type:'object',properties:{type:{enum:['proxy','full']},conjugated:{type:'boolean'},multiplicity:{type:'string',minLength:1},nested:{type:'array',minItems:1,maxItems:4,items:{type:'object',required:['name'],properties:{name:{type:'string',minLength:1},direction:{enum:['in','out','inout']},type:{enum:['proxy','full']}},additionalProperties:false}}},additionalProperties:false},['port']);
  out.extension_contracts.x_unit=def({type:'object',required:['unit'],properties:{unit:{type:'string',minLength:1},quantity:{type:'string',minLength:1}},additionalProperties:false},['field']);
- /* B1-066 (RFC-129): DMN boxed-expression presentation (text display only,
+ /* B1-066 : DMN boxed-expression presentation (text display only,
   * never evaluated) on DRD nodes. */
- /* B1-072 (RFC-130): SoaML port decorations and service-contract binding. */
+ /* B1-072 : SoaML port decorations and service-contract binding. */
  out.extension_contracts.x_service=def({type:'object',required:['kind'],properties:{kind:{enum:['service','request']}},additionalProperties:false},['port']);
  out.extension_contracts.x_contract=def({type:'object',properties:{choreography:{type:'object'}},additionalProperties:false},['object']);
  out.extension_contracts.x_boxed=def({type:'object',required:['form'],properties:{form:{enum:['literal','context','invocation','relation']},text:{type:'string',minLength:1},entries:{type:'array',minItems:1,maxItems:10,items:{type:'object',required:['text'],properties:{name:{type:'string',minLength:1},text:{type:'string',minLength:1}},additionalProperties:false}}},additionalProperties:false},['object']);
@@ -161,12 +161,12 @@ function validate(ir,reg,ErrorClass){
   if(r.kind==='uml.generalization'&&a.kind!==b.kind)fail('DDN-PF005','Generalization endpoints must have the same declared classifier kind',r);
   if(r.kind==='dfd.data'&&a.kind!=='dfd.process'&&b.kind!=='dfd.process')fail('DDN-PF006','A DFD transfer must involve a process; store/external shortcuts are invalid',r);
  }
- /* B1-055 (RFC-119): UML class-diagram completeness validators. */
+ /* B1-055 : UML class-diagram completeness validators. */
  const MULT=/^(\d+|\*)(\.\.(\d+|\*))?$/;
  for(const r of rels){
   const el=r.properties.x_endlabels;
   if(el!==undefined){
-   /* RFC-122: communication paths carry multiplicity end labels too; the
+   /* communication paths carry multiplicity end labels too; the
     * qualifier stays association-only (DDN-PJ164 covers the misuse). */
    if(!['uml.association','uml.commpath','uml.connector','uml.link'].includes(r.kind))fail('DDN-PJ149','x_endlabels (role/multiplicity/qualifier) apply to uml.association, uml.commpath, uml.connector and uml.link only, not '+r.kind,r);
    for(const side of ['source','target']){const e=el[side];if(!e)continue;

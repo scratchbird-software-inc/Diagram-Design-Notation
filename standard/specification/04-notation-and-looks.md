@@ -95,13 +95,13 @@ Draft.2 corrects the barely visible draft.1 look. The old implementation skipped
 
 ```ddn
 format discussion {
-    style pen {
-        look: handDrawn;
-        font: handwriting;   // optional; sans also supports hand-drawn strokes
-        seed: 42;
-        roughness: 1.8;
-        hachure: true;
-    }
+ style pen {
+ look: handDrawn;
+ font: handwriting; // optional; sans also supports hand-drawn strokes
+ seed: 42;
+ roughness: 1.8;
+ hachure: true;
+ }
 }
 ```
 

@@ -1,7 +1,6 @@
 # 42. Family tree / genealogy profile (`family.tree@1`)
 
-Status: implemented in runtime 0.7.0, governed by RFC-116
-(`standard/governance/rfcs/RFC-116-family-tree.md`). Source grammar
+Status: implemented in runtime 0.7.0. Source grammar
 remains DDN 0.5; the profile, kinds and verbs are registry entries, so
 this chapter is a semantic addition, not a grammar change.
 
@@ -17,18 +16,18 @@ records-verification tool. All example data is fictional.
 Two profile kinds (both family `concept`, fallback `object`):
 
 - `family.person` (silhouette `round`, code `PERSON`, glyph `person`) — a
-  person; the label is the name.
+ person; the label is the name.
 - `family.union` (silhouette `circle`, code `UNION`, glyph `object`) — a
-  partnership join node, rendered as the small circle between partners.
+ partnership join node, rendered as the small circle between partners.
 
 Two profile verbs:
 
 - `family.partner_of` ("partner of", family `structural`, code
-  `PARTNEROF`, no arrowheads) — from a `family.person` to a
-  `family.person` or a `family.union`.
+ `PARTNEROF`, no arrowheads) — from a `family.person` to a
+ `family.person` or a `family.union`.
 - `family.parent_of` ("parent of", family `lineage`, code `PARENTOF`,
-  filled end arrowhead) — from a `family.person` or `family.union` down
-  to a `family.person`.
+ filled end arrowhead) — from a `family.person` or `family.union` down
+ to a `family.person`.
 
 Two registered extension properties on the `object` target, both
 `{ "type":"integer" }` optional year numbers (no range enforced):
@@ -42,10 +41,10 @@ already use; the renderer is unchanged.
 A partnership is either:
 
 - a direct `family.partner_of` link between two persons (childless
-  couples), or
+ couples), or
 - a `family.union` join node linked to each partner via
-  `family.partner_of` — the pattern for couples with children, because
-  the join node gives children a single declared origin edge set.
+ `family.partner_of` — the pattern for couples with children, because
+ the join node gives children a single declared origin edge set.
 
 Children are `family.parent_of` edges from a person or a union down to a
 person. With `layout { direction:down; }` the existing layered/tree
@@ -55,16 +54,16 @@ exact generation-row alignment is not claimed.
 ## Lineage rules
 
 - `DDN-PJ129` (error, thrown) — a cycle in visible `family.parent_of`
-  edges. A person cannot be their own ancestor; the message names a
-  person on the cycle.
+ edges. A person cannot be their own ancestor; the message names a
+ person on the cycle.
 - `DDN-PJ130` (error, thrown — NOT a warning) — a `family.person` with
-  more than two distinct visible `family.parent_of` sources. The fact
-  pattern (at most two biological parents) is a hard domain rule; the
-  generations layout places at most two parents above a child or union,
-  so extra parents cannot be drawn faithfully; and silently dropping one
-  would falsify lineage — the project's no-silent-data-loss principle.
-  The remodelling path is to split the extra parentage into separate
-  unions/partners.
+ more than two distinct visible `family.parent_of` sources. The fact
+ pattern (at most two biological parents) is a hard domain rule; the
+ generations layout places at most two parents above a child or union,
+ so extra parents cannot be drawn faithfully; and silently dropping one
+ would falsify lineage — the project's no-silent-data-loss principle.
+ The remodelling path is to split the extra parentage into separate
+ unions/partners.
 
 Endpoint contracts are enforced by the existing machinery: a
 `family.partner_of` edge sourced from a union, or a `family.parent_of`

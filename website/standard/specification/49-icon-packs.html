@@ -41,30 +41,30 @@
 <h2>5. Sanitization requirements (normative)</h2>
 <p>Icon SVG is user-supplied markup rendered into the consumer's page, so <strong>every consumer must reject an icon before rendering it</strong> when any of the following holds (the DDN runtime reports rejection as <code>DDN-PJ207</code>):</p>
 <ul><li>the <code>svg</code> member is not a string beginning with <code>&lt;svg</code>;</li><li>it exceeds <strong>20 KiB</strong> (20,480 characters);</li><li>it contains scripts (<code>&lt;script&gt;</code>, <code>javascript:</code>), embedded documents</li></ul>
-<p>  (<code>&lt;foreignObject&gt;</code>, <code>&lt;iframe&gt;</code>, <code>&lt;embed&gt;</code>, <code>&lt;object&gt;</code>, <code>&lt;image&gt;</code>),   external references of any kind (<code>href</code>/<code>xlink:href</code> attributes, <code>url()</code>   paint servers, remote fonts), event-handler attributes (<code>on*=</code>),   or <code>&lt;!doctype</code>/<code>&lt;!entity</code> declarations.</p>
+<p> (<code>&lt;foreignObject&gt;</code>, <code>&lt;iframe&gt;</code>, <code>&lt;embed&gt;</code>, <code>&lt;object&gt;</code>, <code>&lt;image&gt;</code>),  external references of any kind (<code>href</code>/<code>xlink:href</code> attributes, <code>url</code>  paint servers, remote fonts), event-handler attributes (<code>on*=</code>),  or <code>&lt;!doctype</code>/<code>&lt;!entity</code> declarations.</p>
 <p>Icons must inline everything they need. A pack that fails sanitization for any icon fails as a whole.</p>
 <h2>6. Binding rules</h2>
 <ul><li><strong>Default binding</strong>: when a node has no explicit icon, the first icon</li></ul>
-<p>  entry — across all registered packs, in pack registration order — whose   <code>kinds</code> contains the node's kind is drawn inside the node. Pack order is   therefore binding precedence; a curated, more specific pack should   register before a generic one.</p>
+<p> entry — across all registered packs, in pack registration order — whose  <code>kinds</code> contains the node's kind is drawn inside the node. Pack order is  therefore binding precedence; a curated, more specific pack should  register before a generic one.</p>
 <ul><li><strong>Override</strong>: the <code>x_icon</code> extension property on any element</li></ul>
-<p>  (<code>x_icon: { library: &quot;&lt;pack-id&gt;&quot;, icon: &quot;&lt;icon-id&gt;&quot; }</code>) binds a specific   icon to that node, regardless of <code>kinds</code>.</p>
+<p> (<code>x_icon: { library: &quot;&lt;pack-id&gt;&quot;, icon: &quot;&lt;icon-id&gt;&quot; }</code>) binds a specific  icon to that node, regardless of <code>kinds</code>.</p>
 <ul><li><strong>Unknown references</strong> are errors (<code>DDN-PJ206</code>), never silent fallbacks.</li></ul>
 <h2>7. Versioning and namespaces</h2>
 <ul><li>The <code>@N</code> suffix in the pack id is the <strong>major version</strong>: removing an</li></ul>
-<p>  icon, renaming an id, or redrawing an icon incompatibly requires a new   pack id (<code>acme-symbols@2</code>), so existing diagrams keep rendering exactly   as authored. In-place additions may bump <code>version</code> only.</p>
+<p> icon, renaming an id, or redrawing an icon incompatibly requires a new  pack id (<code>acme-symbols@2</code>), so existing diagrams keep rendering exactly  as authored. In-place additions may bump <code>version</code> only.</p>
 <ul><li>Pack ids are a flat namespace. Host applications must refuse to register</li></ul>
-<p>  a pack whose id is already registered (shipped or host-supplied) —   reported as <code>DDN-PJ206</code>.</p>
+<p> a pack whose id is already registered (shipped or host-supplied) —  reported as <code>DDN-PJ206</code>.</p>
 <ul><li>Icon ids never change within a pack major version.</li></ul>
 <h2>8. Host registration</h2>
-<p>Hosts (viewers, editors, embedding applications) may accept packs at runtime. The DDN runtime exposes <code>registerIconPack(pack)</code> / <code>unregisterIconPack(id)</code> / <code>hostIconPacks()</code> on its public API: a pack is manifest-validated and sanitized exactly as in §5 before it can render, and host packs append after shipped packs in binding precedence. Malformed manifests fail <code>DDN-PJ206</code>; unsafe icons fail <code>DDN-PJ207</code>.</p>
+<p>Hosts (viewers, editors, embedding applications) may accept packs at runtime. The DDN runtime exposes <code>registerIconPack(pack)</code> / <code>unregisterIconPack(id)</code> / <code>hostIconPacks</code> on its public API: a pack is manifest-validated and sanitized exactly as in §5 before it can render, and host packs append after shipped packs in binding precedence. Malformed manifests fail <code>DDN-PJ206</code>; unsafe icons fail <code>DDN-PJ207</code>.</p>
 <h2>9. Shipped packs</h2>
 <table><thead><tr><th>Pack</th><th>Icons</th><th>License</th><th>Scope</th></tr></thead><tbody><tr><td><code>network-generic@1</code></td><td>20</td><td>GPL-2.0-or-later</td><td>generic infrastructure; binds <code>network.*</code></td></tr><tr><td><code>vsm-symbols@1</code></td><td>16</td><td>GPL-2.0-or-later</td><td>value-stream mapping; binds <code>vsm.*</code></td></tr><tr><td><code>pid-common@1</code></td><td>36</td><td>GPL-2.0-or-later</td><td>ISA-5.1-style common set (common-practice, pending document review)</td></tr><tr><td><code>electrical-common@1</code></td><td>32</td><td>GPL-2.0-or-later</td><td>IEC 60617-style common set (common-practice, pending document review)</td></tr><tr><td><code>tabler-infra@1</code></td><td>50</td><td>MIT</td><td>curated Tabler infrastructure selection</td></tr><tr><td><code>iconoir-infra@1</code></td><td>49</td><td>MIT</td><td>curated Iconoir selection, complementing Tabler</td></tr><tr><td><code>generic-demo@1</code></td><td>4</td><td>GPL-2.0-or-later</td><td>original mechanism demo set</td></tr></tbody></table>
 <p>The two MIT packs include their license text and attribution in the manifest and are recorded in the repository <code>NOTICE.md</code>. Vendor packs (Cisco/AWS/Azure/GCP) remain excluded pending licensing diligence.</p>
 <h2>10. Authoring a pack (summary for third parties)</h2>
 <ol><li>Draw stroke SVG icons on one square grid, one stroke width.</li><li>Assemble the single JSON document per §2–§4 with honest license fields.</li><li>Validate against <code>standard/schemas/icon-pack.schema.json</code> and the §5</li></ol>
-<p>   sanitization rules.</p>
+<p> sanitization rules.</p>
 <ol><li>Load it: ship it to the registry for everyone, or register it at runtime</li></ol>
-<p>   per §8.</p>
+<p> per §8.</p>
 <p>Examples: every file under <code>standard/registry/icon-packs/</code> is a conforming worked example; the compliance suite validates all of them against the schema and renders every icon.</p>
 </article>
 <p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>

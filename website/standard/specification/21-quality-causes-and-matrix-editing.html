@@ -30,10 +30,10 @@
 <h2>21.1 Fishbone / Ishikawa profile</h2>
 <p><code>projection.kind: fishbone</code> with <code>profile: &quot;fishbone.basic@1&quot;</code> selects a measured spine-and-branch projection. Objects have kinds <code>quality.effect</code>, <code>quality.category</code>, and <code>quality.cause</code>. Directed <code>quality.cause</code> relations point <strong>from contributing cause to parent cause/category/effect</strong>. The source identifies possible causal relationships; the renderer does not establish their truth. This follows the qualitative cause/category purpose described by ASQ [Q1], not a statistical causality test.</p>
 <pre><code>projection {
-    kind: fishbone;
-    profile: &quot;fishbone.basic@1&quot;;
-    effect: @m.causes.effect;
-    relation: &quot;quality.cause&quot;;
+ kind: fishbone;
+ profile: &quot;fishbone.basic@1&quot;;
+ effect: @m.causes.effect;
+ relation: &quot;quality.cause&quot;;
 }</code></pre>
 <p><code>effect</code> is one selected <code>quality.effect</code>. Its first incoming level contains one to twelve <code>quality.category</code> definitions. Deeper branches are selected cause definitions. The renderer walks incoming relationships and places alternating categories above and below the spine. Branch hierarchy, label widths, and depth determine spacing. The head contains the effect label. Contour/rib lines are visual representations of the declared relations, not newly created data objects or electrical junctions.</p>
 <p>One cause may participate under multiple categories. It remains one semantic object and has several appearance IDs built from its path. A repeated subcause expands under each participating path. Selection maps every appearance to the original cause and contributing relation. A child is not duplicated into the source to satisfy a particular picture.</p>
@@ -42,14 +42,14 @@
 <h2>21.2 Matrix encodings</h2>
 <p>The existing matrix planner derives each cell from a relationship kind and row/column identities. The new <code>matrix.heatmap@1</code> profile adds an explicit <code>encoding</code>. A cell with no source relationship is <strong>missing</strong>, and must remain distinct from a known zero. Numeric strings are not coerced to numbers. More than one contributing relationship is not silently aggregated by this profile.</p>
 <pre><code>projection {
-    kind: matrix;
-    profile: &quot;matrix.heatmap@1&quot;;
-    rows: [@m.responsibilities.inspect, @m.responsibilities.contain];
-    columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b];
-    relation: assoc;
-    value: &quot;x_record.score&quot;;
-    write_data: @m.responsibilities;
-    encoding: {mode: numeric, domain: [0, 10], palette: blue};
+ kind: matrix;
+ profile: &quot;matrix.heatmap@1&quot;;
+ rows: [@m.responsibilities.inspect, @m.responsibilities.contain];
+ columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b];
+ relation: assoc;
+ value: &quot;x_record.score&quot;;
+ write_data: @m.responsibilities;
+ encoding: {mode: numeric, domain: [0, 10], palette: blue};
 }</code></pre>
 <table><thead><tr><th>Mode</th><th>Required parameters</th><th>Validity and rendering</th></tr></thead><tbody><tr><td><code>numeric</code></td><td><code>domain: [low, high]</code></td><td>Two finite strictly increasing limits. Values outside the domain fail instead of clamping. Intensity is <code>(value-low)/(high-low)</code>.</td></tr><tr><td><code>category</code></td><td><code>values: [...]</code>, <code>labels: [...]</code></td><td>Distinct scalar categories with equal-length, nonempty labels. Unmapped values fail. Maximum twelve categories.</td></tr><tr><td><code>bands</code></td><td><code>boundaries: [...]</code>, <code>labels: [...]</code></td><td>Increasing finite bounds; one label for each interval. <code>[low,high)</code> except final upper bound inclusive. Values outside all bands fail.</td></tr></tbody></table>
 <p><code>palette</code> chooses a registered <code>blue</code> or <code>diverging</code> value scale; it does not redefine entity or relation colours. Every encoded cell retains its value/status text and a legend. Missing cells explicitly say no record. A supplied score is not automatically an arithmetic risk measure; its calculation and suitability are data-policy requirements outside the renderer.</p>
@@ -57,12 +57,12 @@
 <h2>21.3 Matrix write-back</h2>
 <p>A matrix view may select <code>write_data</code>, a reference to a shared data block explicitly present in that view's <code>data</code> collection. If omitted, the authoring layer attempts the unambiguous selected data block containing the first row declaration. If no suitable imported target exists, creation fails and requests an explicit <code>write_data</code>. It never silently creates assignments in a view-local block that another view of the shared model cannot see.</p>
 <pre><code>DDNLive.authoring.setMatrixCell(workspace, &quot;views.ddn&quot;, &quot;raci&quot;,
-    rowId, columnId, &quot;C&quot;);
+ rowId, columnId, &quot;C&quot;);
 DDNLive.authoring.setMatrixCell(workspace, &quot;views.ddn&quot;, &quot;raci&quot;,
-    rowId, columnId, null, {remove: true});
+ rowId, columnId, null, {remove: true});
 DDNLive.authoring.setMatrixCells(workspace, &quot;views.ddn&quot;, &quot;raci&quot;, [
-    {row: taskId, column: oldOwnerId, value: &quot;C&quot;},
-    {row: taskId, column: newOwnerId, value: &quot;A&quot;}
+ {row: taskId, column: oldOwnerId, value: &quot;C&quot;},
+ {row: taskId, column: newOwnerId, value: &quot;A&quot;}
 ]);</code></pre>
 <p>The binding must address a safe extension property, for example <code>x_assignment.code</code> or <code>x_record.score</code>. A creation inserts a named relationship in the shared data section and uses resolvable source references to both endpoints. Existing assignments update only their selected property. Remove deletes the specific relationship definition. Joined/multisource cells are not directly editable as one assignment. Unknown keys, invalid identifiers, nonfinite values, duplicate cell operations and targets outside the matrix fail before mutation.</p>
 <p>A batch contains one to 100 operations and commits atomically after the selected view validates. This supports transferring an accountable role without an intermediate state with zero or two accountable assignments. Undo restores the exact prior source buffers. Other views are revalidated on their next render; this is not yet global transactional validation of all dependent views. Raw source drafts intentionally can remain invalid.</p>

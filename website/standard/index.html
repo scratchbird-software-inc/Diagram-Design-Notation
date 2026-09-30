@@ -25,7 +25,7 @@
 </div></header>
 <main class="site-main">
 <h1 class="page-title">The Diagram Design Notation standard</h1>
-<p class="lede">A proposed open standard, pre-1.0: specification chapters, governance RFCs, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>
+<p class="lede">A proposed open standard, pre-1.0: specification chapters, the versioning policy, the EBNF grammar, JSON schemas, and the machine-readable registry. The normative source lives in <code>standard/</code> at the repository root; these pages are rendered copies. DDN provides profiles/projections for well-known diagram families, including all fourteen UML 2.5.1 diagram families with documented exclusions (no XMI/OCL exchange, executable behavior or conformance certification).</p>
 <h2>Specification (53 chapters)</h2>
 <ul>
   <li><a href="specification/00-status-and-scope.html">DDN 0.5 — status and conformance scope</a></li>
@@ -86,41 +86,7 @@
   <li><a href="governance/VERSIONING.html">Versioning policy</a></li>
   <li><a href="governance/RFC-TEMPLATE.html">RFC template</a></li>
 </ul>
-<h2>RFCs</h2>
-<ul>
-  <li><a href="governance/rfcs/RFC-101-sequence-diagram.html">RFC 101 — Sequence diagram projection (kind:sequence, profile uml.sequence@1)</a></li>
-  <li><a href="governance/rfcs/RFC-102-communication-diagram.html">RFC 102 — Communication diagram profile (uml.communication@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-103-object-diagram.html">RFC 103 — Object diagram profile (uml.object@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-104-hierarchical-state.html">RFC 104 — Hierarchical state machine profile (state.composite@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-105-activity-diagram.html">RFC 105 — Activity diagram profile with partitions (uml.activity@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-106-bpmn.html">RFC 106 — BPMN-style process collaboration profile (bpmn.basic@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-107-timing-diagram.html">RFC 107 — Timing diagram projection (kind:timing, profile uml.timing@1)</a></li>
-  <li><a href="governance/rfcs/RFC-108-interaction-overview.html">RFC 108 — Interaction overview profile (uml.interaction_overview@1)</a></li>
-  <li><a href="governance/rfcs/RFC-109-cmmn.html">RFC 109 — CMMN-style case diagram profile (cmmn.basic@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-110-sysml.html">RFC 110 — SysML-style block profiles (sysml.bdd@1, sysml.ibd@1, sysml.parametric@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-111-archimate.html">RFC 111 — ArchiMate-style layered profile (archimate.basic@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-112-pert-cpm.html">RFC 112 — PERT/CPM critical-path profile (pert.cpm@1 on kind:graph)</a></li>
-  <li><a href="governance/rfcs/RFC-113-fault-event-tree.html">RFC 113 — Fault tree and event tree profiles (fault.tree@1, event.tree@1)</a></li>
-  <li><a href="governance/rfcs/RFC-114-network.html">RFC 114 — Network/bus and rack profiles (network.basic@1, network.rack@1)</a></li>
-  <li><a href="governance/rfcs/RFC-115-wireframes.html">RFC 115 — Wireframe stencil profile (wireframe.ui@1)</a></li>
-  <li><a href="governance/rfcs/RFC-116-family-tree.html">RFC 116 — Family tree / genealogy profile (family.tree@1)</a></li>
-  <li><a href="governance/rfcs/RFC-117-multi-module-files.html">RFC 117 — Self-contained multi-module files and bundling</a></li>
-  <li><a href="governance/rfcs/RFC-118-frame-overflow.html">RFC 118 — frame_overflow: expand | confine for scoped frames</a></li>
-  <li><a href="governance/rfcs/RFC-119-uml-class-completeness.html">RFC 0119 — UML 2.5.1 class-diagram completeness</a></li>
-  <li><a href="governance/rfcs/RFC-120-uml-sequence-completeness.html">RFC 0120 — UML 2.5.1 sequence-diagram completeness</a></li>
-  <li><a href="governance/rfcs/RFC-121-uml-statemachine-completeness.html">RFC 0121 — UML 2.5.1 state-machine completeness</a></li>
-  <li><a href="governance/rfcs/RFC-122-uml-deployment.html">RFC 0122 — UML 2.5.1 deployment diagrams (profile uml.deployment@1)</a></li>
-  <li><a href="governance/rfcs/RFC-123-uml-component-composite.html">RFC 0123 — UML 2.5.1 component + composite-structure diagrams (profile uml.composite@1)</a></li>
-  <li><a href="governance/rfcs/RFC-124-uml-activity-completeness.html">RFC 0124 — UML 2.5.1 activity-diagram completeness (profile uml.activity@2)</a></li>
-  <li><a href="governance/rfcs/RFC-125-uml-remainder.html">RFC 0125 — UML 2.5.1 remainder + full-diagram-family sweep</a></li>
-  <li><a href="governance/rfcs/RFC-126-bpmn-compliance.html">RFC 0126 — BPMN 2.0.2 notation compliance</a></li>
-  <li><a href="governance/rfcs/RFC-127-cmmn-compliance.html">RFC 0127 — CMMN 1.1 notation compliance (profile cmmn.complete@1)</a></li>
-  <li><a href="governance/rfcs/RFC-128-sysml-compliance.html">RFC 0128 — SysML 1.6 notation compliance (nine-profile family)</a></li>
-  <li><a href="governance/rfcs/RFC-129-dmn-drd.html">RFC 0129 — DMN 1.4 DRD notation + decision-table integration (no expression language)</a></li>
-  <li><a href="governance/rfcs/RFC-130-soaml-compliance.html">RFC 0130 — SoaML 1.0.1 notation compliance (profile soaml.services@1)</a></li>
-  <li><a href="governance/rfcs/RFC-131-uaf-compliance.html">RFC 0131 — UAF 1.2 notation compliance (twelve domain profiles)</a></li>
-  <li><a href="governance/rfcs/RFC-132-drilldown-thumbnails.html">RFC 0132 — Drill-down display modes and frozen thumbnails (x_subdiagram extension v2)</a></li>
-</ul><h2>Notation plates</h2>
+<h2>Notation plates</h2>
 <p><a href="../plates/index.html">SVG plates of the full vocabulary</a> — object kinds, facets, relationship families, looks, and routing.</p>
 </main>
 <footer class="site-footer"><div class="inner">

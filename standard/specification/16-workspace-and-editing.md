@@ -7,18 +7,18 @@
 
 ## File formats
 
-An individual `.ddn` file is UTF-8 source. The editor does not require JSON around a single script. Relative imports need their referenced files too. Opening one file cannot grant access to its sibling directory; open the project folder or a workspace ZIP when imports are involved. Per RFC-117, one file MAY hold several `module "…";` sections (a fully self-contained design); the workspace model treats each section as a module of that file — module identity stays workspace-unique, and sibling sections resolve each other by module-qualified reference without imports. A whole workspace can also be bundled into one multi-section file (`DDNLive.io.bundle` / CLI `bundle`) with byte-identical rendering.
+An individual `.ddn` file is UTF-8 source. The editor does not require JSON around a single script. Relative imports need their referenced files too. Opening one file cannot grant access to its sibling directory; open the project folder or a workspace ZIP when imports are involved. Per one file MAY hold several `module "…";` sections (a fully self-contained design); the workspace model treats each section as a module of that file — module identity stays workspace-unique, and sibling sections resolve each other by module-qualified reference without imports. A whole workspace can also be bundled into one multi-section file (`DDNLive.io.bundle` / CLI `bundle`) with byte-identical rendering.
 
 A `.ddn-workspace.json` file has this shape:
 
 ```json
 {
-  "format": "ddn-workspace@1",
-  "runtime": {"core": "0.3.0-draft.2"},
-  "entry": "views/main.ddn",
-  "view": "overview",
-  "files": {"views/main.ddn": "ddn source text"},
-  "overrides": {"theme": "night"}
+ "format": "ddn-workspace@1",
+ "runtime": {"core": "0.3.0-draft.2"},
+ "entry": "views/main.ddn",
+ "view": "overview",
+ "files": {"views/main.ddn": "ddn source text"},
+ "overrides": {"theme": "night"}
 }
 ```
 

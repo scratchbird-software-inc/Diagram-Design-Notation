@@ -33,8 +33,8 @@ module &quot;example.customer&quot;;
 import &quot;shared.ddn&quot; as shared;
 data model {
  object customer &quot;Customer&quot; {
-  kind: table;
-  fields {field id; field name;}
+ kind: table;
+ fields {field id; field name;}
  }
 }
 view overview {
@@ -44,7 +44,7 @@ view overview {
  publication {size: content;fit: none;}
 }</code></pre>
 <p>The module is a stable namespace, not a file path. Imports are local workspace-relative resources. Remote imports, traversal outside the workspace and recursive import cycles are rejected. References start with <code>@</code> and resolve declaration paths. A quoted label never serves as identity. An explicit <code>uid</code> can preserve identity across declaration refactoring.</p>
-<h3>Multi-module files (RFC-117)</h3>
+<h3>Multi-module files</h3>
 <p>A file MAY hold more than one module as marked sections — so a full design (model, data, views, formats) can live in one self-contained file:</p>
 <pre><code>ddn &quot;0.5&quot;;
 import &quot;palette.ddn&quot; as palette;
@@ -88,9 +88,9 @@ view overview {
 <p>Disambiguation. Verb words are contextual under the same rule as kind words: declaration position inside a data block, followed by an identifier. A word registered as BOTH an object kind and a relationship (<code>note</code>, <code>report</code>, <code>test</code>, <code>decision</code>, <code>issue</code>, <code>schedule</code>, <code>snapshot</code>, <code>export</code>, <code>trigger</code>, <code>namespace</code>) reads as a relation only when <code>@</code> endpoints follow the id/label — <code>note n &quot;N&quot; {}</code> stays a typed object, <code>note n @a -&gt; @b {}</code> is a relation. The structural keywords <code>flow</code> and <code>domain</code> never act as verbs, so <code>object ref &quot;…&quot; { kind: table; }</code> and <code>flow f {}</code> keep their meaning.</p>
 <p>Named relation batches. Relations sharing a kind and configuration declare once:</p>
 <pre><code>relations depends {
- enforcement: undecided;                  // shared properties, canonical names
+ enforcement: undecided; // shared properties, canonical names
  dep_a &quot;a&quot; @x -&gt; @y;
- dep_b &quot;b&quot; @y -&gt; @z { lane: hot; }        // per-entry body overrides shared
+ dep_b &quot;b&quot; @y -&gt; @z { lane: hot; } // per-entry body overrides shared
 }</code></pre>
 <p>expands to one canonical <code>relation</code> per entry with the kind taken from the batch header. Batch-shared properties merge UNDER per-entry properties — per-entry wins on conflict, the same precedence idiom as format overrides. Every entry carries its own id, label and endpoints (bracket marks allowed), so identity is never positional and legend keys, routes and references address entries by their own ids. The header fixes the kind, so <code>kind:</code> in a shared or entry position is a duplicate property (DDN011). The header word must be a relationship keyword or declared alias; <code>relations</code> followed by anything else is not a batch, and a <code>relations:</code> property inside a data block keeps its property meaning. Anonymous arrow chains are deliberately NOT part of this form.</p>
 <h2>Compact authoring (phase 3)</h2>
@@ -120,13 +120,13 @@ records metrics {
 <p>Bodies and conflicts. A row's optional body carries extra PROPERTIES only, merged onto the record object under canonical duplicate rules (<code>kind:</code> or <code>x_record:</code> inside is DDN011, since the row supplies both); nested declarations inside a row body are a coded parse error (DDN-E016). The <code>columns</code> and <code>label_column</code> directives must precede every row (DDN-E016), are singular (DDN011), and <code>label_column</code> must name a declared column (DDN-E016). A column count mismatch is a coded parse error (DDN-E016) naming the row and the expected/actual counts. As with phases 1–3, the normalizer never rewrites verbose↔compact records.</p>
 <h2>Compact authoring (phase 5)</h2>
 <p>Author-controlled reuse follows the same desugar contract, one step later in the pipeline: definitions are top-level templates and each <code>use:</code> application expands in the workspace assembly to the identical canonical AST as the handwritten inline form BEFORE indexing, so <code>DDN.semanticJSON</code>, rendered SVG, validation outcomes and every expanded identity are indistinguishable from the verbose form (no synthetic prefixes, no IR/renderer changes).</p>
-<pre><code>fields audit { field created_at; field updated_at; }        // named field group
-relation_props softref { enforcement: undecided; }          // relation property set
-preset std_pulse { motion: pulse; speed: 90; }              // property preset (motion: B1-033 keys)
-fragment audit_pair { object log_a {} object log_b {} }     // include-by-reference fragment
+<pre><code>fields audit { field created_at; field updated_at; } // named field group
+relation_props softref { enforcement: undecided; } // relation property set
+preset std_pulse { motion: pulse; speed: 90; } // property preset (motion: B1-033 keys)
+fragment audit_pair { object log_a {} object log_b {} } // include-by-reference fragment
 
 data model {
- use: @audit_pair;                                          // fragment application
+ use: @audit_pair; // fragment application
  table customer { fields { use: @audit; id { key: primary; } } }
  ref r @customer -&gt; @log_a { use: @softref; enforcement: database; }
  transfers_to updates @customer -&gt; @log_b { use: @std_pulse; }

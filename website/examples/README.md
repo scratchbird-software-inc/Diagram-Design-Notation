@@ -36,7 +36,7 @@ node ../../notation/cli/cli.js render projections/views.ddn --workspace . --view
   `ws.replaceData` (`59-data-refresh.ddn`), and spacing hints
   (tight/normal/loose/expanded) on views and formats (`60-spacing-hints.ddn`),
   and a three-section self-contained file (model + data + views, no imports;
-  RFC-117) (`61-self-contained.ddn`), and the Category-2 chart pack
+  ) (`61-self-contained.ddn`), and the Category-2 chart pack
   (`62`–`66`: distributions, tree, grid and network families, statistical
   overlays), and geographic maps via the optional ddn-geo module
   (`67-geo-choropleth.ddn`, `68-geo-symbols.ddn`, `69-geo-projections.ddn` —

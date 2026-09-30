@@ -10,8 +10,8 @@ module "example.customer";
 import "shared.ddn" as shared;
 data model {
  object customer "Customer" {
-  kind: table;
-  fields {field id; field name;}
+ kind: table;
+ fields {field id; field name;}
  }
 }
 view overview {
@@ -24,7 +24,7 @@ view overview {
 
 The module is a stable namespace, not a file path. Imports are local workspace-relative resources. Remote imports, traversal outside the workspace and recursive import cycles are rejected. References start with `@` and resolve declaration paths. A quoted label never serves as identity. An explicit `uid` can preserve identity across declaration refactoring.
 
-### Multi-module files (RFC-117)
+### Multi-module files
 
 A file MAY hold more than one module as marked sections — so a full design (model, data, views, formats) can live in one self-contained file:
 
@@ -106,9 +106,9 @@ Named relation batches. Relations sharing a kind and configuration declare once:
 
 ```ddn
 relations depends {
- enforcement: undecided;                  // shared properties, canonical names
+ enforcement: undecided; // shared properties, canonical names
  dep_a "a" @x -> @y;
- dep_b "b" @y -> @z { lane: hot; }        // per-entry body overrides shared
+ dep_b "b" @y -> @z { lane: hot; } // per-entry body overrides shared
 }
 ```
 
@@ -164,13 +164,13 @@ Bodies and conflicts. A row's optional body carries extra PROPERTIES only, merge
 Author-controlled reuse follows the same desugar contract, one step later in the pipeline: definitions are top-level templates and each `use:` application expands in the workspace assembly to the identical canonical AST as the handwritten inline form BEFORE indexing, so `DDN.semanticJSON`, rendered SVG, validation outcomes and every expanded identity are indistinguishable from the verbose form (no synthetic prefixes, no IR/renderer changes).
 
 ```ddn
-fields audit { field created_at; field updated_at; }        // named field group
-relation_props softref { enforcement: undecided; }          // relation property set
-preset std_pulse { motion: pulse; speed: 90; }              // property preset (motion: B1-033 keys)
-fragment audit_pair { object log_a {} object log_b {} }     // include-by-reference fragment
+fields audit { field created_at; field updated_at; } // named field group
+relation_props softref { enforcement: undecided; } // relation property set
+preset std_pulse { motion: pulse; speed: 90; } // property preset (motion: B1-033 keys)
+fragment audit_pair { object log_a {} object log_b {} } // include-by-reference fragment
 
 data model {
- use: @audit_pair;                                          // fragment application
+ use: @audit_pair; // fragment application
  table customer { fields { use: @audit; id { key: primary; } } }
  ref r @customer -> @log_a { use: @softref; enforcement: database; }
  transfers_to updates @customer -> @log_b { use: @std_pulse; }
