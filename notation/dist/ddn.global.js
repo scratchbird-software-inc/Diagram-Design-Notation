@@ -6252,12 +6252,29 @@
      if(skippedWords.length)diagnostics.push({code:'DDN-PJW04',severity:'warning',message:'Word cloud could not place '+skippedWords.length+' word(s) without overlap and omitted them: '+skippedWords.join(', ')+'. Nothing was resized to fit silently.'});
      body+=text(left,H-15*s,placed.length+' of '+words.length+' words placed · font size encodes weight (√ scale) · deterministic Archimedean-spiral placement, heaviest first; angle and position encode nothing.',11);
     }else if(plan.mark==='arc'){
-     const net=plan.net,N=net.nodes.length,maxV=Math.max(...net.links.map(l=>l.value)),base=bottom-60*s;
+     const net=plan.net,N=net.nodes.length,maxV=Math.max(...net.links.map(l=>l.value));
      const order=net.nodes.map((n,i)=>({n,i})).sort((a,b)=>(b.n.weight-a.n.weight)||(a.n.name<b.n.name?-1:a.n.name>b.n.name?1:a.i-b.i));
      const px=new Map(order.map((o,j)=>[o.i,left+(j+.5)*plotW/N]));
-     net.links.forEach((l,li)=>{const x1=px.get(l.source),x2=px.get(l.target),r=Math.abs(x2-x1)/2,w=1+5*l.value/maxV;
-      body+=group(l.sourceIds[0],l.sourceIds,`<title>${esc(net.nodes[l.source].name+' → '+net.nodes[l.target].name+': '+fmtNumber(l.value)+' '+plan.unit)}</title><path class="ddn-arc-link" data-value="${l.value}" d="M${f(x1)} ${f(base)}A${f(r)} ${f(r)} 0 0 1 ${f(x2)} ${f(base)}" stroke="${colour(li)}" stroke-width="${f(w)}" fill="none" stroke-opacity=".6"/>`,{x:Math.min(x1,x2),y:base-2*r,w:Math.abs(x2-x1)||1,h:2*r,value:l.value},pr.y);});
-     order.forEach((o,j)=>{const x=px.get(o.i),r=4*s+10*s*Math.sqrt(o.n.weight/Math.max(...net.nodes.map(n=>n.weight)));
+     const maxW=Math.max(...net.nodes.map(n=>n.weight)),nodeRmax=4*s+10*s;
+     /* True vertical extents (B1-0xx fix): a sweep-1 semicircle bulges UP when
+      * x2>x1 and DOWN when x2<x1, peaking at radius r (= half the endpoint
+      * distance) plus half the stroke width. The old layout parked the axis at
+      * bottom-60s and let distant-endpoint arcs cross the frame top and bottom.
+      * Now the axis is placed from the measured extents — largest up-bulge,
+      * down-bulge, node radius and the two-line label block — with margins on
+      * both sides, and the frame grows (H) instead of clipping, the same
+      * pattern the calendar/heatmap marks already use. */
+     let upMax=nodeRmax,downMax=nodeRmax;
+     const segs=net.links.map((l,li)=>{const x1=px.get(l.source),x2=px.get(l.target),r=Math.abs(x2-x1)/2,w=1+5*l.value/maxV,ext=r+w/2,up=x2>=x1;
+       if(up)upMax=Math.max(upMax,ext);else downMax=Math.max(downMax,ext);
+       return {l,li,x1,x2,r,w,ext,up};});
+     const labelH=nodeRmax+16*s+2*13*s,margin=20*s;
+     const base=top+upMax+margin;
+     const needed=base+Math.max(downMax,labelH)+margin+115*s;
+     if(needed>H)H=needed;
+     segs.forEach(({l,li,x1,x2,r,w,ext,up})=>{
+      body+=group(l.sourceIds[0],l.sourceIds,`<title>${esc(net.nodes[l.source].name+' → '+net.nodes[l.target].name+': '+fmtNumber(l.value)+' '+plan.unit)}</title><path class="ddn-arc-link" data-value="${l.value}" d="M${f(x1)} ${f(base)}A${f(r)} ${f(r)} 0 0 1 ${f(x2)} ${f(base)}" stroke="${colour(li)}" stroke-width="${f(w)}" fill="none" stroke-opacity=".6"/>`,{x:Math.min(x1,x2),y:up?base-ext:base,w:Math.abs(x2-x1)||1,h:ext,value:l.value},pr.y);});
+     order.forEach((o,j)=>{const x=px.get(o.i),r=4*s+10*s*Math.sqrt(o.n.weight/maxW);
       body+=group(o.n.sourceIds[0]||o.n.name,o.n.sourceIds,`<title>${esc(o.n.name+': total '+fmtNumber(o.n.weight)+' '+plan.unit)}</title><circle class="ddn-arc-node" data-weight="${o.n.weight}" cx="${f(x)}" cy="${f(base)}" r="${f(r)}" fill="${t.ink}"/>`+lines(wrap(o.n.name,plotW/N+40*s,11),x,base+r+16*s,11,400,'middle'),{x:x-r,y:base-r,w:2*r,h:2*r,weight:o.n.weight},pr.x);});
      body+=line(left,base,right,base,t.ink,1.2);
      body+=text(left,H-15*s,N+' nodes · '+net.links.length+' links · nodes ordered by total weight (desc) on one axis · arc thickness encodes value; arc height encodes distance only.',11);

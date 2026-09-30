@@ -61,6 +61,28 @@ test('Edge bundling: links route through the LCA; eu-internal links share eu seg
  assert.equal(r.svg,run('edgebundle',ROUTES).svg,'deterministic');
 });
 
+test('Arc: every mark is fully contained in the drawing frame with margins (B1 arc-extents fix)',()=>{
+ // Wide axis with long-distance links in BOTH sweep directions — the case the
+ // old layout clipped (arcs crossed the frame top and bottom).
+ const head=HEAD.replace(`    object e4 "c→a" { kind: record; x_record: {"from": "c", "to": "a", "n": 40}; }`,
+`    object e4 "c→a" { kind: record; x_record: {"from": "c", "to": "a", "n": 40}; }
+    object e5 "a→d" { kind: record; x_record: {"from": "a", "to": "d", "n": 25}; }
+    object e6 "d→g" { kind: record; x_record: {"from": "d", "to": "g", "n": 15}; }
+    object e7 "g→a" { kind: record; x_record: {"from": "g", "to": "a", "n": 22}; }`);
+ const ids=['e1','e2','e3','e4','e5','e6','e7'].map(i=>'@calls.'+i).join(', ');
+ const r=run('arc',ids,CB,head);
+ const B=r.scene.drawingBounds;
+ let checked=0;
+ for(const m of r.scene.marks){
+  if(!m||m.x===undefined)continue;
+  checked++;
+  assert.ok(m.y>=0,(m.id||'mark')+' crosses the frame top (y='+m.y+')');
+  assert.ok(m.y+m.h<=B.h,(m.id||'mark')+' crosses the frame bottom (y+h='+(m.y+m.h)+' of '+B.h+')');
+  assert.ok(m.x>=0&&(m.x+m.w)<=B.w,(m.id||'mark')+' crosses the frame side');
+ }
+ assert.ok(checked>=7,'checked every arc + node mark ('+checked+')');
+});
+
 test('Network marks refuse bad bindings with coded diagnostics',()=>{
  throws(()=>run('arc',CALLS,'x:"x_record.from"; y:"x_record.n";'),'DDN-PJ030');
  throws(()=>run('force',CALLS,CB+' series:"x_record.from";'),'DDN-PJ030');
