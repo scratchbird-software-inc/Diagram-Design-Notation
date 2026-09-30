@@ -29,11 +29,27 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const REPO = path.resolve(new URL('..', import.meta.url).pathname);
 const A = require(path.join(REPO, 'notation/dist/ddn.global.js'));
+// Optional projection modules (same wiring as notation/cli/cli.js): ddn-iso
+// covers iso:true views, ddn-geo covers kind:geo views with the bundled
+// world-110m geography pre-registered. Without them those views render
+// missing-module placeholders — which no guided edit can change.
+require(path.join(REPO, 'notation/dist/ddn-graph.js'));
+require(path.join(REPO, 'notation/dist/ddn-iso.js'));
+require(path.join(REPO, 'notation/dist/ddn-geo.js'));
+try {
+  const asset = path.join(REPO, 'assets/geo/world-110m.json');
+  if (fs.existsSync(asset) && globalThis.DDNGeo) {
+    const g = fs.readFileSync(asset, 'utf8');
+    globalThis.DDNGeo.registerGeography('assets/geo/world-110m.json', g);
+    globalThis.DDNGeo.registerGeography('world-110m', g);
+  }
+} catch {}
 const args = process.argv.slice(2);
 const OUT = args.includes('--out') ? args[args.indexOf('--out') + 1] : path.join(REPO, 'field-guide');
 const facts = JSON.parse(fs.readFileSync(path.join(REPO, 'standard/submission/facts.json'), 'utf8'));
 import BATCH2 from './field-guide-batch2.mjs';
 import BATCH3 from './field-guide-batch3.mjs';
+import BATCH4 from './field-guide-batch4.mjs';
 const F = k => k.split('.').reduce((o, x) => o[x], facts).value;
 const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -42,7 +58,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // Curated pilot chapters (6). Each fixture is a real repo example; the
 // experiment target is resolved programmatically (first element in the view
 // whose kind matches the chapter's probe), so ids never drift.
-const CHAPTERS = [...BATCH2, ...BATCH3,
+const CHAPTERS = [...BATCH2, ...BATCH3, ...BATCH4,
   {
     id: 'whiteboard', title: 'Whiteboard / discovery sketch', category: 'Data structures and meaning',
     status: 'native', entry: 'website/examples/use-cases/01-whiteboard.ddn', view: 'diagram',
@@ -416,6 +432,10 @@ if (evalRun) evalRun.onclick = () => {
     out.textContent = JSON.stringify(res, null, 2);
   } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
 };
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
 redraw();
 })();`;
 
@@ -453,8 +473,12 @@ function lessonHtml(ch) {
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>${esc(ch.limits)}</p><ul>${ch.pitfalls.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
+<script src="../../notation/dist/ddn-graph.js"></script>
+<script src="../../notation/dist/ddn-iso.js"></script>
+<script src="../../notation/dist/ddn-geo.js"></script>
 <script>window.GUIDE_FILES = ${JSON.stringify(filesFor(ch.entry)).replace(/<\//g, '<\\/')};</script>
 <script>window.GUIDE_CHAPTER = ${JSON.stringify({ id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label', evaluation: ch.evaluation || null }).replace(/<\//g, '<\\/')};</script>
+${/geography\s*:/.test(Object.values(filesFor(ch.entry)).join('\n')) ? `<script>window.GUIDE_GEOGRAPHY = ${JSON.stringify({ name: 'assets/geo/world-110m.json', json: fs.readFileSync(path.join(REPO, 'assets/geo/world-110m.json'), 'utf8') }).replace(/<\//g, '<\\/')};</script>` : ''}
 <script>${GUIDE_JS}</script>
 </body></html>`;
 }

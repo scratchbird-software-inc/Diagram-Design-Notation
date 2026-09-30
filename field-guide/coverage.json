@@ -3,8 +3,8 @@
     "edition": "field-guide-0.7-pilot",
     "runtime": "0.7.0",
     "reviewed": "2026-09-30",
-    "chapterCount": 75,
-    "plannedChapterCount": 153,
+    "chapterCount": 131,
+    "plannedChapterCount": 145,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -637,6 +637,510 @@
       "entry": "website/examples/projections/views.ddn",
       "view": "dfd_gane",
       "sha256": "97cd106da849d7bda17ccb5fbd844cc83d36951f3b5ad33cb55b1777949231eb"
+    },
+    {
+      "id": "umlclass",
+      "status": "native",
+      "profile": "uml.structure@2",
+      "projection": "graph",
+      "entry": "website/examples/basics/75-uml-class-complete.ddn",
+      "view": "associations",
+      "sha256": "e20156609670c87072f269649914e188ae158279ccdac48636a83775d28e34d9"
+    },
+    {
+      "id": "umlobject",
+      "status": "native",
+      "profile": "uml.object@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/43-object-diagram.ddn",
+      "view": "objects",
+      "sha256": "722ecd4de2750f6279ea86c24edf7786cc0400b6acd5851ce9b9b6403197ec7f"
+    },
+    {
+      "id": "umlcomposite",
+      "status": "native",
+      "profile": "uml.composite@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/79-uml-composite.ddn",
+      "view": "components",
+      "sha256": "8f7b1d189cc95cf0dca6fa4569e0ca07740b30a3495f076630951324716c2e5e"
+    },
+    {
+      "id": "umlremainder",
+      "status": "native",
+      "profile": "uml.structure@2",
+      "projection": "graph",
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "packages",
+      "sha256": "88ff3c12363e05d666e1a9cebed05dab0fd2db7c4b51c8e2e41d4d511486601f"
+    },
+    {
+      "id": "statemachine",
+      "status": "native",
+      "profile": "uml.statemachine@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
+      "view": "pseudostates",
+      "sha256": "7d7d96c2aa4340283d7d7a0ebebd821b9d1bc943bfa5bfefb8ae5d47f21c113d"
+    },
+    {
+      "id": "activity",
+      "status": "native",
+      "profile": "uml.activity@2",
+      "projection": "graph",
+      "entry": "website/examples/basics/80-uml-activity.ddn",
+      "view": "pins",
+      "sha256": "8e2837b4759eeb36e469645d5dc219baa8283189682ac73731adf3fceb50d75a"
+    },
+    {
+      "id": "swimlane",
+      "status": "native",
+      "profile": "uml.activity@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/45-activity-diagram.ddn",
+      "view": "fulfilment",
+      "sha256": "8a04396caea688c2db02ba418d8b62eb75d52cf534531b5bb831b9aae263d2c8"
+    },
+    {
+      "id": "communication",
+      "status": "native",
+      "profile": "uml.communication@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/42-communication-diagram.ddn",
+      "view": "communication",
+      "sha256": "8a7ebed8c81ceafd29599f00256d46bb28819e0e4ec0e2f99515bf12af7769bc"
+    },
+    {
+      "id": "interaction-overview",
+      "status": "native",
+      "profile": "uml.interaction_overview@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/48-interaction-overview.ddn",
+      "view": "overview",
+      "sha256": "32128b6b88dcfb22fc7b5d49dfa7c40bc2085c4418c71e485a0dc5b642853e18"
+    },
+    {
+      "id": "timing",
+      "status": "native",
+      "profile": "uml.timing@1",
+      "projection": "timing",
+      "entry": "website/examples/basics/47-timing-diagram.ddn",
+      "view": "timing",
+      "sha256": "ef130f11963d2e656836a43e9d7f25fab3f7c0c4a8a82241a5915e529575ec6f"
+    },
+    {
+      "id": "bpmn-process",
+      "status": "native",
+      "profile": "bpmn.process@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "process",
+      "sha256": "fd8205e40a2a8f4a02249e8a692ed7e00d11bbaa7c2216eca265b8605d678165"
+    },
+    {
+      "id": "bpmn-choreography",
+      "status": "native",
+      "profile": "bpmn.choreography@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "choreography",
+      "sha256": "761d968262d65c581e87e985376b67b4d536690469013b9ab4244f4d65dba3c4"
+    },
+    {
+      "id": "cmmn-case",
+      "status": "native",
+      "profile": "cmmn.complete@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/83-cmmn-complete.ddn",
+      "view": "v",
+      "sha256": "a6c4551ef431b2ea434c008945fabd5e2e51951bb4c7f2fc8271564e9b384931"
+    },
+    {
+      "id": "sysml-bdd",
+      "status": "native",
+      "profile": "sysml.bdd@2",
+      "projection": "graph",
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "bdd",
+      "sha256": "0cf66e8d1634f72fa05d08de1de1d30d9eb2f254e2520b2dc475770f1f090440"
+    },
+    {
+      "id": "sysml-ibd",
+      "status": "native",
+      "profile": "sysml.ibd@2",
+      "projection": "graph",
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "ibd",
+      "sha256": "e53814327780fa3fbfefc1008590d83608d317ae84eb17337b20efc90e5322ca"
+    },
+    {
+      "id": "sysml-parametric",
+      "status": "native",
+      "profile": "sysml.parametric@2",
+      "projection": "graph",
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "parametric",
+      "sha256": "db341261183e9b9aa1965c2816f842bf95a78dca17bd5e87484b3c0ef5f4c3d6"
+    },
+    {
+      "id": "requirements",
+      "status": "native",
+      "profile": "sysml.requirements@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/84-sysml-requirements.ddn",
+      "view": "requirements",
+      "sha256": "46eb6829ddeafd3837925c3c8a725ed53087651250740931d17efdde4e2a99e1"
+    },
+    {
+      "id": "dmn-drd",
+      "status": "native",
+      "profile": "dmn.drd@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/87-dmn-drd.ddn",
+      "view": "drd",
+      "sha256": "8147e9a60e054e60b6b93040c2ce244c1ca5235e1cca1b8998fedb5eff9d116c"
+    },
+    {
+      "id": "soaml-services",
+      "status": "native",
+      "profile": "soaml.services@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/88-soaml.ddn",
+      "view": "arch",
+      "sha256": "ab6c62ef52b4a7dec1301a177c30b97bab7108dea3dd4e08a62d43035fa560d3"
+    },
+    {
+      "id": "uaf-strategic",
+      "status": "native",
+      "profile": "uaf.strategic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "strategic",
+      "sha256": "5276a0dde480ecbba81fc1a63d37d0d772dee0bb84118c181f1751242ad9e17a"
+    },
+    {
+      "id": "uaf-summary",
+      "status": "native",
+      "profile": "uaf.summary@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "summary",
+      "sha256": "716d6dcf7bc2b6a2aff24a8e62438b5d29fd9a0f0156372303b4f19bc2002859"
+    },
+    {
+      "id": "msc",
+      "status": "native",
+      "profile": "msc.basic@1",
+      "projection": "sequence",
+      "entry": "website/examples/basics/93-msc.ddn",
+      "view": "chart",
+      "sha256": "09527af4e43f9c886e8fcb1b6701776c24cd4bf295742058d30b57d16bc14f93"
+    },
+    {
+      "id": "sdl",
+      "status": "native",
+      "profile": "sdl.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/99-sdl.ddn",
+      "view": "system",
+      "sha256": "b091fb874dd938c6ee150d9ad263bd01259e3c978fb3cb0e557055916e75ba73"
+    },
+    {
+      "id": "fbd",
+      "status": "native",
+      "profile": "fbd.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/100-fbd.ddn",
+      "view": "d",
+      "sha256": "da704b334986f680457c957754d530803202e14aeaf9987a445dc3aaab59c37c"
+    },
+    {
+      "id": "petri",
+      "status": "native",
+      "profile": "petri.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/95-petrinet.ddn",
+      "view": "net",
+      "sha256": "1df86b9705e9f35916ddf137c4e2259979e259fb2dc4507a4ce61128b19a90fa"
+    },
+    {
+      "id": "orm",
+      "status": "native",
+      "profile": "orm.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/96-orm.ddn",
+      "view": "model",
+      "sha256": "77e2bf75b668483927ed2e95680ca854ec9e0d0dca66a73e64729264b7bc07af"
+    },
+    {
+      "id": "vsm",
+      "status": "native",
+      "profile": "vsm.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/97-vsm.ddn",
+      "view": "map",
+      "sha256": "59d09b92eeb26fb1911e8509f5da92917b080be21bd0cc0293f1c1e33cf3c773"
+    },
+    {
+      "id": "vsm-symbols",
+      "status": "native",
+      "profile": "vsm.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/102-vsm-symbols.ddn",
+      "view": "map",
+      "sha256": "70ae2ddfec767b94f7ec2bd77315e97abd0191cc0a668a5178f92ab8b2362963"
+    },
+    {
+      "id": "idef0",
+      "status": "native",
+      "profile": "idef0.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/94-idef0.ddn",
+      "view": "context",
+      "sha256": "c75a36f864c687cf7a76a2753e732ebc74f203b2b080f7ec48972d6e007919c8"
+    },
+    {
+      "id": "pert-cpm",
+      "status": "native",
+      "profile": "pert.cpm@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/52-pert-cpm.ddn",
+      "view": "plan",
+      "sha256": "0a5ea9a69d1c655eff4f4aa945ee5e662a91e547adc05d98248b2f83fcc5a5c6"
+    },
+    {
+      "id": "fault-tree",
+      "status": "native",
+      "profile": "fault.tree@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/53-fault-event-tree.ddn",
+      "view": "fault",
+      "sha256": "ff558ab6d57525a10b1cc629554ed6d0541fe32abfe606801af3d559391425cf"
+    },
+    {
+      "id": "mindmap",
+      "status": "native",
+      "profile": "mindmap.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/28-mind-map.ddn",
+      "view": "mindmap",
+      "sha256": "973179d5dcfff7e7cf7430d576a3f2c0580e2e430b46f7e8836f2e4363cb891f"
+    },
+    {
+      "id": "concept-map",
+      "status": "native",
+      "profile": "concept.map@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/29-concept-map.ddn",
+      "view": "concepts",
+      "sha256": "c5527097ebbad6c9d0d3d2f982698a07b5dc317b295e350d7c9d8b75d3a40251"
+    },
+    {
+      "id": "organization",
+      "status": "native",
+      "profile": "org.tree@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/26-org-chart.ddn",
+      "view": "org",
+      "sha256": "78a83280933733f251d75a49d6b1bf99d99c391802b2056a04fd613974cf5f9b"
+    },
+    {
+      "id": "wbs",
+      "status": "native",
+      "profile": "wbs.tree@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/27-wbs.ddn",
+      "view": "wbs",
+      "sha256": "0a388fe41b230e6e4f52e91ede915deac1efeb808e1e8d0055670195d0b0d848"
+    },
+    {
+      "id": "family-tree",
+      "status": "native",
+      "profile": "family.tree@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/56-family-tree.ddn",
+      "view": "family",
+      "sha256": "e1b6b4c529701f5c38eff72e58b1fc32d4c47a84b39d74ef19cfa21bc10b9731"
+    },
+    {
+      "id": "icons",
+      "status": "native",
+      "profile": "network.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/98-icons.ddn",
+      "view": "net",
+      "sha256": "d7fbcab62d13bfe00f7193971cdc5821da85a33927f4be93091899acc1fe18a9"
+    },
+    {
+      "id": "icons-vendor",
+      "status": "native",
+      "profile": "network.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/106-tabler-icons.ddn",
+      "view": "net",
+      "sha256": "ceacad650e364ef42652069f7bd12554dd89fc5ef4a168914aaca7e0c09836d6"
+    },
+    {
+      "id": "pid-symbols",
+      "status": "native",
+      "profile": "network.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/104-pid-symbols.ddn",
+      "view": "pid",
+      "sha256": "e5b816305a7e225fb4d8f6d30ae9a1522ea71cee39fd6930c61f9c7ba77f3d5b"
+    },
+    {
+      "id": "electrical-symbols",
+      "status": "native",
+      "profile": "network.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/105-electrical-symbols.ddn",
+      "view": "sch",
+      "sha256": "71ca27549b9b05838b5cb626fe37e688f119497823f46e327bcefe1f7f0a30b5"
+    },
+    {
+      "id": "iso-charts",
+      "status": "native",
+      "profile": "chart.basic@1",
+      "projection": "chart",
+      "entry": "website/examples/basics/72-iso-charts.ddn",
+      "view": "iso_bar",
+      "sha256": "a567555649f1395ba762203aaca5225526d024d0285185d4b872e1361ab2d381"
+    },
+    {
+      "id": "iso-graph",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/73-iso-architecture.ddn",
+      "view": "iso_map",
+      "sha256": "33ac616b253850e0177075679e60623abef99ad9d755929e0568313cb6850703"
+    },
+    {
+      "id": "geo",
+      "status": "native",
+      "profile": "geo.choropleth@1",
+      "projection": "geo",
+      "entry": "website/examples/basics/67-geo-choropleth.ddn",
+      "view": "choropleth",
+      "sha256": "f2603472f5c4544eb7f13d4c6a21eda917ad148dd3f2ab1413441311863d6bf6"
+    },
+    {
+      "id": "chen",
+      "status": "native",
+      "profile": "chen.binary@2",
+      "projection": "chen",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "chen_extended",
+      "sha256": "91d86cfd183eec3f301938ee76f936e8f1f43df45d9d40760dc6ec8a4e53b9d5"
+    },
+    {
+      "id": "crows-foot",
+      "status": "native",
+      "profile": "erd.crowfoot@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/37-crows-foot-erd.ddn",
+      "view": "erd",
+      "sha256": "a49aa9bd26b2e9899e6c917354e9a22a8af75f7dc8a862638070a17bfa806c20"
+    },
+    {
+      "id": "cross-file",
+      "status": "native",
+      "profile": "uaf.strategic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/108-uaf-traceability.ddn",
+      "view": "sv",
+      "sha256": "8365a5d13ae65a7879bae9aca9b823ccdf63c89ad6edadd5f779f6d582d290ab"
+    },
+    {
+      "id": "linked-views",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/90-drilldown.ddn",
+      "view": "overview",
+      "sha256": "e02861adb713310f1479252e27d40b9f860cee740f0ca769a42c832b03649dd7"
+    },
+    {
+      "id": "audit",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/16-enterprise-gates.ddn",
+      "view": "external",
+      "sha256": "f1396e7c1eccfd99643139c63a43d21867ce07512f66ba2af0682070f5e08e48"
+    },
+    {
+      "id": "verification-gates",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/16-enterprise-gates.ddn",
+      "view": "software",
+      "sha256": "51d92cb9eaa909ee4db242aa43845eb6ee63d669c0413ba300439bf4e31eb28b"
+    },
+    {
+      "id": "form-contract",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/15-process-contracts.ddn",
+      "view": "balanced",
+      "sha256": "a032f7c591dbcadb8a171dbc479729251d8023725748a1c13930157cb46bda10"
+    },
+    {
+      "id": "nested-fields",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/12-nested-fields.ddn",
+      "view": "detailed",
+      "sha256": "32189ce89aa47f3d1af0daa97daf6ee343925d5692831991b2f2ad7c3af881ed"
+    },
+    {
+      "id": "wireframes",
+      "status": "native",
+      "profile": "wireframe.ui@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/55-wireframe.ddn",
+      "view": "settings",
+      "sha256": "0ab6fb69af3cc34eee84f7928952ab30202789ef527700a32eb0322d4e5d7f43"
+    },
+    {
+      "id": "etl",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/etl.ddn",
+      "view": "diagram",
+      "sha256": "5105c67a5073ab32a429c6eb89991d5fee385d3e3a38a34bf85f6e5ca2f4f41b"
+    },
+    {
+      "id": "event-contract",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/event-contract.ddn",
+      "view": "diagram",
+      "sha256": "af76cf744018ff3d0168ca1715601744cf6619de20d8d27f5470a095b124e904"
+    },
+    {
+      "id": "shards-replicas",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "field-guide/sources/shards-replicas.ddn",
+      "view": "diagram",
+      "sha256": "dfc31fbac8e393541d3ce7277b41c58526079e1ccf638018d8ae1b489dd2e289"
+    },
+    {
+      "id": "thumbnails",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/08-subdiagrams.ddn",
+      "view": "overview",
+      "sha256": "bd6a87fa4a8c199fc4d5e732cdc55561683ff23646839082eebf4e5d21a5205f"
     },
     {
       "id": "whiteboard",
@@ -1310,6 +1814,510 @@
       "id": "dfd-gane-sarson",
       "before": "97cd106da849d7bda17ccb5fbd844cc83d36951f3b5ad33cb55b1777949231eb",
       "after": "08e3bbf710922383b31fdd48105f12bfc0990859b52dbe5e13a3df9113c3f813",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "umlclass",
+      "before": "e20156609670c87072f269649914e188ae158279ccdac48636a83775d28e34d9",
+      "after": "059733b50b2fe2a995fe792b9a32dc0385f32b105a9fdb7a5ce036a942544fea",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "umlobject",
+      "before": "722ecd4de2750f6279ea86c24edf7786cc0400b6acd5851ce9b9b6403197ec7f",
+      "after": "f80edec30b75ea9189ffea28c235a6d39fb24385fa2980edbd9ecb663f29377e",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "umlcomposite",
+      "before": "8f7b1d189cc95cf0dca6fa4569e0ca07740b30a3495f076630951324716c2e5e",
+      "after": "e03bc8301dc5ae3a57153bdef697bbd2d792a2b20a1da82eab0fe51d97b22a47",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "umlremainder",
+      "before": "88ff3c12363e05d666e1a9cebed05dab0fd2db7c4b51c8e2e41d4d511486601f",
+      "after": "c86b053b670db50dff18b74e707d46ce0aff874731b2dd76d3064433e96811e7",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "statemachine",
+      "before": "7d7d96c2aa4340283d7d7a0ebebd821b9d1bc943bfa5bfefb8ae5d47f21c113d",
+      "after": "e156ba1e365358fa9c877261c48f394ca33ccfd64e9ed2f29eb75e06a364da44",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "activity",
+      "before": "8e2837b4759eeb36e469645d5dc219baa8283189682ac73731adf3fceb50d75a",
+      "after": "1fc145bd59277f37d590bba5c00e3d84db64b4643a1a5cdf775e57e2685f9a99",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "swimlane",
+      "before": "8a04396caea688c2db02ba418d8b62eb75d52cf534531b5bb831b9aae263d2c8",
+      "after": "ae8b865a19973c11a748bd486238d9ff5643b7b486dcb7457a26fba346307fdb",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "communication",
+      "before": "8a7ebed8c81ceafd29599f00256d46bb28819e0e4ec0e2f99515bf12af7769bc",
+      "after": "cba6e41682f68e5933ced248bdbed18442c20278fd19a4f806f1e3595ef5c18f",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "interaction-overview",
+      "before": "32128b6b88dcfb22fc7b5d49dfa7c40bc2085c4418c71e485a0dc5b642853e18",
+      "after": "c5b94c29fb35bba7c171ecf6a6979efc5dd76558d91c555a012e9a456e72a799",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "timing",
+      "before": "ef130f11963d2e656836a43e9d7f25fab3f7c0c4a8a82241a5915e529575ec6f",
+      "after": "64cabf31e240e27dfa186220e50bdc75d12bed39e1965acccf9f7d010f6465bf",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "bpmn-process",
+      "before": "fd8205e40a2a8f4a02249e8a692ed7e00d11bbaa7c2216eca265b8605d678165",
+      "after": "a9e538179c526f6fc8521a73ae4ba5db101890226628df6f07cb6c925bd8ebda",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "bpmn-choreography",
+      "before": "761d968262d65c581e87e985376b67b4d536690469013b9ab4244f4d65dba3c4",
+      "after": "a8e32aba76c35571d6b5432b0cab369b468769b37ab521a7850f8b078121a57f",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "cmmn-case",
+      "before": "a6c4551ef431b2ea434c008945fabd5e2e51951bb4c7f2fc8271564e9b384931",
+      "after": "efe36950888e0182a51ed0d25dc94079a97f236c50bb9f22641225ff2a2fe33b",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "sysml-bdd",
+      "before": "0cf66e8d1634f72fa05d08de1de1d30d9eb2f254e2520b2dc475770f1f090440",
+      "after": "735bb82b774500470a042e9123c450c44bce32dcbb93d5a60c467c885b0c6680",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "sysml-ibd",
+      "before": "e53814327780fa3fbfefc1008590d83608d317ae84eb17337b20efc90e5322ca",
+      "after": "e8f3e5ac3c3af47f6f1e5ce19cf6507797aca268148bf924dbff1aa2d6ab3686",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "sysml-parametric",
+      "before": "db341261183e9b9aa1965c2816f842bf95a78dca17bd5e87484b3c0ef5f4c3d6",
+      "after": "ac0b0636b9c15f7f3a1c93a3adf68ccf4463ce6a0c7125c17f3e4e6e69a1880b",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "requirements",
+      "before": "46eb6829ddeafd3837925c3c8a725ed53087651250740931d17efdde4e2a99e1",
+      "after": "ca0b30979ed4c0881a46de8640f9999c67214545183f7fa3a378726c7164f74c",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "dmn-drd",
+      "before": "8147e9a60e054e60b6b93040c2ce244c1ca5235e1cca1b8998fedb5eff9d116c",
+      "after": "85125427f8516e8dcf8dbd7c0416941ded4a858cde65ba4b1c8c44eff6373a3d",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "soaml-services",
+      "before": "ab6c62ef52b4a7dec1301a177c30b97bab7108dea3dd4e08a62d43035fa560d3",
+      "after": "ea82ca167adc5a45bfa028dfba820781ec3677b71ac937b95f6830462ddc6616",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "uaf-strategic",
+      "before": "5276a0dde480ecbba81fc1a63d37d0d772dee0bb84118c181f1751242ad9e17a",
+      "after": "8d6007ad7dddd98f9e8b61ca0d1efe795337d6160be15943e4caaf1fbe278c54",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "uaf-summary",
+      "before": "716d6dcf7bc2b6a2aff24a8e62438b5d29fd9a0f0156372303b4f19bc2002859",
+      "after": "c4d5d83703ad8e1d6544312ceda31f61514b08078268f4cfd35db9a9e5ac8112",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "msc",
+      "before": "09527af4e43f9c886e8fcb1b6701776c24cd4bf295742058d30b57d16bc14f93",
+      "after": "3be5dead1d88d700662c1d91aa97b27b3b335caee2cf09be4c5d1a1ab2389409",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "sdl",
+      "before": "b091fb874dd938c6ee150d9ad263bd01259e3c978fb3cb0e557055916e75ba73",
+      "after": "e0040f1e1d118e0f0a30ebc8096f2265fdb44a7b7eaeda6170b7d057a31584d9",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "fbd",
+      "before": "da704b334986f680457c957754d530803202e14aeaf9987a445dc3aaab59c37c",
+      "after": "793dc9afa1ec6e6704757deb1171da8165a49c7a47173307960e64fc739fc891",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "petri",
+      "before": "1df86b9705e9f35916ddf137c4e2259979e259fb2dc4507a4ce61128b19a90fa",
+      "after": "c372d7938dd71ca658193c57141aa3f319542cd8dcef86cae6af51208b02f239",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "orm",
+      "before": "77e2bf75b668483927ed2e95680ca854ec9e0d0dca66a73e64729264b7bc07af",
+      "after": "8e5e8816ccf7b7f9d3e67c56ee0c4de36ba93a49fa268826c6c60e7fb1a9541b",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "vsm",
+      "before": "59d09b92eeb26fb1911e8509f5da92917b080be21bd0cc0293f1c1e33cf3c773",
+      "after": "d26c74d20582a5312adbe594c2d722fb0c3897e057549bcc32f712b213a7e32b",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "vsm-symbols",
+      "before": "70ae2ddfec767b94f7ec2bd77315e97abd0191cc0a668a5178f92ab8b2362963",
+      "after": "d1e1a84b4f57092a00167a0d45cbfddfd834de21ed5507920941e50901380ffb",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "idef0",
+      "before": "c75a36f864c687cf7a76a2753e732ebc74f203b2b080f7ec48972d6e007919c8",
+      "after": "922564b9dc1f89857163449b1c13c5279bda6e5bc8a3236acb53f09fd47bd953",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "pert-cpm",
+      "before": "0a5ea9a69d1c655eff4f4aa945ee5e662a91e547adc05d98248b2f83fcc5a5c6",
+      "after": "e2846c5a65699bafd8a1d7205b9f566157f6ee9e673dfc7aaf93bbbbe2720816",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "fault-tree",
+      "before": "ff558ab6d57525a10b1cc629554ed6d0541fe32abfe606801af3d559391425cf",
+      "after": "be565049e8a4e70c38a301422bdcee3d8d9b4aba75222fdbdf82a52389ffa274",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "mindmap",
+      "before": "973179d5dcfff7e7cf7430d576a3f2c0580e2e430b46f7e8836f2e4363cb891f",
+      "after": "560729cbb410afe0817faae65e0ec030ad7d790eb937bf828d125bad10f5652e",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "concept-map",
+      "before": "c5527097ebbad6c9d0d3d2f982698a07b5dc317b295e350d7c9d8b75d3a40251",
+      "after": "f2e55cc5d499f0158ab398e225dd14d8188a8442829da81a8b151937873c4cfa",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "organization",
+      "before": "78a83280933733f251d75a49d6b1bf99d99c391802b2056a04fd613974cf5f9b",
+      "after": "7461ed67db9d69462f81f5d2e12b679dd6a18515d89bf65c6e23d839c8272e21",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "wbs",
+      "before": "0a388fe41b230e6e4f52e91ede915deac1efeb808e1e8d0055670195d0b0d848",
+      "after": "b0d6ad50e3de104f7951496fec2b9619ec698b820202d947a944bbf9d87ff1bc",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "family-tree",
+      "before": "e1b6b4c529701f5c38eff72e58b1fc32d4c47a84b39d74ef19cfa21bc10b9731",
+      "after": "10d77004cb7b6be0086c0b38d0827f4efa6851a7b58ffc9147970dfe621c7613",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "icons",
+      "before": "d7fbcab62d13bfe00f7193971cdc5821da85a33927f4be93091899acc1fe18a9",
+      "after": "41973ecde7dc20b6dc4e3b5bbd3bad367ebf8fe0ecbfa1f60e7d208dae3db482",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "icons-vendor",
+      "before": "ceacad650e364ef42652069f7bd12554dd89fc5ef4a168914aaca7e0c09836d6",
+      "after": "035b65406d1f817f9de0d5166c91559f38c0be7c09995911d27a7f4cde96b514",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "pid-symbols",
+      "before": "e5b816305a7e225fb4d8f6d30ae9a1522ea71cee39fd6930c61f9c7ba77f3d5b",
+      "after": "4fd078905596be038e097034e6f3efaf148aae2f84ccbd50d865dde1d1d60924",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "electrical-symbols",
+      "before": "71ca27549b9b05838b5cb626fe37e688f119497823f46e327bcefe1f7f0a30b5",
+      "after": "81ee1f77cf836be1d2b53c5ccdf68a33cd94e26459097a811ef6bda33041d4ff",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "iso-charts",
+      "before": "a567555649f1395ba762203aaca5225526d024d0285185d4b872e1361ab2d381",
+      "after": "3fc4e3231a0f64e133a117c291172698eb3432bfd0aff6a483ebb9f951b70fc9",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "iso-graph",
+      "before": "33ac616b253850e0177075679e60623abef99ad9d755929e0568313cb6850703",
+      "after": "66e534dfcb472c0d354ae0fc71963dd6b5fdc50a943796a4fcfdc963e163226a",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "geo",
+      "before": "f2603472f5c4544eb7f13d4c6a21eda917ad148dd3f2ab1413441311863d6bf6",
+      "after": "eb7c5341ed4a49e48a478cd8d370df82aa8c38ffc2496412463db958d451e514",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "chen",
+      "before": "91d86cfd183eec3f301938ee76f936e8f1f43df45d9d40760dc6ec8a4e53b9d5",
+      "after": "dc63621ed51e68dd8cb948218dfd59cb2b5ec52a2569c31af0a6510e9f331d25",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "crows-foot",
+      "before": "a49aa9bd26b2e9899e6c917354e9a22a8af75f7dc8a862638070a17bfa806c20",
+      "after": "c5279f42bbc1a5acf6448ce6937ba6c949f67e75392177393560d1772ba195c9",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "cross-file",
+      "before": "8365a5d13ae65a7879bae9aca9b823ccdf63c89ad6edadd5f779f6d582d290ab",
+      "after": "09bb3add9b4d5587f035e84da114259f219138fe509cd3843d02c0b93d530051",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "linked-views",
+      "before": "e02861adb713310f1479252e27d40b9f860cee740f0ca769a42c832b03649dd7",
+      "after": "ee460a348cffeb3ff7d269c1af8ee13223245c48e81d160ec2f4b99b92bf2606",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "audit",
+      "before": "f1396e7c1eccfd99643139c63a43d21867ce07512f66ba2af0682070f5e08e48",
+      "after": "eca6095f037a07bfea5d33653f9f939a07e042e03410369650db6a7aabcf72b9",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "verification-gates",
+      "before": "51d92cb9eaa909ee4db242aa43845eb6ee63d669c0413ba300439bf4e31eb28b",
+      "after": "0e27b14047ea82fc4f0c17ed42c52e7fb447c9dabd147f83c1f4bf48fa7ec615",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "form-contract",
+      "before": "a032f7c591dbcadb8a171dbc479729251d8023725748a1c13930157cb46bda10",
+      "after": "4698cc5258911b260502d313439801f6fa88b7c28cd9e325f319693e9c08ccef",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "nested-fields",
+      "before": "32189ce89aa47f3d1af0daa97daf6ee343925d5692831991b2f2ad7c3af881ed",
+      "after": "33a846a0e2d919a61b05fc6aa2cb85f349abbcb2bb3c26409a84196659fdea2f",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "wireframes",
+      "before": "0ab6fb69af3cc34eee84f7928952ab30202789ef527700a32eb0322d4e5d7f43",
+      "after": "174e759835ed74c01b4eb0f4323ce250c4c6dba37cefe5e13e68ddf23810532f",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "etl",
+      "before": "5105c67a5073ab32a429c6eb89991d5fee385d3e3a38a34bf85f6e5ca2f4f41b",
+      "after": "21d5ba5c6dbb117d95aebd7092a0bcf7c3634a7ae0a825a74e388e2ab19ee53e",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "event-contract",
+      "before": "af76cf744018ff3d0168ca1715601744cf6619de20d8d27f5470a095b124e904",
+      "after": "15b185b048545eff6ab588cb0cee52104e08c168ed702bf4f56e961301827eb0",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "shards-replicas",
+      "before": "dfc31fbac8e393541d3ce7277b41c58526079e1ccf638018d8ae1b489dd2e289",
+      "after": "03401262ad6adce6aedbc25bec666c860e4aee8c6d25fbe7ad22bdfc7f178160",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "thumbnails",
+      "before": "bd6a87fa4a8c199fc4d5e732cdc55561683ff23646839082eebf4e5d21a5205f",
+      "after": "e188dcd40088528621840724bb4a7a9182249cfcd339ec8b3385003eb3742102",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

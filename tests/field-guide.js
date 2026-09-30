@@ -45,6 +45,19 @@ test('catalogue integrity: counts trace to facts.json and every chapter has runt
 test('every chapter fixture re-renders to the recorded sha256 (evidence is fresh)', () => {
   const catalogue = JSON.parse(fs.readFileSync(path.join(FG, 'catalogue.json'), 'utf8'));
   const A = require(path.join(repo, 'notation/dist/ddn.global.js'));
+  // Same optional-module wiring as the builder (iso/geo projections render
+  // missing-module placeholders otherwise).
+  require(path.join(repo, 'notation/dist/ddn-graph.js'));
+  require(path.join(repo, 'notation/dist/ddn-iso.js'));
+  require(path.join(repo, 'notation/dist/ddn-geo.js'));
+  try {
+    const asset = path.join(repo, 'assets/geo/world-110m.json');
+    if (fs.existsSync(asset) && globalThis.DDNGeo) {
+      const g = fs.readFileSync(asset, 'utf8');
+      globalThis.DDNGeo.registerGeography('assets/geo/world-110m.json', g);
+      globalThis.DDNGeo.registerGeography('world-110m', g);
+    }
+  } catch {}
   for (const l of catalogue.lessons) {
     const files = {};
     const visit = name => {
@@ -71,7 +84,7 @@ test('lesson pages are self-contained apart from the repo-relative runtime scrip
     const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m => m[1]).filter(u => !u.startsWith('#') && !u.startsWith('data:'));
     for (const u of refs)
       assert.ok(!/^(?:[a-z]+:)?\/\//.test(u), f + ': absolute or protocol-relative reference ' + u);
-    assert.ok(!/https?:\/\//.test(html.replace(/<footer>[\s\S]*<\/footer>/, '')), f + ': no remote references outside footer');
+    assert.ok(!/https?:\/\//.test(html.replace(/<footer>[\s\S]*<\/footer>/, '').replace(/https?:\/\/www\.w3\.org\/(?:2000\/svg|1999\/xlink)/g, '')), f + ': no remote references outside footer');
   }
 });
 

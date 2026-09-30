@@ -49,8 +49,12 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Common-practice generic glyphs; no vendor artwork is included.</p><ul><li>Do not treat an icon as a different element — it is the same node with a symbol.</li><li>Do not reach for a vendor pack — licensing keeps this set generic.</li></ul></section>
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
+<script src="../../notation/dist/ddn-graph.js"></script>
+<script src="../../notation/dist/ddn-iso.js"></script>
+<script src="../../notation/dist/ddn-geo.js"></script>
 <script>window.GUIDE_FILES = {"website/examples/basics/103-network-symbols.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.networksymbols\";\n\n// B1-087: the network-generic@1 icon library — generic infrastructure\n// glyphs (no vendor packs; licensing diligence pending). The library binds\n// by default to the network.* kinds (bus→cloud, switch→switch,\n// server→server, rack→database); everything else binds per node via\n// x_icon. Common-practice rendering — compliance against the standard\n// pending document review. All data is synthetic.\ndata m {\n    object wan \"Internet\" { kind: \"network.bus\"; }\n    object fw \"Edge firewall\" { kind: \"network.server\"; x_icon: { library: \"network-generic@1\", icon: \"firewall\" }; }\n    object lb \"Load balancer\" { kind: \"network.server\"; x_icon: { library: \"network-generic@1\", icon: \"load-balancer\" }; }\n    object rtr \"Core router\" { kind: \"network.server\"; x_icon: { library: \"network-generic@1\", icon: \"router\" }; }\n    object sw \"Access switch\" { kind: \"network.switch\"; }\n    object app \"App server\" { kind: \"network.server\"; }\n    object db \"Database\" { kind: \"network.rack\"; }\n    object ap \"Wi-Fi AP\" { kind: \"network.server\"; x_icon: { library: \"network-generic@1\", icon: \"wifi-ap\" }; }\n    object ws \"Workstation\" { kind: \"network.server\"; x_icon: { library: \"network-generic@1\", icon: \"workstation\" }; }\n    object prn \"Printer\" { kind: \"network.server\"; x_icon: { library: \"network-generic@1\", icon: \"printer\" }; }\n    object lan \"Site LAN\" { kind: \"network.bus\"; }\n    relation a1 \"\" @fw -> @wan { kind: \"network.attaches\"; }\n    relation a2 \"\" @rtr -> @wan { kind: \"network.attaches\"; }\n    relation a3 \"\" @rtr -> @lan { kind: \"network.attaches\"; }\n    relation a4 \"\" @lb -> @lan { kind: \"network.attaches\"; }\n    relation a5 \"\" @sw -> @lan { kind: \"network.attaches\"; }\n    relation a6 \"\" @app -> @lan { kind: \"network.attaches\"; }\n    relation a7 \"\" @db -> @lan { kind: \"network.attaches\"; }\n    relation a8 \"\" @ap -> @lan { kind: \"network.attaches\"; }\n    relation a9 \"\" @ws -> @lan { kind: \"network.attaches\"; }\n    relation a10 \"\" @prn -> @lan { kind: \"network.attaches\"; }\n}\nview net \"Network symbol library\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"network-symbols","entry":"website/examples/basics/103-network-symbols.ddn","view":"net","files":["website/examples/basics/103-network-symbols.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.networksymbols::m.fw","file":"website/examples/basics/103-network-symbols.ddn","before":"Edge firewall","after":"Edge firewall / review","expectation":"Only the label of Edge firewall / review changes; glyphs, attachments and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
 <script>(function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -117,6 +121,10 @@ if (evalRun) evalRun.onclick = () => {
     out.textContent = JSON.stringify(res, null, 2);
   } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
 };
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
 redraw();
 })();</script>
 </body></html>

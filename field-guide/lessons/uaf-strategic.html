@@ -1,0 +1,127 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="UAF strategic viewpoint (St): a source-editable DDN field-guide chapter."><title>UAF strategic viewpoint (St) · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
+<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+<main>
+<div class="lesson-title"><p class="eyebrow">Standards families</p><h2>UAF strategic viewpoint (St)</h2><p class="subtitle">website/examples/basics/89-uaf.ddn # strategic</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>The UAF Strategic viewpoint: enterprise phases, capabilities and the strategic map that says which capability arrives when.</p></section><section class="card"><h3>Why use it?</h3><p>Portfolio arguments need a picture where capability gaps are visible before they are budget lines.</p></section><section class="card"><h3>When is it useful?</h3><p>Enterprise architecture roadmapping and capability planning.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Rows and columns follow the declared strategic taxonomy; each cell/box is a capability or phase claim.</li><li>Trace from a capability to the phases that deliver it before agreeing dates.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The capabilities</li><li>The strategic phases</li><li>The mapping between them</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="views"><div><p class="viewer-label">uaf.strategic@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Customer self-service / review changes; phases, mappings and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 5276a0dde480… → 8d6007ad7ddd…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Rename one capability to the wording in your strategy paper, apply, and check its phase mapping still holds.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/89-uaf.ddn and locate view strategic. This selects existing data; it is not a stored SVG.</li><li>Inspect the uaf.strategic@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view strategic &quot;St — Strategic&quot; { data: [@st]; projection { profile: &quot;uaf.strategic@1&quot;; } publication { size: content; fit: none; } }
+view operational &quot;Op — Operational&quot; { data: [@op]; projection { profile: &quot;uaf.operational@1&quot;; } publication { size: content; fit: none; } }</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/89-uaf.ddn</td><td>data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared strategic model with UAF profile validation; portfolio feasibility is not assessed.</p><ul><li>Do not promise a capability in a phase with no project behind it.</li><li>A capability with no owner is a slide, not a plan.</li></ul></section>
+</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../notation/dist/ddn.global.js"></script>
+<script src="../../notation/dist/ddn-graph.js"></script>
+<script src="../../notation/dist/ddn-iso.js"></script>
+<script src="../../notation/dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/89-uaf.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.uaf\";\n\n// B1-072/UAF 1.2 — one view per domain of the UAF grid, showing the\n// domain vocabulary and stereotyped verbs. Matrix/timeline viewpoints of the\n// grid reuse the existing matrix/timeline projections (see the grid doc in\n// specification chapter 47). All data is synthetic.\n\ndata st {\n    object cap \"Customer self-service\" { kind: \"uaf.capability\"; }\n    object cap2 \"Online retail\" { kind: \"uaf.capability\"; }\n    object goal \"Grow digital sales\" { kind: \"uaf.enterprisegoal\"; }\n    object vision \"Vision 2030\" { kind: \"uaf.enterprisevision\"; }\n    object phase \"Phase 2\" { kind: \"uaf.strategicphase\"; }\n    relation d1 \"\" @cap -> @cap2 { kind: \"uaf.capabilitydependency\"; }\n    relation s1 \"\" @cap -> @goal { kind: \"uaf.supports\"; }\n    relation m1 \"\" @vision -> @cap { kind: \"uaf.mapsto\"; }\n}\ndata op {\n    object desk \"Order desk\" { kind: \"uaf.opperformer\"; }\n    object hub \"Fulfillment hub\" { kind: \"uaf.opnode\"; }\n    object act \"Take order\" { kind: \"uaf.opactivity\"; }\n    object act2 \"Pick items\" { kind: \"uaf.opactivity\"; }\n    object ex \"Order details\" { kind: \"uaf.opexchange\"; }\n    relation p1 \"\" @desk -> @act { kind: \"uaf.performs\"; }\n    relation p2 \"\" @hub -> @act2 { kind: \"uaf.performs\"; }\n    relation m1 \"\" @act -> @ex { kind: \"uaf.mapsto\"; }\n    relation n1 \"\" @act -> @act2 { kind: \"uml.flow\"; }\n}\ndata svc {\n    object spec \"Billing service\" { kind: \"uaf.servicespec\"; }\n    object fn \"Compute charge\" { kind: \"uaf.servicefunction\"; }\n    object pol \"Refund policy\" { kind: \"uaf.servicepolicy\"; }\n    object svcCap \"Billing capability\" { kind: \"uaf.capability\"; }\n    relation e1 \"\" @spec -> @svcCap { kind: \"uaf.exhibits\"; }\n    relation m1 \"\" @fn -> @spec { kind: \"uaf.mapsto\"; }\n    relation c1 \"\" @spec -> @pol { kind: \"uaf.complieswith\"; }\n}\ndata sys {\n    object shop \"Shop system\" { kind: \"uaf.system\"; }\n    object sfn \"Handle checkout\" { kind: \"uaf.systemfunction\"; }\n    object impl \"Commerce platform\" { kind: \"uaf.implementer\"; }\n    relation p1 \"\" @impl -> @sfn { kind: \"uaf.performs\"; }\n    relation m1 \"\" @shop -> @sfn { kind: \"uaf.mapsto\"; }\n    relation s1 \"\" @sfn -> @shop { kind: \"uaf.mapsto\"; }\n}\ndata per {\n    object alice \"Alice\" { kind: \"uaf.person\"; }\n    object retail \"Retail org\" { kind: \"uaf.organization\"; }\n    object mgr \"Store manager\" { kind: \"uaf.post\"; }\n    object resp \"Daily reconciliation\" { kind: \"uaf.responsibility\"; }\n    relation a1 \"\" @alice -> @mgr { kind: \"uaf.assignedto\"; }\n    relation o1 \"\" @retail -> @mgr { kind: \"uaf.owns\"; }\n    relation a2 \"\" @mgr -> @resp { kind: \"uaf.assignedto\"; }\n}\ndata res {\n    object wh \"Main warehouse\" { kind: \"uaf.resourceperformer\"; }\n    object shelf \"Shelving\" { kind: \"uaf.resource\"; }\n    object rfn \"Store stock\" { kind: \"uaf.resourcefunction\"; }\n    object wms \"Warehouse software\" { kind: \"uaf.technology\"; }\n    relation p1 \"\" @wh -> @rfn { kind: \"uaf.performs\"; }\n    relation m1 \"\" @shelf -> @rfn { kind: \"uaf.mapsto\"; }\n    relation f1 \"\" @wms -> @wh { kind: \"uaf.forecast\"; }\n}\ndata sec {\n    object zone \"Customer zone\" { kind: \"uaf.securityelement\"; }\n    object tls \"TLS everywhere\" { kind: \"uaf.securitycontrol\"; }\n    object fraud \"Card fraud\" { kind: \"uaf.threat\"; }\n    object data \"Customer data\" { kind: \"uaf.asset\"; }\n    relation m1 \"\" @tls -> @fraud { kind: \"uaf.mitigates\"; }\n    relation m2 \"\" @tls -> @data { kind: \"uaf.mapsto\"; }\n    relation m3 \"\" @zone -> @tls { kind: \"uaf.mapsto\"; }\n}\ndata prj {\n    object p1 \"Webshop rebuild\" { kind: \"uaf.project\"; }\n    object ms1 \"Beta launch\" { kind: \"uaf.projectmilestone\"; }\n    object ms2 \"General availability\" { kind: \"uaf.projectmilestone\"; }\n    object wp \"Payments work\" { kind: \"uaf.workpackage\"; }\n    relation d1 \"\" @ms1 -> @ms2 { kind: \"uaf.milestonedependency\"; }\n    relation m1 \"\" @wp -> @ms1 { kind: \"uaf.mapsto\"; }\n    relation m2 \"\" @p1 -> @ms2 { kind: \"uaf.mapsto\"; }\n}\ndata std {\n    object pci \"PCI DSS\" { kind: \"uaf.standard\"; }\n    object col \"Retail standards\" { kind: \"uaf.standardcollection\"; }\n    object proto \"TLS 1.3\" { kind: \"uaf.protocol\"; }\n    object shop2 \"Shop system\" { kind: \"uaf.system\"; }\n    relation c1 \"\" @shop2 -> @pci { kind: \"uaf.complieswith\"; }\n    relation m1 \"\" @col -> @pci { kind: \"uaf.mapsto\"; }\n    relation f1 \"\" @pci -> @proto { kind: \"uaf.forecast\"; }\n}\ndata ar {\n    object w1 \"Warehouse 7\" { kind: \"uaf.actualresource\"; }\n    object acme \"Acme Retail SE\" { kind: \"uaf.actualorganization\"; }\n    object bob \"Bob\" { kind: \"uaf.actualperson\"; }\n    relation a1 \"\" @bob -> @acme { kind: \"uaf.assignedto\"; }\n    relation o1 \"\" @acme -> @w1 { kind: \"uaf.owns\"; }\n    relation m1 \"\" @w1 -> @acme { kind: \"uaf.mapsto\"; }\n}\ndata dict {\n    object e1 \"Capability\" { kind: \"uaf.dictionaryentry\"; }\n    object e2 \"Operational activity\" { kind: \"uaf.dictionaryentry\"; }\n    object e3 \"Service specification\" { kind: \"uaf.dictionaryentry\"; }\n    relation m1 \"\" @e1 -> @e2 { kind: \"uaf.mapsto\"; }\n    relation m2 \"\" @e2 -> @e3 { kind: \"uaf.mapsto\"; }\n}\ndata sum {\n    object ad \"Retail architecture\" { kind: \"uaf.archdesc\"; }\n    object vp \"Strategic viewpoint\" { kind: \"uaf.viewpoint\"; }\n    object mr \"Capability model\" { kind: \"uaf.modelref\"; }\n    relation m1 \"\" @vp -> @ad { kind: \"uaf.mapsto\"; }\n    relation m2 \"\" @ad -> @mr { kind: \"uaf.mapsto\"; }\n}\n\nview strategic \"St — Strategic\" { data: [@st]; projection { profile: \"uaf.strategic@1\"; } publication { size: content; fit: none; } }\nview operational \"Op — Operational\" { data: [@op]; projection { profile: \"uaf.operational@1\"; } publication { size: content; fit: none; } }\nview services \"Svc — Services\" { data: [@svc]; projection { profile: \"uaf.services@1\"; } publication { size: content; fit: none; } }\nview systems \"Sys — Systems\" { data: [@sys]; projection { profile: \"uaf.systems@1\"; } publication { size: content; fit: none; } }\nview personnel \"Pr — Personnel\" { data: [@per]; projection { profile: \"uaf.personnel@1\"; } publication { size: content; fit: none; } }\nview resources \"Rs — Resources\" { data: [@res]; projection { profile: \"uaf.resources@1\"; } publication { size: content; fit: none; } }\nview security \"Sec — Security\" { data: [@sec]; projection { profile: \"uaf.security@1\"; } publication { size: content; fit: none; } }\nview projects \"Pj — Projects\" { data: [@prj]; projection { profile: \"uaf.projects@1\"; } publication { size: content; fit: none; } }\nview standards \"Std — Standards\" { data: [@std]; projection { profile: \"uaf.standards@1\"; } publication { size: content; fit: none; } }\nview actualresources \"AR — Actual resources\" { data: [@ar]; projection { profile: \"uaf.actualresources@1\"; } publication { size: content; fit: none; } }\nview dictionary \"Dct — Dictionary\" { data: [@dict]; projection { profile: \"uaf.dictionary@1\"; } publication { size: content; fit: none; } }\nview summary \"S&O — Summary and overview\" { data: [@sum]; projection { profile: \"uaf.summary@1\"; } frame ov1 \"OV-1 style high-level pictogram frame\" { scope: @sum.ad; members: [@sum.vp, @sum.mr]; } publication { size: content; fit: none; } }\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"uaf-strategic","entry":"website/examples/basics/89-uaf.ddn","view":"strategic","files":["website/examples/basics/89-uaf.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.uaf::st.cap","file":"website/examples/basics/89-uaf.ddn","before":"Customer self-service","after":"Customer self-service / review","expectation":"Only the label of Customer self-service / review changes; phases, mappings and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+<script>(function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { location.reload(); };
+const sel = document.getElementById('file');
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+})();</script>
+</body></html>

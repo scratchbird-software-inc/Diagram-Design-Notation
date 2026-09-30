@@ -691,6 +691,479 @@
       ]
     },
     {
+      "chapter": "umlclass",
+      "entry": "website/examples/basics/75-uml-class-complete.ddn",
+      "view": "associations",
+      "files": [
+        "website/examples/basics/75-uml-class-complete.ddn"
+      ]
+    },
+    {
+      "chapter": "umlobject",
+      "entry": "website/examples/basics/43-object-diagram.ddn",
+      "view": "objects",
+      "files": [
+        "website/examples/basics/43-object-diagram.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "umlcomposite",
+      "entry": "website/examples/basics/79-uml-composite.ddn",
+      "view": "components",
+      "files": [
+        "website/examples/basics/79-uml-composite.ddn"
+      ]
+    },
+    {
+      "chapter": "umlremainder",
+      "entry": "website/examples/basics/81-uml-remainder.ddn",
+      "view": "packages",
+      "files": [
+        "website/examples/basics/81-uml-remainder.ddn"
+      ]
+    },
+    {
+      "chapter": "statemachine",
+      "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
+      "view": "pseudostates",
+      "files": [
+        "website/examples/basics/77-uml-statemachine-complete.ddn"
+      ]
+    },
+    {
+      "chapter": "activity",
+      "entry": "website/examples/basics/80-uml-activity.ddn",
+      "view": "pins",
+      "files": [
+        "website/examples/basics/80-uml-activity.ddn"
+      ]
+    },
+    {
+      "chapter": "swimlane",
+      "entry": "website/examples/basics/45-activity-diagram.ddn",
+      "view": "fulfilment",
+      "files": [
+        "website/examples/basics/45-activity-diagram.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "communication",
+      "entry": "website/examples/basics/42-communication-diagram.ddn",
+      "view": "communication",
+      "files": [
+        "website/examples/basics/42-communication-diagram.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "interaction-overview",
+      "entry": "website/examples/basics/48-interaction-overview.ddn",
+      "view": "overview",
+      "files": [
+        "website/examples/basics/48-interaction-overview.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "timing",
+      "entry": "website/examples/basics/47-timing-diagram.ddn",
+      "view": "timing",
+      "files": [
+        "website/examples/basics/47-timing-diagram.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "bpmn-process",
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "process",
+      "files": [
+        "website/examples/basics/82-bpmn-complete.ddn"
+      ]
+    },
+    {
+      "chapter": "bpmn-choreography",
+      "entry": "website/examples/basics/82-bpmn-complete.ddn",
+      "view": "choreography",
+      "files": [
+        "website/examples/basics/82-bpmn-complete.ddn"
+      ]
+    },
+    {
+      "chapter": "cmmn-case",
+      "entry": "website/examples/basics/83-cmmn-complete.ddn",
+      "view": "v",
+      "files": [
+        "website/examples/basics/83-cmmn-complete.ddn"
+      ]
+    },
+    {
+      "chapter": "sysml-bdd",
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "bdd",
+      "files": [
+        "website/examples/basics/85-sysml-blocks.ddn"
+      ]
+    },
+    {
+      "chapter": "sysml-ibd",
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "ibd",
+      "files": [
+        "website/examples/basics/85-sysml-blocks.ddn"
+      ]
+    },
+    {
+      "chapter": "sysml-parametric",
+      "entry": "website/examples/basics/85-sysml-blocks.ddn",
+      "view": "parametric",
+      "files": [
+        "website/examples/basics/85-sysml-blocks.ddn"
+      ]
+    },
+    {
+      "chapter": "requirements",
+      "entry": "website/examples/basics/84-sysml-requirements.ddn",
+      "view": "requirements",
+      "files": [
+        "website/examples/basics/84-sysml-requirements.ddn"
+      ]
+    },
+    {
+      "chapter": "dmn-drd",
+      "entry": "website/examples/basics/87-dmn-drd.ddn",
+      "view": "drd",
+      "files": [
+        "website/examples/basics/87-dmn-drd.ddn"
+      ]
+    },
+    {
+      "chapter": "soaml-services",
+      "entry": "website/examples/basics/88-soaml.ddn",
+      "view": "arch",
+      "files": [
+        "website/examples/basics/88-soaml.ddn"
+      ]
+    },
+    {
+      "chapter": "uaf-strategic",
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "strategic",
+      "files": [
+        "website/examples/basics/89-uaf.ddn"
+      ]
+    },
+    {
+      "chapter": "uaf-summary",
+      "entry": "website/examples/basics/89-uaf.ddn",
+      "view": "summary",
+      "files": [
+        "website/examples/basics/89-uaf.ddn"
+      ]
+    },
+    {
+      "chapter": "msc",
+      "entry": "website/examples/basics/93-msc.ddn",
+      "view": "chart",
+      "files": [
+        "website/examples/basics/93-msc.ddn"
+      ]
+    },
+    {
+      "chapter": "sdl",
+      "entry": "website/examples/basics/99-sdl.ddn",
+      "view": "system",
+      "files": [
+        "website/examples/basics/99-sdl.ddn"
+      ]
+    },
+    {
+      "chapter": "fbd",
+      "entry": "website/examples/basics/100-fbd.ddn",
+      "view": "d",
+      "files": [
+        "website/examples/basics/100-fbd.ddn"
+      ]
+    },
+    {
+      "chapter": "petri",
+      "entry": "website/examples/basics/95-petrinet.ddn",
+      "view": "net",
+      "files": [
+        "website/examples/basics/95-petrinet.ddn"
+      ]
+    },
+    {
+      "chapter": "orm",
+      "entry": "website/examples/basics/96-orm.ddn",
+      "view": "model",
+      "files": [
+        "website/examples/basics/96-orm.ddn"
+      ]
+    },
+    {
+      "chapter": "vsm",
+      "entry": "website/examples/basics/97-vsm.ddn",
+      "view": "map",
+      "files": [
+        "website/examples/basics/97-vsm.ddn"
+      ]
+    },
+    {
+      "chapter": "vsm-symbols",
+      "entry": "website/examples/basics/102-vsm-symbols.ddn",
+      "view": "map",
+      "files": [
+        "website/examples/basics/102-vsm-symbols.ddn"
+      ]
+    },
+    {
+      "chapter": "idef0",
+      "entry": "website/examples/basics/94-idef0.ddn",
+      "view": "context",
+      "files": [
+        "website/examples/basics/94-idef0.ddn"
+      ]
+    },
+    {
+      "chapter": "pert-cpm",
+      "entry": "website/examples/basics/52-pert-cpm.ddn",
+      "view": "plan",
+      "files": [
+        "website/examples/basics/52-pert-cpm.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "fault-tree",
+      "entry": "website/examples/basics/53-fault-event-tree.ddn",
+      "view": "fault",
+      "files": [
+        "website/examples/basics/53-fault-event-tree.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "mindmap",
+      "entry": "website/examples/basics/28-mind-map.ddn",
+      "view": "mindmap",
+      "files": [
+        "website/examples/basics/28-mind-map.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "concept-map",
+      "entry": "website/examples/basics/29-concept-map.ddn",
+      "view": "concepts",
+      "files": [
+        "website/examples/basics/29-concept-map.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "organization",
+      "entry": "website/examples/basics/26-org-chart.ddn",
+      "view": "org",
+      "files": [
+        "website/examples/basics/26-org-chart.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "wbs",
+      "entry": "website/examples/basics/27-wbs.ddn",
+      "view": "wbs",
+      "files": [
+        "website/examples/basics/27-wbs.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "family-tree",
+      "entry": "website/examples/basics/56-family-tree.ddn",
+      "view": "family",
+      "files": [
+        "website/examples/basics/56-family-tree.ddn"
+      ]
+    },
+    {
+      "chapter": "icons",
+      "entry": "website/examples/basics/98-icons.ddn",
+      "view": "net",
+      "files": [
+        "website/examples/basics/98-icons.ddn"
+      ]
+    },
+    {
+      "chapter": "icons-vendor",
+      "entry": "website/examples/basics/106-tabler-icons.ddn",
+      "view": "net",
+      "files": [
+        "website/examples/basics/106-tabler-icons.ddn"
+      ]
+    },
+    {
+      "chapter": "pid-symbols",
+      "entry": "website/examples/basics/104-pid-symbols.ddn",
+      "view": "pid",
+      "files": [
+        "website/examples/basics/104-pid-symbols.ddn"
+      ]
+    },
+    {
+      "chapter": "electrical-symbols",
+      "entry": "website/examples/basics/105-electrical-symbols.ddn",
+      "view": "sch",
+      "files": [
+        "website/examples/basics/105-electrical-symbols.ddn"
+      ]
+    },
+    {
+      "chapter": "iso-charts",
+      "entry": "website/examples/basics/72-iso-charts.ddn",
+      "view": "iso_bar",
+      "files": [
+        "website/examples/basics/72-iso-charts.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "iso-graph",
+      "entry": "website/examples/basics/73-iso-architecture.ddn",
+      "view": "iso_map",
+      "files": [
+        "website/examples/basics/73-iso-architecture.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "geo",
+      "entry": "website/examples/basics/67-geo-choropleth.ddn",
+      "view": "choropleth",
+      "files": [
+        "website/examples/basics/67-geo-choropleth.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "chen",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "chen_extended",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "crows-foot",
+      "entry": "website/examples/basics/37-crows-foot-erd.ddn",
+      "view": "erd",
+      "files": [
+        "website/examples/basics/37-crows-foot-erd.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "cross-file",
+      "entry": "website/examples/basics/108-uaf-traceability.ddn",
+      "view": "sv",
+      "files": [
+        "website/examples/basics/108-uaf-traceability.ddn",
+        "website/examples/basics/108-uaf-operations.ddn",
+        "website/examples/basics/108-uaf-governance.ddn"
+      ]
+    },
+    {
+      "chapter": "linked-views",
+      "entry": "website/examples/basics/90-drilldown.ddn",
+      "view": "overview",
+      "files": [
+        "website/examples/basics/90-drilldown.ddn"
+      ]
+    },
+    {
+      "chapter": "audit",
+      "entry": "website/examples/basics/16-enterprise-gates.ddn",
+      "view": "external",
+      "files": [
+        "website/examples/basics/16-enterprise-gates.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "verification-gates",
+      "entry": "website/examples/basics/16-enterprise-gates.ddn",
+      "view": "software",
+      "files": [
+        "website/examples/basics/16-enterprise-gates.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "form-contract",
+      "entry": "website/examples/basics/15-process-contracts.ddn",
+      "view": "balanced",
+      "files": [
+        "website/examples/basics/15-process-contracts.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "nested-fields",
+      "entry": "website/examples/basics/12-nested-fields.ddn",
+      "view": "detailed",
+      "files": [
+        "website/examples/basics/12-nested-fields.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "wireframes",
+      "entry": "website/examples/basics/55-wireframe.ddn",
+      "view": "settings",
+      "files": [
+        "website/examples/basics/55-wireframe.ddn"
+      ]
+    },
+    {
+      "chapter": "etl",
+      "entry": "field-guide/sources/etl.ddn",
+      "view": "diagram",
+      "files": [
+        "field-guide/sources/etl.ddn"
+      ]
+    },
+    {
+      "chapter": "event-contract",
+      "entry": "field-guide/sources/event-contract.ddn",
+      "view": "diagram",
+      "files": [
+        "field-guide/sources/event-contract.ddn"
+      ]
+    },
+    {
+      "chapter": "shards-replicas",
+      "entry": "field-guide/sources/shards-replicas.ddn",
+      "view": "diagram",
+      "files": [
+        "field-guide/sources/shards-replicas.ddn"
+      ]
+    },
+    {
+      "chapter": "thumbnails",
+      "entry": "website/examples/basics/08-subdiagrams.ddn",
+      "view": "overview",
+      "files": [
+        "website/examples/basics/08-subdiagrams.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
       "chapter": "whiteboard",
       "entry": "website/examples/use-cases/01-whiteboard.ddn",
       "view": "diagram",

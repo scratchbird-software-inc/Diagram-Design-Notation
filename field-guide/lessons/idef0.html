@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="IDEF0 function model: a source-editable DDN field-guide chapter."><title>IDEF0 function model · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
+<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+<main>
+<div class="lesson-title"><p class="eyebrow">Standards families</p><h2>IDEF0 function model</h2><p class="subtitle">website/examples/basics/94-idef0.ddn # context</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Functions as boxes with ICOM arrows: inputs in the left, controls over the top, outputs right, mechanisms below — decomposed level by level.</p></section><section class="card"><h3>Why use it?</h3><p>ICOM sides force the question most process diagrams skip: what constrains this, and what performs it?</p></section><section class="card"><h3>When is it useful?</h3><p>Function analysis in regulated or defence-adjacent programmes, or any &quot;what does the system do&quot; baseline.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>The context view is the single A-0 box; the variant decomposes it into numbered child functions.</li><li>Arrows are labelled nouns; the side they enter is the role they play.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The top-level function</li><li>Its inputs, controls, outputs, mechanisms</li><li>The decomposition</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="context">context</option><option value="detail">A0 decomposition variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">idef0.basic@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Manage shop / review changes; ICOM arrows and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha c75a36f864c6… → 922564b9dc1f…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Rename one function to the verb phrase in your statement of work, apply, and check its four arrow roles still read.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/94-idef0.ddn and locate view context. This selects existing data; it is not a stored SVG.</li><li>Inspect the idef0.basic@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view context &quot;A-0 context&quot; {
+    data: [@m];
+    projection { profile: &quot;idef0.basic@1&quot;; }
+    publication { size: content; fit: none; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/94-idef0.ddn</td><td>data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared model with ICOM-side validation; conformance certification to the IDEF0 standard is not implied.</p><ul><li>Do not let an arrow change sides between levels without a tunnel declaration.</li><li>Every parent ICOM must appear (or be deliberately consumed) in the children.</li></ul></section>
+</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../notation/dist/ddn.global.js"></script>
+<script src="../../notation/dist/ddn-graph.js"></script>
+<script src="../../notation/dist/ddn-iso.js"></script>
+<script src="../../notation/dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/94-idef0.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.idef0\";\n\n// B1-078: a small IDEF0 A-0 decomposition. The context view is the single A0\n// activity with its four ICOM sides (input west, control north, output east,\n// mechanism south) and a reference badge into the decomposition view, which\n// shows three numbered activities, a forked labeled arrow, a tunneled arrow\n// (parenthesis at the tunneled end), and a call arrow. All data is synthetic.\ndata m {\n    object a0 \"Manage shop\" { kind: \"idef0.activity\"; x_idef0: { node: \"A0\" };\n        ports {\n            port orders { direction: in; side: west; x_icom: { type: \"input\" }; }\n            port policy { direction: in; side: north; x_icom: { type: \"control\" }; }\n            port service { direction: out; side: east; x_icom: { type: \"output\" }; }\n            port staff { direction: in; side: south; x_icom: { type: \"mechanism\" }; }\n        }\n        x_subdiagram: { view: \"detail\" };\n    }\n}\ndata d {\n    object a1 \"Take orders\" { kind: \"idef0.activity\"; x_idef0: { node: \"A01\" };\n        ports { port packed { direction: out; side: east; x_icom: { type: \"output\" }; } }\n    }\n    object a3 \"Stock shelves\" { kind: \"idef0.activity\"; x_idef0: { node: \"A03\" };\n        ports { port packed { direction: in; side: west; x_icom: { type: \"input\" }; } }\n    }\n    object a2 \"Ship orders\" { kind: \"idef0.activity\"; x_idef0: { node: \"A02\" };\n        ports {\n            port packed { direction: in; side: west; x_icom: { type: \"input\" }; }\n            port carrier { direction: in; side: south; x_icom: { type: \"mechanism\" }; }\n            port shipped { direction: out; side: east; x_icom: { type: \"output\" }; }\n        }\n    }\n    relation f1 \"packed orders\" @a1.packed -> @a2.packed { kind: \"idef0.flow\"; }\n    relation f2 \"packed orders\" @a1.packed -> @a3.packed { kind: \"idef0.flow\"; }\n    relation f3 \"returns\" @a3.packed -> @a1.packed { kind: \"idef0.flow\"; x_tunnel: { start: true }; }\n    relation call1 \"\" @a2 -> @a1 { kind: \"idef0.call\"; x_tunnel: { end: true }; }\n}\nview context \"A-0 context\" {\n    data: [@m];\n    projection { profile: \"idef0.basic@1\"; }\n    publication { size: content; fit: none; }\n}\nview detail \"A0 decomposition\" {\n    data: [@d];\n    projection { profile: \"idef0.basic@1\"; }\n    publication { size: content; fit: none; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"idef0","entry":"website/examples/basics/94-idef0.ddn","view":"context","files":["website/examples/basics/94-idef0.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.idef0::m.a0","file":"website/examples/basics/94-idef0.ddn","before":"Manage shop","after":"Manage shop / review","expectation":"Only the label of Manage shop / review changes; ICOM arrows and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+<script>(function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { location.reload(); };
+const sel = document.getElementById('file');
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+})();</script>
+</body></html>

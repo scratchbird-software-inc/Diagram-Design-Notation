@@ -82,36 +82,12 @@
     "view": "diagram"
   },
   {
-    "id": "sample-grid",
-    "title": "Field-bound sample-data grid",
-    "status": "planned",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
-  },
-  {
     "id": "nested-fields",
     "title": "Recursive fields and structural variants",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "website/examples/basics/02-elements.ddn",
-    "view": "overview"
-  },
-  {
-    "id": "property-graph",
-    "title": "Property-graph schema",
-    "status": "planned",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
-  },
-  {
-    "id": "key-value",
-    "title": "Key-value structure and lookup contract",
-    "status": "planned",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
+    "entry": "website/examples/basics/12-nested-fields.ddn",
+    "view": "detailed"
   },
   {
     "id": "wide-column",
@@ -120,22 +96,6 @@
     "support": "native",
     "entry": "website/examples/use-cases/07-keyed-storage.ddn",
     "view": "wide_column"
-  },
-  {
-    "id": "star-schema",
-    "title": "Dimensional warehouse / star schema",
-    "status": "planned",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
-  },
-  {
-    "id": "bitemporal",
-    "title": "Valid-time and recorded-time model",
-    "status": "planned",
-    "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
   },
   {
     "id": "lineage",
@@ -151,14 +111,6 @@
     "status": "pilot",
     "support": "native",
     "entry": "website/examples/use-cases/20-migration.ddn",
-    "view": "diagram"
-  },
-  {
-    "id": "reference-atlas",
-    "title": "Large-model reference atlas",
-    "status": "planned",
-    "support": "native",
-    "entry": "(new fixture needed)",
     "view": "diagram"
   },
   {
@@ -194,35 +146,27 @@
     "view": "net"
   },
   {
-    "id": "deployment",
-    "title": "Hybrid local/cloud deployment",
-    "status": "planned",
-    "support": "native",
-    "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
-    "view": "diagram"
-  },
-  {
     "id": "shards-replicas",
     "title": "Sharding, replication and co-location",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
+    "entry": "field-guide/sources/shards-replicas.ddn",
     "view": "diagram"
   },
   {
     "id": "etl",
     "title": "ETL/ELT and analytical publication",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
+    "entry": "field-guide/sources/etl.ddn",
     "view": "diagram"
   },
   {
     "id": "event-contract",
     "title": "Event/message contract catalogue",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
+    "entry": "field-guide/sources/event-contract.ddn",
     "view": "diagram"
   },
   {
@@ -260,10 +204,10 @@
   {
     "id": "swimlane",
     "title": "Cross-functional responsibility view",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
+    "entry": "website/examples/basics/45-activity-diagram.ddn",
+    "view": "fulfilment"
   },
   {
     "id": "sequence",
@@ -276,31 +220,31 @@
   {
     "id": "communication",
     "title": "UML communication diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
+    "entry": "website/examples/basics/42-communication-diagram.ddn",
+    "view": "communication"
   },
   {
     "id": "interaction-overview",
     "title": "Interaction overview",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
+    "entry": "website/examples/basics/48-interaction-overview.ddn",
     "view": "overview"
   },
   {
     "id": "timing",
     "title": "UML timing diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
+    "entry": "website/examples/basics/47-timing-diagram.ddn",
+    "view": "timing"
   },
   {
     "id": "msc",
     "title": "MSC message sequence chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/93-msc.ddn",
     "view": "chart"
@@ -308,111 +252,111 @@
   {
     "id": "statemachine",
     "title": "UML state machine completeness",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
-    "view": "d"
+    "view": "pseudostates"
   },
   {
     "id": "activity",
     "title": "UML activity diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/80-uml-activity.ddn",
-    "view": "d"
+    "view": "pins"
   },
   {
     "id": "umlclass",
     "title": "UML class diagram completeness",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/75-uml-class-complete.ddn",
-    "view": "d"
+    "view": "associations"
   },
   {
     "id": "umlobject",
     "title": "UML object diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/43-object-diagram.ddn",
-    "view": "d"
+    "view": "objects"
   },
   {
     "id": "umlcomposite",
     "title": "UML component and composite structure",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/79-uml-composite.ddn",
-    "view": "d"
+    "view": "components"
   },
   {
     "id": "umlremainder",
     "title": "UML remainder notations",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/81-uml-remainder.ddn",
-    "view": "d"
+    "view": "packages"
   },
   {
     "id": "bpmn-process",
     "title": "BPMN process diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/82-bpmn-complete.ddn",
-    "view": "d"
+    "view": "process"
   },
   {
     "id": "bpmn-choreography",
     "title": "BPMN choreography",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/82-bpmn-complete.ddn",
+    "view": "choreography"
   },
   {
     "id": "cmmn-case",
     "title": "CMMN case diagram completeness",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/83-cmmn-complete.ddn",
+    "view": "v"
   },
   {
     "id": "sysml-bdd",
     "title": "SysML block definition diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/85-sysml-blocks.ddn",
+    "view": "bdd"
   },
   {
     "id": "sysml-ibd",
     "title": "SysML internal block diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/85-sysml-blocks.ddn",
+    "view": "ibd"
   },
   {
     "id": "sysml-parametric",
     "title": "SysML parametric diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/85-sysml-blocks.ddn",
+    "view": "parametric"
   },
   {
     "id": "dmn-drd",
     "title": "DMN decision requirements diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/87-dmn-drd.ddn",
+    "view": "drd"
   },
   {
     "id": "soaml-services",
     "title": "SoaML service architecture",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/88-soaml.ddn",
     "view": "arch"
@@ -420,7 +364,7 @@
   {
     "id": "uaf-strategic",
     "title": "UAF strategic domain",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/89-uaf.ddn",
     "view": "strategic"
@@ -428,15 +372,15 @@
   {
     "id": "uaf-summary",
     "title": "UAF summary and overview",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/89-uaf.ddn",
-    "view": "sum"
+    "view": "summary"
   },
   {
     "id": "fbd",
     "title": "IEC 61131-3 function block diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/100-fbd.ddn",
     "view": "d"
@@ -444,7 +388,7 @@
   {
     "id": "sdl",
     "title": "SDL system and process diagrams",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/99-sdl.ddn",
     "view": "system"
@@ -452,23 +396,23 @@
   {
     "id": "petri",
     "title": "Petri net with token markings",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/95-petrinet.ddn",
+    "view": "net"
   },
   {
     "id": "orm",
     "title": "ORM 2 fact model",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/96-orm.ddn",
+    "view": "model"
   },
   {
     "id": "vsm",
     "title": "Value stream map",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/97-vsm.ddn",
     "view": "map"
@@ -476,7 +420,7 @@
   {
     "id": "vsm-symbols",
     "title": "VSM with icon pack symbols",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/102-vsm-symbols.ddn",
     "view": "map"
@@ -484,74 +428,74 @@
   {
     "id": "idef0",
     "title": "IDEF0 function model",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/94-idef0.ddn",
+    "view": "context"
   },
   {
     "id": "pert-cpm",
     "title": "PERT/CPM critical path",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/52-pert-cpm.ddn",
-    "view": "d"
+    "view": "plan"
   },
   {
     "id": "fault-tree",
     "title": "Fault/event tree",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/53-fault-event-tree.ddn",
-    "view": "d"
+    "view": "fault"
   },
   {
     "id": "mindmap",
     "title": "Mind map",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
+    "entry": "website/examples/basics/28-mind-map.ddn",
+    "view": "mindmap"
   },
   {
     "id": "concept-map",
     "title": "Concept map",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/29-concept-map.ddn",
+    "view": "concepts"
   },
   {
     "id": "organization",
     "title": "Organization/reporting chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "overview"
+    "entry": "website/examples/basics/26-org-chart.ddn",
+    "view": "org"
   },
   {
     "id": "wbs",
     "title": "Work breakdown structure",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/27-wbs.ddn",
+    "view": "wbs"
   },
   {
     "id": "family-tree",
     "title": "Family relationship map",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/56-family-tree.ddn",
-    "view": "d"
+    "view": "family"
   },
   {
     "id": "requirements",
     "title": "Requirement and verification traceability",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/84-sysml-requirements.ddn",
+    "view": "requirements"
   },
   {
     "id": "governance",
@@ -572,31 +516,31 @@
   {
     "id": "audit",
     "title": "Audit evidence and custody map",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
+    "entry": "website/examples/basics/16-enterprise-gates.ddn",
+    "view": "external"
   },
   {
     "id": "verification-gates",
     "title": "Verification and readiness gates",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
+    "entry": "website/examples/basics/16-enterprise-gates.ddn",
+    "view": "software"
   },
   {
     "id": "form-contract",
     "title": "UI form and interaction requirements",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "diagram"
+    "entry": "website/examples/basics/15-process-contracts.ddn",
+    "view": "balanced"
   },
   {
     "id": "chen",
     "title": "Chen ER notation — basic and extended",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "chen_extended"
@@ -604,10 +548,10 @@
   {
     "id": "crows-foot",
     "title": "Crow's-foot ERD",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/37-crows-foot-erd.ddn",
-    "view": "d"
+    "view": "erd"
   },
   {
     "id": "raci",
@@ -900,23 +844,23 @@
   {
     "id": "linked-views",
     "title": "Linked diagrams / overview and detail",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/90-drilldown.ddn",
+    "view": "overview"
   },
   {
     "id": "thumbnails",
     "title": "Drill-down thumbnails",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/08-subdiagrams.ddn",
+    "view": "overview"
   },
   {
     "id": "icons",
     "title": "Icon packs and bindings",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/98-icons.ddn",
     "view": "net"
@@ -924,7 +868,7 @@
   {
     "id": "icons-vendor",
     "title": "Curated MIT icon packs (Tabler, Iconoir)",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/106-tabler-icons.ddn",
     "view": "net"
@@ -932,7 +876,7 @@
   {
     "id": "pid-symbols",
     "title": "P&ID common symbols",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/104-pid-symbols.ddn",
     "view": "pid"
@@ -940,7 +884,7 @@
   {
     "id": "electrical-symbols",
     "title": "Electrical common symbols",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/105-electrical-symbols.ddn",
     "view": "sch"
@@ -948,42 +892,34 @@
   {
     "id": "cross-file",
     "title": "Architecture containers and cross-file addressing",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/108-uaf-traceability.ddn",
     "view": "sv"
   },
   {
-    "id": "iso42010",
-    "title": "ISO/IEC/IEEE 42010 architecture descriptions",
-    "status": "planned",
-    "support": "native",
-    "entry": "website/examples/basics/89-uaf.ddn",
-    "view": "sum"
-  },
-  {
     "id": "iso-charts",
     "title": "Isometric chart extrusions",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/72-iso-charts.ddn",
-    "view": "d"
+    "view": "iso_bar"
   },
   {
     "id": "iso-graph",
     "title": "Isometric graph prisms",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/73-iso-architecture.ddn",
-    "view": "d"
+    "view": "iso_map"
   },
   {
     "id": "geo",
     "title": "Geographic maps (choropleth, symbols, outline)",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/67-geo-choropleth.ddn",
-    "view": "d"
+    "view": "choropleth"
   },
   {
     "id": "style-looks",
@@ -1084,10 +1020,10 @@
   {
     "id": "wireframes",
     "title": "Low-fidelity UI wireframes",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/55-wireframe.ddn",
-    "view": "d"
+    "view": "settings"
   },
   {
     "id": "data-refresh",

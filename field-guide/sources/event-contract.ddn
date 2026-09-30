@@ -1,0 +1,27 @@
+ddn "0.5";
+module "ddn.fieldguide.eventcontract";
+
+// Synthetic event contract (all parties invented): one order-events topic
+// with its declared schema versions, the producer that owns it, and two
+// consumer groups with their compatibility claims. The contract view makes
+// "who may break whom" a reviewable graph instead of a wiki promise.
+data contract {
+    object orders_api "Orders API" { kind: "application"; description: "Synthetic producer: emits order lifecycle events."; }
+    object topic "order-events v3" { kind: "topic"; description: "Synthetic topic carrying the current schema version."; }
+    object schema_v2 "Schema v2 (deprecated)" { kind: "record"; description: "Synthetic previous schema: kept for the deprecation window."; }
+    object schema_v3 "Schema v3" { kind: "record"; description: "Synthetic current schema: adds cancellation reason."; }
+    object billing "Billing consumer" { kind: "application"; description: "Synthetic consumer: reads payment-relevant events only."; }
+    object fulfil "Fulfilment consumer" { kind: "application"; description: "Synthetic consumer: drives warehouse tasks from confirmed orders."; }
+    relation publishes "publishes" @orders_api -> @topic { kind: "flow"; }
+    relation carries "conforms to" @topic -> @schema_v3 { kind: "assoc"; }
+    relation supersedes "backward compatible" @schema_v3 -> @schema_v2 { kind: "assoc"; }
+    relation reads_billing "consumer group: billing" @topic -> @billing { kind: "flow"; }
+    relation reads_fulfil "consumer group: fulfilment" @topic -> @fulfil { kind: "flow"; }
+}
+
+view diagram "Synthetic event contract / producer to consumers" {
+    data: [@contract];
+    projection { profile: "ddn@1"; }
+    layout { algorithm: layered; direction: right; }
+    publication { size: content; fit: none; }
+}
