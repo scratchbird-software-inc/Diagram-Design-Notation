@@ -13,8 +13,8 @@ data shop {
     object checkout "Check out" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper completes the order."; }
     object pay "Pay" { kind: "analysis.task"; description: "Synthetic backbone activity: the shopper pays for the order."; }
     object fulfil "Fulfil order" { kind: "analysis.task"; description: "Synthetic backbone activity: the shop fulfils the order."; }
-    object r1 "Release 1 · walkable skeleton" { kind: record; description: "Synthetic first release: the thinnest end-to-end purchase path."; }
-    object r2 "Release 2 · polish" { kind: record; description: "Synthetic second release: convenience and polish stories."; }
+    record r1 "Release 1 · walkable skeleton" {description: "Synthetic first release: the thinnest end-to-end purchase path."; }
+    record r2 "Release 2 · polish" {description: "Synthetic second release: convenience and polish stories."; }
     object s_list "List products" { kind: "analysis.task"; description: "Synthetic story: show a plain product list."; }
     object s_search "Search by name" { kind: "analysis.task"; description: "Synthetic story: find products by name."; }
     object s_photo "Photo gallery" { kind: "analysis.task"; description: "Synthetic story: browse item photos."; }

@@ -23,8 +23,6 @@ data m {
     relation a6 "" @cloud -> @lan { kind: "network.attaches"; }
     relation a7 "" @team -> @lan { kind: "network.attaches"; }
 }
-view net "Iconoir pack" {
-    data: [@m];
-    projection { profile: "network.basic@1"; }
+view net "Iconoir pack": [@m] as "network.basic@1" {
     publication { size: content; fit: none; }
 }

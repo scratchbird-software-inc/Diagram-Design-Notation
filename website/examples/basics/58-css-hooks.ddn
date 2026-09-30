@@ -10,11 +10,11 @@ module "ddn.examples.css-hooks";
 // See the companion 58-css-hooks.html for the live page-CSS demonstration.
 
 data shop {
-    object orders "Orders" { kind: table; fields { field order_id { key: primary; } field status; } }
-    object invoices "Invoices" { kind: table; fields { field invoice_id { key: primary; } field total; } }
-    object audit "Audit cache" { kind: cache; description: "Script-level kind choice: page CSS on .ddn-kind-tbl does not apply here."; }
-    relation billed @orders -> @invoices { kind: publish; }
-    relation cached @invoices -> @audit { kind: capture; }
+    table orders "Orders" {fields { order_id { key: primary; } status; } }
+    table invoices "Invoices" {fields { invoice_id { key: primary; } total; } }
+    cache audit "Audit cache" {description: "Script-level kind choice: page CSS on .ddn-kind-tbl does not apply here."; }
+    publish billed @orders -> @invoices;
+    capture cached @invoices -> @audit;
 }
 
 view hooks "CSS hooks / page styling" {

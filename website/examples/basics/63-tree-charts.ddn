@@ -4,15 +4,15 @@ module "ddn.examples.tree-charts";
 // Synthetic product-catalogue hierarchy: region.family.item dotted paths with
 // quarterly sales values. All data is synthetic.
 data sales {
-    object n1 "North.Hardware.Tools" { kind: record; x_record: {"path": "North.Hardware.Tools", "sales": 120, "unit": "kEUR"}; }
-    object n2 "North.Hardware.Parts" { kind: record; x_record: {"path": "North.Hardware.Parts", "sales": 80, "unit": "kEUR"}; }
-    object n3 "North.Software.Licenses" { kind: record; x_record: {"path": "North.Software.Licenses", "sales": 150, "unit": "kEUR"}; }
-    object n4 "North.Software.Support" { kind: record; x_record: {"path": "North.Software.Support", "sales": 60, "unit": "kEUR"}; }
-    object s1 "South.Hardware.Tools" { kind: record; x_record: {"path": "South.Hardware.Tools", "sales": 90, "unit": "kEUR"}; }
-    object s2 "South.Hardware.Parts" { kind: record; x_record: {"path": "South.Hardware.Parts", "sales": 45, "unit": "kEUR"}; }
-    object s3 "South.Software.Licenses" { kind: record; x_record: {"path": "South.Software.Licenses", "sales": 110, "unit": "kEUR"}; }
-    object s4 "South.Software.Support" { kind: record; x_record: {"path": "South.Software.Support", "sales": 35, "unit": "kEUR"}; }
-    object s5 "South.Services" { kind: record; x_record: {"path": "South.Services", "sales": 70, "unit": "kEUR"}; }
+    record n1 "North.Hardware.Tools" {x_record: {"path": "North.Hardware.Tools", "sales": 120, "unit": "kEUR"}; }
+    record n2 "North.Hardware.Parts" {x_record: {"path": "North.Hardware.Parts", "sales": 80, "unit": "kEUR"}; }
+    record n3 "North.Software.Licenses" {x_record: {"path": "North.Software.Licenses", "sales": 150, "unit": "kEUR"}; }
+    record n4 "North.Software.Support" {x_record: {"path": "North.Software.Support", "sales": 60, "unit": "kEUR"}; }
+    record s1 "South.Hardware.Tools" {x_record: {"path": "South.Hardware.Tools", "sales": 90, "unit": "kEUR"}; }
+    record s2 "South.Hardware.Parts" {x_record: {"path": "South.Hardware.Parts", "sales": 45, "unit": "kEUR"}; }
+    record s3 "South.Software.Licenses" {x_record: {"path": "South.Software.Licenses", "sales": 110, "unit": "kEUR"}; }
+    record s4 "South.Software.Support" {x_record: {"path": "South.Software.Support", "sales": 35, "unit": "kEUR"}; }
+    record s5 "South.Services" {x_record: {"path": "South.Services", "sales": 70, "unit": "kEUR"}; }
 }
 
 view tidytree "Sales hierarchy / tidy tree" {

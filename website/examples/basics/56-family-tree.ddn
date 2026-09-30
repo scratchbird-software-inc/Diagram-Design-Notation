@@ -25,10 +25,8 @@ data m {
     relation child_robin "parent of" @union_sj -> @robin { kind: "family.parent_of"; }
 }
 
-view family "Three generations" {
-    data: [@m];
+view family "Three generations": [@m] as "family.tree@1" {
     select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
-    projection { profile: "family.tree@1"; }
     layout { algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }

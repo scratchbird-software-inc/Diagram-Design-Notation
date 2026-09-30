@@ -12,7 +12,7 @@ data m {
     object sup "Supplier" { kind: "vsm.customer"; x_icon: { library: "vsm-symbols@1", icon: "supplier" }; }
     object ctrl "Production control" { kind: "vsm.control"; }
     object stamp "Stamping" { kind: "vsm.process"; x_vsm: { va: 1.5, nva: 3, unit: "d" };
-        fields { field co "C/O 30 min"; }
+        fields { co "C/O 30 min"; }
     }
     object inv1 "" { kind: "vsm.inventory"; }
     object asm "Assembly" { kind: "vsm.process"; x_vsm: { va: 3, nva: 2, unit: "d" }; }
@@ -36,9 +36,7 @@ data m {
     relation i5 "" @buf -> @lane { kind: "vsm.material"; }
     relation o1 "" @op -> @asm { kind: "vsm.minfo"; }
 }
-view map "VSM symbol library" {
-    data: [@m];
-    projection { profile: "vsm.basic@1"; }
+view map "VSM symbol library": [@m] as "vsm.basic@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

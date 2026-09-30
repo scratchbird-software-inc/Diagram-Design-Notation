@@ -30,8 +30,6 @@ data m {
     relation a9 "" @ws -> @lan { kind: "network.attaches"; }
     relation a10 "" @prn -> @lan { kind: "network.attaches"; }
 }
-view net "Network symbol library" {
-    data: [@m];
-    projection { profile: "network.basic@1"; }
+view net "Network symbol library": [@m] as "network.basic@1" {
     publication { size: content; fit: none; }
 }

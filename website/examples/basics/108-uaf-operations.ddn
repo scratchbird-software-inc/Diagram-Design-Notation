@@ -11,8 +11,6 @@ data ops {
     object osvc "Order service" { kind: "uaf.servicespec"; }
     relation m1 "" @osvc -> @deliver { kind: "uaf.mapsto"; }
 }
-view ov "Operational activities" {
-    data: [@ops];
-    projection { profile: "uaf.operational@1"; }
+view ov "Operational activities": [@ops] as "uaf.operational@1" {
     publication { size: content; fit: none; }
 }

@@ -6,16 +6,16 @@ import "shared.ddn" as shared;
 // Synthetic order-to-cash domain concepts for the concept.map@1 profile.
 // Every relation carries an explicit author-written label — verb defaults are rejected (DDN-PJ104).
 data domain {
-    object order "Order" { kind: entity; }
-    object invoice "Invoice" { kind: entity; }
-    object payment "Payment" { kind: entity; }
-    object ledger "Ledger" { kind: entity; }
-    object shipment "Shipment" { kind: entity; }
-    relation r1 "bills" @order -> @invoice { kind: assoc; }
-    relation r2 "settles" @payment -> @invoice { kind: assoc; }
-    relation r3 "posts to" @invoice -> @ledger { kind: assoc; }
-    relation r4 "fulfilled by" @order -> @shipment { kind: assoc; }
-    relation r5 "books freight to" @shipment -> @ledger { kind: assoc; }
+    entity order "Order";
+    entity invoice "Invoice";
+    entity payment "Payment";
+    entity ledger "Ledger";
+    entity shipment "Shipment";
+    assoc r1 "bills" @order -> @invoice;
+    assoc r2 "settles" @payment -> @invoice;
+    assoc r3 "posts to" @invoice -> @ledger;
+    assoc r4 "fulfilled by" @order -> @shipment;
+    assoc r5 "books freight to" @shipment -> @ledger;
 }
 
 format options {

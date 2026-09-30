@@ -18,7 +18,7 @@ data claim {
     object claim_decided "Claim decided" { kind: "cmmn.milestone"; }
 
     relation order "order" @gather_documents -> @assess_claim { kind: "analysis.precedes"; }
-    relation done "done" @assess_claim -> @claim_decided { kind: "assoc"; }
+    assoc done "done" @assess_claim -> @claim_decided;
 }
 
 view case "Claim handling" {

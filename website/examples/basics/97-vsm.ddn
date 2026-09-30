@@ -10,11 +10,11 @@ data m {
     object cust "Retailer" { kind: "vsm.customer"; }
     object ctrl "Production control" { kind: "vsm.control"; }
     object stamp "Stamping" { kind: "vsm.process"; x_vsm: { va: 1.5, nva: 3, unit: "d" };
-        fields { field co "C/O 30 min"; field up "85%"; }
+        fields { co "C/O 30 min"; up "85%"; }
     }
     object inv1 "" { kind: "vsm.inventory"; }
     object weld "Welding" { kind: "vsm.process"; x_vsm: { va: 2, nva: 1.5, unit: "d" };
-        fields { field co "C/O 15 min"; }
+        fields { co "C/O 15 min"; }
     }
     object sup "Supermarket" { kind: "vsm.supermarket"; }
     object asm "Assembly" { kind: "vsm.process"; x_vsm: { va: 3, nva: 2, unit: "d" }; }
@@ -30,9 +30,7 @@ data m {
     relation i3 "" @asm -> @cust { kind: "vsm.material"; }
     relation o1 "" @op -> @weld { kind: "vsm.minfo"; }
 }
-view map "Current state map" {
-    data: [@m];
-    projection { profile: "vsm.basic@1"; }
+view map "Current state map": [@m] as "vsm.basic@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

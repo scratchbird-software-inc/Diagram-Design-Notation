@@ -10,14 +10,14 @@ data m {
     object name "Name" { kind: "orm.valuetype"; x_values: { values: [ "short", "full" ]; }; }
     object has "has / is of" { kind: "orm.facttype";
         fields {
-            field who { x_role: { mandatory: true }; }
-            field what { x_role: { uniqueness: true }; }
+            who { x_role: { mandatory: true }; }
+            what { x_role: { uniqueness: true }; }
         }
         x_derive: { text: "from CRM extract" };
     }
     object vip "VIP customer" { kind: "orm.entitytype"; }
     object viporder "places priority order" { kind: "orm.facttype";
-        fields { field v; field o; }
+        fields { v; o; }
         x_objectified: { name: "PriorityOrder" };
     }
     relation p1 "" @has.who -> @cust { kind: "orm.plays"; }
@@ -25,8 +25,6 @@ data m {
     relation s1 "" @vip -> @cust { kind: "orm.subset"; }
     relation x1 "" @viporder -> @has { kind: "orm.exclusion"; }
 }
-view model "Customer fact model" {
-    data: [@m];
-    projection { profile: "orm.basic@1"; }
+view model "Customer fact model": [@m] as "orm.basic@1" {
     publication { size: content; fit: none; }
 }

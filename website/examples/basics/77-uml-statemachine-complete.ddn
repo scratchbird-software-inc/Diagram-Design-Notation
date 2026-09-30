@@ -63,15 +63,11 @@ data machine {
     relation m12 "logout" @session -> @mstop { kind: "state.transition"; x_transition: { event: "logout" }; }
 }
 
-view pseudostates "UML state machine / activities and pseudostates" {
-    data: [@player];
-    projection { profile: "uml.statemachine@1"; }
+view pseudostates "UML state machine / activities and pseudostates": [@player] as "uml.statemachine@1" {
     publication { size: content; fit: none; }
 }
 
-view composite "UML state machine / composite, history, submachine" {
-    data: [@machine];
-    projection { profile: "uml.statemachine@1"; }
+view composite "UML state machine / composite, history, submachine": [@machine] as "uml.statemachine@1" {
     frame boundary "Active" { scope: @machine.active; members: [@machine.hist, @machine.deep_hist, @machine.ep_in, @machine.ep_out, @machine.ui_idle, @machine.ui_busy, @machine.net_idle, @machine.net_sync]; }
     publication { size: content; fit: none; }
 }

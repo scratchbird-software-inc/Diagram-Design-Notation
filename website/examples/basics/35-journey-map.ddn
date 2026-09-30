@@ -7,26 +7,26 @@ import "shared.ddn" as shared;
 // (actions, touchpoints, opportunities) and one full-width emotions band whose
 // declared 1..5 values render as a straight-segment polyline (panels.journey@1).
 data journey {
-    object ph_receive "Receive phase" { kind: note; description: "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."; }
-    object ph_inspect "Inspect phase" { kind: note; description: "Synthetic phase goal: the returned item is checked and triaged quickly."; }
-    object ph_decide "Decide phase" { kind: note; description: "Synthetic phase goal: a fair refund-or-replace decision is made transparently."; }
-    object ph_refund "Refund phase" { kind: note; description: "Synthetic phase goal: money or a replacement reaches the customer without chasing."; }
-    object act_receive "Action / receive" { kind: note; description: "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."; }
-    object act_inspect "Action / inspect" { kind: note; description: "Synthetic: customer waits while the warehouse scans and grades the returned item."; }
-    object act_decide "Action / decide" { kind: note; description: "Synthetic: customer reads the decision email and accepts the proposed refund."; }
-    object act_refund "Action / refund" { kind: note; description: "Synthetic: customer sees the refund land on the original card and archives the receipt."; }
-    object tp_receive "Touchpoint / receive" { kind: note; description: "Synthetic: returns portal with order lookup and a QR code for the drop-off point."; }
-    object tp_inspect "Touchpoint / inspect" { kind: note; description: "Synthetic: tracking page shows the parcel arrived and inspection has started."; }
-    object tp_decide "Touchpoint / decide" { kind: note; description: "Synthetic: decision email explains the outcome with photos from the inspection."; }
-    object tp_refund "Touchpoint / refund" { kind: note; description: "Synthetic: bank statement line and a closing confirmation message in the portal."; }
-    object opp_receive "Opportunity / receive" { kind: note; description: "Synthetic opportunity: prefill the returns form from the order history to cut retyping."; }
-    object opp_inspect "Opportunity / inspect" { kind: note; description: "Synthetic opportunity: publish typical inspection times so waiting feels predictable."; }
-    object opp_decide "Opportunity / decide" { kind: note; description: "Synthetic opportunity: offer a one-click appeal path when a refund is declined."; }
-    object opp_refund "Opportunity / refund" { kind: note; description: "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."; }
-    object em_receive "Emotion / receive" { kind: record; x_record: {"phase": "receive", "value": 2, "description": "Synthetic: annoyed that the item failed, mildly relieved the return label was easy."}; }
-    object em_inspect "Emotion / inspect" { kind: record; x_record: {"phase": "inspect", "value": 3, "description": "Synthetic: neutral while waiting, reassured by the visible tracking updates."}; }
-    object em_decide "Emotion / decide" { kind: record; x_record: {"phase": "decide", "value": 4, "description": "Synthetic: pleased the decision arrived with clear evidence and no argument."}; }
-    object em_refund "Emotion / refund" { kind: record; x_record: {"phase": "refund", "value": 5, "description": "Synthetic: delighted the refund landed ahead of the promised date."}; }
+    note ph_receive "Receive phase" {description: "Synthetic phase goal: the customer sends the unwanted item back with minimal effort."; }
+    note ph_inspect "Inspect phase" {description: "Synthetic phase goal: the returned item is checked and triaged quickly."; }
+    note ph_decide "Decide phase" {description: "Synthetic phase goal: a fair refund-or-replace decision is made transparently."; }
+    note ph_refund "Refund phase" {description: "Synthetic phase goal: money or a replacement reaches the customer without chasing."; }
+    note act_receive "Action / receive" {description: "Synthetic: customer prints the prepaid label and drops the parcel at a corner shop."; }
+    note act_inspect "Action / inspect" {description: "Synthetic: customer waits while the warehouse scans and grades the returned item."; }
+    note act_decide "Action / decide" {description: "Synthetic: customer reads the decision email and accepts the proposed refund."; }
+    note act_refund "Action / refund" {description: "Synthetic: customer sees the refund land on the original card and archives the receipt."; }
+    note tp_receive "Touchpoint / receive" {description: "Synthetic: returns portal with order lookup and a QR code for the drop-off point."; }
+    note tp_inspect "Touchpoint / inspect" {description: "Synthetic: tracking page shows the parcel arrived and inspection has started."; }
+    note tp_decide "Touchpoint / decide" {description: "Synthetic: decision email explains the outcome with photos from the inspection."; }
+    note tp_refund "Touchpoint / refund" {description: "Synthetic: bank statement line and a closing confirmation message in the portal."; }
+    note opp_receive "Opportunity / receive" {description: "Synthetic opportunity: prefill the returns form from the order history to cut retyping."; }
+    note opp_inspect "Opportunity / inspect" {description: "Synthetic opportunity: publish typical inspection times so waiting feels predictable."; }
+    note opp_decide "Opportunity / decide" {description: "Synthetic opportunity: offer a one-click appeal path when a refund is declined."; }
+    note opp_refund "Opportunity / refund" {description: "Synthetic opportunity: instant refund to wallet instead of a five-day card settlement."; }
+    record em_receive "Emotion / receive" {x_record: {"phase": "receive", "value": 2, "description": "Synthetic: annoyed that the item failed, mildly relieved the return label was easy."}; }
+    record em_inspect "Emotion / inspect" {x_record: {"phase": "inspect", "value": 3, "description": "Synthetic: neutral while waiting, reassured by the visible tracking updates."}; }
+    record em_decide "Emotion / decide" {x_record: {"phase": "decide", "value": 4, "description": "Synthetic: pleased the decision arrived with clear evidence and no argument."}; }
+    record em_refund "Emotion / refund" {x_record: {"phase": "refund", "value": 5, "description": "Synthetic: delighted the refund landed ahead of the promised date."}; }
 }
 
 view returns "Returns journey / synthetic" {

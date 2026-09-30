@@ -18,20 +18,18 @@ data m {
     object xv "Shutoff valve" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-gate" }; }
     object li "LI 201" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "instrument-panel" }; }
     object psv "PSV 202" { kind: "network.server"; x_icon: { library: "pid-common@1", icon: "valve-relief" }; }
-    relation f1 "" @tk -> @p1 { kind: "assoc"; }
-    relation f2 "" @p1 -> @fv { kind: "assoc"; }
-    relation f3 "" @fv -> @hx { kind: "assoc"; }
-    relation f4 "" @hx -> @v1 { kind: "assoc"; }
-    relation f5 "" @v1 -> @xv { kind: "assoc"; }
-    relation s1 "" @ft -> @fic { kind: "assoc"; }
-    relation s2 "" @fic -> @fv { kind: "assoc"; }
-    relation s3 "" @li -> @v1 { kind: "assoc"; }
-    relation s4 "" @psv -> @v1 { kind: "assoc"; }
-    relation s5 "" @ft -> @fv { kind: "assoc"; }
+    assoc f1 "" @tk -> @p1;
+    assoc f2 "" @p1 -> @fv;
+    assoc f3 "" @fv -> @hx;
+    assoc f4 "" @hx -> @v1;
+    assoc f5 "" @v1 -> @xv;
+    assoc s1 "" @ft -> @fic;
+    assoc s2 "" @fic -> @fv;
+    assoc s3 "" @li -> @v1;
+    assoc s4 "" @psv -> @v1;
+    assoc s5 "" @ft -> @fv;
 }
-view pid "P&ID symbol library" {
-    data: [@m];
-    projection { profile: "network.basic@1"; }
+view pid "P&ID symbol library": [@m] as "network.basic@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

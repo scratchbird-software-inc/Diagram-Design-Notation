@@ -18,7 +18,7 @@ data uc {
 data act {
     object start "" { kind: "flow.start"; }
     object meter "Meter flow" { kind: "flow.process";
-        ports { port out { direction: out; x_pin: { streaming: true }; } }
+        ports { out { direction: out; x_pin: { streaming: true }; } }
     }
     object fin "" { kind: "flow.end"; }
     relation e1 "command" @start -> @meter { kind: "uml.flow"; }
@@ -43,29 +43,21 @@ data sq {
     relation m3 "ack" @pump -> @ctrl { kind: "uml.message"; x_message: { sort: "reply" }; }
 }
 
-view usecase "Station use cases" {
-    data: [@uc];
-    projection { profile: "sysml.usecase@1"; }
+view usecase "Station use cases": [@uc] as "sysml.usecase@1" {
     frame boundary "Pump station" { scope: @uc.station; members: [@uc.run, @uc.log]; }
     publication { size: content; fit: none; }
 }
 
-view activity "Metering activity" {
-    data: [@act];
-    projection { profile: "sysml.activity@1"; }
+view activity "Metering activity": [@act] as "sysml.activity@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }
 
-view states "Pump states" {
-    data: [@sm];
-    projection { profile: "sysml.statemachine@1"; }
+view states "Pump states": [@sm] as "sysml.statemachine@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }
 
-view sequence "Start sequence" {
-    data: [@sq];
-    projection { kind: sequence; profile: "sysml.sequence@1"; }
+view sequence "Start sequence": [@sq] as "sysml.sequence@1" {
     publication { size: content; fit: none; }
 }

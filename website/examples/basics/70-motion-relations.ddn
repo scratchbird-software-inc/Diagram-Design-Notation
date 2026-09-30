@@ -11,10 +11,10 @@ import "shared.ddn" as shared;
 // starts/stops, steps one hop, and re-times playback. --no-motion renders the
 // same diagram static for print.
 data pipeline {
-    object orders "Order intake" { kind: topic; fields { field order_id; field placed_at; } }
-    object queue "Dispatch queue" { kind: queue; fields { field order_id; field priority; } }
-    object worker "Fulfilment worker" { kind: activity; }
-    object ledger "Fulfilled orders" { kind: table; fields { field order_id; field fulfilled_at; } }
+    topic orders "Order intake" {fields { order_id; placed_at; } }
+    queue queue "Dispatch queue" {fields { order_id; priority; } }
+    activity worker "Fulfilment worker";
+    table ledger "Fulfilled orders" {fields { order_id; fulfilled_at; } }
     relation submit "Orders submitted" @orders -> @queue { kind: flow; motion: flow; }
     relation dispatch "Dispatch stream" @queue -> @worker { kind: flow; motion: flow; marker: square; marker_size: 10; rate: 6; speed: 140; marker_color: "#B45309"; }
     relation record "Record fulfilment" @worker -> @ledger { kind: flow; motion: pulse; pulse_color: "#0E7490"; }

@@ -41,15 +41,11 @@ data cluster {
     relation zb "" @app_b -> @ee_b { kind: "uml.deploy"; }
 }
 
-view main "UML deployment / nodes and artifacts" {
-    data: [@shop];
-    projection { profile: "uml.deployment@1"; }
+view main "UML deployment / nodes and artifacts": [@shop] as "uml.deployment@1" {
     publication { size: content; fit: none; }
 }
 
-view nested "UML deployment / nested nodes" {
-    data: [@cluster];
-    projection { profile: "uml.deployment@1"; }
+view nested "UML deployment / nested nodes": [@cluster] as "uml.deployment@1" {
     frame f_zone "Failover zone" { scope: @cluster.zone; members: [@cluster.node_a, @cluster.node_b]; }
     frame f_a "Node A" { scope: @cluster.node_a; members: [@cluster.ee_a, @cluster.app_a]; }
     frame f_b "Node B" { scope: @cluster.node_b; members: [@cluster.ee_b, @cluster.app_b]; }

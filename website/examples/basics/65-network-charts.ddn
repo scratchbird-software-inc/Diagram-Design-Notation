@@ -5,25 +5,25 @@ module "ddn.examples.network-charts";
 // same flows addressed by dotted deployment paths for hierarchical bundling.
 // All data is synthetic.
 data calls {
-    object e1 "web → api" { kind: record; x_record: {"from": "web", "to": "api", "n": 320, "unit": "req/min"}; }
-    object e2 "api → auth" { kind: record; x_record: {"from": "api", "to": "auth", "n": 180, "unit": "req/min"}; }
-    object e3 "api → store" { kind: record; x_record: {"from": "api", "to": "store", "n": 240, "unit": "req/min"}; }
-    object e4 "web → cdn" { kind: record; x_record: {"from": "web", "to": "cdn", "n": 90, "unit": "req/min"}; }
-    object e5 "worker → store" { kind: record; x_record: {"from": "worker", "to": "store", "n": 140, "unit": "req/min"}; }
-    object e6 "api → queue" { kind: record; x_record: {"from": "api", "to": "queue", "n": 110, "unit": "req/min"}; }
-    object e7 "queue → worker" { kind: record; x_record: {"from": "queue", "to": "worker", "n": 105, "unit": "req/min"}; }
-    object e8 "cdn → store" { kind: record; x_record: {"from": "cdn", "to": "store", "n": 60, "unit": "req/min"}; }
+    record e1 "web → api" {x_record: {"from": "web", "to": "api", "n": 320, "unit": "req/min"}; }
+    record e2 "api → auth" {x_record: {"from": "api", "to": "auth", "n": 180, "unit": "req/min"}; }
+    record e3 "api → store" {x_record: {"from": "api", "to": "store", "n": 240, "unit": "req/min"}; }
+    record e4 "web → cdn" {x_record: {"from": "web", "to": "cdn", "n": 90, "unit": "req/min"}; }
+    record e5 "worker → store" {x_record: {"from": "worker", "to": "store", "n": 140, "unit": "req/min"}; }
+    record e6 "api → queue" {x_record: {"from": "api", "to": "queue", "n": 110, "unit": "req/min"}; }
+    record e7 "queue → worker" {x_record: {"from": "queue", "to": "worker", "n": 105, "unit": "req/min"}; }
+    record e8 "cdn → store" {x_record: {"from": "cdn", "to": "store", "n": 60, "unit": "req/min"}; }
 }
 
 data routes {
-    object r1 "eu.web → eu.api" { kind: record; x_record: {"from": "eu.frontend.web", "to": "eu.backend.api", "n": 320, "unit": "req/min"}; }
-    object r2 "eu.api → eu.auth" { kind: record; x_record: {"from": "eu.backend.api", "to": "eu.backend.auth", "n": 180, "unit": "req/min"}; }
-    object r3 "eu.api → us.store" { kind: record; x_record: {"from": "eu.backend.api", "to": "us.backend.store", "n": 240, "unit": "req/min"}; }
-    object r4 "us.web → us.api" { kind: record; x_record: {"from": "us.frontend.web", "to": "us.backend.api", "n": 150, "unit": "req/min"}; }
-    object r5 "us.api → us.store" { kind: record; x_record: {"from": "us.backend.api", "to": "us.backend.store", "n": 210, "unit": "req/min"}; }
-    object r6 "us.worker → us.store" { kind: record; x_record: {"from": "us.backend.worker", "to": "us.backend.store", "n": 140, "unit": "req/min"}; }
-    object r7 "eu.api → eu.queue" { kind: record; x_record: {"from": "eu.backend.api", "to": "eu.backend.queue", "n": 110, "unit": "req/min"}; }
-    object r8 "eu.queue → us.worker" { kind: record; x_record: {"from": "eu.backend.queue", "to": "us.backend.worker", "n": 95, "unit": "req/min"}; }
+    record r1 "eu.web → eu.api" {x_record: {"from": "eu.frontend.web", "to": "eu.backend.api", "n": 320, "unit": "req/min"}; }
+    record r2 "eu.api → eu.auth" {x_record: {"from": "eu.backend.api", "to": "eu.backend.auth", "n": 180, "unit": "req/min"}; }
+    record r3 "eu.api → us.store" {x_record: {"from": "eu.backend.api", "to": "us.backend.store", "n": 240, "unit": "req/min"}; }
+    record r4 "us.web → us.api" {x_record: {"from": "us.frontend.web", "to": "us.backend.api", "n": 150, "unit": "req/min"}; }
+    record r5 "us.api → us.store" {x_record: {"from": "us.backend.api", "to": "us.backend.store", "n": 210, "unit": "req/min"}; }
+    record r6 "us.worker → us.store" {x_record: {"from": "us.backend.worker", "to": "us.backend.store", "n": 140, "unit": "req/min"}; }
+    record r7 "eu.api → eu.queue" {x_record: {"from": "eu.backend.api", "to": "eu.backend.queue", "n": 110, "unit": "req/min"}; }
+    record r8 "eu.queue → us.worker" {x_record: {"from": "eu.backend.queue", "to": "us.backend.worker", "n": 95, "unit": "req/min"}; }
 }
 
 view arc "Service calls / arc diagram" {

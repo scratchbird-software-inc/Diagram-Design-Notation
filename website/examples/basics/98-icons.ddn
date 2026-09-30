@@ -16,8 +16,6 @@ data m {
     relation a2 "" @rack -> @lan { kind: "network.attaches"; }
     relation a3 "" @guest -> @lan { kind: "network.attaches"; }
 }
-view net "Icon network" {
-    data: [@m];
-    projection { profile: "network.basic@1"; }
+view net "Icon network": [@m] as "network.basic@1" {
     publication { size: content; fit: none; }
 }

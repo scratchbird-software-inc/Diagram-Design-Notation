@@ -6,7 +6,7 @@ import "shared.ddn" as shared;
 // Synthetic SLA dataset: one KPI record for the gauge dial.
 // All data is synthetic.
 data sla {
-    object q1 "SLA attainment" { kind: record; x_record: {"kpi": "SLA attainment", "value": 87, "unit": "%"}; }
+    record q1 "SLA attainment" {x_record: {"kpi": "SLA attainment", "value": 87, "unit": "%"}; }
 }
 
 view gauge "Synthetic SLA attainment / gauge" {

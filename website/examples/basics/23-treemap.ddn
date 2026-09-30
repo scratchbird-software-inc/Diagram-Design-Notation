@@ -6,12 +6,12 @@ import "shared.ddn" as shared;
 // Synthetic storage dataset: six tables grouped by dotted domain paths.
 // All data is synthetic.
 data storage {
-    object r1 "analytics.events" { kind: record; x_record: {"path": "analytics.events", "value": 55, "unit": "GB"}; }
-    object r2 "analytics.sessions" { kind: record; x_record: {"path": "analytics.sessions", "value": 25, "unit": "GB"}; }
-    object r3 "core.orders" { kind: record; x_record: {"path": "core.orders", "value": 40, "unit": "GB"}; }
-    object r4 "core.customers" { kind: record; x_record: {"path": "core.customers", "value": 20, "unit": "GB"}; }
-    object r5 "ops.logs" { kind: record; x_record: {"path": "ops.logs", "value": 30, "unit": "GB"}; }
-    object r6 "ops.metrics" { kind: record; x_record: {"path": "ops.metrics", "value": 10, "unit": "GB"}; }
+    record r1 "analytics.events" {x_record: {"path": "analytics.events", "value": 55, "unit": "GB"}; }
+    record r2 "analytics.sessions" {x_record: {"path": "analytics.sessions", "value": 25, "unit": "GB"}; }
+    record r3 "core.orders" {x_record: {"path": "core.orders", "value": 40, "unit": "GB"}; }
+    record r4 "core.customers" {x_record: {"path": "core.customers", "value": 20, "unit": "GB"}; }
+    record r5 "ops.logs" {x_record: {"path": "ops.logs", "value": 30, "unit": "GB"}; }
+    record r6 "ops.metrics" {x_record: {"path": "ops.metrics", "value": 10, "unit": "GB"}; }
 }
 
 view treemap "Synthetic storage by domain and table / treemap" {

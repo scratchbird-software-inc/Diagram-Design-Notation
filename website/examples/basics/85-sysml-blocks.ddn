@@ -10,64 +10,58 @@ module "ddn.examples.sysmlblocks";
 data m {
     object pump "Pump" { kind: "sysml.block";
         fields {
-            field capacity "capacity" { x_block: { compartment: "values" }; x_unit: { unit: "L/min" }; }
-            field mass "mass" { x_block: { compartment: "values" }; x_unit: { unit: "kg" }; }
-            field impeller "impeller" { x_block: { compartment: "parts" }; }
-            field mount "mounting" { x_block: { compartment: "references" }; }
-            field prime "prime()" { x_block: { compartment: "operations" }; }
-            field cav "cavitation free" { x_block: { compartment: "constraints" }; }
+            capacity "capacity" { x_block: { compartment: "values" }; x_unit: { unit: "L/min" }; }
+            mass "mass" { x_block: { compartment: "values" }; x_unit: { unit: "kg" }; }
+            impeller "impeller" { x_block: { compartment: "parts" }; }
+            mount "mounting" { x_block: { compartment: "references" }; }
+            prime "prime()" { x_block: { compartment: "operations" }; }
+            cav "cavitation free" { x_block: { compartment: "constraints" }; }
         }
         ports {
-            port outlet { direction: out; x_port: { type: "full"; multiplicity: "1..2"; nested: [ { name: "seal"; direction: "out" } ] }; }
+            outlet { direction: out; x_port: { type: "full"; multiplicity: "1..2"; nested: [ { name: "seal"; direction: "out" } ] }; }
         }
     }
     object reservoir "Reservoir" { kind: "sysml.block";
-        ports { port inlet { direction: in; x_port: { type: "proxy"; conjugated: true }; } }
+        ports { inlet { direction: in; x_port: { type: "proxy"; conjugated: true }; } }
     }
     object pumpBase "Fluid mover" { kind: "sysml.block"; }
     object litres "Litres per minute" { kind: "sysml.valuetype"; }
     object pumpIf "Pump interface" { kind: "sysml.interfaceblock";
-        ports { port flowOut { direction: out; } port cmd { direction: in; } }
+        ports { flowOut { direction: out; } cmd { direction: in; } }
     }
     object waterSpec "Water flow spec" { kind: "sysml.flowspec";
-        ports { port flowRate { direction: out; } port temperature { direction: inout; } }
+        ports { flowRate { direction: out; } temperature { direction: inout; } }
     }
     object balance "{flow = pressure x area}" { kind: "sysml.constraint";
         fields {
-            field flow "flow" { x_unit: { unit: "L/min" }; }
-            field pressure "pressure" { x_unit: { unit: "bar" }; }
-            field area "area" { x_unit: { unit: "m3" }; }
+            flow "flow" { x_unit: { unit: "L/min" }; }
+            pressure "pressure" { x_unit: { unit: "bar" }; }
+            area "area" { x_unit: { unit: "m3" }; }
         }
     }
 
     relation gen "" @pump -> @pumpBase { kind: "uml.generalization"; }
     relation comp "" @pump -> @reservoir { kind: "sysml.composition"; }
-    relation typed "" @pump -> @litres { kind: "assoc"; }
+    assoc typed "" @pump -> @litres;
     relation water "water" @pump.outlet -> @reservoir.inlet { kind: "sysml.flow"; }
-    relation b1 "" @balance -> @pump { kind: "assoc"; }
-    relation b2 "" @balance -> @reservoir { kind: "assoc"; }
-    relation b3 "" @balance -> @pumpBase { kind: "assoc"; }
+    assoc b1 "" @balance -> @pump;
+    assoc b2 "" @balance -> @reservoir;
+    assoc b3 "" @balance -> @pumpBase;
 }
 
-view bdd "Pump block definition" {
-    data: [@m];
-    projection { profile: "sysml.bdd@2"; }
+view bdd "Pump block definition": [@m] as "sysml.bdd@2" {
     layout { algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
     exclude: [@m.water, @m.balance, @m.b1, @m.b2, @m.b3];
 }
 
-view ibd "Pump station internals" {
-    data: [@m];
-    projection { profile: "sysml.ibd@2"; }
+view ibd "Pump station internals": [@m] as "sysml.ibd@2" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
     exclude: [@m.balance, @m.b1, @m.b2, @m.b3, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpBase];
 }
 
-view parametric "Flow balance" {
-    data: [@m];
-    projection { profile: "sysml.parametric@2"; }
+view parametric "Flow balance": [@m] as "sysml.parametric@2" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
     exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];

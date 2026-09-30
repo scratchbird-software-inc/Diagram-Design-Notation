@@ -2,11 +2,13 @@ ddn "0.5";
 module "ddn.examples.sql-ddl";
 import "shared.ddn" as shared;
 data shop {
- object customer "Customer" { kind: table; fields { field customer_id { key: primary; } field display_name; } }
- object purchase "Purchase" { kind: table; fields { field purchase_id { key: primary; } field customer_id; field ordered_on; } }
- object note "Review note" { kind: note; description: "Synthetic DDL export example; not a deployable schema."; }
- relation purchase_customer "purchase belongs to customer" @purchase.customer_id -> @customer.customer_id { kind: ref; source_mark: zeromany; target_mark: one; enforcement: database; }
- relation note_customer "note annotates customer" @note -> @customer { kind: note; }
+ table customer "Customer" {fields { customer_id { key: primary; } display_name; } }
+ table purchase "Purchase" {fields { purchase_id { key: primary; } customer_id; ordered_on; } }
+ note note "Review note" {description: "Synthetic DDL export example; not a deployable schema."; }
+ ref purchase_customer "purchase belongs to customer" @purchase.customer_id [zeromany] -> @customer.customer_id [one] {
+     enforcement: database;
+ }
+ note note_customer "note annotates customer" @note -> @customer;
 }
 view publish "Synthetic shop / approved SQL DDL" {
  data: [@shop];

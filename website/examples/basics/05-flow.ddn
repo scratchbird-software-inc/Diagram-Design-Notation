@@ -3,19 +3,19 @@ module "ddn.examples.flow";
 import "shared.ddn" as shared;
 
 data model {
-    object source "Operational customer" { kind: table; workload: [oltp]; role: authoritative; }
-    object capture "Capture changes" { kind: activity; }
-    object events "customer.changed" { kind: topic; }
-    object history_job "Build valid + recorded history" { kind: activity; }
-    object search_job "Build search projection" { kind: activity; }
-    object history "Customer history" { kind: history; workload: [olap]; temporal: bitemporal; }
-    object search "Customer search" { kind: search_index; role: derived; }
+    table source "Operational customer" {workload: [oltp]; role: authoritative; }
+    activity capture "Capture changes";
+    topic events "customer.changed";
+    activity history_job "Build valid + recorded history";
+    activity search_job "Build search projection";
+    history history "Customer history" {workload: [olap]; temporal: bitemporal; }
+    search_index search "Customer search" {role: derived; }
     relation r1 @source -> @capture { kind: captures_changes_into; capture: cdc; }
     relation r2 @capture -> @events { kind: publishes_to; transport: kafka; }
     relation r3 @events -> @history_job { kind: delivers_to; scope: "history consumer"; }
     relation r4 @events -> @search_job { kind: delivers_to; scope: "search consumer"; }
-    relation r5 @history_job -> @history { kind: write; }
-    relation r6 @search_job -> @search { kind: write; }
+    write r5 @history_job -> @history;
+    write r6 @search_job -> @search;
 }
 view flow "Capture, transport and transformation are different" {
     data: [@model]; format: @shared.styles.technical; display: @shared.styles.compact;

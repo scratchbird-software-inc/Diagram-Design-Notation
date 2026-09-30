@@ -27,20 +27,18 @@ format styles {
 module "shop.data";
 
 data records "Shop records" {
-    object customer "Customer" {
-        kind: table;
+    table customer "Customer" {
         role: authoritative;
         fields {
-            field customer_id { key: primary; }
-            field display_name;
+            customer_id { key: primary; }
+            display_name;
         }
     }
-    object order "Order" {
-        kind: table;
+    table order "Order" {
         fields {
-            field order_id { key: primary; }
-            field customer_id;
-            field ordered_at;
+            order_id { key: primary; }
+            customer_id;
+            ordered_at;
         }
     }
     relation order_customer "Customer places orders" @order.customer_id -> @customer.customer_id {

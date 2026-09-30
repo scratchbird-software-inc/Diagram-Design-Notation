@@ -40,9 +40,7 @@ data m {
     relation f15 "" @loopend -> @fin { kind: "flow.next"; }
 }
 
-view chart "ISO 5807 warehouse flow" {
-    data: [@m];
-    projection { kind: graph; profile: "flow.iso5807@1"; }
+view chart "ISO 5807 warehouse flow": [@m] as "flow.iso5807@1" {
     layout { algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }

@@ -11,8 +11,8 @@ data fulfil {
     object start "" { kind: "flow.start"; }
     object take "Take order" { kind: "flow.process";
         ports {
-            port order_in { direction: in; x_pin: { set: "request"; }; }
-            port order_out { direction: out; x_pin: { streaming: true; }; }
+            order_in { direction: in; x_pin: { set: "request"; }; }
+            order_out { direction: out; x_pin: { streaming: true; }; }
         }
     }
     object dec "" { kind: "flow.decision"; }
@@ -55,16 +55,12 @@ data signals {
     relation s10 "" @send_ship -> @fin2 { kind: "uml.flow"; x_interrupt: true; }
 }
 
-view pins "UML activity / pins, decision and merge" {
-    data: [@fulfil];
-    projection { kind: graph; profile: "uml.activity@2"; }
+view pins "UML activity / pins, decision and merge": [@fulfil] as "uml.activity@2" {
     frame struct "Iterative" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: "iterative" }; }
     publication { size: content; fit: none; }
 }
 
-view interrupts "UML activity / signals, interrupts, exceptions" {
-    data: [@signals];
-    projection { profile: "uml.activity@2"; }
+view interrupts "UML activity / signals, interrupts, exceptions": [@signals] as "uml.activity@2" {
     frame danger "Interruptible" { members: [@signals.prepare, @signals.send_ship, @signals.wait_ack]; x_interruptible: true; }
     publication { size: content; fit: none; }
 }

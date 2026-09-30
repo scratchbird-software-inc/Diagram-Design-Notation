@@ -2,8 +2,8 @@ ddn "0.5";
 module "ddn.examples.publication";
 import "shared.ddn" as shared;
 data model {
- object source "Order input" {kind: record; fields {field order_id;field amount;}}
- object validated "Accepted order" {kind: record;fields {field order_id;field amount;}}
+ record source "Order input" {fields {order_id;amount;}}
+ record validated "Accepted order" {fields {order_id;amount;}}
  relation check "Validated input" @source -> @validated {kind: flow;}
 }
 view paper "A4 / explicit minimum text" {

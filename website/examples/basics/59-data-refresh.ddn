@@ -19,9 +19,9 @@ module "ddn.examples.data-refresh";
 //   host.innerHTML = r.svg;            // as the first record
 
 data metrics {
-    object m1 "Alpha" { kind: record; x_record: { label: "Alpha", value: 10, unit: "ms" }; }
-    object m2 "Beta" { kind: record; x_record: { label: "Beta", value: 20, unit: "ms" }; }
-    object m3 "Gamma" { kind: record; x_record: { label: "Gamma", value: 15, unit: "ms" }; }
+    record m1 "Alpha" {x_record: { label: "Alpha", value: 10, unit: "ms" }; }
+    record m2 "Beta" {x_record: { label: "Beta", value: 20, unit: "ms" }; }
+    record m3 "Gamma" {x_record: { label: "Gamma", value: 15, unit: "ms" }; }
     relation trend "Alpha drives Beta" @m1 -> @m2 { kind: flow; }
     relation feed "Beta feeds Gamma" @m2 -> @m3 { kind: flow; }
 }

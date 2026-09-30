@@ -37,16 +37,12 @@ data pkgs {
     relation acc "" @plant -> @safety { kind: "uml.access"; }
 }
 
-view requirements "Pump requirements" {
-    data: [@reqs];
-    projection { profile: "sysml.requirements@1"; }
+view requirements "Pump requirements": [@reqs] as "sysml.requirements@1" {
     layout { algorithm: layered; direction: down; }
     publication { size: content; fit: none; }
 }
 
-view packages "Model packages" {
-    data: [@pkgs];
-    projection { profile: "sysml.package@1"; }
+view packages "Model packages": [@pkgs] as "sysml.package@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

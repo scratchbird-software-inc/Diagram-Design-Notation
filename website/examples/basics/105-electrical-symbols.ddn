@@ -23,21 +23,19 @@ data m {
     object u1 "AND gate" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "gate-and" }; }
     object u2 "XOR gate" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "gate-xor" }; }
     object u3 "Op-amp" { kind: "network.server"; x_icon: { library: "electrical-common@1", icon: "op-amp" }; }
-    relation w1 "" @bat -> @sw { kind: "assoc"; }
-    relation w2 "" @sw -> @fu { kind: "assoc"; }
-    relation w3 "" @fu -> @r1 { kind: "assoc"; }
-    relation w4 "" @r1 -> @led { kind: "assoc"; }
-    relation w5 "" @led -> @gnd { kind: "assoc"; }
-    relation w6 "" @c1 -> @gnd { kind: "assoc"; }
-    relation w7 "" @l1 -> @c1 { kind: "assoc"; }
-    relation w8 "" @d1 -> @q1 { kind: "assoc"; }
-    relation w9 "" @q1 -> @gnd { kind: "assoc"; }
-    relation w10 "" @u1 -> @u2 { kind: "assoc"; }
-    relation w11 "" @u2 -> @u3 { kind: "assoc"; }
+    assoc w1 "" @bat -> @sw;
+    assoc w2 "" @sw -> @fu;
+    assoc w3 "" @fu -> @r1;
+    assoc w4 "" @r1 -> @led;
+    assoc w5 "" @led -> @gnd;
+    assoc w6 "" @c1 -> @gnd;
+    assoc w7 "" @l1 -> @c1;
+    assoc w8 "" @d1 -> @q1;
+    assoc w9 "" @q1 -> @gnd;
+    assoc w10 "" @u1 -> @u2;
+    assoc w11 "" @u2 -> @u3;
 }
-view sch "Electrical symbol library" {
-    data: [@m];
-    projection { profile: "network.basic@1"; }
+view sch "Electrical symbol library": [@m] as "network.basic@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

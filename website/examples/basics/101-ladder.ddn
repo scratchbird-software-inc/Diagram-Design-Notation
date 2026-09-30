@@ -26,9 +26,9 @@ data rung3 {
     object run "RUN" { kind: "ladder.contact"; }
     object t1 "T1" { kind: "fbd.block"; datatype: "TON";
         ports {
-            port in1 { direction: in; x_fbd: { type: "BOOL" }; }
-            port pt { direction: in; x_fbd: { type: "TIME" }; }
-            port q { direction: out; x_fbd: { type: "BOOL" }; }
+            in1 { direction: in; x_fbd: { type: "BOOL" }; }
+            pt { direction: in; x_fbd: { type: "TIME" }; }
+            q { direction: out; x_fbd: { type: "BOOL" }; }
         }
     }
     object done "DONE" { kind: "ladder.coil"; x_coil: { mode: "reset" }; }
@@ -36,9 +36,7 @@ data rung3 {
     relation s5 "" @run -> @t1.in1 { kind: "ladder.series"; }
     relation s6 "" @t1.q -> @done { kind: "ladder.series"; }
 }
-view d "Motor control ladder" {
-    data: [@rung1, @rung2, @rung3];
-    projection { profile: "ladder.basic@1"; }
+view d "Motor control ladder": [@rung1, @rung2, @rung3] as "ladder.basic@1" {
     layout { algorithm: ladder; }
     publication { size: content; fit: none; }
 }

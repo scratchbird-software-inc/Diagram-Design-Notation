@@ -7,9 +7,9 @@ module "ddn.examples.umlseq";
 // Minimal current-dialect style, no pinned layout.
 
 data ordering {
-    object customer "Customer" { kind: application; }
-    object checkout "Checkout" { kind: service; }
-    object payments "Payments" { kind: service; }
+    application customer "Customer";
+    service checkout "Checkout";
+    service payments "Payments";
 
     relation submit "Submit order" @customer -> @checkout { kind: "uml.message"; }
     relation charge "Charge card" @checkout -> @payments { kind: "uml.message"; x_message: { sort: synch; duration: "{0..5s}"; };
@@ -29,12 +29,11 @@ data ordering {
 }
 
 data lifeline {
-    object scheduler "Scheduler" { kind: application; }
-    object agent "Agent" { kind: service;
-        x_invariant: [ { after: @lifeline.poll; label: "idle"; } ];
+    application scheduler "Scheduler";
+    service agent "Agent" {        x_invariant: [ { after: @lifeline.poll; label: "idle"; } ];
         x_activation: [ { from: @lifeline.spawn; to: @lifeline.stop; } ];
     }
-    object audit "Audit sink" { kind: service; }
+    service audit "Audit sink";
 
     relation spawn "Spawn" @scheduler -> @agent { kind: "uml.message"; x_message: { sort: create; }; }
     relation poll "Poll" @agent -> @agent { kind: "uml.message"; x_message: { sort: asynch; time: "{t}"; }; }
@@ -44,14 +43,10 @@ data lifeline {
     relation stop "Stop" @scheduler -> @agent { kind: "uml.message"; x_message: { sort: delete; }; }
 }
 
-view fragments "UML sequence / fragments and gates" {
-    data: [@ordering];
-    projection { kind: sequence; profile: "uml.sequence@2"; }
+view fragments "UML sequence / fragments and gates": [@ordering] as "uml.sequence@2" {
     publication { size: content; fit: none; }
 }
 
-view states "UML sequence / lifecycle and annotations" {
-    data: [@lifeline];
-    projection { kind: sequence; profile: "uml.sequence@2"; }
+view states "UML sequence / lifecycle and annotations": [@lifeline] as "uml.sequence@2" {
     publication { size: content; fit: none; }
 }

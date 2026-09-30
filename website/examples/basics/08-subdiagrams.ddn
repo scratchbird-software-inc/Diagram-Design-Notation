@@ -3,9 +3,9 @@ module "ddn.examples.subdiagrams";
 import "shared.ddn" as shared;
 
 data model {
-    object service "Customer service" { kind: application; }
-    object table "Customer table" { kind: table; fields { field customer_id; field display_name; } }
-    object schema "crm schema" { kind: schema; }
+    application service "Customer service";
+    table table "Customer table" {fields { customer_id; display_name; } }
+    schema schema "crm schema";
     relation member @table -> @schema { kind: namespace_member; }
 }
 view overview "A view can link to another view" {

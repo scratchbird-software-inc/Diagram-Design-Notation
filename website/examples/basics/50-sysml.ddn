@@ -14,17 +14,17 @@ import "shared.ddn" as shared;
 // SysML conformance.
 data m {
     object pump "Pump" { kind: "sysml.block";
-        ports { port out { direction: out; } }
+        ports { out { direction: out; } }
     }
     object reservoir "Reservoir" { kind: "sysml.block";
-        ports { port in { direction: in; } }
+        ports { in { direction: in; } }
     }
     object flow_balance "{flow = pressure × area}" { kind: "sysml.constraint"; }
 
-    relation feeds "feeds" @pump -> @reservoir { kind: "assoc"; }
+    assoc feeds "feeds" @pump -> @reservoir;
     relation water "water" @pump.out -> @reservoir.in { kind: "sysml.flow"; }
-    relation bind_pump "binds pump" @flow_balance -> @pump { kind: "assoc"; }
-    relation bind_reservoir "binds reservoir" @flow_balance -> @reservoir { kind: "assoc"; }
+    assoc bind_pump "binds pump" @flow_balance -> @pump;
+    assoc bind_reservoir "binds reservoir" @flow_balance -> @reservoir;
 }
 
 view bdd "Pump station block definition" {

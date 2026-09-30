@@ -18,9 +18,7 @@ data m {
     relation inh "" @buf -> @produce { kind: "petri.inhibitor"; }
     relation rd "" @idle -> @consume { kind: "petri.testarc"; }
 }
-view net "Producer/consumer net" {
-    data: [@m];
-    projection { profile: "petri.basic@1"; }
+view net "Producer/consumer net": [@m] as "petri.basic@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

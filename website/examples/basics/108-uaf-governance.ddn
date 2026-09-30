@@ -8,8 +8,6 @@ module "retail.gov";
 data gov {
     object policy1 "Data protection policy" { kind: "uaf.standard"; }
 }
-view gv "Governance" {
-    data: [@gov];
-    projection { profile: "uaf.standards@1"; }
+view gv "Governance": [@gov] as "uaf.standards@1" {
     publication { size: content; fit: none; }
 }

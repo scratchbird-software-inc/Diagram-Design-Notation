@@ -7,16 +7,16 @@ module "ddn.examples.umlclass";
 
 data fleet {
     object company "Company" { kind: "uml.class";
-        fields { field name { datatype: "string"; } }
+        fields { name { datatype: "string"; } }
     }
     object person "Person" { kind: "uml.class";
         fields {
-            field name { datatype: "string"; }
-            field age { x_member: { kind: attribute; derived: true; visibility: private; }; }
+            name { datatype: "string"; }
+            age { x_member: { kind: attribute; derived: true; visibility: private; }; }
         }
     }
     object employment "Employment" { kind: "uml.class";
-        fields { field started { datatype: "date"; } field grade { datatype: "string"; } }
+        fields { started { datatype: "date"; } grade { datatype: "string"; } }
     }
     object vehicle "Vehicle" { kind: "uml.class"; }
     object car "Car" { kind: "uml.class"; }
@@ -49,16 +49,16 @@ data fleet {
 data library {
     object catalog "Catalog" { kind: "uml.class"; x_template: { parameters: ["T", "N: int"]; };
         fields {
-            field size { x_member: { kind: attribute; derived: true; }; }
-            field items { x_member: { kind: attribute; multiplicity: "0..*"; modifiers: ["ordered", "unique"]; }; }
-            field find { x_member: { kind: operation; visibility: public; }; }
+            size { x_member: { kind: attribute; derived: true; }; }
+            items { x_member: { kind: attribute; multiplicity: "0..*"; modifiers: ["ordered", "unique"]; }; }
+            find { x_member: { kind: operation; visibility: public; }; }
         }
     }
     object status "Loan status" { kind: "uml.enumeration";
         fields {
-            field available { x_member: { kind: literal; }; }
-            field on_loan { x_member: { kind: literal; }; }
-            field lost { x_member: { kind: literal; }; }
+            available { x_member: { kind: literal; }; }
+            on_loan { x_member: { kind: literal; }; }
+            lost { x_member: { kind: literal; }; }
         }
     }
     object loans "Loan registry" { kind: "uml.interface"; }
@@ -72,14 +72,10 @@ data library {
     relation requires "requires" @catalog -> @loans { kind: "uml.required"; }
 }
 
-view associations "UML class diagram / association ends" {
-    data: [@fleet];
-    projection { profile: "uml.structure@2"; }
+view associations "UML class diagram / association ends": [@fleet] as "uml.structure@2" {
     publication { size: content; fit: none; }
 }
 
-view classifiers "UML class diagram / classifiers" {
-    data: [@library];
-    projection { profile: "uml.structure@2"; }
+view classifiers "UML class diagram / classifiers": [@library] as "uml.structure@2" {
     publication { size: content; fit: none; }
 }

@@ -22,13 +22,9 @@ data b {
     object bb "B" { kind: "uml.class"; }
     relation q1 "charge" @a -> @bb { kind: "uml.message"; }
 }
-view chart "Order MSC" {
-    data: [@m];
-    projection { kind: sequence; profile: "msc.basic@1"; }
+view chart "Order MSC": [@m] as "msc.basic@1" {
     publication { size: content; fit: none; }
 }
-view billing "Billing HMSC detail" {
-    data: [@b];
-    projection { kind: sequence; profile: "msc.basic@1"; }
+view billing "Billing HMSC detail": [@b] as "msc.basic@1" {
     publication { size: content; fit: none; }
 }

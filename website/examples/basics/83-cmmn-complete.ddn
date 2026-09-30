@@ -28,9 +28,7 @@ data c {
     relation sr2 "" @customer -> @s1 { kind: "cmmn.sentryref"; }
 }
 
-view v "Case" {
-    data: [@c];
-    projection { profile: "cmmn.complete@1"; }
+view v "Case": [@c] as "cmmn.complete@1" {
     frame intake_f "Intake" { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }
     publication { size: content; fit: none; }
 }

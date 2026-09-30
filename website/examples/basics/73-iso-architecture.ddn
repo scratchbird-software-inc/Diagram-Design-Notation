@@ -10,11 +10,11 @@ import "shared.ddn" as shared;
 // plane — routing is never computed in 3D. All systems are synthetic.
 
 data platform {
-    object client "Client app" { kind: activity; depth: 14px; workload: "interactive"; }
-    object cdn "Edge CDN" { kind: queue; depth: 22px; workload: "edge"; }
-    object gateway "API gateway" { kind: topic; depth: 34px; workload: "serving"; }
-    object orders "Orders service" { kind: activity; depth: 46px; workload: "serving"; }
-    object ledger "Ledger store" { kind: table; depth: 58px; workload: "system-of-record"; }
+    activity client "Client app" {depth: 14px; workload: "interactive"; }
+    queue cdn "Edge CDN" {depth: 22px; workload: "edge"; }
+    topic gateway "API gateway" {depth: 34px; workload: "serving"; }
+    activity orders "Orders service" {depth: 46px; workload: "serving"; }
+    table ledger "Ledger store" {depth: 58px; workload: "system-of-record"; }
     relation r1 "HTTPS" @client -> @cdn { kind: flow; }
     relation r2 "forwards" @cdn -> @gateway { kind: flow; }
     relation r3 "routes" @gateway -> @orders { kind: flow; }

@@ -7,20 +7,20 @@ import "shared.ddn" as shared;
 // study for the canvas.empathy@1 profile and a department balanced scorecard for
 // the canvas.scorecard@1 profile.
 data research {
-    object persona "Persona" { kind: note; description: "Synthetic persona: a support agent on the night shift."; }
-    object says_a "Says (1)" { kind: note; description: "Synthetic: \"I spend half the shift retyping ticket details into the billing tool.\""; }
-    object says_b "Says (2)" { kind: note; description: "Synthetic: \"Customers forgive an outage when we call them back before they notice.\""; }
-    object thinks "Thinks" { kind: note; description: "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."; }
-    object does "Does" { kind: note; description: "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."; }
-    object feels "Feels" { kind: note; description: "Synthetic: proud of calm incident handling but drained by the duplicated data entry."; }
-    object fin_1 "Financial objective 1" { kind: note; description: "Synthetic objective: cut cost per resolved ticket by twelve percent this year."; }
-    object fin_2 "Financial objective 2" { kind: note; description: "Synthetic objective: grow renewal revenue from the existing customer base."; }
-    object cus_1 "Customer objective 1" { kind: note; description: "Synthetic objective: raise first-contact resolution above seventy percent."; }
-    object cus_2 "Customer objective 2" { kind: note; description: "Synthetic objective: answer every chat within ninety seconds during business hours."; }
-    object int_1 "Internal process objective 1" { kind: note; description: "Synthetic objective: automate the ticket-to-billing rekeying step."; }
-    object int_2 "Internal process objective 2" { kind: note; description: "Synthetic objective: publish a weekly workaround digest from the shift handover notes."; }
-    object lrn_1 "Learning & growth objective 1" { kind: note; description: "Synthetic objective: certify every agent on the new incident playbook by quarter end."; }
-    object lrn_2 "Learning & growth objective 2" { kind: note; description: "Synthetic objective: pair each night-shift agent with a day-shift mentor."; }
+    note persona "Persona" {description: "Synthetic persona: a support agent on the night shift."; }
+    note says_a "Says (1)" {description: "Synthetic: \"I spend half the shift retyping ticket details into the billing tool.\""; }
+    note says_b "Says (2)" {description: "Synthetic: \"Customers forgive an outage when we call them back before they notice.\""; }
+    note thinks "Thinks" {description: "Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause."; }
+    note does "Does" {description: "Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat."; }
+    note feels "Feels" {description: "Synthetic: proud of calm incident handling but drained by the duplicated data entry."; }
+    note fin_1 "Financial objective 1" {description: "Synthetic objective: cut cost per resolved ticket by twelve percent this year."; }
+    note fin_2 "Financial objective 2" {description: "Synthetic objective: grow renewal revenue from the existing customer base."; }
+    note cus_1 "Customer objective 1" {description: "Synthetic objective: raise first-contact resolution above seventy percent."; }
+    note cus_2 "Customer objective 2" {description: "Synthetic objective: answer every chat within ninety seconds during business hours."; }
+    note int_1 "Internal process objective 1" {description: "Synthetic objective: automate the ticket-to-billing rekeying step."; }
+    note int_2 "Internal process objective 2" {description: "Synthetic objective: publish a weekly workaround digest from the shift handover notes."; }
+    note lrn_1 "Learning & growth objective 1" {description: "Synthetic objective: certify every agent on the new incident playbook by quarter end."; }
+    note lrn_2 "Learning & growth objective 2" {description: "Synthetic objective: pair each night-shift agent with a day-shift mentor."; }
 }
 
 view empathy "Support team / empathy map" {

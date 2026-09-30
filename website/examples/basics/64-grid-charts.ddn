@@ -5,73 +5,73 @@ module "ddn.examples.grid-charts";
 // daily deploy counts, per-service metric vectors, and incident-tag weights.
 // All data is synthetic.
 data cells {
-    object h1 "api × morning" { kind: record; x_record: {"hour": "morning", "endpoint": "api", "n": 420, "unit": "req"}; }
-    object h2 "api × midday" { kind: record; x_record: {"hour": "midday", "endpoint": "api", "n": 610, "unit": "req"}; }
-    object h3 "api × evening" { kind: record; x_record: {"hour": "evening", "endpoint": "api", "n": 380, "unit": "req"}; }
-    object h4 "web × morning" { kind: record; x_record: {"hour": "morning", "endpoint": "web", "n": 250, "unit": "req"}; }
-    object h5 "web × midday" { kind: record; x_record: {"hour": "midday", "endpoint": "web", "n": 470, "unit": "req"}; }
-    object h6 "web × evening" { kind: record; x_record: {"hour": "evening", "endpoint": "web", "n": 520, "unit": "req"}; }
-    object h7 "batch × morning" { kind: record; x_record: {"hour": "morning", "endpoint": "batch", "n": 90, "unit": "req"}; }
-    object h8 "batch × midday" { kind: record; x_record: {"hour": "midday", "endpoint": "batch", "n": 140, "unit": "req"}; }
-    object h9 "batch × evening" { kind: record; x_record: {"hour": "evening", "endpoint": "batch", "n": 60, "unit": "req"}; }
+    record h1 "api × morning" {x_record: {"hour": "morning", "endpoint": "api", "n": 420, "unit": "req"}; }
+    record h2 "api × midday" {x_record: {"hour": "midday", "endpoint": "api", "n": 610, "unit": "req"}; }
+    record h3 "api × evening" {x_record: {"hour": "evening", "endpoint": "api", "n": 380, "unit": "req"}; }
+    record h4 "web × morning" {x_record: {"hour": "morning", "endpoint": "web", "n": 250, "unit": "req"}; }
+    record h5 "web × midday" {x_record: {"hour": "midday", "endpoint": "web", "n": 470, "unit": "req"}; }
+    record h6 "web × evening" {x_record: {"hour": "evening", "endpoint": "web", "n": 520, "unit": "req"}; }
+    record h7 "batch × morning" {x_record: {"hour": "morning", "endpoint": "batch", "n": 90, "unit": "req"}; }
+    record h8 "batch × midday" {x_record: {"hour": "midday", "endpoint": "batch", "n": 140, "unit": "req"}; }
+    record h9 "batch × evening" {x_record: {"hour": "evening", "endpoint": "batch", "n": 60, "unit": "req"}; }
 }
 
 data scatter {
-    object p1 "s1" { kind: record; x_record: {"size": 12, "ms": 44}; }
-    object p2 "s2" { kind: record; x_record: {"size": 18, "ms": 51}; }
-    object p3 "s3" { kind: record; x_record: {"size": 25, "ms": 63}; }
-    object p4 "s4" { kind: record; x_record: {"size": 31, "ms": 70}; }
-    object p5 "s5" { kind: record; x_record: {"size": 44, "ms": 95}; }
-    object p6 "s6" { kind: record; x_record: {"size": 52, "ms": 101}; }
-    object p7 "s7" { kind: record; x_record: {"size": 63, "ms": 130}; }
-    object p8 "s8" { kind: record; x_record: {"size": 70, "ms": 128}; }
-    object p9 "s9" { kind: record; x_record: {"size": 88, "ms": 170}; }
-    object p10 "s10" { kind: record; x_record: {"size": 95, "ms": 182}; }
+    record p1 "s1" {x_record: {"size": 12, "ms": 44}; }
+    record p2 "s2" {x_record: {"size": 18, "ms": 51}; }
+    record p3 "s3" {x_record: {"size": 25, "ms": 63}; }
+    record p4 "s4" {x_record: {"size": 31, "ms": 70}; }
+    record p5 "s5" {x_record: {"size": 44, "ms": 95}; }
+    record p6 "s6" {x_record: {"size": 52, "ms": 101}; }
+    record p7 "s7" {x_record: {"size": 63, "ms": 130}; }
+    record p8 "s8" {x_record: {"size": 70, "ms": 128}; }
+    record p9 "s9" {x_record: {"size": 88, "ms": 170}; }
+    record p10 "s10" {x_record: {"size": 95, "ms": 182}; }
 }
 
 data deploys {
-    object w1 "2026-03-02" { kind: record; x_record: {"day": "2026-03-02", "n": 3, "unit": "deploys"}; }
-    object w2 "2026-03-03" { kind: record; x_record: {"day": "2026-03-03", "n": 5, "unit": "deploys"}; }
-    object w3 "2026-03-04" { kind: record; x_record: {"day": "2026-03-04", "n": 2, "unit": "deploys"}; }
-    object w4 "2026-03-06" { kind: record; x_record: {"day": "2026-03-06", "n": 4, "unit": "deploys"}; }
-    object w5 "2026-03-09" { kind: record; x_record: {"day": "2026-03-09", "n": 6, "unit": "deploys"}; }
-    object w6 "2026-03-10" { kind: record; x_record: {"day": "2026-03-10", "n": 1, "unit": "deploys"}; }
-    object w7 "2026-03-12" { kind: record; x_record: {"day": "2026-03-12", "n": 4, "unit": "deploys"}; }
-    object w8 "2026-03-13" { kind: record; x_record: {"day": "2026-03-13", "n": 7, "unit": "deploys"}; }
-    object w9 "2026-03-16" { kind: record; x_record: {"day": "2026-03-16", "n": 2, "unit": "deploys"}; }
-    object w10 "2026-03-18" { kind: record; x_record: {"day": "2026-03-18", "n": 5, "unit": "deploys"}; }
-    object w11 "2026-03-20" { kind: record; x_record: {"day": "2026-03-20", "n": 3, "unit": "deploys"}; }
-    object w12 "2026-03-24" { kind: record; x_record: {"day": "2026-03-24", "n": 8, "unit": "deploys"}; }
-    object w13 "2026-03-27" { kind: record; x_record: {"day": "2026-03-27", "n": 2, "unit": "deploys"}; }
-    object w14 "2026-03-31" { kind: record; x_record: {"day": "2026-03-31", "n": 4, "unit": "deploys"}; }
+    record w1 "2026-03-02" {x_record: {"day": "2026-03-02", "n": 3, "unit": "deploys"}; }
+    record w2 "2026-03-03" {x_record: {"day": "2026-03-03", "n": 5, "unit": "deploys"}; }
+    record w3 "2026-03-04" {x_record: {"day": "2026-03-04", "n": 2, "unit": "deploys"}; }
+    record w4 "2026-03-06" {x_record: {"day": "2026-03-06", "n": 4, "unit": "deploys"}; }
+    record w5 "2026-03-09" {x_record: {"day": "2026-03-09", "n": 6, "unit": "deploys"}; }
+    record w6 "2026-03-10" {x_record: {"day": "2026-03-10", "n": 1, "unit": "deploys"}; }
+    record w7 "2026-03-12" {x_record: {"day": "2026-03-12", "n": 4, "unit": "deploys"}; }
+    record w8 "2026-03-13" {x_record: {"day": "2026-03-13", "n": 7, "unit": "deploys"}; }
+    record w9 "2026-03-16" {x_record: {"day": "2026-03-16", "n": 2, "unit": "deploys"}; }
+    record w10 "2026-03-18" {x_record: {"day": "2026-03-18", "n": 5, "unit": "deploys"}; }
+    record w11 "2026-03-20" {x_record: {"day": "2026-03-20", "n": 3, "unit": "deploys"}; }
+    record w12 "2026-03-24" {x_record: {"day": "2026-03-24", "n": 8, "unit": "deploys"}; }
+    record w13 "2026-03-27" {x_record: {"day": "2026-03-27", "n": 2, "unit": "deploys"}; }
+    record w14 "2026-03-31" {x_record: {"day": "2026-03-31", "n": 4, "unit": "deploys"}; }
 }
 
 data metrics {
-    object m1 "auth · cpu" { kind: record; x_record: {"service": "auth", "metric": "cpu", "v": 62}; }
-    object m2 "auth · mem" { kind: record; x_record: {"service": "auth", "metric": "mem", "v": 48}; }
-    object m3 "auth · p99" { kind: record; x_record: {"service": "auth", "metric": "p99", "v": 210}; }
-    object m4 "auth · rps" { kind: record; x_record: {"service": "auth", "metric": "rps", "v": 900}; }
-    object m5 "store · cpu" { kind: record; x_record: {"service": "store", "metric": "cpu", "v": 81}; }
-    object m6 "store · mem" { kind: record; x_record: {"service": "store", "metric": "mem", "v": 74}; }
-    object m7 "store · p99" { kind: record; x_record: {"service": "store", "metric": "p99", "v": 340}; }
-    object m8 "store · rps" { kind: record; x_record: {"service": "store", "metric": "rps", "v": 640}; }
-    object m9 "relay · cpu" { kind: record; x_record: {"service": "relay", "metric": "cpu", "v": 35}; }
-    object m10 "relay · mem" { kind: record; x_record: {"service": "relay", "metric": "mem", "v": 41}; }
-    object m11 "relay · p99" { kind: record; x_record: {"service": "relay", "metric": "p99", "v": 120}; }
-    object m12 "relay · rps" { kind: record; x_record: {"service": "relay", "metric": "rps", "v": 1250}; }
+    record m1 "auth · cpu" {x_record: {"service": "auth", "metric": "cpu", "v": 62}; }
+    record m2 "auth · mem" {x_record: {"service": "auth", "metric": "mem", "v": 48}; }
+    record m3 "auth · p99" {x_record: {"service": "auth", "metric": "p99", "v": 210}; }
+    record m4 "auth · rps" {x_record: {"service": "auth", "metric": "rps", "v": 900}; }
+    record m5 "store · cpu" {x_record: {"service": "store", "metric": "cpu", "v": 81}; }
+    record m6 "store · mem" {x_record: {"service": "store", "metric": "mem", "v": 74}; }
+    record m7 "store · p99" {x_record: {"service": "store", "metric": "p99", "v": 340}; }
+    record m8 "store · rps" {x_record: {"service": "store", "metric": "rps", "v": 640}; }
+    record m9 "relay · cpu" {x_record: {"service": "relay", "metric": "cpu", "v": 35}; }
+    record m10 "relay · mem" {x_record: {"service": "relay", "metric": "mem", "v": 41}; }
+    record m11 "relay · p99" {x_record: {"service": "relay", "metric": "p99", "v": 120}; }
+    record m12 "relay · rps" {x_record: {"service": "relay", "metric": "rps", "v": 1250}; }
 }
 
 data tags {
-    object t1 "latency" { kind: record; x_record: {"tag": "latency", "n": 34}; }
-    object t2 "timeout" { kind: record; x_record: {"tag": "timeout", "n": 28}; }
-    object t3 "cache" { kind: record; x_record: {"tag": "cache", "n": 19}; }
-    object t4 "deploy" { kind: record; x_record: {"tag": "deploy", "n": 15}; }
-    object t5 "dns" { kind: record; x_record: {"tag": "dns", "n": 9}; }
-    object t6 "tls" { kind: record; x_record: {"tag": "tls", "n": 7}; }
-    object t7 "quota" { kind: record; x_record: {"tag": "quota", "n": 5}; }
-    object t8 "retry" { kind: record; x_record: {"tag": "retry", "n": 12}; }
-    object t9 "shard" { kind: record; x_record: {"tag": "shard", "n": 4}; }
-    object t10 "queue" { kind: record; x_record: {"tag": "queue", "n": 8}; }
+    record t1 "latency" {x_record: {"tag": "latency", "n": 34}; }
+    record t2 "timeout" {x_record: {"tag": "timeout", "n": 28}; }
+    record t3 "cache" {x_record: {"tag": "cache", "n": 19}; }
+    record t4 "deploy" {x_record: {"tag": "deploy", "n": 15}; }
+    record t5 "dns" {x_record: {"tag": "dns", "n": 9}; }
+    record t6 "tls" {x_record: {"tag": "tls", "n": 7}; }
+    record t7 "quota" {x_record: {"tag": "quota", "n": 5}; }
+    record t8 "retry" {x_record: {"tag": "retry", "n": 12}; }
+    record t9 "shard" {x_record: {"tag": "shard", "n": 4}; }
+    record t10 "queue" {x_record: {"tag": "queue", "n": 8}; }
 }
 
 view heatmap "Requests by hour and endpoint / heatmap" {

@@ -9,26 +9,26 @@ module "ddn.examples.idef0";
 data m {
     object a0 "Manage shop" { kind: "idef0.activity"; x_idef0: { node: "A0" };
         ports {
-            port orders { direction: in; side: west; x_icom: { type: "input" }; }
-            port policy { direction: in; side: north; x_icom: { type: "control" }; }
-            port service { direction: out; side: east; x_icom: { type: "output" }; }
-            port staff { direction: in; side: south; x_icom: { type: "mechanism" }; }
+            orders { direction: in; side: west; x_icom: { type: "input" }; }
+            policy { direction: in; side: north; x_icom: { type: "control" }; }
+            service { direction: out; side: east; x_icom: { type: "output" }; }
+            staff { direction: in; side: south; x_icom: { type: "mechanism" }; }
         }
         x_subdiagram: { view: "detail" };
     }
 }
 data d {
     object a1 "Take orders" { kind: "idef0.activity"; x_idef0: { node: "A01" };
-        ports { port packed { direction: out; side: east; x_icom: { type: "output" }; } }
+        ports { packed { direction: out; side: east; x_icom: { type: "output" }; } }
     }
     object a3 "Stock shelves" { kind: "idef0.activity"; x_idef0: { node: "A03" };
-        ports { port packed { direction: in; side: west; x_icom: { type: "input" }; } }
+        ports { packed { direction: in; side: west; x_icom: { type: "input" }; } }
     }
     object a2 "Ship orders" { kind: "idef0.activity"; x_idef0: { node: "A02" };
         ports {
-            port packed { direction: in; side: west; x_icom: { type: "input" }; }
-            port carrier { direction: in; side: south; x_icom: { type: "mechanism" }; }
-            port shipped { direction: out; side: east; x_icom: { type: "output" }; }
+            packed { direction: in; side: west; x_icom: { type: "input" }; }
+            carrier { direction: in; side: south; x_icom: { type: "mechanism" }; }
+            shipped { direction: out; side: east; x_icom: { type: "output" }; }
         }
     }
     relation f1 "packed orders" @a1.packed -> @a2.packed { kind: "idef0.flow"; }
@@ -36,13 +36,9 @@ data d {
     relation f3 "returns" @a3.packed -> @a1.packed { kind: "idef0.flow"; x_tunnel: { start: true }; }
     relation call1 "" @a2 -> @a1 { kind: "idef0.call"; x_tunnel: { end: true }; }
 }
-view context "A-0 context" {
-    data: [@m];
-    projection { profile: "idef0.basic@1"; }
+view context "A-0 context": [@m] as "idef0.basic@1" {
     publication { size: content; fit: none; }
 }
-view detail "A0 decomposition" {
-    data: [@d];
-    projection { profile: "idef0.basic@1"; }
+view detail "A0 decomposition": [@d] as "idef0.basic@1" {
     publication { size: content; fit: none; }
 }

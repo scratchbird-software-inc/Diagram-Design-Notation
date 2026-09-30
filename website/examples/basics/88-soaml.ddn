@@ -10,14 +10,14 @@ module "ddn.examples.soaml";
 
 data m {
     object shop "Shop front" { kind: "soaml.participant";
-        ports { port billing { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
+        ports { billing { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
     }
     object warehouse "Warehouse" { kind: "soaml.participant";
-        ports { port stock { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
+        ports { stock { direction: out; x_service: { kind: "request" }; datatype: "Billing"; } }
     }
     object billing "Billing service" { kind: "soaml.serviceinterface";
-        fields { field charge "charge(order)"; field invoice "issue(invoice)"; }
-        ports { port api { direction: in; x_service: { kind: "service" }; datatype: "Billing"; } }
+        fields { charge "charge(order)"; invoice "issue(invoice)"; }
+        ports { api { direction: in; x_service: { kind: "service" }; datatype: "Billing"; } }
     }
     object org "Retail group" { kind: "soaml.agent"; }
     object cap "Online retail" { kind: "soaml.capability"; }
@@ -25,8 +25,8 @@ data m {
     object ms "Payment received" { kind: "soaml.milestone"; }
     object contract "Billing terms" { kind: "soaml.servicecontract";
         fields {
-            field provider { x_part: { classifier: "Billing" }; }
-            field consumer { x_part: { classifier: "Shop" }; }
+            provider { x_part: { classifier: "Billing" }; }
+            consumer { x_part: { classifier: "Shop" }; }
         }
         x_contract: { choreography: @choreography };
     }
@@ -47,15 +47,11 @@ data choreo {
     relation m2 "invoice" @biller -> @shopper { kind: "uml.message"; x_message: { sort: "reply" }; }
 }
 
-view arch "Retail service architecture" {
-    data: [@m];
-    projection { profile: "soaml.services@1"; }
+view arch "Retail service architecture": [@m] as "soaml.services@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }
 
-view choreography "Billing choreography" {
-    data: [@choreo];
-    projection { kind: sequence; profile: "uml.sequence@2"; }
+view choreography "Billing choreography": [@choreo] as "uml.sequence@2" {
     publication { size: content; fit: none; }
 }

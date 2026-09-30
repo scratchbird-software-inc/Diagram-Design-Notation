@@ -24,8 +24,6 @@ data m {
     relation a7 "" @sec -> @wan { kind: "network.attaches"; }
     relation a8 "" @api -> @wan { kind: "network.attaches"; }
 }
-view net "Tabler pack" {
-    data: [@m];
-    projection { profile: "network.basic@1"; }
+view net "Tabler pack": [@m] as "network.basic@1" {
     publication { size: content; fit: none; }
 }

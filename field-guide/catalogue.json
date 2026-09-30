@@ -2567,7 +2567,7 @@
           ]
         }
       ],
-      "viewSource": "view net \"Network symbol library\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view net \"Network symbol library\": [@m] as \"network.basic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/103-network-symbols.ddn and locate view net. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2658,7 +2658,7 @@
           ]
         }
       ],
-      "viewSource": "view main \"UML deployment / nodes and artifacts\" {\n    data: [@shop];\n    projection { profile: \"uml.deployment@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view main \"UML deployment / nodes and artifacts\": [@shop] as \"uml.deployment@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/78-uml-deployment.ddn and locate view main. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.deployment@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2742,7 +2742,7 @@
           ]
         }
       ],
-      "viewSource": "view chart \"ISO 5807 warehouse flow\" {\n    data: [@m];\n    projection { kind: graph; profile: \"flow.iso5807@1\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view chart \"ISO 5807 warehouse flow\": [@m] as \"flow.iso5807@1\" {\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/91-iso5807-flowchart.ddn and locate view chart. This selects existing data; it is not a stored SVG.",
         "Inspect the flow.iso5807@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2827,7 +2827,7 @@
           ]
         }
       ],
-      "viewSource": "view deployment \"Shop deployment\" {\n    data: [@dep];\n    projection { profile: \"c4.deployment@1\"; }\n    frame rack \"Shop server\" { scope: @dep.appbox; members: [@dep.war]; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view deployment \"Shop deployment\": [@dep] as \"c4.deployment@1\" {\n    frame rack \"Shop server\" { scope: @dep.appbox; members: [@dep.war]; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/92-c4-epc.ddn and locate view deployment. This selects existing data; it is not a stored SVG.",
         "Inspect the c4.deployment@1 profile and graph projection. Read the bindings before changing any value.",
@@ -2911,7 +2911,7 @@
           ]
         }
       ],
-      "viewSource": "view dynamic \"Browse dynamic\" {\n    data: [@dyn];\n    projection { profile: \"c4.dynamic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view dynamic \"Browse dynamic\": [@dyn] as \"c4.dynamic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/92-c4-epc.ddn and locate view dynamic. This selects existing data; it is not a stored SVG.",
         "Inspect the c4.dynamic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -3001,7 +3001,7 @@
           ]
         }
       ],
-      "viewSource": "view fragments \"UML sequence / fragments and gates\" {\n    data: [@ordering];\n    projection { kind: sequence; profile: \"uml.sequence@2\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view fragments \"UML sequence / fragments and gates\": [@ordering] as \"uml.sequence@2\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/76-uml-sequence-complete.ddn and locate view fragments. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.sequence@2 profile and sequence projection. Read the bindings before changing any value.",
@@ -7175,7 +7175,7 @@
           ]
         }
       ],
-      "viewSource": "view associations \"UML class diagram / association ends\" {\n    data: [@fleet];\n    projection { profile: \"uml.structure@2\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view associations \"UML class diagram / association ends\": [@fleet] as \"uml.structure@2\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/75-uml-class-complete.ddn and locate view associations. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.structure@2 profile and graph projection. Read the bindings before changing any value.",
@@ -7358,7 +7358,7 @@
           ]
         }
       ],
-      "viewSource": "view components \"UML component / ports and assembly\" {\n    data: [@shop];\n    projection { profile: \"uml.composite@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view components \"UML component / ports and assembly\": [@shop] as \"uml.composite@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/79-uml-composite.ddn and locate view components. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.composite@1 profile and graph projection. Read the bindings before changing any value.",
@@ -7541,7 +7541,7 @@
           ]
         }
       ],
-      "viewSource": "view pseudostates \"UML state machine / activities and pseudostates\" {\n    data: [@player];\n    projection { profile: \"uml.statemachine@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view pseudostates \"UML state machine / activities and pseudostates\": [@player] as \"uml.statemachine@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/77-uml-statemachine-complete.ddn and locate view pseudostates. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.statemachine@1 profile and graph projection. Read the bindings before changing any value.",
@@ -7632,7 +7632,7 @@
           ]
         }
       ],
-      "viewSource": "view pins \"UML activity / pins, decision and merge\" {\n    data: [@fulfil];\n    projection { kind: graph; profile: \"uml.activity@2\"; }\n    frame struct \"Iterative\" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: \"iterative\" }; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view pins \"UML activity / pins, decision and merge\": [@fulfil] as \"uml.activity@2\" {\n    frame struct \"Iterative\" { members: [@fulfil.take, @fulfil.dec, @fulfil.mrg]; x_structured: { mode: \"iterative\" }; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/80-uml-activity.ddn and locate view pins. This selects existing data; it is not a stored SVG.",
         "Inspect the uml.activity@2 profile and graph projection. Read the bindings before changing any value.",
@@ -8106,7 +8106,7 @@
           ]
         }
       ],
-      "viewSource": "view process \"Process\" {\n    data: [@proc];\n    projection { profile: \"bpmn.process@1\"; }\n    frame pool \"Webshop\" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }\n    publication { size: content; fit: none; minimum_text: 6pt; }\n}",
+      "viewSource": "view process \"Process\": [@proc] as \"bpmn.process@1\" {\n    frame pool \"Webshop\" { members: [@proc.start, @proc.review, @proc.escalate, @proc.dec, @proc.pack, @proc.call, @proc.tx, @proc.adhoc, @proc.evsub, @proc.cancel_end, @proc.done]; x_pool: true; }\n    publication { size: content; fit: none; minimum_text: 6pt; }\n}",
       "walkthrough": [
         "Open website/examples/basics/82-bpmn-complete.ddn and locate view process. This selects existing data; it is not a stored SVG.",
         "Inspect the bpmn.process@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8191,7 +8191,7 @@
           ]
         }
       ],
-      "viewSource": "view choreography \"Choreography\" {\n    data: [@choreo];\n    projection { profile: \"bpmn.choreography@1\"; }\n    publication { size: content; fit: none; minimum_text: 6pt; }\n}",
+      "viewSource": "view choreography \"Choreography\": [@choreo] as \"bpmn.choreography@1\" {\n    publication { size: content; fit: none; minimum_text: 6pt; }\n}",
       "walkthrough": [
         "Open website/examples/basics/82-bpmn-complete.ddn and locate view choreography. This selects existing data; it is not a stored SVG.",
         "Inspect the bpmn.choreography@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8276,7 +8276,7 @@
           ]
         }
       ],
-      "viewSource": "view v \"Case\" {\n    data: [@c];\n    projection { profile: \"cmmn.complete@1\"; }\n    frame intake_f \"Intake\" { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view v \"Case\": [@c] as \"cmmn.complete@1\" {\n    frame intake_f \"Intake\" { scope: @c.intake; members: [@c.review, @c.appr, @c.decide, @c.s1]; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/83-cmmn-complete.ddn and locate view v. This selects existing data; it is not a stored SVG.",
         "Inspect the cmmn.complete@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8361,7 +8361,7 @@
           ]
         }
       ],
-      "viewSource": "view bdd \"Pump block definition\" {\n    data: [@m];\n    projection { profile: \"sysml.bdd@2\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n    exclude: [@m.water, @m.balance, @m.b1, @m.b2, @m.b3];\n}",
+      "viewSource": "view bdd \"Pump block definition\": [@m] as \"sysml.bdd@2\" {\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n    exclude: [@m.water, @m.balance, @m.b1, @m.b2, @m.b3];\n}",
       "walkthrough": [
         "Open website/examples/basics/85-sysml-blocks.ddn and locate view bdd. This selects existing data; it is not a stored SVG.",
         "Inspect the sysml.bdd@2 profile and graph projection. Read the bindings before changing any value.",
@@ -8446,7 +8446,7 @@
           ]
         }
       ],
-      "viewSource": "view ibd \"Pump station internals\" {\n    data: [@m];\n    projection { profile: \"sysml.ibd@2\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n    exclude: [@m.balance, @m.b1, @m.b2, @m.b3, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpBase];\n}",
+      "viewSource": "view ibd \"Pump station internals\": [@m] as \"sysml.ibd@2\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n    exclude: [@m.balance, @m.b1, @m.b2, @m.b3, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpBase];\n}",
       "walkthrough": [
         "Open website/examples/basics/85-sysml-blocks.ddn and locate view ibd. This selects existing data; it is not a stored SVG.",
         "Inspect the sysml.ibd@2 profile and graph projection. Read the bindings before changing any value.",
@@ -8532,7 +8532,7 @@
           ]
         }
       ],
-      "viewSource": "view parametric \"Flow balance\" {\n    data: [@m];\n    projection { profile: \"sysml.parametric@2\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];\n}",
+      "viewSource": "view parametric \"Flow balance\": [@m] as \"sysml.parametric@2\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n    exclude: [@m.water, @m.gen, @m.comp, @m.typed, @m.litres, @m.pumpIf, @m.waterSpec];\n}",
       "walkthrough": [
         "Open website/examples/basics/85-sysml-blocks.ddn and locate view parametric. This selects existing data; it is not a stored SVG.",
         "Inspect the sysml.parametric@2 profile and graph projection. Read the bindings before changing any value.",
@@ -8624,7 +8624,7 @@
           ]
         }
       ],
-      "viewSource": "view requirements \"Pump requirements\" {\n    data: [@reqs];\n    projection { profile: \"sysml.requirements@1\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view requirements \"Pump requirements\": [@reqs] as \"sysml.requirements@1\" {\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/84-sysml-requirements.ddn and locate view requirements. This selects existing data; it is not a stored SVG.",
         "Inspect the sysml.requirements@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8719,7 +8719,7 @@
           ]
         }
       ],
-      "viewSource": "view drd \"Claim handling DRD\" {\n    data: [@d];\n    projection { profile: \"dmn.drd@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view drd \"Claim handling DRD\": [@d] as \"dmn.drd@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/87-dmn-drd.ddn and locate view drd. This selects existing data; it is not a stored SVG.",
         "Inspect the dmn.drd@1 profile and graph projection. Read the bindings before changing any value.",
@@ -8810,7 +8810,7 @@
           ]
         }
       ],
-      "viewSource": "view arch \"Retail service architecture\" {\n    data: [@m];\n    projection { profile: \"soaml.services@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view arch \"Retail service architecture\": [@m] as \"soaml.services@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/88-soaml.ddn and locate view arch. This selects existing data; it is not a stored SVG.",
         "Inspect the soaml.services@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9072,7 +9072,7 @@
           ]
         }
       ],
-      "viewSource": "view chart \"Order MSC\" {\n    data: [@m];\n    projection { kind: sequence; profile: \"msc.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view chart \"Order MSC\": [@m] as \"msc.basic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/93-msc.ddn and locate view chart. This selects existing data; it is not a stored SVG.",
         "Inspect the msc.basic@1 profile and sequence projection. Read the bindings before changing any value.",
@@ -9163,7 +9163,7 @@
           ]
         }
       ],
-      "viewSource": "view system \"SDL system\" {\n    data: [@sys];\n    projection { profile: \"sdl.basic@1\"; }\n    frame nb \"Network\" { scope: @sys.net; members: [@sys.sig]; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view system \"SDL system\": [@sys] as \"sdl.basic@1\" {\n    frame nb \"Network\" { scope: @sys.net; members: [@sys.sig]; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/99-sdl.ddn and locate view system. This selects existing data; it is not a stored SVG.",
         "Inspect the sdl.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9248,7 +9248,7 @@
           ]
         }
       ],
-      "viewSource": "view d \"Motor control FBD\" {\n    data: [@m];\n    projection { profile: \"fbd.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view d \"Motor control FBD\": [@m] as \"fbd.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/100-fbd.ddn and locate view d. This selects existing data; it is not a stored SVG.",
         "Inspect the fbd.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9333,7 +9333,7 @@
           ]
         }
       ],
-      "viewSource": "view net \"Producer/consumer net\" {\n    data: [@m];\n    projection { profile: \"petri.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view net \"Producer/consumer net\": [@m] as \"petri.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/95-petrinet.ddn and locate view net. This selects existing data; it is not a stored SVG.",
         "Inspect the petri.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9418,7 +9418,7 @@
           ]
         }
       ],
-      "viewSource": "view model \"Customer fact model\" {\n    data: [@m];\n    projection { profile: \"orm.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view model \"Customer fact model\": [@m] as \"orm.basic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/96-orm.ddn and locate view model. This selects existing data; it is not a stored SVG.",
         "Inspect the orm.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9504,7 +9504,7 @@
           ]
         }
       ],
-      "viewSource": "view map \"Current state map\" {\n    data: [@m];\n    projection { profile: \"vsm.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view map \"Current state map\": [@m] as \"vsm.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/97-vsm.ddn and locate view map. This selects existing data; it is not a stored SVG.",
         "Inspect the vsm.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9588,7 +9588,7 @@
           ]
         }
       ],
-      "viewSource": "view map \"VSM symbol library\" {\n    data: [@m];\n    projection { profile: \"vsm.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view map \"VSM symbol library\": [@m] as \"vsm.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/102-vsm-symbols.ddn and locate view map. This selects existing data; it is not a stored SVG.",
         "Inspect the vsm.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -9679,7 +9679,7 @@
           ]
         }
       ],
-      "viewSource": "view context \"A-0 context\" {\n    data: [@m];\n    projection { profile: \"idef0.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view context \"A-0 context\": [@m] as \"idef0.basic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/94-idef0.ddn and locate view context. This selects existing data; it is not a stored SVG.",
         "Inspect the idef0.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10321,7 +10321,7 @@
           ]
         }
       ],
-      "viewSource": "view family \"Three generations\" {\n    data: [@m];\n    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];\n    projection { profile: \"family.tree@1\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view family \"Three generations\": [@m] as \"family.tree@1\" {\n    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/56-family-tree.ddn and locate view family. This selects existing data; it is not a stored SVG.",
         "Inspect the family.tree@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10406,7 +10406,7 @@
           ]
         }
       ],
-      "viewSource": "view net \"Icon network\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view net \"Icon network\": [@m] as \"network.basic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/98-icons.ddn and locate view net. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10490,7 +10490,7 @@
           ]
         }
       ],
-      "viewSource": "view net \"Tabler pack\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view net \"Tabler pack\": [@m] as \"network.basic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/106-tabler-icons.ddn and locate view net. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10573,7 +10573,7 @@
           ]
         }
       ],
-      "viewSource": "view pid \"P&ID symbol library\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view pid \"P&ID symbol library\": [@m] as \"network.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/104-pid-symbols.ddn and locate view pid. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -10657,7 +10657,7 @@
           ]
         }
       ],
-      "viewSource": "view sch \"Electrical symbol library\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view sch \"Electrical symbol library\": [@m] as \"network.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/105-electrical-symbols.ddn and locate view sch. This selects existing data; it is not a stored SVG.",
         "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -11270,7 +11270,7 @@
           ]
         }
       ],
-      "viewSource": "view sv \"Strategic capabilities\" {\n    data: [@strat];\n    projection { profile: \"uaf.strategic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view sv \"Strategic capabilities\": [@strat] as \"uaf.strategic@1\" {\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/108-uaf-traceability.ddn and locate view sv. This selects existing data; it is not a stored SVG.",
         "Inspect the uaf.strategic@1 profile and graph projection. Read the bindings before changing any value.",
@@ -11824,7 +11824,7 @@
           ]
         }
       ],
-      "viewSource": "view settings \"Settings screen\" {\n    data: [@m];\n    select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];\n    projection { profile: \"wireframe.ui@1\"; }\n    style { theme: neutral; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n    frame settings_area \"Settings\" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }\n}",
+      "viewSource": "view settings \"Settings screen\": [@m] as \"wireframe.ui@1\" {\n    select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];\n    style { theme: neutral; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n    frame settings_area \"Settings\" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }\n}",
       "walkthrough": [
         "Open website/examples/basics/55-wireframe.ddn and locate view settings. This selects existing data; it is not a stored SVG.",
         "Inspect the wireframe.ui@1 profile and graph projection. Read the bindings before changing any value.",
@@ -14147,7 +14147,7 @@
           ]
         }
       ],
-      "viewSource": "view d \"Motor control ladder\" {\n    data: [@rung1, @rung2, @rung3];\n    projection { profile: \"ladder.basic@1\"; }\n    layout { algorithm: ladder; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view d \"Motor control ladder\": [@rung1, @rung2, @rung3] as \"ladder.basic@1\" {\n    layout { algorithm: ladder; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open website/examples/basics/101-ladder.ddn and locate view d. This selects existing data; it is not a stored SVG.",
         "Inspect the ladder.basic@1 profile and graph projection. Read the bindings before changing any value.",

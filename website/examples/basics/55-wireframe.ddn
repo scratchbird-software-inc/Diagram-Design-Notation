@@ -12,16 +12,14 @@ data m {
     object display_name "Display name" { kind: "ui.input"; }
     object email_notifications "Email notifications" { kind: "ui.checkbox"; }
     object timezone_list "Timezone" { kind: "ui.list";
-        fields { field utc; field berlin; field tokyo; }
+        fields { utc; berlin; tokyo; }
     }
     object avatar_placeholder "Avatar" { kind: "ui.image"; }
     object save_button "Save" { kind: "ui.button"; }
 }
 
-view settings "Settings screen" {
-    data: [@m];
+view settings "Settings screen": [@m] as "wireframe.ui@1" {
     select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];
-    projection { profile: "wireframe.ui@1"; }
     style { theme: neutral; }
     layout { algorithm: layered; direction: down; }
     publication { size: content; fit: none; }

@@ -3,16 +3,16 @@ module "ddn.examples.hybrid";
 import "shared.ddn" as shared;
 
 data model {
-    object orders "Orders definition" { kind: table; level: definition; distribution: hash; fields { field tenant_id; field order_id; } }
-    object shard "Tenant shard A" { kind: shard; level: fragment; }
-    object primary "Orders / primary copy" { kind: replica; level: instance; role: primary; location: local; }
-    object follower "Orders / follower copy" { kind: replica; level: instance; role: follower; location: cloud; }
-    object local "Local database service" { kind: service; location: local; }
-    object cloud "Cloud database service" { kind: service; location: cloud; }
-    object schema "sales schema" { kind: schema; }
+    table orders "Orders definition" {level: definition; distribution: hash; fields { tenant_id; order_id; } }
+    shard shard "Tenant shard A" {level: fragment; }
+    replica primary "Orders / primary copy" {level: instance; role: primary; location: local; }
+    replica follower "Orders / follower copy" {level: instance; role: follower; location: cloud; }
+    service local "Local database service" {location: local; }
+    service cloud "Cloud database service" {location: cloud; }
+    schema schema "sales schema";
     relation fragment @orders -> @shard { kind: partitioned_into; }
-    relation copy1 @primary -> @shard { kind: realizes; }
-    relation copy2 @follower -> @shard { kind: realizes; }
+    realizes copy1 @primary -> @shard;
+    realizes copy2 @follower -> @shard;
     relation on_local @primary -> @local { kind: placed_on; }
     relation on_cloud @follower -> @cloud { kind: placed_on; }
     relation replica_stream @primary -> @follower { kind: replicates_to; delivery: undecided; }

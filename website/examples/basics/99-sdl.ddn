@@ -9,10 +9,10 @@ module "ddn.examples.sdl";
 // an active() query. All data is synthetic.
 data sys {
     object net "Network block" { kind: "sdl.block";
-        ports { port g1 { direction: inout; } }
+        ports { g1 { direction: inout; } }
     }
     object app "Application block" { kind: "sdl.block";
-        ports { port g2 { direction: inout; } }
+        ports { g2 { direction: inout; } }
     }
     object sig "OrderReq" { kind: "sdl.signal"; }
     object sigs "Order signals" { kind: "sdl.signalset"; }
@@ -51,14 +51,10 @@ data p {
     relation t9 "" @proc -> @newstate { kind: "state.transition"; }
     relation t10 "" @newstate -> @done { kind: "state.transition"; }
 }
-view system "SDL system" {
-    data: [@sys];
-    projection { profile: "sdl.basic@1"; }
+view system "SDL system": [@sys] as "sdl.basic@1" {
     frame nb "Network" { scope: @sys.net; members: [@sys.sig]; }
     publication { size: content; fit: none; }
 }
-view process "Order process" {
-    data: [@p];
-    projection { profile: "sdl.process@1"; }
+view process "Order process": [@p] as "sdl.process@1" {
     publication { size: content; fit: none; }
 }

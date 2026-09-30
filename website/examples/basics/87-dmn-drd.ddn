@@ -32,9 +32,7 @@ data d {
     relation i2 "" @route -> @svc { kind: "dmn.inforeq"; }
 }
 
-view drd "Claim handling DRD" {
-    data: [@d];
-    projection { profile: "dmn.drd@1"; }
+view drd "Claim handling DRD": [@d] as "dmn.drd@1" {
     layout { algorithm: layered; }
     publication { size: content; fit: none; }
 }

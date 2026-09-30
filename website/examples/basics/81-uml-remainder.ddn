@@ -10,13 +10,13 @@ module "ddn.examples.umlrem";
 
 data obj {
     object customer "Customer" { kind: "uml.class";
-        fields { field customer_id { datatype: "string"; } field age { datatype: "number"; } }
+        fields { customer_id { datatype: "string"; } age { datatype: "number"; } }
     }
-    object ada "ada : Customer" { kind: record; x_instance: { classifier: @obj.customer; };
-        fields { field customer_id "C-1001"; field age "41"; }
+    record ada "ada : Customer" {x_instance: { classifier: @obj.customer; };
+        fields { customer_id "C-1001"; age "41"; }
     }
-    object bob "bob : Customer" { kind: record; x_instance: { classifier: @obj.customer; };
-        fields { field customer_id "C-1002"; field age "36"; }
+    record bob "bob : Customer" {x_instance: { classifier: @obj.customer; };
+        fields { customer_id "C-1002"; age "36"; }
     }
     relation link1 "knows" @ada -> @bob { kind: "uml.link"; x_endlabels: { source: { multiplicity: "0..*"; }; target: { multiplicity: "1"; }; }; }
 }
@@ -32,7 +32,7 @@ data pkg {
 data prof {
     object meta "Classifier" { kind: "uml.metaclass"; }
     object stereo "Audited" { kind: "uml.stereotype";
-        fields { field audited_by { x_member: { kind: attribute; }; } }
+        fields { audited_by { x_member: { kind: attribute; }; } }
     }
     object base_pkg "base" { kind: "uml.package"; }
     object applied_pkg "shop" { kind: "uml.package"; }
@@ -41,8 +41,8 @@ data prof {
 }
 
 data comm {
-    object ui "UI" { kind: application; }
-    object svc "Service" { kind: service; }
+    application ui "UI";
+    service svc "Service";
     relation m1 "request" @ui -> @svc { kind: "uml.message"; x_message: { seq: "1"; time: "{t1}"; };
         x_fragment: { operator: alt; operands: [ { guard: "ok"; messages: [@comm.m1]; }, { guard: "else"; messages: [@comm.m2]; } ] };
     }
@@ -65,12 +65,10 @@ data detail_data {
 }
 
 data tim {
-    object bus "Bus" { kind: service;
-        x_timeconstraint: [ "{0..40}" ];
+    service bus "Bus" {        x_timeconstraint: [ "{0..40}" ];
         x_states: [ { at: 0; state: "idle"; }, { at: 10; state: "idle"; }, { at: 20; state: "busy"; duration: "{20..30}"; } ];
     }
-    object card "Card" { kind: application;
-        x_states: [ { at: 5; state: "out"; slew: "{2}"; }, { at: 25; state: "in"; } ];
+    application card "Card" {        x_states: [ { at: 5; state: "out"; slew: "{2}"; }, { at: 25; state: "in"; } ];
     }
     relation tm "swipe" @card -> @bus { kind: "uml.message"; x_message: { at: 15 }; }
 }
