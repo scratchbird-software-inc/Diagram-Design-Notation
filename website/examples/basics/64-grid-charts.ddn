@@ -29,21 +29,23 @@ data scatter {
     record p10 "s10" {x_record: {"size": 95, "ms": 182}; }
 }
 
-data deploys {
-    record w1 "2026-03-02" {x_record: {"day": "2026-03-02", "n": 3, "unit": "deploys"}; }
-    record w2 "2026-03-03" {x_record: {"day": "2026-03-03", "n": 5, "unit": "deploys"}; }
-    record w3 "2026-03-04" {x_record: {"day": "2026-03-04", "n": 2, "unit": "deploys"}; }
-    record w4 "2026-03-06" {x_record: {"day": "2026-03-06", "n": 4, "unit": "deploys"}; }
-    record w5 "2026-03-09" {x_record: {"day": "2026-03-09", "n": 6, "unit": "deploys"}; }
-    record w6 "2026-03-10" {x_record: {"day": "2026-03-10", "n": 1, "unit": "deploys"}; }
-    record w7 "2026-03-12" {x_record: {"day": "2026-03-12", "n": 4, "unit": "deploys"}; }
-    record w8 "2026-03-13" {x_record: {"day": "2026-03-13", "n": 7, "unit": "deploys"}; }
-    record w9 "2026-03-16" {x_record: {"day": "2026-03-16", "n": 2, "unit": "deploys"}; }
-    record w10 "2026-03-18" {x_record: {"day": "2026-03-18", "n": 5, "unit": "deploys"}; }
-    record w11 "2026-03-20" {x_record: {"day": "2026-03-20", "n": 3, "unit": "deploys"}; }
-    record w12 "2026-03-24" {x_record: {"day": "2026-03-24", "n": 8, "unit": "deploys"}; }
-    record w13 "2026-03-27" {x_record: {"day": "2026-03-27", "n": 2, "unit": "deploys"}; }
-    record w14 "2026-03-31" {x_record: {"day": "2026-03-31", "n": 4, "unit": "deploys"}; }
+records deploys {
+    columns: day, n, unit;
+    label_column: day;
+    row w1: "2026-03-02", 3, "deploys";
+    row w2: "2026-03-03", 5, "deploys";
+    row w3: "2026-03-04", 2, "deploys";
+    row w4: "2026-03-06", 4, "deploys";
+    row w5: "2026-03-09", 6, "deploys";
+    row w6: "2026-03-10", 1, "deploys";
+    row w7: "2026-03-12", 4, "deploys";
+    row w8: "2026-03-13", 7, "deploys";
+    row w9: "2026-03-16", 2, "deploys";
+    row w10: "2026-03-18", 5, "deploys";
+    row w11: "2026-03-20", 3, "deploys";
+    row w12: "2026-03-24", 8, "deploys";
+    row w13: "2026-03-27", 2, "deploys";
+    row w14: "2026-03-31", 4, "deploys";
 }
 
 data metrics {
@@ -61,17 +63,19 @@ data metrics {
     record m12 "relay · rps" {x_record: {"service": "relay", "metric": "rps", "v": 1250}; }
 }
 
-data tags {
-    record t1 "latency" {x_record: {"tag": "latency", "n": 34}; }
-    record t2 "timeout" {x_record: {"tag": "timeout", "n": 28}; }
-    record t3 "cache" {x_record: {"tag": "cache", "n": 19}; }
-    record t4 "deploy" {x_record: {"tag": "deploy", "n": 15}; }
-    record t5 "dns" {x_record: {"tag": "dns", "n": 9}; }
-    record t6 "tls" {x_record: {"tag": "tls", "n": 7}; }
-    record t7 "quota" {x_record: {"tag": "quota", "n": 5}; }
-    record t8 "retry" {x_record: {"tag": "retry", "n": 12}; }
-    record t9 "shard" {x_record: {"tag": "shard", "n": 4}; }
-    record t10 "queue" {x_record: {"tag": "queue", "n": 8}; }
+records tags {
+    columns: tag, n;
+    label_column: tag;
+    row t1: "latency", 34;
+    row t2: "timeout", 28;
+    row t3: "cache", 19;
+    row t4: "deploy", 15;
+    row t5: "dns", 9;
+    row t6: "tls", 7;
+    row t7: "quota", 5;
+    row t8: "retry", 12;
+    row t9: "shard", 4;
+    row t10: "queue", 8;
 }
 
 view heatmap "Requests by hour and endpoint / heatmap" {

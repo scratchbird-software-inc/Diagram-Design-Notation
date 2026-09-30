@@ -4,12 +4,14 @@ module "ddn.examples.chart-overlays";
 // Synthetic bench results: mean render times with measurement error bars, and
 // a payload/latency scatter with regression and loess trend overlays.
 // All data is synthetic.
-data bench {
-    record b1 "parser" {x_record: {"stage": "parser", "ms": 18, "err": 2.5, "unit": "ms"}; }
-    record b2 "layout" {x_record: {"stage": "layout", "ms": 42, "err": 5, "unit": "ms"}; }
-    record b3 "routing" {x_record: {"stage": "routing", "ms": 31, "err": 4, "unit": "ms"}; }
-    record b4 "render" {x_record: {"stage": "render", "ms": 55, "err": 6.5, "unit": "ms"}; }
-    record b5 "export" {x_record: {"stage": "export", "ms": 12, "err": 1.5, "unit": "ms"}; }
+records bench {
+    columns: stage, ms, err, unit;
+    label_column: stage;
+    row b1: "parser", 18, 2.5, "ms";
+    row b2: "layout", 42, 5, "ms";
+    row b3: "routing", 31, 4, "ms";
+    row b4: "render", 55, 6.5, "ms";
+    row b5: "export", 12, 1.5, "ms";
 }
 
 data samples {

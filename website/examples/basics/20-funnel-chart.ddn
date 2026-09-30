@@ -5,12 +5,14 @@ import "shared.ddn" as shared;
 
 // Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
 // All data is synthetic.
-data pipeline {
-    record s1 "Visits" {x_record: {"stage": "Visits", "value": 1200, "unit": "deals"}; }
-    record s2 "Signups" {x_record: {"stage": "Signups", "value": 480, "unit": "deals"}; }
-    record s3 "Trials" {x_record: {"stage": "Trials", "value": 210, "unit": "deals"}; }
-    record s4 "Qualified" {x_record: {"stage": "Qualified", "value": 96, "unit": "deals"}; }
-    record s5 "Closed" {x_record: {"stage": "Closed", "value": 42, "unit": "deals"}; }
+records pipeline {
+    columns: stage, value, unit;
+    label_column: stage;
+    row s1: "Visits", 1200, "deals";
+    row s2: "Signups", 480, "deals";
+    row s3: "Trials", 210, "deals";
+    row s4: "Qualified", 96, "deals";
+    row s5: "Closed", 42, "deals";
 }
 
 view funnel "Synthetic sales pipeline / funnel" {

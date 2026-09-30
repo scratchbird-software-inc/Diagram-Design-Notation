@@ -5267,12 +5267,14 @@ import &quot;shared.ddn&quot; as shared;
 
 // Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
 // All data is synthetic.
-data pipeline {
-    record s1 &quot;Visits&quot; {x_record: {&quot;stage&quot;: &quot;Visits&quot;, &quot;value&quot;: 1200, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s2 &quot;Signups&quot; {x_record: {&quot;stage&quot;: &quot;Signups&quot;, &quot;value&quot;: 480, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s3 &quot;Trials&quot; {x_record: {&quot;stage&quot;: &quot;Trials&quot;, &quot;value&quot;: 210, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s4 &quot;Qualified&quot; {x_record: {&quot;stage&quot;: &quot;Qualified&quot;, &quot;value&quot;: 96, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s5 &quot;Closed&quot; {x_record: {&quot;stage&quot;: &quot;Closed&quot;, &quot;value&quot;: 42, &quot;unit&quot;: &quot;deals&quot;}; }
+records pipeline {
+    columns: stage, value, unit;
+    label_column: stage;
+    row s1: &quot;Visits&quot;, 1200, &quot;deals&quot;;
+    row s2: &quot;Signups&quot;, 480, &quot;deals&quot;;
+    row s3: &quot;Trials&quot;, 210, &quot;deals&quot;;
+    row s4: &quot;Qualified&quot;, 96, &quot;deals&quot;;
+    row s5: &quot;Closed&quot;, 42, &quot;deals&quot;;
 }
 
 view funnel &quot;Synthetic sales pipeline / funnel&quot; {
@@ -5316,12 +5318,14 @@ format styles {
 module &quot;ddn.examples.funnel-chart&quot;;
 // Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
 // All data is synthetic.
-data pipeline {
-    record s1 &quot;Visits&quot; {x_record: {&quot;stage&quot;: &quot;Visits&quot;, &quot;value&quot;: 1200, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s2 &quot;Signups&quot; {x_record: {&quot;stage&quot;: &quot;Signups&quot;, &quot;value&quot;: 480, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s3 &quot;Trials&quot; {x_record: {&quot;stage&quot;: &quot;Trials&quot;, &quot;value&quot;: 210, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s4 &quot;Qualified&quot; {x_record: {&quot;stage&quot;: &quot;Qualified&quot;, &quot;value&quot;: 96, &quot;unit&quot;: &quot;deals&quot;}; }
-    record s5 &quot;Closed&quot; {x_record: {&quot;stage&quot;: &quot;Closed&quot;, &quot;value&quot;: 42, &quot;unit&quot;: &quot;deals&quot;}; }
+records pipeline {
+    columns: stage, value, unit;
+    label_column: stage;
+    row s1: &quot;Visits&quot;, 1200, &quot;deals&quot;;
+    row s2: &quot;Signups&quot;, 480, &quot;deals&quot;;
+    row s3: &quot;Trials&quot;, 210, &quot;deals&quot;;
+    row s4: &quot;Qualified&quot;, 96, &quot;deals&quot;;
+    row s5: &quot;Closed&quot;, 42, &quot;deals&quot;;
 }
 
 view funnel &quot;Synthetic sales pipeline / funnel&quot; {
@@ -5562,13 +5566,15 @@ import &quot;shared.ddn&quot; as shared;
 
 // Synthetic storage dataset: six tables grouped by dotted domain paths.
 // All data is synthetic.
-data storage {
-    record r1 &quot;analytics.events&quot; {x_record: {&quot;path&quot;: &quot;analytics.events&quot;, &quot;value&quot;: 55, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r2 &quot;analytics.sessions&quot; {x_record: {&quot;path&quot;: &quot;analytics.sessions&quot;, &quot;value&quot;: 25, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r3 &quot;core.orders&quot; {x_record: {&quot;path&quot;: &quot;core.orders&quot;, &quot;value&quot;: 40, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r4 &quot;core.customers&quot; {x_record: {&quot;path&quot;: &quot;core.customers&quot;, &quot;value&quot;: 20, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r5 &quot;ops.logs&quot; {x_record: {&quot;path&quot;: &quot;ops.logs&quot;, &quot;value&quot;: 30, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r6 &quot;ops.metrics&quot; {x_record: {&quot;path&quot;: &quot;ops.metrics&quot;, &quot;value&quot;: 10, &quot;unit&quot;: &quot;GB&quot;}; }
+records storage {
+    columns: path, value, unit;
+    label_column: path;
+    row r1: &quot;analytics.events&quot;, 55, &quot;GB&quot;;
+    row r2: &quot;analytics.sessions&quot;, 25, &quot;GB&quot;;
+    row r3: &quot;core.orders&quot;, 40, &quot;GB&quot;;
+    row r4: &quot;core.customers&quot;, 20, &quot;GB&quot;;
+    row r5: &quot;ops.logs&quot;, 30, &quot;GB&quot;;
+    row r6: &quot;ops.metrics&quot;, 10, &quot;GB&quot;;
 }
 
 view treemap &quot;Synthetic storage by domain and table / treemap&quot; {
@@ -5612,13 +5618,15 @@ format styles {
 module &quot;ddn.examples.treemap&quot;;
 // Synthetic storage dataset: six tables grouped by dotted domain paths.
 // All data is synthetic.
-data storage {
-    record r1 &quot;analytics.events&quot; {x_record: {&quot;path&quot;: &quot;analytics.events&quot;, &quot;value&quot;: 55, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r2 &quot;analytics.sessions&quot; {x_record: {&quot;path&quot;: &quot;analytics.sessions&quot;, &quot;value&quot;: 25, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r3 &quot;core.orders&quot; {x_record: {&quot;path&quot;: &quot;core.orders&quot;, &quot;value&quot;: 40, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r4 &quot;core.customers&quot; {x_record: {&quot;path&quot;: &quot;core.customers&quot;, &quot;value&quot;: 20, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r5 &quot;ops.logs&quot; {x_record: {&quot;path&quot;: &quot;ops.logs&quot;, &quot;value&quot;: 30, &quot;unit&quot;: &quot;GB&quot;}; }
-    record r6 &quot;ops.metrics&quot; {x_record: {&quot;path&quot;: &quot;ops.metrics&quot;, &quot;value&quot;: 10, &quot;unit&quot;: &quot;GB&quot;}; }
+records storage {
+    columns: path, value, unit;
+    label_column: path;
+    row r1: &quot;analytics.events&quot;, 55, &quot;GB&quot;;
+    row r2: &quot;analytics.sessions&quot;, 25, &quot;GB&quot;;
+    row r3: &quot;core.orders&quot;, 40, &quot;GB&quot;;
+    row r4: &quot;core.customers&quot;, 20, &quot;GB&quot;;
+    row r5: &quot;ops.logs&quot;, 30, &quot;GB&quot;;
+    row r6: &quot;ops.metrics&quot;, 10, &quot;GB&quot;;
 }
 
 view treemap &quot;Synthetic storage by domain and table / treemap&quot; {
@@ -10608,16 +10616,18 @@ module &quot;ddn.examples.tree-charts&quot;;
 
 // Synthetic product-catalogue hierarchy: region.family.item dotted paths with
 // quarterly sales values. All data is synthetic.
-data sales {
-    record n1 &quot;North.Hardware.Tools&quot; {x_record: {&quot;path&quot;: &quot;North.Hardware.Tools&quot;, &quot;sales&quot;: 120, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record n2 &quot;North.Hardware.Parts&quot; {x_record: {&quot;path&quot;: &quot;North.Hardware.Parts&quot;, &quot;sales&quot;: 80, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record n3 &quot;North.Software.Licenses&quot; {x_record: {&quot;path&quot;: &quot;North.Software.Licenses&quot;, &quot;sales&quot;: 150, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record n4 &quot;North.Software.Support&quot; {x_record: {&quot;path&quot;: &quot;North.Software.Support&quot;, &quot;sales&quot;: 60, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record s1 &quot;South.Hardware.Tools&quot; {x_record: {&quot;path&quot;: &quot;South.Hardware.Tools&quot;, &quot;sales&quot;: 90, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record s2 &quot;South.Hardware.Parts&quot; {x_record: {&quot;path&quot;: &quot;South.Hardware.Parts&quot;, &quot;sales&quot;: 45, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record s3 &quot;South.Software.Licenses&quot; {x_record: {&quot;path&quot;: &quot;South.Software.Licenses&quot;, &quot;sales&quot;: 110, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record s4 &quot;South.Software.Support&quot; {x_record: {&quot;path&quot;: &quot;South.Software.Support&quot;, &quot;sales&quot;: 35, &quot;unit&quot;: &quot;kEUR&quot;}; }
-    record s5 &quot;South.Services&quot; {x_record: {&quot;path&quot;: &quot;South.Services&quot;, &quot;sales&quot;: 70, &quot;unit&quot;: &quot;kEUR&quot;}; }
+records sales {
+    columns: path, sales, unit;
+    label_column: path;
+    row n1: &quot;North.Hardware.Tools&quot;, 120, &quot;kEUR&quot;;
+    row n2: &quot;North.Hardware.Parts&quot;, 80, &quot;kEUR&quot;;
+    row n3: &quot;North.Software.Licenses&quot;, 150, &quot;kEUR&quot;;
+    row n4: &quot;North.Software.Support&quot;, 60, &quot;kEUR&quot;;
+    row s1: &quot;South.Hardware.Tools&quot;, 90, &quot;kEUR&quot;;
+    row s2: &quot;South.Hardware.Parts&quot;, 45, &quot;kEUR&quot;;
+    row s3: &quot;South.Software.Licenses&quot;, 110, &quot;kEUR&quot;;
+    row s4: &quot;South.Software.Support&quot;, 35, &quot;kEUR&quot;;
+    row s5: &quot;South.Services&quot;, 70, &quot;kEUR&quot;;
 }
 
 view tidytree &quot;Sales hierarchy / tidy tree&quot; {
@@ -10685,21 +10695,23 @@ data scatter {
     record p10 &quot;s10&quot; {x_record: {&quot;size&quot;: 95, &quot;ms&quot;: 182}; }
 }
 
-data deploys {
-    record w1 &quot;2026-03-02&quot; {x_record: {&quot;day&quot;: &quot;2026-03-02&quot;, &quot;n&quot;: 3, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w2 &quot;2026-03-03&quot; {x_record: {&quot;day&quot;: &quot;2026-03-03&quot;, &quot;n&quot;: 5, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w3 &quot;2026-03-04&quot; {x_record: {&quot;day&quot;: &quot;2026-03-04&quot;, &quot;n&quot;: 2, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w4 &quot;2026-03-06&quot; {x_record: {&quot;day&quot;: &quot;2026-03-06&quot;, &quot;n&quot;: 4, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w5 &quot;2026-03-09&quot; {x_record: {&quot;day&quot;: &quot;2026-03-09&quot;, &quot;n&quot;: 6, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w6 &quot;2026-03-10&quot; {x_record: {&quot;day&quot;: &quot;2026-03-10&quot;, &quot;n&quot;: 1, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w7 &quot;2026-03-12&quot; {x_record: {&quot;day&quot;: &quot;2026-03-12&quot;, &quot;n&quot;: 4, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w8 &quot;2026-03-13&quot; {x_record: {&quot;day&quot;: &quot;2026-03-13&quot;, &quot;n&quot;: 7, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w9 &quot;2026-03-16&quot; {x_record: {&quot;day&quot;: &quot;2026-03-16&quot;, &quot;n&quot;: 2, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w10 &quot;2026-03-18&quot; {x_record: {&quot;day&quot;: &quot;2026-03-18&quot;, &quot;n&quot;: 5, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w11 &quot;2026-03-20&quot; {x_record: {&quot;day&quot;: &quot;2026-03-20&quot;, &quot;n&quot;: 3, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w12 &quot;2026-03-24&quot; {x_record: {&quot;day&quot;: &quot;2026-03-24&quot;, &quot;n&quot;: 8, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w13 &quot;2026-03-27&quot; {x_record: {&quot;day&quot;: &quot;2026-03-27&quot;, &quot;n&quot;: 2, &quot;unit&quot;: &quot;deploys&quot;}; }
-    record w14 &quot;2026-03-31&quot; {x_record: {&quot;day&quot;: &quot;2026-03-31&quot;, &quot;n&quot;: 4, &quot;unit&quot;: &quot;deploys&quot;}; }
+records deploys {
+    columns: day, n, unit;
+    label_column: day;
+    row w1: &quot;2026-03-02&quot;, 3, &quot;deploys&quot;;
+    row w2: &quot;2026-03-03&quot;, 5, &quot;deploys&quot;;
+    row w3: &quot;2026-03-04&quot;, 2, &quot;deploys&quot;;
+    row w4: &quot;2026-03-06&quot;, 4, &quot;deploys&quot;;
+    row w5: &quot;2026-03-09&quot;, 6, &quot;deploys&quot;;
+    row w6: &quot;2026-03-10&quot;, 1, &quot;deploys&quot;;
+    row w7: &quot;2026-03-12&quot;, 4, &quot;deploys&quot;;
+    row w8: &quot;2026-03-13&quot;, 7, &quot;deploys&quot;;
+    row w9: &quot;2026-03-16&quot;, 2, &quot;deploys&quot;;
+    row w10: &quot;2026-03-18&quot;, 5, &quot;deploys&quot;;
+    row w11: &quot;2026-03-20&quot;, 3, &quot;deploys&quot;;
+    row w12: &quot;2026-03-24&quot;, 8, &quot;deploys&quot;;
+    row w13: &quot;2026-03-27&quot;, 2, &quot;deploys&quot;;
+    row w14: &quot;2026-03-31&quot;, 4, &quot;deploys&quot;;
 }
 
 data metrics {
@@ -10717,17 +10729,19 @@ data metrics {
     record m12 &quot;relay · rps&quot; {x_record: {&quot;service&quot;: &quot;relay&quot;, &quot;metric&quot;: &quot;rps&quot;, &quot;v&quot;: 1250}; }
 }
 
-data tags {
-    record t1 &quot;latency&quot; {x_record: {&quot;tag&quot;: &quot;latency&quot;, &quot;n&quot;: 34}; }
-    record t2 &quot;timeout&quot; {x_record: {&quot;tag&quot;: &quot;timeout&quot;, &quot;n&quot;: 28}; }
-    record t3 &quot;cache&quot; {x_record: {&quot;tag&quot;: &quot;cache&quot;, &quot;n&quot;: 19}; }
-    record t4 &quot;deploy&quot; {x_record: {&quot;tag&quot;: &quot;deploy&quot;, &quot;n&quot;: 15}; }
-    record t5 &quot;dns&quot; {x_record: {&quot;tag&quot;: &quot;dns&quot;, &quot;n&quot;: 9}; }
-    record t6 &quot;tls&quot; {x_record: {&quot;tag&quot;: &quot;tls&quot;, &quot;n&quot;: 7}; }
-    record t7 &quot;quota&quot; {x_record: {&quot;tag&quot;: &quot;quota&quot;, &quot;n&quot;: 5}; }
-    record t8 &quot;retry&quot; {x_record: {&quot;tag&quot;: &quot;retry&quot;, &quot;n&quot;: 12}; }
-    record t9 &quot;shard&quot; {x_record: {&quot;tag&quot;: &quot;shard&quot;, &quot;n&quot;: 4}; }
-    record t10 &quot;queue&quot; {x_record: {&quot;tag&quot;: &quot;queue&quot;, &quot;n&quot;: 8}; }
+records tags {
+    columns: tag, n;
+    label_column: tag;
+    row t1: &quot;latency&quot;, 34;
+    row t2: &quot;timeout&quot;, 28;
+    row t3: &quot;cache&quot;, 19;
+    row t4: &quot;deploy&quot;, 15;
+    row t5: &quot;dns&quot;, 9;
+    row t6: &quot;tls&quot;, 7;
+    row t7: &quot;quota&quot;, 5;
+    row t8: &quot;retry&quot;, 12;
+    row t9: &quot;shard&quot;, 4;
+    row t10: &quot;queue&quot;, 8;
 }
 
 view heatmap &quot;Requests by hour and endpoint / heatmap&quot; {
@@ -10820,12 +10834,14 @@ module &quot;ddn.examples.chart-overlays&quot;;
 // Synthetic bench results: mean render times with measurement error bars, and
 // a payload/latency scatter with regression and loess trend overlays.
 // All data is synthetic.
-data bench {
-    record b1 &quot;parser&quot; {x_record: {&quot;stage&quot;: &quot;parser&quot;, &quot;ms&quot;: 18, &quot;err&quot;: 2.5, &quot;unit&quot;: &quot;ms&quot;}; }
-    record b2 &quot;layout&quot; {x_record: {&quot;stage&quot;: &quot;layout&quot;, &quot;ms&quot;: 42, &quot;err&quot;: 5, &quot;unit&quot;: &quot;ms&quot;}; }
-    record b3 &quot;routing&quot; {x_record: {&quot;stage&quot;: &quot;routing&quot;, &quot;ms&quot;: 31, &quot;err&quot;: 4, &quot;unit&quot;: &quot;ms&quot;}; }
-    record b4 &quot;render&quot; {x_record: {&quot;stage&quot;: &quot;render&quot;, &quot;ms&quot;: 55, &quot;err&quot;: 6.5, &quot;unit&quot;: &quot;ms&quot;}; }
-    record b5 &quot;export&quot; {x_record: {&quot;stage&quot;: &quot;export&quot;, &quot;ms&quot;: 12, &quot;err&quot;: 1.5, &quot;unit&quot;: &quot;ms&quot;}; }
+records bench {
+    columns: stage, ms, err, unit;
+    label_column: stage;
+    row b1: &quot;parser&quot;, 18, 2.5, &quot;ms&quot;;
+    row b2: &quot;layout&quot;, 42, 5, &quot;ms&quot;;
+    row b3: &quot;routing&quot;, 31, 4, &quot;ms&quot;;
+    row b4: &quot;render&quot;, 55, 6.5, &quot;ms&quot;;
+    row b5: &quot;export&quot;, 12, 1.5, &quot;ms&quot;;
 }
 
 data samples {
@@ -13730,24 +13746,28 @@ data criteria {
     record v5 &quot;Solar / Maintenance&quot; {x_record: {&quot;site&quot;: &quot;Solar park&quot;, &quot;criterion&quot;: &quot;Maintenance&quot;, &quot;score&quot;: 9, &quot;unit&quot;: &quot;points&quot;}; }
 }
 
-data pipeline {
-    record p1 &quot;Prospects&quot; {x_record: {&quot;stage&quot;: &quot;Prospects&quot;, &quot;count&quot;: 240, &quot;unit&quot;: &quot;accounts&quot;}; }
-    record p2 &quot;Qualified&quot; {x_record: {&quot;stage&quot;: &quot;Qualified&quot;, &quot;count&quot;: 150, &quot;unit&quot;: &quot;accounts&quot;}; }
-    record p3 &quot;Proposal&quot; {x_record: {&quot;stage&quot;: &quot;Proposal&quot;, &quot;count&quot;: 90, &quot;unit&quot;: &quot;accounts&quot;}; }
-    record p4 &quot;Negotiation&quot; {x_record: {&quot;stage&quot;: &quot;Negotiation&quot;, &quot;count&quot;: 48, &quot;unit&quot;: &quot;accounts&quot;}; }
-    record p5 &quot;Signed&quot; {x_record: {&quot;stage&quot;: &quot;Signed&quot;, &quot;count&quot;: 26, &quot;unit&quot;: &quot;accounts&quot;}; }
+records pipeline {
+    columns: stage, count, unit;
+    label_column: stage;
+    row p1: &quot;Prospects&quot;, 240, &quot;accounts&quot;;
+    row p2: &quot;Qualified&quot;, 150, &quot;accounts&quot;;
+    row p3: &quot;Proposal&quot;, 90, &quot;accounts&quot;;
+    row p4: &quot;Negotiation&quot;, 48, &quot;accounts&quot;;
+    row p5: &quot;Signed&quot;, 26, &quot;accounts&quot;;
 }
 
 data uptime {
     record u1 &quot;Fleet availability&quot; {x_record: {&quot;kpi&quot;: &quot;Fleet availability&quot;, &quot;value&quot;: 96.4, &quot;unit&quot;: &quot;%&quot;}; }
 }
 
-data market {
-    record d1 &quot;Mon&quot; {x_record: {&quot;day&quot;: &quot;Mon&quot;, &quot;open&quot;: 42.1, &quot;high&quot;: 43.8, &quot;low&quot;: 41.5, &quot;close&quot;: 43.2, &quot;unit&quot;: &quot;EUR&quot;}; }
-    record d2 &quot;Tue&quot; {x_record: {&quot;day&quot;: &quot;Tue&quot;, &quot;open&quot;: 43.2, &quot;high&quot;: 44.0, &quot;low&quot;: 42.4, &quot;close&quot;: 42.9, &quot;unit&quot;: &quot;EUR&quot;}; }
-    record d3 &quot;Wed&quot; {x_record: {&quot;day&quot;: &quot;Wed&quot;, &quot;open&quot;: 42.9, &quot;high&quot;: 44.6, &quot;low&quot;: 42.8, &quot;close&quot;: 44.3, &quot;unit&quot;: &quot;EUR&quot;}; }
-    record d4 &quot;Thu&quot; {x_record: {&quot;day&quot;: &quot;Thu&quot;, &quot;open&quot;: 44.3, &quot;high&quot;: 45.1, &quot;low&quot;: 43.6, &quot;close&quot;: 43.9, &quot;unit&quot;: &quot;EUR&quot;}; }
-    record d5 &quot;Fri&quot; {x_record: {&quot;day&quot;: &quot;Fri&quot;, &quot;open&quot;: 43.9, &quot;high&quot;: 45.4, &quot;low&quot;: 43.7, &quot;close&quot;: 45.0, &quot;unit&quot;: &quot;EUR&quot;}; }
+records market {
+    columns: day, open, high, low, close, unit;
+    label_column: day;
+    row d1: &quot;Mon&quot;, 42.1, 43.8, 41.5, 43.2, &quot;EUR&quot;;
+    row d2: &quot;Tue&quot;, 43.2, 44.0, 42.4, 42.9, &quot;EUR&quot;;
+    row d3: &quot;Wed&quot;, 42.9, 44.6, 42.8, 44.3, &quot;EUR&quot;;
+    row d4: &quot;Thu&quot;, 44.3, 45.1, 43.6, 43.9, &quot;EUR&quot;;
+    row d5: &quot;Fri&quot;, 43.9, 45.4, 43.7, 45.0, &quot;EUR&quot;;
 }
 
 data storage {
@@ -13821,13 +13841,15 @@ view mark_sankey &quot;Chart marks / sankey&quot; {
     projection { kind: chart; profile: &quot;chart.sankey@1&quot;; records: [@flows.f1, @flows.f2, @flows.f3, @flows.f4, @flows.f5]; mark: sankey; x: &quot;x_record.source&quot;; target: &quot;x_record.target&quot;; y: &quot;x_record.mwh&quot;; unit: &quot;MWh&quot;; width: 1050px; height: 640px; }
 }
 
-data days {
-    record m1 &quot;2026-03-02&quot; {x_record: {&quot;day&quot;: &quot;2026-03-02&quot;, &quot;mwh&quot;: 96, &quot;unit&quot;: &quot;MWh&quot;}; }
-    record m2 &quot;2026-03-03&quot; {x_record: {&quot;day&quot;: &quot;2026-03-03&quot;, &quot;mwh&quot;: 104, &quot;unit&quot;: &quot;MWh&quot;}; }
-    record m3 &quot;2026-03-04&quot; {x_record: {&quot;day&quot;: &quot;2026-03-04&quot;, &quot;mwh&quot;: 88, &quot;unit&quot;: &quot;MWh&quot;}; }
-    record m4 &quot;2026-03-06&quot; {x_record: {&quot;day&quot;: &quot;2026-03-06&quot;, &quot;mwh&quot;: 112, &quot;unit&quot;: &quot;MWh&quot;}; }
-    record m5 &quot;2026-03-09&quot; {x_record: {&quot;day&quot;: &quot;2026-03-09&quot;, &quot;mwh&quot;: 121, &quot;unit&quot;: &quot;MWh&quot;}; }
-    record m6 &quot;2026-03-11&quot; {x_record: {&quot;day&quot;: &quot;2026-03-11&quot;, &quot;mwh&quot;: 99, &quot;unit&quot;: &quot;MWh&quot;}; }
+records days {
+    columns: day, mwh, unit;
+    label_column: day;
+    row m1: &quot;2026-03-02&quot;, 96, &quot;MWh&quot;;
+    row m2: &quot;2026-03-03&quot;, 104, &quot;MWh&quot;;
+    row m3: &quot;2026-03-04&quot;, 88, &quot;MWh&quot;;
+    row m4: &quot;2026-03-06&quot;, 112, &quot;MWh&quot;;
+    row m5: &quot;2026-03-09&quot;, 121, &quot;MWh&quot;;
+    row m6: &quot;2026-03-11&quot;, 99, &quot;MWh&quot;;
 }
 
 data routes {
@@ -15202,14 +15224,30 @@ data responsibilities {
     relation access_inspect_check &quot;Data access&quot; @inspect -&gt; @check { kind: &quot;analysis.access&quot;; x_assignment: { &quot;code&quot;: &quot;CR&quot; }; }
     relation access_contain_lot &quot;Data access&quot; @contain -&gt; @lot { kind: &quot;analysis.access&quot;; x_assignment: { &quot;code&quot;: &quot;RU&quot; }; }
     relation access_correct_action &quot;Data access&quot; @correct -&gt; @action { kind: &quot;analysis.access&quot;; x_assignment: { &quot;code&quot;: &quot;CRUD&quot; }; }
-    relation score_inspect_plant_a &quot;Supplied review score&quot; @inspect -&gt; @plant_a { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 1, &quot;status&quot;: &quot;Good&quot; }; }
-    relation score_inspect_plant_b &quot;Supplied review score&quot; @inspect -&gt; @plant_b { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 5, &quot;status&quot;: &quot;Monitor&quot; }; }
-    relation score_inspect_plant_c &quot;Supplied review score&quot; @inspect -&gt; @plant_c { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 8, &quot;status&quot;: &quot;Action&quot; }; }
-    relation score_contain_plant_a &quot;Supplied review score&quot; @contain -&gt; @plant_a { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 2, &quot;status&quot;: &quot;Good&quot; }; }
-    relation score_contain_plant_b &quot;Supplied review score&quot; @contain -&gt; @plant_b { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 7, &quot;status&quot;: &quot;Action&quot; }; }
-    relation score_contain_plant_c &quot;Supplied review score&quot; @contain -&gt; @plant_c { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 4, &quot;status&quot;: &quot;Monitor&quot; }; }
-    relation score_correct_plant_a &quot;Supplied review score&quot; @correct -&gt; @plant_a { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 0, &quot;status&quot;: &quot;Good&quot; }; }
-    relation score_correct_plant_b &quot;Supplied review score&quot; @correct -&gt; @plant_b { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 3, &quot;status&quot;: &quot;Monitor&quot; }; }
+    assoc score_inspect_plant_a &quot;Supplied review score&quot; @inspect -&gt; @plant_a {
+        x_record: { &quot;score&quot;: 1, &quot;status&quot;: &quot;Good&quot; };
+    }
+    assoc score_inspect_plant_b &quot;Supplied review score&quot; @inspect -&gt; @plant_b {
+        x_record: { &quot;score&quot;: 5, &quot;status&quot;: &quot;Monitor&quot; };
+    }
+    assoc score_inspect_plant_c &quot;Supplied review score&quot; @inspect -&gt; @plant_c {
+        x_record: { &quot;score&quot;: 8, &quot;status&quot;: &quot;Action&quot; };
+    }
+    assoc score_contain_plant_a &quot;Supplied review score&quot; @contain -&gt; @plant_a {
+        x_record: { &quot;score&quot;: 2, &quot;status&quot;: &quot;Good&quot; };
+    }
+    assoc score_contain_plant_b &quot;Supplied review score&quot; @contain -&gt; @plant_b {
+        x_record: { &quot;score&quot;: 7, &quot;status&quot;: &quot;Action&quot; };
+    }
+    assoc score_contain_plant_c &quot;Supplied review score&quot; @contain -&gt; @plant_c {
+        x_record: { &quot;score&quot;: 4, &quot;status&quot;: &quot;Monitor&quot; };
+    }
+    assoc score_correct_plant_a &quot;Supplied review score&quot; @correct -&gt; @plant_a {
+        x_record: { &quot;score&quot;: 0, &quot;status&quot;: &quot;Good&quot; };
+    }
+    assoc score_correct_plant_b &quot;Supplied review score&quot; @correct -&gt; @plant_b {
+        x_record: { &quot;score&quot;: 3, &quot;status&quot;: &quot;Monitor&quot; };
+    }
 }
 
 data defects {
@@ -15932,14 +15970,30 @@ data responsibilities {
     relation access_inspect_check &quot;Data access&quot; @inspect -&gt; @check { kind: &quot;analysis.access&quot;; x_assignment: { &quot;code&quot;: &quot;CR&quot; }; }
     relation access_contain_lot &quot;Data access&quot; @contain -&gt; @lot { kind: &quot;analysis.access&quot;; x_assignment: { &quot;code&quot;: &quot;RU&quot; }; }
     relation access_correct_action &quot;Data access&quot; @correct -&gt; @action { kind: &quot;analysis.access&quot;; x_assignment: { &quot;code&quot;: &quot;CRUD&quot; }; }
-    relation score_inspect_plant_a &quot;Supplied review score&quot; @inspect -&gt; @plant_a { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 1, &quot;status&quot;: &quot;Good&quot; }; }
-    relation score_inspect_plant_b &quot;Supplied review score&quot; @inspect -&gt; @plant_b { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 5, &quot;status&quot;: &quot;Monitor&quot; }; }
-    relation score_inspect_plant_c &quot;Supplied review score&quot; @inspect -&gt; @plant_c { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 8, &quot;status&quot;: &quot;Action&quot; }; }
-    relation score_contain_plant_a &quot;Supplied review score&quot; @contain -&gt; @plant_a { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 2, &quot;status&quot;: &quot;Good&quot; }; }
-    relation score_contain_plant_b &quot;Supplied review score&quot; @contain -&gt; @plant_b { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 7, &quot;status&quot;: &quot;Action&quot; }; }
-    relation score_contain_plant_c &quot;Supplied review score&quot; @contain -&gt; @plant_c { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 4, &quot;status&quot;: &quot;Monitor&quot; }; }
-    relation score_correct_plant_a &quot;Supplied review score&quot; @correct -&gt; @plant_a { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 0, &quot;status&quot;: &quot;Good&quot; }; }
-    relation score_correct_plant_b &quot;Supplied review score&quot; @correct -&gt; @plant_b { kind: &quot;assoc&quot;; x_record: { &quot;score&quot;: 3, &quot;status&quot;: &quot;Monitor&quot; }; }
+    assoc score_inspect_plant_a &quot;Supplied review score&quot; @inspect -&gt; @plant_a {
+        x_record: { &quot;score&quot;: 1, &quot;status&quot;: &quot;Good&quot; };
+    }
+    assoc score_inspect_plant_b &quot;Supplied review score&quot; @inspect -&gt; @plant_b {
+        x_record: { &quot;score&quot;: 5, &quot;status&quot;: &quot;Monitor&quot; };
+    }
+    assoc score_inspect_plant_c &quot;Supplied review score&quot; @inspect -&gt; @plant_c {
+        x_record: { &quot;score&quot;: 8, &quot;status&quot;: &quot;Action&quot; };
+    }
+    assoc score_contain_plant_a &quot;Supplied review score&quot; @contain -&gt; @plant_a {
+        x_record: { &quot;score&quot;: 2, &quot;status&quot;: &quot;Good&quot; };
+    }
+    assoc score_contain_plant_b &quot;Supplied review score&quot; @contain -&gt; @plant_b {
+        x_record: { &quot;score&quot;: 7, &quot;status&quot;: &quot;Action&quot; };
+    }
+    assoc score_contain_plant_c &quot;Supplied review score&quot; @contain -&gt; @plant_c {
+        x_record: { &quot;score&quot;: 4, &quot;status&quot;: &quot;Monitor&quot; };
+    }
+    assoc score_correct_plant_a &quot;Supplied review score&quot; @correct -&gt; @plant_a {
+        x_record: { &quot;score&quot;: 0, &quot;status&quot;: &quot;Good&quot; };
+    }
+    assoc score_correct_plant_b &quot;Supplied review score&quot; @correct -&gt; @plant_b {
+        x_record: { &quot;score&quot;: 3, &quot;status&quot;: &quot;Monitor&quot; };
+    }
 }
 
 data defects {

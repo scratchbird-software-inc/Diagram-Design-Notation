@@ -27,24 +27,28 @@ data criteria {
     record v5 "Solar / Maintenance" {x_record: {"site": "Solar park", "criterion": "Maintenance", "score": 9, "unit": "points"}; }
 }
 
-data pipeline {
-    record p1 "Prospects" {x_record: {"stage": "Prospects", "count": 240, "unit": "accounts"}; }
-    record p2 "Qualified" {x_record: {"stage": "Qualified", "count": 150, "unit": "accounts"}; }
-    record p3 "Proposal" {x_record: {"stage": "Proposal", "count": 90, "unit": "accounts"}; }
-    record p4 "Negotiation" {x_record: {"stage": "Negotiation", "count": 48, "unit": "accounts"}; }
-    record p5 "Signed" {x_record: {"stage": "Signed", "count": 26, "unit": "accounts"}; }
+records pipeline {
+    columns: stage, count, unit;
+    label_column: stage;
+    row p1: "Prospects", 240, "accounts";
+    row p2: "Qualified", 150, "accounts";
+    row p3: "Proposal", 90, "accounts";
+    row p4: "Negotiation", 48, "accounts";
+    row p5: "Signed", 26, "accounts";
 }
 
 data uptime {
     record u1 "Fleet availability" {x_record: {"kpi": "Fleet availability", "value": 96.4, "unit": "%"}; }
 }
 
-data market {
-    record d1 "Mon" {x_record: {"day": "Mon", "open": 42.1, "high": 43.8, "low": 41.5, "close": 43.2, "unit": "EUR"}; }
-    record d2 "Tue" {x_record: {"day": "Tue", "open": 43.2, "high": 44.0, "low": 42.4, "close": 42.9, "unit": "EUR"}; }
-    record d3 "Wed" {x_record: {"day": "Wed", "open": 42.9, "high": 44.6, "low": 42.8, "close": 44.3, "unit": "EUR"}; }
-    record d4 "Thu" {x_record: {"day": "Thu", "open": 44.3, "high": 45.1, "low": 43.6, "close": 43.9, "unit": "EUR"}; }
-    record d5 "Fri" {x_record: {"day": "Fri", "open": 43.9, "high": 45.4, "low": 43.7, "close": 45.0, "unit": "EUR"}; }
+records market {
+    columns: day, open, high, low, close, unit;
+    label_column: day;
+    row d1: "Mon", 42.1, 43.8, 41.5, 43.2, "EUR";
+    row d2: "Tue", 43.2, 44.0, 42.4, 42.9, "EUR";
+    row d3: "Wed", 42.9, 44.6, 42.8, 44.3, "EUR";
+    row d4: "Thu", 44.3, 45.1, 43.6, 43.9, "EUR";
+    row d5: "Fri", 43.9, 45.4, 43.7, 45.0, "EUR";
 }
 
 data storage {
@@ -118,13 +122,15 @@ view mark_sankey "Chart marks / sankey" {
     projection { kind: chart; profile: "chart.sankey@1"; records: [@flows.f1, @flows.f2, @flows.f3, @flows.f4, @flows.f5]; mark: sankey; x: "x_record.source"; target: "x_record.target"; y: "x_record.mwh"; unit: "MWh"; width: 1050px; height: 640px; }
 }
 
-data days {
-    record m1 "2026-03-02" {x_record: {"day": "2026-03-02", "mwh": 96, "unit": "MWh"}; }
-    record m2 "2026-03-03" {x_record: {"day": "2026-03-03", "mwh": 104, "unit": "MWh"}; }
-    record m3 "2026-03-04" {x_record: {"day": "2026-03-04", "mwh": 88, "unit": "MWh"}; }
-    record m4 "2026-03-06" {x_record: {"day": "2026-03-06", "mwh": 112, "unit": "MWh"}; }
-    record m5 "2026-03-09" {x_record: {"day": "2026-03-09", "mwh": 121, "unit": "MWh"}; }
-    record m6 "2026-03-11" {x_record: {"day": "2026-03-11", "mwh": 99, "unit": "MWh"}; }
+records days {
+    columns: day, mwh, unit;
+    label_column: day;
+    row m1: "2026-03-02", 96, "MWh";
+    row m2: "2026-03-03", 104, "MWh";
+    row m3: "2026-03-04", 88, "MWh";
+    row m4: "2026-03-06", 112, "MWh";
+    row m5: "2026-03-09", 121, "MWh";
+    row m6: "2026-03-11", 99, "MWh";
 }
 
 data routes {

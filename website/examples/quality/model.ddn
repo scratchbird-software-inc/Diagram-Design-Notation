@@ -68,14 +68,30 @@ data responsibilities {
     relation access_inspect_check "Data access" @inspect -> @check { kind: "analysis.access"; x_assignment: { "code": "CR" }; }
     relation access_contain_lot "Data access" @contain -> @lot { kind: "analysis.access"; x_assignment: { "code": "RU" }; }
     relation access_correct_action "Data access" @correct -> @action { kind: "analysis.access"; x_assignment: { "code": "CRUD" }; }
-    relation score_inspect_plant_a "Supplied review score" @inspect -> @plant_a { kind: "assoc"; x_record: { "score": 1, "status": "Good" }; }
-    relation score_inspect_plant_b "Supplied review score" @inspect -> @plant_b { kind: "assoc"; x_record: { "score": 5, "status": "Monitor" }; }
-    relation score_inspect_plant_c "Supplied review score" @inspect -> @plant_c { kind: "assoc"; x_record: { "score": 8, "status": "Action" }; }
-    relation score_contain_plant_a "Supplied review score" @contain -> @plant_a { kind: "assoc"; x_record: { "score": 2, "status": "Good" }; }
-    relation score_contain_plant_b "Supplied review score" @contain -> @plant_b { kind: "assoc"; x_record: { "score": 7, "status": "Action" }; }
-    relation score_contain_plant_c "Supplied review score" @contain -> @plant_c { kind: "assoc"; x_record: { "score": 4, "status": "Monitor" }; }
-    relation score_correct_plant_a "Supplied review score" @correct -> @plant_a { kind: "assoc"; x_record: { "score": 0, "status": "Good" }; }
-    relation score_correct_plant_b "Supplied review score" @correct -> @plant_b { kind: "assoc"; x_record: { "score": 3, "status": "Monitor" }; }
+    assoc score_inspect_plant_a "Supplied review score" @inspect -> @plant_a {
+        x_record: { "score": 1, "status": "Good" };
+    }
+    assoc score_inspect_plant_b "Supplied review score" @inspect -> @plant_b {
+        x_record: { "score": 5, "status": "Monitor" };
+    }
+    assoc score_inspect_plant_c "Supplied review score" @inspect -> @plant_c {
+        x_record: { "score": 8, "status": "Action" };
+    }
+    assoc score_contain_plant_a "Supplied review score" @contain -> @plant_a {
+        x_record: { "score": 2, "status": "Good" };
+    }
+    assoc score_contain_plant_b "Supplied review score" @contain -> @plant_b {
+        x_record: { "score": 7, "status": "Action" };
+    }
+    assoc score_contain_plant_c "Supplied review score" @contain -> @plant_c {
+        x_record: { "score": 4, "status": "Monitor" };
+    }
+    assoc score_correct_plant_a "Supplied review score" @correct -> @plant_a {
+        x_record: { "score": 0, "status": "Good" };
+    }
+    assoc score_correct_plant_b "Supplied review score" @correct -> @plant_b {
+        x_record: { "score": 3, "status": "Monitor" };
+    }
 }
 
 data defects {

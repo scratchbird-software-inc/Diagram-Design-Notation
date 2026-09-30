@@ -85,7 +85,7 @@ function stripLocs(n) {
     if (n.type === 'view') return { type: 'view', id: n.id, label: n.label };
     const o = {};
     for (const k of Object.keys(n).sort()) {
-      if (['start', 'end', 'source', 'bodyStart', 'bodyEnd', 'offset', '$offset', 'line', 'column', 'text'].includes(k)) continue;
+      if (['start', 'end', 'source', 'bodyStart', 'bodyEnd', 'offset', '$offset', 'line', 'column', 'text', 'compactRow', 'compactRecords'].includes(k)) continue;
       o[k] = stripLocs(n[k]);
     }
     return o;
@@ -109,7 +109,7 @@ for (const f of process.argv.slice(2).filter(a => !a.startsWith('--'))) {
   const oldText = gitShow(rel);
   const newText = fs.readFileSync(path.join(REPO, rel), 'utf8');
   if (oldText === null) { console.log('SKIP ' + rel + ' (new file, no HEAD baseline)'); continue; }
-  if (oldText === newText) { console.log('SAME ' + rel); continue; }
+  if (oldText === newText && !process.argv.includes('--force')) { console.log('SAME ' + rel); continue; }
   // overrides: every worktree file differs-from-HEAD inside the closure
   const overrides = { [rel]: oldText };
   const newFiles = closure(rel, {});

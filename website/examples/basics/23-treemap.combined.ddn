@@ -3,13 +3,15 @@ ddn "0.5";
 module "ddn.examples.treemap";
 // Synthetic storage dataset: six tables grouped by dotted domain paths.
 // All data is synthetic.
-data storage {
-    record r1 "analytics.events" {x_record: {"path": "analytics.events", "value": 55, "unit": "GB"}; }
-    record r2 "analytics.sessions" {x_record: {"path": "analytics.sessions", "value": 25, "unit": "GB"}; }
-    record r3 "core.orders" {x_record: {"path": "core.orders", "value": 40, "unit": "GB"}; }
-    record r4 "core.customers" {x_record: {"path": "core.customers", "value": 20, "unit": "GB"}; }
-    record r5 "ops.logs" {x_record: {"path": "ops.logs", "value": 30, "unit": "GB"}; }
-    record r6 "ops.metrics" {x_record: {"path": "ops.metrics", "value": 10, "unit": "GB"}; }
+records storage {
+    columns: path, value, unit;
+    label_column: path;
+    row r1: "analytics.events", 55, "GB";
+    row r2: "analytics.sessions", 25, "GB";
+    row r3: "core.orders", 40, "GB";
+    row r4: "core.customers", 20, "GB";
+    row r5: "ops.logs", 30, "GB";
+    row r6: "ops.metrics", 10, "GB";
 }
 
 view treemap "Synthetic storage by domain and table / treemap" {
