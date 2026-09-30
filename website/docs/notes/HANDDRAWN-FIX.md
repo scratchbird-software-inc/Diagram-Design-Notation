@@ -1,5 +1,9 @@
 # Hand-drawn rendering correction — draft.2
 
+> **Historical engineering note** (pre-0.7 archive). Paths and commands refer to the
+> pre-monorepo layout and are kept for provenance; the current hand-drawn
+> treatment ships in the runtime (`look: handDrawn`).
+
 This bundle replaces the weak draft.1 stroke treatment with visibly hand-drawn vector geometry. Open `site/gallery.html` for the existing six-look gallery, or `examples/rendered/09-look-comparison/handDrawn.svg` for the new coordinate-free sample. Its source is `examples/09-look-comparison.ddn`.
 
 ## What changed

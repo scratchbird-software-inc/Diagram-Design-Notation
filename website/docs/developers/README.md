@@ -15,7 +15,7 @@ library and embedding rendered diagrams; they are verified against
 | [api-reference.md](api-reference.md) | You need the workspace object: parse, check, render, mount, snapshots, data replacement, authoring, io. |
 | [embedding.md](embedding.md) | You are embedding diagrams in a page or framework and need CSP / `file://` guidance. |
 | [tool.md](tool.md) | You want the unified diagram tool (`ddn-tool.html`, served as `tools/index.html`): drawers, modes, deep links, export. |
-| [viewer.md](viewer.md) | Historical: the retired single-file viewer (`ddn-viewer.html`), replaced by the unified tool in. |
+| [viewer.md](viewer.md) | Historical: the retired single-file viewer (`ddn-viewer.html`), replaced by the unified tool. |
 | [styling.md](styling.md) | You want to restyle rendered SVG with CSS: class hooks, cascade rules, `ddn.css`. |
 | [data-refresh.md](data-refresh.md) | You are building a dashboard that swaps data-block records without touching the model. |
 | [limits.md](limits.md) | You need the enforced caps (128/384 per view, dashboard depth, file sizes) with the code that raises them, plus the measured performance baseline. |

@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-Five runnable minimal pages under `website/examples/embed/` cover the common
+Eight runnable pages under `website/examples/embed/` cover the common
 embedding shapes — open the one that matches yours and copy it:
 
 | Example | Shows | `file://` safe? |
@@ -257,4 +257,4 @@ about *your sources*:
   pickers/drag-drop/paste and the bundled catalogue, so it works fully from
   `file://` in current Chrome and Firefox; its `?src=` deep links need HTTP.
   It replaced the single-file viewer (`ddn-viewer.html`, see
-  [viewer.md](viewer.md)) in.
+  [viewer.md](viewer.md)).

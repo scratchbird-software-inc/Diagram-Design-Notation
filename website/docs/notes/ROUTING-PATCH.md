@@ -1,5 +1,10 @@
 # DDN 0.7.0 — endpoint-ordering replacement patch
 
+> **Historical engineering note** (endpoint-ordering era patch archive). The patch
+> instructions below are provenance, not a current distribution unit; the
+> endpoint-ordering machinery it describes ships in the runtime
+> (`layout.endpoint_ordering`).
+
 This patch targets the runtime in **ddn-0.5-field-guide** (field-guide.1, previously
 0.5.0-draft.1). It is built from that actual archive, not from an older companion.
 It changes routing, not the authored business model or field order.

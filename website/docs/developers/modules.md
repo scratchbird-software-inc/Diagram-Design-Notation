@@ -15,19 +15,19 @@ Every bundle ships three formats: readable browser IIFE (`.js`), ES module
 
 | Bundle | `.js` bytes | `.min.js` (gzip) | Provides | Load after |
 |---|---:|---:|---|---|
-| `ddn-core` | 695,510 | 596,571 (133,757) | Parse, resolve, validate (`createWorkspace`, `parse`, `resolve`, `analyze`, authoring, io). No rendering. | — |
-| `ddn-graph` | 151,781 | 108,180 (40,007) | Graph-family rendering: layout, routing, shapes, palettes, interaction validation. | `ddn-core.js` |
-| `ddn-projections` | 91,683 | 75,333 (27,810) | Fixed-grid projections: chart (basic marks plus the Category-2 pack — distributions, tree, grid, network families and statistical overlays), matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
-| `ddn-quality` | 20,469 | 15,633 (7,022) | Quality charts, fishbone causes, decision/rule-table rendering. | `ddn-graph.js` (renders through `ddn-projections.js`) |
-| `ddn-geo` | 23,771 | 16,201 (6,841) | **Optional** geographic module: mercator/equirectangular/albers/equal-earth projection math, GeoJSON ingestion, choropleth/symbol/outline map rendering. Registers the `geo` kind with `optional: true`. | `ddn-graph.js` |
-| `ddn-iso` | 23,406 | 14,396 (5,996) | **Optional** isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms. Publishes `DDNIso`; no new kind. | `ddn-graph.js` |
-| `ddn.global` | 980,489 | 819,295 (213,042) | All of the above **except** the optional `ddn-geo` and `ddn-iso`, plus the web component — one file, nothing to order. | — |
+| `ddn-core` | 1,008,691 | 850,436 (184,697) | Parse, resolve, validate (`createWorkspace`, `parse`, `resolve`, `analyze`, authoring, io). No rendering. | — |
+| `ddn-graph` | 333,842 | 256,195 (69,812) | Graph-family rendering: layout, routing, shapes, palettes, interaction validation. | `ddn-core.js` |
+| `ddn-projections` | 99,121 | 80,686 (29,309) | Fixed-grid projections: chart (basic marks plus the Category-2 pack — distributions, tree, grid, network families and statistical overlays), matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
+| `ddn-quality` | 25,030 | 18,413 (7,948) | Quality charts, fishbone causes, decision/rule-table rendering. | `ddn-graph.js` (renders through `ddn-projections.js`) |
+| `ddn-geo` | 24,217 | 16,355 (6,908) | **Optional** geographic module: mercator/equirectangular/albers/equal-earth projection math, GeoJSON ingestion, choropleth/symbol/outline map rendering. Registers the `geo` kind with `optional: true`. | `ddn-graph.js` |
+| `ddn-iso` | 23,644 | 14,483 (6,034) | **Optional** isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms. Publishes `DDNIso`; no new kind. | `ddn-graph.js` |
+| `ddn.global` | 1,379,759 | 1,133,890 (279,563) | All of the above **except** the optional `ddn-geo` and `ddn-iso`, plus the web component — one file, nothing to order. | — |
 
 The `.mjs` files are real ES modules (named exports for the live API and the
 internal namespaces); non-core `.mjs` files import their prerequisites
 automatically, and the package `sideEffects` annotation (`["dist/*.js"]`)
 lets downstream bundlers tree-shake them. A consumer bundling only the
-check-level API from `ddn-core.mjs` emits ≈640 KB instead of ≈876 KB for the
+check-level API from `ddn-core.mjs` emits ≈1,000 KB instead of ≈1,365 KB for the
 all-in-one (measured by `notation/tests/esm-dist.js`).
 
 Each modular bundle is additive: it registers itself with the previously

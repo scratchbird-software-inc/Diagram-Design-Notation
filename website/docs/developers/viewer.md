@@ -1,7 +1,7 @@
 # Viewer (retired)
 
-The single-file end-user viewer (`notation/viewer/ddn-viewer.html`, )
-was retired in  its features — fit modes, per-kind/verb/object colour
+The single-file end-user viewer (`notation/viewer/ddn-viewer.html`) was
+retired; its features — fit modes, per-kind/verb/object colour
 and typography overrides, click-to-select panels, `?src=` deep links, PNG
 export — live on in the **unified diagram tool**, served as
 `tools/index.html` (see [tool.md](tool.md)). The old URL

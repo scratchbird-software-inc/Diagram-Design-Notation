@@ -77,9 +77,9 @@ data model {
   group of the same kind; member order is preserved around local members.
 - `relation_props` — property sets for relation bodies only.
 - `preset` — property sets for any element/relation body and for view-level
-  `flow` blocks; a motion preset is a preset carrying the  motion keys.
+  `flow` blocks; a motion preset is a preset carrying the motion keys.
 - `fragment` — include-by-reference data members (unparameterized;
-  parameterized fragments are deferred, see `DDN-GAPS.md`).
+  parameterized fragments are deferred — see `DDN-GAPS.md`).
 
 Precedence: local in-declaration properties override presets; two presets
 conflicting on a property are a coded error (DDN-E017) unless the declaration
@@ -118,7 +118,7 @@ view sketch "Orders / workshop sketch" {
 - Layout algorithms, routing modes, crossings: `05-routing.md`,
   `15-placement-and-low-light.md`, `13-curved-relations.md`,
   `26-local-endpoint-ordering.md`.
-- Spacing hints (`tight`/`normal`/`loose`/`expanded`, ): registered in
+- Spacing hints (`tight`/`normal`/`loose`/`expanded`): registered in
   `standard/registry/capabilities.json`, behavior pinned by
   `notation/tests/spacing-hints.js`.
 - Publication sizes, subdiagrams, legends: `06-publication-and-subdiagrams.md`.
@@ -128,7 +128,7 @@ view sketch "Orders / workshop sketch" {
 `projection { kind: …; profile: "…"; … }` turns a view into a specific
 diagram family: `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`,
 `fishbone`, `decision`, `sequence`, `timing`, `geo`, or a specialised `graph`
-profile. All 98 installed profiles (12 projection kinds) are listed in
+profile. All 150 installed profiles (12 projection kinds) are listed in
 `standard/registry/profiles/catalogue.json` and each has a rendered example
 in the gallery (`website/examples/gallery/index.html`). The projection chapters:
 `16-profiles-and-projections.md` through `42-family-trees.md` (matrices and
@@ -150,4 +150,4 @@ operations the visual designer uses) are documented in
 itself is spec `16-workspace-and-editing.md`.
 
 More prose, lesson-style: `25-diagram-field-guide.md`. The largest
-collection of real sources to copy from is `website/examples/basics/` (01–60).
+collection of real sources to copy from is `website/examples/basics/` (numbered examples 01–108 plus support files).

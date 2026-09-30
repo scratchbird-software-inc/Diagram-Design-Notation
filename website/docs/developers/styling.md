@@ -1,6 +1,6 @@
 # Styling rendered diagrams
 
- added stable CSS class hooks to every rendered diagram plus an
+Every rendered diagram carries stable CSS class hooks to every rendered diagram plus an
 optional stylesheet, `notation/dist/ddn.css` (source:
 `notation/studio/src/ddn.css`). The contract: **page CSS fills the gaps the
 script left unset** — script-level presentation (format palette, look,
@@ -38,7 +38,7 @@ attribute selectors.
 
 ## Per-kind typography CSS
 
- added per-kind font overrides in the viewer, emitted as viewer-page
+Per-kind font overrides are also supported, emitted as viewer-page
 rules of the form:
 
 ```css

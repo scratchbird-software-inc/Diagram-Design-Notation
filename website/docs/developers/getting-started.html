@@ -41,7 +41,7 @@
   const result = ws.renderSync({ entry: &quot;hello.ddn&quot;, view: &quot;v&quot; });
   document.getElementById(&quot;diagram&quot;).innerHTML = result.svg;
 &lt;/script&gt;</code></pre>
-<p>That is a complete first render: create a workspace from a map of file names to source text, render a declared view synchronously, and place the returned SVG. Ten lines, and it works from <code>file://</code> because nothing is fetched. A single file can also carry the whole design — model, data, views and formats as several <code>module &quot;…&quot;;</code> sections (, see <code>website/examples/basics/61-self-contained.ddn</code>) — and <code>DDNLive.io.bundle(files, entry)</code> merges a multi-file workspace into one such self-contained file with byte-identical rendering.</p>
+<p>That is a complete first render: create a workspace from a map of file names to source text, render a declared view synchronously, and place the returned SVG. Ten lines, and it works from <code>file://</code> because nothing is fetched. A single file can also carry the whole design — model, data, views and formats as several <code>module &quot;…&quot;;</code> sections (see <code>website/examples/basics/61-self-contained.ddn</code>) — and <code>DDNLive.io.bundle(files, entry)</code> merges a multi-file workspace into one such self-contained file with byte-identical rendering.</p>
 <p>For an embedded, self-updating element use <code>DDNLive.mount</code> instead — see <a href="embedding.html">embedding.md</a>.</p>
 <h2>Node (<code>require</code>)</h2>
 <p>The package is published from <code>notation/</code> (<code>npm pack</code> there, then <code>npm install &lt;tarball&gt;</code>). Its <code>exports</code> map exposes both the all-in-one bundle and the modular splits:</p>

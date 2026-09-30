@@ -64,7 +64,7 @@ view the entry declares. Both authoring styles are kept side by side.
 - `gallery/` — generated full-coverage gallery: one pre-rendered SVG
   per installed profile (all 98) plus variation sheets (chart marks — flat and
   isometric — looks × palettes, routing × look, layout algorithms, spacing
-  levels, and the  isometric chart/graph plates, incl. the
+  levels, and the isometric chart/graph plates, including the
   multi-series iso bar) — 190 SVGs via
   the real CLI render path, a static `index.html` (no inlined runtime,
   `file://`-safe), and `coverage.json`, the machine-readable coverage map the

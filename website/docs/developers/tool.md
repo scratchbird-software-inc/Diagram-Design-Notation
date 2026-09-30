@@ -109,7 +109,7 @@ timelines, sequence, …) the buttons disable with an explaining tooltip — the
 same rule drag-to-pin already follows. The programmatic counterparts
 (`DDNTool.placeElement`, `DDNTool.connectElements`, `startPlacement`,
 `startConnect`, `cancelDesignGesture`, `getDesignGesture`) drive the same code
-paths for hosts and tests. `?mode=design&toolbar=off` plus the  host I/O
+paths for hosts and tests. `?mode=design&toolbar=off` plus the host I/O
 contract is the supported embedded-designer shape — see
 [embedding.md](embedding.md) → "Embedding the designer" and
 [examples/embed/designer-host.html](../../examples/embed/designer-host.html).
