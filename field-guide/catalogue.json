@@ -1,0 +1,586 @@
+{
+  "meta": {
+    "edition": "field-guide-0.7-pilot",
+    "runtime": "0.7.0",
+    "reviewed": "2026-09-30",
+    "chapterCount": 6,
+    "plannedChapterCount": 138,
+    "facts": {
+      "profiles": 150,
+      "projectionKinds": 12,
+      "totalKinds": 374,
+      "totalRelations": 185,
+      "iconPacks": 7,
+      "icons": 207
+    }
+  },
+  "lessons": [
+    {
+      "id": "whiteboard",
+      "title": "Whiteboard / discovery sketch",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/01-whiteboard.ddn",
+      "view": "diagram",
+      "what": "A preliminary map of named concepts and their relationships. An unspecified object deliberately leaves storage technology and detailed structure undecided; it is not an undocumented SQL table.",
+      "why": "Use this to expose disagreements about vocabulary before implementation choices obscure them. A shared sketch provides stable identities that can acquire fields, domains and deployment details later.",
+      "when": "Start an unfamiliar project or facilitate a meeting where participants need to agree on the important things before they agree on keys and types.",
+      "read": [
+        "Read the nouns in the boxes first.",
+        "Read each connecting verb as an assertion, not as an enforced foreign key.",
+        "An unselected element is out of scope for this sketch, not deleted from the model."
+      ],
+      "inputs": [
+        "Names understood by the participants",
+        "Relationship meanings and direction",
+        "Questions that have not been settled"
+      ],
+      "pitfalls": [
+        "Do not infer a table from every rectangle.",
+        "Do not treat proximity, colour, or a crossed line as a new fact."
+      ],
+      "limits": "This is an explanatory model, not an executed business system. A successful render does not establish implementation effectiveness or independent approval.",
+      "variants": [],
+      "refs": [],
+      "probe": [
+        "application",
+        "table",
+        "process"
+      ],
+      "editTask": "After the safe label change, review the names understood by the participants in the source. Change one additional documented assumption appropriate to this diagram, apply it and inspect every reported diagnostic.",
+      "tags": [
+        "sketch",
+        "concept",
+        "meeting"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/01-whiteboard.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "d00df3acff62fc8e85c1f5bfb7bfc3c94852e043f485b75cc93340000dda482c",
+        "modelFingerprint": "b3bed9a5d5af2063",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/01-whiteboard.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/sketch.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/01-whiteboard.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/sketch.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"01 / Whiteboard sketch\" {\n    data: [@s.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.sketch;\n    layout: @fmt.shared.row;\n    select: [@s.model.customer, @s.model.order, @s.model.shipment];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_a\": 1, \"model.r_b\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/01-whiteboard.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.sketch::model.customer",
+        "file": "website/examples/use-cases/01-whiteboard.ddn",
+        "before": "Customer",
+        "after": "Customer / review",
+        "expectation": "Only the label of Customer / review changes; identities, relations and every other declaration are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "d00df3acff62fc8e85c1f5bfb7bfc3c94852e043f485b75cc93340000dda482c",
+        "after": "e15fef5ca8ff1168874a5ea109bd3c482250cd51ca074a0d22de6bffa59ab20a",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "business-erd",
+      "title": "Conceptual business ER diagram",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/02-business-erd.ddn",
+      "view": "diagram",
+      "what": "Entities and the relationships between them at business level: names and cardinalities, no storage design.",
+      "why": "Agree on the things the business tracks before any schema discussion; the diagram is the vocabulary contract.",
+      "when": "Early domain workshops and any review where business stakeholders must confirm scope without reading SQL.",
+      "read": [
+        "Entities are nouns; relationships are verbs with cardinality marks.",
+        "Participation marks (zero/one/many) are claims about the domain, not constraints enforced here."
+      ],
+      "inputs": [
+        "The entities the business names",
+        "How they relate, in business words",
+        "Rough cardinalities"
+      ],
+      "pitfalls": [
+        "Do not start assigning datatypes here — that is the logical/physical stage.",
+        "A relationship without a business-readable verb is usually a missing entity."
+      ],
+      "limits": "Conceptual only: no keys, types or indexes are decided by this view.",
+      "variants": [],
+      "refs": [],
+      "probe": [
+        "entity",
+        "table",
+        "application"
+      ],
+      "editTask": "Rename one relationship verb so it reads in the business direction, apply, and check the legend and diagnostics.",
+      "tags": [
+        "erd",
+        "conceptual",
+        "domain"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/02-business-erd.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "c0f9737c422c83d912e6ce8e7b30ca94d4d27430d09020bc7f04d271911b1add",
+        "modelFingerprint": "0551dec45c11cbc2",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/02-business-erd.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/02-business-erd.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"02 / Business concepts\" {\n    data: [@c.concepts];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@c.concepts.customer, @c.concepts.order, @c.concepts.shipment];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"concepts.r_places\": 1, \"concepts.r_ships\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/02-business-erd.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::concepts.customer",
+        "file": "website/examples/use-cases/02-business-erd.ddn",
+        "before": "Customer",
+        "after": "Customer / review",
+        "expectation": "Only the label of Customer / review changes; identities and relationships are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "c0f9737c422c83d912e6ce8e7b30ca94d4d27430d09020bc7f04d271911b1add",
+        "after": "0d405bbdc60138a61db40baa06dc170f2f9d9ad6aaa44d64840232cc4e75947c",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "bpmn-collaboration",
+      "title": "BPMN collaboration / message flow between pools",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/basics/46-bpmn.ddn",
+      "view": "collaboration",
+      "what": "Two pools with their internal flows and the message flow between them: the classic BPMN collaboration picture.",
+      "why": "Make cross-organisation communication explicit without pretending one party controls the other.",
+      "when": "Whenever a process crosses an organisational boundary and responsibilities must stay visibly separate.",
+      "read": [
+        "Each pool owns its sequence flow; message flow only connects across pools.",
+        "A message flow inside one pool is a modeling error, not a style choice."
+      ],
+      "inputs": [
+        "The participants",
+        "The messages exchanged, in order",
+        "What each side does independently"
+      ],
+      "pitfalls": [
+        "Do not draw sequence flow between pools.",
+        "Do not hide a participant whose messages drive your process."
+      ],
+      "limits": "Notation coverage only: no execution, simulation or choreography conformance is claimed by this render.",
+      "variants": [],
+      "refs": [],
+      "probe": [
+        "bpmn.task",
+        "flow.process",
+        "bpmn.activity"
+      ],
+      "editTask": "Rename one message to describe the payload it carries (not the action), apply, and inspect diagnostics.",
+      "tags": [
+        "bpmn",
+        "collaboration",
+        "messages"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/46-bpmn.ddn",
+        "view": "collaboration",
+        "profile": "bpmn.basic@1",
+        "projection": "graph",
+        "sha256": "689b1d4f864909396517e9b9ebb9509238f03cafb89a4ca8350588a128a46852",
+        "modelFingerprint": "90414c1fb23d6cab",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/46-bpmn.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/46-bpmn.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view collaboration \"Buyer / seller collaboration\" {\n    data: [@quote]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"bpmn.basic@1\"; }\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n    frame buyer \"Buyer\" { x_pool: true; members: [@quote.start, @quote.request_quote, @quote.decide, @quote.failed]; }\n    frame seller \"Seller\" { x_pool: true; members: [@quote.receive, @quote.prepare_quote, @quote.sent]; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/46-bpmn.ddn and locate view collaboration. This selects existing data; it is not a stored SVG.",
+        "Inspect the bpmn.basic@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.bpmn::quote.request_quote",
+        "file": "website/examples/basics/46-bpmn.ddn",
+        "before": "Request quote",
+        "after": "Request quote / review",
+        "expectation": "Only the label of Request quote / review changes; pools, messages and flow identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "689b1d4f864909396517e9b9ebb9509238f03cafb89a4ca8350588a128a46852",
+        "after": "66a7eaa2a764d83d3d7271f6af5d4b98f676ed6f379d1c85a9f13e436b4e77b5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "bar-chart",
+      "title": "Bar chart — live records, keyed refresh",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/basics/59-data-refresh.ddn",
+      "view": "latency_chart",
+      "what": "A data-bound bar chart over a records block: the records are the source, the chart is a projection of them.",
+      "why": "Show that the chart is generated from data you can replace — the supported live-dashboard pattern is a transactional record swap, not an image swap.",
+      "when": "Any metric over categories where the numbers will change but the model must not.",
+      "read": [
+        "Bars read value against unit by category.",
+        "The source data block is one summary away in the Files panel."
+      ],
+      "inputs": [
+        "Category keys",
+        "Numeric values with units",
+        "A data block to own them"
+      ],
+      "pitfalls": [
+        "Do not edit the picture when the data is wrong — edit the records.",
+        "Do not reorder keyed records expecting identities to follow position."
+      ],
+      "limits": "Bounded native marks and finite JavaScript arithmetic; refresh replaces records, never structure.",
+      "variants": [],
+      "refs": [],
+      "experimentKind": "data",
+      "dataBlock": "metrics",
+      "probe": [
+        "application",
+        "record",
+        "entity"
+      ],
+      "editTask": "Use ws.replaceData on the metrics block with a second keyed payload, re-render, and confirm the model fingerprint is unchanged (data-only change).",
+      "tags": [
+        "chart",
+        "bar",
+        "refresh"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/59-data-refresh.ddn",
+        "view": "latency_chart",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "0d5461efd227e0468afa5c1cb47519402068201563ca1b9ec8e960d43b3ba63c",
+        "modelFingerprint": "165b1a279f8e3c3b",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/59-data-refresh.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/59-data-refresh.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view latency_chart \"Latency / chart\" {\n    data: [@metrics];\n    projection { kind: chart; profile: \"chart.basic@1\"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: \"x_record.label\"; y: \"x_record.value\"; unit: \"ms\"; width: 900px; height: 560px; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/59-data-refresh.ddn and locate view latency_chart. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.data-refresh::metrics.m1",
+        "file": "website/examples/basics/59-data-refresh.ddn",
+        "before": "metrics.m1 value 10",
+        "after": "metrics.m1 value 15",
+        "expectation": "Only the record's value changes from 10 to 15; the chart re-renders from the swapped records and undo restores the original payload."
+      },
+      "exerciseEvidence": {
+        "before": "0d5461efd227e0468afa5c1cb47519402068201563ca1b9ec8e960d43b3ba63c",
+        "after": "e7b4b2963fa7a194a140a44defc22f0e4020fc2a6ccba76384128ab53fe8b9a7",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "ladder",
+      "title": "IEC 61131-3 ladder diagram / relay logic",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/basics/101-ladder.ddn",
+      "view": "d",
+      "what": "Three rungs between the power rails: normally-open and normally-closed contacts driving coils, one coil per rung, a parallel OR branch, and a hosted function block.",
+      "why": "Ladder logic is the control-room reading of combinatorial logic: conditions left-to-right, one output per rung.",
+      "when": "Industrial control documentation where electricians and engineers share one reading of the wiring.",
+      "read": [
+        "Power flows conceptually left rail to right rail.",
+        "Contacts in series are AND; contacts stacked on parallel tracks are OR.",
+        "One rung drives exactly one coil — the validator enforces it."
+      ],
+      "inputs": [
+        "The signals (contacts)",
+        "The outputs (coils and their modes)",
+        "Rung order"
+      ],
+      "pitfalls": [
+        "A rung with two coils is an error, not a design.",
+        "Branches come from the wiring topology — you do not declare them."
+      ],
+      "limits": "Common-practice ladder rendering and validation; no PLC compilation, execution or IEC XML interchange.",
+      "variants": [],
+      "refs": [],
+      "probe": [
+        "ladder.contact",
+        "ladder.coil"
+      ],
+      "editTask": "Change the NC contact to NO (or vice versa) in the source, apply, and reason about the changed logic before reverting.",
+      "tags": [
+        "ladder",
+        "iec61131",
+        "control"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/101-ladder.ddn",
+        "view": "d",
+        "profile": "ladder.basic@1",
+        "projection": "graph",
+        "sha256": "999480ef7946012e165eec9d63fa1abd1d37498e66e603803d0502154494c28e",
+        "modelFingerprint": "904fc8ff4a532b8d",
+        "warnings": [
+          "DDN-LW05",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/101-ladder.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/101-ladder.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view d \"Motor control ladder\" {\n    data: [@rung1, @rung2, @rung3];\n    projection { profile: \"ladder.basic@1\"; }\n    layout { algorithm: ladder; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/101-ladder.ddn and locate view d. This selects existing data; it is not a stored SVG.",
+        "Inspect the ladder.basic@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.ladder::rung1.start",
+        "file": "website/examples/basics/101-ladder.ddn",
+        "before": "START",
+        "after": "START / review",
+        "expectation": "Only the label of START / review changes; rungs, contacts and the coil are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "999480ef7946012e165eec9d63fa1abd1d37498e66e603803d0502154494c28e",
+        "after": "4dc99733a1173320c40d3a6b39338eeac1e514f32068768854e16c00263759a0",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "decision-first",
+      "title": "Typed decision table — first match",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_first",
+      "what": "A typed decision table evaluated in first-match order: the first row whose conditions all match produces the outcome.",
+      "why": "Expose rule order as a deliberate design decision instead of an accident of presentation.",
+      "when": "Bounded business rules where precedence must be reviewable line by line.",
+      "read": [
+        "Read rows top-down: the first fully-matching row wins.",
+        "Type domains on each input gate what a row may claim."
+      ],
+      "inputs": [
+        "The input fields and their domains",
+        "The rule rows in priority order",
+        "The output column"
+      ],
+      "pitfalls": [
+        "Row order is normative here — reordering rows changes outcomes.",
+        "A gap in the domain is a silent fall-through, not a default row."
+      ],
+      "limits": "Bounded decision-table evaluation against one input record; no arbitrary rule-language execution.",
+      "variants": [],
+      "refs": [],
+      "probe": [
+        "decision.table",
+        "table",
+        "record"
+      ],
+      "editTask": "Evaluate the table against one input record with evaluateDecision, then swap two rows and evaluate again — the outcome difference is the lesson.",
+      "tags": [
+        "decision",
+        "rules",
+        "quality"
+      ],
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "decision_first",
+        "profile": "decision.rules@1",
+        "projection": "decision",
+        "sha256": "76eb5c19b17068d715a14b6dfd885035a6cf3f18e8eee7ef78512e8c669a5477",
+        "modelFingerprint": "5182e89444061c8a",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view decision_first \"14 / Disposition policy — first\" {\n    data: [@m.rules];\n    format: @f.shared.common;\n    projection { kind: \"decision\"; profile: \"decision.rules@1\"; records: [@m.rules.high, @m.rules.default, @m.rules.low_pass]; inputs: [{ \"key\": \"severity\", \"type\": \"enum\", \"values\": [\"low\", \"high\"] }, { \"key\": \"score\", \"type\": \"number\", \"min\": 0, \"max\": 10 }]; outputs: [\"route\", \"audit\"]; hit_policy: \"first\"; coverage: \"complete\"; analysis_budget: 4096; }\n    select: [@m.rules.high, @m.rules.default, @m.rules.low_pass];\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view decision_first. This selects existing data; it is not a stored SVG.",
+        "Inspect the decision.rules@1 profile and decision projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.quality.review::rules.high",
+        "file": "website/examples/quality/views.ddn",
+        "before": "High severity",
+        "after": "High severity / review",
+        "expectation": "Only the label of High severity / review changes; rules, domains and the evaluation contract are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "76eb5c19b17068d715a14b6dfd885035a6cf3f18e8eee7ef78512e8c669a5477",
+        "after": "86dec25ca71b9f235004d3abc2f7baa05dcd26346c53e902a2d12c36f137ed7e",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    }
+  ]
+}

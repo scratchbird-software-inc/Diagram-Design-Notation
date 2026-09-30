@@ -1,0 +1,131 @@
+{
+  "meta": {
+    "edition": "field-guide-0.7-pilot",
+    "runtime": "0.7.0",
+    "reviewed": "2026-09-30",
+    "chapterCount": 6,
+    "plannedChapterCount": 138,
+    "facts": {
+      "profiles": 150,
+      "projectionKinds": 12,
+      "totalKinds": 374,
+      "totalRelations": 185,
+      "iconPacks": 7,
+      "icons": 207
+    }
+  },
+  "profiles": 150,
+  "projectionKinds": 12,
+  "chapters": [
+    {
+      "id": "whiteboard",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/use-cases/01-whiteboard.ddn",
+      "view": "diagram",
+      "sha256": "d00df3acff62fc8e85c1f5bfb7bfc3c94852e043f485b75cc93340000dda482c"
+    },
+    {
+      "id": "business-erd",
+      "status": "native",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/use-cases/02-business-erd.ddn",
+      "view": "diagram",
+      "sha256": "c0f9737c422c83d912e6ce8e7b30ca94d4d27430d09020bc7f04d271911b1add"
+    },
+    {
+      "id": "bpmn-collaboration",
+      "status": "native",
+      "profile": "bpmn.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/46-bpmn.ddn",
+      "view": "collaboration",
+      "sha256": "689b1d4f864909396517e9b9ebb9509238f03cafb89a4ca8350588a128a46852"
+    },
+    {
+      "id": "bar-chart",
+      "status": "native",
+      "profile": "chart.basic@1",
+      "projection": "chart",
+      "entry": "website/examples/basics/59-data-refresh.ddn",
+      "view": "latency_chart",
+      "sha256": "0d5461efd227e0468afa5c1cb47519402068201563ca1b9ec8e960d43b3ba63c"
+    },
+    {
+      "id": "ladder",
+      "status": "native",
+      "profile": "ladder.basic@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/101-ladder.ddn",
+      "view": "d",
+      "sha256": "999480ef7946012e165eec9d63fa1abd1d37498e66e603803d0502154494c28e"
+    },
+    {
+      "id": "decision-first",
+      "status": "native",
+      "profile": "decision.rules@1",
+      "projection": "decision",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_first",
+      "sha256": "76eb5c19b17068d715a14b6dfd885035a6cf3f18e8eee7ef78512e8c669a5477"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "whiteboard",
+      "before": "d00df3acff62fc8e85c1f5bfb7bfc3c94852e043f485b75cc93340000dda482c",
+      "after": "e15fef5ca8ff1168874a5ea109bd3c482250cd51ca074a0d22de6bffa59ab20a",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "business-erd",
+      "before": "c0f9737c422c83d912e6ce8e7b30ca94d4d27430d09020bc7f04d271911b1add",
+      "after": "0d405bbdc60138a61db40baa06dc170f2f9d9ad6aaa44d64840232cc4e75947c",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "bpmn-collaboration",
+      "before": "689b1d4f864909396517e9b9ebb9509238f03cafb89a4ca8350588a128a46852",
+      "after": "66a7eaa2a764d83d3d7271f6af5d4b98f676ed6f379d1c85a9f13e436b4e77b5",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "bar-chart",
+      "before": "0d5461efd227e0468afa5c1cb47519402068201563ca1b9ec8e960d43b3ba63c",
+      "after": "e7b4b2963fa7a194a140a44defc22f0e4020fc2a6ccba76384128ab53fe8b9a7",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "ladder",
+      "before": "999480ef7946012e165eec9d63fa1abd1d37498e66e603803d0502154494c28e",
+      "after": "4dc99733a1173320c40d3a6b39338eeac1e514f32068768854e16c00263759a0",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "decision-first",
+      "before": "76eb5c19b17068d715a14b6dfd885035a6cf3f18e8eee7ef78512e8c669a5477",
+      "after": "86dec25ca71b9f235004d3abc2f7baa05dcd26346c53e902a2d12c36f137ed7e",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    }
+  ]
+}

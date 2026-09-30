@@ -1,0 +1,61 @@
+{
+  "runtime": "0.7.0",
+  "examples": [
+    {
+      "chapter": "whiteboard",
+      "entry": "website/examples/use-cases/01-whiteboard.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/01-whiteboard.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/sketch.ddn"
+      ]
+    },
+    {
+      "chapter": "business-erd",
+      "entry": "website/examples/use-cases/02-business-erd.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/02-business-erd.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ]
+    },
+    {
+      "chapter": "bpmn-collaboration",
+      "entry": "website/examples/basics/46-bpmn.ddn",
+      "view": "collaboration",
+      "files": [
+        "website/examples/basics/46-bpmn.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "bar-chart",
+      "entry": "website/examples/basics/59-data-refresh.ddn",
+      "view": "latency_chart",
+      "files": [
+        "website/examples/basics/59-data-refresh.ddn"
+      ]
+    },
+    {
+      "chapter": "ladder",
+      "entry": "website/examples/basics/101-ladder.ddn",
+      "view": "d",
+      "files": [
+        "website/examples/basics/101-ladder.ddn"
+      ]
+    },
+    {
+      "chapter": "decision-first",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_first",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    }
+  ]
+}

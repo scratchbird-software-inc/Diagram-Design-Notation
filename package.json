@@ -10,7 +10,7 @@
     "designer"
   ],
   "scripts": {
-    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site && npm run test:brand && npm run test:ai-reference && npm run test:normalize && npm run test:submission && npm run test:benchmark",
+    "test": "npm --prefix notation test && npm run test:packaging && npm --prefix designer test && npm run test:site && npm run test:brand && npm run test:ai-reference && npm run test:normalize && npm run test:submission && npm run test:field-guide && npm run test:benchmark",
     "test:benchmark": "node --expose-gc tools/benchmark.mjs --smoke",
     "benchmark": "node --expose-gc tools/benchmark.mjs",
     "test:normalize": "node tests/normalize-ddn.js",
@@ -25,7 +25,8 @@
     "build:site": "node website/build-site.mjs",
     "serve": "node tools/serve.js",
     "build:tool": "node tools/build-tool.js",
-    "test:submission": "node tests/submission-freshness.js"
+    "test:submission": "node tests/submission-freshness.js",
+    "test:field-guide": "node tests/field-guide.js"
   },
   "engines": {
     "node": ">=22"
