@@ -1,7 +1,7 @@
 # DDNA — DDN with Automation · proposed open standard (draft, pre-1.0)
 
 **Status:** full draft skeleton, 2026-09-29. All twelve chapters and the
-appendix are full drafts. Per-family chapters: batch 1 (EM-1..EM-3) landed under `ddna/families/`; batch 2 (EM-4..EM-6 + no-standard one-pagers) is a follow-on work item.
+appendix are full drafts. Per-family chapters: the full program has landed under `ddna/families/` (twelve chapters covering all six execution-model classes plus the no-standard families; tier-3 gated families excepted, chapter 12 §1).
 
 ## Scope
 
@@ -63,6 +63,12 @@ inert metadata to a DDN-only tool.
 | `families/sdl.md` | Family chapter: SDL-2010 (special position) | full draft |
 | `families/dmn.md` | Family chapter: DMN 1.4 (EM-2) | full draft |
 | `families/cmmn.md` | Family chapter: CMMN 1.1 (EM-3) | full draft |
+| `families/uml-interactions.md` | Family chapter: UML interactions (EM-4) | full draft |
+| `families/msc.md` | Family chapter: MSC/HMSC, Z.120 (EM-4) | full draft |
+| `families/sysml-parametrics.md` | Family chapter: SysML 1.6 parametrics (EM-5) | full draft |
+| `families/soaml.md` | Family chapter: SoaML 1.0.1 (EM-6) | full draft |
+| `families/uaf.md` | Family chapter: UAF 1.2 (EM-5) | full draft |
+| `families/no-standard-families.md` | Combined chapter: ER, DFD, EPC, C4, mind maps, presentation families | full draft |
 
 Citation convention: normative claims cite the analysis file in the DDNA
 analysis corpus and, through it, the underlying standard's clause, e.g.

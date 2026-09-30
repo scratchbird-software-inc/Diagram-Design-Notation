@@ -69,6 +69,8 @@ instrumentation [DT; replay VS] core.
 
 ## 8.5 EM-4 — trace-set families (interactions, MSC)
 
+*Normative family chapters: `families/uml-interactions.md`, `families/msc.md`.*
+
 **UML interactions:** F-INT-1 trace validation against the [P, I]
 semantics (three-valued verdict) [DT] core — **the family's distinctive
 feature, possible only because interactions are trace-set
@@ -88,6 +90,8 @@ graph-over-traces) · F-MSC-4 timer/time-constraint checker over the
 virtual clock [DT] core.
 
 ## 8.6 EM-5 — spec-delegated families (SysML, UAF)
+
+*Normative family chapters: `families/sysml-parametrics.md`, `families/uaf.md`.*
 
 **SysML:** F-SYS-1 recorded solver-trace replay (value assignments,
 constraint fires, fixpoint, mode switches; engine stamped) [VS] core ·
@@ -109,6 +113,8 @@ evaluation via KEEL [DT] optional · F-UAF-6 what-if / trade-off comparator
 
 ## 8.7 EM-6 — conformance-specification family (SoaML)
 
+*Normative family chapter: `families/soaml.md`.*
+
 F-SOA-1 recorded service-enactment replay over bound choreography views
 [VS] core · F-SOA-2 milestone-instrumented recorder + progress overlay
 [DT/VS] core · F-SOA-3 full §6.4.15 ServiceChannel compatibility checker
@@ -118,6 +124,8 @@ interpretation id recorded) [DT] core · F-SOA-5 correlated multi-instance
 conversation simulation (isID keys) [DT] optional.
 
 ## 8.8 Special position — SDL
+
+*Normative family chapter: `families/sdl.md`.*
 
 F-SDL-1 SAM-mirroring simulator/stepper (macro = one transition; micro =
 one SAM phase) [DT] core · F-SDL-2 timer service with virtual clock
@@ -129,6 +137,8 @@ bridge (SDL consume/output events rendered as MSC) [DT] core —
 format.**
 
 ## 8.9 No-standard families
+
+*Combined family chapter: `families/no-standard-families.md`.*
 
 ER/Chen, DFD, EPC, C4, mind maps, org charts, timelines, VSM, network:
 every feature is **[DD] DDNA-defined** — no normative semantics exists to

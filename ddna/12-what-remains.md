@@ -35,10 +35,10 @@ uncovered inventory entries of that hole.
 1. **DATA A-vs-C final selection** — the one deferred runtime choice
    (chapter 7 §7.2); to be settled as the per-family chapters show which
    facets are actually distinct.
-2. **Per-family chapter authoring** — batch 1 (EM-1..EM-3) landed under
-   `ddna/families/` (six chapters); batch 2 (EM-4..EM-6 plus the
-   no-standard one-pagers) remains, then core/optional tags in chapter 8
-   get their final form.
+2. **Per-family chapter authoring** — **complete**: twelve chapters under
+   `ddna/families/` cover all six execution-model classes plus the
+   no-standard families (tier-3 gated families excepted, §1). Remaining
+   here: core/optional tags in chapter 8 get their final form.
 3. **Interactive view state** — out of v1 (D2), with an explicit
    revisit-after-replay note.
 4. **Shared converter core licensing** — open vs dual-licensed (D9 names
@@ -87,8 +87,8 @@ drafting notes only (the README's citation convention).
 
 1. **Owner review of this skeleton** (12 chapters + appendix) — gate for
    per-family work.
-2. **Per-family chapters** — catalog features finalized, DATA A-vs-C
-   settled, family claims tables expanded from chapter 3.
+2. **Feature finalization** — catalog core/optional tags finalized against
+   the landed family chapters; DATA A-vs-C settled.
 3. **The DDNA file format itself** — the expansion-file grammar (association
    declarations, feature definitions in the feature-id space, trace
    blocks, expression references), designed against chapters 1, 4, 5 and
