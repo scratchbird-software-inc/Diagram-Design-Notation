@@ -1,0 +1,122 @@
+{
+  "generated": "build-submission.mjs — every entry carries its source path",
+  "registry": {
+    "coreKinds": {
+      "value": 152,
+      "source": "standard/registry/catalogue.json (kinds)"
+    },
+    "coreRelations": {
+      "value": 91,
+      "source": "standard/registry/catalogue.json (relationships)"
+    },
+    "profileKinds": {
+      "value": 222,
+      "source": "standard/registry/profiles/catalogue.json (kinds)"
+    },
+    "profileRelations": {
+      "value": 94,
+      "source": "standard/registry/profiles/catalogue.json (relationships)"
+    },
+    "totalKinds": {
+      "value": 374,
+      "source": "computed: coreKinds + profileKinds"
+    },
+    "totalRelations": {
+      "value": 185,
+      "source": "computed: coreRelations + profileRelations"
+    },
+    "shapes": {
+      "value": 14,
+      "source": "standard/registry/profiles/catalogue.json (shapes)"
+    }
+  },
+  "profiles": {
+    "installed": {
+      "value": 150,
+      "source": "standard/registry/profiles/catalogue.json (profiles)"
+    },
+    "projectionKinds": {
+      "value": 12,
+      "source": "notation/runtime/ddn-core.js (CHOICES.projection.kind)"
+    },
+    "byProjection": {
+      "value": {
+        "graph": 85,
+        "chen": 2,
+        "matrix": 8,
+        "panels": 12,
+        "table": 1,
+        "chart": 30,
+        "timeline": 1,
+        "fishbone": 1,
+        "decision": 1,
+        "sequence": 4,
+        "timing": 2,
+        "geo": 3
+      },
+      "source": "standard/registry/profiles/catalogue.json (profiles, grouped by projection)"
+    }
+  },
+  "extensions": {
+    "contracts": {
+      "value": 68,
+      "source": "notation/runtime/ddn-profiles.js (extension_contracts … = def)"
+    }
+  },
+  "icons": {
+    "packs": {
+      "value": 7,
+      "source": "standard/registry/icon-packs/index.json"
+    },
+    "icons": {
+      "value": 207,
+      "source": "standard/registry/icon-packs/*.json (icons)"
+    },
+    "perPack": {
+      "value": {
+        "network-generic@1": 20,
+        "vsm-symbols@1": 16,
+        "pid-common@1": 36,
+        "electrical-common@1": 32,
+        "tabler-infra@1": 50,
+        "iconoir-infra@1": 49,
+        "generic-demo@1": 4
+      },
+      "source": "standard/registry/icon-packs/*.json"
+    },
+    "mitPacks": {
+      "value": 2,
+      "source": "standard/registry/icon-packs/*.json (license)"
+    }
+  },
+  "diagnostics": {
+    "documentedFixes": {
+      "value": 124,
+      "source": "tools/ai-reference/diagnostic-fixes.json (fixes)"
+    }
+  },
+  "docs": {
+    "specChapters": {
+      "value": 53,
+      "source": "standard/specification/*.md"
+    },
+    "schemas": {
+      "value": 8,
+      "source": "standard/schemas/*.schema.json"
+    },
+    "ddnaChapters": {
+      "value": 14,
+      "source": "ddna/*.md (incl. README + appendix)"
+    },
+    "ddnaFamilyChapters": {
+      "value": 12,
+      "source": "ddna/families/*.md"
+    }
+  },
+  "licensing": {
+    "mitAttributions": {
+      "value": 2,
+      "source": "NOTICE.md (MIT License mentions)"
+    }
+  }
+}

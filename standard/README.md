@@ -20,6 +20,9 @@ implements this directory; anything here outranks the implementation.
   `profiles/catalogue.json` (24 installed versioned profiles).
 - `plates/` — SVG notation plates (kinds, facets, relationships, looks).
 - `governance/` — RFC template and versioning policy; change process lives here.
+- `submission/` — generated standards-body submission drafts for DDN and
+  DDNA (2026 draft, pre-submission; regenerate with
+  `node tools/build-submission.mjs`, drift-checked by the test suite).
 - `decisions/` — (reserved) project-level ADRs; designer ADRs live in
   `../designer/decisions/`.
 
