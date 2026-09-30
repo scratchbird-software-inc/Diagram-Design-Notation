@@ -524,6 +524,7 @@ function indexHtml(chapters, meta) {
 <li><strong>Model first:</strong> <a href="lessons/whiteboard.html">Whiteboard sketch</a> → <a href="lessons/business-erd.html">Conceptual ER</a> — agree on the nouns before the verbs.</li>
 <li><strong>Processes:</strong> <a href="lessons/bpmn-collaboration.html">BPMN collaboration</a> → <a href="lessons/ladder.html">IEC 61131-3 ladder</a> — two control-world readings of logic.</li>
 <li><strong>Data to decisions:</strong> <a href="lessons/bar-chart.html">Bar chart with keyed refresh</a> → <a href="lessons/decision-first.html">First-match decision table</a> — records in, verdicts out.</li>
+<li><strong>Let an AI do the typing:</strong> paste the <a href="../download/DDN-AI-REFERENCE.md">AI authoring reference</a> into your chat AI, describe the diagram, and paste the DDN it writes back into any chapter's source drawer — or straight into the tool.</li>
 </ol></section>
 <section id="chapters" class="card"><h3>Chapters (${meta.chapters})</h3><input id="search" class="search" type="search" placeholder="Search chapters…" aria-label="Search chapters">
 <div id="nav-list" class="nav-list">${Object.entries(byCat).map(([cat, cs]) => `<h4>${esc(cat)}</h4>` + cs.map(c => `<a href="lessons/${c.id}.html" data-text="${esc((c.title + ' ' + c.tags.join(' ')).toLowerCase())}">${esc(c.title)}</a>`).join('')).join('')}</div></section>

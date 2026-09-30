@@ -285,6 +285,12 @@ writeOut('plates/index.html',
 copyOut('license/LICENSE', path.join(REPO, 'LICENSE'));
 copyOut('license/NOTICE.md', path.join(REPO, 'NOTICE.md'));
 
+/* AI authoring reference (B1-030/B1-047): assembled fresh from the registry
+ * and runtime sources at every site build — the served file cannot drift.
+ * The ```ddn examples inside it are validated by tests/ai-reference.js. */
+const AI_REFERENCE = (await import(path.join(REPO, 'tools/build-ai-reference.mjs'))).assemble({ validate: false });
+writeOut('download/DDN-AI-REFERENCE.md', AI_REFERENCE.text);
+
 /* ------------------------------------------------------- standalone mirrors */
 
 // Unified diagram tool (B1-027): single self-contained file, no relative refs.
@@ -416,6 +422,7 @@ const demoScript = '(function(){\n' +
   '})();';
 
 const homeCards = [
+  ['download/DDN-AI-REFERENCE.md', 'AI authoring reference — let a chat AI write your DDN', 'The whole dialect in one generated file: paste it into Claude, ChatGPT or any chat AI, describe your diagram in plain language, and paste the DDN it writes into the tool. The validator catches mistakes by code.', 'generated · always current'],
   ['guide/index.html', 'Diagram field guide — read, change, verify', GUIDE_CHAPTER_COUNT + ' chapters: every major notation family and chart type as a live, source-editable example with a guided first edit whose render-changing evidence is shipped in the page. Also as one self-contained portable file.', 'live · works offline'],
   ['gallery/index.html', 'Gallery — full notation coverage and every example', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + '), variation sheets (every chart mark flat and isometric, look × palette, routing × style, layout algorithm, spacing level), and the complete example corpus — every runnable .ddn the project ships — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
   ['tools/index.html?mode=design', 'Designer — the tool in design mode', 'The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.', 'standalone · no server'],
@@ -591,6 +598,14 @@ writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<table>\n<thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>\n' + distRows.join('\n') + '\n</tbody></table>\n' +
   '<h2>Field guide</h2>\n' +
   '<p>The <a href="../guide/index.html">Diagram Field Guide</a> (' + GUIDE_CHAPTER_COUNT + ' chapters) also ships as <a href="../guide/portable.html">one portable, self-contained HTML file</a> — the whole edition: live examples, guided edits and the full runtime inlined; save it and it works offline.</p>\n' +
+  '<h2>AI authoring reference</h2>\n' +
+  '<p><a href="DDN-AI-REFERENCE.md"><strong>DDN-AI-REFERENCE.md</strong></a> (' + Math.round(Buffer.byteLength(AI_REFERENCE.text, 'utf8') / 1024) + ' KiB, regenerated from the registry at every site build) is the whole DDN dialect in one file — vocabulary, properties, projections, all ' + AI_REFERENCE.diagnosticCount + ' diagnostic codes with fixes, the full grammar, and two dozen worked recipes — written so a chat AI can author valid DDN from it. How to use it:</p>\n' +
+  '<ol>\n' +
+  '  <li>Download <a href="DDN-AI-REFERENCE.md">the reference file</a>.</li>\n' +
+  '  <li>Paste it into your AI chat (Claude, ChatGPT, …) or attach it as context.</li>\n' +
+  '  <li>Describe the diagram you want in plain language — the AI writes the DDN source.</li>\n' +
+  '  <li>Paste that source into the <a href="../tools/index.html">live tool</a> — it renders immediately, and the validator catches anything the AI got wrong, by code.</li>\n' +
+  '</ol>\n' +
   '<h2>License</h2>\n<p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>'));
 
 // License page.
