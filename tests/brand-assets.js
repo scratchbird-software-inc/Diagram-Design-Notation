@@ -49,7 +49,7 @@ test('website shell pages carry the logo, favicons, wordmark, and ScratchBird fo
   assert.ok(home.includes('>ddn<small>Diagram Design Notation</small>'), 'wordmark missing');
   assert.ok(home.includes('assets/brand/scratchweaver.svg'), 'sponsor mark missing from footer');
   assert.ok(home.includes('ScratchWeaver-sponsored') || home.includes('ScratchWeaver project'), 'ScratchWeaver sponsor framing missing');
-  assert.ok(home.includes('ScratchWeaver</strong>-sponsored open-source project') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
+  assert.ok(home.includes('ScratchWeaver</strong></a>-sponsored open-source project') && home.includes('href="https://scratchbird.ca/weaver"') && home.includes('href="https://www.scratchbird.ca"'), 'footer provenance/link missing');
   const download = fs.readFileSync(path.join(root, 'website/download/index.html'), 'utf8');
   assert.ok(download.includes('open-source Diagram Design Notation project'), 'download page does not name the project');
 });

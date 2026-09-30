@@ -2,11 +2,11 @@
 
 ## ddn — the Diagram Design Notation project
 
-**ddn** (Diagram Design Notation) is an open-source diagram dialect sponsored by the **ScratchWeaver** project at **[ScratchBird Software Inc.](https://www.scratchbird.ca)**. The free tools are **ddn-viewer** (display and verify .ddn diagrams) and **ddn-designer** (simple edits and small diagrams). The free tools ship the complete notation and rendering core — only tool depth differs from the commercial offerings.
+**ddn** (Diagram Design Notation) is an open-source diagram dialect sponsored by the **[ScratchWeaver](https://scratchbird.ca/weaver)** project at **[ScratchBird Software Inc.](https://www.scratchbird.ca)**. The free tools are **ddn-viewer** (display and verify .ddn diagrams) and **ddn-designer** (simple edits and small diagrams). The free tools ship the complete notation and rendering core — only tool depth differs from the commercial offerings.
 
 Sister project: [ScratchBird on GitHub](https://github.com/scratchbird-software-inc/ScratchBird) ([wiki](https://github.com/scratchbird-software-inc/ScratchBird/wiki)).
 
-The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **ScratchWeaver** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **[ScratchRobin](https://github.com/scratchbird-software-inc/CDEadmin)** is the commercial database console / BI / analytics package that owns backend capabilities such as KEEL. KEEL is not part of ddn, ddn-viewer, or ddn-designer, and never will be.
+The product family: **ddn / ddn-viewer / ddn-designer** (this open-source project, sponsored by ScratchWeaver); **[ScratchWeaver](https://scratchbird.ca/weaver)** is also the commercial full diagramming suite (subscription, some on-site licensing) built on ddn as its file format; **[ScratchRobin](https://github.com/scratchbird-software-inc/CDEadmin)** is the commercial database console / BI / analytics package that owns backend capabilities such as KEEL. KEEL is not part of ddn, ddn-viewer, or ddn-designer, and never will be.
 
 A simple script language that allows complex diagrams to be created with just a few lines of text.  
 
