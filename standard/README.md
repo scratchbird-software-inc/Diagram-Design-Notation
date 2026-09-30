@@ -17,7 +17,7 @@ implements this directory; anything here outranks the implementation.
   (152 object kinds, 90 relation verbs, 118 facets at 0.7.0),
   `capabilities.json`, `data-properties.json`, `relation-constraints.json`,
   `extensions.json`, `glyph-library.svg`, `text-metrics.json`, and
-  `profiles/catalogue.json` (24 installed versioned profiles).
+  `profiles/catalogue.json` (150 installed versioned profiles).
 - `plates/` — SVG notation plates (kinds, facets, relationships, looks).
 - `governance/` — RFC template and versioning policy; change process lives here.
 - `submission/` — generated standards-body submission drafts for DDN and

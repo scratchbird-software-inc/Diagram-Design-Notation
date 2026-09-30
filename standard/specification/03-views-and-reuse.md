@@ -26,7 +26,7 @@ A view or a bundle may also declare `spacing: tight|normal|loose|expanded` direc
 
 ## Display versus authorization
 
-`fields:none`, limited `depth`, hidden domains, hidden samples and omitted badges change presentation only. Full private resolution still contains the model. Public output MUST use an explicit `export {mode:redacted; ...}` profile; it is not inferred from a sparse view.
+`fields:none`, limited `depth`, hidden domains, hidden samples and omitted badges change presentation only. Full private resolution still contains the model. Public output MUST use an explicit `export {mode:redacted;...}` profile; it is not inferred from a sparse view.
 
 ## Appearance constraints
 

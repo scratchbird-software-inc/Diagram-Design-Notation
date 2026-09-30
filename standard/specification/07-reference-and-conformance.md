@@ -1,6 +1,6 @@
 # DDN 0.5 — Executable capability matrix
 
-`registry/capabilities.json` is generated from runtime constants. `tools/build-capabilities.js` is the sole producer of formatting enum lists. Documentation must not advertise an accepted value that has no implementation or explicit diagnostic.
+`registry/capabilities.json` is maintained in lockstep with the runtime constants (the language CHOICES in `notation/runtime/ddn-core.js`); the drift between an advertised value and an implemented one is covered by the capability tests. Documentation must not advertise an accepted value that has no implementation or explicit diagnostic.
 
 | Area | Reference support | Important boundary |
 |---|---|---|
@@ -21,7 +21,7 @@ The core mechanisms above are shared with `fishbone.basic@1`, `matrix.heatmap@1`
 
 ## Verification reports
 
-Current tests are `tests/core-report.json`, `validation/0.3-regressions.json`, the use-case/session reports, and `enterprise-review/validation/`. The original 0.2 failure evidence lives only under `history/0.2-enterprise/`. Tests corrected from old “unsupported” expectations now assert the implemented behavior; the original assertions remain in the historical Git baseline evidence where applicable.
+Current evidence lives in `notation/tests/` (the full suite, per-profile compliance and showcase tests), `notation/tests/validation/` (generated validation reports), and `release/validation/` (build manifests). The original 0.2 failure evidence lives only in the historical Git baseline. Tests corrected from old “unsupported” expectations now assert the implemented behavior; the original assertions remain in the historical Git baseline evidence where applicable.
 
 The enterprise geometry scanner tests emitted SVG-scene coordinates independently of the router. No route-through-box, overlapping object, overlapping callout, independent collinear trunk, or callout-versus-unrelated-route hit is accepted in that corpus. This is corpus evidence, not a universal proof for all possible input graphs.
 

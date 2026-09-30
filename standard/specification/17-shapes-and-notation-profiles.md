@@ -7,7 +7,7 @@
 
 ## 17.1 Geometry contract
 
-`reference/ddn-shapes.js` separates measurement, drawing and attachment. Each recipe provides a visible contour, a conservative rectangular collision envelope, content/label space, measured minimum dimensions and permitted boundary anchors. Endpoint placement uses the actual contour for circles, ellipses, diamonds and sloped sides rather than the invisible rectangle. The existing router continues to avoid conservative obstacle envelopes.
+`notation/runtime/ddn-shapes.js` separates measurement, drawing and attachment. Each recipe provides a visible contour, a conservative rectangular collision envelope, content/label space, measured minimum dimensions and permitted boundary anchors. Endpoint placement uses the actual contour for circles, ellipses, diamonds and sloped sides rather than the invisible rectangle. The existing router continues to avoid conservative obstacle envelopes.
 
 The initial reusable recipes are rectangle, rounded rectangle, terminal, decision diamond, ellipse, circle, parallelogram, wavy document, predefined-process frame, data store, actor, package tab and component frame. Existing DDN note, frame, sample and card shapes remain available. This is a compositional implementation, not a source-level arbitrary SVG drawing language.
 
@@ -101,7 +101,7 @@ Selecting a source-bound shape or matrix/chart mark navigates to its semantic so
 
 ## Reference boundary
 
-OMG UML 2.5.1 separately publishes its formal specification, abstract syntax and diagram interchange resources: https://www.omg.org/spec/UML/2.5.1/About-UML . This profile was designed to cover a declared structural subset; it does not claim to implement all those normative resources. The traditional DFD and Chen illustrations similarly identify their intentional exclusions rather than using familiar silhouettes as a conformance claim.
+OMG UML 2.5.1 separately publishes its formal specification, abstract syntax and diagram interchange resources: https://www.omg.org/spec/UML/2.5.1/About-UML. This profile was designed to cover a declared structural subset; it does not claim to implement all those normative resources. The traditional DFD and Chen illustrations similarly identify their intentional exclusions rather than using familiar silhouettes as a conformance claim.
 
 ## 17.9 Component and composite-structure diagrams (profile `uml.composite@1`)
 
@@ -129,8 +129,7 @@ metaclass) carries the new filled-triangle end mark; `uml.application`
 
 ## 17.13 ISO 5807 flowcharts (flow.iso5807@1)
 
-`flow.iso5807@1` ships the full ISO 5807 (1985) flowchart symbol set
-(B1-075). The `flow.basic@1` vocabulary (terminator, process, decision, IO,
+`flow.iso5807@1` ships the full ISO 5807 (1985) flowchart symbol set. The `flow.basic@1` vocabulary (terminator, process, decision, IO,
 document, predefined process, connector, storage, annotation) is extended
 with thirteen kinds: `flow.manualinput` (sloped-top quadrilateral),
 `flow.manualop` (trapezoid), `flow.preparation` (hexagon, silhouette
@@ -271,23 +270,29 @@ tests `vsm-compliance.js` + `vsm-showcase.js`.
 
 ## 17.21 Icon-library mechanism (x_icon, generic-demo@1)
 
-Named SVG icon asset sets bind to kinds: `standard/registry/icon-libraries.json`
-declares libraries; an icon entry names an SVG asset and may list kinds it
-binds to by default. Any node can also carry
-`x_icon: { library: "<id>", icon: "<id>" }` explicitly. The renderer draws the
-referenced icon inside the node's top area, ids namespaced per node
-(`ddn-icon` group). Because libraries are user-supplied SVG rendered into the
-page, every asset is **sanitized at load time** (`DDN-PJ207`): scripts,
-`foreignObject`, iframes/embeds/objects, images, event handlers
-(`on*=`/`onload`), `href`/`xlink:href` (including local `<use>` references —
-icons must inline everything), `javascript:` and CSS `url` are all
-rejected, non-SVG payloads are rejected, and each icon is capped at 20 KiB.
-Unknown references fail as `DDN-PJ206`. The built-in `generic-demo@1` set
-(cloud, server, database, user — agent-drawn simple glyphs) proves the
-mechanism and binds to `network.bus`/`network.server`/`network.rack`.
-**Vendor packs (Cisco/AWS/Azure/GCP) are explicitly excluded** — their
-licensing diligence is a separate task. Example:
-`website/examples/basics/98-icons.ddn`; tests `icons-compliance.js` +
+Named SVG icon asset sets bind to kinds: `standard/registry/icon-packs/`
+declares the packs as `ddn-icon-pack@1` documents (one JSON file per pack
+plus an ordered `index.json`; the open format is specified in chapter 49).
+An icon entry names an SVG asset and may list kinds it binds to by default.
+Any node can also carry `x_icon: { library: "<id>", icon: "<id>" }`
+explicitly. The renderer draws the referenced icon inside the node's top
+area, ids namespaced per node (`ddn-icon` group). Because packs are
+user-supplied SVG rendered into the page, every icon is **sanitized before
+it can render** (`DDN-PJ207`): scripts, `foreignObject`,
+iframes/embeds/objects, images, event handlers (`on*=`/`onload`),
+`href`/`xlink:href` (including local `<use>` references — icons must inline
+everything), `javascript:` and CSS `url` are all rejected, non-SVG payloads
+are rejected, and each icon is capped at 20 KiB. Unknown references fail as
+`DDN-PJ206`. Seven packs ship: `network-generic@1` (20 icons, bound by
+default to `network.bus`/`network.switch`/`network.server`/`network.rack`),
+`vsm-symbols@1` (16, bound to the `vsm.*` kinds), `pid-common@1` (36),
+`electrical-common@1` (32), the curated MIT selections `tabler-infra@1`
+(50) and `iconoir-infra@1` (49), and the original `generic-demo@1` set (4).
+Host applications may register their own packs at runtime
+(`registerIconPack` — validated and sanitized identically). **Vendor packs
+(Cisco/AWS/Azure/GCP) are explicitly excluded** — their licensing diligence
+is a separate task. Example: `website/examples/basics/98-icons.ddn` and the
+per-pack galleries `102`–`107`; tests `icons-compliance.js` +
 `icons-showcase.js`.
 
 ## 17.22 SDL — system and process diagrams (sdl.basic@1, sdl.process@1)

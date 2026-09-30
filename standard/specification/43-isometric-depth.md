@@ -1,7 +1,6 @@
 # 43. Isometric depth (optional ddn-iso module)
 
-Status: implemented in runtime 0.7.0 (B1-034; multi-series quality
-charts B1-036). Source grammar remains
+Status: implemented in runtime 0.7.0. Source grammar remains
 DDN 0.5; views without `iso`/`depth` render byte-identical SVG to previous
 releases. Scope: `graph` and `chart` projections. All rendering is pure SVG —
 no WebGL, canvas or 3D engine.
@@ -16,7 +15,7 @@ the `DDNIso` namespace and registers no projection kind; the engine routes
 
 - an `iso: true` view renders a visible inline placeholder ("Isometric view
  requires ddn-iso.js") plus the coded `DDN-E010` diagnostic — the same
- owner-directed exception path as the geographic module (B1-025);
+ owner-directed exception path as the geographic module;
 - a `depth` property without the module degrades to the flat render plus a
  coded `DDN-E010` warning on the diagnostics channel — never a crash.
 
@@ -68,7 +67,7 @@ flat face plus top/front/side faces. Axis labels and grid stay flat-overlayed.
 Other marks warn (`DDN-ISOW01`) and render flat.
 
 Multi-series views (`series:`/`arrangement:` on `chart.quality@1`) plan through
-the quality renderer; the same extrusion applies there (B1-036): one column per
+the quality renderer; the same extrusion applies there: one column per
 series point for bar layers, one ribbon per series for area layers. Each series
 sits on its own depth plane — geometry translated by `li·depth` along the
 extrusion vector — so coincident faces never z-fight, and all marks emit in one
@@ -90,7 +89,7 @@ flat-view devices and are omitted in iso graph views (`DDN-ISOW02`).
 
 ## Refresh-driven depth transitions (D6)
 
-Keyed refresh (`ws.replaceData`, B1-029) of a bound depth field re-renders with
+Keyed refresh (`ws.replaceData`) of a bound depth field re-renders with
 the new heights; a same-values refresh re-renders byte-identical. Hosts pass
 the previous committed depths as `renderSync({isoFrom:{depths}})` and ddn-iso
 emits a declarative one-shot SMIL `<animate>` (250 ms, ≤300 ms) per changed

@@ -52,7 +52,7 @@ validation time.
 ## Visual encoding
 
 None beyond the graph renderer's existing record cards with field rows. The
-instance's name may follow UML-ish `name : Classifier` text as plain label
+instance's name may follow UML-ish `name: Classifier` text as plain label
 text (author's choice; no parser support). Links render as ordinary graph
 edges; layout is the author's choice (`layout { algorithm: layered; }` is a
 good default).
@@ -60,7 +60,7 @@ good default).
 ## Source example
 
 ```ddn
-object sample_order "sample_order : Order" {
+object sample_order "sample_order: Order" {
  kind: record; x_instance: { classifier: @model.order; };
  fields { field order_id "O-4711"; field total "129.50"; }
 }
@@ -85,7 +85,7 @@ v1); full UML conformance.
 `uml.object@2` adds the UML 2.5.1 object surface; @1 stays installed and
 immutable.
 
-- **Instance styling** — instance titles (`name : Classifier`) render
+- **Instance styling** — instance titles (`name: Classifier`) render
  underlined.
 - **Slot datatype checking** — slot values are checked against the
  classifier's declared field datatypes (deterministic scalar cases: number /

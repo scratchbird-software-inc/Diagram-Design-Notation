@@ -204,7 +204,7 @@ Special transforms reject series/layer/arrangement, unrelated transform paramete
 
 The page engine measures labels/legend rows, expands categorical spacing where required, and validates output size. A fixed page that cannot retain its minimum text size fails. Do not use browser zoom as proof that an exported PDF target is readable. Grouped legends and data labels retain unit and series meanings in all palettes. There is no global label-placement optimality guarantee for every possible dataset.
 
-`DDN-QC001..022`, `DDN-Q001..005`, core publication diagnostics and capability errors report invalid bindings, parameters, units, aggregates, ranges and unsupported combinations. `tests/quality.js` includes exact bin counts, density integral, boundary inclusion, cumulative totals, stacks, R7 values, outliers, numeric-string rejection and source edits shared across tables/plots.
+`DDN-QC001..022`, `DDN-Q001..005`, core publication diagnostics and capability errors report invalid bindings, parameters, units, aggregates, ranges and unsupported combinations. `notation/tests/quality.js` includes exact bin counts, density integral, boundary inclusion, cumulative totals, stacks, R7 values, outliers, numeric-string rejection and source edits shared across tables/plots.
 
 ## Sources
 

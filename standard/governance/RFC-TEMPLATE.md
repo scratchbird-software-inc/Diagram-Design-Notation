@@ -1,7 +1,7 @@
 # RFC NNNN — title
 
-Status: proposed  
-Authors/reviewers: to be assigned  
+Status: proposed
+Authors/reviewers: to be assigned
 Language/registry impact: specify versions
 
 ## Problem and motivating example

@@ -7,7 +7,7 @@ DDN is a pre-1.0 draft standard. Versioning is layered:
 | Language source version | `ddn "0.x";` declaration at the top of every `.ddn` file; runtime accepts a fixed set (`ddn-core.js` `SOURCE_VERSIONS`) | 0.2 – 0.5 |
 | Runtime / notation package | semver (pre-1.0 minor releases; prerelease tags `-draft.N`/`-beta.N` used during development); git tags `notation/vX.Y.Z` | 0.7.0 |
 | Core registry | pinned identifier `ddn-core@0.3` inside `registry/catalogue.json` | ddn-core@0.3 |
-| Profiles | `name@version` identifiers, listed in `registry/profiles/catalogue.json` | 24 installed |
+| Profiles | `name@version` identifiers, listed in `registry/profiles/catalogue.json` | 150 installed |
 | Standard documents | chapter set per language version; git tags `standard/vX.Y.Z` | 0.7.0 |
 | Designer specification | independent semver; git tags `designer/vX.Y.Z` | 0.2.0 |
 

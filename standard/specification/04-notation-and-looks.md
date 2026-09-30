@@ -113,7 +113,7 @@ Random streams use the global seed, stable element or relation identity, and pri
 
 Object hachures are analytically clipped against the shape, rendered behind text at low opacity, and have no data meaning. A generic dotted or dashed relation is not made of two independently staggered dash patterns. Short segments near connection endpoints, orthogonal elbows, and detected crossings remain on the exact original centerline. The ideal route in scene JSON stays orthogonal; the visible pen stroke is permitted to deviate around that route.
 
-The renderer is original, dependency-free JavaScript in `reference/ddn-sketch.js`. It is not Rough.js or Mermaid code. In browser hosts load core, sketch primitives, then renderer. Exported SVG contains its completed geometry and needs none of these scripts to display. Full collision-envelope enforcement and exact font shaping remain production milestones.
+The renderer is original, dependency-free JavaScript in `notation/runtime/ddn-sketch.js`. It is not Rough.js or Mermaid code. In browser hosts load core, sketch primitives, then renderer. Exported SVG contains its completed geometry and needs none of these scripts to display. Full collision-envelope enforcement and exact font shaping remain production milestones.
 
 Crossing gaps are encoded as omitted path sections as well as masks, so their disconnected meaning does not depend exclusively on luminance-mask support. Relation dash offsets continue across those omitted sections. Directed legend arrows and missing-value symbols request a separate local symbol-capable font fallback.
 

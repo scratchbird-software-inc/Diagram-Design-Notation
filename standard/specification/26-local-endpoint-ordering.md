@@ -67,5 +67,5 @@ actual paired swaps in the circular lab; and the Journal Line journal/account
 crossing with curved, rounded, and angular routing. The purchasing `Complete`
 connector's 140-unit short-route regression remains in force.
 
-See `../patches/endpoint-ordering/validation/` for this patch's actual test results.
+See `notation/patches/endpoint-ordering/` (`VERIFICATION.md`, `FINDINGS.md`) for this patch's actual test results.
 Earlier release reports remain historical evidence, not newly executed assertions.

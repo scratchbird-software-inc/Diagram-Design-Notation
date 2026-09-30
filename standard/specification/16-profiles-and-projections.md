@@ -49,14 +49,14 @@ view monthly {
 }
 ```
 
-A reusable `projection` is a named declaration inside `format`, just like `layout`, `style` or `publication`. It can be referenced directly from `view` or through a `bundle`. A view-local `projection { ... }` block overrides the referenced projection's properties using the existing concern-resolution rules. The parser does not introduce a different statement keyword for every diagram kind.
+A reusable `projection` is a named declaration inside `format`, just like `layout`, `style` or `publication`. It can be referenced directly from `view` or through a `bundle`. A view-local `projection {... }` block overrides the referenced projection's properties using the existing concern-resolution rules. The parser does not introduce a different statement keyword for every diagram kind.
 
 Projection syntax in EBNF supplements the existing generic declaration grammar:
 
 ```text
-ProjectionDefinition = "projection", Identifier, "{", Property*, "}" ;
-ProjectionReference = "projection", ":", Reference, ";" ;
-ProjectionOverride = "projection", "{", Property*, "}" ;
+ProjectionDefinition = "projection", Identifier, "{", Property*, "}";
+ProjectionReference = "projection", ":", Reference, ";";
+ProjectionOverride = "projection", "{", Property*, "}";
 ```
 
 The implementation's semantic validator is authoritative for property applicability. Merely parsing a property does not make it valid for all projections. For instance, `mark` is not legal on a matrix. No filter or binding executes JavaScript, SQL, FEEL or another expression language.

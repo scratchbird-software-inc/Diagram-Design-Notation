@@ -48,9 +48,9 @@
 <ul><li>Unregistered extension typos (e.g. <code>x_instnce</code>) warn <code>DDN-W103</code> in logical</li></ul>
 <p> mode and fail <code>DDN103</code> under <code>validation { mode: strict; }</code>, as for every  extension property.</p>
 <h2>Visual encoding</h2>
-<p>None beyond the graph renderer's existing record cards with field rows. The instance's name may follow UML-ish <code>name : Classifier</code> text as plain label text (author's choice; no parser support). Links render as ordinary graph edges; layout is the author's choice (<code>layout { algorithm: layered; }</code> is a good default).</p>
+<p>None beyond the graph renderer's existing record cards with field rows. The instance's name may follow UML-ish <code>name: Classifier</code> text as plain label text (author's choice; no parser support). Links render as ordinary graph edges; layout is the author's choice (<code>layout { algorithm: layered; }</code> is a good default).</p>
 <h2>Source example</h2>
-<pre><code>object sample_order &quot;sample_order : Order&quot; {
+<pre><code>object sample_order &quot;sample_order: Order&quot; {
  kind: record; x_instance: { classifier: @model.order; };
  fields { field order_id &quot;O-4711&quot;; field total &quot;129.50&quot;; }
 }
@@ -65,7 +65,7 @@ view objects &quot;Synthetic snapshot / objects&quot; {
 <p>Object identity semantics beyond labels; slot datatype checking (names only in v1); full UML conformance.</p>
 <h1>29a. Object diagrams at uml.object@2</h1>
 <p><code>uml.object@2</code> adds the UML 2.5.1 object surface; @1 stays installed and immutable.</p>
-<ul><li><strong>Instance styling</strong> — instance titles (<code>name : Classifier</code>) render</li></ul>
+<ul><li><strong>Instance styling</strong> — instance titles (<code>name: Classifier</code>) render</li></ul>
 <p> underlined.</p>
 <ul><li><strong>Slot datatype checking</strong> — slot values are checked against the</li></ul>
 <p> classifier's declared field datatypes (deterministic scalar cases: number /  boolean; richer datatypes pass through) as <code>DDN-PJ170</code>.</p>
