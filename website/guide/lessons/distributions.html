@@ -1,0 +1,138 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Distribution chart pack: a source-editable DDN field-guide chapter."><title>Distribution chart pack · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Charts, distributions and measurement</p><h2>Distribution chart pack</h2><p class="subtitle">website/examples/basics/62-distribution-charts.ddn # violin</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>The distribution family beyond the histogram: violin shapes, density curves, Q-Q plots and quantile dots from one record set.</p></section><section class="card"><h3>Why use it?</h3><p>Shape questions need shape tools — each of these shows what averages and even histograms smooth away.</p></section><section class="card"><h3>When is it useful?</h3><p>Comparing distributions, checking normality, reading tails.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>The violin mirrors the density; the Q-Q compares against the theoretical line.</li><li>Quantile dots are records, never a smoothed invention.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The values</li><li>The comparison target (normal, or another group)</li><li>The variant that answers your question</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="violin">violin</option><option value="density">Density / KDE variant</option><option value="qq">Q-Q variant</option><option value="quantiledot">Quantile dot variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">chart.violin@1 · chart</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Change one record value without touching the model</h3>
+<p class="expected">Only one value changes; curves, quantiles and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha ae17190a5392… → acf6f1ff1dc1…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Cycle the variants to compare readings, then move one tail value in the source and check which view shows it most honestly.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/62-distribution-charts.ddn and locate view violin. This selects existing data; it is not a stored SVG.</li><li>Inspect the chart.violin@1 profile and chart projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view violin &quot;Response times by service / violin&quot; {
+    data: [@latency];
+    projection { kind:chart; profile:&quot;chart.violin@1&quot;; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:violin; x:&quot;x_record.service&quot;; y:&quot;x_record.ms&quot;; unit:&quot;ms&quot;; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/62-distribution-charts.ddn</td><td>data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared kernels and quantiles from the records; no significance testing.</p><ul><li>Do not read a KDE bandwidth as data.</li><li>Do not conclude normality from a pretty Q-Q alone.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/62-distribution-charts.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.distribution-charts\";\n\n// Synthetic latency sample: 30 response-time observations across three\n// services. All data is synthetic; not a measurement of any real system.\ndata latency {\n    object a1 \"alpha #1\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 42, \"unit\": \"ms\"}; }\n    object a2 \"alpha #2\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 45, \"unit\": \"ms\"}; }\n    object a3 \"alpha #3\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 47, \"unit\": \"ms\"}; }\n    object a4 \"alpha #4\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 48, \"unit\": \"ms\"}; }\n    object a5 \"alpha #5\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 50, \"unit\": \"ms\"}; }\n    object a6 \"alpha #6\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 51, \"unit\": \"ms\"}; }\n    object a7 \"alpha #7\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 53, \"unit\": \"ms\"}; }\n    object a8 \"alpha #8\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 55, \"unit\": \"ms\"}; }\n    object a9 \"alpha #9\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 58, \"unit\": \"ms\"}; }\n    object a10 \"alpha #10\" { kind: record; x_record: {\"service\": \"alpha\", \"ms\": 96, \"unit\": \"ms\"}; }\n    object b1 \"beta #1\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 61, \"unit\": \"ms\"}; }\n    object b2 \"beta #2\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 63, \"unit\": \"ms\"}; }\n    object b3 \"beta #3\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 64, \"unit\": \"ms\"}; }\n    object b4 \"beta #4\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 66, \"unit\": \"ms\"}; }\n    object b5 \"beta #5\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 68, \"unit\": \"ms\"}; }\n    object b6 \"beta #6\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 69, \"unit\": \"ms\"}; }\n    object b7 \"beta #7\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 71, \"unit\": \"ms\"}; }\n    object b8 \"beta #8\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 74, \"unit\": \"ms\"}; }\n    object b9 \"beta #9\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 79, \"unit\": \"ms\"}; }\n    object b10 \"beta #10\" { kind: record; x_record: {\"service\": \"beta\", \"ms\": 85, \"unit\": \"ms\"}; }\n    object c1 \"gamma #1\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 30, \"unit\": \"ms\"}; }\n    object c2 \"gamma #2\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 33, \"unit\": \"ms\"}; }\n    object c3 \"gamma #3\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 52, \"unit\": \"ms\"}; }\n    object c4 \"gamma #4\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 55, \"unit\": \"ms\"}; }\n    object c5 \"gamma #5\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 72, \"unit\": \"ms\"}; }\n    object c6 \"gamma #6\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 90, \"unit\": \"ms\"}; }\n    object c7 \"gamma #7\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 94, \"unit\": \"ms\"}; }\n    object c8 \"gamma #8\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 118, \"unit\": \"ms\"}; }\n    object c9 \"gamma #9\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 121, \"unit\": \"ms\"}; }\n    object c10 \"gamma #10\" { kind: record; x_record: {\"service\": \"gamma\", \"ms\": 150, \"unit\": \"ms\"}; }\n}\n\nview histogram \"Response times / histogram\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.histogram@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:histogram; x:\"x_record.ms\"; x_type:number; bin_count:8; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview density \"Response times / probability density\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.density@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:density; x:\"x_record.ms\"; x_type:number; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview qq \"Response times / normal Q-Q\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.qq@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:qq; x:\"x_record.ms\"; x_type:number; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview quantiledot \"Response times / quantile dotplot\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.quantiledot@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:quantiledot; x:\"x_record.ms\"; x_type:number; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview dotplot \"Response times by service / dot plot\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.dotplot@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:dotplot; x:\"x_record.service\"; y:\"x_record.ms\"; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview boxplot \"Response times by service / box plot\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.boxplot@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:boxplot; x:\"x_record.service\"; y:\"x_record.ms\"; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview violin \"Response times by service / violin\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.violin@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:violin; x:\"x_record.service\"; y:\"x_record.ms\"; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview beeswarm \"Response times by service / beeswarm\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.beeswarm@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:beeswarm; x:\"x_record.service\"; y:\"x_record.ms\"; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview topk \"Slowest services / top-K\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.topk@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:topk; x:\"x_record.service\"; y:\"x_record.ms\"; aggregate:mean; k:2; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"distributions","entry":"website/examples/basics/62-distribution-charts.ddn","view":"violin","files":["website/examples/basics/62-distribution-charts.ddn"],"experiment":{"kind":"value","title":"Change one record value without touching the model","id":"ddn.examples.distribution-charts::latency.c1","file":"website/examples/basics/62-distribution-charts.ddn","before":"gamma #1 ms = 30","after":"gamma #1 ms = 35","expectation":"Only one value changes; curves, quantiles and identities are untouched.","key":"ms","value":35},"experimentKind":"value","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

@@ -1,0 +1,139 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Family tree / genealogy: a source-editable DDN field-guide chapter."><title>Family tree / genealogy · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Hierarchies, maps and symbol libraries</p><h2>Family tree / genealogy</h2><p class="subtitle">website/examples/basics/56-family-tree.ddn # family</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Three generations: people, partnerships and descent lines in the conventional genealogy layout.</p></section><section class="card"><h3>Why use it?</h3><p>Kinship is the oldest diagrammed domain — a good test that the layout handles unions and many-child descent.</p></section><section class="card"><h3>When is it useful?</h3><p>Genealogies, house/lineage diagrams, any parentage-plus-partnership structure.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Boxes are people; horizontal joins are partnerships; vertical drops are descent.</li><li>Read one surname line across the generations before reading individuals.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The people</li><li>The partnerships</li><li>The parent-child links</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="views"><div><p class="viewer-label">family.tree@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Alex / review changes; partnerships, descent and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha e1b6b4c52970… → 10d77004cb7b…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Rename one person to include their dates, apply, and check the descent lines still attach to the partnership.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/56-family-tree.ddn and locate view family. This selects existing data; it is not a stored SVG.</li><li>Inspect the family.tree@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view family &quot;Three generations&quot; {
+    data: [@m];
+    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];
+    projection { profile: &quot;family.tree@1&quot;; }
+    layout { algorithm: layered; direction: down; }
+    publication { size: content; fit: none; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/56-family-tree.ddn</td><td>data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared kinship rendered conventionally; no genealogical validation rules are applied.</p><ul><li>Do not draw descent from one parent when the fact is a partnership's child.</li><li>Dates belong in the boxes; the geometry is kinship only.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/56-family-tree.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.familytree\";\n\n// Fictional three-generation family for the family.tree@1 profile.\n// Partnerships join through small family.union nodes: alex and miriam via\n// union_am, sam and jo via union_sj. family.parent_of edges run from a\n// union down to a child, so the layered downward layout stacks the\n// generations — grandparents' union at the top, the child generation\n// below, the grandchild at the bottom. Persons carry optional x_birth\n// (and one x_death) years. All persons and dates are fictional.\ndata m {\n    object alex \"Alex\" { kind: \"family.person\"; x_birth: 1948; x_death: 2019; }\n    object miriam \"Miriam\" { kind: \"family.person\"; x_birth: 1951; }\n    object union_am { kind: \"family.union\"; }\n    object sam \"Sam\" { kind: \"family.person\"; x_birth: 1976; }\n    object jo \"Jo\" { kind: \"family.person\"; x_birth: 1978; }\n    object union_sj { kind: \"family.union\"; }\n    object robin \"Robin\" { kind: \"family.person\"; x_birth: 2005; }\n\n    relation partner_alex \"partner of\" @alex -> @union_am { kind: \"family.partner_of\"; }\n    relation partner_miriam \"partner of\" @miriam -> @union_am { kind: \"family.partner_of\"; }\n    relation partner_sam \"partner of\" @sam -> @union_sj { kind: \"family.partner_of\"; }\n    relation partner_jo \"partner of\" @jo -> @union_sj { kind: \"family.partner_of\"; }\n    relation child_sam \"parent of\" @union_am -> @sam { kind: \"family.parent_of\"; }\n    relation child_robin \"parent of\" @union_sj -> @robin { kind: \"family.parent_of\"; }\n}\n\nview family \"Three generations\" {\n    data: [@m];\n    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];\n    projection { profile: \"family.tree@1\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"family-tree","entry":"website/examples/basics/56-family-tree.ddn","view":"family","files":["website/examples/basics/56-family-tree.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.familytree::m.alex","file":"website/examples/basics/56-family-tree.ddn","before":"Alex","after":"Alex / review","expectation":"Only the label of Alex / review changes; partnerships, descent and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

@@ -6,7 +6,7 @@ header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .
 nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
 main{max-width:1080px;margin:0 auto;padding:1rem}
 .pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
-.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
 .card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
 .views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
 button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
@@ -21,7 +21,8 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding
 .search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
 .nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
 footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
-<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
 <main>
 <div class="lesson-title"><p class="eyebrow">Architecture, distribution and integration</p><h2>Component responsibility map — C4-style</h2><p class="subtitle">website/examples/basics/25-c4-views.ddn # component</p><span class="pill native">native</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Inside one container: its components and how they collaborate.</p></section><section class="card"><h3>Why use it?</h3><p>This is where most day-to-day design discussion actually happens.</p></section><section class="card"><h3>When is it useful?</h3><p>Designing or reviewing the inside of a service or application.</p></section></div>
@@ -51,7 +52,8 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 }</code></pre></details></section>
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/25-c4-views.ddn</td><td>data, format, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>C4-style equivalent; not a code-structure certification.</p><ul><li>Do not invent components that have no code counterpart.</li><li>Do not let every component talk to every other — that is a missing component.</li></ul></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
@@ -59,7 +61,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/25-c4-views.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.c4-views\";\n\nimport \"shared.ddn\" as shared;\n\n// Synthetic online-shop workspace for the C4-style profiles. All data is synthetic.\ndata shop {\n    object customer \"Customer\" { kind: \"c4.person\"; }\n    object site \"Online shop\" { kind: \"c4.system\"; }\n    object mailer \"Notification service\" { kind: \"c4.system\"; }\n    object web \"Web application\" { kind: \"c4.container\"; }\n    object db \"Orders database\" { kind: \"c4.store\"; }\n    object events \"Order events\" { kind: \"c4.queue\"; }\n    object checkout \"Checkout component\" { kind: \"c4.component\"; }\n    object cart \"Cart component\" { kind: \"c4.component\"; }\n    relation browses \"Browses and buys\" @customer -> @site { kind: \"c4.rel\"; }\n    relation notifies \"Sends notifications\" @site -> @mailer { kind: \"c4.rel\"; }\n    relation visits @customer -> @web { kind: \"c4.rel\"; }\n    relation orders \"Reads/writes orders\" @web -> @db { kind: \"c4.rel\"; }\n    relation publishes \"Publishes order events\" @web -> @events { kind: \"c4.rel\"; }\n    relation persists @checkout -> @db { kind: \"c4.rel\"; }\n    relation uses \"Uses\" @cart -> @checkout { kind: \"c4.rel\"; }\n}\n\nformat options {\n    layout c4ctx { algorithm: layered; }\n    layout c4grid { algorithm: grid; }\n    layout c4layered { algorithm: layered; }\n}\n\nview context \"Synthetic shop / C4 context\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.context@1\"; }\n    select: [@shop.customer, @shop.site, @shop.mailer];\n    display { fields: none; }\n    layout: @options.c4ctx;\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n\nview container \"Synthetic shop / C4 container\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.container@1\"; }\n    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];\n    display { fields: none; }\n    layout: @options.c4grid;\n    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n\nview component \"Synthetic shop / C4 component\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.component@1\"; }\n    select: [@shop.customer, @shop.web, @shop.checkout, @shop.cart, @shop.db];\n    display { fields: none; }\n    layout: @options.c4layered;\n    frame container_boundary { scope: @shop.web; members: [@shop.checkout, @shop.cart]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n","website/examples/basics/shared.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core;\n    style classic;\n    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    style dark { theme: dark; }\n    style neutral { theme: neutral; font: mono; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; gap: 80px; }\n    display detailed;\n    display compact { fields: none; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { width: 280px; }\n    legend numbers { mode: numbers; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"c4-components","entry":"website/examples/basics/25-c4-views.ddn","view":"component","files":["website/examples/basics/25-c4-views.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.c4-views::shop.checkout","file":"website/examples/basics/25-c4-views.ddn","before":"Checkout component","after":"Checkout component / review","expectation":"Only the label of Checkout component / review changes; components, collaborations and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
-<script>(function(){
+<script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
 const status = t => document.getElementById('status').textContent = t;
@@ -91,8 +93,9 @@ document.getElementById('guided').onclick = () => {
 };
 document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
 document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
-document.getElementById('reset').onclick = () => { location.reload(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
 const sel = document.getElementById('file');
+sel.innerHTML = '';
 for (const f of data.files) sel.add(new Option(f, f));
 const editor = document.getElementById('source-editor');
 const live = Object.assign({}, files);
@@ -130,5 +133,6 @@ if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
 }
 redraw();
-})();</script>
+};</script>
+<script>window.__guideInit();</script>
 </body></html>

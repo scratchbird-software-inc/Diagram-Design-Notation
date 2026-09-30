@@ -150,6 +150,7 @@ const NAV = [
   ['Home', 'index.html', 'home'],
   ['Features', 'features/index.html', 'features'],
   ['Gallery', 'gallery/index.html', 'gallery'],
+  ['Guide', 'guide/index.html', 'guide'],
   ['Docs', 'docs/index.html', 'docs'],
   ['Standard', 'standard/index.html', 'standard'],
   ['Tools', 'tools/index.html', 'tools'],
@@ -224,6 +225,25 @@ for (const p of walk(gallerySrc)) {
      * Query-string values (e.g. ?entry=../examples/…) are resolved by the tool
      * against its own page and never start with "../../" right after a quote. */
     const html = fs.readFileSync(p, 'utf8').split('"../../').join('"../');
+    writeOut(rel, withFavicons(html, rel));
+  }
+  else copyOut(rel, p);
+}
+
+/* Field guide (B1-098): the generated 0.7 edition mirrored under guide/.
+ * Lesson pages reference the repo runtime at src="../../notation/dist/*"; the
+ * site serves the same bundles at dist/*, which resolves identically from
+ * guide/lessons/ once retargeted one level up. The portable edition is a
+ * single inlined file and needs no retargeting. Chapter .ddn sources under
+ * field-guide/sources/ stay repo-side (lessons embed everything they need). */
+const GUIDE_CATALOGUE = readJson('field-guide/catalogue.json');
+const GUIDE_CHAPTER_COUNT = GUIDE_CATALOGUE.meta.chapterCount;
+const guideSrc = path.join(REPO, 'field-guide');
+for (const p of walk(guideSrc)) {
+  if (p.split(path.sep).includes('sources')) continue;
+  const rel = path.posix.join('guide', path.relative(guideSrc, p).split(path.sep).join('/'));
+  if (p.endsWith('.html')) {
+    const html = fs.readFileSync(p, 'utf8').split('src="../../notation/dist/').join('src="../../dist/');
     writeOut(rel, withFavicons(html, rel));
   }
   else copyOut(rel, p);
@@ -393,6 +413,7 @@ const demoScript = '(function(){\n' +
   '})();';
 
 const homeCards = [
+  ['guide/index.html', 'Diagram field guide — read, change, verify', GUIDE_CHAPTER_COUNT + ' chapters: every major notation family and chart type as a live, source-editable example with a guided first edit whose render-changing evidence is shipped in the page. Also as one self-contained portable file.', 'live · works offline'],
   ['gallery/index.html', 'Gallery — full notation coverage and every example', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + '), variation sheets (every chart mark flat and isometric, look × palette, routing × style, layout algorithm, spacing level), and the complete example corpus — every runnable .ddn the project ships — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
   ['tools/index.html?mode=design', 'Designer — the tool in design mode', 'The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.', 'standalone · no server'],
   ['tools/index.html', 'Unified diagram tool', 'One page for viewing, exploring, editing and designing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets — view, explore, edit, design), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.', 'standalone · no server'],
@@ -563,6 +584,8 @@ writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<h2>Runtime bundles</h2>\n' +
   '<p>Load <code>ddn.global.js</code> for everything, or compose the modular bundles (<code>ddn-core</code> → <code>ddn-graph</code> → <code>ddn-projections</code>/<code>ddn-quality</code>, plus the optional <code>ddn-geo</code> for map views and <code>ddn-iso</code> for isometric depth). Every bundle ships three formats: use the <strong>minified <code>.min.js</code> IIFEs for production embeds</strong>, the <strong><code>.mjs</code> ES modules for modern bundlers and module pages</strong> (tree-shakeable; browsers need a static server for module imports — no <code>file://</code>), and the readable <code>.js</code> builds for debugging (source maps included). See the <a href="../docs/developers/modules.html">modules guide</a>, the <a href="../docs/developers/embedding.html">embedding quickstart</a> and the <a href="../examples/embed/script-tag-global.html">embed example pages</a>.</p>\n' +
   '<table>\n<thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>\n' + distRows.join('\n') + '\n</tbody></table>\n' +
+  '<h2>Field guide</h2>\n' +
+  '<p>The <a href="../guide/index.html">Diagram Field Guide</a> (' + GUIDE_CHAPTER_COUNT + ' chapters) also ships as <a href="../guide/portable.html">one portable, self-contained HTML file</a> — the whole edition: live examples, guided edits and the full runtime inlined; save it and it works offline.</p>\n' +
   '<h2>License</h2>\n<p>GPL-2.0-or-later — see the <a href="../license/index.html">license page</a>.</p>'));
 
 // License page.

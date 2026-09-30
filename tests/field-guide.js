@@ -15,7 +15,7 @@ test('field-guide output is byte-fresh (build-field-guide rebuild matches commit
   const walk = d => { for (const f of fs.readdirSync(d)) { const p = path.join(d, f); (fs.statSync(p).isDirectory() ? walk : x => produced.push(x))(p); } };
   walk(tmp);
   const rel = p => path.relative(tmp, p).replace(/\\/g, '/');
-  const committed = ['catalogue.json', 'coverage.json', 'example-index.json', 'chapter-plan.json', 'FIELD-GUIDE.md', 'index.html',
+  const committed = ['catalogue.json', 'coverage.json', 'example-index.json', 'chapter-plan.json', 'FIELD-GUIDE.md', 'index.html', 'portable.html',
     ...fs.readdirSync(path.join(FG, 'lessons')).map(f => 'lessons/' + f)];
   assert.deepEqual(produced.map(rel).sort(), committed.sort(), 'field-guide file set drifted');
   for (const f of committed)

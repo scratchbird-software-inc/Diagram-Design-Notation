@@ -1,0 +1,138 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Grid and network chart pack: a source-editable DDN field-guide chapter."><title>Grid and network chart pack · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Charts, distributions and measurement</p><h2>Grid and network chart pack</h2><p class="subtitle">website/examples/basics/64-grid-charts.ddn # heatmap</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Grid-based charts: heatmaps, calendar maps, parallel coordinates and word clouds from declared records.</p></section><section class="card"><h3>Why use it?</h3><p>Patterns across many cells, days or dimensions need a grid, not another line.</p></section><section class="card"><h3>When is it useful?</h3><p>Activity over days, many-metric comparison, term frequency.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Cells are records; colour encodes the declared measure.</li><li>Parallel coordinates read as profiles per record, not as trends.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The axes or dimensions</li><li>The measure per cell/line</li><li>The scale</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="heatmap">heatmap</option><option value="calendar">Calendar variant</option><option value="parallelcoords">Parallel coordinates variant</option><option value="wordcloud">Word cloud variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">chart.heatmap@1 · chart</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Change one record value without touching the model</h3>
+<p class="expected">Only one record changes; grids, scales and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 053d64c90239… → 93306e4058f7…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Cycle the variants, then change one record in the source and check it moves the right cell, line or word.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/64-grid-charts.ddn and locate view heatmap. This selects existing data; it is not a stored SVG.</li><li>Inspect the chart.heatmap@1 profile and chart projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view heatmap &quot;Requests by hour and endpoint / heatmap&quot; {
+    data: [@cells];
+    projection { kind:chart; profile:&quot;chart.heatmap@1&quot;; records:[@cells.h1, @cells.h2, @cells.h3, @cells.h4, @cells.h5, @cells.h6, @cells.h7, @cells.h8, @cells.h9]; mark:heatmap; x:&quot;x_record.hour&quot;; y:&quot;x_record.n&quot;; series:&quot;x_record.endpoint&quot;; unit:&quot;req&quot;; width:1120px; height:620px; }
+    publication { size: content; fit: none; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/64-grid-charts.ddn</td><td>data, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared records; no clustering or correlation is computed.</p><ul><li>Do not read a word cloud as precise frequency — it is emphasis.</li><li>Do not compare cell colours across differently scaled maps.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/64-grid-charts.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.grid-charts\";\n\n// Synthetic telemetry: request counts by hour and endpoint, a latency scatter,\n// daily deploy counts, per-service metric vectors, and incident-tag weights.\n// All data is synthetic.\ndata cells {\n    object h1 \"api × morning\" { kind: record; x_record: {\"hour\": \"morning\", \"endpoint\": \"api\", \"n\": 420, \"unit\": \"req\"}; }\n    object h2 \"api × midday\" { kind: record; x_record: {\"hour\": \"midday\", \"endpoint\": \"api\", \"n\": 610, \"unit\": \"req\"}; }\n    object h3 \"api × evening\" { kind: record; x_record: {\"hour\": \"evening\", \"endpoint\": \"api\", \"n\": 380, \"unit\": \"req\"}; }\n    object h4 \"web × morning\" { kind: record; x_record: {\"hour\": \"morning\", \"endpoint\": \"web\", \"n\": 250, \"unit\": \"req\"}; }\n    object h5 \"web × midday\" { kind: record; x_record: {\"hour\": \"midday\", \"endpoint\": \"web\", \"n\": 470, \"unit\": \"req\"}; }\n    object h6 \"web × evening\" { kind: record; x_record: {\"hour\": \"evening\", \"endpoint\": \"web\", \"n\": 520, \"unit\": \"req\"}; }\n    object h7 \"batch × morning\" { kind: record; x_record: {\"hour\": \"morning\", \"endpoint\": \"batch\", \"n\": 90, \"unit\": \"req\"}; }\n    object h8 \"batch × midday\" { kind: record; x_record: {\"hour\": \"midday\", \"endpoint\": \"batch\", \"n\": 140, \"unit\": \"req\"}; }\n    object h9 \"batch × evening\" { kind: record; x_record: {\"hour\": \"evening\", \"endpoint\": \"batch\", \"n\": 60, \"unit\": \"req\"}; }\n}\n\ndata scatter {\n    object p1 \"s1\" { kind: record; x_record: {\"size\": 12, \"ms\": 44}; }\n    object p2 \"s2\" { kind: record; x_record: {\"size\": 18, \"ms\": 51}; }\n    object p3 \"s3\" { kind: record; x_record: {\"size\": 25, \"ms\": 63}; }\n    object p4 \"s4\" { kind: record; x_record: {\"size\": 31, \"ms\": 70}; }\n    object p5 \"s5\" { kind: record; x_record: {\"size\": 44, \"ms\": 95}; }\n    object p6 \"s6\" { kind: record; x_record: {\"size\": 52, \"ms\": 101}; }\n    object p7 \"s7\" { kind: record; x_record: {\"size\": 63, \"ms\": 130}; }\n    object p8 \"s8\" { kind: record; x_record: {\"size\": 70, \"ms\": 128}; }\n    object p9 \"s9\" { kind: record; x_record: {\"size\": 88, \"ms\": 170}; }\n    object p10 \"s10\" { kind: record; x_record: {\"size\": 95, \"ms\": 182}; }\n}\n\ndata deploys {\n    object w1 \"2026-03-02\" { kind: record; x_record: {\"day\": \"2026-03-02\", \"n\": 3, \"unit\": \"deploys\"}; }\n    object w2 \"2026-03-03\" { kind: record; x_record: {\"day\": \"2026-03-03\", \"n\": 5, \"unit\": \"deploys\"}; }\n    object w3 \"2026-03-04\" { kind: record; x_record: {\"day\": \"2026-03-04\", \"n\": 2, \"unit\": \"deploys\"}; }\n    object w4 \"2026-03-06\" { kind: record; x_record: {\"day\": \"2026-03-06\", \"n\": 4, \"unit\": \"deploys\"}; }\n    object w5 \"2026-03-09\" { kind: record; x_record: {\"day\": \"2026-03-09\", \"n\": 6, \"unit\": \"deploys\"}; }\n    object w6 \"2026-03-10\" { kind: record; x_record: {\"day\": \"2026-03-10\", \"n\": 1, \"unit\": \"deploys\"}; }\n    object w7 \"2026-03-12\" { kind: record; x_record: {\"day\": \"2026-03-12\", \"n\": 4, \"unit\": \"deploys\"}; }\n    object w8 \"2026-03-13\" { kind: record; x_record: {\"day\": \"2026-03-13\", \"n\": 7, \"unit\": \"deploys\"}; }\n    object w9 \"2026-03-16\" { kind: record; x_record: {\"day\": \"2026-03-16\", \"n\": 2, \"unit\": \"deploys\"}; }\n    object w10 \"2026-03-18\" { kind: record; x_record: {\"day\": \"2026-03-18\", \"n\": 5, \"unit\": \"deploys\"}; }\n    object w11 \"2026-03-20\" { kind: record; x_record: {\"day\": \"2026-03-20\", \"n\": 3, \"unit\": \"deploys\"}; }\n    object w12 \"2026-03-24\" { kind: record; x_record: {\"day\": \"2026-03-24\", \"n\": 8, \"unit\": \"deploys\"}; }\n    object w13 \"2026-03-27\" { kind: record; x_record: {\"day\": \"2026-03-27\", \"n\": 2, \"unit\": \"deploys\"}; }\n    object w14 \"2026-03-31\" { kind: record; x_record: {\"day\": \"2026-03-31\", \"n\": 4, \"unit\": \"deploys\"}; }\n}\n\ndata metrics {\n    object m1 \"auth · cpu\" { kind: record; x_record: {\"service\": \"auth\", \"metric\": \"cpu\", \"v\": 62}; }\n    object m2 \"auth · mem\" { kind: record; x_record: {\"service\": \"auth\", \"metric\": \"mem\", \"v\": 48}; }\n    object m3 \"auth · p99\" { kind: record; x_record: {\"service\": \"auth\", \"metric\": \"p99\", \"v\": 210}; }\n    object m4 \"auth · rps\" { kind: record; x_record: {\"service\": \"auth\", \"metric\": \"rps\", \"v\": 900}; }\n    object m5 \"store · cpu\" { kind: record; x_record: {\"service\": \"store\", \"metric\": \"cpu\", \"v\": 81}; }\n    object m6 \"store · mem\" { kind: record; x_record: {\"service\": \"store\", \"metric\": \"mem\", \"v\": 74}; }\n    object m7 \"store · p99\" { kind: record; x_record: {\"service\": \"store\", \"metric\": \"p99\", \"v\": 340}; }\n    object m8 \"store · rps\" { kind: record; x_record: {\"service\": \"store\", \"metric\": \"rps\", \"v\": 640}; }\n    object m9 \"relay · cpu\" { kind: record; x_record: {\"service\": \"relay\", \"metric\": \"cpu\", \"v\": 35}; }\n    object m10 \"relay · mem\" { kind: record; x_record: {\"service\": \"relay\", \"metric\": \"mem\", \"v\": 41}; }\n    object m11 \"relay · p99\" { kind: record; x_record: {\"service\": \"relay\", \"metric\": \"p99\", \"v\": 120}; }\n    object m12 \"relay · rps\" { kind: record; x_record: {\"service\": \"relay\", \"metric\": \"rps\", \"v\": 1250}; }\n}\n\ndata tags {\n    object t1 \"latency\" { kind: record; x_record: {\"tag\": \"latency\", \"n\": 34}; }\n    object t2 \"timeout\" { kind: record; x_record: {\"tag\": \"timeout\", \"n\": 28}; }\n    object t3 \"cache\" { kind: record; x_record: {\"tag\": \"cache\", \"n\": 19}; }\n    object t4 \"deploy\" { kind: record; x_record: {\"tag\": \"deploy\", \"n\": 15}; }\n    object t5 \"dns\" { kind: record; x_record: {\"tag\": \"dns\", \"n\": 9}; }\n    object t6 \"tls\" { kind: record; x_record: {\"tag\": \"tls\", \"n\": 7}; }\n    object t7 \"quota\" { kind: record; x_record: {\"tag\": \"quota\", \"n\": 5}; }\n    object t8 \"retry\" { kind: record; x_record: {\"tag\": \"retry\", \"n\": 12}; }\n    object t9 \"shard\" { kind: record; x_record: {\"tag\": \"shard\", \"n\": 4}; }\n    object t10 \"queue\" { kind: record; x_record: {\"tag\": \"queue\", \"n\": 8}; }\n}\n\nview heatmap \"Requests by hour and endpoint / heatmap\" {\n    data: [@cells];\n    projection { kind:chart; profile:\"chart.heatmap@1\"; records:[@cells.h1, @cells.h2, @cells.h3, @cells.h4, @cells.h5, @cells.h6, @cells.h7, @cells.h8, @cells.h9]; mark:heatmap; x:\"x_record.hour\"; y:\"x_record.n\"; series:\"x_record.endpoint\"; unit:\"req\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview densityheatmap \"Latency vs payload / density heatmap\" {\n    data: [@scatter];\n    projection { kind:chart; profile:\"chart.densityheatmap@1\"; records:[@scatter.p1, @scatter.p2, @scatter.p3, @scatter.p4, @scatter.p5, @scatter.p6, @scatter.p7, @scatter.p8, @scatter.p9, @scatter.p10]; mark:densityheatmap; x:\"x_record.size\"; x_type:number; y:\"x_record.ms\"; bin_count:5; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview calendar \"Deploys per day / calendar\" {\n    data: [@deploys];\n    projection { kind:chart; profile:\"chart.calendar@1\"; records:[@deploys.w1, @deploys.w2, @deploys.w3, @deploys.w4, @deploys.w5, @deploys.w6, @deploys.w7, @deploys.w8, @deploys.w9, @deploys.w10, @deploys.w11, @deploys.w12, @deploys.w13, @deploys.w14]; mark:calendar; x:\"x_record.day\"; x_type:date; y:\"x_record.n\"; unit:\"deploys\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview parallelcoords \"Service metric vectors / parallel coordinates\" {\n    data: [@metrics];\n    projection { kind:chart; profile:\"chart.parallelcoords@1\"; records:[@metrics.m1, @metrics.m2, @metrics.m3, @metrics.m4, @metrics.m5, @metrics.m6, @metrics.m7, @metrics.m8, @metrics.m9, @metrics.m10, @metrics.m11, @metrics.m12]; mark:parallelcoords; x:\"x_record.metric\"; y:\"x_record.v\"; series:\"x_record.service\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n\nview wordcloud \"Incident tags / word cloud\" {\n    data: [@tags];\n    projection { kind:chart; profile:\"chart.wordcloud@1\"; records:[@tags.t1, @tags.t2, @tags.t3, @tags.t4, @tags.t5, @tags.t6, @tags.t7, @tags.t8, @tags.t9, @tags.t10]; mark:wordcloud; x:\"x_record.tag\"; y:\"x_record.n\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"gridcharts","entry":"website/examples/basics/64-grid-charts.ddn","view":"heatmap","files":["website/examples/basics/64-grid-charts.ddn"],"experiment":{"kind":"value","title":"Change one record value without touching the model","id":"ddn.examples.grid-charts::cells.h9","file":"website/examples/basics/64-grid-charts.ddn","before":"batch × evening n = 60","after":"batch × evening n = 65","expectation":"Only one record changes; grids, scales and identities are untouched.","key":"n","value":65},"experimentKind":"value","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

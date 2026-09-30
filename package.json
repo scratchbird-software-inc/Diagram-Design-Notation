@@ -26,7 +26,7 @@
     "serve": "node tools/serve.js",
     "build:tool": "node tools/build-tool.js",
     "test:submission": "node tests/submission-freshness.js",
-    "test:field-guide": "node tests/field-guide.js"
+    "test:field-guide": "node tests/field-guide.js && node tests/field-guide-browser.js"
   },
   "engines": {
     "node": ">=22"

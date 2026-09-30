@@ -1,0 +1,141 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Dataset lineage and derivation: a source-editable DDN field-guide chapter."><title>Dataset lineage and derivation · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Data structures and meaning</p><h2>Dataset lineage and derivation</h2><p class="subtitle">website/examples/use-cases/13-lineage.ddn # diagram</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Where each dataset comes from: sources, transformations and the datasets they produce, end to end.</p></section><section class="card"><h3>Why use it?</h3><p>Every number on a report should answer &quot;from where&quot; in one look.</p></section><section class="card"><h3>When is it useful?</h3><p>Auditing data products, debugging a wrong number, or onboarding to a pipeline.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Read right-to-left from the report: each arrow is a derivation step you can inspect.</li><li>A dataset with no recorded source is an assumption, not a fact.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The sources</li><li>The transformation steps</li><li>The produced datasets</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="views"><div><p class="viewer-label">ddn@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Orders / review changes; sources, derivations and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 8ab0bc1dec84… → eac8e99cf5cc…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Add the missing source label to one derived dataset, apply, and check the chain is unbroken.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/use-cases/13-lineage.ddn and locate view diagram. This selects existing data; it is not a stored SVG.</li><li>Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view diagram &quot;13 / Dataset lineage&quot; {
+    data: [@c.tables, @l.model, @c.domains];
+    format: @fmt.shared.technical;
+    style: @fmt.shared.classic;
+    layout: @fmt.shared.row;
+    select: [@c.tables.orders, @l.model.daily, @l.model.report];
+    publication { width: 1580px; height: 440px; }
+    legend { keys: { &quot;model.r_aggregate&quot;: 1, &quot;model.r_report&quot;: 2 }; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/use-cases/13-lineage.ddn</td><td>view</td></tr><tr><td>website/examples/use-cases/formats.ddn</td><td>format</td></tr><tr><td>website/examples/use-cases/data/commerce.ddn</td><td>data</td></tr><tr><td>website/examples/use-cases/data/lineage.ddn</td><td>data</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared lineage; no data actually flows when you read this.</p><ul><li>Do not skip the boring intermediate datasets — they are where errors hide.</li><li>Do not draw lineage at a granularity you cannot actually inspect.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/use-cases/13-lineage.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.views.lineage\";\nimport \"formats.ddn\" as fmt;\nimport \"data/commerce.ddn\" as c;\nimport \"data/lineage.ddn\" as l;\n\n// Where did an analytical result come from?\n// Automatic grid placement: no absolute positions or waypoints.\nview diagram \"13 / Dataset lineage\" {\n    data: [@c.tables, @l.model, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@c.tables.orders, @l.model.daily, @l.model.report];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_aggregate\": 1, \"model.r_report\": 2 }; }\n}\n","website/examples/use-cases/formats.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.formats\";\nformat shared {\n    notation core;\n    style classic;\n    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    layout row { algorithm: grid; gap: 120px; }\n    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }\n    layout teaching { algorithm: manual; gap: 120px; }\n    display full;\n    display compact { fields: none; maturity: none; }\n    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }\n    legend numbered { mode: numbers; width: 340px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @row;\n        display: @full;\n        publication: @figure;\n        legend: @numbered;\n    }\n}\n","website/examples/use-cases/data/commerce.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.commerce\";\n\n// All names, records and architectures in this catalogue are synthetic teaching examples.\n\ndata concepts {\n    object customer \"Customer\" {\n        kind: entity;\n    }\n    object order \"Order\" {\n        kind: entity;\n    }\n    object shipment \"Shipment\" {\n        kind: entity;\n    }\n    relation r_places \"places\" @customer -> @order { kind: assoc; source_mark: one; target_mark: zeromany; }\n    relation r_ships \"fulfilled by\" @order -> @shipment { kind: assoc; source_mark: one; target_mark: zeromany; }\n}\n\ndata domains {\n    domain customer_id \"Customer identifier\" {\n        kind: domain;\n        meaning: \"Identifies a customer in the registry.\";\n        representation: undecided;\n    }\n    domain order_id \"Order identifier\" {\n        kind: domain;\n        meaning: \"Identifies an order in the order book.\";\n        representation: undecided;\n    }\n}\n\ndata tables {\n    object customer \"Customer\" {\n        kind: table;\n        level: definition;\n        workload: [oltp];\n        role: authoritative;\n        description: \"Authority for the customer registry, not for every customer attribute in all systems.\";\n        fields {\n            field customer_id { key: primary; domain: @domains.customer_id; }\n            field display_name;\n            field status;\n        }\n    }\n    object orders \"Orders\" {\n        kind: table;\n        level: definition;\n        workload: [oltp];\n        fields {\n            field order_id { key: primary; domain: @domains.order_id; }\n            field customer_id { domain: @domains.customer_id; }\n            field ordered_at;\n        }\n    }\n    object line \"Order line\" {\n        kind: table;\n        level: definition;\n        workload: [oltp];\n        fields {\n            field line_id { key: primary; }\n            field order_id;\n            field sku;\n            field quantity;\n        }\n    }\n    relation r_line_order @line.order_id -> @orders.order_id { kind: ref; source_mark: many; target_mark: one; enforcement: undecided; }\n    relation r_order_customer @orders.customer_id -> @customer.customer_id { kind: ref; source_mark: zeromany; target_mark: one; enforcement: undecided; }\n}\n","website/examples/use-cases/data/lineage.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.lineage\";\nimport \"commerce.ddn\" as commerce;\n\n// All names, records and architectures in this catalogue are synthetic teaching examples.\n\ndata model {\n    object daily \"Daily order totals\" {\n        kind: dataset;\n        role: derived;\n        workload: [olap];\n        fields {\n            field business_date;\n            field order_count;\n        }\n    }\n    object report \"Operations dashboard\" {\n        kind: dashboard;\n    }\n    relation r_aggregate @commerce.tables.orders -> @daily { kind: aggregates; }\n    relation r_report @daily -> @report { kind: report; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"lineage","entry":"website/examples/use-cases/13-lineage.ddn","view":"diagram","files":["website/examples/use-cases/13-lineage.ddn","website/examples/use-cases/formats.ddn","website/examples/use-cases/data/commerce.ddn","website/examples/use-cases/data/lineage.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.usecases.commerce::tables.orders","file":"website/examples/use-cases/13-lineage.ddn","before":"Orders","after":"Orders / review","expectation":"Only the label of Orders / review changes; sources, derivations and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

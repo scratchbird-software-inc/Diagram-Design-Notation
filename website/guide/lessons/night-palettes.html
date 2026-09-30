@@ -1,0 +1,137 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Night and low-light palettes: a source-editable DDN field-guide chapter."><title>Night and low-light palettes · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Night and low-light palettes</h2><p class="subtitle">website/examples/gallery/src/looks.ddn # classic_night</p><span class="pill technique">technique</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>The same sheet rendered in the night and dark themes across looks — palettes built for projection and low-light rooms.</p></section><section class="card"><h3>Why use it?</h3><p>A diagram projected in a dark room inverts its reading: the night palette keeps contrast where the eye expects it.</p></section><section class="card"><h3>When is it useful?</h3><p>Ops-room displays, evening reviews, any projected reading in low light.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Switch variants: the model is identical; ink, surface and accent move to the night scale.</li><li>Contrast pairs stay deliberate — night is a designed palette, not an inverted filter.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The model</li><li>The theme declaration on the view</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="classic_night">classic_night</option><option value="handdrawn_night">Hand-drawn night variant</option><option value="neo_night">Neo night variant</option><option value="classic_dark">Classic dark variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">ddn@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the label of Online storefront / review changes; palette and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 6050759a9d4f… → a7b6cd68fce5…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Rename one element, apply, and switch variants to confirm legibility holds in every night treatment.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/gallery/src/looks.ddn and locate view classic_night. This selects existing data; it is not a stored SVG.</li><li>Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view classic_night &quot;Looks / classic × night&quot; {
+    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    style { look: classic; theme: night; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/gallery/src/looks.ddn</td><td>data, format, view</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>The built-in theme scales (default, neutral, dark, night, forest, base); custom palettes are a publication-format concern.</p><ul><li>Do not screenshot a day palette into a night deck — declare the theme and re-render.</li><li>Theme is view-level; a mixed-theme document is a deliberate choice, say so.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/gallery/src/looks.ddn":"ddn \"0.5\";\nmodule \"ddn.gallery.looks\";\n\n// Gallery look/palette sheet. One small order-to-cash graph rendered in every\n// look (classic, handDrawn, neo) crossed with every palette theme\n// (default, neutral, dark, night, forest, base).\ndata model {\n    object customer \"Customer\" { kind: actor; }\n    object storefront \"Online storefront\" { kind: application; }\n    object orders \"Order service\" { kind: application; }\n    object ledger \"Sales ledger\" { kind: table; fields { field order_id; field amount; } }\n    object warehouse \"Warehouse dispatch\" { kind: process; }\n    relation places @customer -> @storefront { kind: assoc; }\n    relation confirms @storefront -> @orders { kind: assoc; }\n    relation posts @orders -> @ledger { kind: assoc; }\n    relation ships @orders -> @warehouse { kind: assoc; }\n}\n\nformat gallery {\n    layout flow_right { algorithm: layered; gap: 120px; row_gap: 110px; }\n    display readable { badges: none; maturity: none; }\n    publication screen { size: content; fit: none; }\n    legend key { width: 260px; }\n}\n\nview classic_default \"Looks / classic × default\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: classic; theme: default; }\n}\nview classic_neutral \"Looks / classic × neutral\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: classic; theme: neutral; }\n}\nview classic_dark \"Looks / classic × dark\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: classic; theme: dark; }\n}\nview classic_night \"Looks / classic × night\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: classic; theme: night; }\n}\nview classic_forest \"Looks / classic × forest\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: classic; theme: forest; }\n}\nview classic_base \"Looks / classic × base\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: classic; theme: base; }\n}\nview handdrawn_default \"Looks / handDrawn × default\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: handDrawn; theme: default; }\n}\nview handdrawn_neutral \"Looks / handDrawn × neutral\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: handDrawn; theme: neutral; }\n}\nview handdrawn_dark \"Looks / handDrawn × dark\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: handDrawn; theme: dark; }\n}\nview handdrawn_night \"Looks / handDrawn × night\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: handDrawn; theme: night; }\n}\nview handdrawn_forest \"Looks / handDrawn × forest\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: handDrawn; theme: forest; }\n}\nview handdrawn_base \"Looks / handDrawn × base\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: handDrawn; theme: base; }\n}\nview neo_default \"Looks / neo × default\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: neo; theme: default; }\n}\nview neo_neutral \"Looks / neo × neutral\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: neo; theme: neutral; }\n}\nview neo_dark \"Looks / neo × dark\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: neo; theme: dark; }\n}\nview neo_night \"Looks / neo × night\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: neo; theme: night; }\n}\nview neo_forest \"Looks / neo × forest\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: neo; theme: forest; }\n}\nview neo_base \"Looks / neo × base\" {\n    data: [@model]; layout: @gallery.flow_right; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;\n    style { look: neo; theme: base; }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"night-palettes","entry":"website/examples/gallery/src/looks.ddn","view":"classic_night","files":["website/examples/gallery/src/looks.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.gallery.looks::model.storefront","file":"website/examples/gallery/src/looks.ddn","before":"Online storefront","after":"Online storefront / review","expectation":"Only the label of Online storefront / review changes; palette and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

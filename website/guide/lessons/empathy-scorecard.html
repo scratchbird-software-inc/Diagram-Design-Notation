@@ -1,0 +1,143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Empathy map and balanced scorecard: a source-editable DDN field-guide chapter."><title>Empathy map and balanced scorecard · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style><link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+</head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Matrices, tables and analysis panels</p><h2>Empathy map and balanced scorecard</h2><p class="subtitle">website/examples/basics/34-empathy-scorecard.ddn # empathy</p><span class="pill native">native</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>An empathy map — what a user says, thinks, does and feels — plus a scorecard variant in the same source.</p></section><section class="card"><h3>Why use it?</h3><p>The four-quadrant map keeps a team from designing for itself.</p></section><section class="card"><h3>When is it useful?</h3><p>Early discovery for a feature or service.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Quadrants are observation categories, not personality types.</li><li>Entries are evidence or declared hypotheses — mark which.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The user</li><li>Observed statements and behaviours</li><li>Inferred feelings, marked as inferred</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="empathy">empathy</option><option value="scorecard">Balanced scorecard variant</option></select></label></div>
+<div class="views"><div><p class="viewer-label">canvas.empathy@1 · panels</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only one entry changes; quadrants and identities are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha ed48d4f2de61… → 3c5e01566328…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Switch to the scorecard variant to compare, then mark one inferred entry as hypothesis in the source, apply, and check the honesty marker.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/34-empathy-scorecard.ddn and locate view empathy. This selects existing data; it is not a stored SVG.</li><li>Inspect the canvas.empathy@1 profile and panels projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view empathy &quot;Support team / empathy map&quot; {
+    data: [@research];
+    format: @shared.styles.technical;
+    projection { kind:panels; profile:&quot;canvas.empathy@1&quot;; columns:2; panels:[
+        {id:&quot;says&quot;,title:&quot;SAYS&quot;,row:0,column:0,rowspan:1,colspan:1,items:[@research.says_a, @research.says_b]},
+        {id:&quot;thinks&quot;,title:&quot;THINKS&quot;,row:0,column:1,rowspan:1,colspan:1,items:[@research.thinks]},
+        {id:&quot;persona&quot;,title:&quot;PERSONA&quot;,row:1,column:0,rowspan:1,colspan:2,items:[@research.persona]},
+        {id:&quot;does&quot;,title:&quot;DOES&quot;,row:2,column:0,rowspan:1,colspan:1,items:[@research.does]},
+        {id:&quot;feels&quot;,title:&quot;FEELS&quot;,row:2,column:1,rowspan:1,colspan:1,items:[@research.feels]}]; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/34-empathy-scorecard.ddn</td><td>data, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared empathy content; the map organises evidence, it does not collect it.</p><ul><li>Do not present a hypothesis as an observation.</li><li>Do not run an empathy session about a demographic instead of a person.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../dist/ddn.global.js"></script>
+<script src="../../dist/ddn-graph.js"></script>
+<script src="../../dist/ddn-iso.js"></script>
+<script src="../../dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/34-empathy-scorecard.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.empathy-scorecard\";\n\nimport \"shared.ddn\" as shared;\n\n// Two synthetic studies in one file (all data invented): a support-team empathy\n// study for the canvas.empathy@1 profile and a department balanced scorecard for\n// the canvas.scorecard@1 profile.\ndata research {\n    object persona \"Persona\" { kind: note; description: \"Synthetic persona: a support agent on the night shift.\"; }\n    object says_a \"Says (1)\" { kind: note; description: \"Synthetic: \\\"I spend half the shift retyping ticket details into the billing tool.\\\"\"; }\n    object says_b \"Says (2)\" { kind: note; description: \"Synthetic: \\\"Customers forgive an outage when we call them back before they notice.\\\"\"; }\n    object thinks \"Thinks\" { kind: note; description: \"Synthetic: worries that automation metrics reward closing tickets fast, not solving the root cause.\"; }\n    object does \"Does\" { kind: note; description: \"Synthetic: keeps a personal spreadsheet of workarounds and shares it with the next shift over chat.\"; }\n    object feels \"Feels\" { kind: note; description: \"Synthetic: proud of calm incident handling but drained by the duplicated data entry.\"; }\n    object fin_1 \"Financial objective 1\" { kind: note; description: \"Synthetic objective: cut cost per resolved ticket by twelve percent this year.\"; }\n    object fin_2 \"Financial objective 2\" { kind: note; description: \"Synthetic objective: grow renewal revenue from the existing customer base.\"; }\n    object cus_1 \"Customer objective 1\" { kind: note; description: \"Synthetic objective: raise first-contact resolution above seventy percent.\"; }\n    object cus_2 \"Customer objective 2\" { kind: note; description: \"Synthetic objective: answer every chat within ninety seconds during business hours.\"; }\n    object int_1 \"Internal process objective 1\" { kind: note; description: \"Synthetic objective: automate the ticket-to-billing rekeying step.\"; }\n    object int_2 \"Internal process objective 2\" { kind: note; description: \"Synthetic objective: publish a weekly workaround digest from the shift handover notes.\"; }\n    object lrn_1 \"Learning & growth objective 1\" { kind: note; description: \"Synthetic objective: certify every agent on the new incident playbook by quarter end.\"; }\n    object lrn_2 \"Learning & growth objective 2\" { kind: note; description: \"Synthetic objective: pair each night-shift agent with a day-shift mentor.\"; }\n}\n\nview empathy \"Support team / empathy map\" {\n    data: [@research];\n    format: @shared.styles.technical;\n    projection { kind:panels; profile:\"canvas.empathy@1\"; columns:2; panels:[\n        {id:\"says\",title:\"SAYS\",row:0,column:0,rowspan:1,colspan:1,items:[@research.says_a, @research.says_b]},\n        {id:\"thinks\",title:\"THINKS\",row:0,column:1,rowspan:1,colspan:1,items:[@research.thinks]},\n        {id:\"persona\",title:\"PERSONA\",row:1,column:0,rowspan:1,colspan:2,items:[@research.persona]},\n        {id:\"does\",title:\"DOES\",row:2,column:0,rowspan:1,colspan:1,items:[@research.does]},\n        {id:\"feels\",title:\"FEELS\",row:2,column:1,rowspan:1,colspan:1,items:[@research.feels]}]; }\n}\n\nview scorecard \"Department / balanced scorecard\" {\n    data: [@research];\n    format: @shared.styles.technical;\n    projection { kind:panels; profile:\"canvas.scorecard@1\"; columns:2; panels:[\n        {id:\"financial\",title:\"FINANCIAL\",row:0,column:0,rowspan:1,colspan:1,items:[@research.fin_1, @research.fin_2]},\n        {id:\"customer\",title:\"CUSTOMER\",row:0,column:1,rowspan:1,colspan:1,items:[@research.cus_1, @research.cus_2]},\n        {id:\"internal\",title:\"INTERNAL PROCESS\",row:1,column:0,rowspan:1,colspan:1,items:[@research.int_1, @research.int_2]},\n        {id:\"learning\",title:\"LEARNING & GROWTH\",row:1,column:1,rowspan:1,colspan:1,items:[@research.lrn_1, @research.lrn_2]}]; }\n}\n","website/examples/basics/shared.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core;\n    style classic;\n    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    style dark { theme: dark; }\n    style neutral { theme: neutral; font: mono; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; gap: 80px; }\n    display detailed;\n    display compact { fields: none; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { width: 280px; }\n    legend numbers { mode: numbers; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"empathy-scorecard","entry":"website/examples/basics/34-empathy-scorecard.ddn","view":"empathy","files":["website/examples/basics/34-empathy-scorecard.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"panel","title":"Clarify a label without changing its identity","id":"ddn.examples.empathy-scorecard::research.feels","file":"website/examples/basics/34-empathy-scorecard.ddn","before":"Feels description = Synthetic: proud of calm incident handli…","after":"Feels description = Synthetic: proud of calm incident handli…","expectation":"Only one entry changes; quadrants and identities are untouched.","key":"description","value":"Synthetic: proud of calm incident handling but drained by the duplicated data entry. (reviewed)"},"experimentKind":"panel","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

@@ -6,7 +6,7 @@ header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .
 nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
 main{max-width:1080px;margin:0 auto;padding:1rem}
 .pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
-.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
 .card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
 .views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
 button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
@@ -21,7 +21,8 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding
 .search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
 .nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
 footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
-<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
 <main>
 <div class="lesson-title"><p class="eyebrow">Requirements, governance and enterprise review</p><h2>Balanced process contract</h2><p class="subtitle">website/examples/basics/15-process-contracts.ddn # balanced</p><span class="pill native">native</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Interfaces drawn with their declared state and the verification that keeps both sides balanced — the contract as a diagram.</p></section><section class="card"><h3>Why use it?</h3><p>Integration defects are contract assumptions colliding; drawing the declared state on each side exposes the mismatch.</p></section><section class="card"><h3>When is it useful?</h3><p>Interface design between systems or teams, especially asynchronous ones.</p></section></div>
@@ -48,7 +49,8 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 }</code></pre></details></section>
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/15-process-contracts.ddn</td><td>data, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared contracts and verification intent; runtime conformance monitoring is out of scope.</p><ul><li>Do not leave the verification method as &quot;testing&quot; — name the check.</li><li>A balanced contract says nothing about latency; declare that separately.</li></ul></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
@@ -56,7 +58,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/15-process-contracts.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.process\";\nimport \"shared.ddn\" as shared;\ndata model {\n object request \"Stock-transfer command\" {kind: message;fields {field command_id;field source_id;field target_id;}}\n object result \"Transfer decision\" {kind: message;fields {field command_id;field state;}}\n object transfer \"Transfer boundary\" {kind: pipeline;\n  ports {port input {direction: in;payload: @request;} port output {direction: out;payload: @result;}}\n  x_boundary: {ports:[@transfer.input,@transfer.output],bindings:[{external:@transfer.input,internal:@validate.input},{external:@transfer.output,internal:@validate.output}]};\n }\n object validate \"Validate and reserve\" {kind: activity;\n  ports {port input {direction: in;payload: @request;} port output {direction: out;payload: @result;}}\n  x_workflow: {\n   states:[pending,accepted,rejected,compensated],initial:pending,terminal:[rejected,compensated],\n   transitions:[\n    {id:approve,from:pending,to:accepted,event:decide,guard:{field:\"approved\",op:eq,value:true}},\n    {id:deny,from:pending,to:rejected,event:decide,guard:{field:\"approved\",op:eq,value:false}},\n    {id:cancel,from:accepted,to:compensated,event:cancel,guard:true}\n   ]\n  };\n  x_reconciliation: {owner:\"Inventory command service\",idempotency_key:\"command_id\",states:[pending,accepted,rejected,compensated],timeout:\"PT5M\",compensation:\"release allocation once\",evidence:\"durable decision and recovery checkpoint\"};\n }\n object deployment_gate \"Operational verification pending\" {kind: rule;\n  x_requirement: {id:\"R-OPS\",owner:\"SRE reviewer\",acceptance:\"Run outage, duplicate delivery and replay tests against real infrastructure\",state:required};\n }\n relation input @request -> @transfer.input {kind: flow;}\n relation internal @transfer -> @validate {kind: depends;}\n relation output @transfer.output -> @result {kind: flow;}\n relation gate @validate -> @deployment_gate {kind: depends;}\n}\nview balanced \"Balanced interfaces / declared state and verification\" {\n data: [@model];format:@shared.styles.technical;\n layout {algorithm: layered;}\n legend {mode:numbers;keys:{input:1,internal:2,output:3,gate:4};}\n publication {size:content;fit:none;overflow:error;}\n}\n","website/examples/basics/shared.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core;\n    style classic;\n    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    style dark { theme: dark; }\n    style neutral { theme: neutral; font: mono; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; gap: 80px; }\n    display detailed;\n    display compact { fields: none; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { width: 280px; }\n    legend numbers { mode: numbers; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"form-contract","entry":"website/examples/basics/15-process-contracts.ddn","view":"balanced","files":["website/examples/basics/15-process-contracts.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.process::model.request","file":"website/examples/basics/15-process-contracts.ddn","before":"Stock-transfer command","after":"Stock-transfer command / review","expectation":"Only the label of Stock-transfer command / review changes; state, verification and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
-<script>(function(){
+<script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
 const status = t => document.getElementById('status').textContent = t;
@@ -88,8 +90,9 @@ document.getElementById('guided').onclick = () => {
 };
 document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
 document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
-document.getElementById('reset').onclick = () => { location.reload(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
 const sel = document.getElementById('file');
+sel.innerHTML = '';
 for (const f of data.files) sel.add(new Option(f, f));
 const editor = document.getElementById('source-editor');
 const live = Object.assign({}, files);
@@ -127,5 +130,6 @@ if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
 }
 redraw();
-})();</script>
+};</script>
+<script>window.__guideInit();</script>
 </body></html>

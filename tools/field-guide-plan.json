@@ -828,10 +828,10 @@
   {
     "id": "timeline-roadmap",
     "title": "Timeline / milestone roadmap",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "field-guide/sources/roadmap.ddn",
+    "view": "roadmap"
   },
   {
     "id": "dashboard",
@@ -924,39 +924,39 @@
   {
     "id": "style-looks",
     "title": "Classic, hand-drawn and neo looks",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/basics/09-look-comparison.ddn",
-    "view": "d"
+    "view": "classic"
   },
   {
     "id": "route-options",
     "title": "Straight, angular, curved and rounded routes",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/basics/17-curved-relations.ddn",
-    "view": "d"
+    "view": "mindmap_classic"
   },
   {
     "id": "crossings",
     "title": "Crossings, gaps and bridge markers",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/basics/17-curved-relations.ddn",
-    "view": "d"
+    "view": "crossing_gap"
   },
   {
     "id": "fields-detail",
     "title": "Selected detail and nested-field attachment",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/12-nested-fields.ddn",
+    "view": "metrics_chart"
   },
   {
     "id": "layout-algorithms",
     "title": "Placement algorithms incl. ladder",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/gallery/src/layouts.ddn",
     "view": "layered"
@@ -964,58 +964,58 @@
   {
     "id": "spacing",
     "title": "Spacing hints",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/basics/60-spacing-hints.ddn",
-    "view": "d"
+    "view": "normal"
   },
   {
     "id": "page-size",
     "title": "Page size, orientation, scale and zoom",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/basics/13-publication.ddn",
+    "view": "paper"
   },
   {
     "id": "safe-export",
     "title": "Visible versus authorized export",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/basics/14-authorized-export.ddn",
-    "view": "d"
+    "view": "private"
   },
   {
     "id": "notation-atlas",
     "title": "Element silhouettes and indicator slots",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/projections/views.ddn",
+    "view": "shape_atlas"
   },
   {
     "id": "pinned-placement",
     "title": "Pin-centred placement patterns",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/live/pinned-patterns.ddn",
+    "view": "circular"
   },
   {
     "id": "pause-placement",
     "title": "Pause, reflow and retained positions",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/live/pinned-patterns.ddn",
+    "view": "paused"
   },
   {
     "id": "night-palettes",
     "title": "Dark and night palettes",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
-    "entry": "(new fixture needed)",
-    "view": "d"
+    "entry": "website/examples/gallery/src/looks.ddn",
+    "view": "classic_night"
   },
   {
     "id": "wireframes",
@@ -1028,7 +1028,7 @@
   {
     "id": "data-refresh",
     "title": "Live dashboards with keyed refresh",
-    "status": "planned",
+    "status": "pilot",
     "support": "technique",
     "entry": "website/examples/basics/59-data-refresh.ddn",
     "view": "latency_chart"
@@ -1151,5 +1151,12 @@
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "lifecycle_trace"
+  },
+  {
+    "id": "fishbone",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "fishbone"
   }
 ]

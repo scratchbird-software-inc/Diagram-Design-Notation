@@ -1,0 +1,25 @@
+ddn "0.5";
+module "ddn.fieldguide.roadmap";
+
+// Synthetic product roadmap (all dates and phases invented): four phases of
+// a platform rebuild on one timeline, with the finish-to-start dependencies
+// declared. A roadmap is the schedule at phase granularity — one bar per
+// phase, read for sequence and overlap, not for task tracking.
+data phases {
+    object discover "Discover" { kind: "flow.process"; x_record: { start: "2026-01-05", end: "2026-02-13", status: "Complete" }; }
+    object foundation "Foundation" { kind: "flow.process"; x_record: { start: "2026-02-16", end: "2026-04-10", status: "Complete" }; }
+    object build "Build out" { kind: "flow.process"; x_record: { start: "2026-04-13", end: "2026-07-31", status: "In progress" }; }
+    object harden "Harden and launch" { kind: "flow.process"; x_record: { start: "2026-08-03", end: "2026-10-09", status: "Planned" }; }
+}
+
+data sequence {
+    relation d_then_f "Discovery gates foundation" @phases.discover -> @phases.foundation { kind: "analysis.precedes"; }
+    relation f_then_b "Foundation gates build" @phases.foundation -> @phases.build { kind: "analysis.precedes"; }
+    relation b_then_h "Build gates hardening" @phases.build -> @phases.harden { kind: "analysis.precedes"; }
+}
+
+view roadmap "Synthetic platform rebuild / roadmap" {
+    data: [@phases, @sequence];
+    projection { kind: timeline; profile: "timeline.basic@1"; records: [@phases.discover, @phases.foundation, @phases.build, @phases.harden]; start: "x_record.start"; end: "x_record.end"; dependencies: [@sequence.d_then_f, @sequence.f_then_b, @sequence.b_then_h]; width: 1250px; }
+    publication { size: content; fit: none; }
+}

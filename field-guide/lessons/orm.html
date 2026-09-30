@@ -6,7 +6,7 @@ header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .
 nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
 main{max-width:1080px;margin:0 auto;padding:1rem}
 .pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
-.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
 .card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
 .views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
 button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
@@ -21,7 +21,8 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding
 .search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
 .nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
 footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
-<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
 <main>
 <div class="lesson-title"><p class="eyebrow">Standards families</p><h2>ORM fact model</h2><p class="subtitle">website/examples/basics/96-orm.ddn # model</p><span class="pill native">native</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>Object-Role Modeling: entity types, value types and the fact roles between them, with uniqueness and mandatory constraints drawn on the roles.</p></section><section class="card"><h3>Why use it?</h3><p>ORM verbalises facts in sentences non-modellers can confirm, and the constraints are drawn where they apply.</p></section><section class="card"><h3>When is it useful?</h3><p>Deep domain modelling where every constraint must survive a business review.</p></section></div>
@@ -47,7 +48,8 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 }</code></pre></details></section>
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/96-orm.ddn</td><td>data, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared fact model with constraint validation; schema generation is a separate step, not claimed here.</p><ul><li>Do not model a ternary fact as two binaries — the constraint semantics differ.</li><li>A role with no uniqueness reading is an unfinished sentence.</li></ul></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
@@ -55,7 +57,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/96-orm.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.orm\";\n\n// B1-080: a small ORM 2 fact model — entity types (solid ellipses), a value\n// type (dashed ellipse) with a value constraint, a fact type drawn as a\n// role-box predicate row (mandatory dot, uniqueness bar), a subset arc, an\n// exclusion arc, objectification and derivation text. All data is synthetic.\ndata m {\n    object cust \"Customer\" { kind: \"orm.entitytype\"; }\n    object name \"Name\" { kind: \"orm.valuetype\"; x_values: { values: [ \"short\", \"full\" ]; }; }\n    object has \"has / is of\" { kind: \"orm.facttype\";\n        fields {\n            field who { x_role: { mandatory: true }; }\n            field what { x_role: { uniqueness: true }; }\n        }\n        x_derive: { text: \"from CRM extract\" };\n    }\n    object vip \"VIP customer\" { kind: \"orm.entitytype\"; }\n    object viporder \"places priority order\" { kind: \"orm.facttype\";\n        fields { field v; field o; }\n        x_objectified: { name: \"PriorityOrder\" };\n    }\n    relation p1 \"\" @has.who -> @cust { kind: \"orm.plays\"; }\n    relation p2 \"\" @has.what -> @name { kind: \"orm.plays\"; }\n    relation s1 \"\" @vip -> @cust { kind: \"orm.subset\"; }\n    relation x1 \"\" @viporder -> @has { kind: \"orm.exclusion\"; }\n}\nview model \"Customer fact model\" {\n    data: [@m];\n    projection { profile: \"orm.basic@1\"; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"orm","entry":"website/examples/basics/96-orm.ddn","view":"model","files":["website/examples/basics/96-orm.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.orm::m.cust","file":"website/examples/basics/96-orm.ddn","before":"Customer","after":"Customer / review","expectation":"Only the label of Customer / review changes; roles, constraints and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
-<script>(function(){
+<script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
 const status = t => document.getElementById('status').textContent = t;
@@ -87,8 +89,9 @@ document.getElementById('guided').onclick = () => {
 };
 document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
 document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
-document.getElementById('reset').onclick = () => { location.reload(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
 const sel = document.getElementById('file');
+sel.innerHTML = '';
 for (const f of data.files) sel.add(new Option(f, f));
 const editor = document.getElementById('source-editor');
 const live = Object.assign({}, files);
@@ -126,5 +129,6 @@ if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
 }
 redraw();
-})();</script>
+};</script>
+<script>window.__guideInit();</script>
 </body></html>

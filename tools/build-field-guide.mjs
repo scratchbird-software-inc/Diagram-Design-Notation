@@ -50,6 +50,7 @@ const facts = JSON.parse(fs.readFileSync(path.join(REPO, 'standard/submission/fa
 import BATCH2 from './field-guide-batch2.mjs';
 import BATCH3 from './field-guide-batch3.mjs';
 import BATCH4 from './field-guide-batch4.mjs';
+import BATCH5 from './field-guide-batch5.mjs';
 const F = k => k.split('.').reduce((o, x) => o[x], facts).value;
 const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -58,7 +59,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // Curated pilot chapters (6). Each fixture is a real repo example; the
 // experiment target is resolved programmatically (first element in the view
 // whose kind matches the chapter's probe), so ids never drift.
-const CHAPTERS = [...BATCH2, ...BATCH3, ...BATCH4,
+const CHAPTERS = [...BATCH2, ...BATCH3, ...BATCH4, ...BATCH5,
   {
     id: 'whiteboard', title: 'Whiteboard / discovery sketch', category: 'Data structures and meaning',
     status: 'native', entry: 'website/examples/use-cases/01-whiteboard.ddn', view: 'diagram',
@@ -350,7 +351,7 @@ header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .
 nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
 main{max-width:1080px;margin:0 auto;padding:1rem}
 .pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
-.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
 .card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
 .views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
 button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
@@ -366,7 +367,7 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding
 .nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
 footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}`;
 
-const GUIDE_JS = `(function(){
+const GUIDE_JS = `window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
 const status = t => document.getElementById('status').textContent = t;
@@ -398,8 +399,9 @@ document.getElementById('guided').onclick = () => {
 };
 document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
 document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
-document.getElementById('reset').onclick = () => { location.reload(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
 const sel = document.getElementById('file');
+sel.innerHTML = '';
 for (const f of data.files) sel.add(new Option(f, f));
 const editor = document.getElementById('source-editor');
 const live = Object.assign({}, files);
@@ -437,13 +439,10 @@ if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
 }
 redraw();
-})();`;
+};`;
 
-function lessonHtml(ch) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="${esc(ch.title)}: a source-editable DDN field-guide chapter."><title>${esc(ch.title)} · DDN field guide</title>
-<style>${GUIDE_CSS}</style></head><body>
-<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+function lessonMain(ch) {
+  return `
 <main>
 <div class="lesson-title"><p class="eyebrow">${esc(ch.category)}</p><h2>${esc(ch.title)}</h2><p class="subtitle">${esc(ch.entry)} # ${esc(ch.view)}</p><span class="pill ${ch.status}">${esc(ch.status)}</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>${esc(ch.what)}</p></section><section class="card"><h3>Why use it?</h3><p>${esc(ch.why)}</p></section><section class="card"><h3>When is it useful?</h3><p>${esc(ch.when)}</p></section></div>
@@ -471,15 +470,37 @@ function lessonHtml(ch) {
 <details><summary>Actual view declaration</summary><pre><code>${esc(ch.viewSource || '(view declaration not locatable)')}</code></pre></details></section>
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody>${ch.sourceTour.map(s => `<tr><td>${esc(s.file)}</td><td>${esc(s.roles.join(', ') || 'support')}</td></tr>`).join('')}</tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>${esc(ch.limits)}</p><ul>${ch.pitfalls.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+</main>`;
+}
+
+function lessonPayloads(ch) {
+  const files = filesFor(ch.entry);
+  return {
+    files,
+    chapter: { id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label', evaluation: ch.evaluation || null },
+    geography: /geography\s*:/.test(Object.values(files).join('\n'))
+      ? { name: 'assets/geo/world-110m.json', json: fs.readFileSync(path.join(REPO, 'assets/geo/world-110m.json'), 'utf8') }
+      : null,
+  };
+}
+
+function lessonHtml(ch) {
+  const p = lessonPayloads(ch);
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="${esc(ch.title)}: a source-editable DDN field-guide chapter."><title>${esc(ch.title)} · DDN field guide</title>
+<style>${GUIDE_CSS}</style></head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+${lessonMain(ch)}
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
 <script src="../../notation/dist/ddn-geo.js"></script>
-<script>window.GUIDE_FILES = ${JSON.stringify(filesFor(ch.entry)).replace(/<\//g, '<\\/')};</script>
-<script>window.GUIDE_CHAPTER = ${JSON.stringify({ id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label', evaluation: ch.evaluation || null }).replace(/<\//g, '<\\/')};</script>
-${/geography\s*:/.test(Object.values(filesFor(ch.entry)).join('\n')) ? `<script>window.GUIDE_GEOGRAPHY = ${JSON.stringify({ name: 'assets/geo/world-110m.json', json: fs.readFileSync(path.join(REPO, 'assets/geo/world-110m.json'), 'utf8') }).replace(/<\//g, '<\\/')};</script>` : ''}
+<script>window.GUIDE_FILES = ${JSON.stringify(p.files).replace(/<\//g, '<\\/')};</script>
+<script>window.GUIDE_CHAPTER = ${JSON.stringify(p.chapter).replace(/<\//g, '<\\/')};</script>
+${p.geography ? `<script>window.GUIDE_GEOGRAPHY = ${JSON.stringify(p.geography).replace(/<\//g, '<\\/')};</script>` : ''}
 <script>${GUIDE_JS}</script>
+<script>window.__guideInit();</script>
 </body></html>`;
 }
 
@@ -488,13 +509,12 @@ function indexHtml(chapters, meta) {
   for (const c of chapters) (byCat[c.category] ??= []).push(c);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DDN Diagram Field Guide · 0.7 edition</title><style>${GUIDE_CSS}</style></head><body>
-<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="#paths">Learning paths</a><a href="#chapters">All chapters</a><a href="#coverage">Coverage</a></nav></header>
+<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="#paths">Learning paths</a><a href="#chapters">All chapters</a><a href="#coverage">Coverage</a><a href="portable.html">Portable edition</a></nav></header>
 <main>
 <section class="hero card"><h1>Understand the diagram.<br>Change the actual design.</h1>
-<p>Choose a question, read the diagram, inspect its shared source, and try a real edit. Every chapter includes a live example, a bounded capability statement, and a shipped, undoable first edit.</p>
+<p>Choose a question, read the diagram, inspect its shared source, and try a real edit. Every chapter includes a live example, a bounded capability statement, and a shipped, undoable first edit. The whole guide also ships as <a href="portable.html">one self-contained file</a>.</p>
 <div class="metrics">
 <div><strong>${meta.chapters}</strong><span>chapters this edition</span></div>
-<div><strong>${meta.plannedChapters}</strong><span>planned in the full-edition map</span></div>
 <div><strong>${F('profiles.installed')}</strong><span>installed profiles</span></div>
 <div><strong>${F('profiles.projectionKinds')}</strong><span>projection kinds</span></div>
 <div><strong>${F('registry.totalKinds')}</strong><span>element kinds</span></div>
@@ -508,21 +528,21 @@ function indexHtml(chapters, meta) {
 <section id="chapters" class="card"><h3>Chapters (${meta.chapters})</h3><input id="search" class="search" type="search" placeholder="Search chapters…" aria-label="Search chapters">
 <div id="nav-list" class="nav-list">${Object.entries(byCat).map(([cat, cs]) => `<h4>${esc(cat)}</h4>` + cs.map(c => `<a href="lessons/${c.id}.html" data-text="${esc((c.title + ' ' + c.tags.join(' ')).toLowerCase())}">${esc(c.title)}</a>`).join('')).join('')}</div></section>
 <section id="coverage" class="card"><h3>Coverage and honesty</h3>
-<p>Support levels: <span class="pill native">native</span> a directly implemented DDN capability within its declared limits; <span class="pill equivalent">equivalent</span> a constructive DDN teaching template for the same information, no external certification implied; <span class="pill subset">subset</span> an explicitly bounded implementation of a wider family. This pilot ships ${meta.chapters} chapters, all ${meta.byStatus}; ${meta.plannedChapters - meta.chapters} more are mapped in <code>chapter-plan.json</code> and land in later runs.</p>
+<p>Support levels: <span class="pill native">native</span> a directly implemented DDN capability within its declared limits; <span class="pill equivalent">equivalent</span> a constructive DDN teaching template for the same information, no external certification implied; <span class="pill subset">subset</span> an explicitly bounded implementation of a wider family; <span class="pill technique">technique</span> an authoring or publication practice chapter. This edition ships ${meta.chapters} chapters (${meta.byStatus}) — every entry in <code>chapter-plan.json</code> is delivered.</p>
 <p>Registry facts are generated, never hand-written: ${F('registry.totalKinds')} element kinds, ${F('registry.totalRelations')} relation verbs, ${F('profiles.installed')} profiles, ${F('profiles.projectionKinds')} projection kinds, ${F('icons.packs')} icon packs (${F('icons.icons')} icons) — source: standard/submission/facts.json.</p></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · every chapter's fixture is checked and rendered at build time; every exercise is executed and undone, hashes recorded.</footer>
+</main><footer>DDN 0.7.0 · field-guide 0.7 edition · every chapter's fixture is checked and rendered at build time; every exercise is executed and undone, hashes recorded.</footer>
 <script>document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();for(const a of document.querySelectorAll('#nav-list a'))a.style.display=a.dataset.text.includes(q)?'':'none';});</script>
 </body></html>`;
 }
 
 function fieldGuideMd(chapters, meta) {
-  const lines = [`# DDN Diagram Field Guide — 0.7 edition (pilot)`,
+  const lines = [`# DDN Diagram Field Guide — 0.7 edition`,
     ``,
     `Generated by \`tools/build-field-guide.mjs\` from the registry, the example corpus and`,
     `\`standard/submission/facts.json\`. Every chapter fixture is checked and rendered at build`,
     `time; every guided first edit is executed and undone, with both SVG hashes recorded.`,
     ``,
-    `- chapters this edition: **${meta.chapters}** (all ${meta.byStatus}) · planned full map: **${meta.plannedChapters}**`,
+    `- chapters this edition: **${meta.chapters}** (${meta.byStatus}) — the full chapter map is delivered`,
     `- registry facts: **${F('registry.totalKinds')}** element kinds · **${F('registry.totalRelations')}** relation verbs · **${F('profiles.installed')}** profiles · **${F('profiles.projectionKinds')}** projection kinds`,
     ``];
   for (const ch of chapters) {
@@ -536,6 +556,72 @@ function fieldGuideMd(chapters, meta) {
   return lines.join('\n') + '\n';
 }
 
+/* portable.html — the whole edition as ONE self-contained file: minified
+ * runtimes inlined, every chapter's rendered body + payload embedded, source
+ * files deduplicated into one shared map, hash routing between chapters. No
+ * external reference of any kind (fonts are system stacks, geography inline). */
+function portableHtml(chapters, meta) {
+  const sharedFiles = {};
+  const payload = chapters.map(ch => {
+    const p = lessonPayloads(ch);
+    for (const [k, v] of Object.entries(p.files)) sharedFiles[k] = v;
+    return { id: ch.id, title: ch.title, category: ch.category, main: lessonMain(ch), files: Object.keys(p.files), chapter: p.chapter, geography: !!p.geography };
+  });
+  const needsGeo = payload.some(c => c.geography);
+  const safe = s => s.replace(/<\//g, '<\\/');
+  const runtimes = ['ddn.global.min.js', 'ddn-graph.min.js', 'ddn-iso.min.js', 'ddn-geo.min.js'].map(f => {
+    const js = fs.readFileSync(path.join(REPO, 'notation/dist', f), 'utf8');
+    if (js.includes('</script')) throw new Error(f + ' contains </script — cannot inline into portable.html');
+    return '<script>' + js + '</script>';
+  }).join('\n');
+  const byCat = {};
+  for (const c of payload) (byCat[c.category] ??= []).push(c);
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="The DDN Diagram Field Guide as one self-contained file: ${meta.chapters} chapters, live examples, guided edits — no network, no account."><title>DDN Diagram Field Guide · portable 0.7 edition</title>
+<style>${GUIDE_CSS}
+#layout{display:grid;grid-template-columns:300px 1fr;gap:1rem;align-items:start}
+#sidebar{position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto}
+#sidebar .nav-list a.active{font-weight:700;color:#173d6e}
+#lesson{min-width:0}
+@media(max-width:900px){#layout{grid-template-columns:1fr}#sidebar{position:static;max-height:none}}
+</style></head><body>
+<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>portable 0.7 edition · one file · works offline</small></header>
+<div id="layout"><aside id="sidebar" class="card"><input id="search" class="search" type="search" placeholder="Search chapters…" aria-label="Search chapters">
+<div class="nav-list">${Object.entries(byCat).map(([cat, cs]) => `<h4>${esc(cat)}</h4>` + cs.map(c => `<a href="#/${c.id}" data-id="${c.id}" data-text="${esc((c.title + ' ' + cat).toLowerCase())}">${esc(c.title)}</a>`).join('')).join('')}</div></aside>
+<div id="lesson"><main><section class="hero card"><h1>Understand the diagram.<br>Change the actual design.</h1>
+<p>This single file carries the whole 0.7 field guide: <strong>${meta.chapters} chapters</strong>, every live example, every guided first edit, the full rendering runtime — no network, no account, no external reference. Pick a chapter on the left; the URL hash deep-links it.</p>
+<p class="minor">Registry facts are generated, never hand-written: ${F('registry.totalKinds')} element kinds, ${F('registry.totalRelations')} relation verbs, ${F('profiles.installed')} profiles, ${F('profiles.projectionKinds')} projection kinds, ${F('icons.packs')} icon packs (${F('icons.icons')} icons) — source: standard/submission/facts.json.</p></section></main></div></div>
+<footer>DDN ${A.VERSION} · field-guide 0.7 portable edition · original documentation and synthetic examples · everything on this page runs locally.</footer>
+${runtimes}
+<script>window.GUIDE_SHARED_FILES = ${safe(JSON.stringify(sharedFiles))};</script>
+<script>window.GUIDE_PORTABLE = ${safe(JSON.stringify(payload.map(c => ({ id: c.id, main: c.main, files: c.files, chapter: c.chapter, geography: c.geography }))))};</script>
+${needsGeo ? `<script>window.GUIDE_GEO_JSON = ${safe(JSON.stringify(fs.readFileSync(path.join(REPO, 'assets/geo/world-110m.json'), 'utf8')))};</script>` : ''}
+<script>${GUIDE_JS}</script>
+<script>(function(){
+const byId = {};
+for (const c of window.GUIDE_PORTABLE) byId[c.id] = c;
+function open(id){
+  const c = byId[id];
+  if (!c) return;
+  window.GUIDE_FILES = {};
+  for (const f of c.files) window.GUIDE_FILES[f] = window.GUIDE_SHARED_FILES[f];
+  window.GUIDE_CHAPTER = c.chapter;
+  window.GUIDE_GEOGRAPHY = c.geography ? { name: 'assets/geo/world-110m.json', json: window.GUIDE_GEO_JSON } : null;
+  document.getElementById('lesson').innerHTML = c.main;
+  window.__guideInit();
+  for (const a of document.querySelectorAll('#sidebar a')) a.classList.toggle('active', a.dataset.id === id);
+  document.getElementById('lesson').scrollIntoView({ block: 'start' });
+}
+window.addEventListener('hashchange', () => open(location.hash.replace(/^#\\//, '')));
+if (location.hash) open(location.hash.replace(/^#\\//, ''));
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  for (const a of document.querySelectorAll('#sidebar .nav-list a')) a.style.display = a.dataset.text.includes(q) ? '' : 'none';
+});
+})();</script>
+</body></html>`;
+}
+
 // ---------------------------------------------------------------- main -----
 fs.mkdirSync(path.join(OUT, 'lessons'), { recursive: true });
 const chapters = CHAPTERS.map(buildChapter);
@@ -545,7 +631,7 @@ const meta = {
   byStatus: [...new Set(chapters.map(c => c.status))].join('/'),
 };
 const catalogue = {
-  meta: { edition: 'field-guide-0.7-pilot', runtime: A.VERSION, reviewed: '2026-09-30',
+  meta: { edition: 'field-guide-0.7', runtime: A.VERSION, reviewed: '2026-09-30',
     chapterCount: chapters.length, plannedChapterCount: PLAN.length,
     facts: {
       profiles: F('profiles.installed'), projectionKinds: F('profiles.projectionKinds'),
@@ -571,5 +657,6 @@ fs.writeFileSync(path.join(OUT, 'chapter-plan.json'), JSON.stringify(PLAN, null,
 fs.writeFileSync(path.join(OUT, 'FIELD-GUIDE.md'), fieldGuideMd(chapters, meta));
 for (const ch of chapters) fs.writeFileSync(path.join(OUT, 'lessons', ch.id + '.html'), lessonHtml(ch));
 fs.writeFileSync(path.join(OUT, 'index.html'), indexHtml(chapters, meta));
-console.log(`field-guide: ${chapters.length} pilot chapters → ${OUT} (catalogue, coverage, example-index, plan ${PLAN.length}, FIELD-GUIDE.md, ${chapters.length} lesson pages, index)`);
+fs.writeFileSync(path.join(OUT, 'portable.html'), portableHtml(chapters, meta));
+console.log(`field-guide: ${chapters.length} chapters → ${OUT} (catalogue, coverage, example-index, plan ${PLAN.length}, FIELD-GUIDE.md, ${chapters.length} lesson pages, index, portable edition)`);
 for (const c of chapters) console.log(`  ${c.id}: render ok (${c.runtime.warnings.length} warnings, exercise ${c.exerciseEvidence.changed ? 'changes' : 'NO-CHANGE?!'}, undo-restores=${c.exerciseEvidence.undoRestoresBefore}`);

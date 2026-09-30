@@ -6,7 +6,7 @@ header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .
 nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
 main{max-width:1080px;margin:0 auto;padding:1rem}
 .pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
-.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
 .card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
 .views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
 button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
@@ -21,7 +21,8 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding
 .search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
 .nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
 footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
-<header class="top"><a class="brand" href="index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition (pilot)</small><nav><a href="index.html#paths">Learning paths</a><a href="index.html#chapters">All chapters</a><a href="index.html#coverage">Coverage</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+
 <main>
 <div class="lesson-title"><p class="eyebrow">Architecture, distribution and integration</p><h2>ETL pipeline — sources to marts</h2><p class="subtitle">field-guide/sources/etl.ddn # diagram</p><span class="pill native">native</span></div>
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>A nightly extract-transform-load pipeline in the data-flow idiom: sources, landing, staging, conformance and the marts it feeds.</p></section><section class="card"><h3>Why use it?</h3><p>Pipeline reviews fail on invisible handoffs; drawing every read/write makes an unverified hop a visible gap.</p></section><section class="card"><h3>When is it useful?</h3><p>Batch integration design, data-platform documentation, impact analysis (&quot;who reads this table?&quot;).</p></section></div>
@@ -48,7 +49,8 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 }</code></pre></details></section>
 <section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>field-guide/sources/etl.ddn</td><td>data, view</td></tr></tbody></table></section></div>
 <section class="limits card"><h3>Boundaries and common mistakes</h3><p>Declared flow in the DFD idiom; job scheduling, data quality and volumes are documented elsewhere.</p><ul><li>Do not draw a dataset-to-dataset arrow with no activity between — the transform is the point.</li><li>A mart nobody declared a consumer for is shelf-ware.</li></ul></section>
-</main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script src="../../notation/dist/ddn-graph.js"></script>
 <script src="../../notation/dist/ddn-iso.js"></script>
@@ -56,7 +58,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"field-guide/sources/etl.ddn":"ddn \"0.5\";\nmodule \"ddn.fieldguide.etl\";\n\n// Synthetic nightly ETL pipeline (all systems invented): two operational\n// sources land in a raw staging area, conformance transforms integrate and\n// deduplicate, and two marts serve reporting. Drawn in the data-flow idiom:\n// activities transform, datasets hold, read/write relations mark direction.\ndata pipeline {\n    object shop \"Shop OLTP\" { kind: \"dataset\"; description: \"Synthetic order-taking source: orders, customers, payments.\"; }\n    object crm \"CRM extracts\" { kind: \"dataset\"; description: \"Synthetic nightly customer-master extract files.\"; }\n    object land \"Nightly landing\" { kind: \"activity\"; description: \"Synthetic copy job: source-faithful, no business rules.\"; }\n    object raw \"Raw staging\" { kind: \"dataset\"; description: \"Synthetic landing zone: immutable copies with arrival metadata.\"; }\n    object conform \"Conform and deduplicate\" { kind: \"activity\"; description: \"Synthetic transform: key mapping, survivorship, type alignment.\"; }\n    object warehouse \"Integrated warehouse\" { kind: \"dataset\"; description: \"Synthetic conformed store: one customer, one order line.\"; }\n    object feed_sales \"Sales slice build\" { kind: \"activity\"; description: \"Synthetic daily slice for order reporting.\"; }\n    object feed_churn \"Churn feature build\" { kind: \"activity\"; description: \"Synthetic feature build for retention analysis.\"; }\n    object sales_mart \"Sales mart\" { kind: \"dataset\"; description: \"Synthetic star for order reporting.\"; }\n    object churn_mart \"Churn mart\" { kind: \"dataset\"; description: \"Synthetic features for retention analysis.\"; }\n    relation r1 @shop -> @land { kind: read; }\n    relation r2 @crm -> @land { kind: read; }\n    relation r3 @land -> @raw { kind: write; }\n    relation r4 @raw -> @conform { kind: read; }\n    relation r5 @conform -> @warehouse { kind: write; }\n    relation r6 @warehouse -> @feed_sales { kind: read; }\n    relation r7 @feed_sales -> @sales_mart { kind: write; }\n    relation r8 @warehouse -> @feed_churn { kind: read; }\n    relation r9 @feed_churn -> @churn_mart { kind: write; }\n}\n\nview diagram \"Synthetic ETL / sources to marts\" {\n    data: [@pipeline];\n    projection { profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"etl","entry":"field-guide/sources/etl.ddn","view":"diagram","files":["field-guide/sources/etl.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.fieldguide.etl::pipeline.shop","file":"field-guide/sources/etl.ddn","before":"Shop OLTP","after":"Shop OLTP / review","expectation":"Only the label of Shop OLTP / review changes; the read/write topology and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
-<script>(function(){
+<script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
 const status = t => document.getElementById('status').textContent = t;
@@ -88,8 +90,9 @@ document.getElementById('guided').onclick = () => {
 };
 document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
 document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
-document.getElementById('reset').onclick = () => { location.reload(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
 const sel = document.getElementById('file');
+sel.innerHTML = '';
 for (const f of data.files) sel.add(new Option(f, f));
 const editor = document.getElementById('source-editor');
 const live = Object.assign({}, files);
@@ -127,5 +130,6 @@ if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
 }
 redraw();
-})();</script>
+};</script>
+<script>window.__guideInit();</script>
 </body></html>
