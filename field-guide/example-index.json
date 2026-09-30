@@ -2,6 +2,308 @@
   "runtime": "0.7.0",
   "examples": [
     {
+      "chapter": "relational",
+      "entry": "website/examples/use-cases/03-relational.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/03-relational.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ]
+    },
+    {
+      "chapter": "physical-model",
+      "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/04-sql-dependencies.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/sql.ddn"
+      ]
+    },
+    {
+      "chapter": "documents",
+      "entry": "website/examples/use-cases/05-documents.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/05-documents.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/documents.ddn"
+      ]
+    },
+    {
+      "chapter": "graph-schema",
+      "entry": "website/examples/use-cases/06-graph-schema.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/06-graph-schema.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/graph.ddn"
+      ]
+    },
+    {
+      "chapter": "keyed-storage",
+      "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/07-keyed-storage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/keyed.ddn"
+      ]
+    },
+    {
+      "chapter": "wide-column",
+      "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+      "view": "wide_column",
+      "files": [
+        "website/examples/use-cases/07-keyed-storage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/keyed.ddn"
+      ]
+    },
+    {
+      "chapter": "domains",
+      "entry": "website/examples/use-cases/08-domains.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/08-domains.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/domains.ddn"
+      ]
+    },
+    {
+      "chapter": "namespaces",
+      "entry": "website/examples/use-cases/09-namespaces.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/09-namespaces.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/sql.ddn",
+        "website/examples/use-cases/data/namespace.ddn"
+      ]
+    },
+    {
+      "chapter": "hybrid-deployment",
+      "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/10-hybrid-deployment.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/deployment.ddn"
+      ]
+    },
+    {
+      "chapter": "data-flow",
+      "entry": "website/examples/use-cases/11-data-flow.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/11-data-flow.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/flow.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ]
+    },
+    {
+      "chapter": "streaming",
+      "entry": "website/examples/use-cases/12-streaming.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/12-streaming.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/flow.ddn"
+      ]
+    },
+    {
+      "chapter": "lineage",
+      "entry": "website/examples/use-cases/13-lineage.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/13-lineage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/lineage.ddn"
+      ]
+    },
+    {
+      "chapter": "temporal",
+      "entry": "website/examples/use-cases/14-temporal.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/14-temporal.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/temporal.ddn"
+      ]
+    },
+    {
+      "chapter": "warehouse",
+      "entry": "website/examples/use-cases/15-warehouse.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/15-warehouse.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/warehouse.ddn"
+      ]
+    },
+    {
+      "chapter": "vector-lineage",
+      "entry": "website/examples/use-cases/16-vector-lineage.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/16-vector-lineage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/vectors.ddn"
+      ]
+    },
+    {
+      "chapter": "governance",
+      "entry": "website/examples/use-cases/17-governance.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/17-governance.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/governance.ddn"
+      ]
+    },
+    {
+      "chapter": "security-boundary",
+      "entry": "website/examples/use-cases/18-security.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/18-security.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/security.ddn"
+      ]
+    },
+    {
+      "chapter": "recovery",
+      "entry": "website/examples/use-cases/19-recovery.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/19-recovery.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/recovery.ddn"
+      ]
+    },
+    {
+      "chapter": "migration",
+      "entry": "website/examples/use-cases/20-migration.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/20-migration.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/migration.ddn"
+      ]
+    },
+    {
+      "chapter": "quality-model",
+      "entry": "website/examples/use-cases/21-quality.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/21-quality.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/quality.ddn"
+      ]
+    },
+    {
+      "chapter": "linked-documentation",
+      "entry": "website/examples/use-cases/22-linked-documentation.ddn",
+      "view": "diagram",
+      "files": [
+        "website/examples/use-cases/22-linked-documentation.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ]
+    },
+    {
+      "chapter": "c4-context",
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "context",
+      "files": [
+        "website/examples/basics/25-c4-views.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "c4-container",
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "container",
+      "files": [
+        "website/examples/basics/25-c4-views.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "c4-components",
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "component",
+      "files": [
+        "website/examples/basics/25-c4-views.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "network",
+      "entry": "website/examples/basics/54-network-diagram.ddn",
+      "view": "lan",
+      "files": [
+        "website/examples/basics/54-network-diagram.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "network-symbols",
+      "entry": "website/examples/basics/103-network-symbols.ddn",
+      "view": "net",
+      "files": [
+        "website/examples/basics/103-network-symbols.ddn"
+      ]
+    },
+    {
+      "chapter": "uml-deployment",
+      "entry": "website/examples/basics/78-uml-deployment.ddn",
+      "view": "main",
+      "files": [
+        "website/examples/basics/78-uml-deployment.ddn"
+      ]
+    },
+    {
+      "chapter": "iso5807-flowchart",
+      "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+      "view": "chart",
+      "files": [
+        "website/examples/basics/91-iso5807-flowchart.ddn"
+      ]
+    },
+    {
+      "chapter": "c4-deployment",
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "deployment",
+      "files": [
+        "website/examples/basics/92-c4-epc.ddn"
+      ]
+    },
+    {
+      "chapter": "c4-dynamic",
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "dynamic",
+      "files": [
+        "website/examples/basics/92-c4-epc.ddn"
+      ]
+    },
+    {
+      "chapter": "sequence-fragments",
+      "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+      "view": "fragments",
+      "files": [
+        "website/examples/basics/76-uml-sequence-complete.ddn"
+      ]
+    },
+    {
       "chapter": "whiteboard",
       "entry": "website/examples/use-cases/01-whiteboard.ddn",
       "view": "diagram",

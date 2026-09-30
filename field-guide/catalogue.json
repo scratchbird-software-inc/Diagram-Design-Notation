@@ -3,8 +3,8 @@
     "edition": "field-guide-0.7-pilot",
     "runtime": "0.7.0",
     "reviewed": "2026-09-30",
-    "chapterCount": 6,
-    "plannedChapterCount": 138,
+    "chapterCount": 37,
+    "plannedChapterCount": 152,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -15,6 +15,3017 @@
     }
   },
   "lessons": [
+    {
+      "id": "relational",
+      "title": "Logical relational schema",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/03-relational.ddn",
+      "view": "diagram",
+      "variants": [
+        {
+          "view": "compact",
+          "title": "Compact notation"
+        },
+        {
+          "view": "neo",
+          "title": "Neo look"
+        }
+      ],
+      "what": "Tables and references at design level: keys, cardinalities and which table owns a fact — still no storage engine decisions.",
+      "why": "Move from business nouns to a checkable structure: every relationship now has a home and a direction.",
+      "when": "After the conceptual ER pass, before physical naming, indexing and platform choices.",
+      "read": [
+        "Each box is a table; read keys first, then the reference arrows from foreign key to primary key.",
+        "Crow's-foot marks state how many children a parent may have — claims, not constraints enforced here."
+      ],
+      "inputs": [
+        "The entity list from the conceptual model",
+        "Candidate keys per table",
+        "Ownership rules for every relationship"
+      ],
+      "pitfalls": [
+        "Do not put a foreign key on both sides.",
+        "A many-to-many without a join table hides a missing entity."
+      ],
+      "limits": "Logical only: datatypes, indexes and platform types are declared in the physical model, not here.",
+      "refs": [],
+      "probe": [
+        "table",
+        "entity",
+        "application"
+      ],
+      "editTask": "Pick one relationship and state its cardinality in words in the label, apply, and verify the marks still match your sentence.",
+      "tags": [
+        "relational",
+        "logical",
+        "schema"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/03-relational.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "62f828abde84738c9d6ec45b7ec42b9d5966882a65faa21115e7e20a747337e1",
+        "modelFingerprint": "653d302f2d3c8ac5",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/03-relational.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/03-relational.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"03 / Logical relational schema\" {\n    data: [@c.tables, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@c.tables.line, @c.tables.orders, @c.tables.customer];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"tables.r_line_order\": 1, \"tables.r_order_customer\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/03-relational.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.customer",
+        "file": "website/examples/use-cases/03-relational.ddn",
+        "before": "Customer",
+        "after": "Customer / review",
+        "expectation": "Only the label of Customer / review changes; keys, references and every identity are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "62f828abde84738c9d6ec45b7ec42b9d5966882a65faa21115e7e20a747337e1",
+        "after": "e6d48757d341c596df9ba6dad4b43e71b9fbf7343690ae207df0b113bbcaf457",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "physical-model",
+      "title": "Physical representation and datatype documentation",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+      "view": "diagram",
+      "what": "SQL objects with their dependencies: which view reads which table, which table feeds which report.",
+      "why": "Know the blast radius of a schema change before you make it.",
+      "when": "Impact analysis before renaming, splitting or dropping database objects.",
+      "read": [
+        "Arrows point from a definition to the objects that consume it.",
+        "A shared lookup table with many consumers is a deliberate coupling, not an accident."
+      ],
+      "inputs": [
+        "The object inventory",
+        "Read/write relationships between objects",
+        "Ownership per object"
+      ],
+      "pitfalls": [
+        "Do not treat a missing arrow as proof of no dependency — dynamic SQL and applications are outside the model until declared.",
+        "Do not delete a consumer from the diagram to make a change look safe."
+      ],
+      "limits": "Declared dependencies only; runtime introspection of a live database is out of scope.",
+      "refs": [],
+      "probe": [
+        "table",
+        "entity",
+        "application"
+      ],
+      "editTask": "Add one dependency you know exists between two declared objects, apply, and check it renders and validates.",
+      "tags": [
+        "sql",
+        "dependencies",
+        "impact"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "ea5cf366e09dee95b1e1212ea977a91eddd32653619ad73087e775d3a9076e77",
+        "modelFingerprint": "157d2f94add29618",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/04-sql-dependencies.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/sql.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/04-sql-dependencies.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/sql.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"04 / SQL object dependencies\" {\n    data: [@s.model, @c.tables, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@s.model.routine, @s.model.view, @c.tables.orders];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_routine_view\": 1, \"model.r_view_orders\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/04-sql-dependencies.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.orders",
+        "file": "website/examples/use-cases/04-sql-dependencies.ddn",
+        "before": "Orders",
+        "after": "Orders / review",
+        "expectation": "Only the label of Orders / review changes; dependencies and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "ea5cf366e09dee95b1e1212ea977a91eddd32653619ad73087e775d3a9076e77",
+        "after": "1a5700cf2780021c264cd5b3040c2cdeffd57050d10b9fc942065bfe3b4ff64b",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "documents",
+      "title": "Document and embedded-object schema",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/05-documents.ddn",
+      "view": "diagram",
+      "what": "A document model: nested objects, arrays and embedded structures with their containment rules.",
+      "why": "Tree-shaped data needs its own contract — tables of one row type do not describe nesting.",
+      "when": "Designing JSON documents, message payloads, or any hierarchical record.",
+      "read": [
+        "Containment reads top-down: each level owns the fields below it.",
+        "Arrays are plural by contract, not by current length."
+      ],
+      "inputs": [
+        "The nesting levels",
+        "Which fields are arrays",
+        "Required-versus-optional per node"
+      ],
+      "pitfalls": [
+        "Do not flatten a tree into parallel tables just because it feels relational.",
+        "An optional node with required children is usually a modeling mistake."
+      ],
+      "limits": "Structural contract only; no validation engine runs against live documents.",
+      "refs": [],
+      "probe": [
+        "table",
+        "entity",
+        "application",
+        "document"
+      ],
+      "editTask": "Mark one field optional in the source, apply, and check the marker and diagnostics.",
+      "tags": [
+        "document",
+        "json",
+        "nested"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/05-documents.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "596e287f00523bf0d6cff226bcbb954361c606c227ce38db69e78f036a5d423f",
+        "modelFingerprint": "f451fee3d83d53fb",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/05-documents.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/documents.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/05-documents.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/documents.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"05 / Nested document structure\" {\n    data: [@d.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@d.model.profiles, @d.model.contacts, @d.model.contact];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_a\": 1, \"model.r_b\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/05-documents.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.documents::model.contact",
+        "file": "website/examples/use-cases/05-documents.ddn",
+        "before": "Contact item",
+        "after": "Contact item / review",
+        "expectation": "Only the label of Contact item / review changes; nesting and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "596e287f00523bf0d6cff226bcbb954361c606c227ce38db69e78f036a5d423f",
+        "after": "22477872650cdbc3ace41d4f0c48cc6f7b0a21ab83c90d9930b048aa1b357af0",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "graph-schema",
+      "title": "Property-graph schema",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/06-graph-schema.ddn",
+      "view": "diagram",
+      "what": "Nodes and edges with properties: the schema of a property graph, including which labels and properties exist.",
+      "why": "Graph stores still need contracts — \"schemaless\" without a written agreement becomes archaeology.",
+      "when": "Designing or reviewing a property-graph model (nodes, edge types, properties).",
+      "read": [
+        "Node labels are types; edge labels are typed relationships.",
+        "Properties attach to the node or edge that owns them."
+      ],
+      "inputs": [
+        "Node labels",
+        "Edge types and their directions",
+        "Property sets per label"
+      ],
+      "pitfalls": [
+        "Do not model every relationship as a generic \"related\" edge.",
+        "Do not store on an edge what belongs to the node."
+      ],
+      "limits": "Declared schema only; no graph query execution.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "table"
+      ],
+      "editTask": "Rename one edge type to a verb phrase, apply, and check the legend and diagnostics.",
+      "tags": [
+        "graph",
+        "property-graph",
+        "schema"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/06-graph-schema.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "ba6085eeea864f7befc5b0caddb47b9b9b3d9688ffcb35894cdbd7a32761eadf",
+        "modelFingerprint": "2aa9d60168ec549b",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/06-graph-schema.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/graph.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/06-graph-schema.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/graph.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"06 / Property-graph schema\" {\n    data: [@g.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.neo;\n    layout: @fmt.shared.row;\n    select: [@g.model.customer, @g.model.purchased, @g.model.product];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_source\": 1, \"model.r_target\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/06-graph-schema.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.graph::model.customer",
+        "file": "website/examples/use-cases/06-graph-schema.ddn",
+        "before": "Customer node",
+        "after": "Customer node / review",
+        "expectation": "Only the label of Customer node / review changes; labels, edges and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "ba6085eeea864f7befc5b0caddb47b9b9b3d9688ffcb35894cdbd7a32761eadf",
+        "after": "07f1f3f61025938a48b167f269be5720090a67955bcd9a237a98a03d1e191573",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "keyed-storage",
+      "title": "Key-value structure and lookup contract",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+      "view": "diagram",
+      "what": "A key-value space: key shapes, value payloads, and the lookup contract between them.",
+      "why": "Make key design a reviewed decision — it decides distribution, collisions and every access pattern.",
+      "when": "Designing caches, key-value stores, or any lookup-first data structure.",
+      "read": [
+        "Keys are the contract; values are opaque to readers of the key space.",
+        "Lookup paths start at the key, never the value."
+      ],
+      "inputs": [
+        "Key shapes and their parts",
+        "Payload sketches",
+        "Read patterns"
+      ],
+      "pitfalls": [
+        "Do not design keys you cannot construct from what the reader already knows.",
+        "Do not hide a second lookup path the contract does not mention."
+      ],
+      "limits": "Contract documentation; no cache behaviour is simulated.",
+      "refs": [],
+      "probe": [
+        "application",
+        "table",
+        "entity",
+        "record"
+      ],
+      "editTask": "Extend one key with a version or namespace segment, apply, and check the contract still reads correctly.",
+      "tags": [
+        "key-value",
+        "cache",
+        "lookup"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "54f641300b0d46632c1ddfc685ffc57990355136849524cb1608956adc0b8a8b",
+        "modelFingerprint": "4ae4eb467ff549c6",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/07-keyed-storage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/keyed.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/07-keyed-storage.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/keyed.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"07 / Key-value design\" {\n    data: [@k.kv];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@k.kv.key, @k.kv.sessions, @k.kv.value];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"kv.r_a\": 1, \"kv.r_b\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/07-keyed-storage.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.keyed::kv.value",
+        "file": "website/examples/use-cases/07-keyed-storage.ddn",
+        "before": "Session value",
+        "after": "Session value / review",
+        "expectation": "Only the label of Session value / review changes; keys, values and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "54f641300b0d46632c1ddfc685ffc57990355136849524cb1608956adc0b8a8b",
+        "after": "f11fc846fd1e81a39118f408bfd13c0e6973d4229dec73b90d4028e313c870e5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "wide-column",
+      "title": "Wide-column and access-pattern design",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+      "view": "wide_column",
+      "what": "A wide-column layout: rows keyed for the queries they must serve, column families grouped by access pattern.",
+      "why": "In wide-column stores the query writes the schema — documenting which access pattern owns which family prevents expensive mistakes.",
+      "when": "Designing or reviewing Cassandra/Bigtable-style tables.",
+      "read": [
+        "Read from the partition key outward: what is looked up together lives together.",
+        "Column families are access patterns, not topics."
+      ],
+      "inputs": [
+        "The queries the system must answer",
+        "Partition and clustering choices",
+        "Families per pattern"
+      ],
+      "pitfalls": [
+        "Do not model wide-column tables relationally and expect the queries to work.",
+        "Do not create a family nobody reads."
+      ],
+      "limits": "Design documentation; no distribution or compaction behaviour is modeled.",
+      "refs": [],
+      "probe": [
+        "application",
+        "table",
+        "entity",
+        "record"
+      ],
+      "editTask": "Rename one column family after the access pattern it serves, apply, and check the grouping still reads correctly.",
+      "tags": [
+        "wide-column",
+        "nosql",
+        "access-patterns"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+        "view": "wide_column",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "44ce22fea59dfc3ae97aca23e8c504a336acc09b33bddacbe8a1ddde3db83358",
+        "modelFingerprint": "2fbdb759f5b84299",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/07-keyed-storage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/keyed.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/07-keyed-storage.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/keyed.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view wide_column \"07b / Wide-column access pattern\" {\n    data: [@k.wide]; format: @fmt.shared.technical;\n    select: [@k.wide.query, @k.wide.readings, @k.wide.key];\n    legend { keys: { \"wide.r_a\": 1, \"wide.r_b\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/07-keyed-storage.ddn and locate view wide_column. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.keyed::wide.key",
+        "file": "website/examples/use-cases/07-keyed-storage.ddn",
+        "before": "Device identifier",
+        "after": "Device identifier / review",
+        "expectation": "Only the label of Device identifier / review changes; keys, families and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "44ce22fea59dfc3ae97aca23e8c504a336acc09b33bddacbe8a1ddde3db83358",
+        "after": "63b28636dba53d2b86bbaa89fe15899a393e736e5c8221e9278ab076b4b782b0",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "domains",
+      "title": "Semantic domains and candidate bindings",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/08-domains.ddn",
+      "view": "diagram",
+      "what": "Semantic domains: named value sets with their rules, and which fields bind to which domain.",
+      "why": "Shared meaning beats shared spelling — a domain contract stops \"status\" meaning six different things.",
+      "when": "Whenever the same concept appears in several tables, payloads or teams.",
+      "read": [
+        "Domains are named rule sets; fields borrow them.",
+        "A field bound to two conflicting domains is a defect, not a convenience."
+      ],
+      "inputs": [
+        "The value sets and their rules",
+        "The fields that use them",
+        "Who owns each domain"
+      ],
+      "pitfalls": [
+        "Do not clone a domain instead of referencing it.",
+        "Do not bind by name when a reference exists."
+      ],
+      "limits": "Declared bindings only; the registry validates references, not your data at rest.",
+      "refs": [],
+      "probe": [
+        "domain",
+        "application",
+        "table"
+      ],
+      "editTask": "Bind one currently free field to a declared domain, apply, and check the binding renders.",
+      "tags": [
+        "domains",
+        "semantics",
+        "contract"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/08-domains.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "a365cd95b3361f0d801e651046b4ae70a5d4dad9cc6cf8d9e25e109b14cd6fb1",
+        "modelFingerprint": "93a2788d768fb653",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/08-domains.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/domains.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/08-domains.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/domains.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"08 / Domain discovery and binding\" {\n    data: [@c.tables, @d.model, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.teaching;\n    select: [@c.tables.orders, @d.model.support, @c.domains.customer_id, @d.model.binding];\n    publication { width: 1730px; height: 700px; }\n    legend { keys: { \"model.r_order_domain\": 1, \"model.r_support_candidate\": 2, \"model.r_binding\": 3 }; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/08-domains.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.orders",
+        "file": "website/examples/use-cases/08-domains.ddn",
+        "before": "Orders",
+        "after": "Orders / review",
+        "expectation": "Only the label of Orders / review changes; domains, bindings and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "a365cd95b3361f0d801e651046b4ae70a5d4dad9cc6cf8d9e25e109b14cd6fb1",
+        "after": "c31efbe3371f3f1577fe0886ac8a65add1020943824894f618985590473cac86",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "namespaces",
+      "title": "Catalog, database and schema organization",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/09-namespaces.ddn",
+      "view": "diagram",
+      "what": "Namespace hierarchy: catalogs, databases and schemas, and where each object lives in it.",
+      "why": "Ownership and environment boundaries live in namespaces; getting them on paper prevents \"it worked in dev\".",
+      "when": "Organizing many objects across environments, teams or catalogs.",
+      "read": [
+        "Nesting is ownership: an object has exactly one home.",
+        "Cross-namespace references are explicit, annotated contracts."
+      ],
+      "inputs": [
+        "The environments",
+        "Object homes",
+        "Reference rules across boundaries"
+      ],
+      "pitfalls": [
+        "Do not let objects drift between namespaces without a migration note.",
+        "Do not hide cross-namespace dependencies in names."
+      ],
+      "limits": "Organizational documentation; no deployment is performed from this view.",
+      "refs": [],
+      "probe": [
+        "namespace",
+        "package",
+        "application",
+        "table"
+      ],
+      "editTask": "Rename one schema to its owning team, apply, and check the nesting still reads correctly.",
+      "tags": [
+        "namespaces",
+        "catalog",
+        "organization"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/09-namespaces.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "364e5b44e7cff68702b4b291d85808b0a62bc6d6ced41cc2df92e731aae85eb2",
+        "modelFingerprint": "1eb39cdb4a402397",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/09-namespaces.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/sql.ddn",
+        "website/examples/use-cases/data/namespace.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/09-namespaces.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/sql.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/namespace.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"09 / Namespace organization\" {\n    data: [@c.tables, @s.model, @n.model, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.teaching;\n    select: [@c.tables.orders, @s.model.routine, @n.model.schema];\n    publication { width: 1370px; height: 640px; }\n    legend { keys: { \"model.r_orders_schema\": 1, \"model.r_routine_schema\": 2 }; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/09-namespaces.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.orders",
+        "file": "website/examples/use-cases/09-namespaces.ddn",
+        "before": "Orders",
+        "after": "Orders / review",
+        "expectation": "Only the label of Orders / review changes; the hierarchy and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "364e5b44e7cff68702b4b291d85808b0a62bc6d6ced41cc2df92e731aae85eb2",
+        "after": "3b106244fd3439cad854a4b1a131623e065392fb46f4fdae34b41638c02a02d6",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "hybrid-deployment",
+      "title": "Hybrid local/cloud deployment",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+      "view": "diagram",
+      "what": "A deployment split across on-premises and cloud environments: what runs where, and the links between them.",
+      "why": "Hybrid designs fail at the seams; the seam list is the point of the diagram.",
+      "when": "Planning or reviewing any system spanning local and cloud infrastructure.",
+      "read": [
+        "Environment boundaries are the thick lines — everything crossing them is an explicit link.",
+        "Data gravity arrows point where state lives, not where compute happens."
+      ],
+      "inputs": [
+        "The environments",
+        "Component placements",
+        "The cross-boundary links and their protocols"
+      ],
+      "pitfalls": [
+        "Do not leave the boundary link unnamed — it is usually the riskiest part.",
+        "Do not duplicate a component in both environments without saying which is authoritative."
+      ],
+      "limits": "Structural documentation; no latency, failover or cost model is implied.",
+      "refs": [],
+      "probe": [
+        "application",
+        "node",
+        "uml.node",
+        "entity"
+      ],
+      "editTask": "Rename one cross-boundary link with its protocol and direction, apply, and check the seam still reads honestly.",
+      "tags": [
+        "deployment",
+        "hybrid",
+        "cloud"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "671da8bb7ad0b37a1ee2a1620e43ffb39630ada0f014e2db17283504945276aa",
+        "modelFingerprint": "40478795248ae569",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/10-hybrid-deployment.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/deployment.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/10-hybrid-deployment.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/deployment.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"10 / Shards, copies and placement\" {\n    data: [@c.tables, @d.model, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.teaching;\n    select: [@c.tables.orders, @d.model.shard, @d.model.primary, @d.model.follower, @d.model.local, @d.model.cloud];\n    publication { width: 1600px; height: 1080px; }\n    legend { keys: { \"model.r_part\": 1, \"model.r_primary_fragment\": 2, \"model.r_follower_fragment\": 3, \"model.r_primary_host\": 4, \"model.r_follower_host\": 5, \"model.r_replication\": 6 }; }\n    display { fields: none; badges: none; }\n\n    frame local \"ON-PREMISES / placement view\" { members: [@d.model.primary, @d.model.local]; }\n    frame cloud \"CLOUD / placement view\" { members: [@d.model.follower, @d.model.cloud]; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/10-hybrid-deployment.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.orders",
+        "file": "website/examples/use-cases/10-hybrid-deployment.ddn",
+        "before": "Orders",
+        "after": "Orders / review",
+        "expectation": "Only the label of Orders / review changes; placements, links and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "671da8bb7ad0b37a1ee2a1620e43ffb39630ada0f014e2db17283504945276aa",
+        "after": "f3d8df8801b72c63b236fc3607b4d94da4d6147bba5d4d4b6a865714b3ad118e",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "data-flow",
+      "title": "Data-flow diagram (Yourdon/Gane–Sarson idiom)",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/use-cases/11-data-flow.ddn",
+      "view": "diagram",
+      "what": "Processes, data stores and external entities with the flows between them: where data moves, not who decides.",
+      "why": "DFDs expose missing flows and orphan stores that a task diagram never shows.",
+      "when": "Mapping information movement through a system before deciding on implementation.",
+      "read": [
+        "Every arrow is data in motion, labeled with what it carries.",
+        "Stores are data at rest; a store nobody reads is a question, not a fact."
+      ],
+      "inputs": [
+        "The processes",
+        "The stores",
+        "The flows and their contents"
+      ],
+      "pitfalls": [
+        "Do not draw control flow — arrows carry data, not instructions.",
+        "Do not let a process have inputs but no outputs."
+      ],
+      "limits": "Flow documentation; no simulation of the data actually moving.",
+      "refs": [],
+      "probe": [
+        "process",
+        "application",
+        "entity",
+        "table"
+      ],
+      "editTask": "Name one currently anonymous flow with the data it carries, apply, and check it reads as data, not control.",
+      "tags": [
+        "dfd",
+        "data-flow",
+        "yourdon"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/11-data-flow.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "a88a065f6d99a606971291a662d8fec49f115bf5b775b126576b34139cf94f22",
+        "modelFingerprint": "75c1a0b51acb0257",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/11-data-flow.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/flow.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/11-data-flow.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/flow.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"11 / Data-flow diagram\" {\n    data: [@f.dfd];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@f.dfd.incoming, @f.dfd.validate, @f.dfd.accepted];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"dfd.r_input\": 1, \"dfd.r_output\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/11-data-flow.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.flow::dfd.incoming",
+        "file": "website/examples/use-cases/11-data-flow.ddn",
+        "before": "Incoming orders",
+        "after": "Incoming orders / review",
+        "expectation": "Only the label of Incoming orders / review changes; flows, stores and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "a88a065f6d99a606971291a662d8fec49f115bf5b775b126576b34139cf94f22",
+        "after": "33a237c4f3cd133ba191f4d64f4c16bc10f4dd9ae4c187f7eb40a202f99ab499",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "streaming",
+      "title": "Event distribution / streaming integration",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/use-cases/12-streaming.ddn",
+      "view": "diagram",
+      "what": "Producers, topics and consumers of an event stream: who publishes what, who subscribes, and the contracts between them.",
+      "why": "Streaming systems fail on contracts, not on brokers; the diagram is where the contract gets reviewed.",
+      "when": "Designing or auditing event-driven integration.",
+      "read": [
+        "Topics are the joints: everything else attaches to them.",
+        "Consumers read at their own pace — the diagram shows subscriptions, not delivery guarantees."
+      ],
+      "inputs": [
+        "The event types",
+        "Producers and consumers per topic",
+        "Schema/contract owners"
+      ],
+      "pitfalls": [
+        "Do not draw point-to-point links around the broker — it hides the coupling the topics create.",
+        "Do not leave the schema owner off a topic."
+      ],
+      "limits": "Integration documentation; no throughput, ordering or replay semantics are modeled.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "process"
+      ],
+      "editTask": "Rename one topic after the event family it carries, apply, and check producers and consumers still line up.",
+      "tags": [
+        "streaming",
+        "events",
+        "integration"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/12-streaming.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "90a9124f51fe1958bb4694d19b2a83c5bfe3a188fb8b35e7fa353cfb086ba126",
+        "modelFingerprint": "1db02410c176bfe2",
+        "warnings": [
+          "DDN-LW05",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/12-streaming.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/flow.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/12-streaming.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/flow.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"12 / Event publication and consumers\" {\n    data: [@f.stream, @c.tables, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.teaching;\n    select: [@f.stream.source, @f.stream.capture, @f.stream.topic, @f.stream.hist_job, @f.stream.search_job, @f.stream.history, @f.stream.search];\n    publication { width: 1640px; height: 1090px; }\n    legend { keys: { \"stream.r_capture\": 1, \"stream.r_publish\": 2, \"stream.r_history_delivery\": 3, \"stream.r_search_delivery\": 4, \"stream.r_history_write\": 5, \"stream.r_search_write\": 6 }; }\n    display { fields: none; badges: none; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/12-streaming.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.flow::stream.source",
+        "file": "website/examples/use-cases/12-streaming.ddn",
+        "before": "Customer / production",
+        "after": "Customer / production / review",
+        "expectation": "Only the label of Customer / production / review changes; topics, subscriptions and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "90a9124f51fe1958bb4694d19b2a83c5bfe3a188fb8b35e7fa353cfb086ba126",
+        "after": "c701fd41a978204e552ea2f9693680421445c358d0bb4915a72b00b9eea9d79a",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "lineage",
+      "title": "Dataset lineage and derivation",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/13-lineage.ddn",
+      "view": "diagram",
+      "what": "Where each dataset comes from: sources, transformations and the datasets they produce, end to end.",
+      "why": "Every number on a report should answer \"from where\" in one look.",
+      "when": "Auditing data products, debugging a wrong number, or onboarding to a pipeline.",
+      "read": [
+        "Read right-to-left from the report: each arrow is a derivation step you can inspect.",
+        "A dataset with no recorded source is an assumption, not a fact."
+      ],
+      "inputs": [
+        "The sources",
+        "The transformation steps",
+        "The produced datasets"
+      ],
+      "pitfalls": [
+        "Do not skip the boring intermediate datasets — they are where errors hide.",
+        "Do not draw lineage at a granularity you cannot actually inspect."
+      ],
+      "limits": "Declared lineage; no data actually flows when you read this.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "table",
+        "process"
+      ],
+      "editTask": "Add the missing source label to one derived dataset, apply, and check the chain is unbroken.",
+      "tags": [
+        "lineage",
+        "derivation",
+        "pipeline"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/13-lineage.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "8ab0bc1dec8484364d8d4c3d102fdbf811f7a5242c6afe83ac603e60981e7c33",
+        "modelFingerprint": "fdecaeec50f0ef62",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/13-lineage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn",
+        "website/examples/use-cases/data/lineage.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/13-lineage.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/lineage.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"13 / Dataset lineage\" {\n    data: [@c.tables, @l.model, @c.domains];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@c.tables.orders, @l.model.daily, @l.model.report];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_aggregate\": 1, \"model.r_report\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/13-lineage.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.orders",
+        "file": "website/examples/use-cases/13-lineage.ddn",
+        "before": "Orders",
+        "after": "Orders / review",
+        "expectation": "Only the label of Orders / review changes; sources, derivations and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "8ab0bc1dec8484364d8d4c3d102fdbf811f7a5242c6afe83ac603e60981e7c33",
+        "after": "eac8e99cf5cc91b75dedc68bacef86fd01d652ea7d8c55ae3a17ec11500fe746",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "temporal",
+      "title": "Valid-time and recorded-time model",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/14-temporal.ddn",
+      "view": "diagram",
+      "what": "Bitemporal data: when a fact was true (valid time) versus when we learned it (record time), modeled explicitly.",
+      "why": "Most \"history\" tables answer only one of those questions; the diagram keeps both honest.",
+      "when": "Designing audit trails, corrections, or any as-of reporting.",
+      "read": [
+        "Each fact carries two clocks; reads pick a point on each.",
+        "A correction adds a row — it never edits the past in place."
+      ],
+      "inputs": [
+        "The facts that change",
+        "Both time dimensions per fact",
+        "The as-of questions to answer"
+      ],
+      "pitfalls": [
+        "Do not overwrite a fact when you mean to correct it.",
+        "Do not confuse \"when it happened\" with \"when it was entered\"."
+      ],
+      "limits": "Model documentation; no temporal query evaluation.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "table"
+      ],
+      "editTask": "Rename one timestamp field to say which clock it is (valid or recorded), apply, and check the model reads correctly.",
+      "tags": [
+        "temporal",
+        "bitemporal",
+        "history"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/14-temporal.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "3aebe99a059f6af9367963d006f6be69ec412c5c0463b504d88211f7acdcf1b7",
+        "modelFingerprint": "ed7adb27ddf4b9eb",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/14-temporal.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/temporal.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/14-temporal.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/temporal.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"14 / Valid time and recorded time\" {\n    data: [@t.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.teaching;\n    select: [@t.model.history, @t.model.example];\n    publication { width: 1700px; height: 850px; }\n    legend { keys: { \"model.r_example\": 1 }; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/14-temporal.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.temporal::model.history",
+        "file": "website/examples/use-cases/14-temporal.ddn",
+        "before": "Customer status history",
+        "after": "Customer status history / review",
+        "expectation": "Only the label of Customer status history / review changes; both timelines and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "3aebe99a059f6af9367963d006f6be69ec412c5c0463b504d88211f7acdcf1b7",
+        "after": "d507945654cc61ef85651ca43014ae4939c4c9f0c20fcc9b8d215b995800aac5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "warehouse",
+      "title": "Dimensional warehouse / star schema",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/15-warehouse.ddn",
+      "view": "diagram",
+      "what": "A star schema: one fact table surrounded by dimensions, with grain declared.",
+      "why": "The star makes analytical queries legible — and the grain declaration prevents the classic double-count.",
+      "when": "Designing marts, cubes or any reporting model.",
+      "read": [
+        "The fact table is events or measurements; dimensions answer who/what/where/when.",
+        "Every fact row means exactly one thing — that is the grain."
+      ],
+      "inputs": [
+        "The grain",
+        "The measures",
+        "The dimensions and their levels"
+      ],
+      "pitfalls": [
+        "Do not mix grains in one fact table.",
+        "Do not let a dimension quietly become a second fact table."
+      ],
+      "limits": "Model documentation; no aggregation is computed by this view.",
+      "refs": [],
+      "probe": [
+        "table",
+        "entity",
+        "application"
+      ],
+      "editTask": "State the grain of the fact table in its label, apply, and check every dimension still attaches at that grain.",
+      "tags": [
+        "warehouse",
+        "star-schema",
+        "dimensional"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/15-warehouse.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "787840f8071b9c770ffdc2570089344b2463d3d8b52a75dec3bd47d509624b4b",
+        "modelFingerprint": "ed3f80de77e01c86",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/15-warehouse.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/warehouse.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/15-warehouse.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/warehouse.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"15 / Dimensional warehouse\" {\n    data: [@w.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.teaching;\n    select: [@w.model.fact, @w.model.customer, @w.model.product, @w.model.date, @w.model.grain];\n    publication { width: 1680px; height: 1050px; }\n    legend { keys: { \"model.r_c\": 1, \"model.r_p\": 2, \"model.r_d\": 3 }; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/15-warehouse.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.warehouse::model.fact",
+        "file": "website/examples/use-cases/15-warehouse.ddn",
+        "before": "Order line fact",
+        "after": "Order line fact / review",
+        "expectation": "Only the label of Order line fact / review changes; grain, facts, dimensions and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "787840f8071b9c770ffdc2570089344b2463d3d8b52a75dec3bd47d509624b4b",
+        "after": "01b42109ef9ab927821ab34bd52a3f7ea32e37b0dd34ee0a7d8e1369b87b1e73",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "vector-lineage",
+      "title": "Embedding, vector and model lineage",
+      "category": "Data structures and meaning",
+      "status": "native",
+      "entry": "website/examples/use-cases/16-vector-lineage.ddn",
+      "view": "diagram",
+      "what": "Lineage for derived artifacts: embeddings, features and models — what they were built from and when.",
+      "why": "A model you cannot trace to its training data is a liability, not an asset.",
+      "when": "Governing ML artifacts, features and their inputs.",
+      "read": [
+        "Same rules as data lineage, plus version and owner on every artifact.",
+        "A feature with no recorded source is an assumption with a GPU bill."
+      ],
+      "inputs": [
+        "The source datasets",
+        "Feature/model artifacts",
+        "Versions and owners"
+      ],
+      "pitfalls": [
+        "Do not let \"the pipeline\" be a single anonymous box.",
+        "Do not version the model without versioning its inputs."
+      ],
+      "limits": "Declared lineage; no evaluation of the models themselves (inference is out of scope by decision).",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "process"
+      ],
+      "editTask": "Add the version stamp to one artifact label, apply, and check the chain still reads end to end.",
+      "tags": [
+        "lineage",
+        "vectors",
+        "ml-artifacts"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/16-vector-lineage.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "906344bc59a65f2194cd1e7c0a4cf6835c70163502482f338d344e8356cf188b",
+        "modelFingerprint": "c66d83a48f97e3f6",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/16-vector-lineage.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/vectors.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/16-vector-lineage.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/vectors.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"16 / Vector and embedding lineage\" {\n    data: [@v.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.neo;\n    layout: @fmt.shared.row;\n    select: [@v.model.source, @v.model.embedding, @v.model.index];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_input\": 1, \"model.r_output\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/16-vector-lineage.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.vectors::model.source",
+        "file": "website/examples/use-cases/16-vector-lineage.ddn",
+        "before": "Product descriptions",
+        "after": "Product descriptions / review",
+        "expectation": "Only the label of Product descriptions / review changes; artifacts, versions and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "906344bc59a65f2194cd1e7c0a4cf6835c70163502482f338d344e8356cf188b",
+        "after": "1e093527ff35465af42fd279ea4d31472a0ca90ea9203229f251288c9fdc40b5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "governance",
+      "title": "Data-product ownership and contracts",
+      "category": "Requirements, governance and enterprise review",
+      "status": "native",
+      "entry": "website/examples/use-cases/17-governance.ddn",
+      "view": "diagram",
+      "what": "Who owns which data product, under which contract, with which consumers.",
+      "why": "Every dataset that matters needs a name attached to it — the diagram is the accountability list.",
+      "when": "Establishing or auditing data-product governance.",
+      "read": [
+        "Owners are people or teams, never systems.",
+        "A contract without a named consumer is a wish, not a contract."
+      ],
+      "inputs": [
+        "The products",
+        "Owners per product",
+        "Contracts and their consumers"
+      ],
+      "pitfalls": [
+        "Do not list a team as owner when a person is accountable.",
+        "Do not let a product have zero consumers named — it is probably not a product."
+      ],
+      "limits": "Governance documentation; the contracts are stated, not enforced.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "role",
+        "team"
+      ],
+      "editTask": "Name the accountable owner on one product that lacks one, apply, and check the governance read again.",
+      "tags": [
+        "governance",
+        "ownership",
+        "contracts"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/17-governance.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "c4fa354668dff812ba8614fae179caced99dad5dacb7f6c3b7c6712c40f7e394",
+        "modelFingerprint": "564c37f6e9ac9ff8",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/17-governance.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/governance.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/17-governance.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/governance.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"17 / Data products and contracts\" {\n    data: [@g.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@g.model.product, @g.model.contract, @g.model.team];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_contract\": 1, \"model.r_owner\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/17-governance.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.governance::model.team",
+        "file": "website/examples/use-cases/17-governance.ddn",
+        "before": "Customer data team",
+        "after": "Customer data team / review",
+        "expectation": "Only the label of Customer data team / review changes; owners, contracts and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "c4fa354668dff812ba8614fae179caced99dad5dacb7f6c3b7c6712c40f7e394",
+        "after": "fc3bac54a86ce9d2f6b6f6008e1eaf965ec825a340a3906ff7f75a11d6f11e2d",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "security-boundary",
+      "title": "Trust and data-handling boundaries",
+      "category": "Requirements, governance and enterprise review",
+      "status": "native",
+      "entry": "website/examples/use-cases/18-security.ddn",
+      "view": "diagram",
+      "what": "Trust zones and what may cross them: classification per zone, and the explicit gates between zones.",
+      "why": "Security reviews fail on unstated boundaries; the diagram forces every crossing to have a name.",
+      "when": "Threat modeling, compliance reviews, or designing data flows across trust levels.",
+      "read": [
+        "Zones carry classification labels; every arrow crossing a zone edge is a gate with a rule.",
+        "Inside a zone, flows are routine; between zones, they are decisions."
+      ],
+      "inputs": [
+        "The zones and their classifications",
+        "The gates and their rules",
+        "What data may never cross"
+      ],
+      "pitfalls": [
+        "Do not mark a boundary as trusted because it is inconvenient to gate.",
+        "Do not let a \"temporary\" bridge become the permanent path."
+      ],
+      "limits": "Boundary documentation; no security evaluation or certification is implied.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "process"
+      ],
+      "editTask": "Name the rule on one currently unlabeled gate, apply, and check the crossing now reads as a decision.",
+      "tags": [
+        "security",
+        "trust",
+        "boundaries"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/18-security.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "3ada8c063c18a3b25bfcbf742e1d44221f5c295760e49b3113fde98960dd8a3e",
+        "modelFingerprint": "e4e147ace4bb4dea",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/18-security.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/security.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/18-security.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/security.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"18 / Data handling boundaries\" {\n    data: [@s.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@s.model.source, @s.model.mask, @s.model.export];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_input\": 1, \"model.r_output\": 2 }; }\n    frame restricted \"RESTRICTED / view scope\" { scope: @s.model.restricted; members: [@s.model.source]; }\n    frame review \"REVIEW BEFORE RELEASE / view scope\" { scope: @s.model.egress; members: [@s.model.export]; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/18-security.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.security::model.source",
+        "file": "website/examples/use-cases/18-security.ddn",
+        "before": "Contact records",
+        "after": "Contact records / review",
+        "expectation": "Only the label of Contact records / review changes; zones, gates and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "3ada8c063c18a3b25bfcbf742e1d44221f5c295760e49b3113fde98960dd8a3e",
+        "after": "57929e262b241cb8460abac29214f8aee735963bcfea577c5203e59b2f5eb954",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "recovery",
+      "title": "Backup, restore and continuity design",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/use-cases/19-recovery.ddn",
+      "view": "diagram",
+      "what": "Recovery structure: what is backed up, where copies live, and the restore path for each failure mode.",
+      "why": "Backups nobody has restored are a hope; the restore path is the design.",
+      "when": "Continuity planning and disaster-recovery reviews.",
+      "read": [
+        "Read backwards from each failure mode to the copy that answers it.",
+        "RPO/RTO notes attach to the restore path, not the backup schedule."
+      ],
+      "inputs": [
+        "The protected systems",
+        "Copy locations and schedules",
+        "Restore steps per failure mode"
+      ],
+      "pitfalls": [
+        "Do not document a backup without its restore test.",
+        "Do not let one site hold both primary and only copy."
+      ],
+      "limits": "Design documentation; no actual recovery is executed or timed here.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "process"
+      ],
+      "editTask": "Add the last-tested date to one restore path label, apply, and check the continuity read again.",
+      "tags": [
+        "recovery",
+        "backup",
+        "continuity"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/19-recovery.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "e9a1fae01833e6ac198d91e5dae0b40548844b0191c0fb7fa8e4f2edf2e98a84",
+        "modelFingerprint": "6c3f15240e7084ba",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/19-recovery.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/recovery.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/19-recovery.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/recovery.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"19 / Backup and restore design\" {\n    data: [@r.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@r.model.backup, @r.model.restore, @r.model.target];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_restore\": 1, \"model.r_output\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/19-recovery.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.recovery::model.backup",
+        "file": "website/examples/use-cases/19-recovery.ddn",
+        "before": "Full backup artifact",
+        "after": "Full backup artifact / review",
+        "expectation": "Only the label of Full backup artifact / review changes; copies, paths and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "e9a1fae01833e6ac198d91e5dae0b40548844b0191c0fb7fa8e4f2edf2e98a84",
+        "after": "47bb7a683dd27c80567458491463928692598315e938492cff648df2db62fa8d",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "migration",
+      "title": "Current-to-target mapping",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/use-cases/20-migration.ddn",
+      "view": "diagram",
+      "what": "A migration map: current-state elements to target-state elements, with the transformation for each.",
+      "why": "Migrations fail on unmapped items — the map is the proof nothing is silently dropped.",
+      "when": "Any system, schema or platform migration.",
+      "read": [
+        "Every current element has exactly one fate: migrated, transformed, retired or deferred.",
+        "A \"temporary\" parallel run is a phase with an exit date."
+      ],
+      "inputs": [
+        "The current inventory",
+        "Target elements",
+        "The fate and transformation of each"
+      ],
+      "pitfalls": [
+        "Do not leave an item unmapped because it is awkward.",
+        "Do not start the move before every row has a fate."
+      ],
+      "limits": "Mapping documentation; the migration itself is not executed from this view.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "process"
+      ],
+      "editTask": "Mark one item's fate explicitly (migrated/transformed/retired/deferred), apply, and check the map is still complete.",
+      "tags": [
+        "migration",
+        "mapping",
+        "target-state"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/20-migration.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "5531fca915e886b23b05bfc0aac973600574ec93ba99125e48056e3359099bfb",
+        "modelFingerprint": "8ebad52a93804b96",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/20-migration.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/migration.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/20-migration.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/migration.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"20 / Migration and target design\" {\n    data: [@m.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@m.model.legacy, @m.model.convert, @m.model.target];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_extract\": 1, \"model.r_load\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/20-migration.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.migration::model.legacy",
+        "file": "website/examples/use-cases/20-migration.ddn",
+        "before": "Customer / legacy",
+        "after": "Customer / legacy / review",
+        "expectation": "Only the label of Customer / legacy / review changes; mappings, fates and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "5531fca915e886b23b05bfc0aac973600574ec93ba99125e48056e3359099bfb",
+        "after": "e1f5e4f23c8090e1de96226373f16171c6ca6fd063aa6db4817af32e33d05dbb",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "quality-model",
+      "title": "Example-driven data-quality specification",
+      "category": "Requirements, governance and enterprise review",
+      "status": "native",
+      "entry": "website/examples/use-cases/21-quality.ddn",
+      "view": "diagram",
+      "what": "Data-quality rules as examples: the checks a dataset must pass, stated against concrete records.",
+      "why": "Rules stated on real examples get implemented; rules stated in prose get admired.",
+      "when": "Defining acceptance for a data product or feed.",
+      "read": [
+        "Each rule names the check, the records it guards, and what failure means.",
+        "A rule without a severity is an opinion."
+      ],
+      "inputs": [
+        "The dataset",
+        "The rules per field/record",
+        "Failure severities"
+      ],
+      "pitfalls": [
+        "Do not write rules you cannot point at a record for.",
+        "Do not make everything a warning — then nothing is."
+      ],
+      "limits": "Specification documentation; the checks are stated, not executed by this view.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "record"
+      ],
+      "editTask": "Assign an explicit severity to one rule, apply, and check the specification still reads as enforceable.",
+      "tags": [
+        "quality",
+        "rules",
+        "specification"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/21-quality.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "6f44d4f7f52119cc25bb177ef0e9d154389015b0324616af2d3203c999d9f401",
+        "modelFingerprint": "cd6fc3519ade4253",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/21-quality.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/quality.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/21-quality.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/quality.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"21 / Example-driven data quality\" {\n    data: [@q.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@q.model.input, @q.model.check, @q.model.expected];\n    publication { width: 2130px; height: 440px; }\n    legend { keys: { \"model.r_input\": 1, \"model.r_result\": 2 }; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/21-quality.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.quality::model.input",
+        "file": "website/examples/use-cases/21-quality.ddn",
+        "before": "Input / intentional invalid value",
+        "after": "Input / intentional invalid value / review",
+        "expectation": "Only the label of Input / intentional invalid value / review changes; rules, severities and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "6f44d4f7f52119cc25bb177ef0e9d154389015b0324616af2d3203c999d9f401",
+        "after": "f83c8357ef70fcc015572f2f50cf2c4c46926ebd673778737f39abe489b30662",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "linked-documentation",
+      "title": "Linked diagrams and documentation views",
+      "category": "Time, composition and linked documentation",
+      "status": "native",
+      "entry": "website/examples/use-cases/22-linked-documentation.ddn",
+      "view": "diagram",
+      "variants": [
+        {
+          "view": "logical_detail",
+          "title": "Logical detail view"
+        },
+        {
+          "view": "business_detail",
+          "title": "Business detail view"
+        }
+      ],
+      "what": "Several views over one model: an overview with links into detail views at different audiences.",
+      "why": "One model, many readers — the links keep every audience on the same facts.",
+      "when": "Any documentation set where executives and implementers read the same system.",
+      "read": [
+        "The overview is a map, not a simplification to maintain separately.",
+        "Detail views are selections of the same model — they cannot drift apart."
+      ],
+      "inputs": [
+        "The audiences",
+        "The overview contents",
+        "The detail views per audience"
+      ],
+      "pitfalls": [
+        "Do not maintain a separate \"simplified\" copy of the model.",
+        "Do not link to a view that no longer selects what the link promises."
+      ],
+      "limits": "Composition documentation; navigation is a reading aid, not an application.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "table"
+      ],
+      "editTask": "Switch variants to compare the detail views, then rename one detail-view label so its audience is explicit, apply, and check the link still promises the right thing.",
+      "tags": [
+        "linked-views",
+        "documentation",
+        "composition"
+      ],
+      "runtime": {
+        "entry": "website/examples/use-cases/22-linked-documentation.ddn",
+        "view": "diagram",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "86ec74df690fd808c7605151003ce1023f11f46733fd0b3f1b67d27c4d90582e",
+        "modelFingerprint": "653d302f2d3c8ac5",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/use-cases/22-linked-documentation.ddn",
+        "website/examples/use-cases/formats.ddn",
+        "website/examples/use-cases/data/commerce.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/use-cases/22-linked-documentation.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        },
+        {
+          "file": "website/examples/use-cases/data/commerce.ddn",
+          "roles": [
+            "data"
+          ]
+        }
+      ],
+      "viewSource": "view diagram \"22 / Navigable design documentation\" {\n    data: [@c.tables, @c.domains]; format: @fmt.shared.technical;\n    display: @fmt.shared.compact;\n    select: [@c.tables.orders, @c.tables.customer];\n    publication { width: 1580px; height: 780px; }\n    legend { keys: { \"tables.r_order_customer\": 1 }; }\n    subdiagram logical { view: @logical_detail; mode: reference; label: \"Logical detail\"; }\n    subdiagram business { view: @business_detail; mode: reference; label: \"Business concepts\"; }\n}",
+      "walkthrough": [
+        "Open website/examples/use-cases/22-linked-documentation.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.usecases.commerce::tables.customer",
+        "file": "website/examples/use-cases/22-linked-documentation.ddn",
+        "before": "Customer",
+        "after": "Customer / review",
+        "expectation": "Only the label of Customer / review changes; views, links and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "86ec74df690fd808c7605151003ce1023f11f46733fd0b3f1b67d27c4d90582e",
+        "after": "bba51b34cfe3d324ca52a9d42ed82828db24d28741d1c0c6a09b979fbaaa9a79",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "c4-context",
+      "title": "System context — C4-style",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "context",
+      "what": "The system in its world: users, neighbouring systems, and the interactions at the boundary.",
+      "why": "Every architecture conversation should be able to start on one page.",
+      "when": "Introducing a system to anyone new — the first diagram of any review.",
+      "read": [
+        "The system is one box; everything interesting is what touches it.",
+        "Arrows are responsibilities: who uses it for what, what it uses for what."
+      ],
+      "inputs": [
+        "The system name",
+        "Its users and neighbours",
+        "The boundary interactions"
+      ],
+      "pitfalls": [
+        "Do not show internals here — that is the container view's job.",
+        "Do not omit a dependency because it is \"just a library\"."
+      ],
+      "limits": "C4-style equivalent: the visual idiom, not a C4 certification.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "c4.system",
+        "system"
+      ],
+      "editTask": "Rename one boundary interaction with what actually flows over it, apply, and check the context still reads in one breath.",
+      "tags": [
+        "c4",
+        "context",
+        "architecture"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/25-c4-views.ddn",
+        "view": "context",
+        "profile": "c4.context@1",
+        "projection": "graph",
+        "sha256": "9c498bc60bdcd52304d1cc3e10a46868afcf23f22b2e4090c1925731df4b8892",
+        "modelFingerprint": "ac3fe2c1e216fa37",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/25-c4-views.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/25-c4-views.ddn",
+          "roles": [
+            "data",
+            "format",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view context \"Synthetic shop / C4 context\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.context@1\"; }\n    select: [@shop.customer, @shop.site, @shop.mailer];\n    display { fields: none; }\n    layout: @options.c4ctx;\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/25-c4-views.ddn and locate view context. This selects existing data; it is not a stored SVG.",
+        "Inspect the c4.context@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.c4-views::shop.site",
+        "file": "website/examples/basics/25-c4-views.ddn",
+        "before": "Online shop",
+        "after": "Online shop / review",
+        "expectation": "Only the label of Online shop / review changes; the boundary and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "9c498bc60bdcd52304d1cc3e10a46868afcf23f22b2e4090c1925731df4b8892",
+        "after": "7f09886f4cac8a0e1e0883e373d35e3f8414aa2bb5be83f4931613b0e6634f39",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "c4-container",
+      "title": "Application/container responsibilities — C4-style",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "container",
+      "what": "Inside the system: the deployable containers (apps, services, stores) and their responsibilities.",
+      "why": "This is the map a new developer uses for the first week.",
+      "when": "Onboarding, ownership reviews, deployment planning.",
+      "read": [
+        "Each container owns a responsibility you can state in one line.",
+        "Connections name the protocol and direction, not just \"talks to\"."
+      ],
+      "inputs": [
+        "The containers",
+        "One-line responsibilities",
+        "The protocols between them"
+      ],
+      "pitfalls": [
+        "Do not list libraries as containers — they are not independently deployable.",
+        "Do not let a container have no stated responsibility."
+      ],
+      "limits": "C4-style equivalent; deployment detail belongs to the deployment view.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "c4.container"
+      ],
+      "editTask": "State one container's responsibility in its label if it is missing, apply, and check the map again.",
+      "tags": [
+        "c4",
+        "container",
+        "architecture"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/25-c4-views.ddn",
+        "view": "container",
+        "profile": "c4.container@1",
+        "projection": "graph",
+        "sha256": "ead7f862bbe96e4ba410017821180a36c8649ce656371c79412ba3cb7ed4a0ad",
+        "modelFingerprint": "ac3fe2c1e216fa37",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/25-c4-views.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/25-c4-views.ddn",
+          "roles": [
+            "data",
+            "format",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view container \"Synthetic shop / C4 container\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.container@1\"; }\n    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];\n    display { fields: none; }\n    layout: @options.c4grid;\n    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/25-c4-views.ddn and locate view container. This selects existing data; it is not a stored SVG.",
+        "Inspect the c4.container@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.c4-views::shop.web",
+        "file": "website/examples/basics/25-c4-views.ddn",
+        "before": "Web application",
+        "after": "Web application / review",
+        "expectation": "Only the label of Web application / review changes; containers, links and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "ead7f862bbe96e4ba410017821180a36c8649ce656371c79412ba3cb7ed4a0ad",
+        "after": "dbae9e863d48640b8724fd8ac0b13f7e47e5848ca24d226841716d4a8d558c0c",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "c4-components",
+      "title": "Component responsibility map — C4-style",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/25-c4-views.ddn",
+      "view": "component",
+      "what": "Inside one container: its components and how they collaborate.",
+      "why": "This is where most day-to-day design discussion actually happens.",
+      "when": "Designing or reviewing the inside of a service or application.",
+      "read": [
+        "Components are code-level units with names you can find in the repo.",
+        "Collaborations read as \"calls for purpose\", not \"uses\"."
+      ],
+      "inputs": [
+        "The component list",
+        "Responsibilities per component",
+        "The collaboration paths"
+      ],
+      "pitfalls": [
+        "Do not invent components that have no code counterpart.",
+        "Do not let every component talk to every other — that is a missing component."
+      ],
+      "limits": "C4-style equivalent; not a code-structure certification.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "c4.component",
+        "uml.component"
+      ],
+      "editTask": "Rename one collaboration with the purpose it serves, apply, and check the map again.",
+      "tags": [
+        "c4",
+        "component",
+        "architecture"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/25-c4-views.ddn",
+        "view": "component",
+        "profile": "c4.component@1",
+        "projection": "graph",
+        "sha256": "88bd8113589cfc67b018a82eafceb7aabac0d77a0d39a68e8cf6aa406082b8ef",
+        "modelFingerprint": "ac3fe2c1e216fa37",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/25-c4-views.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/25-c4-views.ddn",
+          "roles": [
+            "data",
+            "format",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view component \"Synthetic shop / C4 component\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.component@1\"; }\n    select: [@shop.customer, @shop.web, @shop.checkout, @shop.cart, @shop.db];\n    display { fields: none; }\n    layout: @options.c4layered;\n    frame container_boundary { scope: @shop.web; members: [@shop.checkout, @shop.cart]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/25-c4-views.ddn and locate view component. This selects existing data; it is not a stored SVG.",
+        "Inspect the c4.component@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.c4-views::shop.checkout",
+        "file": "website/examples/basics/25-c4-views.ddn",
+        "before": "Checkout component",
+        "after": "Checkout component / review",
+        "expectation": "Only the label of Checkout component / review changes; components, collaborations and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "88bd8113589cfc67b018a82eafceb7aabac0d77a0d39a68e8cf6aa406082b8ef",
+        "after": "4a288518b3436efa3084dcd937749540b9b2ed1bbbc6b743cf5c6ee8da0f89c6",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "network",
+      "title": "Network/system topology",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/54-network-diagram.ddn",
+      "view": "lan",
+      "what": "The physical/logical topology: hosts, buses and racks and how they attach.",
+      "why": "Outages are read on topology first; this is the page you open at 3 a.m.",
+      "when": "Infrastructure documentation and change windows.",
+      "read": [
+        "Attachments declare where a host lives; the bus is shared, the rack is contained.",
+        "A host drawn without its attachment contract is decoration."
+      ],
+      "inputs": [
+        "The hosts and buses",
+        "Attachment contracts",
+        "Redundancy notes"
+      ],
+      "pitfalls": [
+        "Do not draw the redundant path if you have not verified it exists.",
+        "Do not mix logical and physical layers without a label."
+      ],
+      "limits": "Topology documentation; no monitoring or reachability is computed.",
+      "refs": [],
+      "probe": [
+        "network.server",
+        "network.bus",
+        "network.rack",
+        "application"
+      ],
+      "editTask": "Label one link with its medium or role, apply, and check the topology still reads cleanly.",
+      "tags": [
+        "network",
+        "topology",
+        "infrastructure"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/54-network-diagram.ddn",
+        "view": "lan",
+        "profile": "network.basic@1",
+        "projection": "graph",
+        "sha256": "7f4627aea5ab7869a920fb97a03d68b973d26c8832642e5eb5e82d9636d4bd1e",
+        "modelFingerprint": "45a74ff084928b60",
+        "warnings": [
+          "DDN-LW05",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/54-network-diagram.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/54-network-diagram.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view lan \"Office LAN\" {\n    data: [@m]; format: @shared.styles.technical;\n    select: [@m.office_bus, @m.core_switch, @m.file_server, @m.app_server, @m.uplink];\n    projection { kind: graph; profile: \"network.basic@1\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n    place @m.office_bus { size: [420px, 28px]; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/54-network-diagram.ddn and locate view lan. This selects existing data; it is not a stored SVG.",
+        "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.networkdiagram::m.office_bus",
+        "file": "website/examples/basics/54-network-diagram.ddn",
+        "before": "Office bus",
+        "after": "Office bus / review",
+        "expectation": "Only the label of Office bus / review changes; hosts, attachments and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "7f4627aea5ab7869a920fb97a03d68b973d26c8832642e5eb5e82d9636d4bd1e",
+        "after": "9c5ba708ef5a69793f5c3d9ab372481ab3568a918efa087797d1887873f1615e",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "network-symbols",
+      "title": "Network with icon pack symbols",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/103-network-symbols.ddn",
+      "view": "net",
+      "what": "The same topology drawn with the shipped network icon pack: routers, firewalls, load balancers, servers and access points as recognisable glyphs.",
+      "why": "Symbols make a diagram read at a glance in a review — and they bind by default, so authors do not place them by hand.",
+      "when": "Any network documentation meant for a mixed audience.",
+      "read": [
+        "Glyphs are icon-pack bindings on ordinary nodes — the model is unchanged.",
+        "Per-node overrides exist for the cases the defaults do not cover."
+      ],
+      "inputs": [
+        "The topology from the plain diagram",
+        "Which nodes need explicit overrides"
+      ],
+      "pitfalls": [
+        "Do not treat an icon as a different element — it is the same node with a symbol.",
+        "Do not reach for a vendor pack — licensing keeps this set generic."
+      ],
+      "limits": "Common-practice generic glyphs; no vendor artwork is included.",
+      "refs": [],
+      "probe": [
+        "network.server",
+        "network.switch",
+        "application"
+      ],
+      "editTask": "Override one node with a different icon from the same pack (x_icon), apply, and check the glyph and the binding note.",
+      "tags": [
+        "network",
+        "icons",
+        "symbols"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/103-network-symbols.ddn",
+        "view": "net",
+        "profile": "network.basic@1",
+        "projection": "graph",
+        "sha256": "0e25b77ec466652b84fcf544f14bfacbaa480953120b451781c67f2b13f7aed4",
+        "modelFingerprint": "3ae43b7b15f5f107",
+        "warnings": [
+          "DDN-LW05",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/103-network-symbols.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/103-network-symbols.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view net \"Network symbol library\" {\n    data: [@m];\n    projection { profile: \"network.basic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/103-network-symbols.ddn and locate view net. This selects existing data; it is not a stored SVG.",
+        "Inspect the network.basic@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.networksymbols::m.fw",
+        "file": "website/examples/basics/103-network-symbols.ddn",
+        "before": "Edge firewall",
+        "after": "Edge firewall / review",
+        "expectation": "Only the label of Edge firewall / review changes; glyphs, attachments and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "0e25b77ec466652b84fcf544f14bfacbaa480953120b451781c67f2b13f7aed4",
+        "after": "1685d7c95ddedb87918b75b3fd76bc397a6dda3bb58516fb62fe4e35c1670536",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "uml-deployment",
+      "title": "UML deployment diagram",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/78-uml-deployment.ddn",
+      "view": "main",
+      "variants": [
+        {
+          "view": "nested",
+          "title": "Nested nodes variant"
+        }
+      ],
+      "what": "Nodes, devices and execution environments as 3D boxes, with artifacts deployed on them and communication paths between.",
+      "why": "Deployment is where architecture meets hardware; the 3D-box idiom keeps it readable.",
+      "when": "Documenting what runs on which machine or environment.",
+      "read": [
+        "Boxes inside boxes are nesting: an artifact has exactly one home node.",
+        "Communication paths are structural links, not runtime traffic."
+      ],
+      "inputs": [
+        "The nodes and devices",
+        "The artifacts and their homes",
+        "The paths between nodes"
+      ],
+      "pitfalls": [
+        "Do not deploy an artifact to two homes without saying which is authoritative.",
+        "Do not draw network traffic as deployment."
+      ],
+      "limits": "UML deployment notation; middleware-specific models and topology discovery are out of scope.",
+      "refs": [],
+      "probe": [
+        "uml.node",
+        "uml.device",
+        "uml.artifact",
+        "application"
+      ],
+      "editTask": "Rename one communication path with its protocol, apply, and check the deployment still reads structurally.",
+      "tags": [
+        "uml",
+        "deployment",
+        "nodes"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/78-uml-deployment.ddn",
+        "view": "main",
+        "profile": "uml.deployment@1",
+        "projection": "graph",
+        "sha256": "ee8886a20c746fc2d378f3bf868b32038cb7557470cd832ba2ad3207882798e6",
+        "modelFingerprint": "b522f9c9f0f1abeb",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/78-uml-deployment.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/78-uml-deployment.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view main \"UML deployment / nodes and artifacts\" {\n    data: [@shop];\n    projection { profile: \"uml.deployment@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/78-uml-deployment.ddn and locate view main. This selects existing data; it is not a stored SVG.",
+        "Inspect the uml.deployment@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.umldep::shop.lb",
+        "file": "website/examples/basics/78-uml-deployment.ddn",
+        "before": "Load balancer",
+        "after": "Load balancer / review",
+        "expectation": "Only the label of Load balancer / review changes; nodes, artifacts and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "ee8886a20c746fc2d378f3bf868b32038cb7557470cd832ba2ad3207882798e6",
+        "after": "71b2d270e5915f98deda29743a05553061b617f4b0e7ecada9b379caaf874e30",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "iso5807-flowchart",
+      "title": "ISO 5807 flowchart — full symbol set",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+      "view": "chart",
+      "what": "A flowchart using the complete ISO 5807 vocabulary: the classic symbols plus manual input, preparation, display, delay, loop limits, merge/extract, card, collate, sort and parallel mode.",
+      "why": "Flowcharts are the most misused notation in the world — the full symbol set says exactly what each step is.",
+      "when": "Documenting procedures for a general audience.",
+      "read": [
+        "Read top to bottom following the arrows; every symbol has one meaning.",
+        "Decisions have exactly the branches their labels claim."
+      ],
+      "inputs": [
+        "The steps and their types",
+        "The branches",
+        "Start and end points"
+      ],
+      "pitfalls": [
+        "Do not use a process box for a decision (or vice versa).",
+        "Do not leave a branch unlabeled."
+      ],
+      "limits": "Notation coverage of the ISO 5807 symbol set; no simulation of the procedure.",
+      "refs": [],
+      "probe": [
+        "flow.process",
+        "flow.decision",
+        "process"
+      ],
+      "editTask": "Swap one step to its correct symbol type in the source, apply, and check the reading again.",
+      "tags": [
+        "flowchart",
+        "iso5807",
+        "procedure"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+        "view": "chart",
+        "profile": "flow.iso5807@1",
+        "projection": "graph",
+        "sha256": "44dbeca0beb42853cc91ef7a32cf945726c97c81b5a6ce4d0b9a062bfdeec566",
+        "modelFingerprint": "c9ecf0e5fc10eb27",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/91-iso5807-flowchart.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/91-iso5807-flowchart.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view chart \"ISO 5807 warehouse flow\" {\n    data: [@m];\n    projection { kind: graph; profile: \"flow.iso5807@1\"; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/91-iso5807-flowchart.ddn and locate view chart. This selects existing data; it is not a stored SVG.",
+        "Inspect the flow.iso5807@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.iso5807::m.start",
+        "file": "website/examples/basics/91-iso5807-flowchart.ddn",
+        "before": "start",
+        "after": "start / review",
+        "expectation": "Only the label of start / review changes; symbols, flow and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "44dbeca0beb42853cc91ef7a32cf945726c97c81b5a6ce4d0b9a062bfdeec566",
+        "after": "07b6f30965457bc63a98f4ecdfab64d48635d3b66e96c255a7a3c51b11e3a711",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "c4-deployment",
+      "title": "C4 deployment diagram",
+      "category": "Architecture, distribution and integration",
+      "status": "native",
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "deployment",
+      "what": "C4-style deployment: nodes and where the containers actually run.",
+      "why": "The container view says what exists; the deployment view says where it lives.",
+      "when": "Release planning, environment reviews, incident reading.",
+      "read": [
+        "Placement is a fact per environment; paths between nodes are the links operations watches.",
+        "A container missing from the map is not deployed (or not documented)."
+      ],
+      "inputs": [
+        "The environments",
+        "Container placements",
+        "The operational links"
+      ],
+      "pitfalls": [
+        "Do not assume dev matches production on paper.",
+        "Do not hide a placement because it is embarrassing."
+      ],
+      "limits": "C4-style equivalent with tag-chip styling; no live discovery.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "uml.node",
+        "c4.container"
+      ],
+      "editTask": "Label one link with what operations calls it, apply, and check the map again.",
+      "tags": [
+        "c4",
+        "deployment",
+        "operations"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/92-c4-epc.ddn",
+        "view": "deployment",
+        "profile": "c4.deployment@1",
+        "projection": "graph",
+        "sha256": "806e0e7adc51f6c064aca729ae1affd0a957b690f2c4397dd45084a7959f0de4",
+        "modelFingerprint": "fc73b557ab61c3a1",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/92-c4-epc.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/92-c4-epc.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view deployment \"Shop deployment\" {\n    data: [@dep];\n    projection { profile: \"c4.deployment@1\"; }\n    frame rack \"Shop server\" { scope: @dep.appbox; members: [@dep.war]; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/92-c4-epc.ddn and locate view deployment. This selects existing data; it is not a stored SVG.",
+        "Inspect the c4.deployment@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.c4epc::dep.cdn",
+        "file": "website/examples/basics/92-c4-epc.ddn",
+        "before": "Edge node",
+        "after": "Edge node / review",
+        "expectation": "Only the label of Edge node / review changes; placements, links and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "806e0e7adc51f6c064aca729ae1affd0a957b690f2c4397dd45084a7959f0de4",
+        "after": "e665d550d103624b2d3dea1010eb84aa0bb423b2e69e11ca07c33f162ef1a7bb",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "c4-dynamic",
+      "title": "C4 dynamic diagram (numbered messages)",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/basics/92-c4-epc.ddn",
+      "view": "dynamic",
+      "what": "One scenario as a numbered sequence of interactions between containers: who calls whom, in what order, for this story.",
+      "why": "Static structure never shows order; a dynamic view answers \"what actually happens when X\".",
+      "when": "Explaining a flow-through-scenario (login, checkout, failure handling).",
+      "read": [
+        "Read the numbers in order — they are the story.",
+        "Each number is one interaction with a name and a direction."
+      ],
+      "inputs": [
+        "The scenario",
+        "The ordered interactions",
+        "The containers involved"
+      ],
+      "pitfalls": [
+        "Do not number interactions you have not traced.",
+        "Do not mix scenarios on one diagram."
+      ],
+      "limits": "A recorded order, not a runtime trace; choreography conformance is out of scope.",
+      "refs": [],
+      "probe": [
+        "application",
+        "entity",
+        "c4.component"
+      ],
+      "editTask": "Rename one numbered step so it reads as an action with an outcome, apply, and check the story again.",
+      "tags": [
+        "c4",
+        "dynamic",
+        "scenario"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/92-c4-epc.ddn",
+        "view": "dynamic",
+        "profile": "c4.dynamic@1",
+        "projection": "graph",
+        "sha256": "17514b92a94f3c2f04bedd4e6e9b618a6d8516c89d586639a679e9e8b5c12b36",
+        "modelFingerprint": "5b04ad76b73611fe",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/92-c4-epc.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/92-c4-epc.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view dynamic \"Browse dynamic\" {\n    data: [@dyn];\n    projection { profile: \"c4.dynamic@1\"; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/92-c4-epc.ddn and locate view dynamic. This selects existing data; it is not a stored SVG.",
+        "Inspect the c4.dynamic@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.c4epc::dyn.cust",
+        "file": "website/examples/basics/92-c4-epc.ddn",
+        "before": "Customer",
+        "after": "Customer / review",
+        "expectation": "Only the label of Customer / review changes; order, interactions and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "17514b92a94f3c2f04bedd4e6e9b618a6d8516c89d586639a679e9e8b5c12b36",
+        "after": "c04d476cd58150fb89cc7dc9b8d1ad0cb11ffe9850875dffbfa74a6a055de162",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "sequence-fragments",
+      "title": "UML sequence diagram with combined fragments",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+      "view": "fragments",
+      "variants": [
+        {
+          "view": "states",
+          "title": "State invariants variant"
+        }
+      ],
+      "what": "A full UML sequence diagram: lifelines, messages, combined fragments (alt/opt/loop), gates and time constraints.",
+      "why": "Sequence diagrams are where protocol assumptions get written down and found out.",
+      "when": "Specifying or reviewing message order between components.",
+      "read": [
+        "Vertical position is time; fragments bracket the conditional parts.",
+        "A guard you cannot state in words does not belong on the diagram."
+      ],
+      "inputs": [
+        "The lifelines",
+        "The messages in order",
+        "The fragments and their guards"
+      ],
+      "pitfalls": [
+        "Do not use a fragment when you mean a separate diagram.",
+        "Do not leave a reply message unanswered without saying so."
+      ],
+      "limits": "Notation coverage; interactions are trace descriptions, not executable models.",
+      "refs": [],
+      "probe": [
+        "uml.class",
+        "application",
+        "entity"
+      ],
+      "editTask": "Rename one fragment operator or guard to match the condition you actually mean, apply, and check the reading again.",
+      "tags": [
+        "uml",
+        "sequence",
+        "fragments"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+        "view": "fragments",
+        "profile": "uml.sequence@2",
+        "projection": "sequence",
+        "sha256": "007bcfa02a656a9b0ec15fc7e28dfd537b2bbd3dcbb334a089b28de94a8bfc7f",
+        "modelFingerprint": "62f3c4dcb7b0c1e2",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/76-uml-sequence-complete.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/76-uml-sequence-complete.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view fragments \"UML sequence / fragments and gates\" {\n    data: [@ordering];\n    projection { kind: sequence; profile: \"uml.sequence@2\"; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/76-uml-sequence-complete.ddn and locate view fragments. This selects existing data; it is not a stored SVG.",
+        "Inspect the uml.sequence@2 profile and sequence projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.umlseq::ordering.customer",
+        "file": "website/examples/basics/76-uml-sequence-complete.ddn",
+        "before": "Customer",
+        "after": "Customer / review",
+        "expectation": "Only the label of Customer / review changes; messages, fragments and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "007bcfa02a656a9b0ec15fc7e28dfd537b2bbd3dcbb334a089b28de94a8bfc7f",
+        "after": "8e5eb77c8d1b440314d4c430f994455907bad3644800e56b1d328ecba4f6fe19",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
     {
       "id": "whiteboard",
       "title": "Whiteboard / discovery sketch",

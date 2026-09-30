@@ -32,6 +32,7 @@ const A = require(path.join(REPO, 'notation/dist/ddn.global.js'));
 const args = process.argv.slice(2);
 const OUT = args.includes('--out') ? args[args.indexOf('--out') + 1] : path.join(REPO, 'field-guide');
 const facts = JSON.parse(fs.readFileSync(path.join(REPO, 'standard/submission/facts.json'), 'utf8'));
+import BATCH2 from './field-guide-batch2.mjs';
 const F = k => k.split('.').reduce((o, x) => o[x], facts).value;
 const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -40,7 +41,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // Curated pilot chapters (6). Each fixture is a real repo example; the
 // experiment target is resolved programmatically (first element in the view
 // whose kind matches the chapter's probe), so ids never drift.
-const CHAPTERS = [
+const CHAPTERS = [...BATCH2,
   {
     id: 'whiteboard', title: 'Whiteboard / discovery sketch', category: 'Data structures and meaning',
     status: 'native', entry: 'website/examples/use-cases/01-whiteboard.ddn', view: 'diagram',
@@ -183,7 +184,8 @@ function buildChapter(ch) {
   const ws = A.createWorkspace(files);
   const r = ws.renderSync({ entry: ch.entry, view: ch.view });
   const ir = ws.resolve(ch.entry, ch.view);
-  const element = ir.elements.find(e => ch.probe.includes(e.kind)) || ir.elements[0];
+  const candidates = ir.elements.filter(e => ir.view.selected.includes(e.id));
+  const element = candidates.find(e => ch.probe.includes(e.kind)) || candidates[0] || ir.elements[0];
   // guided experiment through the public API (label edit, or a keyed record swap)
   let before, after, r2;
   const svgBefore = sha256(r.svg);
@@ -268,15 +270,22 @@ const ws = DDNLive.createWorkspace(files);
 const status = t => document.getElementById('status').textContent = t;
 function redraw(){
   try {
-    const r = ws.renderSync({entry: data.entry, view: data.view});
+    const r = ws.renderSync({entry: data.entry, view: currentView});
     document.getElementById('main-view').innerHTML = r.svg;
     status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
   } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
 }
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    DDNLive.authoring.setLabel(ws, data.entry, data.view, ex.id, ex.after);
+    if (data.experimentKind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -289,10 +298,11 @@ document.getElementById('reset').onclick = () => { location.reload(); };
 const sel = document.getElementById('file');
 for (const f of data.files) sel.add(new Option(f, f));
 const editor = document.getElementById('source-editor');
-function loadFile(){ editor.value = files[sel.value] || ws.getSource().files[sel.value] || ''; }
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
 sel.onchange = loadFile; loadFile();
 document.getElementById('apply-source').onclick = () => {
-  try { ws.updateFiles({ [sel.value]: editor.value }); redraw();
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
     document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
     document.getElementById('undo').disabled = false;
   } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
@@ -303,8 +313,7 @@ document.getElementById('download-svg').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
 };
 document.getElementById('download-ddn').onclick = () => {
-  const out = ws.getSource({ single: Object.keys(files).length === 1 });
-  const b = new Blob([typeof out === 'string' ? out : out.files[sel.value]], {type:'text/plain'}); const a = document.createElement('a');
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
@@ -321,7 +330,8 @@ function lessonHtml(ch) {
 <div class="explain"><section class="card"><h3>What this diagram shows</h3><p>${esc(ch.what)}</p></section><section class="card"><h3>Why use it?</h3><p>${esc(ch.why)}</p></section><section class="card"><h3>When is it useful?</h3><p>${esc(ch.when)}</p></section></div>
 <div class="read-guide"><section class="card"><h3>How to read this example</h3><ol>${ch.read.map(x => `<li>${esc(x)}</li>`).join('')}</ol></section>
 <section class="card"><h3>Information to gather first</h3><ul>${ch.inputs.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section></div>
-<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>${ch.variants?.length ? `
+<div class="actions" style="margin:.3rem 0"><label for="variant">Variant <select id="variant"><option value="${ch.view}">${esc(ch.view)}</option>${ch.variants.map(v => `<option value="${v.view}">${esc(v.title)}</option>`).join('')}</select></label></div>` : ''}
 <div class="views"><div><p class="viewer-label">${esc(ch.runtime.profile)} · ${esc(ch.runtime.projection)}</p><div id="main-view"></div></div></div>
 <div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
 <section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>${esc(ch.experiment.title)}</h3>
@@ -340,7 +350,7 @@ function lessonHtml(ch) {
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = ${JSON.stringify(filesFor(ch.entry)).replace(/<\//g, '<\\/')};</script>
-<script>window.GUIDE_CHAPTER = ${JSON.stringify({ id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment }).replace(/<\//g, '<\\/')};</script>
+<script>window.GUIDE_CHAPTER = ${JSON.stringify({ id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label' }).replace(/<\//g, '<\\/')};</script>
 <script>${GUIDE_JS}</script>
 </body></html>`;
 }
@@ -434,4 +444,4 @@ fs.writeFileSync(path.join(OUT, 'FIELD-GUIDE.md'), fieldGuideMd(chapters, meta))
 for (const ch of chapters) fs.writeFileSync(path.join(OUT, 'lessons', ch.id + '.html'), lessonHtml(ch));
 fs.writeFileSync(path.join(OUT, 'index.html'), indexHtml(chapters, meta));
 console.log(`field-guide: ${chapters.length} pilot chapters → ${OUT} (catalogue, coverage, example-index, plan ${PLAN.length}, FIELD-GUIDE.md, ${chapters.length} lesson pages, index)`);
-for (const c of chapters) console.log(`  ${c.id}: render ok (${c.runtime.milliseconds}ms, ${c.runtime.warnings.length} warnings), exercise ${c.exerciseEvidence.changed ? 'changes' : 'NO-CHANGE?!'}, undo-restores=${c.exerciseEvidence.undoRestoresBefore}`);
+for (const c of chapters) console.log(`  ${c.id}: render ok (${c.runtime.warnings.length} warnings, exercise ${c.exerciseEvidence.changed ? 'changes' : 'NO-CHANGE?!'}, undo-restores=${c.exerciseEvidence.undoRestoresBefore}`);
