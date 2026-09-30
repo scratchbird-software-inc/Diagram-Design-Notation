@@ -53,7 +53,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = {"website/examples/basics/25-c4-views.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.c4-views\";\n\nimport \"shared.ddn\" as shared;\n\n// Synthetic online-shop workspace for the C4-style profiles. All data is synthetic.\ndata shop {\n    object customer \"Customer\" { kind: \"c4.person\"; }\n    object site \"Online shop\" { kind: \"c4.system\"; }\n    object mailer \"Notification service\" { kind: \"c4.system\"; }\n    object web \"Web application\" { kind: \"c4.container\"; }\n    object db \"Orders database\" { kind: \"c4.store\"; }\n    object events \"Order events\" { kind: \"c4.queue\"; }\n    object checkout \"Checkout component\" { kind: \"c4.component\"; }\n    object cart \"Cart component\" { kind: \"c4.component\"; }\n    relation browses \"Browses and buys\" @customer -> @site { kind: \"c4.rel\"; }\n    relation notifies \"Sends notifications\" @site -> @mailer { kind: \"c4.rel\"; }\n    relation visits @customer -> @web { kind: \"c4.rel\"; }\n    relation orders \"Reads/writes orders\" @web -> @db { kind: \"c4.rel\"; }\n    relation publishes \"Publishes order events\" @web -> @events { kind: \"c4.rel\"; }\n    relation persists @checkout -> @db { kind: \"c4.rel\"; }\n    relation uses \"Uses\" @cart -> @checkout { kind: \"c4.rel\"; }\n}\n\nformat options {\n    layout c4ctx { algorithm: layered; }\n    layout c4grid { algorithm: grid; }\n    layout c4layered { algorithm: layered; }\n}\n\nview context \"Synthetic shop / C4 context\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.context@1\"; }\n    select: [@shop.customer, @shop.site, @shop.mailer];\n    display { fields: none; }\n    layout: @options.c4ctx;\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n\nview container \"Synthetic shop / C4 container\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.container@1\"; }\n    select: [@shop.customer, @shop.site, @shop.web, @shop.db, @shop.events];\n    display { fields: none; }\n    layout: @options.c4grid;\n    frame system_boundary { scope: @shop.site; members: [@shop.web, @shop.db, @shop.events]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n\nview component \"Synthetic shop / C4 component\" {\n    data: [@shop]; format: @shared.styles.technical;\n    projection { kind: graph; profile: \"c4.component@1\"; }\n    select: [@shop.customer, @shop.web, @shop.checkout, @shop.cart, @shop.db];\n    display { fields: none; }\n    layout: @options.c4layered;\n    frame container_boundary { scope: @shop.web; members: [@shop.checkout, @shop.cart]; }\n    publication { size: content; fit: none; overflow: error; minimum_text: 8pt; }\n}\n","website/examples/basics/shared.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core;\n    style classic;\n    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    style dark { theme: dark; }\n    style neutral { theme: neutral; font: mono; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; gap: 80px; }\n    display detailed;\n    display compact { fields: none; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { width: 280px; }\n    legend numbers { mode: numbers; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"};</script>
-<script>window.GUIDE_CHAPTER = {"id":"c4-context","entry":"website/examples/basics/25-c4-views.ddn","view":"context","files":["website/examples/basics/25-c4-views.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.c4-views::shop.site","file":"website/examples/basics/25-c4-views.ddn","before":"Online shop","after":"Online shop / review","expectation":"Only the label of Online shop / review changes; the boundary and identities are untouched."},"experimentKind":"label"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"c4-context","entry":"website/examples/basics/25-c4-views.ddn","view":"context","files":["website/examples/basics/25-c4-views.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.c4-views::shop.site","file":"website/examples/basics/25-c4-views.ddn","before":"Online shop","after":"Online shop / review","expectation":"Only the label of Online shop / review changes; the boundary and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 <script>(function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -71,11 +71,13 @@ if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; re
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    if (data.experimentKind === 'data') {
+    if (ex.kind === 'data') {
       status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
       return;
     }
-    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -107,6 +109,17 @@ document.getElementById('download-ddn').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
 redraw();
 })();</script>
 </body></html>

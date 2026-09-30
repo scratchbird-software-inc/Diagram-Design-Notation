@@ -54,7 +54,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = {"website/examples/use-cases/07-keyed-storage.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.views.keyed-storage\";\nimport \"formats.ddn\" as fmt;\nimport \"data/keyed.ddn\" as k;\n\n// What is the key, and what shape is its value?\n// Automatic grid placement: no absolute positions or waypoints.\nview diagram \"07 / Key-value design\" {\n    data: [@k.kv];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@k.kv.key, @k.kv.sessions, @k.kv.value];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"kv.r_a\": 1, \"kv.r_b\": 2 }; }\n}\n\nview wide_column \"07b / Wide-column access pattern\" {\n    data: [@k.wide]; format: @fmt.shared.technical;\n    select: [@k.wide.query, @k.wide.readings, @k.wide.key];\n    legend { keys: { \"wide.r_a\": 1, \"wide.r_b\": 2 }; }\n}\n","website/examples/use-cases/formats.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.formats\";\nformat shared {\n    notation core;\n    style classic;\n    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    layout row { algorithm: grid; gap: 120px; }\n    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }\n    layout teaching { algorithm: manual; gap: 120px; }\n    display full;\n    display compact { fields: none; maturity: none; }\n    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }\n    legend numbered { mode: numbers; width: 340px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @row;\n        display: @full;\n        publication: @figure;\n        legend: @numbered;\n    }\n}\n","website/examples/use-cases/data/keyed.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.keyed\";\n\n// All names, records and architectures in this catalogue are synthetic teaching examples.\n\ndata kv {\n    object key \"Session key\" {\n        kind: identity;\n        description: \"Scope: one active login session.\";\n    }\n    object sessions \"Session store\" {\n        kind: key_value;\n    }\n    object value \"Session value\" {\n        kind: record;\n        fields {\n            field user_id;\n            field expires_at;\n            field cart_id;\n        }\n    }\n    relation r_a @key -> @sessions { kind: ident; }\n    relation r_b \"value shape\" @sessions -> @value { kind: mem; }\n}\n\ndata wide {\n    domain key \"Device identifier\" {\n        kind: domain;\n        meaning: \"Identifies the producing sensor.\";\n        representation: undecided;\n    }\n    object readings \"Readings by device\" {\n        kind: wide_column;\n        workload: [streaming];\n        fields {\n            field device_id { key: partition; }\n            field measured_at { key: clustering; }\n            field value;\n        }\n    }\n    object query \"Latest device readings\" {\n        kind: qry;\n        description: \"Access pattern; not a claim that a database query has been executed.\";\n    }\n    relation r_a @readings.device_id -> @key { kind: domain; }\n    relation r_b @query -> @readings { kind: depends; }\n}\n"};</script>
-<script>window.GUIDE_CHAPTER = {"id":"keyed-storage","entry":"website/examples/use-cases/07-keyed-storage.ddn","view":"diagram","files":["website/examples/use-cases/07-keyed-storage.ddn","website/examples/use-cases/formats.ddn","website/examples/use-cases/data/keyed.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.usecases.keyed::kv.value","file":"website/examples/use-cases/07-keyed-storage.ddn","before":"Session value","after":"Session value / review","expectation":"Only the label of Session value / review changes; keys, values and identities are untouched."},"experimentKind":"label"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"keyed-storage","entry":"website/examples/use-cases/07-keyed-storage.ddn","view":"diagram","files":["website/examples/use-cases/07-keyed-storage.ddn","website/examples/use-cases/formats.ddn","website/examples/use-cases/data/keyed.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.usecases.keyed::kv.value","file":"website/examples/use-cases/07-keyed-storage.ddn","before":"Session value","after":"Session value / review","expectation":"Only the label of Session value / review changes; keys, values and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 <script>(function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -72,11 +72,13 @@ if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; re
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    if (data.experimentKind === 'data') {
+    if (ex.kind === 'data') {
       status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
       return;
     }
-    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -108,6 +110,17 @@ document.getElementById('download-ddn').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
 redraw();
 })();</script>
 </body></html>

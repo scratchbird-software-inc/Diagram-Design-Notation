@@ -50,7 +50,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = {"website/examples/basics/92-c4-epc.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.c4epc\";\n\n// B1-076: C4 deployment + dynamic diagrams, and the full EPC notation.\n// All data is synthetic.\n\ndata dep {\n    object cdn \"Edge node\" { kind: \"uml.node\"; x_c4tag: { tags: [ \"infra\", \"edge\" ]; }; }\n    object appbox \"Shop server\" { kind: \"uml.device\"; }\n    object db \"Database host\" { kind: \"uml.device\"; }\n    object war \"shop.war\" { kind: \"uml.artifact\"; }\n    relation deploy \"\" @war -> @appbox { kind: \"uml.deploy\"; }\n    relation path1 \"\" @cdn -> @appbox { kind: \"uml.commpath\"; x_endlabels: { target: { multiplicity: \"1..2\" } }; }\n    relation path2 \"\" @appbox -> @db { kind: \"uml.commpath\"; }\n}\n\ndata dyn {\n    object cust \"Customer\" { kind: \"c4.person\"; }\n    object web \"Web app\" { kind: \"c4.container\"; x_c4tag: { tags: [ \"web\" ]; }; }\n    object api \"API service\" { kind: \"c4.container\"; }\n    relation m1 \"browse catalog\" @cust -> @web { kind: \"uml.message\"; x_message: { seq: \"1\" }; }\n    relation m2 \"query products\" @web -> @api { kind: \"uml.message\"; x_message: { seq: \"2\" }; }\n    relation m3 \"product list\" @api -> @web { kind: \"uml.message\"; x_message: { seq: \"2.1\" }; x_return: true; }\n    relation m4 \"render page\" @web -> @cust { kind: \"uml.message\"; x_message: { seq: \"3\" }; }\n}\n\ndata e {\n    object ev \"Order received\" { kind: \"epk.event\"; }\n    object check \"Check stock\" { kind: \"epk.function\"; }\n    object c1 \"\" { kind: \"epk.connector\"; x_epc: { operator: \"and\" }; }\n    object reserve \"Reserve items\" { kind: \"epk.function\"; }\n    object pick \"Pick items\" { kind: \"epk.function\"; }\n    object c2 \"\" { kind: \"epk.connector\"; x_epc: { operator: \"and\" }; }\n    object ev2 \"Order ready\" { kind: \"epk.event\"; }\n    object ship \"Ship order\" { kind: \"epk.function\"; }\n    object ev3 \"Order shipped\" { kind: \"epk.event\"; }\n    object wh \"Warehouse\" { kind: \"epk.orgunit\"; }\n    object picker \"Picker\" { kind: \"epk.role\"; }\n    object list \"Pick list\" { kind: \"epk.infoobject\"; }\n    object billing \"Billing process\" { kind: \"epk.processlink\"; }\n\n    relation n1 \"\" @ev -> @check { kind: \"epk.next\"; }\n    relation n2 \"\" @check -> @c1 { kind: \"epk.next\"; }\n    relation n3 \"\" @c1 -> @reserve { kind: \"epk.next\"; }\n    relation n4 \"\" @c1 -> @pick { kind: \"epk.next\"; }\n    relation n5 \"\" @reserve -> @c2 { kind: \"epk.next\"; }\n    relation n6 \"\" @pick -> @c2 { kind: \"epk.next\"; }\n    relation n7 \"\" @c2 -> @ev2 { kind: \"epk.next\"; }\n    relation n8 \"\" @ev2 -> @ship { kind: \"epk.next\"; }\n    relation n9 \"\" @ship -> @ev3 { kind: \"epk.next\"; }\n    relation a1 \"\" @wh -> @pick { kind: \"epk.assigned\"; }\n    relation a2 \"\" @picker -> @pick { kind: \"epk.assigned\"; }\n    relation i1 \"\" @list -> @pick { kind: \"epk.infoflow\"; }\n    relation i2 \"\" @ship -> @list { kind: \"epk.infoflow\"; }\n    relation l1 \"\" @billing -> @ev3 { kind: \"epk.links\"; }\n}\n\nview deployment \"Shop deployment\" {\n    data: [@dep];\n    projection { profile: \"c4.deployment@1\"; }\n    frame rack \"Shop server\" { scope: @dep.appbox; members: [@dep.war]; }\n    publication { size: content; fit: none; }\n}\n\nview dynamic \"Browse dynamic\" {\n    data: [@dyn];\n    projection { profile: \"c4.dynamic@1\"; }\n    publication { size: content; fit: none; }\n}\n\nview epc \"Fulfillment EPC\" {\n    data: [@e];\n    projection { profile: \"epc.complete@1\"; }\n    frame lane \"Warehouse lane\" { scope: @e.wh; members: [@e.pick, @e.picker, @e.list]; }\n    publication { size: content; fit: none; }\n}\n"};</script>
-<script>window.GUIDE_CHAPTER = {"id":"c4-dynamic","entry":"website/examples/basics/92-c4-epc.ddn","view":"dynamic","files":["website/examples/basics/92-c4-epc.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.c4epc::dyn.cust","file":"website/examples/basics/92-c4-epc.ddn","before":"Customer","after":"Customer / review","expectation":"Only the label of Customer / review changes; order, interactions and identities are untouched."},"experimentKind":"label"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"c4-dynamic","entry":"website/examples/basics/92-c4-epc.ddn","view":"dynamic","files":["website/examples/basics/92-c4-epc.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.c4epc::dyn.cust","file":"website/examples/basics/92-c4-epc.ddn","before":"Customer","after":"Customer / review","expectation":"Only the label of Customer / review changes; order, interactions and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 <script>(function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -68,11 +68,13 @@ if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; re
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    if (data.experimentKind === 'data') {
+    if (ex.kind === 'data') {
       status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
       return;
     }
-    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -104,6 +106,17 @@ document.getElementById('download-ddn').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
 redraw();
 })();</script>
 </body></html>

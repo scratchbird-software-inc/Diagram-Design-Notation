@@ -51,7 +51,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = {"website/examples/basics/76-uml-sequence-complete.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.umlseq\";\n\n// B1-056 : UML 2.5.1 sequence-diagram completeness on uml.sequence@2.\n// View 1: combined fragments, gates, replies. View 2: creation/destruction,\n// lost/found, invariants, authorable activations, time/duration constraints.\n// Minimal current-dialect style, no pinned layout.\n\ndata ordering {\n    object customer \"Customer\" { kind: application; }\n    object checkout \"Checkout\" { kind: service; }\n    object payments \"Payments\" { kind: service; }\n\n    relation submit \"Submit order\" @customer -> @checkout { kind: \"uml.message\"; }\n    relation charge \"Charge card\" @checkout -> @payments { kind: \"uml.message\"; x_message: { sort: synch; duration: \"{0..5s}\"; };\n        x_fragment: { operator: alt; operands: [\n            { guard: \"card valid\"; messages: [@ordering.charge, @ordering.capture]; },\n            { guard: \"else\"; messages: [@ordering.declined]; } ] };\n    }\n    relation capture \"Capture\" @payments -> @payments { kind: \"uml.message\"; }\n    relation declined \"Declined\" @checkout -> @customer { kind: \"uml.message\"; x_message: { sort: reply; }; }\n    relation confirm \"Confirmation\" @checkout -> @customer { kind: \"uml.message\"; x_return: true; }\n    relation notify \"Notify warehouse\" @checkout -> @payments { kind: \"uml.message\"; x_message: { sort: asynch; gate: target; };\n        x_fragment: { operator: loop; operands: [\n            { guard: \"per batch\"; messages: [@ordering.notify, @ordering.ack]; fragments: [\n                { operator: opt; operands: [ { guard: \"stock low\"; messages: [@ordering.ack]; } ] } ] } ] };\n    }\n    relation ack \"Ack\" @payments -> @checkout { kind: \"uml.message\"; }\n}\n\ndata lifeline {\n    object scheduler \"Scheduler\" { kind: application; }\n    object agent \"Agent\" { kind: service;\n        x_invariant: [ { after: @lifeline.poll; label: \"idle\"; } ];\n        x_activation: [ { from: @lifeline.spawn; to: @lifeline.stop; } ];\n    }\n    object audit \"Audit sink\" { kind: service; }\n\n    relation spawn \"Spawn\" @scheduler -> @agent { kind: \"uml.message\"; x_message: { sort: create; }; }\n    relation poll \"Poll\" @agent -> @agent { kind: \"uml.message\"; x_message: { sort: asynch; time: \"{t}\"; }; }\n    relation report \"Report\" @agent -> @scheduler { kind: \"uml.message\"; x_message: { sort: synch; duration: \"{1..3s}\"; }; }\n    relation lostm \"Metric\" @audit -> @audit { kind: \"uml.message\"; x_message: { sort: lost; }; }\n    relation foundm \"Late event\" @agent -> @agent { kind: \"uml.message\"; x_message: { sort: found; }; }\n    relation stop \"Stop\" @scheduler -> @agent { kind: \"uml.message\"; x_message: { sort: delete; }; }\n}\n\nview fragments \"UML sequence / fragments and gates\" {\n    data: [@ordering];\n    projection { kind: sequence; profile: \"uml.sequence@2\"; }\n    publication { size: content; fit: none; }\n}\n\nview states \"UML sequence / lifecycle and annotations\" {\n    data: [@lifeline];\n    projection { kind: sequence; profile: \"uml.sequence@2\"; }\n    publication { size: content; fit: none; }\n}\n"};</script>
-<script>window.GUIDE_CHAPTER = {"id":"sequence-fragments","entry":"website/examples/basics/76-uml-sequence-complete.ddn","view":"fragments","files":["website/examples/basics/76-uml-sequence-complete.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.umlseq::ordering.customer","file":"website/examples/basics/76-uml-sequence-complete.ddn","before":"Customer","after":"Customer / review","expectation":"Only the label of Customer / review changes; messages, fragments and identities are untouched."},"experimentKind":"label"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"sequence-fragments","entry":"website/examples/basics/76-uml-sequence-complete.ddn","view":"fragments","files":["website/examples/basics/76-uml-sequence-complete.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.umlseq::ordering.customer","file":"website/examples/basics/76-uml-sequence-complete.ddn","before":"Customer","after":"Customer / review","expectation":"Only the label of Customer / review changes; messages, fragments and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 <script>(function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -69,11 +69,13 @@ if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; re
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    if (data.experimentKind === 'data') {
+    if (ex.kind === 'data') {
       status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
       return;
     }
-    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -105,6 +107,17 @@ document.getElementById('download-ddn').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
 redraw();
 })();</script>
 </body></html>

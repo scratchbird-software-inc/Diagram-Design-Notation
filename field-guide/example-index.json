@@ -304,6 +304,393 @@
       ]
     },
     {
+      "chapter": "raci",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "raci",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "crud",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "crud",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "relationship-matrix",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "matrix_general",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "record-table",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "record_table",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "decision-unique",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_unique",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "decision-collect",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_collect",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "heatmap-numeric",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_numeric",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "heatmap-bands",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_bands",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "heatmap-categories",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_categories",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "swot",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "swot",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "sipoc",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "sipoc",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "journey",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "journey",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "empathy-scorecard",
+      "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+      "view": "empathy",
+      "files": [
+        "website/examples/basics/34-empathy-scorecard.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "story-map",
+      "entry": "website/examples/basics/36-story-map.ddn",
+      "view": "storymap",
+      "files": [
+        "website/examples/basics/36-story-map.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
+      "chapter": "line-chart",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chart_line",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "area-chart",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chart_area",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "pie-donut",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chart_pie",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "scatter",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "scatter",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "time-series",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "time_series",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "grouped-bars",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "grouped_bars",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "stacked-bars",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "stacked_bars",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "percent-bars",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "percent_bars",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "multi-line",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "multiseries_line",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "multi-area",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "multiseries_area",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "actual-target",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "actual_target",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "histogram",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "histogram",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "pareto",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "pareto",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "waterfall",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "waterfall",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "boxplot",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "boxplot",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "distributions",
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "violin",
+      "files": [
+        "website/examples/basics/62-distribution-charts.ddn"
+      ]
+    },
+    {
+      "chapter": "treecharts",
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "sunburst",
+      "files": [
+        "website/examples/basics/63-tree-charts.ddn"
+      ]
+    },
+    {
+      "chapter": "gridcharts",
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "heatmap",
+      "files": [
+        "website/examples/basics/64-grid-charts.ddn"
+      ]
+    },
+    {
+      "chapter": "overlays",
+      "entry": "website/examples/basics/66-chart-overlays.ddn",
+      "view": "regression",
+      "files": [
+        "website/examples/basics/66-chart-overlays.ddn"
+      ]
+    },
+    {
+      "chapter": "gantt",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "gantt",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "dashboard",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "dashboard_quality",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "lifecycle-trace",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "lifecycle_trace",
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "dfd-yourdon",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "dfd_yourdon",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
+      "chapter": "dfd-gane-sarson",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "dfd_gane",
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ]
+    },
+    {
       "chapter": "whiteboard",
       "entry": "website/examples/use-cases/01-whiteboard.ddn",
       "view": "diagram",

@@ -51,7 +51,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = {"website/examples/basics/78-uml-deployment.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.umldep\";\n\n// B1-058 : UML 2.5.1 deployment diagrams on uml.deployment@1.\n// View 1: devices, execution environment, artifacts, deploy/manifest,\n// communication paths with multiplicity. View 2: node nesting via frames.\n// Minimal current-dialect style, no pinned layout.\n\ndata shop {\n    object lb \"Load balancer\" { kind: \"uml.device\"; }\n    object appsrv \"App server\" { kind: \"uml.device\"; }\n    object jvm \"Tomcat 10\" { kind: \"uml.executionenv\"; }\n    object war \"shop.war\" { kind: \"uml.artifact\"; }\n    object cart \"Cart component\" { kind: \"uml.component\"; }\n    object dbnode \"DB server\" { kind: \"uml.node\"; }\n    object jar \"persistence.jar\" { kind: \"uml.artifact\"; }\n\n    relation lan \"https\" @lb -> @appsrv { kind: \"uml.commpath\";\n        x_endlabels: { source: { multiplicity: \"1\"; }; target: { multiplicity: \"1..*\"; }; };\n    }\n    relation dep1 \"\" @war -> @jvm { kind: \"uml.deploy\"; }\n    relation dep2 \"\" @cart -> @jvm { kind: \"uml.deploy\"; }\n    relation dep3 \"\" @jar -> @dbnode { kind: \"uml.deploy\"; }\n    relation man \"\" @war -> @cart { kind: \"uml.manifest\"; }\n    relation sql \"jdbc\" @appsrv -> @dbnode { kind: \"uml.commpath\"; }\n}\n\ndata cluster {\n    object zone \"Failover zone\" { kind: \"uml.node\"; }\n    object node_a \"Node A\" { kind: \"uml.device\"; }\n    object node_b \"Node B\" { kind: \"uml.device\"; }\n    object ee_a \"JVM\" { kind: \"uml.executionenv\"; }\n    object ee_b \"JVM\" { kind: \"uml.executionenv\"; }\n    object app_a \"orders.ear\" { kind: \"uml.artifact\"; }\n    object app_b \"orders.ear\" { kind: \"uml.artifact\"; }\n\n    relation ha \"\" @node_a -> @node_b { kind: \"uml.commpath\";\n        x_endlabels: { source: { multiplicity: \"1\"; }; target: { multiplicity: \"1\"; }; };\n    }\n    relation za \"\" @app_a -> @ee_a { kind: \"uml.deploy\"; }\n    relation zb \"\" @app_b -> @ee_b { kind: \"uml.deploy\"; }\n}\n\nview main \"UML deployment / nodes and artifacts\" {\n    data: [@shop];\n    projection { profile: \"uml.deployment@1\"; }\n    publication { size: content; fit: none; }\n}\n\nview nested \"UML deployment / nested nodes\" {\n    data: [@cluster];\n    projection { profile: \"uml.deployment@1\"; }\n    frame f_zone \"Failover zone\" { scope: @cluster.zone; members: [@cluster.node_a, @cluster.node_b]; }\n    frame f_a \"Node A\" { scope: @cluster.node_a; members: [@cluster.ee_a, @cluster.app_a]; }\n    frame f_b \"Node B\" { scope: @cluster.node_b; members: [@cluster.ee_b, @cluster.app_b]; }\n    publication { size: content; fit: none; }\n}\n"};</script>
-<script>window.GUIDE_CHAPTER = {"id":"uml-deployment","entry":"website/examples/basics/78-uml-deployment.ddn","view":"main","files":["website/examples/basics/78-uml-deployment.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.umldep::shop.lb","file":"website/examples/basics/78-uml-deployment.ddn","before":"Load balancer","after":"Load balancer / review","expectation":"Only the label of Load balancer / review changes; nodes, artifacts and identities are untouched."},"experimentKind":"label"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"uml-deployment","entry":"website/examples/basics/78-uml-deployment.ddn","view":"main","files":["website/examples/basics/78-uml-deployment.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.umldep::shop.lb","file":"website/examples/basics/78-uml-deployment.ddn","before":"Load balancer","after":"Load balancer / review","expectation":"Only the label of Load balancer / review changes; nodes, artifacts and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 <script>(function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -69,11 +69,13 @@ if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; re
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    if (data.experimentKind === 'data') {
+    if (ex.kind === 'data') {
       status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
       return;
     }
-    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -105,6 +107,17 @@ document.getElementById('download-ddn').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
 redraw();
 })();</script>
 </body></html>

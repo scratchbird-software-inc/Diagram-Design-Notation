@@ -1,1212 +1,1219 @@
 [
- {
-  "id": "whiteboard",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/01-whiteboard.ddn",
-  "view": "diagram"
- },
- {
-  "id": "business-erd",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/02-business-erd.ddn",
-  "view": "diagram"
- },
- {
-  "id": "bpmn-collaboration",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/46-bpmn.ddn",
-  "view": "collaboration"
- },
- {
-  "id": "bar-chart",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/59-data-refresh.ddn",
-  "view": "latency_chart"
- },
- {
-  "id": "ladder",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/101-ladder.ddn",
-  "view": "d"
- },
- {
-  "id": "decision-first",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "decision_first"
- },
- {
-  "id": "relational",
-  "title": "Logical relational schema",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/03-relational.ddn",
-  "view": "diagram"
- },
- {
-  "id": "physical-model",
-  "title": "Physical representation and datatype documentation",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
-  "view": "diagram"
- },
- {
-  "id": "documents",
-  "title": "Document and embedded-object schema",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/05-documents.ddn",
-  "view": "diagram"
- },
- {
-  "id": "namespaces",
-  "title": "Catalog, database and schema organization",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/09-namespaces.ddn",
-  "view": "diagram"
- },
- {
-  "id": "domains",
-  "title": "Semantic domains and candidate bindings",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/08-domains.ddn",
-  "view": "diagram"
- },
- {
-  "id": "sample-grid",
-  "title": "Field-bound sample-data grid",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "nested-fields",
-  "title": "Recursive fields and structural variants",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/02-elements.ddn",
-  "view": "overview"
- },
- {
-  "id": "property-graph",
-  "title": "Property-graph schema",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "key-value",
-  "title": "Key-value structure and lookup contract",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "wide-column",
-  "title": "Wide-column and access-pattern design",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/07-keyed-storage.ddn",
-  "view": "wide_column"
- },
- {
-  "id": "star-schema",
-  "title": "Dimensional warehouse / star schema",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "bitemporal",
-  "title": "Valid-time and recorded-time model",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "lineage",
-  "title": "Dataset lineage and derivation",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/13-lineage.ddn",
-  "view": "diagram"
- },
- {
-  "id": "migration",
-  "title": "Current-to-target mapping",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/20-migration.ddn",
-  "view": "diagram"
- },
- {
-  "id": "reference-atlas",
-  "title": "Large-model reference atlas",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "c4-context",
-  "title": "System context \u2014 C4-style",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/25-c4-views.ddn",
-  "view": "context"
- },
- {
-  "id": "c4-components",
-  "title": "Component responsibility map \u2014 C4-style",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/25-c4-views.ddn",
-  "view": "component"
- },
- {
-  "id": "network",
-  "title": "Network/system topology",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/54-network-diagram.ddn",
-  "view": "lan"
- },
- {
-  "id": "network-symbols",
-  "title": "Network with icon pack symbols",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/103-network-symbols.ddn",
-  "view": "net"
- },
- {
-  "id": "deployment",
-  "title": "Hybrid local/cloud deployment",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
-  "view": "diagram"
- },
- {
-  "id": "shards-replicas",
-  "title": "Sharding, replication and co-location",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "etl",
-  "title": "ETL/ELT and analytical publication",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "event-contract",
-  "title": "Event/message contract catalogue",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "recovery",
-  "title": "Backup, restore and continuity design",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/19-recovery.ddn",
-  "view": "diagram"
- },
- {
-  "id": "dfd-yourdon",
-  "title": "Yourdon-style data-flow diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "dfd-gane-sarson",
-  "title": "Gane\u2013Sarson-style DFD",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "flowchart",
-  "title": "ISO 5807 flowchart \u2014 full symbol set",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
-  "view": "chart"
- },
- {
-  "id": "swimlane",
-  "title": "Cross-functional responsibility view",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "sequence",
-  "title": "UML sequence diagram completeness",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
-  "view": "fragments"
- },
- {
-  "id": "communication",
-  "title": "UML communication diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "interaction-overview",
-  "title": "Interaction overview",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "timing",
-  "title": "UML timing diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "msc",
-  "title": "MSC message sequence chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/93-msc.ddn",
-  "view": "chart"
- },
- {
-  "id": "statemachine",
-  "title": "UML state machine completeness",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
-  "view": "d"
- },
- {
-  "id": "activity",
-  "title": "UML activity diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/80-uml-activity.ddn",
-  "view": "d"
- },
- {
-  "id": "umlclass",
-  "title": "UML class diagram completeness",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/75-uml-class-complete.ddn",
-  "view": "d"
- },
- {
-  "id": "umlobject",
-  "title": "UML object diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/43-object-diagram.ddn",
-  "view": "d"
- },
- {
-  "id": "umlcomposite",
-  "title": "UML component and composite structure",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/79-uml-composite.ddn",
-  "view": "d"
- },
- {
-  "id": "umlremainder",
-  "title": "UML remainder notations",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/81-uml-remainder.ddn",
-  "view": "d"
- },
- {
-  "id": "bpmn-process",
-  "title": "BPMN process diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/82-bpmn-complete.ddn",
-  "view": "d"
- },
- {
-  "id": "bpmn-choreography",
-  "title": "BPMN choreography",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "cmmn-case",
-  "title": "CMMN case diagram completeness",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "sysml-bdd",
-  "title": "SysML block definition diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "sysml-ibd",
-  "title": "SysML internal block diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "sysml-parametric",
-  "title": "SysML parametric diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "dmn-drd",
-  "title": "DMN decision requirements diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "soaml-services",
-  "title": "SoaML service architecture",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/88-soaml.ddn",
-  "view": "arch"
- },
- {
-  "id": "uaf-strategic",
-  "title": "UAF strategic domain",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/89-uaf.ddn",
-  "view": "strategic"
- },
- {
-  "id": "uaf-summary",
-  "title": "UAF summary and overview",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/89-uaf.ddn",
-  "view": "sum"
- },
- {
-  "id": "fbd",
-  "title": "IEC 61131-3 function block diagram",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/100-fbd.ddn",
-  "view": "d"
- },
- {
-  "id": "sdl",
-  "title": "SDL system and process diagrams",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/99-sdl.ddn",
-  "view": "system"
- },
- {
-  "id": "petri",
-  "title": "Petri net with token markings",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "orm",
-  "title": "ORM 2 fact model",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "vsm",
-  "title": "Value stream map",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/97-vsm.ddn",
-  "view": "map"
- },
- {
-  "id": "vsm-symbols",
-  "title": "VSM with icon pack symbols",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/102-vsm-symbols.ddn",
-  "view": "map"
- },
- {
-  "id": "idef0",
-  "title": "IDEF0 function model",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "pert-cpm",
-  "title": "PERT/CPM critical path",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/52-pert-cpm.ddn",
-  "view": "d"
- },
- {
-  "id": "fault-tree",
-  "title": "Fault/event tree",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/53-fault-event-tree.ddn",
-  "view": "d"
- },
- {
-  "id": "mindmap",
-  "title": "Mind map",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "concept-map",
-  "title": "Concept map",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "organization",
-  "title": "Organization/reporting chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "overview"
- },
- {
-  "id": "wbs",
-  "title": "Work breakdown structure",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "family-tree",
-  "title": "Family relationship map",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/56-family-tree.ddn",
-  "view": "d"
- },
- {
-  "id": "requirements",
-  "title": "Requirement and verification traceability",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "governance",
-  "title": "Data-product ownership and contracts",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/17-governance.ddn",
-  "view": "diagram"
- },
- {
-  "id": "security-boundary",
-  "title": "Trust and data-handling boundaries",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/18-security.ddn",
-  "view": "diagram"
- },
- {
-  "id": "audit",
-  "title": "Audit evidence and custody map",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "verification-gates",
-  "title": "Verification and readiness gates",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "form-contract",
-  "title": "UI form and interaction requirements",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "diagram"
- },
- {
-  "id": "chen",
-  "title": "Chen ER notation \u2014 basic and extended",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "chen_extended"
- },
- {
-  "id": "crows-foot",
-  "title": "Crow's-foot ERD",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/37-crows-foot-erd.ddn",
-  "view": "d"
- },
- {
-  "id": "raci",
-  "title": "RACI responsibility matrix",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "raci"
- },
- {
-  "id": "crud",
-  "title": "CRUD / data-access matrix",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "crud"
- },
- {
-  "id": "relationship-matrix",
-  "title": "Model-derived relationship matrix",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "record-table",
-  "title": "Source-bound record table",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "defect_table"
- },
- {
-  "id": "decision-unique",
-  "title": "Typed decision table \u2014 unique match",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "decision_unique"
- },
- {
-  "id": "decision-collect",
-  "title": "Typed decision table \u2014 collect matches",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "decision_collect"
- },
- {
-  "id": "heatmap-numeric",
-  "title": "Numeric heatmap",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "heat_numeric"
- },
- {
-  "id": "heatmap-bands",
-  "title": "Risk/priority threshold bands",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "heat_bands"
- },
- {
-  "id": "heatmap-categories",
-  "title": "Categorical status matrix",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "heat_categories"
- },
- {
-  "id": "swot",
-  "title": "SWOT and four-panel strategic analysis",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "sipoc",
-  "title": "SIPOC process overview",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "journey",
-  "title": "Customer/service journey panels",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "story-map",
-  "title": "Story map",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "empathy-scorecard",
-  "title": "Empathy map and scorecard",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/34-empathy-scorecard.ddn",
-  "view": "d"
- },
- {
-  "id": "line-chart",
-  "title": "Line chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "area-chart",
-  "title": "Area chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "pie-donut",
-  "title": "Pie and doughnut charts",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "scatter",
-  "title": "Scatter and perceptual plots",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "time-series",
-  "title": "Calendar-ordered time-series",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "grouped-bars",
-  "title": "Grouped multi-series bars",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "grouped_bars"
- },
- {
-  "id": "stacked-bars",
-  "title": "Signed stacked bars",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "stacked_bars"
- },
- {
-  "id": "percent-bars",
-  "title": "Percentage-stacked bars",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "percent_bars"
- },
- {
-  "id": "multi-line",
-  "title": "Multiple-line chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "multiseries_line"
- },
- {
-  "id": "multi-area",
-  "title": "Multiple-series area chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "multiseries_area"
- },
- {
-  "id": "actual-target",
-  "title": "Actual versus target / layered marks",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "actual_target"
- },
- {
-  "id": "histogram",
-  "title": "Histogram \u2014 counts and density",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "histogram"
- },
- {
-  "id": "pareto",
-  "title": "Pareto chart",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "pareto"
- },
- {
-  "id": "waterfall",
-  "title": "Waterfall reconciliation",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "waterfall"
- },
- {
-  "id": "boxplot",
-  "title": "Box plot conventions",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "boxplot"
- },
- {
-  "id": "distributions",
-  "title": "Distribution chart pack",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "treecharts",
-  "title": "Tree and radial chart pack",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/63-tree-charts.ddn",
-  "view": "d"
- },
- {
-  "id": "gridcharts",
-  "title": "Grid and network chart pack",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/64-grid-charts.ddn",
-  "view": "d"
- },
- {
-  "id": "overlays",
-  "title": "Statistical overlays (error bars, regression)",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "gantt",
-  "title": "Gantt / supplied-date schedule",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "timeline-roadmap",
-  "title": "Timeline / milestone roadmap",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "dashboard",
-  "title": "Composed dashboard",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/quality/views.ddn",
-  "view": "dashboard_quality"
- },
- {
-  "id": "linked-views",
-  "title": "Linked diagrams / overview and detail",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "thumbnails",
-  "title": "Drill-down thumbnails",
-  "status": "planned",
-  "support": "native",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "icons",
-  "title": "Icon packs and bindings",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/98-icons.ddn",
-  "view": "net"
- },
- {
-  "id": "icons-vendor",
-  "title": "Curated MIT icon packs (Tabler, Iconoir)",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/106-tabler-icons.ddn",
-  "view": "net"
- },
- {
-  "id": "pid-symbols",
-  "title": "P&ID common symbols",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/104-pid-symbols.ddn",
-  "view": "pid"
- },
- {
-  "id": "electrical-symbols",
-  "title": "Electrical common symbols",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/105-electrical-symbols.ddn",
-  "view": "sch"
- },
- {
-  "id": "cross-file",
-  "title": "Architecture containers and cross-file addressing",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/108-uaf-traceability.ddn",
-  "view": "sv"
- },
- {
-  "id": "iso42010",
-  "title": "ISO/IEC/IEEE 42010 architecture descriptions",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/89-uaf.ddn",
-  "view": "sum"
- },
- {
-  "id": "iso-charts",
-  "title": "Isometric chart extrusions",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/72-iso-charts.ddn",
-  "view": "d"
- },
- {
-  "id": "iso-graph",
-  "title": "Isometric graph prisms",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/73-iso-architecture.ddn",
-  "view": "d"
- },
- {
-  "id": "geo",
-  "title": "Geographic maps (choropleth, symbols, outline)",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/67-geo-choropleth.ddn",
-  "view": "d"
- },
- {
-  "id": "style-looks",
-  "title": "Classic, hand-drawn and neo looks",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/basics/09-look-comparison.ddn",
-  "view": "d"
- },
- {
-  "id": "route-options",
-  "title": "Straight, angular, curved and rounded routes",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/basics/17-curved-relations.ddn",
-  "view": "d"
- },
- {
-  "id": "crossings",
-  "title": "Crossings, gaps and bridge markers",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/basics/17-curved-relations.ddn",
-  "view": "d"
- },
- {
-  "id": "fields-detail",
-  "title": "Selected detail and nested-field attachment",
-  "status": "planned",
-  "support": "technique",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "layout-algorithms",
-  "title": "Placement algorithms incl. ladder",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/gallery/src/layouts.ddn",
-  "view": "layered"
- },
- {
-  "id": "spacing",
-  "title": "Spacing hints",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/basics/60-spacing-hints.ddn",
-  "view": "d"
- },
- {
-  "id": "page-size",
-  "title": "Page size, orientation, scale and zoom",
-  "status": "planned",
-  "support": "technique",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "safe-export",
-  "title": "Visible versus authorized export",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/basics/14-authorized-export.ddn",
-  "view": "d"
- },
- {
-  "id": "notation-atlas",
-  "title": "Element silhouettes and indicator slots",
-  "status": "planned",
-  "support": "technique",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "pinned-placement",
-  "title": "Pin-centred placement patterns",
-  "status": "planned",
-  "support": "technique",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "pause-placement",
-  "title": "Pause, reflow and retained positions",
-  "status": "planned",
-  "support": "technique",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "night-palettes",
-  "title": "Dark and night palettes",
-  "status": "planned",
-  "support": "technique",
-  "entry": "(new fixture needed)",
-  "view": "d"
- },
- {
-  "id": "wireframes",
-  "title": "Low-fidelity UI wireframes",
-  "status": "planned",
-  "support": "native",
-  "entry": "website/examples/basics/55-wireframe.ddn",
-  "view": "d"
- },
- {
-  "id": "data-refresh",
-  "title": "Live dashboards with keyed refresh",
-  "status": "planned",
-  "support": "technique",
-  "entry": "website/examples/basics/59-data-refresh.ddn",
-  "view": "latency_chart"
- },
- {
-  "id": "sql-dependencies",
-  "title": "SQL-object dependency diagram",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
-  "view": "diagram"
- },
- {
-  "id": "graph-schema",
-  "title": "Property-graph schema",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/06-graph-schema.ddn",
-  "view": "diagram"
- },
- {
-  "id": "keyed-storage",
-  "title": "Key-value structure and lookup contract",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/07-keyed-storage.ddn",
-  "view": "diagram"
- },
- {
-  "id": "hybrid-deployment",
-  "title": "Hybrid local/cloud deployment",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
-  "view": "diagram"
- },
- {
-  "id": "data-flow",
-  "title": "Data-flow diagram (Yourdon/Gane\u2013Sarson idiom)",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/11-data-flow.ddn",
-  "view": "diagram"
- },
- {
-  "id": "streaming",
-  "title": "Event distribution / streaming integration",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/12-streaming.ddn",
-  "view": "diagram"
- },
- {
-  "id": "temporal",
-  "title": "Valid-time and recorded-time model",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/14-temporal.ddn",
-  "view": "diagram"
- },
- {
-  "id": "warehouse",
-  "title": "Dimensional warehouse / star schema",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/15-warehouse.ddn",
-  "view": "diagram"
- },
- {
-  "id": "vector-lineage",
-  "title": "Embedding, vector and model lineage",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/16-vector-lineage.ddn",
-  "view": "diagram"
- },
- {
-  "id": "quality-model",
-  "title": "Example-driven data-quality specification",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/21-quality.ddn",
-  "view": "diagram"
- },
- {
-  "id": "linked-documentation",
-  "title": "Linked diagrams and documentation views",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/use-cases/22-linked-documentation.ddn",
-  "view": "diagram"
- },
- {
-  "id": "c4-container",
-  "title": "Application/container responsibilities \u2014 C4-style",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/25-c4-views.ddn",
-  "view": "container"
- },
- {
-  "id": "c4-deployment",
-  "title": "C4 deployment diagram",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/92-c4-epc.ddn",
-  "view": "deployment"
- },
- {
-  "id": "c4-dynamic",
-  "title": "C4 dynamic diagram (numbered messages)",
-  "status": "pilot",
-  "support": "native",
-  "entry": "website/examples/basics/92-c4-epc.ddn",
-  "view": "dynamic"
- }
+  {
+    "id": "whiteboard",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/01-whiteboard.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "business-erd",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/02-business-erd.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "bpmn-collaboration",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/46-bpmn.ddn",
+    "view": "collaboration"
+  },
+  {
+    "id": "bar-chart",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/59-data-refresh.ddn",
+    "view": "latency_chart"
+  },
+  {
+    "id": "ladder",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/101-ladder.ddn",
+    "view": "d"
+  },
+  {
+    "id": "decision-first",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "decision_first"
+  },
+  {
+    "id": "relational",
+    "title": "Logical relational schema",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/03-relational.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "physical-model",
+    "title": "Physical representation and datatype documentation",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "documents",
+    "title": "Document and embedded-object schema",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/05-documents.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "namespaces",
+    "title": "Catalog, database and schema organization",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/09-namespaces.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "domains",
+    "title": "Semantic domains and candidate bindings",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/08-domains.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "sample-grid",
+    "title": "Field-bound sample-data grid",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "nested-fields",
+    "title": "Recursive fields and structural variants",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/02-elements.ddn",
+    "view": "overview"
+  },
+  {
+    "id": "property-graph",
+    "title": "Property-graph schema",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "key-value",
+    "title": "Key-value structure and lookup contract",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "wide-column",
+    "title": "Wide-column and access-pattern design",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+    "view": "wide_column"
+  },
+  {
+    "id": "star-schema",
+    "title": "Dimensional warehouse / star schema",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "bitemporal",
+    "title": "Valid-time and recorded-time model",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "lineage",
+    "title": "Dataset lineage and derivation",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/13-lineage.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "migration",
+    "title": "Current-to-target mapping",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/20-migration.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "reference-atlas",
+    "title": "Large-model reference atlas",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "c4-context",
+    "title": "System context — C4-style",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/25-c4-views.ddn",
+    "view": "context"
+  },
+  {
+    "id": "c4-components",
+    "title": "Component responsibility map — C4-style",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/25-c4-views.ddn",
+    "view": "component"
+  },
+  {
+    "id": "network",
+    "title": "Network/system topology",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/54-network-diagram.ddn",
+    "view": "lan"
+  },
+  {
+    "id": "network-symbols",
+    "title": "Network with icon pack symbols",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/103-network-symbols.ddn",
+    "view": "net"
+  },
+  {
+    "id": "deployment",
+    "title": "Hybrid local/cloud deployment",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "shards-replicas",
+    "title": "Sharding, replication and co-location",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "etl",
+    "title": "ETL/ELT and analytical publication",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "event-contract",
+    "title": "Event/message contract catalogue",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "recovery",
+    "title": "Backup, restore and continuity design",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/19-recovery.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "dfd-yourdon",
+    "title": "Yourdon-style data-flow diagram",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "dfd-gane-sarson",
+    "title": "Gane–Sarson-style DFD",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "flowchart",
+    "title": "ISO 5807 flowchart — full symbol set",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/91-iso5807-flowchart.ddn",
+    "view": "chart"
+  },
+  {
+    "id": "swimlane",
+    "title": "Cross-functional responsibility view",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "sequence",
+    "title": "UML sequence diagram completeness",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
+    "view": "fragments"
+  },
+  {
+    "id": "communication",
+    "title": "UML communication diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "interaction-overview",
+    "title": "Interaction overview",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "timing",
+    "title": "UML timing diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "msc",
+    "title": "MSC message sequence chart",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/93-msc.ddn",
+    "view": "chart"
+  },
+  {
+    "id": "statemachine",
+    "title": "UML state machine completeness",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/77-uml-statemachine-complete.ddn",
+    "view": "d"
+  },
+  {
+    "id": "activity",
+    "title": "UML activity diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/80-uml-activity.ddn",
+    "view": "d"
+  },
+  {
+    "id": "umlclass",
+    "title": "UML class diagram completeness",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/75-uml-class-complete.ddn",
+    "view": "d"
+  },
+  {
+    "id": "umlobject",
+    "title": "UML object diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/43-object-diagram.ddn",
+    "view": "d"
+  },
+  {
+    "id": "umlcomposite",
+    "title": "UML component and composite structure",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/79-uml-composite.ddn",
+    "view": "d"
+  },
+  {
+    "id": "umlremainder",
+    "title": "UML remainder notations",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/81-uml-remainder.ddn",
+    "view": "d"
+  },
+  {
+    "id": "bpmn-process",
+    "title": "BPMN process diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/82-bpmn-complete.ddn",
+    "view": "d"
+  },
+  {
+    "id": "bpmn-choreography",
+    "title": "BPMN choreography",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "cmmn-case",
+    "title": "CMMN case diagram completeness",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "sysml-bdd",
+    "title": "SysML block definition diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "sysml-ibd",
+    "title": "SysML internal block diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "sysml-parametric",
+    "title": "SysML parametric diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "dmn-drd",
+    "title": "DMN decision requirements diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "soaml-services",
+    "title": "SoaML service architecture",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/88-soaml.ddn",
+    "view": "arch"
+  },
+  {
+    "id": "uaf-strategic",
+    "title": "UAF strategic domain",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/89-uaf.ddn",
+    "view": "strategic"
+  },
+  {
+    "id": "uaf-summary",
+    "title": "UAF summary and overview",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/89-uaf.ddn",
+    "view": "sum"
+  },
+  {
+    "id": "fbd",
+    "title": "IEC 61131-3 function block diagram",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/100-fbd.ddn",
+    "view": "d"
+  },
+  {
+    "id": "sdl",
+    "title": "SDL system and process diagrams",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/99-sdl.ddn",
+    "view": "system"
+  },
+  {
+    "id": "petri",
+    "title": "Petri net with token markings",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "orm",
+    "title": "ORM 2 fact model",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "vsm",
+    "title": "Value stream map",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/97-vsm.ddn",
+    "view": "map"
+  },
+  {
+    "id": "vsm-symbols",
+    "title": "VSM with icon pack symbols",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/102-vsm-symbols.ddn",
+    "view": "map"
+  },
+  {
+    "id": "idef0",
+    "title": "IDEF0 function model",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "pert-cpm",
+    "title": "PERT/CPM critical path",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/52-pert-cpm.ddn",
+    "view": "d"
+  },
+  {
+    "id": "fault-tree",
+    "title": "Fault/event tree",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/53-fault-event-tree.ddn",
+    "view": "d"
+  },
+  {
+    "id": "mindmap",
+    "title": "Mind map",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "concept-map",
+    "title": "Concept map",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "organization",
+    "title": "Organization/reporting chart",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "overview"
+  },
+  {
+    "id": "wbs",
+    "title": "Work breakdown structure",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "family-tree",
+    "title": "Family relationship map",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/56-family-tree.ddn",
+    "view": "d"
+  },
+  {
+    "id": "requirements",
+    "title": "Requirement and verification traceability",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "governance",
+    "title": "Data-product ownership and contracts",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/17-governance.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "security-boundary",
+    "title": "Trust and data-handling boundaries",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/18-security.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "audit",
+    "title": "Audit evidence and custody map",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "verification-gates",
+    "title": "Verification and readiness gates",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "form-contract",
+    "title": "UI form and interaction requirements",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "diagram"
+  },
+  {
+    "id": "chen",
+    "title": "Chen ER notation — basic and extended",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "chen_extended"
+  },
+  {
+    "id": "crows-foot",
+    "title": "Crow's-foot ERD",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/37-crows-foot-erd.ddn",
+    "view": "d"
+  },
+  {
+    "id": "raci",
+    "title": "RACI responsibility matrix",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "raci"
+  },
+  {
+    "id": "crud",
+    "title": "CRUD / data-access matrix",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "crud"
+  },
+  {
+    "id": "relationship-matrix",
+    "title": "Model-derived relationship matrix",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "record-table",
+    "title": "Source-bound record table",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "defect_table"
+  },
+  {
+    "id": "decision-unique",
+    "title": "Typed decision table — unique match",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "decision_unique"
+  },
+  {
+    "id": "decision-collect",
+    "title": "Typed decision table — collect matches",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "decision_collect"
+  },
+  {
+    "id": "heatmap-numeric",
+    "title": "Numeric heatmap",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "heat_numeric"
+  },
+  {
+    "id": "heatmap-bands",
+    "title": "Risk/priority threshold bands",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "heat_bands"
+  },
+  {
+    "id": "heatmap-categories",
+    "title": "Categorical status matrix",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "heat_categories"
+  },
+  {
+    "id": "swot",
+    "title": "SWOT and four-panel strategic analysis",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "sipoc",
+    "title": "SIPOC process overview",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "journey",
+    "title": "Customer/service journey panels",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "story-map",
+    "title": "Story map",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "empathy-scorecard",
+    "title": "Empathy map and scorecard",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+    "view": "d"
+  },
+  {
+    "id": "line-chart",
+    "title": "Line chart",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "area-chart",
+    "title": "Area chart",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "pie-donut",
+    "title": "Pie and doughnut charts",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "scatter",
+    "title": "Scatter and perceptual plots",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "time-series",
+    "title": "Calendar-ordered time-series",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "grouped-bars",
+    "title": "Grouped multi-series bars",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "grouped_bars"
+  },
+  {
+    "id": "stacked-bars",
+    "title": "Signed stacked bars",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "stacked_bars"
+  },
+  {
+    "id": "percent-bars",
+    "title": "Percentage-stacked bars",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "percent_bars"
+  },
+  {
+    "id": "multi-line",
+    "title": "Multiple-line chart",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "multiseries_line"
+  },
+  {
+    "id": "multi-area",
+    "title": "Multiple-series area chart",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "multiseries_area"
+  },
+  {
+    "id": "actual-target",
+    "title": "Actual versus target / layered marks",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "actual_target"
+  },
+  {
+    "id": "histogram",
+    "title": "Histogram — counts and density",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "histogram"
+  },
+  {
+    "id": "pareto",
+    "title": "Pareto chart",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "pareto"
+  },
+  {
+    "id": "waterfall",
+    "title": "Waterfall reconciliation",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "waterfall"
+  },
+  {
+    "id": "boxplot",
+    "title": "Box plot conventions",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "boxplot"
+  },
+  {
+    "id": "distributions",
+    "title": "Distribution chart pack",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "treecharts",
+    "title": "Tree and radial chart pack",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/63-tree-charts.ddn",
+    "view": "d"
+  },
+  {
+    "id": "gridcharts",
+    "title": "Grid and network chart pack",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/64-grid-charts.ddn",
+    "view": "d"
+  },
+  {
+    "id": "overlays",
+    "title": "Statistical overlays (error bars, regression)",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "gantt",
+    "title": "Gantt / supplied-date schedule",
+    "status": "pilot",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "timeline-roadmap",
+    "title": "Timeline / milestone roadmap",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "dashboard",
+    "title": "Composed dashboard",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "dashboard_quality"
+  },
+  {
+    "id": "linked-views",
+    "title": "Linked diagrams / overview and detail",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "thumbnails",
+    "title": "Drill-down thumbnails",
+    "status": "planned",
+    "support": "native",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "icons",
+    "title": "Icon packs and bindings",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/98-icons.ddn",
+    "view": "net"
+  },
+  {
+    "id": "icons-vendor",
+    "title": "Curated MIT icon packs (Tabler, Iconoir)",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/106-tabler-icons.ddn",
+    "view": "net"
+  },
+  {
+    "id": "pid-symbols",
+    "title": "P&ID common symbols",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/104-pid-symbols.ddn",
+    "view": "pid"
+  },
+  {
+    "id": "electrical-symbols",
+    "title": "Electrical common symbols",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/105-electrical-symbols.ddn",
+    "view": "sch"
+  },
+  {
+    "id": "cross-file",
+    "title": "Architecture containers and cross-file addressing",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/108-uaf-traceability.ddn",
+    "view": "sv"
+  },
+  {
+    "id": "iso42010",
+    "title": "ISO/IEC/IEEE 42010 architecture descriptions",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/89-uaf.ddn",
+    "view": "sum"
+  },
+  {
+    "id": "iso-charts",
+    "title": "Isometric chart extrusions",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/72-iso-charts.ddn",
+    "view": "d"
+  },
+  {
+    "id": "iso-graph",
+    "title": "Isometric graph prisms",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/73-iso-architecture.ddn",
+    "view": "d"
+  },
+  {
+    "id": "geo",
+    "title": "Geographic maps (choropleth, symbols, outline)",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/67-geo-choropleth.ddn",
+    "view": "d"
+  },
+  {
+    "id": "style-looks",
+    "title": "Classic, hand-drawn and neo looks",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/basics/09-look-comparison.ddn",
+    "view": "d"
+  },
+  {
+    "id": "route-options",
+    "title": "Straight, angular, curved and rounded routes",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/basics/17-curved-relations.ddn",
+    "view": "d"
+  },
+  {
+    "id": "crossings",
+    "title": "Crossings, gaps and bridge markers",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/basics/17-curved-relations.ddn",
+    "view": "d"
+  },
+  {
+    "id": "fields-detail",
+    "title": "Selected detail and nested-field attachment",
+    "status": "planned",
+    "support": "technique",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "layout-algorithms",
+    "title": "Placement algorithms incl. ladder",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/gallery/src/layouts.ddn",
+    "view": "layered"
+  },
+  {
+    "id": "spacing",
+    "title": "Spacing hints",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/basics/60-spacing-hints.ddn",
+    "view": "d"
+  },
+  {
+    "id": "page-size",
+    "title": "Page size, orientation, scale and zoom",
+    "status": "planned",
+    "support": "technique",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "safe-export",
+    "title": "Visible versus authorized export",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/basics/14-authorized-export.ddn",
+    "view": "d"
+  },
+  {
+    "id": "notation-atlas",
+    "title": "Element silhouettes and indicator slots",
+    "status": "planned",
+    "support": "technique",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "pinned-placement",
+    "title": "Pin-centred placement patterns",
+    "status": "planned",
+    "support": "technique",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "pause-placement",
+    "title": "Pause, reflow and retained positions",
+    "status": "planned",
+    "support": "technique",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "night-palettes",
+    "title": "Dark and night palettes",
+    "status": "planned",
+    "support": "technique",
+    "entry": "(new fixture needed)",
+    "view": "d"
+  },
+  {
+    "id": "wireframes",
+    "title": "Low-fidelity UI wireframes",
+    "status": "planned",
+    "support": "native",
+    "entry": "website/examples/basics/55-wireframe.ddn",
+    "view": "d"
+  },
+  {
+    "id": "data-refresh",
+    "title": "Live dashboards with keyed refresh",
+    "status": "planned",
+    "support": "technique",
+    "entry": "website/examples/basics/59-data-refresh.ddn",
+    "view": "latency_chart"
+  },
+  {
+    "id": "sql-dependencies",
+    "title": "SQL-object dependency diagram",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/04-sql-dependencies.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "graph-schema",
+    "title": "Property-graph schema",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/06-graph-schema.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "keyed-storage",
+    "title": "Key-value structure and lookup contract",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/07-keyed-storage.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "hybrid-deployment",
+    "title": "Hybrid local/cloud deployment",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/10-hybrid-deployment.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "data-flow",
+    "title": "Data-flow diagram (Yourdon/Gane–Sarson idiom)",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/11-data-flow.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "streaming",
+    "title": "Event distribution / streaming integration",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/12-streaming.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "temporal",
+    "title": "Valid-time and recorded-time model",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/14-temporal.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "warehouse",
+    "title": "Dimensional warehouse / star schema",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/15-warehouse.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "vector-lineage",
+    "title": "Embedding, vector and model lineage",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/16-vector-lineage.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "quality-model",
+    "title": "Example-driven data-quality specification",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/21-quality.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "linked-documentation",
+    "title": "Linked diagrams and documentation views",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/use-cases/22-linked-documentation.ddn",
+    "view": "diagram"
+  },
+  {
+    "id": "c4-container",
+    "title": "Application/container responsibilities — C4-style",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/25-c4-views.ddn",
+    "view": "container"
+  },
+  {
+    "id": "c4-deployment",
+    "title": "C4 deployment diagram",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/92-c4-epc.ddn",
+    "view": "deployment"
+  },
+  {
+    "id": "c4-dynamic",
+    "title": "C4 dynamic diagram (numbered messages)",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/92-c4-epc.ddn",
+    "view": "dynamic"
+  },
+  {
+    "id": "lifecycle-trace",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "lifecycle_trace"
+  }
 ]

@@ -3,8 +3,8 @@
     "edition": "field-guide-0.7-pilot",
     "runtime": "0.7.0",
     "reviewed": "2026-09-30",
-    "chapterCount": 37,
-    "plannedChapterCount": 152,
+    "chapterCount": 75,
+    "plannedChapterCount": 153,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -3027,6 +3027,4089 @@
       }
     },
     {
+      "id": "raci",
+      "title": "RACI responsibility matrix",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "raci",
+      "experimentKind": "matrix",
+      "what": "Who is Responsible, Accountable, Consulted and Informed for each deliverable, one letter per person per row.",
+      "why": "Accountability fails when it is shared; the matrix makes \"exactly one A per row\" something a validator can check.",
+      "when": "Assigning work packages, approvals or escalation ownership.",
+      "read": [
+        "Read row by row: each deliverable needs exactly one A.",
+        "R does the work, A answers for it, C is asked, I is told."
+      ],
+      "inputs": [
+        "The deliverables",
+        "The people",
+        "The letters per cell"
+      ],
+      "pitfalls": [
+        "Do not allow two As on one row.",
+        "Do not confuse C (consulted before acting) with I (told after)."
+      ],
+      "limits": "Declared assignments with the one-accountable rule validated; the matrix does not enforce the work itself.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Move one deliverable to a different accountable person in the source, apply, and confirm the one-A rule still holds.",
+      "tags": [
+        "raci",
+        "matrix",
+        "responsibility"
+      ],
+      "experimentMeta": {
+        "row": "meridian.procurement.review::process.order",
+        "column": "meridian.procurement.review::roles.warehouse",
+        "to": "R"
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "raci",
+        "profile": "matrix.raci@1",
+        "projection": "matrix",
+        "sha256": "4d9a7aa1d083515d7836a7cb10b4c5f4d19efeff20717d92cbe8be444b71a491",
+        "modelFingerprint": "fdec83608a32dbea",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view raci \"03 / Model-derived RACI\" {\n    data: [@m.process, @m.roles, @m.responsibilities];\n    format: @f.shared.common;\n    projection { kind:matrix;profile:\"matrix.raci@1\";rows:[@m.process.order, @m.process.receive, @m.process.post];columns:[@m.roles.buyer, @m.roles.manager, @m.roles.warehouse, @m.roles.controller];relation:\"analysis.assignment\";value:\"x_assignment.code\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view raci. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.raci@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "matrix",
+        "title": "Fill one matrix cell without changing its axes",
+        "id": "meridian.procurement.review::process.start",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Issue purchase order × Warehouse supervisor = (empty)",
+        "after": "Issue purchase order × Warehouse supervisor = R",
+        "expectation": "Only the edited cell changes; every other assignment and identity is untouched.",
+        "row": "meridian.procurement.review::process.order",
+        "column": "meridian.procurement.review::roles.warehouse",
+        "to": "R"
+      },
+      "exerciseEvidence": {
+        "before": "4d9a7aa1d083515d7836a7cb10b4c5f4d19efeff20717d92cbe8be444b71a491",
+        "after": "7bfc439e73f4f36fc5a94110748ac9956e96ea8f9fb906cb7d55f724b0036593",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "crud",
+      "title": "CRUD / data-access matrix",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "crud",
+      "experimentKind": "matrix",
+      "what": "Which actor Creates, Reads, Updates and Deletes which entity — the access contract as a grid.",
+      "why": "Access questions get answered at the cell instead of in a meeting.",
+      "when": "Permission reviews, API design, or onboarding to a data model.",
+      "read": [
+        "Read actor against entity: the letter is the permission.",
+        "An empty row is an inaccessible entity — deliberate or defect?"
+      ],
+      "inputs": [
+        "The actors",
+        "The entities",
+        "The permissions per cell"
+      ],
+      "pitfalls": [
+        "Do not write \"admin\" as the actor — name the role.",
+        "Do not leave D without an owner for retention questions."
+      ],
+      "limits": "Declared permissions only; the grid is documentation, not an enforcement point.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Grant or revoke one letter deliberately in the source, apply, and check the access story still reads.",
+      "tags": [
+        "crud",
+        "matrix",
+        "access"
+      ],
+      "experimentMeta": {
+        "row": "meridian.procurement.review::process.order",
+        "column": "meridian.procurement.review::schema.receipt",
+        "to": "R"
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "crud",
+        "profile": "matrix.crud@1",
+        "projection": "matrix",
+        "sha256": "4d9319dd49e6a214a8646f622899439c2d5dd06a8d3ba5b8987a490e88d1214b",
+        "modelFingerprint": "9f192cb6a009ab76",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view crud \"04 / Model-derived CRUD\" {\n    data: [@m.process, @m.schema, @m.access];\n    format: @f.shared.common;\n    projection { kind:matrix;profile:\"matrix.crud@1\";rows:[@m.process.order, @m.process.receive, @m.process.post];columns:[@m.schema.supplier, @m.schema.po, @m.schema.receipt];relation:\"analysis.access\";value:\"x_assignment.code\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view crud. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.crud@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "matrix",
+        "title": "Fill one matrix cell without changing its axes",
+        "id": "meridian.procurement.review::process.start",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Issue purchase order × Goods receipt = (empty)",
+        "after": "Issue purchase order × Goods receipt = R",
+        "expectation": "Only the edited cell changes; every other permission and identity is untouched.",
+        "row": "meridian.procurement.review::process.order",
+        "column": "meridian.procurement.review::schema.receipt",
+        "to": "R"
+      },
+      "exerciseEvidence": {
+        "before": "4d9319dd49e6a214a8646f622899439c2d5dd06a8d3ba5b8987a490e88d1214b",
+        "after": "f4bf74a41ec0c9d5b00cfb2f6c2b4e4abfdb0844fb550fe7612dee8d842fbbd7",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "relationship-matrix",
+      "title": "General model-derived relationship matrix",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "matrix_general",
+      "probe": [
+        "flow.process",
+        "analysis.role",
+        "application",
+        "entity"
+      ],
+      "what": "Any two model lists crossed: elements on both axes, cells marking which pairs relate and how.",
+      "why": "Cross-checks (\"every X is covered by a Y\") become visual gaps instead of list-diffing by hand.",
+      "when": "Coverage checks: capabilities↔systems, requirements↔tests, teams↔systems.",
+      "read": [
+        "Rows are one model list, columns another; a marked cell means the pair relates.",
+        "An empty row or column is the finding: something relates to nothing."
+      ],
+      "inputs": [
+        "The row list",
+        "The column list",
+        "The mark each true cell carries"
+      ],
+      "pitfalls": [
+        "Do not fill cells to look complete — an honest empty cell is the finding.",
+        "Do not mix relationship types in one mark without a legend."
+      ],
+      "limits": "Model-derived marks; the matrix reports the model, it does not prove coverage in reality.",
+      "refs": [],
+      "editTask": "Clear one overstated cell in the source, apply, and check the gap it reveals reads honestly.",
+      "tags": [
+        "matrix",
+        "coverage",
+        "cross-check"
+      ],
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "matrix_general",
+        "profile": "matrix.relations@1",
+        "projection": "matrix",
+        "sha256": "111b78b51cc8e4b19410b7f636cc92fd7382f248ac2c129c08951345233a6c44",
+        "modelFingerprint": "fdec83608a32dbea",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view matrix_general \"26 / General relationship matrix\" {\n    data: [@m.process, @m.roles, @m.responsibilities];\n    format: @f.shared.common;\n    projection { kind:matrix;profile:\"matrix.relations@1\";rows:[@m.process.order, @m.process.receive, @m.process.post];columns:[@m.roles.buyer, @m.roles.manager, @m.roles.warehouse, @m.roles.controller];relation:\"analysis.assignment\";value:\"name\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view matrix_general. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.relations@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.procurement.review::process.order",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Issue purchase order",
+        "after": "Issue purchase order / review",
+        "expectation": "Only the edited cell changes; axes, other marks and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "111b78b51cc8e4b19410b7f636cc92fd7382f248ac2c129c08951345233a6c44",
+        "after": "647e47257bbba9fade48a644c5b1fd1d935d5857dc494d85eeb77fab23ee94e0",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "record-table",
+      "title": "Source-bound record table",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "record_table",
+      "experimentKind": "value",
+      "what": "Model records rendered as a literal rows-and-columns table — the data itself, formatted, not a chart.",
+      "why": "Some reviews need the numbers, not the picture; the table is the honest projection.",
+      "when": "Reconciliation, sign-off, or checking exact values a chart would round.",
+      "read": [
+        "Columns are the record fields, in declared order.",
+        "Missing values print as missing — never zero-filled."
+      ],
+      "inputs": [
+        "The records",
+        "The columns and their order",
+        "Units per numeric column"
+      ],
+      "pitfalls": [
+        "Do not sort the table in the picture instead of the source.",
+        "Do not read a formatted unit as a different unit."
+      ],
+      "limits": "Presentation of declared records; no aggregation beyond what the view declares.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Correct one value in the source records, apply, and check the table cell and any totals.",
+      "tags": [
+        "table",
+        "records",
+        "reconciliation"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::facts.m1",
+        "key": "count",
+        "value": 13
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "record_table",
+        "profile": "table.records@1",
+        "projection": "table",
+        "sha256": "6bd60337c320c4e0e4f9e6bfe5295c5576fb9fb98d7bb5f48f32603cf0a8c58f",
+        "modelFingerprint": "74515a3e8d541676",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view record_table \"19 / Shared observation table\" {\n    data: [@m.facts];\n    format: @f.shared.common;\n    projection { kind:table;profile:\"table.records@1\";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];columns:[{key:\"x_record.month\",label:\"Month\"},{key:\"x_record.value\",label:\"Recorded value (CAD)\"},{key:\"x_record.cost\",label:\"Illustrative cost (CAD)\"},{key:\"x_record.count\",label:\"Count\"}]; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view record_table. This selects existing data; it is not a stored SVG.",
+        "Inspect the table.records@1 profile and table projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::facts.m1",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Jan observation count = 8",
+        "after": "Jan observation count = 13",
+        "expectation": "Only one record value changes; rows, columns, order and identities are untouched.",
+        "key": "count",
+        "value": 13
+      },
+      "exerciseEvidence": {
+        "before": "6bd60337c320c4e0e4f9e6bfe5295c5576fb9fb98d7bb5f48f32603cf0a8c58f",
+        "after": "b105ff8b1c9e9d0a597b3104e7467aeca6418760b8e520d514806392ffaa9c27",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "decision-unique",
+      "title": "Typed decision table — unique match",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_unique",
+      "experimentKind": "rule",
+      "what": "A typed decision table where exactly one rule may match any input: overlapping conditions are defects, not style.",
+      "why": "Uniqueness is the strongest review contract a rule set can carry — any ambiguity fails loudly.",
+      "when": "Rules that must be exhaustive and mutually exclusive (fee codes, eligibility).",
+      "read": [
+        "Every input hits exactly one row — or the table is broken.",
+        "Type domains on inputs define what \"match\" may claim."
+      ],
+      "inputs": [
+        "The input fields and domains",
+        "Non-overlapping rule rows",
+        "The output column"
+      ],
+      "pitfalls": [
+        "Do not write two rows that can both be true.",
+        "Do not leave a domain hole: unique also requires complete."
+      ],
+      "limits": "Bounded evaluation against one input record; no arbitrary rule-language execution.",
+      "evaluation": {
+        "type": "decision",
+        "sample": "{\"usage\": 120, \"vip\": true}"
+      },
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Evaluate the table with the panel below, then make one condition stricter in the source and evaluate again.",
+      "tags": [
+        "decision",
+        "rules",
+        "unique"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::rules.high",
+        "record": {
+          "when": {
+            "severity": {
+              "op": "eq",
+              "value": "high"
+            }
+          },
+          "then": {
+            "route": "quarantine",
+            "audit": false
+          }
+        }
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "decision_unique",
+        "profile": "decision.rules@1",
+        "projection": "decision",
+        "sha256": "90f62a85cc05db59e5e31f2388e6d99f4254776aeff10853222cf5eb75ab739d",
+        "modelFingerprint": "5182e89444061c8a",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view decision_unique \"14 / Disposition policy — unique\" {\n    data: [@m.rules];\n    format: @f.shared.common;\n    projection { kind: \"decision\"; profile: \"decision.rules@1\"; records: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review]; inputs: [{ \"key\": \"severity\", \"type\": \"enum\", \"values\": [\"low\", \"high\"] }, { \"key\": \"score\", \"type\": \"number\", \"min\": 0, \"max\": 10 }]; outputs: [\"route\", \"audit\"]; hit_policy: \"unique\"; coverage: \"complete\"; analysis_budget: 4096; }\n    select: [@m.rules.high, @m.rules.low_pass, @m.rules.low_review];\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view decision_unique. This selects existing data; it is not a stored SVG.",
+        "Inspect the decision.rules@1 profile and decision projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "rule",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.quality.review::rules.high",
+        "file": "website/examples/quality/views.ddn",
+        "before": "High severity then.audit = true",
+        "after": "High severity then.audit = false",
+        "expectation": "Only one rule-input value changes; rows, domains and the uniqueness contract are untouched.",
+        "record": {
+          "when": {
+            "severity": {
+              "op": "eq",
+              "value": "high"
+            }
+          },
+          "then": {
+            "route": "quarantine",
+            "audit": false
+          }
+        }
+      },
+      "exerciseEvidence": {
+        "before": "90f62a85cc05db59e5e31f2388e6d99f4254776aeff10853222cf5eb75ab739d",
+        "after": "80adadb46eb7da88e6fcd023af1fe76d14c00bf39ff8a0019354ca01616db1ec",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "decision-collect",
+      "title": "Typed decision table — collect matches",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "decision_collect",
+      "experimentKind": "rule",
+      "what": "A decision table where every matching rule contributes to the outcome: collect, then aggregate.",
+      "why": "Some policies are additive by design — the collect policy makes the accumulation explicit instead of hidden in code.",
+      "when": "Scoring, surcharges, risk points — anything summed across matching rules.",
+      "read": [
+        "Read all rows: every match counts, not the first.",
+        "The aggregation (sum/min/max/count) is declared on the table, not implied."
+      ],
+      "inputs": [
+        "The additive rules",
+        "The aggregation",
+        "The input fields"
+      ],
+      "pitfalls": [
+        "Do not add a rule whose points you cannot justify independently.",
+        "Do not read collect order as priority — it is a bag, not a race."
+      ],
+      "limits": "Bounded evaluation against one input record with the declared aggregation.",
+      "evaluation": {
+        "type": "decision",
+        "sample": "{\"usage\": 120, \"vip\": true}"
+      },
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Evaluate the table with the panel, change one rule's points, and evaluate again to see the aggregate move.",
+      "tags": [
+        "decision",
+        "rules",
+        "collect"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::rules.high",
+        "record": {
+          "when": {
+            "severity": {
+              "op": "eq",
+              "value": "high"
+            }
+          },
+          "then": {
+            "route": "quarantine",
+            "audit": false
+          }
+        }
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "decision_collect",
+        "profile": "decision.rules@1",
+        "projection": "decision",
+        "sha256": "beb77fadb3ec7f6aa3a9cebcfde083e117744f3c59c1382cac9c13b3b9c7b1d7",
+        "modelFingerprint": "5182e89444061c8a",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view decision_collect \"14 / Disposition policy — collect\" {\n    data: [@m.rules];\n    format: @f.shared.common;\n    projection { kind: \"decision\"; profile: \"decision.rules@1\"; records: [@m.rules.high, @m.rules.check, @m.rules.audit]; inputs: [{ \"key\": \"severity\", \"type\": \"enum\", \"values\": [\"low\", \"high\"] }, { \"key\": \"score\", \"type\": \"number\", \"min\": 0, \"max\": 10 }]; outputs: [\"route\", \"audit\"]; hit_policy: \"collect\"; coverage: \"complete\"; analysis_budget: 4096; }\n    select: [@m.rules.high, @m.rules.check, @m.rules.audit];\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view decision_collect. This selects existing data; it is not a stored SVG.",
+        "Inspect the decision.rules@1 profile and decision projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "rule",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.quality.review::rules.high",
+        "file": "website/examples/quality/views.ddn",
+        "before": "High severity then.audit = true",
+        "after": "High severity then.audit = false",
+        "expectation": "Only one rule-input value changes; rows, aggregation and identities are untouched.",
+        "record": {
+          "when": {
+            "severity": {
+              "op": "eq",
+              "value": "high"
+            }
+          },
+          "then": {
+            "route": "quarantine",
+            "audit": false
+          }
+        }
+      },
+      "exerciseEvidence": {
+        "before": "beb77fadb3ec7f6aa3a9cebcfde083e117744f3c59c1382cac9c13b3b9c7b1d7",
+        "after": "f0e4efd7831143547f40684d931457b992bba91eec3f3f61ce627c057bdb066a",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "heatmap-numeric",
+      "title": "Numeric heatmap",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_numeric",
+      "experimentKind": "matrix",
+      "matrixValue": 8,
+      "what": "A grid where cell colour encodes a numeric measure: magnitude at a glance across two axes.",
+      "why": "Outliers hide in tables and shout in heatmaps.",
+      "when": "Load, cost, error or latency across services and time windows.",
+      "read": [
+        "Colour is the number — darker/hotter means larger.",
+        "Read the scale first: the same colour means different numbers on different maps."
+      ],
+      "inputs": [
+        "The two axes",
+        "The measure and its unit",
+        "The scale"
+      ],
+      "pitfalls": [
+        "Do not compare colours across heatmaps with different scales.",
+        "Do not let one extreme cell flatten the rest of the scale."
+      ],
+      "limits": "Declared scale from declared data; no automatic outlier detection.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one cell to an outlier in the source, apply, and watch what it does to the scale — then decide if that is honest.",
+      "tags": [
+        "heatmap",
+        "numeric",
+        "matrix"
+      ],
+      "experimentMeta": {
+        "row": "meridian.quality.review::responsibilities.correct",
+        "column": "meridian.quality.review::responsibilities.plant_c",
+        "to": 8
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "heat_numeric",
+        "profile": "matrix.heatmap@1",
+        "projection": "matrix",
+        "sha256": "338ff78f3891c5209603afdb0b155009f167a393027f023a9663c4448ca64251",
+        "modelFingerprint": "1d668ee2515bd70c",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view heat_numeric \"02 / Review score — numeric\" {\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.score\"; encoding: { \"mode\": \"numeric\", \"domain\": [0, 10], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view heat_numeric. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.heatmap@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "matrix",
+        "title": "Fill one matrix cell without changing its axes",
+        "id": "meridian.quality.review::responsibilities.inspect",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Implement corrective action × Warehouse C = (empty)",
+        "after": "Implement corrective action × Warehouse C = 8",
+        "expectation": "Only one cell value changes; axes, scale and identities are untouched.",
+        "row": "meridian.quality.review::responsibilities.correct",
+        "column": "meridian.quality.review::responsibilities.plant_c",
+        "to": 8
+      },
+      "exerciseEvidence": {
+        "before": "338ff78f3891c5209603afdb0b155009f167a393027f023a9663c4448ca64251",
+        "after": "0c16e2350eb695c01289e3a255ab917515cb4510509b589be4f2d608ce0e9c3a",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "heatmap-bands",
+      "title": "Risk/priority matrix with threshold bands",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_bands",
+      "experimentKind": "matrix",
+      "matrixValue": 8,
+      "what": "A heatmap whose colours come from declared thresholds: green/amber/red by band, not by raw magnitude.",
+      "why": "Reviewers ask \"is it bad?\" before \"how big?\" — bands answer the first question without hiding the second.",
+      "when": "Risk registers, SLO dashboards, priority triage.",
+      "read": [
+        "Band boundaries are data, declared in the view — read them before the colours.",
+        "A cell near a boundary is a judgement call, not a colour."
+      ],
+      "inputs": [
+        "The measure",
+        "The thresholds",
+        "The items on the axes"
+      ],
+      "pitfalls": [
+        "Do not tune a threshold to make a cell change colour without saying so.",
+        "Do not use red/green without a non-colour cue."
+      ],
+      "limits": "Declared bands from declared data; the thresholds are policy, not statistics.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Move one cell across a band boundary in the source, apply, and check the colour and the boundary note.",
+      "tags": [
+        "heatmap",
+        "bands",
+        "risk"
+      ],
+      "experimentMeta": {
+        "row": "meridian.quality.review::responsibilities.correct",
+        "column": "meridian.quality.review::responsibilities.plant_c",
+        "to": 8
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "heat_bands",
+        "profile": "matrix.heatmap@1",
+        "projection": "matrix",
+        "sha256": "b624dd9014deedee832d743aca426eea9d525119e6ec4075bbd540cb518f1a11",
+        "modelFingerprint": "1d668ee2515bd70c",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view heat_bands \"02 / Review score — bands\" {\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.score\"; encoding: { \"mode\": \"bands\", \"boundaries\": [0, 3, 7, 11], \"labels\": [\"Low\", \"Watch\", \"Action\"], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view heat_bands. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.heatmap@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "matrix",
+        "title": "Fill one matrix cell without changing its axes",
+        "id": "meridian.quality.review::responsibilities.inspect",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Implement corrective action × Warehouse C = (empty)",
+        "after": "Implement corrective action × Warehouse C = 8",
+        "expectation": "Only one cell value changes; thresholds, bands and identities are untouched.",
+        "row": "meridian.quality.review::responsibilities.correct",
+        "column": "meridian.quality.review::responsibilities.plant_c",
+        "to": 8
+      },
+      "exerciseEvidence": {
+        "before": "b624dd9014deedee832d743aca426eea9d525119e6ec4075bbd540cb518f1a11",
+        "after": "f89c781fa7df2dc8241805825447f5f2e6c8a80df21f0f4cb509736070b56fbc",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "heatmap-categories",
+      "title": "Categorical status matrix",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "heat_categories",
+      "experimentKind": "matrix",
+      "matrixValue": "Monitor",
+      "what": "A status board: cells coloured by category (ok/degraded/down/unknown) rather than number.",
+      "why": "One glance answers \"what is on fire\" across many small services.",
+      "when": "Operations walls and release readiness boards.",
+      "read": [
+        "Categories are declared sets with declared colours.",
+        "Unknown is a category, not a colour to ignore."
+      ],
+      "inputs": [
+        "The services/axes",
+        "The category set",
+        "A colour per category"
+      ],
+      "pitfalls": [
+        "Do not add a category without a colour and a meaning.",
+        "Do not let stale data look fresh — timestamp the board."
+      ],
+      "limits": "Declared categories from declared data; no live probing.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Flip one cell to degraded in the source, apply, and check the board reads the same story the category means.",
+      "tags": [
+        "heatmap",
+        "status",
+        "categories"
+      ],
+      "experimentMeta": {
+        "row": "meridian.quality.review::responsibilities.correct",
+        "column": "meridian.quality.review::responsibilities.plant_c",
+        "to": "Monitor"
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "heat_categories",
+        "profile": "matrix.heatmap@1",
+        "projection": "matrix",
+        "sha256": "ef00ff355c2f3f2d9ed359ef9f8b24115b2d17eea60bc87d025007369d17613f",
+        "modelFingerprint": "1d668ee2515bd70c",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view heat_categories \"02 / Review score — categories\" {\n    data: [@m.responsibilities];\n    format: @f.shared.common;\n    projection { kind: \"matrix\"; write_data: @m.responsibilities; profile: \"matrix.heatmap@1\"; rows: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct]; columns: [@m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c]; relation: \"assoc\"; value: \"x_record.status\"; encoding: { \"mode\": \"category\", \"values\": [\"Good\", \"Monitor\", \"Action\"], \"labels\": [\"Good\", \"Monitor\", \"Action\"], \"palette\": \"blue\" }; }\n    select: [@m.responsibilities.inspect, @m.responsibilities.contain, @m.responsibilities.correct, @m.responsibilities.plant_a, @m.responsibilities.plant_b, @m.responsibilities.plant_c];\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view heat_categories. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.heatmap@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "matrix",
+        "title": "Fill one matrix cell without changing its axes",
+        "id": "meridian.quality.review::responsibilities.inspect",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Implement corrective action × Warehouse C = (empty)",
+        "after": "Implement corrective action × Warehouse C = Monitor",
+        "expectation": "Only one cell category changes; the category set and identities are untouched.",
+        "row": "meridian.quality.review::responsibilities.correct",
+        "column": "meridian.quality.review::responsibilities.plant_c",
+        "to": "Monitor"
+      },
+      "exerciseEvidence": {
+        "before": "ef00ff355c2f3f2d9ed359ef9f8b24115b2d17eea60bc87d025007369d17613f",
+        "after": "b685e1ef19843134a33f1d793922732189b949623effc8d42bc7805ad7f3c126",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "swot",
+      "title": "SWOT and four-panel strategic analysis",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "swot",
+      "experimentKind": "panel",
+      "what": "Strengths, Weaknesses, Opportunities and Threats in four quadrants — the classic strategy frame as records.",
+      "why": "The frame forces balance: an analysis that is all strengths or all threats shows immediately.",
+      "when": "Strategy workshops and decision framing.",
+      "read": [
+        "Internal factors above, external below (or per the quadrant labels).",
+        "Each entry is a claim with an owner, not a mood."
+      ],
+      "inputs": [
+        "The four lists",
+        "An owner per entry",
+        "The decision the analysis feeds"
+      ],
+      "pitfalls": [
+        "Do not park weaknesses in opportunities to avoid the conversation.",
+        "Do not run a SWOT with no decision attached to it."
+      ],
+      "limits": "A framing tool: entries are declared content, no scoring or recommendation is computed.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Move one entry to its honest quadrant in the source, apply, and check the balance of the four lists.",
+      "tags": [
+        "swot",
+        "strategy",
+        "canvas"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::notes.threat",
+        "key": "description",
+        "value": "Duplicate delivery, stale approval and unknown payment outcomes. (reviewed)"
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "swot",
+        "profile": "panels.basic@1",
+        "projection": "panels",
+        "sha256": "39e92850e12bc339afea70e830836e321d54406caec812a9e366594343392ec9",
+        "modelFingerprint": "e0838fe785c8f449",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view swot \"23 / Reusable SWOT panel template\" {\n    data: [@m.notes];\n    format: @f.shared.common;\n    projection { kind:panels;profile:\"panels.basic@1\";columns:2;panels:[{id:\"s\",title:\"STRENGTHS\",row:0,column:0,rowspan:1,colspan:1,items:[@m.notes.strength]}, {id:\"w\",title:\"WEAKNESSES\",row:0,column:1,rowspan:1,colspan:1,items:[@m.notes.weakness]}, {id:\"o\",title:\"OPPORTUNITIES\",row:1,column:0,rowspan:1,colspan:1,items:[@m.notes.opportunity]}, {id:\"t\",title:\"THREATS\",row:1,column:1,rowspan:1,colspan:1,items:[@m.notes.threat]}]; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view swot. This selects existing data; it is not a stored SVG.",
+        "Inspect the panels.basic@1 profile and panels projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "panel",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.procurement.review::notes.threat",
+        "file": "website/examples/projections/views.ddn",
+        "before": "THREATS description = Duplicate delivery, stale approval and u…",
+        "after": "THREATS description = Duplicate delivery, stale approval and u…",
+        "expectation": "Only one entry changes; quadrants, other entries and identities are untouched.",
+        "key": "description",
+        "value": "Duplicate delivery, stale approval and unknown payment outcomes. (reviewed)"
+      },
+      "exerciseEvidence": {
+        "before": "39e92850e12bc339afea70e830836e321d54406caec812a9e366594343392ec9",
+        "after": "b8ef962b737b5e94423d8c95c7207fef1a0e33b9b6df675d7f8d89bf2cf669b1",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "sipoc",
+      "title": "SIPOC process overview",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "sipoc",
+      "experimentKind": "panel",
+      "what": "Suppliers, Inputs, Process, Outputs, Customers as one row-oriented summary: the 30-second version of a process.",
+      "why": "Before any detail diagram, SIPOC aligns everyone on scope and boundaries.",
+      "when": "Opening a process-improvement or documentation effort.",
+      "read": [
+        "Read left to right: who supplies, what arrives, what happens, what leaves, who receives.",
+        "The process column is a handful of verbs, not the detail diagram."
+      ],
+      "inputs": [
+        "The boundary of the process",
+        "The five columns",
+        "The primary output"
+      ],
+      "pitfalls": [
+        "Do not write the whole flowchart in the process column.",
+        "Do not forget the customer of the output."
+      ],
+      "limits": "Summary frame only; detail belongs to the flowchart or DFD.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Tighten the process column to verbs only in the source, apply, and check the summary still spans end to end.",
+      "tags": [
+        "sipoc",
+        "process",
+        "summary"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::notes.customers",
+        "key": "description",
+        "value": "Warehouse, accounts payable and the treasury team. (reviewed)"
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "sipoc",
+        "profile": "panels.basic@1",
+        "projection": "panels",
+        "sha256": "aa4a513943e4717e0edcc7334a95474dfd7c3bce41c623053b337e1bb21e4029",
+        "modelFingerprint": "e0838fe785c8f449",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view sipoc \"24 / SIPOC from shared notes\" {\n    data: [@m.notes];\n    format: @f.shared.common;\n    projection { kind:panels;profile:\"panels.basic@1\";columns:5;width:1650px;panels:[{id:\"supplier\",title:\"SUPPLIER\",row:0,column:0,rowspan:1,colspan:1,items:[@m.notes.supplier]}, {id:\"inputs\",title:\"INPUTS\",row:0,column:1,rowspan:1,colspan:1,items:[@m.notes.inputs]}, {id:\"process\",title:\"PROCESS\",row:0,column:2,rowspan:1,colspan:1,items:[@m.notes.process]}, {id:\"outputs\",title:\"OUTPUTS\",row:0,column:3,rowspan:1,colspan:1,items:[@m.notes.outputs]}, {id:\"customers\",title:\"CUSTOMERS\",row:0,column:4,rowspan:1,colspan:1,items:[@m.notes.customers]}]; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view sipoc. This selects existing data; it is not a stored SVG.",
+        "Inspect the panels.basic@1 profile and panels projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "panel",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.procurement.review::notes.customers",
+        "file": "website/examples/projections/views.ddn",
+        "before": "CUSTOMERS description = Warehouse, accounts payable and the trea…",
+        "after": "CUSTOMERS description = Warehouse, accounts payable and the trea…",
+        "expectation": "Only one cell changes; the five columns and identities are untouched.",
+        "key": "description",
+        "value": "Warehouse, accounts payable and the treasury team. (reviewed)"
+      },
+      "exerciseEvidence": {
+        "before": "aa4a513943e4717e0edcc7334a95474dfd7c3bce41c623053b337e1bb21e4029",
+        "after": "bdac8420b3c6bc85216053d6dde55b8b22fedbd118f81ae9a05335b822b756f3",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "journey",
+      "title": "Customer/service journey panels",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "journey",
+      "experimentKind": "panel",
+      "what": "A journey map: stages across the top, touchpoints and experience below.",
+      "why": "The map makes the worst moment findable instead of average-scored away.",
+      "when": "Service design and customer-experience reviews.",
+      "read": [
+        "Read stage by stage: what the customer does, feels and hits.",
+        "The dip in the curve is a named moment, not a mood."
+      ],
+      "inputs": [
+        "The stages",
+        "Touchpoints per stage",
+        "The experience notes"
+      ],
+      "pitfalls": [
+        "Do not average the curve — it hides the moment that loses the customer.",
+        "Do not map the company's process instead of the customer's journey."
+      ],
+      "limits": "Declared journey content; no measurement pipeline is attached.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Name the worst moment on the curve explicitly in the source, apply, and check it is findable at a glance.",
+      "tags": [
+        "journey",
+        "panels",
+        "experience"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::notes.verification",
+        "key": "description",
+        "value": "Reconcile quantities and values at a named source cutoff. (reviewed)"
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "journey",
+        "profile": "panels.basic@1",
+        "projection": "panels",
+        "sha256": "0c05821b7033f77098bb86731a33924e67a9bc306e0963a3d92e814881073070",
+        "modelFingerprint": "e0838fe785c8f449",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view journey \"25 / Service journey with spanning panels\" {\n    data: [@m.notes];\n    format: @f.shared.common;\n    projection { kind:panels;profile:\"panels.basic@1\";columns:3;panels:[{id:\"input\",title:\"INPUT AND EXPECTATION\",row:0,column:0,rowspan:1,colspan:1,items:[@m.notes.inputs]}, {id:\"p\",title:\"PROCESS\",row:0,column:1,rowspan:1,colspan:1,items:[@m.notes.process]}, {id:\"out\",title:\"OUTPUT\",row:0,column:2,rowspan:1,colspan:1,items:[@m.notes.outputs]}, {id:\"actor\",title:\"ACTOR EXPERIENCE\",row:1,column:0,rowspan:1,colspan:3,items:[@m.notes.journey]}, {id:\"verify\",title:\"VERIFICATION AND REVIEW\",row:2,column:0,rowspan:1,colspan:3,items:[@m.notes.verification, @m.notes.review]}]; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view journey. This selects existing data; it is not a stored SVG.",
+        "Inspect the panels.basic@1 profile and panels projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "panel",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.procurement.review::notes.verification",
+        "file": "website/examples/projections/views.ddn",
+        "before": "VERIFY description = Reconcile quantities and values at a nam…",
+        "after": "VERIFY description = Reconcile quantities and values at a nam…",
+        "expectation": "Only one touchpoint note changes; stages, curve and identities are untouched.",
+        "key": "description",
+        "value": "Reconcile quantities and values at a named source cutoff. (reviewed)"
+      },
+      "exerciseEvidence": {
+        "before": "0c05821b7033f77098bb86731a33924e67a9bc306e0963a3d92e814881073070",
+        "after": "4b0647b89d9b11741785647012b4bc2e654a34e8d630bfe991f4539d163a0381",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "empathy-scorecard",
+      "title": "Empathy map and balanced scorecard",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+      "view": "empathy",
+      "variants": [
+        {
+          "view": "scorecard",
+          "title": "Balanced scorecard variant"
+        }
+      ],
+      "experimentKind": "panel",
+      "what": "An empathy map — what a user says, thinks, does and feels — plus a scorecard variant in the same source.",
+      "why": "The four-quadrant map keeps a team from designing for itself.",
+      "when": "Early discovery for a feature or service.",
+      "read": [
+        "Quadrants are observation categories, not personality types.",
+        "Entries are evidence or declared hypotheses — mark which."
+      ],
+      "inputs": [
+        "The user",
+        "Observed statements and behaviours",
+        "Inferred feelings, marked as inferred"
+      ],
+      "pitfalls": [
+        "Do not present a hypothesis as an observation.",
+        "Do not run an empathy session about a demographic instead of a person."
+      ],
+      "limits": "Declared empathy content; the map organises evidence, it does not collect it.",
+      "refs": [],
+      "probe": [
+        "record",
+        "application"
+      ],
+      "editTask": "Switch to the scorecard variant to compare, then mark one inferred entry as hypothesis in the source, apply, and check the honesty marker.",
+      "tags": [
+        "empathy",
+        "scorecard",
+        "discovery"
+      ],
+      "experimentMeta": {
+        "id": "ddn.examples.empathy-scorecard::research.feels",
+        "key": "description",
+        "value": "Synthetic: proud of calm incident handling but drained by the duplicated data entry. (reviewed)"
+      },
+      "runtime": {
+        "entry": "website/examples/basics/34-empathy-scorecard.ddn",
+        "view": "empathy",
+        "profile": "canvas.empathy@1",
+        "projection": "panels",
+        "sha256": "ed48d4f2de6198849fbb087cefe82eca661c10cfb0e053f399376934054ad846",
+        "modelFingerprint": "2af396a99b0ec0d5",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/34-empathy-scorecard.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/34-empathy-scorecard.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view empathy \"Support team / empathy map\" {\n    data: [@research];\n    format: @shared.styles.technical;\n    projection { kind:panels; profile:\"canvas.empathy@1\"; columns:2; panels:[\n        {id:\"says\",title:\"SAYS\",row:0,column:0,rowspan:1,colspan:1,items:[@research.says_a, @research.says_b]},\n        {id:\"thinks\",title:\"THINKS\",row:0,column:1,rowspan:1,colspan:1,items:[@research.thinks]},\n        {id:\"persona\",title:\"PERSONA\",row:1,column:0,rowspan:1,colspan:2,items:[@research.persona]},\n        {id:\"does\",title:\"DOES\",row:2,column:0,rowspan:1,colspan:1,items:[@research.does]},\n        {id:\"feels\",title:\"FEELS\",row:2,column:1,rowspan:1,colspan:1,items:[@research.feels]}]; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/34-empathy-scorecard.ddn and locate view empathy. This selects existing data; it is not a stored SVG.",
+        "Inspect the canvas.empathy@1 profile and panels projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "panel",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.empathy-scorecard::research.feels",
+        "file": "website/examples/basics/34-empathy-scorecard.ddn",
+        "before": "Feels description = Synthetic: proud of calm incident handli…",
+        "after": "Feels description = Synthetic: proud of calm incident handli…",
+        "expectation": "Only one entry changes; quadrants and identities are untouched.",
+        "key": "description",
+        "value": "Synthetic: proud of calm incident handling but drained by the duplicated data entry. (reviewed)"
+      },
+      "exerciseEvidence": {
+        "before": "ed48d4f2de6198849fbb087cefe82eca661c10cfb0e053f399376934054ad846",
+        "after": "3c5e0156632803f0e275b81de301c399390fd5d874d075313c3b8bc9ccb5fae5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "story-map",
+      "title": "Story map",
+      "category": "Matrices, tables and analysis panels",
+      "status": "native",
+      "entry": "website/examples/basics/36-story-map.ddn",
+      "view": "storymap",
+      "experimentKind": "label",
+      "what": "A story map: user activities across the top, stories beneath, releases sliced horizontally.",
+      "why": "It keeps the walking skeleton visible while the backlog grows.",
+      "when": "Release planning for a user-facing product.",
+      "read": [
+        "Top row is the user's day; below is what we build, sliced by release.",
+        "A story above the release line ships; below it waits."
+      ],
+      "inputs": [
+        "The activities",
+        "The stories under each",
+        "The release slices"
+      ],
+      "pitfalls": [
+        "Do not slice releases by component — slice by user outcome.",
+        "Do not let the top row become a feature list."
+      ],
+      "limits": "Declared map content; no estimation or velocity is computed.",
+      "refs": [],
+      "probe": [
+        "analysis.task"
+      ],
+      "editTask": "Move one story across the release line in the source, apply, and check the skeleton still walks.",
+      "tags": [
+        "story-map",
+        "backlog",
+        "release"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/36-story-map.ddn",
+        "view": "storymap",
+        "profile": "matrix.storymap@1",
+        "projection": "matrix",
+        "sha256": "406406883f0cf76da5be5814c3b9aee513a547644256d3ff27d2502a52bcd2ec",
+        "modelFingerprint": "a5cc2d43518e58cd",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/36-story-map.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/36-story-map.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view storymap \"Shop rebuild / story map\" {\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind:matrix; profile:\"matrix.storymap@1\"; rows:[@shop.r1, @shop.r2]; columns:[@shop.browse, @shop.configure, @shop.checkout, @shop.pay, @shop.fulfil]; relation:\"assoc\"; value:\"x_story.task\"; duplicates:join; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/36-story-map.ddn and locate view storymap. This selects existing data; it is not a stored SVG.",
+        "Inspect the matrix.storymap@1 profile and matrix projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.story-map::shop.browse",
+        "file": "website/examples/basics/36-story-map.ddn",
+        "before": "Browse catalogue",
+        "after": "Browse catalogue / review",
+        "expectation": "Only one story changes; activities, slices and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "406406883f0cf76da5be5814c3b9aee513a547644256d3ff27d2502a52bcd2ec",
+        "after": "890abb7ab202b4cc1744b1f4b606f84d301b5d46c9f135fdc55afd316a284187",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "line-chart",
+      "title": "Line chart",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chart_line",
+      "experimentKind": "value",
+      "what": "A data-bound line chart: an ordered series over an ordered axis, from declared records.",
+      "why": "Trend is the question lines answer best — and the records behind the line stay inspectable.",
+      "when": "Anything over time or another ordered axis.",
+      "read": [
+        "The axis order comes from the data, not the alphabet.",
+        "A line connects consecutive points — it is not a regression."
+      ],
+      "inputs": [
+        "The ordered axis",
+        "The value with unit",
+        "The records"
+      ],
+      "pitfalls": [
+        "Do not draw a line across a gap as if it were measured.",
+        "Do not read slope without reading the axis scale."
+      ],
+      "limits": "Declared records and bounded native marks; no trend computation.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one point in the source records, apply, and check the bend it makes is honest data, not smoothing.",
+      "tags": [
+        "chart",
+        "line",
+        "trend"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::facts.m1",
+        "key": "value",
+        "value": 425
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "chart_line",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "11f2691af66cb57bd769099c896183fb7242d4d444b10c90073febac8f927832",
+        "modelFingerprint": "74515a3e8d541676",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view chart_line \"13 / Synthetic monthly value \\u2014 line\" {\n    data: [@m.facts];\n    format: @f.shared.common;\n    projection { kind:chart;profile:\"chart.basic@1\";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:line;x:\"x_record.month\";y:\"x_record.value\";unit:\"CAD\";width:1120px;height:620px; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view chart_line. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::facts.m1",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Jan observation value = 420",
+        "after": "Jan observation value = 425",
+        "expectation": "Only one point value changes; series, axis and identities are untouched.",
+        "key": "value",
+        "value": 425
+      },
+      "exerciseEvidence": {
+        "before": "11f2691af66cb57bd769099c896183fb7242d4d444b10c90073febac8f927832",
+        "after": "97a92ce84f5d5a4ed092333b9f114660001b32810ec966c1e8729dfc77438508",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "area-chart",
+      "title": "Area chart",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chart_area",
+      "experimentKind": "value",
+      "what": "A filled series: the line plus the weight of what is under it.",
+      "why": "When volume matters as much as direction, the filled form says both.",
+      "when": "Totals evolving: throughput, stock, energy.",
+      "read": [
+        "The top edge is the value; the fill is emphasis, not a second series.",
+        "Stacked areas read as composition — this one reads as one series."
+      ],
+      "inputs": [
+        "The ordered axis",
+        "The value with unit",
+        "The records"
+      ],
+      "pitfalls": [
+        "Do not fill a series that can go negative without saying where zero is.",
+        "Do not read the filled area as a probability."
+      ],
+      "limits": "Declared records; bounded native marks.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one point in the source, apply, and check the silhouette still matches the records.",
+      "tags": [
+        "chart",
+        "area",
+        "volume"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::facts.m1",
+        "key": "value",
+        "value": 425
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "chart_area",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "5cdf0876967246b84b867deb3a75991ad03aeefafafdaffaa437e24eadde4e19",
+        "modelFingerprint": "74515a3e8d541676",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view chart_area \"14 / Synthetic monthly value \\u2014 area\" {\n    data: [@m.facts];\n    format: @f.shared.common;\n    projection { kind:chart;profile:\"chart.basic@1\";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:area;x:\"x_record.month\";y:\"x_record.value\";unit:\"CAD\";width:1120px;height:620px; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view chart_area. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::facts.m1",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Jan observation value = 420",
+        "after": "Jan observation value = 425",
+        "expectation": "Only one point value changes; series, axis and identities are untouched.",
+        "key": "value",
+        "value": 425
+      },
+      "exerciseEvidence": {
+        "before": "5cdf0876967246b84b867deb3a75991ad03aeefafafdaffaa437e24eadde4e19",
+        "after": "b58aeca7d9d07db1af0f974fc90f475dd311f26b189ece5fc523508a4a7f5a22",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "pie-donut",
+      "title": "Pie and doughnut charts",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "chart_pie",
+      "variants": [
+        {
+          "view": "chart_donut",
+          "title": "Doughnut variant"
+        }
+      ],
+      "experimentKind": "value",
+      "what": "Shares of a total as slices of a circle — and the doughnut variant with its centre free for the total.",
+      "why": "Composition reads instantly when there are few slices and a real whole.",
+      "when": "Parts of one meaningful total (market share, budget split).",
+      "read": [
+        "Slices sum to the whole — percentages are computed from the records.",
+        "The doughnut's centre carries the total, not a decoration."
+      ],
+      "inputs": [
+        "The categories",
+        "The values",
+        "The whole they share"
+      ],
+      "pitfalls": [
+        "Do not use a pie for values that are not parts of a total.",
+        "Do not ship seven-plus slices — group the tail."
+      ],
+      "limits": "Declared records; percentages derive from them, never from hand-entered numbers.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Switch variants to compare, then change one slice in the source and check the sum still reads as a whole.",
+      "tags": [
+        "chart",
+        "pie",
+        "donut"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::facts.m1",
+        "key": "value",
+        "value": 425
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "chart_pie",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "c8675bcc00f4abdf1134f8c1d3e84d03f9e6b4e31d4329b03d898ff45e1b4441",
+        "modelFingerprint": "74515a3e8d541676",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view chart_pie \"15 / Synthetic monthly value \\u2014 pie\" {\n    data: [@m.facts];\n    format: @f.shared.common;\n    projection { kind:chart;profile:\"chart.basic@1\";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:pie;x:\"x_record.month\";y:\"x_record.value\";unit:\"CAD\";width:1120px;height:620px; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view chart_pie. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::facts.m1",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Jan observation value = 420",
+        "after": "Jan observation value = 425",
+        "expectation": "Only one slice value changes; the total and identities are untouched.",
+        "key": "value",
+        "value": 425
+      },
+      "exerciseEvidence": {
+        "before": "c8675bcc00f4abdf1134f8c1d3e84d03f9e6b4e31d4329b03d898ff45e1b4441",
+        "after": "c24ee17e66b88670d660cf353113020db2dc95ce70348b22f847f32d2dc29f70",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "scatter",
+      "title": "Scatter and perceptual plots",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "scatter",
+      "experimentKind": "value",
+      "what": "Points in two dimensions: correlation, clusters and outliers from declared records.",
+      "why": "Averages hide structure that only the cloud shows.",
+      "when": "Exploring relationships between two measures.",
+      "read": [
+        "Each point is one record on two axes.",
+        "A cluster is a hypothesis to investigate, not a conclusion."
+      ],
+      "inputs": [
+        "The two measures with units",
+        "The records",
+        "Any grouping"
+      ],
+      "pitfalls": [
+        "Do not read correlation as causation.",
+        "Do not crop an outlier out of the frame silently."
+      ],
+      "limits": "Declared points; no regression or clustering is computed by this view.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Move one point in the source, apply, and check whether the cluster story survives it.",
+      "tags": [
+        "chart",
+        "scatter",
+        "correlation"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::facts.m1",
+        "key": "value",
+        "value": 425
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "scatter",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "c363841a0ec2292f73c318031bf7c05ec13daf04172a690c2f01ae35ec2ed20b",
+        "modelFingerprint": "74515a3e8d541676",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view scatter \"17 / Cost versus recorded value\" {\n    data: [@m.facts];\n    format: @f.shared.common;\n    projection { kind:chart;profile:\"chart.basic@1\";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:point;x:\"x_record.cost\";x_type:number;y:\"x_record.value\";size:\"x_record.count\";unit:\"CAD\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view scatter. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::facts.m1",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Jan observation value = 420",
+        "after": "Jan observation value = 425",
+        "expectation": "Only one point changes; axes and identities are untouched.",
+        "key": "value",
+        "value": 425
+      },
+      "exerciseEvidence": {
+        "before": "c363841a0ec2292f73c318031bf7c05ec13daf04172a690c2f01ae35ec2ed20b",
+        "after": "07cf1a18d1f652ad361c83979e034d519ba992c4b60c1428aa6005566b7db362",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "time-series",
+      "title": "Calendar-ordered time-series",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "time_series",
+      "experimentKind": "value",
+      "what": "A series on a real calendar axis: dates are data, spacing is honest.",
+      "why": "Equal spacing for unequal time gaps is the most common chart lie; the calendar axis removes it.",
+      "when": "Anything timestamped: metrics, events, activity.",
+      "read": [
+        "Gaps on the axis are gaps in time, not missing pixels.",
+        "Read the timezone note before comparing days."
+      ],
+      "inputs": [
+        "The timestamps",
+        "The values",
+        "The timezone of the records"
+      ],
+      "pitfalls": [
+        "Do not resample silently — the axis shows what was recorded.",
+        "Do not compare series on different time axes."
+      ],
+      "limits": "Declared timestamps and bounded marks; no forecasting.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one dated value in the source, apply, and check the point lands on its true date, not an index.",
+      "tags": [
+        "chart",
+        "time-series",
+        "calendar"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::facts.m1",
+        "key": "value",
+        "value": 425
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "time_series",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "459c8816f0a5bc80a05e899335597c3f9342aef7a1895f2928eda6a00c0481d1",
+        "modelFingerprint": "74515a3e8d541676",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view time_series \"18 / UTC monthly observations\" {\n    data: [@m.facts];\n    format: @f.shared.common;\n    projection { kind:chart;profile:\"chart.basic@1\";records:[@m.facts.m1, @m.facts.m2, @m.facts.m3, @m.facts.m4, @m.facts.m5, @m.facts.m6];mark:line;x:\"x_record.date\";x_type:date;y:\"x_record.value\";unit:\"CAD\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view time_series. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::facts.m1",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Jan observation value = 420",
+        "after": "Jan observation value = 425",
+        "expectation": "Only one value changes; dates, spacing and identities are untouched.",
+        "key": "value",
+        "value": 425
+      },
+      "exerciseEvidence": {
+        "before": "459c8816f0a5bc80a05e899335597c3f9342aef7a1895f2928eda6a00c0481d1",
+        "after": "e9d4c175f65cc8ebac7245512c97e9523ab20e09c6092ff105c72ace3b073316",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "grouped-bars",
+      "title": "Grouped multi-series bars",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "grouped_bars",
+      "experimentKind": "value",
+      "what": "Several series side by side per category: comparison across groups without stacking.",
+      "why": "Side-by-side is the honest comparison when absolute values matter more than composition.",
+      "when": "This period vs last, plan vs actual, per team or product.",
+      "read": [
+        "Same colour means same series across groups.",
+        "Read per group first, then across groups within one series."
+      ],
+      "inputs": [
+        "The categories",
+        "The series",
+        "The values with unit"
+      ],
+      "pitfalls": [
+        "Do not group more series than the eye can separate.",
+        "Do not let one tall group squash the rest of the scale."
+      ],
+      "limits": "Declared records; bounded native marks.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one bar in the source, apply, and check the group ordering and the scale note.",
+      "tags": [
+        "chart",
+        "grouped",
+        "bars"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::series.s1_2",
+        "key": "count",
+        "value": 10
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "grouped_bars",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "77841cf44b6acecf98fae585056ee9668636d2fb7a68892fe5ecd6c30599e555",
+        "modelFingerprint": "35839ce875f33e26",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view grouped_bars \"06 / Defects — grouped bars\" {\n    data: [@m.series];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: \"x_record.stage\"; y: \"x_record.count\"; series: \"x_record.series\"; unit: \"defects\"; mark: \"bar\"; arrangement: \"group\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view grouped_bars. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::series.s1_2",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Plant B / Final count = 5",
+        "after": "Plant B / Final count = 10",
+        "expectation": "Only one bar value changes; series, groups and identities are untouched.",
+        "key": "count",
+        "value": 10
+      },
+      "exerciseEvidence": {
+        "before": "77841cf44b6acecf98fae585056ee9668636d2fb7a68892fe5ecd6c30599e555",
+        "after": "eeaaa580d605f8b4116872a94f568a184e392b3767eeb4318e5b11ff0e503be1",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "stacked-bars",
+      "title": "Signed stacked bars",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "stacked_bars",
+      "experimentKind": "value",
+      "what": "Composition per category as stacked segments, including negative contributions across zero.",
+      "why": "Part-to-whole with a baseline: gains above, losses below.",
+      "when": "Budget vs variance, contribution breakdowns, reconciliations.",
+      "read": [
+        "Segments stack from the zero line out, in declared series order.",
+        "The total is the stack height, not a separate mark."
+      ],
+      "inputs": [
+        "The categories",
+        "The signed series values",
+        "The series order"
+      ],
+      "pitfalls": [
+        "Do not stack things that are not additive.",
+        "Do not hide the zero line when signs mix."
+      ],
+      "limits": "Declared records; bounded native marks.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Flip one segment's sign in the source, apply, and check the zero line and the reading of the stack.",
+      "tags": [
+        "chart",
+        "stacked",
+        "composition"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::series.s1_2",
+        "key": "count",
+        "value": 10
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "stacked_bars",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "db7bfdd624ba79023e03dceeadabacd20ec3ff889d4410e4035b84fa44632604",
+        "modelFingerprint": "35839ce875f33e26",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view stacked_bars \"06 / Defects — stacked bars\" {\n    data: [@m.series];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: \"x_record.stage\"; y: \"x_record.count\"; series: \"x_record.series\"; unit: \"defects\"; mark: \"bar\"; arrangement: \"stack\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view stacked_bars. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::series.s1_2",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Plant B / Final count = 5",
+        "after": "Plant B / Final count = 10",
+        "expectation": "Only one segment value changes; stacks, order and identities are untouched.",
+        "key": "count",
+        "value": 10
+      },
+      "exerciseEvidence": {
+        "before": "db7bfdd624ba79023e03dceeadabacd20ec3ff889d4410e4035b84fa44632604",
+        "after": "5ce388527dc505e6f1619b7e9aab8cc3ab691f7fcea628531ed6b80fe15ee43f",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "percent-bars",
+      "title": "Percentage-stacked bars",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "percent_bars",
+      "experimentKind": "value",
+      "what": "Each bar normalised to 100%: composition comparison across categories of different sizes.",
+      "why": "When the mix matters more than the mass, normalising removes the size argument.",
+      "when": "Share of type/status per category across unequal categories.",
+      "read": [
+        "Every bar is 100% — compare segment shares, not heights.",
+        "Percentages derive from the records, never from entered numbers."
+      ],
+      "inputs": [
+        "The categories",
+        "The segments per category",
+        "The segment order"
+      ],
+      "pitfalls": [
+        "Do not forget the small category whose 40% is 3 records.",
+        "Do not mix absolute and percentage bars on one chart."
+      ],
+      "limits": "Declared records; normalisation is computed from them.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one segment in the source, apply, and check the shares still sum to 100%.",
+      "tags": [
+        "chart",
+        "percent",
+        "composition"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::series.s1_2",
+        "key": "count",
+        "value": 10
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "percent_bars",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "17eb3a26b25b94e725bc63e7a7155eedd28f98d94d15b4ab39202a088deee0a3",
+        "modelFingerprint": "35839ce875f33e26",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view percent_bars \"06 / Defects — percent bars\" {\n    data: [@m.series];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: \"x_record.stage\"; y: \"x_record.count\"; series: \"x_record.series\"; unit: \"defects\"; mark: \"bar\"; arrangement: \"percent\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view percent_bars. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::series.s1_2",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Plant B / Final count = 5",
+        "after": "Plant B / Final count = 10",
+        "expectation": "Only one segment value changes; shares and identities are untouched.",
+        "key": "count",
+        "value": 10
+      },
+      "exerciseEvidence": {
+        "before": "17eb3a26b25b94e725bc63e7a7155eedd28f98d94d15b4ab39202a088deee0a3",
+        "after": "e14e103fa3bc1e217564d761ff81d6a993273a6698b337a4782fcd9d1e6cf38e",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "multi-line",
+      "title": "Multiple-line chart",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "multiseries_line",
+      "experimentKind": "value",
+      "what": "Several series as overlaid lines on one axis: trend comparison without stacking.",
+      "why": "Overlay is the honest way to compare trajectories that should not be added.",
+      "when": "KPIs per service, per cohort, per period.",
+      "read": [
+        "Colour is the series; the legend is the contract.",
+        "Lines cross freely — crossing is not interaction."
+      ],
+      "inputs": [
+        "The series list",
+        "The shared axis",
+        "The values"
+      ],
+      "pitfalls": [
+        "Do not overlay more lines than colours can distinguish.",
+        "Do not give two series the same name on different scales."
+      ],
+      "limits": "Declared records; bounded native marks.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one point in the source, apply, and check which series bent and why you expected it.",
+      "tags": [
+        "chart",
+        "multiseries",
+        "lines"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::series.s1_2",
+        "key": "count",
+        "value": 10
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "multiseries_line",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "4e33d0fe94b177fe645ecd622c7b192fb7988ac15aaa8f094c1614b8c9b53cf6",
+        "modelFingerprint": "35839ce875f33e26",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view multiseries_line \"06 / Defects — multiseries line\" {\n    data: [@m.series];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: \"x_record.stage\"; y: \"x_record.count\"; series: \"x_record.series\"; unit: \"defects\"; mark: \"line\"; arrangement: \"overlay\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view multiseries_line. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::series.s1_2",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Plant B / Final count = 5",
+        "after": "Plant B / Final count = 10",
+        "expectation": "Only one point changes; series, axis and identities are untouched.",
+        "key": "count",
+        "value": 10
+      },
+      "exerciseEvidence": {
+        "before": "4e33d0fe94b177fe645ecd622c7b192fb7988ac15aaa8f094c1614b8c9b53cf6",
+        "after": "5e52fb8d05f3f7fbe66f8d414b0858eeaca7079d317f7444bb035471c00d8cb5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "multi-area",
+      "title": "Multiple-series area chart",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "multiseries_area",
+      "experimentKind": "value",
+      "what": "Several series as stacked areas: composition of a total over an ordered axis.",
+      "why": "Shows both the total trajectory and who contributes to it.",
+      "when": "Load, cost or traffic broken down by source over time.",
+      "read": [
+        "The top edge is the total; the bands are the parts, in declared order.",
+        "A band swallowing another is data, not a rendering bug."
+      ],
+      "inputs": [
+        "The series",
+        "The stacking order",
+        "The values"
+      ],
+      "pitfalls": [
+        "Do not stack series that are not parts of one whole.",
+        "Do not put the volatile series at the bottom where it wobbles everything."
+      ],
+      "limits": "Declared records; bounded native marks.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one point in the source, apply, and check whether the total or one band moved — the difference matters.",
+      "tags": [
+        "chart",
+        "multiseries",
+        "areas"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::series.s1_2",
+        "key": "count",
+        "value": 10
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "multiseries_area",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "8f0685c5de4a8b9890f9c56735e47014bc799332d743f3bae875c6cbdf04c9e5",
+        "modelFingerprint": "35839ce875f33e26",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view multiseries_area \"06 / Defects — multiseries area\" {\n    data: [@m.series];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.series.s0_0, @m.series.s0_1, @m.series.s0_2, @m.series.s1_0, @m.series.s1_1, @m.series.s1_2]; x: \"x_record.stage\"; y: \"x_record.count\"; series: \"x_record.series\"; unit: \"defects\"; mark: \"area\"; arrangement: \"stack\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view multiseries_area. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::series.s1_2",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Plant B / Final count = 5",
+        "after": "Plant B / Final count = 10",
+        "expectation": "Only one point changes; bands, totals and identities are untouched.",
+        "key": "count",
+        "value": 10
+      },
+      "exerciseEvidence": {
+        "before": "8f0685c5de4a8b9890f9c56735e47014bc799332d743f3bae875c6cbdf04c9e5",
+        "after": "5ea52c889802989582a7486e7bfab25cf657906db13b37ca7fd446cd2af007be",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "actual-target",
+      "title": "Actual versus target / layered marks",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "actual_target",
+      "experimentKind": "value",
+      "what": "Measured values and supplied target marks on one scale: bars for actual, a line for the declared target.",
+      "why": "Performance against a requirement is visible, and the target's provenance stays inspectable.",
+      "when": "Comparative quality and operations reports.",
+      "read": [
+        "The target is a separate source fact, not a computed decoration.",
+        "Layers are declared per series: which mark plays which role."
+      ],
+      "inputs": [
+        "The actual series",
+        "The target series and where it came from",
+        "The shared unit"
+      ],
+      "pitfalls": [
+        "A target line is not a statistical control limit.",
+        "Do not change the target by dragging a line — change the record."
+      ],
+      "limits": "Finite arithmetic and bounded marks; no independent multi-unit axes.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one target value in the source, apply, and check the scale still uses the shared unit.",
+      "tags": [
+        "chart",
+        "target",
+        "layers"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::targets.s1_2",
+        "key": "count",
+        "value": 10
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "actual_target",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "4e6c9da27cf16d7b7c7f1060622d5c210db9a8c9d19716e6625d81eb27e061b4",
+        "modelFingerprint": "5f8f2915b9634947",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view actual_target \"07 / Actual versus target\" {\n    data: [@m.targets];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.targets.s0_0, @m.targets.s0_1, @m.targets.s0_2, @m.targets.s1_0, @m.targets.s1_1, @m.targets.s1_2]; x: \"x_record.stage\"; y: \"x_record.count\"; series: \"x_record.series\"; unit: \"defects\"; mark: \"bar\"; arrangement: \"overlay\"; layers: [{ \"series\": \"Actual\", \"mark\": \"bar\" }, { \"series\": \"Target\", \"mark\": \"line\" }]; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view actual_target. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::targets.s1_2",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Target / Final count = 5",
+        "after": "Target / Final count = 10",
+        "expectation": "Only one target or actual value changes; layers, scale and identities are untouched.",
+        "key": "count",
+        "value": 10
+      },
+      "exerciseEvidence": {
+        "before": "4e6c9da27cf16d7b7c7f1060622d5c210db9a8c9d19716e6625d81eb27e061b4",
+        "after": "a9f17acdfc67c3483c9bb350da1002f77200f001cc2345b1e1c28e11eccc8e03",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "histogram",
+      "title": "Histogram — counts and density",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "histogram",
+      "variants": [
+        {
+          "view": "histogram_density",
+          "title": "Density variant"
+        }
+      ],
+      "experimentKind": "value",
+      "valueDelta": 0.1,
+      "what": "A distribution as binned counts (and the density variant): how values spread, not just their average.",
+      "why": "The average is where histograms go to hide the truth.",
+      "when": "Latency, sizes, scores — anything with a shape worth seeing.",
+      "read": [
+        "Bins are declared intervals with inclusive/exclusive edges noted.",
+        "Counts and density answer different questions — switch variants to see."
+      ],
+      "inputs": [
+        "The values",
+        "The bin count or edges",
+        "Counts versus density choice"
+      ],
+      "pitfalls": [
+        "Do not tune bin count to hide a second mode.",
+        "Do not read a density curve as more data than the records hold."
+      ],
+      "limits": "Exact bin counts from the records; boundary inclusion is declared and tested.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Move one value across a bin edge in the source, apply, and check which bin absorbed it and why.",
+      "tags": [
+        "chart",
+        "histogram",
+        "distribution"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::measurements.m0_0",
+        "key": "value",
+        "value": 9.92
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "histogram",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "bd7c49aab81fbbe62e346d28b8c04b634e4183b13e1441dcd852590ca837d13b",
+        "modelFingerprint": "bb89444cd7dd720e",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view histogram \"08 / Dimension measurements — count\" {\n    data: [@m.measurements];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; transform: \"histogram\"; mark: \"bar\"; y: \"x_record.value\"; unit: \"mm\"; bins: [9.7, 9.9, 10.1, 10.3, 10.5, 11.3]; normalize: \"count\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view histogram. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::measurements.m0_0",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Machine A observation 1 value = 9.82",
+        "after": "Machine A observation 1 value = 9.92",
+        "expectation": "Only one value changes; bins, edges and identities are untouched.",
+        "key": "value",
+        "value": 9.92
+      },
+      "exerciseEvidence": {
+        "before": "bd7c49aab81fbbe62e346d28b8c04b634e4183b13e1441dcd852590ca837d13b",
+        "after": "b77f0adfc434c74c0b206582764be27348d82e4942e355a0ddb90016427dab14",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "pareto",
+      "title": "Pareto chart",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "pareto",
+      "experimentKind": "value",
+      "what": "Categories sorted by count descending, with the cumulative share line: the vital few versus the trivial many.",
+      "why": "It tells you which three fixes kill most of the problem.",
+      "when": "Defect triage, incident categories, complaint analysis.",
+      "read": [
+        "Bars descend left to right; the line is cumulative share.",
+        "The 80% mark is a reading aid, not a law."
+      ],
+      "inputs": [
+        "The categories",
+        "The counts",
+        "The cumulative line"
+      ],
+      "pitfalls": [
+        "Do not sort by anything but count — that is the point.",
+        "Do not merge the tail into \"other\" without a label."
+      ],
+      "limits": "Declared counts; the cumulative line derives from them.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one count so the order flips, apply, and check the vital few are still the ones you would fix first.",
+      "tags": [
+        "chart",
+        "pareto",
+        "triage"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::defects.d3",
+        "key": "count",
+        "value": 9
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "pareto",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "3f0033916a612080ab864aacc37de87601a03964fe92c31bded61e1cc0814d8d",
+        "modelFingerprint": "1ccebf23b108cb97",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view pareto \"09 / Defect priorities\" {\n    data: [@m.defects];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.defects.d0, @m.defects.d1, @m.defects.d2, @m.defects.d3]; transform: \"pareto\"; mark: \"bar\"; x: \"x_record.category\"; y: \"x_record.count\"; unit: \"defects\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view pareto. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::defects.d3",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Label count = 4",
+        "after": "Label count = 9",
+        "expectation": "Only one category count changes; order, line and identities are untouched.",
+        "key": "count",
+        "value": 9
+      },
+      "exerciseEvidence": {
+        "before": "3f0033916a612080ab864aacc37de87601a03964fe92c31bded61e1cc0814d8d",
+        "after": "b7bfd39baefd3d3ee7f4c02b706ce06db134bf43b92d6fc6f8beaac73794c4a4",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "waterfall",
+      "title": "Waterfall / running-change reconciliation",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "waterfall",
+      "experimentKind": "value",
+      "valueKey": "label",
+      "valueAfter": "Inspection — revised",
+      "what": "A running total built step by step: start, deltas up and down, end — the reconciliation made visible.",
+      "why": "Executives read \"how did we get from A to B\" better in steps than in a table of deltas.",
+      "when": "Bridging two totals: budgets, headcount, inventory.",
+      "read": [
+        "Each block starts where the last ended; up is green, down is red by convention.",
+        "The final block must equal the end total — the chart reconciles or it is wrong."
+      ],
+      "inputs": [
+        "Start and end totals",
+        "The ordered deltas",
+        "What each delta is"
+      ],
+      "pitfalls": [
+        "Do not reorder deltas for drama — the story is in the declared order.",
+        "Do not leave a step unexplained."
+      ],
+      "limits": "Declared deltas; the running total derives from them.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one delta in the source, apply, and check the bridge still reconciles start to end.",
+      "tags": [
+        "chart",
+        "waterfall",
+        "reconciliation"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::cost.cost0",
+        "key": "label",
+        "value": "Inspection — revised"
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "waterfall",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "e10f2d2b102c055c52c33875db2c3ebc89b9c36498a0d4acd88ee534b56d5485",
+        "modelFingerprint": "b45480362ad9fc54",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view waterfall \"10 / Cost-of-quality reconciliation\" {\n    data: [@m.cost];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.cost.cost0, @m.cost.cost1, @m.cost.cost2, @m.cost.cost3, @m.cost.cost4, @m.cost.cost5]; transform: \"waterfall\"; mark: \"bar\"; x: \"x_record.label\"; y: \"x_record.amount\"; step: \"x_record.step\"; unit: \"CAD\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view waterfall. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::cost.cost0",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Inspection label = Inspection",
+        "after": "Inspection label = Inspection — revised",
+        "expectation": "Only one delta changes; the bridge and identities are untouched.",
+        "key": "label",
+        "value": "Inspection — revised"
+      },
+      "exerciseEvidence": {
+        "before": "e10f2d2b102c055c52c33875db2c3ebc89b9c36498a0d4acd88ee534b56d5485",
+        "after": "b27a60a9743f4d2a7b0f6f4344338ef6f36bb4faaf4470d3774d634f9057a023",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "boxplot",
+      "title": "Box plot conventions",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "boxplot",
+      "variants": [
+        {
+          "view": "boxplot_minmax",
+          "title": "Min/max whisker variant"
+        }
+      ],
+      "experimentKind": "value",
+      "what": "Distribution summaries as boxes: median, quartiles, whiskers and outliers — Tukey and min/max conventions side by side.",
+      "why": "Five numbers per group beat one average per group, every time.",
+      "when": "Comparing spreads across groups or versions.",
+      "read": [
+        "The box is the middle half; whiskers follow the declared rule (1.5×IQR or min/max).",
+        "Outlier dots are records, named by the rule that flagged them."
+      ],
+      "inputs": [
+        "The groups",
+        "The values per group",
+        "The whisker convention"
+      ],
+      "pitfalls": [
+        "Do not mix conventions without a label — switch variants to see why it matters.",
+        "Do not read the median as the mean."
+      ],
+      "limits": "Exact quartiles from the records; the R7 rule and outlier set are declared and tested.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Switch variants to compare whisker rules, then move one value in the source and check which marker it becomes.",
+      "tags": [
+        "chart",
+        "boxplot",
+        "distribution"
+      ],
+      "experimentMeta": {
+        "id": "meridian.quality.review::measurements.m0_0",
+        "key": "value",
+        "value": 14.82
+      },
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "boxplot",
+        "profile": "chart.quality@1",
+        "projection": "chart",
+        "sha256": "fbf49d1d6b6882463968210c9c329d21fec518f0bb45ef07051476f9a3ed1d05",
+        "modelFingerprint": "bb89444cd7dd720e",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view boxplot \"11 / Machine variation — tukey_1_5\" {\n    data: [@m.measurements];\n    format: @f.shared.common;\n    projection { kind: \"chart\"; profile: \"chart.quality@1\"; records: [@m.measurements.m0_0, @m.measurements.m0_1, @m.measurements.m0_2, @m.measurements.m0_3, @m.measurements.m0_4, @m.measurements.m0_5, @m.measurements.m0_6, @m.measurements.m0_7, @m.measurements.m0_8, @m.measurements.m0_9, @m.measurements.m0_10, @m.measurements.m0_11, @m.measurements.m1_0, @m.measurements.m1_1, @m.measurements.m1_2, @m.measurements.m1_3, @m.measurements.m1_4, @m.measurements.m1_5, @m.measurements.m1_6, @m.measurements.m1_7, @m.measurements.m1_8, @m.measurements.m1_9, @m.measurements.m1_10, @m.measurements.m1_11]; transform: \"boxplot\"; mark: \"box\"; x: \"x_record.machine\"; y: \"x_record.value\"; unit: \"mm\"; quartiles: \"linear_r7\"; whiskers: \"tukey_1_5\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view boxplot. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.quality@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.quality.review::measurements.m0_0",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Machine A observation 1 value = 9.82",
+        "after": "Machine A observation 1 value = 14.82",
+        "expectation": "Only one value changes; quartiles, whiskers and identities are untouched.",
+        "key": "value",
+        "value": 14.82
+      },
+      "exerciseEvidence": {
+        "before": "fbf49d1d6b6882463968210c9c329d21fec518f0bb45ef07051476f9a3ed1d05",
+        "after": "7a44cb482d57dc36e5fc54904bf3960347d6a742622ac5d4ba94dbf0c394fb29",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "distributions",
+      "title": "Distribution chart pack",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/basics/62-distribution-charts.ddn",
+      "view": "violin",
+      "variants": [
+        {
+          "view": "density",
+          "title": "Density / KDE variant"
+        },
+        {
+          "view": "qq",
+          "title": "Q-Q variant"
+        },
+        {
+          "view": "quantiledot",
+          "title": "Quantile dot variant"
+        }
+      ],
+      "experimentKind": "value",
+      "what": "The distribution family beyond the histogram: violin shapes, density curves, Q-Q plots and quantile dots from one record set.",
+      "why": "Shape questions need shape tools — each of these shows what averages and even histograms smooth away.",
+      "when": "Comparing distributions, checking normality, reading tails.",
+      "read": [
+        "The violin mirrors the density; the Q-Q compares against the theoretical line.",
+        "Quantile dots are records, never a smoothed invention."
+      ],
+      "inputs": [
+        "The values",
+        "The comparison target (normal, or another group)",
+        "The variant that answers your question"
+      ],
+      "pitfalls": [
+        "Do not read a KDE bandwidth as data.",
+        "Do not conclude normality from a pretty Q-Q alone."
+      ],
+      "limits": "Declared kernels and quantiles from the records; no significance testing.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Cycle the variants to compare readings, then move one tail value in the source and check which view shows it most honestly.",
+      "tags": [
+        "chart",
+        "distribution",
+        "violin"
+      ],
+      "experimentMeta": {
+        "id": "ddn.examples.distribution-charts::latency.c1",
+        "key": "ms",
+        "value": 35
+      },
+      "runtime": {
+        "entry": "website/examples/basics/62-distribution-charts.ddn",
+        "view": "violin",
+        "profile": "chart.violin@1",
+        "projection": "chart",
+        "sha256": "ae17190a53923919bcd2d3cc0001190b1b13e75acf5d405591b5a0829a86b54b",
+        "modelFingerprint": "c9312845f66fcb87",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/62-distribution-charts.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/62-distribution-charts.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view violin \"Response times by service / violin\" {\n    data: [@latency];\n    projection { kind:chart; profile:\"chart.violin@1\"; records:[@latency.a1, @latency.a2, @latency.a3, @latency.a4, @latency.a5, @latency.a6, @latency.a7, @latency.a8, @latency.a9, @latency.a10, @latency.b1, @latency.b2, @latency.b3, @latency.b4, @latency.b5, @latency.b6, @latency.b7, @latency.b8, @latency.b9, @latency.b10, @latency.c1, @latency.c2, @latency.c3, @latency.c4, @latency.c5, @latency.c6, @latency.c7, @latency.c8, @latency.c9, @latency.c10]; mark:violin; x:\"x_record.service\"; y:\"x_record.ms\"; unit:\"ms\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/62-distribution-charts.ddn and locate view violin. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.violin@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "ddn.examples.distribution-charts::latency.c1",
+        "file": "website/examples/basics/62-distribution-charts.ddn",
+        "before": "gamma #1 ms = 30",
+        "after": "gamma #1 ms = 35",
+        "expectation": "Only one value changes; curves, quantiles and identities are untouched.",
+        "key": "ms",
+        "value": 35
+      },
+      "exerciseEvidence": {
+        "before": "ae17190a53923919bcd2d3cc0001190b1b13e75acf5d405591b5a0829a86b54b",
+        "after": "acf6f1ff1dc1046033879dc7514019a59e87a262d925a77c4e3034c4f26c9ea5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "treecharts",
+      "title": "Tree and radial chart pack",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/basics/63-tree-charts.ddn",
+      "view": "sunburst",
+      "experimentKind": "value",
+      "variants": [
+        {
+          "view": "tidytree",
+          "title": "Tidy tree variant"
+        },
+        {
+          "view": "radialtree",
+          "title": "Radial tree variant"
+        },
+        {
+          "view": "circlepack",
+          "title": "Circle packing variant"
+        },
+        {
+          "view": "packedbubble",
+          "title": "Packed bubbles variant"
+        }
+      ],
+      "what": "Hierarchies as nested area: sunbursts, tidy/radial trees, circle packing and packed bubbles from one hierarchy.",
+      "why": "Nested magnitude reads differently in each form — the pack lets the data pick the right one.",
+      "when": "Org size, budget trees, file storage, taxonomy size.",
+      "read": [
+        "Area is value, nesting is structure.",
+        "Read outward (sunburst) or along branches (trees) — never compare area across different forms directly."
+      ],
+      "inputs": [
+        "The hierarchy",
+        "The value per node",
+        "The depth you actually have"
+      ],
+      "pitfalls": [
+        "Do not force deep hierarchies into a sunburst — they become confetti.",
+        "Do not compare sibling sizes across separate charts."
+      ],
+      "limits": "Declared hierarchy and values; layout is deterministic per form.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Cycle the variants to compare forms, then change one node value in the source and check the areas still sum honestly.",
+      "tags": [
+        "chart",
+        "tree",
+        "hierarchy"
+      ],
+      "experimentMeta": {
+        "id": "ddn.examples.tree-charts::sales.s4",
+        "key": "sales",
+        "value": 40
+      },
+      "runtime": {
+        "entry": "website/examples/basics/63-tree-charts.ddn",
+        "view": "sunburst",
+        "profile": "chart.sunburst@1",
+        "projection": "chart",
+        "sha256": "10819646840cf8a450904828544e701503ca01a0512806767857819a1eecb35f",
+        "modelFingerprint": "eeaad797d697c0db",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/63-tree-charts.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/63-tree-charts.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view sunburst \"Sales hierarchy / sunburst\" {\n    data: [@sales];\n    projection { kind:chart; profile:\"chart.sunburst@1\"; records:[@sales.n1, @sales.n2, @sales.n3, @sales.n4, @sales.s1, @sales.s2, @sales.s3, @sales.s4, @sales.s5]; mark:sunburst; x:\"x_record.path\"; y:\"x_record.sales\"; unit:\"kEUR\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/63-tree-charts.ddn and locate view sunburst. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.sunburst@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "ddn.examples.tree-charts::sales.s4",
+        "file": "website/examples/basics/63-tree-charts.ddn",
+        "before": "South.Software.Support sales = 35",
+        "after": "South.Software.Support sales = 40",
+        "expectation": "Only one node value changes; hierarchy and identities are untouched.",
+        "key": "sales",
+        "value": 40
+      },
+      "exerciseEvidence": {
+        "before": "10819646840cf8a450904828544e701503ca01a0512806767857819a1eecb35f",
+        "after": "db47c10ad109de075a2c8c47c1d63e188a83ce061afbef61e4f5827cd9a72192",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "gridcharts",
+      "title": "Grid and network chart pack",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/basics/64-grid-charts.ddn",
+      "view": "heatmap",
+      "experimentKind": "value",
+      "variants": [
+        {
+          "view": "calendar",
+          "title": "Calendar variant"
+        },
+        {
+          "view": "parallelcoords",
+          "title": "Parallel coordinates variant"
+        },
+        {
+          "view": "wordcloud",
+          "title": "Word cloud variant"
+        }
+      ],
+      "what": "Grid-based charts: heatmaps, calendar maps, parallel coordinates and word clouds from declared records.",
+      "why": "Patterns across many cells, days or dimensions need a grid, not another line.",
+      "when": "Activity over days, many-metric comparison, term frequency.",
+      "read": [
+        "Cells are records; colour encodes the declared measure.",
+        "Parallel coordinates read as profiles per record, not as trends."
+      ],
+      "inputs": [
+        "The axes or dimensions",
+        "The measure per cell/line",
+        "The scale"
+      ],
+      "pitfalls": [
+        "Do not read a word cloud as precise frequency — it is emphasis.",
+        "Do not compare cell colours across differently scaled maps."
+      ],
+      "limits": "Declared records; no clustering or correlation is computed.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Cycle the variants, then change one record in the source and check it moves the right cell, line or word.",
+      "tags": [
+        "chart",
+        "grid",
+        "heatmap"
+      ],
+      "experimentMeta": {
+        "id": "ddn.examples.grid-charts::cells.h9",
+        "key": "n",
+        "value": 65
+      },
+      "runtime": {
+        "entry": "website/examples/basics/64-grid-charts.ddn",
+        "view": "heatmap",
+        "profile": "chart.heatmap@1",
+        "projection": "chart",
+        "sha256": "053d64c90239dfd6a63cff1ae1acfad9ac318b8c1f4d5becc48e323999446276",
+        "modelFingerprint": "c37c13766fe0eaa2",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/64-grid-charts.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/64-grid-charts.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view heatmap \"Requests by hour and endpoint / heatmap\" {\n    data: [@cells];\n    projection { kind:chart; profile:\"chart.heatmap@1\"; records:[@cells.h1, @cells.h2, @cells.h3, @cells.h4, @cells.h5, @cells.h6, @cells.h7, @cells.h8, @cells.h9]; mark:heatmap; x:\"x_record.hour\"; y:\"x_record.n\"; series:\"x_record.endpoint\"; unit:\"req\"; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/64-grid-charts.ddn and locate view heatmap. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.heatmap@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "ddn.examples.grid-charts::cells.h9",
+        "file": "website/examples/basics/64-grid-charts.ddn",
+        "before": "batch × evening n = 60",
+        "after": "batch × evening n = 65",
+        "expectation": "Only one record changes; grids, scales and identities are untouched.",
+        "key": "n",
+        "value": 65
+      },
+      "exerciseEvidence": {
+        "before": "053d64c90239dfd6a63cff1ae1acfad9ac318b8c1f4d5becc48e323999446276",
+        "after": "93306e4058f7e1d46f8d08873573394aefada93174094af0dbfb7581122a4578",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "overlays",
+      "title": "Statistical overlays (error bars, regression, loess)",
+      "category": "Charts, distributions and measurement",
+      "status": "native",
+      "entry": "website/examples/basics/66-chart-overlays.ddn",
+      "view": "regression",
+      "experimentKind": "value",
+      "variants": [
+        {
+          "view": "errorbars",
+          "title": "Error bars variant"
+        },
+        {
+          "view": "loess",
+          "title": "Loess variant"
+        }
+      ],
+      "what": "Marks plus statistics: error bars on declared uncertainty, regression and loess lines fitted to the records.",
+      "why": "The overlay separates the measured fact from the fitted model — and says which is which.",
+      "when": "Reporting measurements with uncertainty or trend models.",
+      "read": [
+        "Points are records; the line is a model of them, named with its method.",
+        "Error bars are declared ranges, not computed guesses — unless the view declares the computation."
+      ],
+      "inputs": [
+        "The records",
+        "The uncertainty per point (if any)",
+        "The fit method"
+      ],
+      "pitfalls": [
+        "Do not show a fit without naming its method.",
+        "Do not let the line outrun the points it claims to summarise."
+      ],
+      "limits": "Declared fits from declared data; no confidence interval is invented.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Cycle the variants, then move one point in the source and watch the fit respond — the overlay recalculates from records, not from the old line.",
+      "tags": [
+        "chart",
+        "overlays",
+        "statistics"
+      ],
+      "experimentMeta": {
+        "id": "ddn.examples.chart-overlays::samples.s1",
+        "key": "ms",
+        "value": 29
+      },
+      "runtime": {
+        "entry": "website/examples/basics/66-chart-overlays.ddn",
+        "view": "regression",
+        "profile": "chart.basic@1",
+        "projection": "chart",
+        "sha256": "8564b46f2e39d19e6fc9ad5128d13f1b6bf8960fad038ea7bce6a60cc1954fad",
+        "modelFingerprint": "c13c6c4ea577b1d0",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/66-chart-overlays.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/66-chart-overlays.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        }
+      ],
+      "viewSource": "view regression \"Payload vs latency / point + least-squares trend\" {\n    data: [@samples];\n    projection { kind:chart; profile:\"chart.basic@1\"; records:[@samples.s1, @samples.s2, @samples.s3, @samples.s4, @samples.s5, @samples.s6, @samples.s7, @samples.s8, @samples.s9, @samples.s10, @samples.s11, @samples.s12]; mark:point; x:\"x_record.kb\"; x_type:number; y:\"x_record.ms\"; trend:linear; width:1120px; height:620px; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/66-chart-overlays.ddn and locate view regression. This selects existing data; it is not a stored SVG.",
+        "Inspect the chart.basic@1 profile and chart projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "ddn.examples.chart-overlays::samples.s1",
+        "file": "website/examples/basics/66-chart-overlays.ddn",
+        "before": "p1 ms = 24",
+        "after": "p1 ms = 29",
+        "expectation": "Only one point changes; fits, ranges and identities are untouched.",
+        "key": "ms",
+        "value": 29
+      },
+      "exerciseEvidence": {
+        "before": "8564b46f2e39d19e6fc9ad5128d13f1b6bf8960fad038ea7bce6a60cc1954fad",
+        "after": "3a68b628e90b39659f42e43435d1e3255267e8532abeb39599ed6a9be1a787ce",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "gantt",
+      "title": "Gantt / supplied-date schedule",
+      "category": "Time, composition and linked documentation",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "gantt",
+      "experimentKind": "value",
+      "valueKey": "end",
+      "valueAfter": "2026-01-06",
+      "what": "A schedule from supplied dates: bars per task on a calendar, dependencies as links.",
+      "why": "Dates are data — a Gantt you can edit in source stays honest when the plan moves.",
+      "when": "Any dated plan small enough to read on one page.",
+      "read": [
+        "Bars are declared spans, not estimates the chart invented.",
+        "A dependency arrow is finish-to-start; it constrains reading, not the calendar."
+      ],
+      "inputs": [
+        "The tasks with start/end",
+        "The dependencies",
+        "Today's date for context"
+      ],
+      "pitfalls": [
+        "Do not schedule a task before its predecessor without a note.",
+        "Do not let the chart silently shift dates — every date is in the source."
+      ],
+      "limits": "Supplied dates only; no scheduling algorithm runs.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Move one task's dates in the source, apply, and check the dependency arrows still make sense.",
+      "tags": [
+        "gantt",
+        "schedule",
+        "calendar"
+      ],
+      "experimentMeta": {
+        "id": "meridian.procurement.review::process.order",
+        "key": "end",
+        "value": "2026-01-06"
+      },
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "gantt",
+        "profile": "timeline.basic@1",
+        "projection": "timeline",
+        "sha256": "b049329ab0e860a9f2244c2fe9950e82194f33c9a796233a5a7be010feadd717",
+        "modelFingerprint": "35c5bc193d2b7953",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view gantt \"21 / Supplied-date procurement schedule\" {\n    data: [@m.process, @m.schedule];\n    format: @f.shared.common;\n    projection { kind:timeline;profile:\"timeline.basic@1\";records:[@m.process.order, @m.process.receive, @m.process.post];start:\"x_record.start\";end:\"x_record.end\";dependencies:[@m.schedule.order_before_receive, @m.schedule.receive_before_post];width:1250px; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view gantt. This selects existing data; it is not a stored SVG.",
+        "Inspect the timeline.basic@1 profile and timeline projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "value",
+        "title": "Change one record value without touching the model",
+        "id": "meridian.procurement.review::process.order",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Issue purchase order end = 2026-01-07",
+        "after": "Issue purchase order end = 2026-01-06",
+        "expectation": "Only one date or span changes; tasks, links and identities are untouched.",
+        "key": "end",
+        "value": "2026-01-06"
+      },
+      "exerciseEvidence": {
+        "before": "b049329ab0e860a9f2244c2fe9950e82194f33c9a796233a5a7be010feadd717",
+        "after": "eae34787c047432d4afabdcc187370034323555b15be4d434a1f727e90c1e889",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "dashboard",
+      "title": "Composed dashboard / report page",
+      "category": "Time, composition and linked documentation",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "dashboard_quality",
+      "experimentKind": "data",
+      "dataBlock": "measurements",
+      "dataDelta": 0.1,
+      "what": "Several views composed on one page: charts, tables and a graph sharing one model and one data block.",
+      "why": "The dashboard is the summary stakeholders actually read — and it refreshes as one transaction, not nine.",
+      "when": "Periodic operations and quality reporting.",
+      "read": [
+        "Panels are views of the same records — a number that disagrees with its chart is a defect, not a refresh lag.",
+        "Composition is one level deep, by rule."
+      ],
+      "inputs": [
+        "The panels to show",
+        "The shared data block",
+        "The refresh cadence"
+      ],
+      "pitfalls": [
+        "Do not nest a dashboard in a dashboard.",
+        "Do not add a panel that answers a question nobody asked."
+      ],
+      "limits": "One composition level with per-panel budgets; refresh swaps records atomically.",
+      "refs": [],
+      "probe": [
+        "record"
+      ],
+      "editTask": "Change one record in the shared block, apply, and check every panel that reads it moved together.",
+      "tags": [
+        "dashboard",
+        "composition",
+        "report"
+      ],
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "dashboard_quality",
+        "profile": "panels.composed@1",
+        "projection": "panels",
+        "sha256": "52c8d380f7c54a4533ad561fe61605023239ae8f5fb410d8f72f10fc065820e7",
+        "modelFingerprint": "833f2d66db2a3dd0",
+        "warnings": [
+          "DDN-TW01",
+          "DDN-TW01",
+          "DDN-TW01",
+          "DDN-TW01",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view dashboard_quality \"17 / Dashboard Quality\" {\n    data: [@m.notes];\n    format: @f.shared.common;\n    projection { kind: \"panels\"; profile: \"panels.composed@1\"; columns: 2; panels: [{ \"id\": \"slot0\", \"title\": \"Pareto\", \"row\": 0, \"column\": 0, \"view\": @pareto }, { \"id\": \"slot1\", \"title\": \"Histogram\", \"row\": 0, \"column\": 1, \"view\": @histogram }, { \"id\": \"slot2\", \"title\": \"Heat Bands\", \"row\": 1, \"column\": 0, \"view\": @heat_bands }, { \"id\": \"slot3\", \"title\": \"Lifecycle\", \"row\": 1, \"column\": 1, \"view\": @lifecycle }]; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view dashboard_quality. This selects existing data; it is not a stored SVG.",
+        "Inspect the panels.composed@1 profile and panels projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "data",
+        "title": "Swap one record payload without touching the model",
+        "id": "meridian.quality.review::notes.note",
+        "file": "website/examples/quality/views.ddn",
+        "before": "measurements.m0_0 value 9.82",
+        "after": "measurements.m0_0 value 9.92",
+        "expectation": "Only the record's value changes from 9.82 to 9.92; the chart re-renders from the swapped records and undo restores the original payload."
+      },
+      "exerciseEvidence": {
+        "before": "52c8d380f7c54a4533ad561fe61605023239ae8f5fb410d8f72f10fc065820e7",
+        "after": "77c2b115e4b062966f6ec31e7414ff9f90ff87cdfeee81702c80cb702a3f949a",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "lifecycle-trace",
+      "title": "Lifecycle trace verification",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/quality/views.ddn",
+      "view": "lifecycle_trace",
+      "probe": [
+        "record"
+      ],
+      "what": "A flat lifecycle diagram plus its trace checker: replay a declared event list through the states and verify the outcome.",
+      "why": "The state machine you cannot run an event list through is a picture, not a contract.",
+      "when": "Checking that a declared lifecycle actually reaches the states its name implies.",
+      "read": [
+        "States and transitions are the model; the trace is a recorded input you replay.",
+        "A mismatch names the event and the expected state."
+      ],
+      "inputs": [
+        "The states and transitions",
+        "The event list to replay",
+        "The expected end state"
+      ],
+      "pitfalls": [
+        "Do not treat a passing trace as proof of all traces.",
+        "Do not hide an event the machine cannot consume."
+      ],
+      "limits": "Deterministic flat-lifecycle replay with exactly-one-transition validation.",
+      "evaluation": {
+        "type": "lifecycle",
+        "sample": "[\"start\",\"process\",\"complete\"]"
+      },
+      "refs": [],
+      "editTask": "Replay the trace with the panel below, then add one event to the list and replay again — the checker names what breaks.",
+      "tags": [
+        "lifecycle",
+        "trace",
+        "verification"
+      ],
+      "runtime": {
+        "entry": "website/examples/quality/views.ddn",
+        "view": "lifecycle_trace",
+        "profile": "state.flat@1",
+        "projection": "graph",
+        "sha256": "996f9eb2ca8dacfab545b7f8e86dfef65dab005f523ea67c9e07691e773914e5",
+        "modelFingerprint": "2597cf0130cd2d87",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/quality/views.ddn",
+        "website/examples/quality/model.ddn",
+        "website/examples/quality/details.ddn",
+        "website/examples/quality/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/quality/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/quality/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/details.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/quality/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view lifecycle_trace \"13 / Corrective-action retry trace\" {\n    data: [@m.lifecycle];\n    format: @f.shared.common;\n    projection { kind: \"graph\"; profile: \"state.flat@1\"; inputs: [{ \"key\": \"passed\", \"type\": \"boolean\", \"optional\": true }]; traces: [{ \"events\": [{ \"event\": \"submit\" }, { \"event\": \"accept\" }, { \"event\": \"investigated\" }, { \"event\": \"verify\", \"data\": { \"passed\": false } }, { \"event\": \"investigated\" }, { \"event\": \"verify\", \"data\": { \"passed\": true } }, { \"event\": \"close\" }], \"expected\": @m.lifecycle.closed }]; }\n    style { look:neo; }\n}",
+      "walkthrough": [
+        "Open website/examples/quality/views.ddn and locate view lifecycle_trace. This selects existing data; it is not a stored SVG.",
+        "Inspect the state.flat@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.quality.review::lifecycle.initial",
+        "file": "website/examples/quality/views.ddn",
+        "before": "Start",
+        "after": "Start / review",
+        "expectation": "Only one record value changes; states, trace and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "996f9eb2ca8dacfab545b7f8e86dfef65dab005f523ea67c9e07691e773914e5",
+        "after": "0f0e060602e48f5a4b31e20da31d9cc26be790230f7b87777db6bd3c6950db72",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "dfd-yourdon",
+      "title": "Yourdon-style DFD",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "dfd_yourdon",
+      "what": "A data-flow diagram in the Yourdon idiom: circles for processes, open boxes for stores, named arrows for flows.",
+      "why": "The idiom keeps flows honest: every arrow carries data, every process transforms some.",
+      "when": "Classic systems analysis and documentation.",
+      "read": [
+        "Processes are verbs, stores are nouns at rest, entities are outside the system.",
+        "Balancing: a decomposed process shows the same boundary flows as its parent."
+      ],
+      "inputs": [
+        "The processes",
+        "The stores and entities",
+        "The flows with names"
+      ],
+      "pitfalls": [
+        "Do not draw control signals as data flows.",
+        "Do not decompose a process and lose a flow at the boundary."
+      ],
+      "limits": "The Yourdon idiom as notation; balancing is a modeling discipline, not a validator here.",
+      "refs": [],
+      "probe": [
+        "process",
+        "application",
+        "entity",
+        "table"
+      ],
+      "editTask": "Name one anonymous flow with its data, apply, and check it reads as data, not control.",
+      "tags": [
+        "dfd",
+        "yourdon",
+        "data-flow"
+      ],
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "dfd_yourdon",
+        "profile": "dfd.yourdon@1",
+        "projection": "graph",
+        "sha256": "1e08c85f6a3aef5ffa7422c2f641dafbaed74883b7220dab6670bc1658a7bd6d",
+        "modelFingerprint": "ae01a4a0a6c008ac",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view dfd_yourdon \"06 / Yourdon-style DFD\" {\n    data: [@m.dfd];\n    format: @f.shared.common;\n    projection { kind:graph;profile:\"dfd.yourdon@1\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view dfd_yourdon. This selects existing data; it is not a stored SVG.",
+        "Inspect the dfd.yourdon@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.procurement.review::dfd.supplier",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Supplier",
+        "after": "Supplier / review",
+        "expectation": "Only the label of Supplier / review changes; flows, stores and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "1e08c85f6a3aef5ffa7422c2f641dafbaed74883b7220dab6670bc1658a7bd6d",
+        "after": "bbf113ba8e8213486abbc26c607511eeae6affe37953007e49f02d3e38f7b188",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "dfd-gane-sarson",
+      "title": "Gane–Sarson-style DFD",
+      "category": "Processes, interactions and lifecycle",
+      "status": "native",
+      "entry": "website/examples/projections/views.ddn",
+      "view": "dfd_gane",
+      "what": "The Gane–Sarson DFD variant: rounded process boxes, parallel-line stores, and the same discipline of named data flows.",
+      "why": "Some organisations standardised on Gane–Sarson; the variant exists so the document reads natively to them.",
+      "when": "DFD work in Gane–Sarson shops.",
+      "read": [
+        "Same rules as Yourdon — only the silhouettes differ.",
+        "Stores are the parallel lines; everything else maps one to one."
+      ],
+      "inputs": [
+        "The same content as any DFD",
+        "The idiom the audience reads"
+      ],
+      "pitfalls": [
+        "Do not mix Yourdon and Gane–Sarson symbols in one diagram.",
+        "Do not read the variant as a different model."
+      ],
+      "limits": "The Gane–Sarson idiom as notation; the same underlying model as any DFD.",
+      "refs": [],
+      "probe": [
+        "process",
+        "application",
+        "entity",
+        "table"
+      ],
+      "editTask": "Rename one store with what actually lives in it, apply, and check the flows into and out of it still balance.",
+      "tags": [
+        "dfd",
+        "gane-sarson",
+        "data-flow"
+      ],
+      "runtime": {
+        "entry": "website/examples/projections/views.ddn",
+        "view": "dfd_gane",
+        "profile": "dfd.gane_sarson@1",
+        "projection": "graph",
+        "sha256": "97cd106da849d7bda17ccb5fbd844cc83d36951f3b5ad33cb55b1777949231eb",
+        "modelFingerprint": "ae01a4a0a6c008ac",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/projections/views.ddn",
+        "website/examples/projections/model.ddn",
+        "website/examples/projections/formats.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/projections/views.ddn",
+          "roles": [
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/projections/model.ddn",
+          "roles": [
+            "data"
+          ]
+        },
+        {
+          "file": "website/examples/projections/formats.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view dfd_gane \"05 / Numbered Gane\\u2013Sarson-style DFD\" {\n    data: [@m.dfd];\n    format: @f.shared.common;\n    projection { kind:graph;profile:\"dfd.gane_sarson@1\"; }\n\n}",
+      "walkthrough": [
+        "Open website/examples/projections/views.ddn and locate view dfd_gane. This selects existing data; it is not a stored SVG.",
+        "Inspect the dfd.gane_sarson@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "meridian.procurement.review::dfd.supplier",
+        "file": "website/examples/projections/views.ddn",
+        "before": "Supplier",
+        "after": "Supplier / review",
+        "expectation": "Only the label of Supplier / review changes; flows, stores and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "97cd106da849d7bda17ccb5fbd844cc83d36951f3b5ad33cb55b1777949231eb",
+        "after": "08e3bbf710922383b31fdd48105f12bfc0990859b52dbe5e13a3df9113c3f813",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
       "id": "whiteboard",
       "title": "Whiteboard / discovery sketch",
       "category": "Data structures and meaning",
@@ -3385,8 +7468,8 @@
         "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
       ],
       "experiment": {
-        "kind": "label",
-        "title": "Clarify a label without changing its identity",
+        "kind": "data",
+        "title": "Swap one record payload without touching the model",
         "id": "ddn.examples.data-refresh::metrics.m1",
         "file": "website/examples/basics/59-data-refresh.ddn",
         "before": "metrics.m1 value 10",

@@ -236,7 +236,7 @@
   {
     "id": "dfd-yourdon",
     "title": "Yourdon-style data-flow diagram",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "overview"
@@ -244,7 +244,7 @@
   {
     "id": "dfd-gane-sarson",
     "title": "Gane–Sarson-style DFD",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "overview"
@@ -612,7 +612,7 @@
   {
     "id": "raci",
     "title": "RACI responsibility matrix",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "raci"
@@ -620,7 +620,7 @@
   {
     "id": "crud",
     "title": "CRUD / data-access matrix",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "crud"
@@ -628,7 +628,7 @@
   {
     "id": "relationship-matrix",
     "title": "Model-derived relationship matrix",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -636,7 +636,7 @@
   {
     "id": "record-table",
     "title": "Source-bound record table",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "defect_table"
@@ -644,7 +644,7 @@
   {
     "id": "decision-unique",
     "title": "Typed decision table — unique match",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "decision_unique"
@@ -652,7 +652,7 @@
   {
     "id": "decision-collect",
     "title": "Typed decision table — collect matches",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "decision_collect"
@@ -660,7 +660,7 @@
   {
     "id": "heatmap-numeric",
     "title": "Numeric heatmap",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "heat_numeric"
@@ -668,7 +668,7 @@
   {
     "id": "heatmap-bands",
     "title": "Risk/priority threshold bands",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "heat_bands"
@@ -676,7 +676,7 @@
   {
     "id": "heatmap-categories",
     "title": "Categorical status matrix",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "heat_categories"
@@ -684,7 +684,7 @@
   {
     "id": "swot",
     "title": "SWOT and four-panel strategic analysis",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -692,7 +692,7 @@
   {
     "id": "sipoc",
     "title": "SIPOC process overview",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -700,7 +700,7 @@
   {
     "id": "journey",
     "title": "Customer/service journey panels",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -708,7 +708,7 @@
   {
     "id": "story-map",
     "title": "Story map",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -716,7 +716,7 @@
   {
     "id": "empathy-scorecard",
     "title": "Empathy map and scorecard",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/34-empathy-scorecard.ddn",
     "view": "d"
@@ -724,7 +724,7 @@
   {
     "id": "line-chart",
     "title": "Line chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -732,7 +732,7 @@
   {
     "id": "area-chart",
     "title": "Area chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -740,7 +740,7 @@
   {
     "id": "pie-donut",
     "title": "Pie and doughnut charts",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -748,7 +748,7 @@
   {
     "id": "scatter",
     "title": "Scatter and perceptual plots",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -756,7 +756,7 @@
   {
     "id": "time-series",
     "title": "Calendar-ordered time-series",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -764,7 +764,7 @@
   {
     "id": "grouped-bars",
     "title": "Grouped multi-series bars",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "grouped_bars"
@@ -772,7 +772,7 @@
   {
     "id": "stacked-bars",
     "title": "Signed stacked bars",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "stacked_bars"
@@ -780,7 +780,7 @@
   {
     "id": "percent-bars",
     "title": "Percentage-stacked bars",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "percent_bars"
@@ -788,7 +788,7 @@
   {
     "id": "multi-line",
     "title": "Multiple-line chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "multiseries_line"
@@ -796,7 +796,7 @@
   {
     "id": "multi-area",
     "title": "Multiple-series area chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "multiseries_area"
@@ -804,7 +804,7 @@
   {
     "id": "actual-target",
     "title": "Actual versus target / layered marks",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "actual_target"
@@ -812,7 +812,7 @@
   {
     "id": "histogram",
     "title": "Histogram — counts and density",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "histogram"
@@ -820,7 +820,7 @@
   {
     "id": "pareto",
     "title": "Pareto chart",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "pareto"
@@ -828,7 +828,7 @@
   {
     "id": "waterfall",
     "title": "Waterfall reconciliation",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "waterfall"
@@ -836,7 +836,7 @@
   {
     "id": "boxplot",
     "title": "Box plot conventions",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "boxplot"
@@ -844,7 +844,7 @@
   {
     "id": "distributions",
     "title": "Distribution chart pack",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -852,7 +852,7 @@
   {
     "id": "treecharts",
     "title": "Tree and radial chart pack",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/63-tree-charts.ddn",
     "view": "d"
@@ -860,7 +860,7 @@
   {
     "id": "gridcharts",
     "title": "Grid and network chart pack",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/basics/64-grid-charts.ddn",
     "view": "d"
@@ -868,7 +868,7 @@
   {
     "id": "overlays",
     "title": "Statistical overlays (error bars, regression)",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -876,7 +876,7 @@
   {
     "id": "gantt",
     "title": "Gantt / supplied-date schedule",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "(new fixture needed)",
     "view": "d"
@@ -892,7 +892,7 @@
   {
     "id": "dashboard",
     "title": "Composed dashboard",
-    "status": "planned",
+    "status": "pilot",
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "dashboard_quality"
@@ -1208,5 +1208,12 @@
     "support": "native",
     "entry": "website/examples/basics/92-c4-epc.ddn",
     "view": "dynamic"
+  },
+  {
+    "id": "lifecycle-trace",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/quality/views.ddn",
+    "view": "lifecycle_trace"
   }
 ]

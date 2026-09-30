@@ -33,6 +33,7 @@ const args = process.argv.slice(2);
 const OUT = args.includes('--out') ? args[args.indexOf('--out') + 1] : path.join(REPO, 'field-guide');
 const facts = JSON.parse(fs.readFileSync(path.join(REPO, 'standard/submission/facts.json'), 'utf8'));
 import BATCH2 from './field-guide-batch2.mjs';
+import BATCH3 from './field-guide-batch3.mjs';
 const F = k => k.split('.').reduce((o, x) => o[x], facts).value;
 const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -41,7 +42,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 // Curated pilot chapters (6). Each fixture is a real repo example; the
 // experiment target is resolved programmatically (first element in the view
 // whose kind matches the chapter's probe), so ids never drift.
-const CHAPTERS = [...BATCH2,
+const CHAPTERS = [...BATCH2, ...BATCH3,
   {
     id: 'whiteboard', title: 'Whiteboard / discovery sketch', category: 'Data structures and meaning',
     status: 'native', entry: 'website/examples/use-cases/01-whiteboard.ddn', view: 'diagram',
@@ -192,15 +193,100 @@ function buildChapter(ch) {
   const fpBefore = r.modelFingerprint;
   if (ch.experimentKind === 'data') {
     const block = ch.dataBlock;
-    const current = ir.elements.filter(e => e.ref && e.ref.startsWith(block + '.') && e.properties && e.properties.x_record);
+    let current = ir.elements.filter(e => e.ref && e.ref.startsWith(block + '.') && e.properties && e.properties.x_record);
+    if (!current.length) {
+      // The view does not select the block (e.g. a composed dashboard whose
+      // data is notes while its panels chart records) — read the records
+      // straight from the parsed sources instead.
+      for (const f of Object.keys(files)) {
+        const ast = A.parse(files[f], f);
+        for (const sec of ast.sections || []) for (const d of sec.declarations || []) {
+          if (d.type === 'data' && d.id === block)
+            current = (d.children || []).filter(n => n.props && n.props.x_record)
+              .map(n => ({ local: n.id, ref: block + '.' + n.id, properties: { x_record: n.props.x_record } }));
+        }
+      }
+    }
+    if (!current.length) throw new Error(ch.id + ': data block ' + block + ' has no records for the data experiment');
     const first = current[0];
-    const xr = first.properties.x_record, beforeV = xr.value, afterV = beforeV + 5;
+    const xr = first.properties.x_record, beforeV = xr.value, afterV = beforeV + (ch.dataDelta ?? 5);
     const rows = current.map(e => ({ key: e.local || e.ref.split('.').pop(), ...e.properties.x_record }));
     rows[0] = { ...rows[0], value: afterV };
     ws.replaceData(block, rows);
     before = block + '.' + first.ref.split('.').pop() + ' value ' + beforeV;
     after = block + '.' + first.ref.split('.').pop() + ' value ' + afterV;
     ch.expectation = () => `Only the record's value changes from ${beforeV} to ${afterV}; the chart re-renders from the swapped records and undo restores the original payload.`;
+  } else if (ch.experimentKind === 'matrix') {
+    const plan = ws.projectionPlan(ch.entry, ch.view);
+    const rows = plan.rows.map(x => x.$ref || x.id), cols = plan.columns.map(x => x.$ref || x.id);
+    let row = null, column = null;
+    outer: for (let i = 0; i < rows.length; i++) for (let j = 0; j < cols.length; j++) {
+      if (!plan.cells[i][j].length) { row = rows[i]; column = cols[j]; break outer; }
+    }
+    if (!row) throw new Error(ch.id + ': no empty matrix cell found for the matrix experiment');
+    const to = ch.matrixValue || 'R';
+    A.authoring.setMatrixCell(ws, ch.entry, ch.view, row, column, to);
+    const rowName = (plan.rows.find(x => (x.$ref || x.id) === row) || {}).name || row;
+    const colName = (plan.columns.find(x => (x.$ref || x.id) === column) || {}).name || column;
+    before = rowName + ' × ' + colName + ' = (empty)';
+    after = rowName + ' × ' + colName + ' = ' + to;
+    ch.experimentMeta = { row, column, to };
+  } else if (ch.experimentKind === 'value') {
+    const recs = candidates.filter(e => e.properties && e.properties.x_record);
+    if (!recs.length) throw new Error(ch.id + ': no record found for the value experiment');
+    let rec, key, beforeV, afterV;
+    const labeled = recs.find(e => typeof e.properties.x_record.label === 'string' && e.properties.x_record.label);
+    const withNumeric = recs.flatMap(e => Object.keys(e.properties.x_record).filter(k => typeof e.properties.x_record[k] === 'number' && Number.isFinite(e.properties.x_record[k]) && k !== 'key').map(k => ({ e, k, v: e.properties.x_record[k] })));
+    const bindingField = (ir.view.profiles.projection.y || ir.view.profiles.projection.measure || ir.view.profiles.projection.value || '').replace(/^x_record\./, '') || null;
+    if (ch.valueKey) {
+      const target = recs.find(e => ch.valueKey in (e.properties.x_record || {}));
+      if (!target) throw new Error(ch.id + ': no record carries the declared field ' + ch.valueKey);
+      rec = target; key = ch.valueKey; beforeV = rec.properties.x_record[key]; afterV = ch.valueAfter;
+    }
+    else if (bindingField && recs.some(e => typeof e.properties.x_record[bindingField] === 'number' && Number.isFinite(e.properties.x_record[bindingField]))) {
+      const pool = recs.filter(e => typeof e.properties.x_record[bindingField] === 'number' && Number.isFinite(e.properties.x_record[bindingField]));
+      rec = pool.reduce((a, b) => (b.properties.x_record[bindingField] < a.properties.x_record[bindingField] ? b : a));
+      key = bindingField; beforeV = rec.properties.x_record[key]; afterV = beforeV + (ch.valueDelta ?? 5);
+    }
+    else if (labeled) { rec = labeled; key = 'label'; beforeV = rec.properties.x_record.label; afterV = beforeV + ' / review'; }
+    else if (withNumeric.length) {
+      const pick = withNumeric.reduce((a, b) => (b.v < a.v ? b : a));
+      rec = pick.e; key = pick.k; beforeV = pick.v; afterV = beforeV + (ch.valueDelta ?? 5);
+    } else {
+      rec = recs[0];
+      key = Object.keys(rec.properties.x_record).find(k => typeof rec.properties.x_record[k] === 'string' && !['key', 'id', 'row', 'column'].includes(k));
+      if (!key) throw new Error(ch.id + ': no editable scalar field in the record for the value experiment');
+      beforeV = rec.properties.x_record[key]; afterV = beforeV + ' · reviewed';
+    }
+    A.authoring.setRecordValue(ws, ch.entry, ch.view, rec.id, key, afterV);
+    before = (rec.name || rec.id) + ' ' + key + ' = ' + beforeV;
+    after = (rec.name || rec.id) + ' ' + key + ' = ' + afterV;
+    ch.experimentMeta = { id: rec.id, key, value: afterV };
+  } else if (ch.experimentKind === 'panel') {
+    const panels = ir.view.profiles.projection.panels || [];
+    let target = null;
+    for (const p of panels) for (const it of (p.items || [])) {
+      const t = candidates.find(e => e.id === it.$ref) || ir.elements.find(e => e.id === it.$ref);
+      if (t && t.properties && typeof t.properties.description === 'string') { target = t; break; }
+    }
+    if (!target) target = candidates.find(e => e.properties && typeof e.properties.description === 'string');
+    if (!target) throw new Error(ch.id + ': no panel item with an editable description found for the panel experiment');
+    const beforeV = target.properties.description, afterV = beforeV + ' (reviewed)';
+    A.authoring.setProperty(ws, ch.entry, ch.view, target.id, 'description', afterV);
+    before = (target.name || target.id) + ' description = ' + beforeV.slice(0, 40) + (beforeV.length > 40 ? '…' : '');
+    after = (target.name || target.id) + ' description = ' + afterV.slice(0, 40) + (afterV.length > 40 ? '…' : '');
+    ch.experimentMeta = { id: target.id, key: 'description', value: afterV };
+  } else if (ch.experimentKind === 'rule') {
+    const rule = candidates.find(e => e.kind === 'rule.row' && e.properties && e.properties.x_rule && e.properties.x_rule.then && Object.values(e.properties.x_rule.then).some(v => typeof v === 'boolean'));
+    if (!rule) throw new Error(ch.id + ': no rule row with a boolean then-property found for the rule experiment');
+    const xr = JSON.parse(JSON.stringify(rule.properties.x_rule));
+    const key = Object.keys(xr.then).find(k => typeof xr.then[k] === 'boolean');
+    const beforeV = xr.then[key], afterV = !beforeV;
+    xr.then[key] = afterV;
+    A.authoring.setProperty(ws, ch.entry, ch.view, rule.id, 'x_rule', xr);
+    before = (rule.name || rule.id) + ' then.' + key + ' = ' + beforeV;
+    after = (rule.name || rule.id) + ' then.' + key + ' = ' + afterV;
+    ch.experimentMeta = { id: rule.id, record: xr };
   } else {
     before = element.name;
     after = before + ' / review';
@@ -235,7 +321,7 @@ function buildChapter(ch) {
       'Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.',
       'Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.',
     ],
-    experiment: { kind: 'label', title: 'Clarify a label without changing its identity', id: element.id, file: ch.entry, before, after, expectation: ch.expectation(after) },
+    experiment: { kind: ch.experimentKind || 'label', title: ch.experimentKind === 'matrix' ? 'Fill one matrix cell without changing its axes' : ch.experimentKind === 'value' ? 'Change one record value without touching the model' : ch.experimentKind === 'data' ? 'Swap one record payload without touching the model' : 'Clarify a label without changing its identity', id: element.id, file: ch.entry, before, after, expectation: ch.expectation(after), ...(ch.experimentMeta || {}) },
     exerciseEvidence: { before: svgBefore, after: svgAfter, changed: svgBefore !== svgAfter, modelChanged: fpBefore !== fpAfter, relationIdentitiesPreserved: undoOk && r3.modelFingerprint === fpBefore, undoRestoresBefore: undoOk },
   };
   return chapter;
@@ -281,11 +367,13 @@ if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; re
 document.getElementById('guided').onclick = () => {
   try {
     const ex = data.experiment;
-    if (data.experimentKind === 'data') {
+    if (ex.kind === 'data') {
       status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
       return;
     }
-    DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
     redraw();
     document.getElementById('undo').disabled = false;
     document.getElementById('exercise-evidence').textContent =
@@ -317,6 +405,17 @@ document.getElementById('download-ddn').onclick = () => {
   a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
 };
 document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
 redraw();
 })();`;
 
@@ -338,7 +437,12 @@ function lessonHtml(ch) {
 <p class="expected">${esc(ch.experiment.expectation)}</p>
 <div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
 <p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha ${ch.exerciseEvidence.before.slice(0, 12)}… → ${ch.exerciseEvidence.after.slice(0, 12)}…), model changes (${ch.exerciseEvidence.modelChanged}), undo restores the shipped bytes (${ch.exerciseEvidence.undoRestoresBefore}).</p>
-<p class="minor">${esc(ch.editTask)}</p></section>
+<p class="minor">${esc(ch.editTask)}</p></section>${ch.evaluation ? `
+<section class="card evaluation"><h3>${ch.evaluation.type === 'decision' ? 'Evaluate the decision table' : 'Replay the lifecycle trace'}</h3>
+<p class="minor">${ch.evaluation.type === 'decision' ? 'Edit the JSON input record and evaluate. The result is a bounded local witness, not execution of business actions.' : 'Edit the event list and replay it through the flat lifecycle. A mismatch names the event and the expected state.'}</p>
+<textarea id="evaluation-input" class="source-editor" style="min-height:80px" spellcheck="false">${esc(ch.evaluation.sample)}</textarea>
+<div class="actions" style="margin-top:.4rem"><button id="evaluation-run" class="primary">${ch.evaluation.type === 'decision' ? 'Evaluate decision' : 'Validate trace'}</button></div>
+<pre id="evaluation-result">No evaluation yet.</pre></section>` : ''}
 <details class="card"><summary>Open the DDN source and edit any definition</summary>
 <div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
 <p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
@@ -350,7 +454,7 @@ function lessonHtml(ch) {
 </main><footer>DDN 0.7.0 · field-guide 0.7 edition (pilot) · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
 <script>window.GUIDE_FILES = ${JSON.stringify(filesFor(ch.entry)).replace(/<\//g, '<\\/')};</script>
-<script>window.GUIDE_CHAPTER = ${JSON.stringify({ id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label' }).replace(/<\//g, '<\\/')};</script>
+<script>window.GUIDE_CHAPTER = ${JSON.stringify({ id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label', evaluation: ch.evaluation || null }).replace(/<\//g, '<\\/')};</script>
 <script>${GUIDE_JS}</script>
 </body></html>`;
 }
