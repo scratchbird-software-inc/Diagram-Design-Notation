@@ -2,12 +2,12 @@ ddn "0.5";
 module "ddn.live.routing-lab";
 // This is a diagram, not an executing order processing application.
 data model {
-    object intake "Order entry" { kind: application; role: "UI + client library"; }
-    object validation "Validate and reserve" { kind: activity; role: "Checks + inventory hold"; }
-    object orders "Accepted orders" { kind: table; workload: [oltp];
-        fields { field order_id { key: primary; } field customer_id; field accepted_at; }
+    application intake "Order entry" {role: "UI + client library"; }
+    activity validation "Validate and reserve" {role: "Checks + inventory hold"; }
+    table orders "Accepted orders" {workload: [oltp];
+        fields { order_id { key: primary; } customer_id; accepted_at; }
     }
-    object publish "Publish order event" { kind: topic; role: "Transactional outbox consumer"; }
+    topic publish "Publish order event" {role: "Transactional outbox consumer"; }
     relation submit "Submit proposed order" @intake -> @validation { kind: flow; }
     relation accept "Persist an accepted order" @validation -> @orders { kind: flow; }
     relation event "Publish order-accepted event" @orders -> @publish { kind: flow; }

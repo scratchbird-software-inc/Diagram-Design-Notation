@@ -193,8 +193,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 316,
-            "end": 331
+            "start": 294,
+            "end": 303
           }
         },
         {
@@ -207,8 +207,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 344,
-            "end": 358
+            "start": 316,
+            "end": 324
           }
         },
         {
@@ -221,8 +221,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 371,
-            "end": 390
+            "start": 337,
+            "end": 350
           }
         },
         {
@@ -235,8 +235,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 403,
-            "end": 421
+            "start": 363,
+            "end": 375
           }
         },
         {
@@ -249,8 +249,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 434,
-            "end": 449
+            "start": 388,
+            "end": 397
           }
         },
         {
@@ -263,8 +263,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 462,
-            "end": 479
+            "start": 410,
+            "end": 421
           }
         }
       ],
@@ -272,7 +272,7 @@
       "source": {
         "file": "use-cases/data/warehouse.ddn",
         "start": 154,
-        "end": 495
+        "end": 437
       }
     },
     {
@@ -297,8 +297,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 593,
-            "end": 612
+            "start": 513,
+            "end": 526
           }
         },
         {
@@ -311,16 +311,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 625,
-            "end": 644
+            "start": 539,
+            "end": 552
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 500,
-        "end": 660
+        "start": 442,
+        "end": 568
       }
     },
     {
@@ -345,8 +345,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 756,
-            "end": 774
+            "start": 642,
+            "end": 654
           }
         },
         {
@@ -359,16 +359,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 787,
-            "end": 806
+            "start": 667,
+            "end": 680
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 665,
-        "end": 822
+        "start": 573,
+        "end": 696
       }
     },
     {
@@ -393,8 +393,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 912,
-            "end": 927
+            "start": 764,
+            "end": 773
           }
         },
         {
@@ -407,16 +407,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/warehouse.ddn",
-            "start": 940,
-            "end": 960
+            "start": 786,
+            "end": 800
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 827,
-        "end": 976
+        "start": 701,
+        "end": 816
       }
     },
     {
@@ -435,8 +435,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 981,
-        "end": 1155
+        "start": 821,
+        "end": 973
       }
     }
   ],
@@ -464,8 +464,8 @@
       },
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 1160,
-        "end": 1273
+        "start": 978,
+        "end": 1048
       }
     },
     {
@@ -491,8 +491,8 @@
       },
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 1278,
-        "end": 1388
+        "start": 1053,
+        "end": 1120
       }
     },
     {
@@ -518,8 +518,8 @@
       },
       "source": {
         "file": "use-cases/data/warehouse.ddn",
-        "start": 1393,
-        "end": 1494
+        "start": 1125,
+        "end": 1183
       }
     }
   ],

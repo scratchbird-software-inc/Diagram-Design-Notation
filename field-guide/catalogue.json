@@ -11909,7 +11909,7 @@
           ]
         }
       ],
-      "viewSource": "view diagram \"Synthetic ETL / sources to marts\" {\n    data: [@pipeline];\n    projection { profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view diagram \"Synthetic ETL / sources to marts\": [@pipeline] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open field-guide/sources/etl.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
         "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
@@ -11994,7 +11994,7 @@
           ]
         }
       ],
-      "viewSource": "view diagram \"Synthetic event contract / producer to consumers\" {\n    data: [@contract];\n    projection { profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view diagram \"Synthetic event contract / producer to consumers\": [@contract] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open field-guide/sources/event-contract.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
         "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
@@ -12080,7 +12080,7 @@
           ]
         }
       ],
-      "viewSource": "view diagram \"Synthetic shards and replicas / placement\" {\n    data: [@cluster];\n    projection { profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
+      "viewSource": "view diagram \"Synthetic shards and replicas / placement\": [@cluster] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}",
       "walkthrough": [
         "Open field-guide/sources/shards-replicas.ddn and locate view diagram. This selects existing data; it is not a stored SVG.",
         "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",

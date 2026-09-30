@@ -46,23 +46,19 @@ module "ddn.usecases.keyed";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data kv {
-    object key "Session key" {
-        kind: identity;
+    identity key "Session key" {
         description: "Scope: one active login session.";
     }
-    object sessions "Session store" {
-        kind: key_value;
-    }
-    object value "Session value" {
-        kind: record;
+    key_value sessions "Session store";
+    record value "Session value" {
         fields {
-            field user_id;
-            field expires_at;
-            field cart_id;
+            user_id;
+            expires_at;
+            cart_id;
         }
     }
-    relation r_a @key -> @sessions { kind: ident; }
-    relation r_b "value shape" @sessions -> @value { kind: mem; }
+    ident r_a @key -> @sessions;
+    mem r_b "value shape" @sessions -> @value;
 }
 
 data wide {
@@ -71,19 +67,17 @@ data wide {
         meaning: "Identifies the producing sensor.";
         representation: undecided;
     }
-    object readings "Readings by device" {
-        kind: wide_column;
+    wide_column readings "Readings by device" {
         workload: [streaming];
         fields {
-            field device_id { key: partition; }
-            field measured_at { key: clustering; }
-            field value;
+            device_id { key: partition; }
+            measured_at { key: clustering; }
+            value;
         }
     }
-    object query "Latest device readings" {
-        kind: qry;
+    qry query "Latest device readings" {
         description: "Access pattern; not a claim that a database query has been executed.";
     }
     relation r_a @readings.device_id -> @key { kind: domain; }
-    relation r_b @query -> @readings { kind: depends; }
+    depends r_b @query -> @readings;
 }

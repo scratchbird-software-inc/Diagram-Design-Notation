@@ -40,27 +40,24 @@ module "ddn.usecases.graph";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object customer "Customer node" {
-        kind: graph_node;
+    graph_node customer "Customer node" {
         fields {
-            field customer_id;
-            field name;
+            customer_id;
+            name;
         }
     }
-    object purchased "PURCHASED edge" {
-        kind: graph_edge;
+    graph_edge purchased "PURCHASED edge" {
         fields {
-            field purchased_at;
-            field quantity;
+            purchased_at;
+            quantity;
         }
     }
-    object product "Product node" {
-        kind: graph_node;
+    graph_node product "Product node" {
         fields {
-            field sku;
-            field title;
+            sku;
+            title;
         }
     }
-    relation r_source "source node type" @customer -> @purchased { kind: assoc; }
-    relation r_target "target node type" @purchased -> @product { kind: assoc; }
+    assoc r_source "source node type" @customer -> @purchased;
+    assoc r_target "target node type" @purchased -> @product;
 }

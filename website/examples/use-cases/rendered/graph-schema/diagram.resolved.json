@@ -184,8 +184,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/graph.ddn",
-            "start": 239,
-            "end": 257
+            "start": 217,
+            "end": 229
           }
         },
         {
@@ -198,8 +198,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/graph.ddn",
-            "start": 270,
-            "end": 281
+            "start": 242,
+            "end": 247
           }
         }
       ],
@@ -207,7 +207,7 @@
       "source": {
         "file": "use-cases/data/graph.ddn",
         "start": 150,
-        "end": 297
+        "end": 263
       }
     },
     {
@@ -232,8 +232,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/graph.ddn",
-            "start": 393,
-            "end": 412
+            "start": 337,
+            "end": 350
           }
         },
         {
@@ -246,16 +246,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/graph.ddn",
-            "start": 425,
-            "end": 440
+            "start": 363,
+            "end": 372
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/graph.ddn",
-        "start": 302,
-        "end": 456
+        "start": 268,
+        "end": 388
       }
     },
     {
@@ -280,8 +280,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/graph.ddn",
-            "start": 548,
-            "end": 558
+            "start": 458,
+            "end": 462
           }
         },
         {
@@ -294,16 +294,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/graph.ddn",
-            "start": 571,
-            "end": 583
+            "start": 475,
+            "end": 481
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/graph.ddn",
-        "start": 461,
-        "end": 599
+        "start": 393,
+        "end": 497
       }
     }
   ],
@@ -325,8 +325,8 @@
       },
       "source": {
         "file": "use-cases/data/graph.ddn",
-        "start": 604,
-        "end": 681
+        "start": 502,
+        "end": 560
       }
     },
     {
@@ -346,8 +346,8 @@
       },
       "source": {
         "file": "use-cases/data/graph.ddn",
-        "start": 686,
-        "end": 762
+        "start": 565,
+        "end": 622
       }
     }
   ],

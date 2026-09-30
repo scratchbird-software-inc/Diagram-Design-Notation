@@ -9,9 +9,9 @@ module "ddn.examples.communication";
 // 2.1. audit_log is a self-message on checkout.
 // All data is synthetic. This is profile-level coverage, not UML conformance.
 data flow {
-    object customer_app "Customer app" { kind: "application"; }
-    object checkout "Checkout" { kind: "service"; }
-    object inventory "Inventory" { kind: "service"; }
+    application customer_app "Customer app";
+    service checkout "Checkout";
+    service inventory "Inventory";
     relation submit_order "Submit order" @customer_app -> @checkout { kind: "uml.message"; x_message: { seq: "1"; }; }
     relation reserve_stock "Reserve stock" @checkout -> @inventory { kind: "uml.message"; x_message: { seq: "2"; }; }
     relation reserve_stock_reply "Stock reserved" @inventory -> @checkout { kind: "uml.message"; x_return: true; x_message: { seq: "2.1"; }; }

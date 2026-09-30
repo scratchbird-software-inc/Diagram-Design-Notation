@@ -40,27 +40,23 @@ module "ddn.usecases.migration";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object legacy "Customer / legacy" {
-        kind: table;
+    table legacy "Customer / legacy" {
         level: instance;
         maturity: deprecated;
         fields {
-            field id;
-            field full_name;
+            id;
+            full_name;
         }
     }
-    object convert "Map and reconcile" {
-        kind: activity;
-    }
-    object target "Customer / target" {
-        kind: table;
+    activity convert "Map and reconcile";
+    table target "Customer / target" {
         level: instance;
         maturity: draft;
         fields {
-            field customer_id;
-            field display_name;
+            customer_id;
+            display_name;
         }
     }
-    relation r_extract @legacy -> @convert { kind: extract; }
-    relation r_load @convert -> @target { kind: load; }
+    extract r_extract @legacy -> @convert;
+    load r_load @convert -> @target;
 }

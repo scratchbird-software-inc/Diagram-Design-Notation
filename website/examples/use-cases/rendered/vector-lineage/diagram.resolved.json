@@ -178,7 +178,7 @@
       "source": {
         "file": "use-cases/data/vectors.ddn",
         "start": 152,
-        "end": 219
+        "end": 190
       }
     },
     {
@@ -197,8 +197,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/vectors.ddn",
-        "start": 224,
-        "end": 400
+        "start": 195,
+        "end": 349
       }
     },
     {
@@ -224,8 +224,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/vectors.ddn",
-            "start": 512,
-            "end": 529
+            "start": 439,
+            "end": 450
           }
         },
         {
@@ -238,8 +238,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/vectors.ddn",
-            "start": 542,
-            "end": 558
+            "start": 463,
+            "end": 473
           }
         },
         {
@@ -252,16 +252,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/vectors.ddn",
-            "start": 571,
-            "end": 591
+            "start": 486,
+            "end": 500
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/vectors.ddn",
-        "start": 405,
-        "end": 607
+        "start": 354,
+        "end": 516
       }
     }
   ],
@@ -283,8 +283,8 @@
       },
       "source": {
         "file": "use-cases/data/vectors.ddn",
-        "start": 612,
-        "end": 670
+        "start": 521,
+        "end": 560
       }
     },
     {
@@ -304,8 +304,8 @@
       },
       "source": {
         "file": "use-cases/data/vectors.ddn",
-        "start": 675,
-        "end": 734
+        "start": 565,
+        "end": 605
       }
     }
   ],

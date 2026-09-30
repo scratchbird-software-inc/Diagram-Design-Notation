@@ -2,9 +2,9 @@ ddn "0.5";
 
 module "ddn.examples.documents";
 data model {
-    object profiles "Customer profiles" { kind: collection; fields { field customer_id; field address; field status { presence: optional; nullable: true; } } }
-    object address "Embedded address" { kind: document; fields { field street; field city; field postal_code; } }
-    object contacts "Contact array" { kind: array; fields { field kind; field value; } }
+    collection profiles "Customer profiles" {fields { customer_id; address; status { presence: optional; nullable: true; } } }
+    document address "Embedded address" {fields { street; city; postal_code; } }
+    array contacts "Contact array" {fields { kind; value; } }
     sample example "Absent is not null" { mode: synthetic; columns: [@profiles.customer_id, @profiles.status]; rows: [["C001", null], ["C002", missing]]; }
     relation nested @profiles -> @address { kind: embeds; }
     relation repeated @profiles -> @contacts { kind: embeds; }

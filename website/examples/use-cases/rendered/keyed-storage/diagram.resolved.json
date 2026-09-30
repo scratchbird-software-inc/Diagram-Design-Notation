@@ -179,7 +179,7 @@
       "source": {
         "file": "use-cases/data/keyed.ddn",
         "start": 147,
-        "end": 260
+        "end": 238
       }
     },
     {
@@ -197,8 +197,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/keyed.ddn",
-        "start": 265,
-        "end": 329
+        "start": 243,
+        "end": 278
       }
     },
     {
@@ -223,8 +223,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/keyed.ddn",
-            "start": 416,
-            "end": 430
+            "start": 343,
+            "end": 351
           }
         },
         {
@@ -237,8 +237,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/keyed.ddn",
-            "start": 443,
-            "end": 460
+            "start": 364,
+            "end": 375
           }
         },
         {
@@ -251,16 +251,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/keyed.ddn",
-            "start": 473,
-            "end": 487
+            "start": 388,
+            "end": 396
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/keyed.ddn",
-        "start": 334,
-        "end": 503
+        "start": 283,
+        "end": 412
       }
     }
   ],
@@ -282,8 +282,8 @@
       },
       "source": {
         "file": "use-cases/data/keyed.ddn",
-        "start": 508,
-        "end": 555
+        "start": 417,
+        "end": 445
       }
     },
     {
@@ -303,8 +303,8 @@
       },
       "source": {
         "file": "use-cases/data/keyed.ddn",
-        "start": 560,
-        "end": 621
+        "start": 450,
+        "end": 492
       }
     }
   ],

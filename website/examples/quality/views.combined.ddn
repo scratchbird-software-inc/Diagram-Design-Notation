@@ -261,8 +261,8 @@ format shared {
 
 module "meridian.quality.notations";
 data chen {
-    object order "Order" { kind: "entity"; fields { field order_id { x_chen:{key:true}; } field address { x_chen:{composite:true}; fields { field street; field city; } } field tags { x_chen:{multivalued:true}; } field calculated_total { x_chen:{derived:true}; } } }
-    object line "Order line" { kind: "entity"; x_chen: { "weak": true, "owner": @order }; fields { field line_no { x_chen:{partial_key:true}; } field quantity; } }
+    entity order "Order" {fields { order_id { x_chen:{key:true}; } address { x_chen:{composite:true}; fields { field street; field city; } } tags { x_chen:{multivalued:true}; } calculated_total { x_chen:{derived:true}; } } }
+    entity line "Order line" {x_chen: { "weak": true, "owner": @order }; fields { line_no { x_chen:{partial_key:true}; } quantity; } }
     relation contains "Identifies line" @order -> @line { kind: "assoc"; x_chen: { "identifying": true, "owner": @order, "weak": @line, "from": { "min": 1, "max": 1 }, "to": { "min": 0, "max": "many" } }; }
 }
 
@@ -354,12 +354,12 @@ data responsibilities {
     object inspector "Quality inspector" { kind: "analysis.role"; }
     object engineer "Process engineer" { kind: "analysis.role"; }
     object manager "Quality manager" { kind: "analysis.role"; }
-    object plant_a "Plant A" { kind: "team"; }
-    object plant_b "Plant B" { kind: "team"; }
-    object plant_c "Warehouse C" { kind: "team"; }
-    object lot "Inspection lot" { kind: "table"; fields { field id; field status; } }
-    object check "Inspection result" { kind: "table"; fields { field id; field status; } }
-    object action "Corrective action" { kind: "table"; fields { field id; field status; } }
+    team plant_a "Plant A";
+    team plant_b "Plant B";
+    team plant_c "Warehouse C";
+    table lot "Inspection lot" {fields { id; status; } }
+    table check "Inspection result" {fields { id; status; } }
+    table action "Corrective action" {fields { id; status; } }
     relation assign_inspect_inspector "Responsibility" @inspect -> @inspector { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
     relation assign_inspect_manager "Responsibility" @inspect -> @manager { kind: "analysis.assignment"; x_assignment: { "code": "A" }; }
     relation assign_contain_inspector "Responsibility" @contain -> @inspector { kind: "analysis.assignment"; x_assignment: { "code": "R" }; }
@@ -381,64 +381,64 @@ data responsibilities {
 }
 
 data defects {
-    object d0 "Dimension" { kind: "record"; x_record: { "category": "Dimension", "count": 22, "unit": "defects" }; }
-    object d1 "Surface" { kind: "record"; x_record: { "category": "Surface", "count": 12, "unit": "defects" }; }
-    object d2 "Packaging" { kind: "record"; x_record: { "category": "Packaging", "count": 6, "unit": "defects" }; }
-    object d3 "Label" { kind: "record"; x_record: { "category": "Label", "count": 4, "unit": "defects" }; }
+    record d0 "Dimension" {x_record: { "category": "Dimension", "count": 22, "unit": "defects" }; }
+    record d1 "Surface" {x_record: { "category": "Surface", "count": 12, "unit": "defects" }; }
+    record d2 "Packaging" {x_record: { "category": "Packaging", "count": 6, "unit": "defects" }; }
+    record d3 "Label" {x_record: { "category": "Label", "count": 4, "unit": "defects" }; }
 }
 
 data measurements {
-    object m0_0 "Machine A observation 1" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.82, "unit": "mm" }; }
-    object m0_1 "Machine A observation 2" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.88, "unit": "mm" }; }
-    object m0_2 "Machine A observation 3" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.95, "unit": "mm" }; }
-    object m0_3 "Machine A observation 4" { kind: "record"; x_record: { "machine": "Machine A", "value": 9.98, "unit": "mm" }; }
-    object m0_4 "Machine A observation 5" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.0, "unit": "mm" }; }
-    object m0_5 "Machine A observation 6" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.01, "unit": "mm" }; }
-    object m0_6 "Machine A observation 7" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.04, "unit": "mm" }; }
-    object m0_7 "Machine A observation 8" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.06, "unit": "mm" }; }
-    object m0_8 "Machine A observation 9" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.09, "unit": "mm" }; }
-    object m0_9 "Machine A observation 10" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.12, "unit": "mm" }; }
-    object m0_10 "Machine A observation 11" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.15, "unit": "mm" }; }
-    object m0_11 "Machine A observation 12" { kind: "record"; x_record: { "machine": "Machine A", "value": 10.18, "unit": "mm" }; }
-    object m1_0 "Machine B observation 1" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.9, "unit": "mm" }; }
-    object m1_1 "Machine B observation 2" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.94, "unit": "mm" }; }
-    object m1_2 "Machine B observation 3" { kind: "record"; x_record: { "machine": "Machine B", "value": 9.99, "unit": "mm" }; }
-    object m1_3 "Machine B observation 4" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.02, "unit": "mm" }; }
-    object m1_4 "Machine B observation 5" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.03, "unit": "mm" }; }
-    object m1_5 "Machine B observation 6" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.05, "unit": "mm" }; }
-    object m1_6 "Machine B observation 7" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.07, "unit": "mm" }; }
-    object m1_7 "Machine B observation 8" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.11, "unit": "mm" }; }
-    object m1_8 "Machine B observation 9" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.16, "unit": "mm" }; }
-    object m1_9 "Machine B observation 10" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.19, "unit": "mm" }; }
-    object m1_10 "Machine B observation 11" { kind: "record"; x_record: { "machine": "Machine B", "value": 10.24, "unit": "mm" }; }
-    object m1_11 "Machine B observation 12" { kind: "record"; x_record: { "machine": "Machine B", "value": 11.2, "unit": "mm" }; }
+    record m0_0 "Machine A observation 1" {x_record: { "machine": "Machine A", "value": 9.82, "unit": "mm" }; }
+    record m0_1 "Machine A observation 2" {x_record: { "machine": "Machine A", "value": 9.88, "unit": "mm" }; }
+    record m0_2 "Machine A observation 3" {x_record: { "machine": "Machine A", "value": 9.95, "unit": "mm" }; }
+    record m0_3 "Machine A observation 4" {x_record: { "machine": "Machine A", "value": 9.98, "unit": "mm" }; }
+    record m0_4 "Machine A observation 5" {x_record: { "machine": "Machine A", "value": 10.0, "unit": "mm" }; }
+    record m0_5 "Machine A observation 6" {x_record: { "machine": "Machine A", "value": 10.01, "unit": "mm" }; }
+    record m0_6 "Machine A observation 7" {x_record: { "machine": "Machine A", "value": 10.04, "unit": "mm" }; }
+    record m0_7 "Machine A observation 8" {x_record: { "machine": "Machine A", "value": 10.06, "unit": "mm" }; }
+    record m0_8 "Machine A observation 9" {x_record: { "machine": "Machine A", "value": 10.09, "unit": "mm" }; }
+    record m0_9 "Machine A observation 10" {x_record: { "machine": "Machine A", "value": 10.12, "unit": "mm" }; }
+    record m0_10 "Machine A observation 11" {x_record: { "machine": "Machine A", "value": 10.15, "unit": "mm" }; }
+    record m0_11 "Machine A observation 12" {x_record: { "machine": "Machine A", "value": 10.18, "unit": "mm" }; }
+    record m1_0 "Machine B observation 1" {x_record: { "machine": "Machine B", "value": 9.9, "unit": "mm" }; }
+    record m1_1 "Machine B observation 2" {x_record: { "machine": "Machine B", "value": 9.94, "unit": "mm" }; }
+    record m1_2 "Machine B observation 3" {x_record: { "machine": "Machine B", "value": 9.99, "unit": "mm" }; }
+    record m1_3 "Machine B observation 4" {x_record: { "machine": "Machine B", "value": 10.02, "unit": "mm" }; }
+    record m1_4 "Machine B observation 5" {x_record: { "machine": "Machine B", "value": 10.03, "unit": "mm" }; }
+    record m1_5 "Machine B observation 6" {x_record: { "machine": "Machine B", "value": 10.05, "unit": "mm" }; }
+    record m1_6 "Machine B observation 7" {x_record: { "machine": "Machine B", "value": 10.07, "unit": "mm" }; }
+    record m1_7 "Machine B observation 8" {x_record: { "machine": "Machine B", "value": 10.11, "unit": "mm" }; }
+    record m1_8 "Machine B observation 9" {x_record: { "machine": "Machine B", "value": 10.16, "unit": "mm" }; }
+    record m1_9 "Machine B observation 10" {x_record: { "machine": "Machine B", "value": 10.19, "unit": "mm" }; }
+    record m1_10 "Machine B observation 11" {x_record: { "machine": "Machine B", "value": 10.24, "unit": "mm" }; }
+    record m1_11 "Machine B observation 12" {x_record: { "machine": "Machine B", "value": 11.2, "unit": "mm" }; }
 }
 
 data series {
-    object s0_0 "Plant A / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Plant A", "count": 8, "unit": "defects" }; }
-    object s0_1 "Plant A / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Plant A", "count": 14, "unit": "defects" }; }
-    object s0_2 "Plant A / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Plant A", "count": 6, "unit": "defects" }; }
-    object s1_0 "Plant B / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Plant B", "count": 6, "unit": "defects" }; }
-    object s1_1 "Plant B / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Plant B", "count": 9, "unit": "defects" }; }
-    object s1_2 "Plant B / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Plant B", "count": 5, "unit": "defects" }; }
+    record s0_0 "Plant A / Incoming" {x_record: { "stage": "Incoming", "series": "Plant A", "count": 8, "unit": "defects" }; }
+    record s0_1 "Plant A / In-process" {x_record: { "stage": "In-process", "series": "Plant A", "count": 14, "unit": "defects" }; }
+    record s0_2 "Plant A / Final" {x_record: { "stage": "Final", "series": "Plant A", "count": 6, "unit": "defects" }; }
+    record s1_0 "Plant B / Incoming" {x_record: { "stage": "Incoming", "series": "Plant B", "count": 6, "unit": "defects" }; }
+    record s1_1 "Plant B / In-process" {x_record: { "stage": "In-process", "series": "Plant B", "count": 9, "unit": "defects" }; }
+    record s1_2 "Plant B / Final" {x_record: { "stage": "Final", "series": "Plant B", "count": 5, "unit": "defects" }; }
 }
 
 data targets {
-    object s0_0 "Actual / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Actual", "count": 8, "unit": "defects" }; }
-    object s0_1 "Actual / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Actual", "count": 14, "unit": "defects" }; }
-    object s0_2 "Actual / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Actual", "count": 6, "unit": "defects" }; }
-    object s1_0 "Target / Incoming" { kind: "record"; x_record: { "stage": "Incoming", "series": "Target", "count": 7, "unit": "defects" }; }
-    object s1_1 "Target / In-process" { kind: "record"; x_record: { "stage": "In-process", "series": "Target", "count": 9, "unit": "defects" }; }
-    object s1_2 "Target / Final" { kind: "record"; x_record: { "stage": "Final", "series": "Target", "count": 5, "unit": "defects" }; }
+    record s0_0 "Actual / Incoming" {x_record: { "stage": "Incoming", "series": "Actual", "count": 8, "unit": "defects" }; }
+    record s0_1 "Actual / In-process" {x_record: { "stage": "In-process", "series": "Actual", "count": 14, "unit": "defects" }; }
+    record s0_2 "Actual / Final" {x_record: { "stage": "Final", "series": "Actual", "count": 6, "unit": "defects" }; }
+    record s1_0 "Target / Incoming" {x_record: { "stage": "Incoming", "series": "Target", "count": 7, "unit": "defects" }; }
+    record s1_1 "Target / In-process" {x_record: { "stage": "In-process", "series": "Target", "count": 9, "unit": "defects" }; }
+    record s1_2 "Target / Final" {x_record: { "stage": "Final", "series": "Target", "count": 5, "unit": "defects" }; }
 }
 
 data cost {
-    object cost0 "Inspection" { kind: "record"; x_record: { "label": "Inspection", "amount": 120, "step": "delta", "unit": "CAD" }; }
-    object cost1 "Rework" { kind: "record"; x_record: { "label": "Rework", "amount": 180, "step": "delta", "unit": "CAD" }; }
-    object cost2 "Subtotal" { kind: "record"; x_record: { "label": "Subtotal", "amount": 300, "step": "subtotal", "unit": "CAD" }; }
-    object cost3 "Scrap" { kind: "record"; x_record: { "label": "Scrap", "amount": 70, "step": "delta", "unit": "CAD" }; }
-    object cost4 "Recovery" { kind: "record"; x_record: { "label": "Recovery", "amount": -40, "step": "delta", "unit": "CAD" }; }
-    object cost5 "Total" { kind: "record"; x_record: { "label": "Total", "amount": 330, "step": "total", "unit": "CAD" }; }
+    record cost0 "Inspection" {x_record: { "label": "Inspection", "amount": 120, "step": "delta", "unit": "CAD" }; }
+    record cost1 "Rework" {x_record: { "label": "Rework", "amount": 180, "step": "delta", "unit": "CAD" }; }
+    record cost2 "Subtotal" {x_record: { "label": "Subtotal", "amount": 300, "step": "subtotal", "unit": "CAD" }; }
+    record cost3 "Scrap" {x_record: { "label": "Scrap", "amount": 70, "step": "delta", "unit": "CAD" }; }
+    record cost4 "Recovery" {x_record: { "label": "Recovery", "amount": -40, "step": "delta", "unit": "CAD" }; }
+    record cost5 "Total" {x_record: { "label": "Total", "amount": 330, "step": "total", "unit": "CAD" }; }
 }
 
 data lifecycle {
@@ -468,5 +468,5 @@ data rules {
 }
 
 data notes {
-    object note "Quality review assumptions" { kind: "note"; description: "Synthetic data: scores are supplied review policy values, not ordinal arithmetic. Possible causes require investigation. The chart library is not an authoritative accounting engine."; }
+    note note "Quality review assumptions" {description: "Synthetic data: scores are supplied review policy values, not ordinal arithmetic. Possible causes require investigation. The chart library is not an authoritative accounting engine."; }
 }

@@ -5,22 +5,19 @@ import "commerce.ddn" as commerce;
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object routine "Refresh open orders" {
-        kind: procedure;
+    procedure routine "Refresh open orders" {
         description: "Definition of callable SQL code; not an observed execution.";
     }
-    object view "Open orders" {
-        kind: view;
+    view view "Open orders" {
         fields {
-            field order_id;
-            field customer_id;
+            order_id;
+            customer_id;
         }
     }
-    object index "Customer lookup" {
-        kind: index;
+    index index "Customer lookup" {
         description: "Proposed access path; engine and index method are undecided.";
     }
-    relation r_routine_view @routine -> @view { kind: depends; }
-    relation r_view_orders @view -> @commerce.tables.orders { kind: depends; }
-    relation r_index_orders @index -> @commerce.tables.orders { kind: depends; }
+    depends r_routine_view @routine -> @view;
+    depends r_view_orders @view -> @commerce.tables.orders;
+    depends r_index_orders @index -> @commerce.tables.orders;
 }

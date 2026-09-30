@@ -10,10 +10,10 @@ module "ddn.examples.iso-charts";
 // an iso:true view degrades to a visible placeholder plus DDN-E010.
 
 data capacity {
-    object web "Web tier" { kind: record; x_record: { tier: "Web", value: 420, load: 26, unit: "req/s" }; }
-    object api "API tier" { kind: record; x_record: { tier: "API", value: 610, load: 34, unit: "req/s" }; }
-    object db "Database tier" { kind: record; x_record: { tier: "Database", value: 380, load: 18, unit: "req/s" }; }
-    object cache "Cache tier" { kind: record; x_record: { tier: "Cache", value: 240, load: 12, unit: "req/s" }; }
+    record web "Web tier" {x_record: { tier: "Web", value: 420, load: 26, unit: "req/s" }; }
+    record api "API tier" {x_record: { tier: "API", value: 610, load: 34, unit: "req/s" }; }
+    record db "Database tier" {x_record: { tier: "Database", value: 380, load: 18, unit: "req/s" }; }
+    record cache "Cache tier" {x_record: { tier: "Cache", value: 240, load: 12, unit: "req/s" }; }
 }
 
 view iso_bar "Synthetic tier throughput / iso bar" {
@@ -51,14 +51,14 @@ view iso_treemap "Synthetic tier throughput / iso treemap blocks" {
 // one column per series point, each series on its own depth plane so faces never
 // z-fight. Without ddn-iso.js this view degrades exactly like the others.
 data throughput {
-    object a_q1 "Line A / Q1" { kind: record; x_record: { quarter: "Q1", line: "Line A", value: 420, unit: "req/s" }; }
-    object a_q2 "Line A / Q2" { kind: record; x_record: { quarter: "Q2", line: "Line A", value: 510, unit: "req/s" }; }
-    object a_q3 "Line A / Q3" { kind: record; x_record: { quarter: "Q3", line: "Line A", value: 460, unit: "req/s" }; }
-    object a_q4 "Line A / Q4" { kind: record; x_record: { quarter: "Q4", line: "Line A", value: 610, unit: "req/s" }; }
-    object b_q1 "Line B / Q1" { kind: record; x_record: { quarter: "Q1", line: "Line B", value: 300, unit: "req/s" }; }
-    object b_q2 "Line B / Q2" { kind: record; x_record: { quarter: "Q2", line: "Line B", value: 360, unit: "req/s" }; }
-    object b_q3 "Line B / Q3" { kind: record; x_record: { quarter: "Q3", line: "Line B", value: 330, unit: "req/s" }; }
-    object b_q4 "Line B / Q4" { kind: record; x_record: { quarter: "Q4", line: "Line B", value: 410, unit: "req/s" }; }
+    record a_q1 "Line A / Q1" {x_record: { quarter: "Q1", line: "Line A", value: 420, unit: "req/s" }; }
+    record a_q2 "Line A / Q2" {x_record: { quarter: "Q2", line: "Line A", value: 510, unit: "req/s" }; }
+    record a_q3 "Line A / Q3" {x_record: { quarter: "Q3", line: "Line A", value: 460, unit: "req/s" }; }
+    record a_q4 "Line A / Q4" {x_record: { quarter: "Q4", line: "Line A", value: 610, unit: "req/s" }; }
+    record b_q1 "Line B / Q1" {x_record: { quarter: "Q1", line: "Line B", value: 300, unit: "req/s" }; }
+    record b_q2 "Line B / Q2" {x_record: { quarter: "Q2", line: "Line B", value: 360, unit: "req/s" }; }
+    record b_q3 "Line B / Q3" {x_record: { quarter: "Q3", line: "Line B", value: 330, unit: "req/s" }; }
+    record b_q4 "Line B / Q4" {x_record: { quarter: "Q4", line: "Line B", value: 410, unit: "req/s" }; }
 }
 
 view iso_multiseries_bar "Synthetic line throughput / iso multi-series bar" {

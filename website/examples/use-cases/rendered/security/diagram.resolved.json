@@ -202,8 +202,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/security.ddn",
-            "start": 264,
-            "end": 282
+            "start": 242,
+            "end": 254
           }
         },
         {
@@ -216,8 +216,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/security.ddn",
-            "start": 295,
-            "end": 307
+            "start": 267,
+            "end": 273
           }
         }
       ],
@@ -225,7 +225,7 @@
       "source": {
         "file": "use-cases/data/security.ddn",
         "start": 153,
-        "end": 323
+        "end": 289
       }
     },
     {
@@ -243,8 +243,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/security.ddn",
-        "start": 328,
-        "end": 396
+        "start": 294,
+        "end": 333
       }
     },
     {
@@ -270,8 +270,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/security.ddn",
-            "start": 519,
-            "end": 535
+            "start": 434,
+            "end": 444
           }
         },
         {
@@ -284,16 +284,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/security.ddn",
-            "start": 548,
-            "end": 560
+            "start": 457,
+            "end": 463
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/security.ddn",
-        "start": 401,
-        "end": 576
+        "start": 338,
+        "end": 479
       }
     },
     {
@@ -311,8 +311,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/security.ddn",
-        "start": 581,
-        "end": 659
+        "start": 484,
+        "end": 533
       }
     },
     {
@@ -330,8 +330,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/security.ddn",
-        "start": 664,
-        "end": 738
+        "start": 538,
+        "end": 583
       }
     }
   ],
@@ -353,8 +353,8 @@
       },
       "source": {
         "file": "use-cases/data/security.ddn",
-        "start": 743,
-        "end": 792
+        "start": 588,
+        "end": 618
       }
     },
     {
@@ -374,8 +374,8 @@
       },
       "source": {
         "file": "use-cases/data/security.ddn",
-        "start": 797,
-        "end": 848
+        "start": 623,
+        "end": 655
       }
     }
   ],

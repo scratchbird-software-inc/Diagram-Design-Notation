@@ -11,13 +11,13 @@ data people {
     object lead_qa "F. Costa — QA lead" { kind: "analysis.role"; }
     object lead_ar "G. Lund — AR lead" { kind: "analysis.role"; }
     object lead_fleet "H. Petit — Fleet lead" { kind: "analysis.role"; }
-    relation r1 @ceo -> @vp_eng { kind: reports_to; }
-    relation r2 @ceo -> @vp_fin { kind: reports_to; }
-    relation r3 @ceo -> @vp_ops { kind: reports_to; }
-    relation r4 @vp_eng -> @lead_plat { kind: reports_to; }
-    relation r5 @vp_eng -> @lead_qa { kind: reports_to; }
-    relation r6 @vp_fin -> @lead_ar { kind: reports_to; }
-    relation r7 @vp_ops -> @lead_fleet { kind: reports_to; }
+    reports_to r1 @ceo -> @vp_eng;
+    reports_to r2 @ceo -> @vp_fin;
+    reports_to r3 @ceo -> @vp_ops;
+    reports_to r4 @vp_eng -> @lead_plat;
+    reports_to r5 @vp_eng -> @lead_qa;
+    reports_to r6 @vp_fin -> @lead_ar;
+    reports_to r7 @vp_ops -> @lead_fleet;
 }
 
 format options {

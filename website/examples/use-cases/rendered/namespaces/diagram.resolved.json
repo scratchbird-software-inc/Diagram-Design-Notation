@@ -195,8 +195,8 @@
           },
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1194,
-            "end": 1259
+            "start": 999,
+            "end": 1058
           }
         },
         {
@@ -209,8 +209,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1272,
-            "end": 1291
+            "start": 1071,
+            "end": 1084
           }
         },
         {
@@ -223,16 +223,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1304,
-            "end": 1317
+            "start": 1097,
+            "end": 1104
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 923,
-        "end": 1333
+        "start": 750,
+        "end": 1120
       }
     },
     {
@@ -266,8 +266,8 @@
           },
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1466,
-            "end": 1525
+            "start": 1231,
+            "end": 1284
           }
         },
         {
@@ -284,8 +284,8 @@
           },
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1538,
-            "end": 1589
+            "start": 1297,
+            "end": 1342
           }
         },
         {
@@ -298,16 +298,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1602,
-            "end": 1619
+            "start": 1355,
+            "end": 1366
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 1338,
-        "end": 1635
+        "start": 1125,
+        "end": 1382
       }
     },
     {
@@ -338,8 +338,8 @@
           },
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1770,
-            "end": 1801
+            "start": 1495,
+            "end": 1520
           }
         },
         {
@@ -352,8 +352,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1814,
-            "end": 1829
+            "start": 1533,
+            "end": 1542
           }
         },
         {
@@ -366,8 +366,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1842,
-            "end": 1852
+            "start": 1555,
+            "end": 1559
           }
         },
         {
@@ -380,16 +380,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/commerce.ddn",
-            "start": 1865,
-            "end": 1880
+            "start": 1572,
+            "end": 1581
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 1640,
-        "end": 1896
+        "start": 1387,
+        "end": 1597
       }
     },
     {
@@ -409,7 +409,7 @@
       "source": {
         "file": "use-cases/data/sql.ddn",
         "start": 183,
-        "end": 336
+        "end": 314
       }
     },
     {
@@ -434,8 +434,8 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/sql.ddn",
-            "start": 418,
-            "end": 433
+            "start": 374,
+            "end": 383
           }
         },
         {
@@ -448,16 +448,16 @@
           "properties": {},
           "source": {
             "file": "use-cases/data/sql.ddn",
-            "start": 446,
-            "end": 464
+            "start": 396,
+            "end": 408
           }
         }
       ],
       "ports": [],
       "source": {
         "file": "use-cases/data/sql.ddn",
-        "start": 341,
-        "end": 480
+        "start": 319,
+        "end": 424
       }
     },
     {
@@ -476,8 +476,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/sql.ddn",
-        "start": 485,
-        "end": 629
+        "start": 429,
+        "end": 551
       }
     },
     {
@@ -496,7 +496,7 @@
       "source": {
         "file": "use-cases/data/namespace.ddn",
         "start": 214,
-        "end": 272
+        "end": 243
       }
     },
     {
@@ -518,8 +518,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 574,
-        "end": 738
+        "start": 401,
+        "end": 565
       }
     },
     {
@@ -541,8 +541,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 743,
-        "end": 901
+        "start": 570,
+        "end": 728
       }
     }
   ],
@@ -573,8 +573,8 @@
       },
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 1901,
-        "end": 2033
+        "start": 1602,
+        "end": 1706
       }
     },
     {
@@ -603,8 +603,8 @@
       },
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 2038,
-        "end": 2188
+        "start": 1711,
+        "end": 1833
       }
     },
     {
@@ -624,8 +624,8 @@
       },
       "source": {
         "file": "use-cases/data/sql.ddn",
-        "start": 634,
-        "end": 694
+        "start": 556,
+        "end": 597
       }
     },
     {
@@ -645,8 +645,8 @@
       },
       "source": {
         "file": "use-cases/data/sql.ddn",
-        "start": 699,
-        "end": 773
+        "start": 602,
+        "end": 657
       }
     },
     {
@@ -666,8 +666,8 @@
       },
       "source": {
         "file": "use-cases/data/sql.ddn",
-        "start": 778,
-        "end": 854
+        "start": 662,
+        "end": 719
       }
     },
     {
@@ -687,8 +687,8 @@
       },
       "source": {
         "file": "use-cases/data/namespace.ddn",
-        "start": 277,
-        "end": 357
+        "start": 248,
+        "end": 309
       }
     },
     {
@@ -708,8 +708,8 @@
       },
       "source": {
         "file": "use-cases/data/namespace.ddn",
-        "start": 362,
-        "end": 438
+        "start": 314,
+        "end": 371
       }
     },
     {
@@ -729,8 +729,8 @@
       },
       "source": {
         "file": "use-cases/data/namespace.ddn",
-        "start": 443,
-        "end": 513
+        "start": 376,
+        "end": 427
       }
     }
   ],

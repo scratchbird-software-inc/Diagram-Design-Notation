@@ -11,31 +11,31 @@ module "ddn.examples.object";
 data model {
     object customer "Customer" { kind: "uml.class";
         fields {
-            field customer_id { datatype: "string"; }
-            field name { datatype: "string"; }
+            customer_id { datatype: "string"; }
+            name { datatype: "string"; }
         }
     }
     object order "Order" { kind: "uml.class";
         fields {
-            field order_id { datatype: "string"; }
-            field total { datatype: "number"; }
+            order_id { datatype: "string"; }
+            total { datatype: "number"; }
         }
     }
-    object sample_customer "sample_customer : Customer" {
-        kind: record; x_instance: { classifier: @model.customer; };
+    record sample_customer "sample_customer : Customer" {
+x_instance: { classifier: @model.customer; };
         fields {
-            field customer_id "C-1001";
-            field name "Ada Example";
+            customer_id "C-1001";
+            name "Ada Example";
         }
     }
-    object sample_order "sample_order : Order" {
-        kind: record; x_instance: { classifier: @model.order; };
+    record sample_order "sample_order : Order" {
+x_instance: { classifier: @model.order; };
         fields {
-            field order_id "O-4711";
-            field total "129.50";
+            order_id "O-4711";
+            total "129.50";
         }
     }
-    relation placed "Placed" @sample_customer -> @sample_order { kind: assoc; }
+    assoc placed "Placed" @sample_customer -> @sample_order;
 }
 
 view objects "Synthetic snapshot / objects" {

@@ -6,14 +6,14 @@ module "ddn.gallery.looks";
 // (default, neutral, dark, night, forest, base).
 data model {
     object customer "Customer" { kind: actor; }
-    object storefront "Online storefront" { kind: application; }
-    object orders "Order service" { kind: application; }
-    object ledger "Sales ledger" { kind: table; fields { field order_id; field amount; } }
+    application storefront "Online storefront";
+    application orders "Order service";
+    table ledger "Sales ledger" {fields { order_id; amount; } }
     object warehouse "Warehouse dispatch" { kind: process; }
-    relation places @customer -> @storefront { kind: assoc; }
-    relation confirms @storefront -> @orders { kind: assoc; }
-    relation posts @orders -> @ledger { kind: assoc; }
-    relation ships @orders -> @warehouse { kind: assoc; }
+    assoc places @customer -> @storefront;
+    assoc confirms @storefront -> @orders;
+    assoc posts @orders -> @ledger;
+    assoc ships @orders -> @warehouse;
 }
 
 format gallery {

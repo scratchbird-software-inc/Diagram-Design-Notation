@@ -13,15 +13,15 @@ module "ddn.examples.networkdiagram";
 data m {
     object office_bus "Office bus" { kind: "network.bus"; }
     object core_switch "Core switch" { kind: "network.switch";
-        ports { port wan { direction: in; } }
+        ports { wan { direction: in; } }
     }
     object file_server "File server" { kind: "network.server"; x_rack: { unit: 1 };
-        ports { port eth0 { direction: out; } }
+        ports { eth0 { direction: out; } }
     }
     object app_server "App server" { kind: "network.server"; x_rack: { unit: 3 };
-        ports { port eth0 { direction: out; } }
+        ports { eth0 { direction: out; } }
     }
-    object uplink "Uplink router" { kind: "router"; }
+    router uplink "Uplink router";
     object rack_a "Rack A" { kind: "network.rack"; x_rack: { units: 4 }; }
 
     relation attach_switch "attaches to" @core_switch -> @office_bus { kind: "network.attaches"; }

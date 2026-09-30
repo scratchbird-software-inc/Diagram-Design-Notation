@@ -178,7 +178,7 @@
       "source": {
         "file": "use-cases/data/governance.ddn",
         "start": 155,
-        "end": 229
+        "end": 200
       }
     },
     {
@@ -196,8 +196,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/governance.ddn",
-        "start": 234,
-        "end": 303
+        "start": 205,
+        "end": 245
       }
     },
     {
@@ -215,8 +215,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/governance.ddn",
-        "start": 308,
-        "end": 368
+        "start": 250,
+        "end": 281
       }
     }
   ],
@@ -238,8 +238,8 @@
       },
       "source": {
         "file": "use-cases/data/governance.ddn",
-        "start": 373,
-        "end": 434
+        "start": 286,
+        "end": 328
       }
     },
     {
@@ -260,8 +260,8 @@
       },
       "source": {
         "file": "use-cases/data/governance.ddn",
-        "start": 439,
-        "end": 524
+        "start": 333,
+        "end": 414
       }
     }
   ],

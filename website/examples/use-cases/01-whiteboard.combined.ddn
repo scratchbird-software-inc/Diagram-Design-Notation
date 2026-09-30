@@ -49,6 +49,6 @@ data model {
     object shipment "Shipment" {
         kind: object;
     }
-    relation r_a "places" @customer -> @order { kind: assoc; }
-    relation r_b "fulfilled by" @order -> @shipment { kind: assoc; }
+    assoc r_a "places" @customer -> @order;
+    assoc r_b "fulfilled by" @order -> @shipment;
 }

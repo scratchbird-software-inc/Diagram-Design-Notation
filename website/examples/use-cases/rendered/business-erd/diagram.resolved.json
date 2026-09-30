@@ -178,7 +178,7 @@
       "source": {
         "file": "use-cases/data/commerce.ddn",
         "start": 156,
-        "end": 212
+        "end": 183
       }
     },
     {
@@ -196,8 +196,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 217,
-        "end": 267
+        "start": 188,
+        "end": 209
       }
     },
     {
@@ -215,8 +215,8 @@
       "ports": [],
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 272,
-        "end": 328
+        "start": 214,
+        "end": 241
       }
     }
   ],
@@ -240,8 +240,8 @@
       },
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 333,
-        "end": 437
+        "start": 246,
+        "end": 307
       }
     },
     {
@@ -263,8 +263,8 @@
       },
       "source": {
         "file": "use-cases/data/commerce.ddn",
-        "start": 442,
-        "end": 551
+        "start": 312,
+        "end": 378
       }
     }
   ],

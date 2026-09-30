@@ -42,31 +42,23 @@ module "ddn.usecases.security";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object source "Contact records" {
-        kind: dataset;
+    dataset source "Contact records" {
         level: instance;
         fields {
-            field customer_id;
-            field email;
+            customer_id;
+            email;
         }
     }
-    object mask "Aggregate + remove IDs" {
-        kind: activity;
-    }
-    object export "Proposed cohort export" {
-        kind: dataset;
+    activity mask "Aggregate + remove IDs";
+    dataset export "Proposed cohort export" {
         level: instance;
         fields {
-            field cohort_id;
-            field count;
+            cohort_id;
+            count;
         }
     }
-    object restricted "Restricted processing" {
-        kind: security_zone;
-    }
-    object egress "Review before release" {
-        kind: security_zone;
-    }
-    relation r_input @source -> @mask { kind: read; }
-    relation r_output @mask -> @export { kind: write; }
+    security_zone restricted "Restricted processing";
+    security_zone egress "Review before release";
+    read r_input @source -> @mask;
+    write r_output @mask -> @export;
 }

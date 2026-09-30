@@ -37,26 +37,24 @@ view embedded "Customer data / minimal chrome for embedding" {
 
 module "ddn.examples.customer-data";
 data model {
-    object customer "Customer" {
+    table customer "Customer" {
         uid: "urn:ddn:example:customer";
-        kind: table;
         maturity: draft;
         workload: [oltp];
         role: authoritative;
         fields {
-            field customer_id { key: primary; domain: @customer_identifier; }
-            field display_name;
-            field status;
+            customer_id { key: primary; domain: @customer_identifier; }
+            display_name;
+            status;
         }
     }
-    object order "Order" {
-        kind: table;
+    table order "Order" {
         maturity: draft;
         workload: [oltp];
         fields {
-            field order_id { key: primary; }
-            field customer_id { domain: @customer_identifier; }
-            field ordered_at;
+            order_id { key: primary; }
+            customer_id { domain: @customer_identifier; }
+            ordered_at;
         }
     }
     domain customer_identifier "Customer identifier" {

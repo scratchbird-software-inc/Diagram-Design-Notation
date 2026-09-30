@@ -3,24 +3,24 @@ ddn "0.5";
 module "ddn.examples.canvas-pack-a";
 // Synthetic coffee-cart business (all data invented) for the canvas.bmc@1 and canvas.lean@1 profiles.
 data canvas {
-    object bmc_kp "Key partners" { kind: note; description: "Synthetic: the bean roaster cooperative and the cart maintenance contractor."; }
-    object bmc_ka "Key activities" { kind: note; description: "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."; }
-    object bmc_kr "Key resources" { kind: note; description: "Synthetic: the cart, the espresso machine, and the two trained baristas."; }
-    object bmc_vp "Value propositions" { kind: note; description: "Synthetic: a fast specialty coffee at the commuter corner before the first train."; }
-    object bmc_cr "Customer relationships" { kind: note; description: "Synthetic: remembered orders and a stamp-card loyalty scheme."; }
-    object bmc_ch "Channels" { kind: note; description: "Synthetic: the physical cart plus pre-orders through a simple chat channel."; }
-    object bmc_cs "Customer segments" { kind: note; description: "Synthetic: morning commuters and nearby office workers on breaks."; }
-    object bmc_cost "Cost structure" { kind: note; description: "Synthetic: beans and milk, pitch rent, machine servicing, and wages."; }
-    object bmc_rev "Revenue streams" { kind: note; description: "Synthetic: per-cup sales and pre-paid weekly commuter bundles."; }
-    object lean_problem "Problem" { kind: note; description: "Synthetic: commuters queue too long at the station kiosk and miss their train."; }
-    object lean_solution "Solution" { kind: note; description: "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."; }
-    object lean_keymetrics "Key metrics" { kind: note; description: "Synthetic: cups served per morning hour and pre-order pickup rate."; }
-    object lean_uvp "Unique value proposition" { kind: note; description: "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."; }
-    object lean_unfair "Unfair advantage" { kind: note; description: "Synthetic: an exclusive pitch licence for the busiest commuter corner."; }
-    object lean_channels "Channels" { kind: note; description: "Synthetic: the cart itself and the pre-order chat channel."; }
-    object lean_segments "Customer segments" { kind: note; description: "Synthetic: daily commuters and nearby office workers."; }
-    object lean_cost "Cost structure" { kind: note; description: "Synthetic: supplies, pitch licence, servicing, and staffing."; }
-    object lean_revenue "Revenue streams" { kind: note; description: "Synthetic: walk-up sales and weekly subscription bundles."; }
+    note bmc_kp "Key partners" {description: "Synthetic: the bean roaster cooperative and the cart maintenance contractor."; }
+    note bmc_ka "Key activities" {description: "Synthetic: brewing and serving drinks, daily cart setup, and stock ordering."; }
+    note bmc_kr "Key resources" {description: "Synthetic: the cart, the espresso machine, and the two trained baristas."; }
+    note bmc_vp "Value propositions" {description: "Synthetic: a fast specialty coffee at the commuter corner before the first train."; }
+    note bmc_cr "Customer relationships" {description: "Synthetic: remembered orders and a stamp-card loyalty scheme."; }
+    note bmc_ch "Channels" {description: "Synthetic: the physical cart plus pre-orders through a simple chat channel."; }
+    note bmc_cs "Customer segments" {description: "Synthetic: morning commuters and nearby office workers on breaks."; }
+    note bmc_cost "Cost structure" {description: "Synthetic: beans and milk, pitch rent, machine servicing, and wages."; }
+    note bmc_rev "Revenue streams" {description: "Synthetic: per-cup sales and pre-paid weekly commuter bundles."; }
+    note lean_problem "Problem" {description: "Synthetic: commuters queue too long at the station kiosk and miss their train."; }
+    note lean_solution "Solution" {description: "Synthetic: a compact cart with pre-order pickup that serves a coffee in under a minute."; }
+    note lean_keymetrics "Key metrics" {description: "Synthetic: cups served per morning hour and pre-order pickup rate."; }
+    note lean_uvp "Unique value proposition" {description: "Synthetic: specialty coffee faster than the station kiosk, right on the platform path."; }
+    note lean_unfair "Unfair advantage" {description: "Synthetic: an exclusive pitch licence for the busiest commuter corner."; }
+    note lean_channels "Channels" {description: "Synthetic: the cart itself and the pre-order chat channel."; }
+    note lean_segments "Customer segments" {description: "Synthetic: daily commuters and nearby office workers."; }
+    note lean_cost "Cost structure" {description: "Synthetic: supplies, pitch licence, servicing, and staffing."; }
+    note lean_revenue "Revenue streams" {description: "Synthetic: walk-up sales and weekly subscription bundles."; }
 }
 
 view bmc "Coffee cart / business model canvas" {

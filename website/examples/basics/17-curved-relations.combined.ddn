@@ -3,47 +3,47 @@ ddn "0.5";
 module "ddn.examples.curved-relations";
 // One semantic graph, several independent routing and drawing choices.
 data capabilities {
- object enterprise "Meridian Works" { kind: context; }
- object finance "Accounting" { kind: application; }
- object inventory "Inventory control" { kind: application; }
- object production "Production control" { kind: application; }
- object logistics "Logistics" { kind: application; }
- object workforce "Human resources" { kind: application; }
- object journals "Journals and periods" { kind: dataset; }
- object lots "Lots and reservations" { kind: dataset; }
- object work_orders "Work orders and WIP" { kind: dataset; }
- object shipments "Loads and delivery" { kind: dataset; }
- object employment "Employment and payroll" { kind: dataset; }
- relation f01 @enterprise -> @finance { kind: assoc; }
- relation f02 @enterprise -> @inventory { kind: assoc; }
- relation f03 @enterprise -> @production { kind: assoc; }
- relation f04 @enterprise -> @logistics { kind: assoc; }
- relation f05 @enterprise -> @workforce { kind: assoc; }
- relation f06 @finance -> @journals { kind: assoc; }
- relation f07 @inventory -> @lots { kind: assoc; }
- relation f08 @production -> @work_orders { kind: assoc; }
- relation f09 @logistics -> @shipments { kind: assoc; }
- relation f10 @workforce -> @employment { kind: assoc; }
+ context enterprise "Meridian Works";
+ application finance "Accounting";
+ application inventory "Inventory control";
+ application production "Production control";
+ application logistics "Logistics";
+ application workforce "Human resources";
+ dataset journals "Journals and periods";
+ dataset lots "Lots and reservations";
+ dataset work_orders "Work orders and WIP";
+ dataset shipments "Loads and delivery";
+ dataset employment "Employment and payroll";
+ assoc f01 @enterprise -> @finance;
+ assoc f02 @enterprise -> @inventory;
+ assoc f03 @enterprise -> @production;
+ assoc f04 @enterprise -> @logistics;
+ assoc f05 @enterprise -> @workforce;
+ assoc f06 @finance -> @journals;
+ assoc f07 @inventory -> @lots;
+ assoc f08 @production -> @work_orders;
+ assoc f09 @logistics -> @shipments;
+ assoc f10 @workforce -> @employment;
 }
 data exchange {
- object client "Client" { kind: application; }
- object manager "Connection manager" { kind: application; }
+ application client "Client";
+ application manager "Connection manager";
  relation request "Connection request" @client -> @manager { kind: flow; }
  relation response "Authentication prompt" @manager -> @client { kind: flow; }
- relation verify "Validate negotiated settings" @manager -> @manager { kind: invoke; }
+ invoke verify "Validate negotiated settings" @manager -> @manager;
 }
 data crossing {
- object a "Orders source" { kind: dataset; }
- object b "Stock source" { kind: dataset; }
- object c "Stock projection" { kind: dataset; }
- object d "Orders projection" { kind: dataset; }
+ dataset a "Orders source";
+ dataset b "Stock source";
+ dataset c "Stock projection";
+ dataset d "Orders projection";
  relation orders "Order projection input" @a -> @d { kind: flow; }
- relation stock "Stock projection input" @b -> @c { kind: derives; }
+ derives stock "Stock projection input" @b -> @c;
 }
 data obstruction {
- object source "Upstream" { kind: dataset; }
- object unrelated "Unrelated database" { kind: database; }
- object target "Downstream" { kind: dataset; }
+ dataset source "Upstream";
+ database unrelated "Unrelated database";
+ dataset target "Downstream";
  relation deliver "Route around unrelated storage" @source -> @target { kind: flow; }
 }
 format options {

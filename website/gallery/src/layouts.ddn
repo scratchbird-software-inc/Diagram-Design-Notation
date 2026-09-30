@@ -6,17 +6,17 @@ module "ddn.gallery.layouts";
 // tree/mindmap/grouped/ladder plus the pattern-based fit_grid/circular/
 // radial/spanning_tree/organic).
 data model {
-    object holding "Meridian Holdings" { kind: context; role: group; }
-    object energy "Meridian Energy" { kind: application; role: core; }
-    object freight "Meridian Freight" { kind: application; role: core; }
-    object media "Meridian Media" { kind: application; role: support; }
+    context holding "Meridian Holdings" {role: group; }
+    application energy "Meridian Energy" {role: core; }
+    application freight "Meridian Freight" {role: core; }
+    application media "Meridian Media" {role: support; }
     object wind "Wind operations" { kind: process; role: core; }
     object solar "Solar operations" { kind: process; role: core; }
-    relation own_e @holding -> @energy { kind: assoc; }
-    relation own_f @holding -> @freight { kind: assoc; }
-    relation own_m @holding -> @media { kind: assoc; }
-    relation split_w @energy -> @wind { kind: assoc; }
-    relation split_s @energy -> @solar { kind: assoc; }
+    assoc own_e @holding -> @energy;
+    assoc own_f @holding -> @freight;
+    assoc own_m @holding -> @media;
+    assoc split_w @energy -> @wind;
+    assoc split_s @energy -> @solar;
 }
 
 format gallery {

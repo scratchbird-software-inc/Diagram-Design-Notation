@@ -41,45 +41,40 @@ module "ddn.usecases.warehouse";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object fact "Order line fact" {
-        kind: fact;
+    fact fact "Order line fact" {
         workload: [olap];
         description: "Grain: one row per order line.";
         fields {
-            field order_id;
-            field line_id;
-            field customer_key;
-            field product_key;
-            field date_key;
-            field net_amount;
+            order_id;
+            line_id;
+            customer_key;
+            product_key;
+            date_key;
+            net_amount;
         }
     }
-    object customer "Customer dimension" {
-        kind: dimension;
+    dimension customer "Customer dimension" {
         fields {
-            field customer_key;
-            field display_name;
+            customer_key;
+            display_name;
         }
     }
-    object product "Product dimension" {
-        kind: dimension;
+    dimension product "Product dimension" {
         fields {
-            field product_key;
-            field product_name;
+            product_key;
+            product_name;
         }
     }
-    object date "Date dimension" {
-        kind: dimension;
+    dimension date "Date dimension" {
         fields {
-            field date_key;
-            field calendar_date;
+            date_key;
+            calendar_date;
         }
     }
-    object grain "Declare the grain" {
-        kind: note;
+    note grain "Declare the grain" {
         description: "One fact row per order line. Order totals must not be repeated as additive line measures.";
     }
-    relation r_c @fact.customer_key -> @customer.customer_key { kind: ref; source_mark: zeromany; target_mark: one; }
-    relation r_p @fact.product_key -> @product.product_key { kind: ref; source_mark: zeromany; target_mark: one; }
-    relation r_d @fact.date_key -> @date.date_key { kind: ref; source_mark: zeromany; target_mark: one; }
+    ref r_c @fact.customer_key [zeromany] -> @customer.customer_key [one];
+    ref r_p @fact.product_key [zeromany] -> @product.product_key [one];
+    ref r_d @fact.date_key [zeromany] -> @date.date_key [one];
 }

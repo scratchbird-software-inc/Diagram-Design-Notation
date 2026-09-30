@@ -241,7 +241,7 @@
       "source": {
         "file": "use-cases/data/sketch.ddn",
         "start": 328,
-        "end": 386
+        "end": 367
       }
     },
     {
@@ -261,8 +261,8 @@
       },
       "source": {
         "file": "use-cases/data/sketch.ddn",
-        "start": 391,
-        "end": 455
+        "start": 372,
+        "end": 417
       }
     }
   ],

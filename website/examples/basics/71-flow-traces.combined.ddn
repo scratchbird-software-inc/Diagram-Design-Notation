@@ -7,11 +7,11 @@ module "ddn.examples.flow-trace";
 // tool's Animation drawer steps a selected flow exactly one hop at a time.
 // Two flows over one model demonstrate the flow selector.
 data shop {
-    object client "Storefront" { kind: application; }
-    object cart "Cart service" { kind: service; }
-    object payment "Payment gateway" { kind: service; }
-    object orders "Order store" { kind: table; fields { field order_id; field total; } }
-    object warehouse "Warehouse" { kind: activity; }
+    application client "Storefront";
+    service cart "Cart service";
+    service payment "Payment gateway";
+    table orders "Order store" {fields { order_id; total; } }
+    activity warehouse "Warehouse";
     relation checkout "Checkout" @client -> @cart { kind: flow; }
     relation charge "Charge card" @cart -> @payment { kind: flow; }
     relation persist "Persist order" @cart -> @orders { kind: flow; }

@@ -4,11 +4,10 @@ module "ddn.usecases.quality";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object shape "Status record" {
-        kind: record;
+    record shape "Status record" {
         fields {
-            field customer_id;
-            field status { presence: required; nullable: false; }
+            customer_id;
+            status { presence: required; nullable: false; }
         }
     }
     sample input "Input / intentional invalid value" {
@@ -17,8 +16,7 @@ data model {
         columns: [@shape.customer_id, @shape.status];
         rows: [["C001", "Active"], ["C002", null]];
     }
-    object check "Reject null status" {
-        kind: activity;
+    activity check "Reject null status" {
         description: "A documented expectation; this diagram renderer does not execute the validation.";
     }
     sample expected "Expected accepted rows" {
@@ -27,6 +25,6 @@ data model {
         columns: [@shape.customer_id, @shape.status];
         rows: [["C001", "Active"]];
     }
-    relation r_input @input -> @check { kind: read; }
-    relation r_result "expected accepted output" @check -> @expected { kind: write; }
+    read r_input @input -> @check;
+    write r_result "expected accepted output" @check -> @expected;
 }

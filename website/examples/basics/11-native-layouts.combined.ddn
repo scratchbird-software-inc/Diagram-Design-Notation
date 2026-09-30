@@ -2,17 +2,17 @@ ddn "0.5";
 
 module "ddn.examples.native-layouts";
 data model {
- object enterprise "Meridian Works" { kind: context; role: authoritative; }
- object finance "Finance" { kind: application; role: authoritative; }
- object plant "Plant operations" { kind: application; role: authoritative; }
- object journal "Posted journals" { kind: table; role: authoritative; fields { field journal_id; field period_id; } }
- object stock "Stock movements" { kind: table; role: authoritative; fields { field movement_id; field lot_id; } }
- object analytics "Warehouse projection" { kind: dataset; role: derived; }
- relation f1 @enterprise -> @finance { kind: assoc; }
- relation f2 @enterprise -> @plant { kind: assoc; }
- relation f3 @finance -> @journal { kind: assoc; }
- relation f4 @plant -> @stock { kind: assoc; }
- relation f5 @plant -> @analytics { kind: assoc; }
+ context enterprise "Meridian Works" {role: authoritative; }
+ application finance "Finance" {role: authoritative; }
+ application plant "Plant operations" {role: authoritative; }
+ table journal "Posted journals" {role: authoritative; fields { journal_id; period_id; } }
+ table stock "Stock movements" {role: authoritative; fields { movement_id; lot_id; } }
+ dataset analytics "Warehouse projection" {role: derived; }
+ assoc f1 @enterprise -> @finance;
+ assoc f2 @enterprise -> @plant;
+ assoc f3 @finance -> @journal;
+ assoc f4 @plant -> @stock;
+ assoc f5 @plant -> @analytics;
 }
 format options {
  layout grid { algorithm: grid; columns: 3; }

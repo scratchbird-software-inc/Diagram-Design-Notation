@@ -6,30 +6,28 @@ module "ddn.fieldguide.shards";
 // its replicas placed in the other two. The diagram is the placement claim:
 // which copy lives where, and which copy leads.
 data cluster {
-    object zone_a "Zone A" { kind: "zone"; description: "Synthetic failure zone A."; }
-    object zone_b "Zone B" { kind: "zone"; description: "Synthetic failure zone B."; }
-    object zone_c "Zone C" { kind: "zone"; description: "Synthetic failure zone C."; }
-    object shard1 "Shard 1 (hash 0-33%)" { kind: "shard"; description: "Synthetic first key range; leader in zone A."; }
-    object shard2 "Shard 2 (hash 34-66%)" { kind: "shard"; description: "Synthetic second key range; leader in zone B."; }
-    object shard3 "Shard 3 (hash 67-100%)" { kind: "shard"; description: "Synthetic third key range; leader in zone C."; }
-    object router "Query router" { kind: "application"; description: "Synthetic router: maps key to shard, reads from replicas."; }
-    relation lead1 "leads in" @shard1 -> @zone_a { kind: "assoc"; }
-    relation lead2 "leads in" @shard2 -> @zone_b { kind: "assoc"; }
-    relation lead3 "leads in" @shard3 -> @zone_c { kind: "assoc"; }
-    relation repl1b "replica" @shard1 -> @zone_b { kind: "assoc"; }
-    relation repl1c "replica" @shard1 -> @zone_c { kind: "assoc"; }
-    relation repl2a "replica" @shard2 -> @zone_a { kind: "assoc"; }
-    relation repl2c "replica" @shard2 -> @zone_c { kind: "assoc"; }
-    relation repl3a "replica" @shard3 -> @zone_a { kind: "assoc"; }
-    relation repl3b "replica" @shard3 -> @zone_b { kind: "assoc"; }
+    zone zone_a "Zone A" {description: "Synthetic failure zone A."; }
+    zone zone_b "Zone B" {description: "Synthetic failure zone B."; }
+    zone zone_c "Zone C" {description: "Synthetic failure zone C."; }
+    shard shard1 "Shard 1 (hash 0-33%)" {description: "Synthetic first key range; leader in zone A."; }
+    shard shard2 "Shard 2 (hash 34-66%)" {description: "Synthetic second key range; leader in zone B."; }
+    shard shard3 "Shard 3 (hash 67-100%)" {description: "Synthetic third key range; leader in zone C."; }
+    application router "Query router" {description: "Synthetic router: maps key to shard, reads from replicas."; }
+    assoc lead1 "leads in" @shard1 -> @zone_a;
+    assoc lead2 "leads in" @shard2 -> @zone_b;
+    assoc lead3 "leads in" @shard3 -> @zone_c;
+    assoc repl1b "replica" @shard1 -> @zone_b;
+    assoc repl1c "replica" @shard1 -> @zone_c;
+    assoc repl2a "replica" @shard2 -> @zone_a;
+    assoc repl2c "replica" @shard2 -> @zone_c;
+    assoc repl3a "replica" @shard3 -> @zone_a;
+    assoc repl3b "replica" @shard3 -> @zone_b;
     relation route1 "routes" @router -> @shard1 { kind: "flow"; }
     relation route2 "routes" @router -> @shard2 { kind: "flow"; }
     relation route3 "routes" @router -> @shard3 { kind: "flow"; }
 }
 
-view diagram "Synthetic shards and replicas / placement" {
-    data: [@cluster];
-    projection { profile: "ddn@1"; }
+view diagram "Synthetic shards and replicas / placement": [@cluster] as "ddn@1" {
     layout { algorithm: layered; direction: right; }
     publication { size: content; fit: none; }
 }

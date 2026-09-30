@@ -8,18 +8,18 @@ data ideas {
     object onboarding "Onboarding" { kind: object; }
     object risks "Risks" { kind: object; }
     object marketing "Marketing" { kind: object; }
-    object tiers "Usage tiers" { kind: term; }
-    object discount "Annual discount" { kind: term; }
-    object tour "Sample data tour" { kind: term; }
-    object creep "Scope creep" { kind: term; }
-    relation r1 @root -> @pricing { kind: assoc; }
-    relation r2 @root -> @onboarding { kind: assoc; }
-    relation r3 @root -> @risks { kind: assoc; }
-    relation r4 @root -> @marketing { kind: assoc; }
-    relation r5 @pricing -> @tiers { kind: assoc; }
-    relation r6 @pricing -> @discount { kind: assoc; }
-    relation r7 @onboarding -> @tour { kind: assoc; }
-    relation r8 @risks -> @creep { kind: assoc; }
+    term tiers "Usage tiers";
+    term discount "Annual discount";
+    term tour "Sample data tour";
+    term creep "Scope creep";
+    assoc r1 @root -> @pricing;
+    assoc r2 @root -> @onboarding;
+    assoc r3 @root -> @risks;
+    assoc r4 @root -> @marketing;
+    assoc r5 @pricing -> @tiers;
+    assoc r6 @pricing -> @discount;
+    assoc r7 @onboarding -> @tour;
+    assoc r8 @risks -> @creep;
 }
 
 format options {

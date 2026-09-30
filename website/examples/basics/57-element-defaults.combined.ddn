@@ -6,8 +6,8 @@ module "ddn.examples.element-defaults";
 // renders with exactly those defaults implicit; an explicit property always
 // wins over the registry default. `cache` defaults to role: "cache".
 data model {
-    object bare "Bare cache (registry default role)" { kind: cache; }
-    object explicit "Explicit override wins" { kind: cache; role: primary; description: "role is stated in source, overriding the registry default role: cache."; }
+    cache bare "Bare cache (registry default role)";
+    cache explicit "Explicit override wins" {role: primary; description: "role is stated in source, overriding the registry default role: cache."; }
 }
 
 view defaults "Element defaults / bare versus explicit" {

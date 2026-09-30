@@ -2,10 +2,10 @@ ddn "0.5";
 
 module "ddn.examples.routing";
 data model {
-    object west "West source" { kind: dataset; }
-    object east "East target" { kind: dataset; }
-    object north "North source" { kind: dataset; }
-    object south "South target" { kind: dataset; }
+    dataset west "West source";
+    dataset east "East target";
+    dataset north "North source";
+    dataset south "South target";
     relation horizontal @west -> @east { kind: flow; }
     relation vertical @north -> @south { kind: flow; }
 }

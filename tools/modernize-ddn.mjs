@@ -92,8 +92,12 @@ function modernize(src) {
       const verb = verbWord;
       const smM = body.match(new RegExp(`\\bsource_mark\\s*:\\s*(${ID})\\s*;`));
       const tmM = body.match(new RegExp(`\\btarget_mark\\s*:\\s*(${ID})\\s*;`));
-      let rest = body;
-      for (const mm of [kindAt, smM, tmM]) if (mm) rest = rest.replace(body.slice(mm.index, mm.index + (mm === kindAt ? kindM[0].length : mm[0].length)), '');
+      const spansToRemove = [[kindAt.index, kindAt.index + kindM[0].length]];
+      if (smM) spansToRemove.push([smM.index, smM.index + smM[0].length]);
+      if (tmM) spansToRemove.push([tmM.index, tmM.index + tmM[0].length]);
+      spansToRemove.sort((a, b) => b[0] - a[0]);
+      let rest = bodySrc;
+      for (const [s, e] of spansToRemove) rest = rest.slice(0, s) + rest.slice(e);
       if (/[{}]/.test(rest)) continue; // nested declarations — leave verbose
       const label = (src.slice(m.index).match(new RegExp(`^relation\\s+${ID}((?:\\s+"(?:[^"\\\\]|\\\\.)*")?)`)) || [])[1] || '';
       const indent = (src.slice(0, m.index).match(/([ \t]*)$/) || [])[1];

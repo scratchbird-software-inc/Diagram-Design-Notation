@@ -2,17 +2,17 @@ ddn "0.5";
 
 module "ddn.examples.elements";
 data model {
-    object customer "Customer" { kind: table; maturity: draft; workload: [oltp]; fields { field customer_id { key: primary; } field display_name; field status; } }
-    object history "Customer history" { kind: history; workload: [olap]; temporal: bitemporal; fields { field customer_id; field valid_from; field recorded_from; } }
-    object profile "Profile document" { kind: collection; fields { field customer_id; field address { shape: object; } field tags { shape: array; } } }
-    object events "Customer events" { kind: topic; fields { field event_id; field occurred_at; field payload; } }
-    object transform "Build history" { kind: activity; }
-    object procedure "Reconcile customers" { kind: procedure; fields { field tenant_id; field batch_id; } }
+    table customer "Customer" {maturity: draft; workload: [oltp]; fields { customer_id { key: primary; } display_name; status; } }
+    history history "Customer history" {workload: [olap]; temporal: bitemporal; fields { customer_id; valid_from; recorded_from; } }
+    collection profile "Profile document" {fields { customer_id; address { shape: object; } tags { shape: array; } } }
+    topic events "Customer events" {fields { event_id; occurred_at; payload; } }
+    activity transform "Build history";
+    procedure procedure "Reconcile customers" {fields { tenant_id; batch_id; } }
     domain identifier "Customer identifier" { meaning: "Stable registry identity"; representation: undecided; }
-    object schema "SQL namespace" { kind: schema; }
-    object server "Cloud SQL service" { kind: service; location: cloud; }
-    object cloud "Cloud scope" { kind: cloud; }
-    object note "Design decision" { kind: note; description: "Examples illustrate intent; the data model remains independent of its look."; }
+    schema schema "SQL namespace";
+    service server "Cloud SQL service" {location: cloud; }
+    cloud cloud "Cloud scope";
+    note note "Design decision" {description: "Examples illustrate intent; the data model remains independent of its look."; }
     sample example "Synthetic rows" { mode: synthetic; columns: [@customer.customer_id, @customer.status]; rows: [["C001", "Active"], ["C002", "Suspended"]]; }
 }
 

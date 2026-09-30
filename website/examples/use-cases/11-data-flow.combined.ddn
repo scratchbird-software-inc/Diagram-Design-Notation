@@ -17,17 +17,11 @@ module "ddn.usecases.commerce";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data concepts {
-    object customer "Customer" {
-        kind: entity;
-    }
-    object order "Order" {
-        kind: entity;
-    }
-    object shipment "Shipment" {
-        kind: entity;
-    }
-    relation r_places "places" @customer -> @order { kind: assoc; source_mark: one; target_mark: zeromany; }
-    relation r_ships "fulfilled by" @order -> @shipment { kind: assoc; source_mark: one; target_mark: zeromany; }
+    entity customer "Customer";
+    entity order "Order";
+    entity shipment "Shipment";
+    assoc r_places "places" @customer [one] -> @order [zeromany];
+    assoc r_ships "fulfilled by" @order [one] -> @shipment [zeromany];
 }
 
 data domains {
@@ -44,97 +38,91 @@ data domains {
 }
 
 data tables {
-    object customer "Customer" {
-        kind: table;
+    table customer "Customer" {
         level: definition;
         workload: [oltp];
         role: authoritative;
         description: "Authority for the customer registry, not for every customer attribute in all systems.";
         fields {
-            field customer_id { key: primary; domain: @domains.customer_id; }
-            field display_name;
-            field status;
+            customer_id { key: primary; domain: @domains.customer_id; }
+            display_name;
+            status;
         }
     }
-    object orders "Orders" {
-        kind: table;
+    table orders "Orders" {
         level: definition;
         workload: [oltp];
         fields {
-            field order_id { key: primary; domain: @domains.order_id; }
-            field customer_id { domain: @domains.customer_id; }
-            field ordered_at;
+            order_id { key: primary; domain: @domains.order_id; }
+            customer_id { domain: @domains.customer_id; }
+            ordered_at;
         }
     }
-    object line "Order line" {
-        kind: table;
+    table line "Order line" {
         level: definition;
         workload: [oltp];
         fields {
-            field line_id { key: primary; }
-            field order_id;
-            field sku;
-            field quantity;
+            line_id { key: primary; }
+            order_id;
+            sku;
+            quantity;
         }
     }
-    relation r_line_order @line.order_id -> @orders.order_id { kind: ref; source_mark: many; target_mark: one; enforcement: undecided; }
-    relation r_order_customer @orders.customer_id -> @customer.customer_id { kind: ref; source_mark: zeromany; target_mark: one; enforcement: undecided; }
+    ref r_line_order @line.order_id [many] -> @orders.order_id [one] {
+        enforcement: undecided;
+    }
+    ref r_order_customer @orders.customer_id [zeromany] -> @customer.customer_id [one] {
+        enforcement: undecided;
+    }
 }
 
 module "ddn.usecases.flow";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data dfd {
-    object incoming "Incoming orders" {
-        kind: dataset;
-    }
-    object validate "Validate orders" {
-        kind: activity;
+    dataset incoming "Incoming orders";
+    activity validate "Validate orders" {
         description: "Transform and validate; no implied transaction boundary.";
     }
-    object accepted "Accepted orders" {
-        kind: dataset;
-    }
-    relation r_input @incoming -> @validate { kind: read; }
-    relation r_output @validate -> @accepted { kind: write; }
+    dataset accepted "Accepted orders";
+    read r_input @incoming -> @validate;
+    write r_output @validate -> @accepted;
 }
 
 data stream {
-    object source "Customer / production" {
-        kind: table;
+    table source "Customer / production" {
         level: instance;
         role: authoritative;
         workload: [oltp];
     }
-    object capture "Capture changes" {
-        kind: activity;
-    }
-    object topic "customer.changed" {
-        kind: topic;
+    activity capture "Capture changes";
+    topic topic "customer.changed" {
         workload: [streaming];
     }
-    object hist_job "Build customer history" {
-        kind: activity;
-    }
-    object search_job "Build customer search" {
-        kind: activity;
-    }
-    object history "Customer history" {
-        kind: history;
+    activity hist_job "Build customer history";
+    activity search_job "Build customer search";
+    history history "Customer history" {
         temporal: bitemporal;
         role: derived;
     }
-    object search "Customer search" {
-        kind: search_index;
+    search_index search "Customer search" {
         role: derived;
     }
-    relation r_source_definition @source -> @ddn.usecases.commerce.tables.customer { kind: instance; }
-    relation r_capture @source -> @capture { kind: capture; capture: cdc; }
-    relation r_publish @capture -> @topic { kind: publish; transport: "Kafka"; }
-    relation r_history_delivery @topic -> @hist_job { kind: deliver; scope: "history consumer"; }
-    relation r_search_delivery @topic -> @search_job { kind: deliver; scope: "search consumer"; }
-    relation r_history_write @hist_job -> @history { kind: write; }
-    relation r_search_write @search_job -> @search { kind: write; }
+    instance r_source_definition @source -> @ddn.usecases.commerce.tables.customer;
+    capture r_capture @source -> @capture {
+        capture: cdc;
+    }
+    publish r_publish @capture -> @topic {
+        transport: "Kafka";
+    }
+    deliver r_history_delivery @topic -> @hist_job {
+        scope: "history consumer";
+    }
+    deliver r_search_delivery @topic -> @search_job {
+        scope: "search consumer";
+    }
+    write r_history_write @hist_job -> @history;
+    write r_search_write @search_job -> @search;
 }
 
 module "ddn.usecases.formats";

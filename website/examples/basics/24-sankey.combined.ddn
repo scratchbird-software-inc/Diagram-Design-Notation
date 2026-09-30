@@ -4,13 +4,13 @@ module "ddn.examples.sankey";
 // Synthetic energy-spend dataset: seven flows across three stages.
 // All data is synthetic.
 data energy {
-    object f1 "grid → heating" { kind: record; x_record: {"source": "grid", "target": "heating", "value": 40, "unit": "MWh"}; }
-    object f2 "grid → it" { kind: record; x_record: {"source": "grid", "target": "it", "value": 30, "unit": "MWh"}; }
-    object f3 "gas → heating" { kind: record; x_record: {"source": "gas", "target": "heating", "value": 35, "unit": "MWh"}; }
-    object f4 "solar → it" { kind: record; x_record: {"source": "solar", "target": "it", "value": 15, "unit": "MWh"}; }
-    object f5 "heating → building_a" { kind: record; x_record: {"source": "heating", "target": "building_a", "value": 45, "unit": "MWh"}; }
-    object f6 "heating → building_b" { kind: record; x_record: {"source": "heating", "target": "building_b", "value": 30, "unit": "MWh"}; }
-    object f7 "it → building_a" { kind: record; x_record: {"source": "it", "target": "building_a", "value": 45, "unit": "MWh"}; }
+    record f1 "grid → heating" {x_record: {"source": "grid", "target": "heating", "value": 40, "unit": "MWh"}; }
+    record f2 "grid → it" {x_record: {"source": "grid", "target": "it", "value": 30, "unit": "MWh"}; }
+    record f3 "gas → heating" {x_record: {"source": "gas", "target": "heating", "value": 35, "unit": "MWh"}; }
+    record f4 "solar → it" {x_record: {"source": "solar", "target": "it", "value": 15, "unit": "MWh"}; }
+    record f5 "heating → building_a" {x_record: {"source": "heating", "target": "building_a", "value": 45, "unit": "MWh"}; }
+    record f6 "heating → building_b" {x_record: {"source": "heating", "target": "building_b", "value": 30, "unit": "MWh"}; }
+    record f7 "it → building_a" {x_record: {"source": "it", "target": "building_a", "value": 45, "unit": "MWh"}; }
 }
 
 view sankey "Synthetic energy spend across three stages / sankey" {

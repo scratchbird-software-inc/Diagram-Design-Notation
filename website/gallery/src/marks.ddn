@@ -4,64 +4,64 @@ module "ddn.gallery.marks";
 // Gallery chart-mark sheet. Every mark renders over a small real dataset:
 // synthetic quarterly generation figures for a two-site wind/solar operator.
 data quarterly {
-    object q1 "Q1 / Wind" { kind: record; x_record: {"quarter": "Q1", "source": "Wind", "mwh": 412, "unit": "MWh"}; }
-    object q2 "Q2 / Wind" { kind: record; x_record: {"quarter": "Q2", "source": "Wind", "mwh": 355, "unit": "MWh"}; }
-    object q3 "Q3 / Wind" { kind: record; x_record: {"quarter": "Q3", "source": "Wind", "mwh": 388, "unit": "MWh"}; }
-    object q4 "Q4 / Wind" { kind: record; x_record: {"quarter": "Q4", "source": "Wind", "mwh": 470, "unit": "MWh"}; }
-    object s1 "Q1 / Solar" { kind: record; x_record: {"quarter": "Q1", "source": "Solar", "mwh": 180, "unit": "MWh"}; }
-    object s2 "Q2 / Solar" { kind: record; x_record: {"quarter": "Q2", "source": "Solar", "mwh": 296, "unit": "MWh"}; }
-    object s3 "Q3 / Solar" { kind: record; x_record: {"quarter": "Q3", "source": "Solar", "mwh": 310, "unit": "MWh"}; }
-    object s4 "Q4 / Solar" { kind: record; x_record: {"quarter": "Q4", "source": "Solar", "mwh": 205, "unit": "MWh"}; }
+    record q1 "Q1 / Wind" {x_record: {"quarter": "Q1", "source": "Wind", "mwh": 412, "unit": "MWh"}; }
+    record q2 "Q2 / Wind" {x_record: {"quarter": "Q2", "source": "Wind", "mwh": 355, "unit": "MWh"}; }
+    record q3 "Q3 / Wind" {x_record: {"quarter": "Q3", "source": "Wind", "mwh": 388, "unit": "MWh"}; }
+    record q4 "Q4 / Wind" {x_record: {"quarter": "Q4", "source": "Wind", "mwh": 470, "unit": "MWh"}; }
+    record s1 "Q1 / Solar" {x_record: {"quarter": "Q1", "source": "Solar", "mwh": 180, "unit": "MWh"}; }
+    record s2 "Q2 / Solar" {x_record: {"quarter": "Q2", "source": "Solar", "mwh": 296, "unit": "MWh"}; }
+    record s3 "Q3 / Solar" {x_record: {"quarter": "Q3", "source": "Solar", "mwh": 310, "unit": "MWh"}; }
+    record s4 "Q4 / Solar" {x_record: {"quarter": "Q4", "source": "Solar", "mwh": 205, "unit": "MWh"}; }
 }
 
 data criteria {
-    object r1 "Wind / Capacity factor" { kind: record; x_record: {"site": "Wind farm", "criterion": "Capacity factor", "score": 8, "unit": "points"}; }
-    object r2 "Wind / Grid access" { kind: record; x_record: {"site": "Wind farm", "criterion": "Grid access", "score": 6, "unit": "points"}; }
-    object r3 "Wind / Land cost" { kind: record; x_record: {"site": "Wind farm", "criterion": "Land cost", "score": 5, "unit": "points"}; }
-    object r4 "Wind / Permitting" { kind: record; x_record: {"site": "Wind farm", "criterion": "Permitting", "score": 4, "unit": "points"}; }
-    object r5 "Wind / Maintenance" { kind: record; x_record: {"site": "Wind farm", "criterion": "Maintenance", "score": 7, "unit": "points"}; }
-    object v1 "Solar / Capacity factor" { kind: record; x_record: {"site": "Solar park", "criterion": "Capacity factor", "score": 6, "unit": "points"}; }
-    object v2 "Solar / Grid access" { kind: record; x_record: {"site": "Solar park", "criterion": "Grid access", "score": 7, "unit": "points"}; }
-    object v3 "Solar / Land cost" { kind: record; x_record: {"site": "Solar park", "criterion": "Land cost", "score": 6, "unit": "points"}; }
-    object v4 "Solar / Permitting" { kind: record; x_record: {"site": "Solar park", "criterion": "Permitting", "score": 8, "unit": "points"}; }
-    object v5 "Solar / Maintenance" { kind: record; x_record: {"site": "Solar park", "criterion": "Maintenance", "score": 9, "unit": "points"}; }
+    record r1 "Wind / Capacity factor" {x_record: {"site": "Wind farm", "criterion": "Capacity factor", "score": 8, "unit": "points"}; }
+    record r2 "Wind / Grid access" {x_record: {"site": "Wind farm", "criterion": "Grid access", "score": 6, "unit": "points"}; }
+    record r3 "Wind / Land cost" {x_record: {"site": "Wind farm", "criterion": "Land cost", "score": 5, "unit": "points"}; }
+    record r4 "Wind / Permitting" {x_record: {"site": "Wind farm", "criterion": "Permitting", "score": 4, "unit": "points"}; }
+    record r5 "Wind / Maintenance" {x_record: {"site": "Wind farm", "criterion": "Maintenance", "score": 7, "unit": "points"}; }
+    record v1 "Solar / Capacity factor" {x_record: {"site": "Solar park", "criterion": "Capacity factor", "score": 6, "unit": "points"}; }
+    record v2 "Solar / Grid access" {x_record: {"site": "Solar park", "criterion": "Grid access", "score": 7, "unit": "points"}; }
+    record v3 "Solar / Land cost" {x_record: {"site": "Solar park", "criterion": "Land cost", "score": 6, "unit": "points"}; }
+    record v4 "Solar / Permitting" {x_record: {"site": "Solar park", "criterion": "Permitting", "score": 8, "unit": "points"}; }
+    record v5 "Solar / Maintenance" {x_record: {"site": "Solar park", "criterion": "Maintenance", "score": 9, "unit": "points"}; }
 }
 
 data pipeline {
-    object p1 "Prospects" { kind: record; x_record: {"stage": "Prospects", "count": 240, "unit": "accounts"}; }
-    object p2 "Qualified" { kind: record; x_record: {"stage": "Qualified", "count": 150, "unit": "accounts"}; }
-    object p3 "Proposal" { kind: record; x_record: {"stage": "Proposal", "count": 90, "unit": "accounts"}; }
-    object p4 "Negotiation" { kind: record; x_record: {"stage": "Negotiation", "count": 48, "unit": "accounts"}; }
-    object p5 "Signed" { kind: record; x_record: {"stage": "Signed", "count": 26, "unit": "accounts"}; }
+    record p1 "Prospects" {x_record: {"stage": "Prospects", "count": 240, "unit": "accounts"}; }
+    record p2 "Qualified" {x_record: {"stage": "Qualified", "count": 150, "unit": "accounts"}; }
+    record p3 "Proposal" {x_record: {"stage": "Proposal", "count": 90, "unit": "accounts"}; }
+    record p4 "Negotiation" {x_record: {"stage": "Negotiation", "count": 48, "unit": "accounts"}; }
+    record p5 "Signed" {x_record: {"stage": "Signed", "count": 26, "unit": "accounts"}; }
 }
 
 data uptime {
-    object u1 "Fleet availability" { kind: record; x_record: {"kpi": "Fleet availability", "value": 96.4, "unit": "%"}; }
+    record u1 "Fleet availability" {x_record: {"kpi": "Fleet availability", "value": 96.4, "unit": "%"}; }
 }
 
 data market {
-    object d1 "Mon" { kind: record; x_record: {"day": "Mon", "open": 42.1, "high": 43.8, "low": 41.5, "close": 43.2, "unit": "EUR"}; }
-    object d2 "Tue" { kind: record; x_record: {"day": "Tue", "open": 43.2, "high": 44.0, "low": 42.4, "close": 42.9, "unit": "EUR"}; }
-    object d3 "Wed" { kind: record; x_record: {"day": "Wed", "open": 42.9, "high": 44.6, "low": 42.8, "close": 44.3, "unit": "EUR"}; }
-    object d4 "Thu" { kind: record; x_record: {"day": "Thu", "open": 44.3, "high": 45.1, "low": 43.6, "close": 43.9, "unit": "EUR"}; }
-    object d5 "Fri" { kind: record; x_record: {"day": "Fri", "open": 43.9, "high": 45.4, "low": 43.7, "close": 45.0, "unit": "EUR"}; }
+    record d1 "Mon" {x_record: {"day": "Mon", "open": 42.1, "high": 43.8, "low": 41.5, "close": 43.2, "unit": "EUR"}; }
+    record d2 "Tue" {x_record: {"day": "Tue", "open": 43.2, "high": 44.0, "low": 42.4, "close": 42.9, "unit": "EUR"}; }
+    record d3 "Wed" {x_record: {"day": "Wed", "open": 42.9, "high": 44.6, "low": 42.8, "close": 44.3, "unit": "EUR"}; }
+    record d4 "Thu" {x_record: {"day": "Thu", "open": 44.3, "high": 45.1, "low": 43.6, "close": 43.9, "unit": "EUR"}; }
+    record d5 "Fri" {x_record: {"day": "Fri", "open": 43.9, "high": 45.4, "low": 43.7, "close": 45.0, "unit": "EUR"}; }
 }
 
 data storage {
-    object t1 "Turbine logs" { kind: record; x_record: {"path": "operations/turbine-logs", "gb": 320, "unit": "GB"}; }
-    object t2 "SCADA archive" { kind: record; x_record: {"path": "operations/scada-archive", "gb": 540, "unit": "GB"}; }
-    object t3 "Meter reads" { kind: record; x_record: {"path": "billing/meter-reads", "gb": 210, "unit": "GB"}; }
-    object t4 "Invoices" { kind: record; x_record: {"path": "billing/invoices", "gb": 80, "unit": "GB"}; }
-    object t5 "Weather feeds" { kind: record; x_record: {"path": "forecast/weather-feeds", "gb": 260, "unit": "GB"}; }
-    object t6 "Model runs" { kind: record; x_record: {"path": "forecast/model-runs", "gb": 150, "unit": "GB"}; }
+    record t1 "Turbine logs" {x_record: {"path": "operations/turbine-logs", "gb": 320, "unit": "GB"}; }
+    record t2 "SCADA archive" {x_record: {"path": "operations/scada-archive", "gb": 540, "unit": "GB"}; }
+    record t3 "Meter reads" {x_record: {"path": "billing/meter-reads", "gb": 210, "unit": "GB"}; }
+    record t4 "Invoices" {x_record: {"path": "billing/invoices", "gb": 80, "unit": "GB"}; }
+    record t5 "Weather feeds" {x_record: {"path": "forecast/weather-feeds", "gb": 260, "unit": "GB"}; }
+    record t6 "Model runs" {x_record: {"path": "forecast/model-runs", "gb": 150, "unit": "GB"}; }
 }
 
 data flows {
-    object f1 "Wind to grid" { kind: record; x_record: {"source": "Wind farm", "target": "Grid export", "mwh": 1240, "unit": "MWh"}; }
-    object f2 "Solar to grid" { kind: record; x_record: {"source": "Solar park", "target": "Grid export", "mwh": 780, "unit": "MWh"}; }
-    object f3 "Solar to storage" { kind: record; x_record: {"source": "Solar park", "target": "Battery", "mwh": 211, "unit": "MWh"}; }
-    object f4 "Storage to grid" { kind: record; x_record: {"source": "Battery", "target": "Grid export", "mwh": 190, "unit": "MWh"}; }
-    object f5 "Wind to curtailment" { kind: record; x_record: {"source": "Wind farm", "target": "Curtailment", "mwh": 62, "unit": "MWh"}; }
+    record f1 "Wind to grid" {x_record: {"source": "Wind farm", "target": "Grid export", "mwh": 1240, "unit": "MWh"}; }
+    record f2 "Solar to grid" {x_record: {"source": "Solar park", "target": "Grid export", "mwh": 780, "unit": "MWh"}; }
+    record f3 "Solar to storage" {x_record: {"source": "Solar park", "target": "Battery", "mwh": 211, "unit": "MWh"}; }
+    record f4 "Storage to grid" {x_record: {"source": "Battery", "target": "Grid export", "mwh": 190, "unit": "MWh"}; }
+    record f5 "Wind to curtailment" {x_record: {"source": "Wind farm", "target": "Curtailment", "mwh": 62, "unit": "MWh"}; }
 }
 
 format gallery {
@@ -119,20 +119,20 @@ view mark_sankey "Chart marks / sankey" {
 }
 
 data days {
-    object m1 "2026-03-02" { kind: record; x_record: {"day": "2026-03-02", "mwh": 96, "unit": "MWh"}; }
-    object m2 "2026-03-03" { kind: record; x_record: {"day": "2026-03-03", "mwh": 104, "unit": "MWh"}; }
-    object m3 "2026-03-04" { kind: record; x_record: {"day": "2026-03-04", "mwh": 88, "unit": "MWh"}; }
-    object m4 "2026-03-06" { kind: record; x_record: {"day": "2026-03-06", "mwh": 112, "unit": "MWh"}; }
-    object m5 "2026-03-09" { kind: record; x_record: {"day": "2026-03-09", "mwh": 121, "unit": "MWh"}; }
-    object m6 "2026-03-11" { kind: record; x_record: {"day": "2026-03-11", "mwh": 99, "unit": "MWh"}; }
+    record m1 "2026-03-02" {x_record: {"day": "2026-03-02", "mwh": 96, "unit": "MWh"}; }
+    record m2 "2026-03-03" {x_record: {"day": "2026-03-03", "mwh": 104, "unit": "MWh"}; }
+    record m3 "2026-03-04" {x_record: {"day": "2026-03-04", "mwh": 88, "unit": "MWh"}; }
+    record m4 "2026-03-06" {x_record: {"day": "2026-03-06", "mwh": 112, "unit": "MWh"}; }
+    record m5 "2026-03-09" {x_record: {"day": "2026-03-09", "mwh": 121, "unit": "MWh"}; }
+    record m6 "2026-03-11" {x_record: {"day": "2026-03-11", "mwh": 99, "unit": "MWh"}; }
 }
 
 data routes {
-    object g1 "EU web to EU api" { kind: record; x_record: {"from": "eu.frontend.web", "to": "eu.backend.api", "n": 32, "unit": "req/min"}; }
-    object g2 "EU api to EU auth" { kind: record; x_record: {"from": "eu.backend.api", "to": "eu.backend.auth", "n": 18, "unit": "req/min"}; }
-    object g3 "EU api to US store" { kind: record; x_record: {"from": "eu.backend.api", "to": "us.backend.store", "n": 24, "unit": "req/min"}; }
-    object g4 "US web to US api" { kind: record; x_record: {"from": "us.frontend.web", "to": "us.backend.api", "n": 15, "unit": "req/min"}; }
-    object g5 "US api to US store" { kind: record; x_record: {"from": "us.backend.api", "to": "us.backend.store", "n": 21, "unit": "req/min"}; }
+    record g1 "EU web to EU api" {x_record: {"from": "eu.frontend.web", "to": "eu.backend.api", "n": 32, "unit": "req/min"}; }
+    record g2 "EU api to EU auth" {x_record: {"from": "eu.backend.api", "to": "eu.backend.auth", "n": 18, "unit": "req/min"}; }
+    record g3 "EU api to US store" {x_record: {"from": "eu.backend.api", "to": "us.backend.store", "n": 24, "unit": "req/min"}; }
+    record g4 "US web to US api" {x_record: {"from": "us.frontend.web", "to": "us.backend.api", "n": 15, "unit": "req/min"}; }
+    record g5 "US api to US store" {x_record: {"from": "us.backend.api", "to": "us.backend.store", "n": 21, "unit": "req/min"}; }
 }
 
 view mark_histogram "Chart marks / histogram" {

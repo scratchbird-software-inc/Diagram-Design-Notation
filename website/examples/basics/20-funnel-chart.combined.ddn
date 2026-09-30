@@ -4,11 +4,11 @@ module "ddn.examples.funnel-chart";
 // Synthetic sales-pipeline dataset: five funnel stages, one value per stage.
 // All data is synthetic.
 data pipeline {
-    object s1 "Visits" { kind: record; x_record: {"stage": "Visits", "value": 1200, "unit": "deals"}; }
-    object s2 "Signups" { kind: record; x_record: {"stage": "Signups", "value": 480, "unit": "deals"}; }
-    object s3 "Trials" { kind: record; x_record: {"stage": "Trials", "value": 210, "unit": "deals"}; }
-    object s4 "Qualified" { kind: record; x_record: {"stage": "Qualified", "value": 96, "unit": "deals"}; }
-    object s5 "Closed" { kind: record; x_record: {"stage": "Closed", "value": 42, "unit": "deals"}; }
+    record s1 "Visits" {x_record: {"stage": "Visits", "value": 1200, "unit": "deals"}; }
+    record s2 "Signups" {x_record: {"stage": "Signups", "value": 480, "unit": "deals"}; }
+    record s3 "Trials" {x_record: {"stage": "Trials", "value": 210, "unit": "deals"}; }
+    record s4 "Qualified" {x_record: {"stage": "Qualified", "value": 96, "unit": "deals"}; }
+    record s5 "Closed" {x_record: {"stage": "Closed", "value": 42, "unit": "deals"}; }
 }
 
 view funnel "Synthetic sales pipeline / funnel" {

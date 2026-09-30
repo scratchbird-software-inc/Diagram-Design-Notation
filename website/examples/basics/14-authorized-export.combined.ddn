@@ -2,13 +2,12 @@ ddn "0.5";
 
 module "ddn.examples.export";
 data model {
- object workforce "Workforce public directory" {
-  kind: table;
-  fields {field staff_id; field display_name; field salary {classification: restricted;}}
+ table workforce "Workforce public directory" {
+  fields {staff_id; display_name; salary {classification: restricted;}}
   description: "Synthetic restricted note: SALARY_SECRET_CANARY";
  }
- object team "Team" {kind: table;fields {field team_id;field name;}}
- relation membership "Membership" @workforce -> @team {kind: ref;}
+ table team "Team" {fields {team_id;name;}}
+ ref membership "Membership" @workforce -> @team;
 }
 view private "Private source / hiding is not redaction" {
  data: [@model];format: @ddn.examples.shared.styles.technical;

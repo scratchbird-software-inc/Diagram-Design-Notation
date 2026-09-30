@@ -17,27 +17,24 @@ module "ddn.usecases.documents";
 // All names, records and architectures in this catalogue are synthetic teaching examples.
 
 data model {
-    object profiles "Customer profile" {
-        kind: collection;
+    collection profiles "Customer profile" {
         fields {
-            field customer_id;
-            field contacts { shape: array; }
+            customer_id;
+            contacts { shape: array; }
         }
     }
-    object contacts "Contacts array" {
-        kind: array;
+    array contacts "Contacts array" {
         description: "Embedded collection value, not an independently stored table.";
     }
-    object contact "Contact item" {
-        kind: document;
+    document contact "Contact item" {
         fields {
-            field kind;
-            field value;
-            field preferred { presence: optional; nullable: false; }
+            kind;
+            value;
+            preferred { presence: optional; nullable: false; }
         }
     }
-    relation r_a @profiles -> @contacts { kind: emb; }
-    relation r_b "item shape" @contacts -> @contact { kind: mem; }
+    emb r_a @profiles -> @contacts;
+    mem r_b "item shape" @contacts -> @contact;
 }
 
 module "ddn.usecases.formats";

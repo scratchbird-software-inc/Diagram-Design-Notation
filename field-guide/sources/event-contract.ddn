@@ -6,22 +6,20 @@ module "ddn.fieldguide.eventcontract";
 // consumer groups with their compatibility claims. The contract view makes
 // "who may break whom" a reviewable graph instead of a wiki promise.
 data contract {
-    object orders_api "Orders API" { kind: "application"; description: "Synthetic producer: emits order lifecycle events."; }
-    object topic "order-events v3" { kind: "topic"; description: "Synthetic topic carrying the current schema version."; }
-    object schema_v2 "Schema v2 (deprecated)" { kind: "record"; description: "Synthetic previous schema: kept for the deprecation window."; }
-    object schema_v3 "Schema v3" { kind: "record"; description: "Synthetic current schema: adds cancellation reason."; }
-    object billing "Billing consumer" { kind: "application"; description: "Synthetic consumer: reads payment-relevant events only."; }
-    object fulfil "Fulfilment consumer" { kind: "application"; description: "Synthetic consumer: drives warehouse tasks from confirmed orders."; }
+    application orders_api "Orders API" {description: "Synthetic producer: emits order lifecycle events."; }
+    topic topic "order-events v3" {description: "Synthetic topic carrying the current schema version."; }
+    record schema_v2 "Schema v2 (deprecated)" {description: "Synthetic previous schema: kept for the deprecation window."; }
+    record schema_v3 "Schema v3" {description: "Synthetic current schema: adds cancellation reason."; }
+    application billing "Billing consumer" {description: "Synthetic consumer: reads payment-relevant events only."; }
+    application fulfil "Fulfilment consumer" {description: "Synthetic consumer: drives warehouse tasks from confirmed orders."; }
     relation publishes "publishes" @orders_api -> @topic { kind: "flow"; }
-    relation carries "conforms to" @topic -> @schema_v3 { kind: "assoc"; }
-    relation supersedes "backward compatible" @schema_v3 -> @schema_v2 { kind: "assoc"; }
+    assoc carries "conforms to" @topic -> @schema_v3;
+    assoc supersedes "backward compatible" @schema_v3 -> @schema_v2;
     relation reads_billing "consumer group: billing" @topic -> @billing { kind: "flow"; }
     relation reads_fulfil "consumer group: fulfilment" @topic -> @fulfil { kind: "flow"; }
 }
 
-view diagram "Synthetic event contract / producer to consumers" {
-    data: [@contract];
-    projection { profile: "ddn@1"; }
+view diagram "Synthetic event contract / producer to consumers": [@contract] as "ddn@1" {
     layout { algorithm: layered; direction: right; }
     publication { size: content; fit: none; }
 }

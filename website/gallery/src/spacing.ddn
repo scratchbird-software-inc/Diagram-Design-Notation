@@ -5,12 +5,12 @@ module "ddn.gallery.spacing";
 // level (tight, normal, loose, expanded).
 data model {
     object member "Library member" { kind: actor; }
-    object catalogue "Catalogue search" { kind: application; }
-    object loans "Loans register" { kind: table; fields { field loan_id; field due_date; } }
+    application catalogue "Catalogue search";
+    table loans "Loans register" {fields { loan_id; due_date; } }
     object notices "Overdue notices" { kind: process; }
-    relation searches @member -> @catalogue { kind: assoc; }
-    relation borrows "borrows a copy recorded in the loans register" @member -> @loans { kind: assoc; }
-    relation flags "flags overdue loans for the notice run" @loans -> @notices { kind: assoc; }
+    assoc searches @member -> @catalogue;
+    assoc borrows "borrows a copy recorded in the loans register" @member -> @loans;
+    assoc flags "flags overdue loans for the notice run" @loans -> @notices;
 }
 
 format gallery {

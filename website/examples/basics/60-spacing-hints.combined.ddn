@@ -2,13 +2,13 @@ ddn "0.5";
 
 module "ddn.examples.spacing-hints";
 data model {
- object orders "Order capture" { kind: application; role: authoritative; }
- object ledger "Ledger posting" { kind: application; role: authoritative; }
- object journal "Posted journals" { kind: table; role: authoritative; fields { field journal_id; field period_id; } }
- object analytics "Margin analytics" { kind: dataset; role: derived; }
+ application orders "Order capture" {role: authoritative; }
+ application ledger "Ledger posting" {role: authoritative; }
+ table journal "Posted journals" {role: authoritative; fields { journal_id; period_id; } }
+ dataset analytics "Margin analytics" {role: derived; }
  relation posts "Posts every approved order into the ledger for reconciliation" @orders -> @ledger { kind: flow; }
- relation records @ledger -> @journal { kind: assoc; }
- relation feeds @journal -> @analytics { kind: assoc; }
+ assoc records @ledger -> @journal;
+ assoc feeds @journal -> @analytics;
 }
 view tight "Spacing / tight" {
  data: [@model]; format: @ddn.examples.shared.styles.technical; spacing: tight;

@@ -3,25 +3,25 @@ module "ddn.live.pinned-patterns";
 // One shared model, six placement patterns. Only place.at locks a position.
 // Synthetic planning diagram, not a running integration architecture.
 data network {
-    object hub "Integration hub" { kind: application; fields { field request_id; field schema_version; } }
-    object store "Transaction store" { kind: table; fields { field transaction_id; field occurred_at; field status; } }
-    object client "Client application" { kind: application; }
-    object orders "Order service" { kind: application; fields { field order_id; } }
-    object inventory "Inventory" { kind: table; fields { field item_id; field quantity; } }
-    object production "Production control" { kind: application; }
-    object events "Event channel" { kind: topic; }
-    object history "Historical projection" { kind: table; workload: [olap]; role: derived; fields { field valid_from; field recorded_from; } }
-    object audit "Audit monitor" { kind: application; }
-    object note "Review note" { kind: note; description: "Layout does not establish timing, ownership, or authorization."; }
+    application hub "Integration hub" {fields { request_id; schema_version; } }
+    table store "Transaction store" {fields { transaction_id; occurred_at; status; } }
+    application client "Client application";
+    application orders "Order service" {fields { order_id; } }
+    table inventory "Inventory" {fields { item_id; quantity; } }
+    application production "Production control";
+    topic events "Event channel";
+    table history "Historical projection" {workload: [olap]; role: derived; fields { valid_from; recorded_from; } }
+    application audit "Audit monitor";
+    note note "Review note" {description: "Layout does not establish timing, ownership, or authorization."; }
     relation submit "Submit request" @client -> @hub { kind: flow; }
     relation route "Dispatch order" @hub -> @orders { kind: flow; }
-    relation reserve "Check availability" @orders -> @inventory { kind: depends; }
+    depends reserve "Check availability" @orders -> @inventory;
     relation plan "Production request" @orders -> @production { kind: flow; }
     relation persist "Store transaction" @hub -> @store { kind: flow; }
     relation publish "Publish outbox" @store -> @events { kind: flow; }
     relation history_projection "Build history" @events -> @history { kind: flow; }
     relation monitor "Observe event" @events -> @audit { kind: flow; }
-    relation document "Review design" @note -> @hub { kind: note; }
+    note document "Review design" @note -> @hub;
 }
 format patterns {
     style day;

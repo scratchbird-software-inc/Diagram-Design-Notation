@@ -9,13 +9,13 @@ data model {
     object review "Peer review" { kind: process; }
     object edit "Copy editing" { kind: process; }
     object typeset "Typesetting" { kind: process; }
-    object archive "Digital archive" { kind: table; }
-    relation submit @manuscript -> @review { kind: assoc; }
-    relation revise "returns for revision" @review -> @manuscript { kind: assoc; }
-    relation accept @review -> @edit { kind: assoc; }
-    relation compose @edit -> @typeset { kind: assoc; }
-    relation publish @typeset -> @archive { kind: assoc; }
-    relation reference @edit -> @archive { kind: assoc; }
+    table archive "Digital archive";
+    assoc submit @manuscript -> @review;
+    assoc revise "returns for revision" @review -> @manuscript;
+    assoc accept @review -> @edit;
+    assoc compose @edit -> @typeset;
+    assoc publish @typeset -> @archive;
+    assoc reference @edit -> @archive;
 }
 
 data model_straight {
@@ -23,12 +23,12 @@ data model_straight {
     object review "Peer review" { kind: process; }
     object edit "Copy editing" { kind: process; }
     object typeset "Typesetting" { kind: process; }
-    object archive "Digital archive" { kind: table; }
-    relation submit @manuscript -> @review { kind: assoc; }
-    relation revise "returns for revision" @review -> @manuscript { kind: assoc; }
-    relation accept @review -> @edit { kind: assoc; }
-    relation compose @edit -> @typeset { kind: assoc; }
-    relation publish @typeset -> @archive { kind: assoc; }
+    table archive "Digital archive";
+    assoc submit @manuscript -> @review;
+    assoc revise "returns for revision" @review -> @manuscript;
+    assoc accept @review -> @edit;
+    assoc compose @edit -> @typeset;
+    assoc publish @typeset -> @archive;
 }
 
 format gallery {

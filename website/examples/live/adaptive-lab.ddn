@@ -3,63 +3,63 @@ module "ddn.live.adaptive-lab";
 // Presentation-only routing laboratory. No physical operations are executed.
 // Default placement is automatic. place.at and route.via remain hard hints.
 data pipeline {
-    object client "Order entry" { kind: application; }
-    object validate "Validate order" { kind: activity; }
-    object catalog "Product catalogue" { kind: table;
-        fields { field product_id { key: primary; } field description; field sellable; }
+    application client "Order entry";
+    activity validate "Validate order";
+    table catalog "Product catalogue" {        fields { product_id { key: primary; } description; sellable; }
     }
-    object stock "Inventory reserve" { kind: activity; }
-    object orders "Accepted orders" { kind: table;
-        fields { field order_id { key: primary; } field customer_id; field accepted_at; field row_version; }
+    activity stock "Inventory reserve";
+    table orders "Accepted orders" {        fields { order_id { key: primary; } customer_id; accepted_at; row_version; }
     }
-    object events "Order events" { kind: topic; }
-    object reports "Sales projection" { kind: table; workload: [olap]; role: derived;
-        fields { field order_id; field business_date; field net_amount; }
+    topic events "Order events";
+    table reports "Sales projection" {workload: [olap]; role: derived;
+        fields { order_id; business_date; net_amount; }
     }
     relation submit "Submit proposed order" @client -> @validate { kind: flow; }
-    relation lookup "Check product status" @validate -> @catalog { kind: depends; }
+    depends lookup "Check product status" @validate -> @catalog;
     relation reserve "Request stock reservation" @validate -> @stock { kind: flow; }
     relation persist "Record accepted order" @stock -> @orders { kind: flow; }
     relation publish "Publish outbox event" @orders -> @events { kind: flow; }
     relation project "Build sales projection" @events -> @reports { kind: flow; }
 }
 data ports {
-    object n0 "Sales application" { kind: application; }
-    object n1 "Customer service" { kind: application; }
-    object n2 "Order service" { kind: application; }
-    object n3 "Reporting" { kind: application; }
-    object n4 "Warehouse" { kind: application; }
-    object n5 "Integration hub" { kind: application; }
+    application n0 "Sales application";
+    application n1 "Customer service";
+    application n2 "Order service";
+    application n3 "Reporting";
+    application n4 "Warehouse";
+    application n5 "Integration hub";
     relation r0 "Order event" @n2 -> @n5 { kind: flow; }
     relation r1 "Customer update" @n5 -> @n1 { kind: flow; }
     relation r2 "Warehouse summary" @n4 -> @n3 { kind: flow; }
     relation r3 "Acknowledgement" @n5 -> @n0 { kind: flow; }
 }
 data movement {
-    object n0 "Request handler" { kind: application; }
-    object n1 "Client" { kind: application; }
-    object n2 "Projection service" { kind: application; }
-    object n3 "Gateway" { kind: application; }
-    object n4 "Database" { kind: application; }
-    object n5 "Middleware" { kind: application; }
+    application n0 "Request handler";
+    application n1 "Client";
+    application n2 "Projection service";
+    application n3 "Gateway";
+    application n4 "Database";
+    application n5 "Middleware";
     relation r0 "Dispatch request" @n3 -> @n0 { kind: flow; }
     relation r1 "Forward request" @n5 -> @n3 { kind: flow; }
     relation r2 "Persist projection" @n2 -> @n4 { kind: flow; }
     relation r3 "Submit command" @n1 -> @n5 { kind: flow; }
 }
 data locked {
-    object left "Source A" { kind: application; }
-    object right "Destination A" { kind: application; }
-    object top "Source B" { kind: application; }
-    object bottom "Destination B" { kind: application; }
+    application left "Source A";
+    application right "Destination A";
+    application top "Source B";
+    application bottom "Destination B";
     relation horizontal "Independent transfer A" @left -> @right { kind: flow; }
-    relation vertical "Independent dependency B" @top -> @bottom { kind: depends; }
+    depends vertical "Independent dependency B" @top -> @bottom;
 }
 data blockers {
-    object a "Order lines" { kind: table; fields { field customer_id; } }
-    object b "Unrelated dataset" { kind: table; fields { field audit_id; } }
-    object c "Customers" { kind: table; fields { field customer_id { key: primary; } } }
-    relation a_c "Logical customer reference" @a.customer_id -> @c.customer_id { kind: ref; enforcement: undecided; }
+    table a "Order lines" {fields { customer_id; } }
+    table b "Unrelated dataset" {fields { audit_id; } }
+    table c "Customers" {fields { customer_id { key: primary; } } }
+    ref a_c "Logical customer reference" @a.customer_id -> @c.customer_id {
+        enforcement: undecided;
+    }
 }
 format shared {
     style night { theme: night; }
