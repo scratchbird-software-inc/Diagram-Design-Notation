@@ -489,7 +489,7 @@ function lessonHtml(ch) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="${esc(ch.title)}: a source-editable DDN field-guide chapter."><title>${esc(ch.title)} · DDN field guide</title>
 <style>${GUIDE_CSS}</style></head><body>
-<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a></nav></header>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 ${lessonMain(ch)}
 <footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
 <script src="../../notation/dist/ddn.global.js"></script>
@@ -509,7 +509,7 @@ function indexHtml(chapters, meta) {
   for (const c of chapters) (byCat[c.category] ??= []).push(c);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DDN Diagram Field Guide · 0.7 edition</title><style>${GUIDE_CSS}</style></head><body>
-<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="#paths">Learning paths</a><a href="#chapters">All chapters</a><a href="#coverage">Coverage</a><a href="portable.html">Portable edition</a></nav></header>
+<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="#paths">Learning paths</a><a href="#chapters">All chapters</a><a href="#coverage">Coverage</a><a href="portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 <main>
 <section class="hero card"><h1>Understand the diagram.<br>Change the actual design.</h1>
 <p>Choose a question, read the diagram, inspect its shared source, and try a real edit. Every chapter includes a live example, a bounded capability statement, and a shipped, undoable first edit. The whole guide also ships as <a href="portable.html">one self-contained file</a>.</p>
@@ -585,7 +585,7 @@ function portableHtml(chapters, meta) {
 #lesson{min-width:0}
 @media(max-width:900px){#layout{grid-template-columns:1fr}#sidebar{position:static;max-height:none}}
 </style></head><body>
-<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>portable 0.7 edition · one file · works offline</small></header>
+<header class="top"><span class="mark">D</span><strong>DDN Diagram Field Guide</strong><small>portable 0.7 edition · one file · works offline</small><nav><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
 <div id="layout"><aside id="sidebar" class="card"><input id="search" class="search" type="search" placeholder="Search chapters…" aria-label="Search chapters">
 <div class="nav-list">${Object.entries(byCat).map(([cat, cs]) => `<h4>${esc(cat)}</h4>` + cs.map(c => `<a href="#/${c.id}" data-id="${c.id}" data-text="${esc((c.title + ' ' + cat).toLowerCase())}">${esc(c.title)}</a>`).join('')).join('')}</div></aside>
 <div id="lesson"><main><section class="hero card"><h1>Understand the diagram.<br>Change the actual design.</h1>

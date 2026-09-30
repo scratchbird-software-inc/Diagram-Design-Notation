@@ -593,7 +593,7 @@ function page(cov, combined) {
       (names.length > 1 ? ' — multi-file workspace (' + names.length + ' files)' : '') + '</summary>\n' + parts + '\n' + combPart + '\n</details>';
   }).join('\n');
 
-  const navLink = (href, label, active) => '<a href="../../' + href + '"' + (active ? ' class="active"' : '') + '>' + label + '</a>';
+  const navLink = (href, label, active) => '<a href="' + (/^https?:\/\//.test(href) ? href : '../../' + href) + '"' + (active ? ' class="active"' : '') + '>' + label + '</a>';
   const NAV = [
     ['index.html', 'Home', false],
     ['features/index.html', 'Features', false],
@@ -601,7 +601,8 @@ function page(cov, combined) {
     ['docs/index.html', 'Docs', false],
     ['standard/index.html', 'Standard', false],
     ['tools/index.html', 'Tools', false],
-    ['download/index.html', 'Download', false]
+    ['download/index.html', 'Download', false],
+    ['https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki', 'Wiki', false]
   ];
   return `<!doctype html>
 <html lang="en">

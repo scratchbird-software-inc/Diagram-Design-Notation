@@ -81,10 +81,13 @@ test('lesson pages are self-contained apart from the repo-relative runtime scrip
   assert.ok(committed.length >= 6, 'pilot lesson pages present');
   for (const f of committed) {
     const html = fs.readFileSync(path.join(FG, 'lessons', f), 'utf8');
-    const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m => m[1]).filter(u => !u.startsWith('#') && !u.startsWith('data:'));
+    const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m => m[1]).filter(u => !u.startsWith('#') && !u.startsWith('data:')
+      // outbound navigation link to the project wiki — a hyperlink, not a
+      // remote resource; nothing is fetched from it to render the page
+      && u !== 'https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki');
     for (const u of refs)
       assert.ok(!/^(?:[a-z]+:)?\/\//.test(u), f + ': absolute or protocol-relative reference ' + u);
-    assert.ok(!/https?:\/\//.test(html.replace(/<footer>[\s\S]*<\/footer>/, '').replace(/https?:\/\/www\.w3\.org\/(?:2000\/svg|1999\/xlink)/g, '')), f + ': no remote references outside footer');
+    assert.ok(!/https?:\/\//.test(html.replace(/<footer>[\s\S]*<\/footer>/, '').replace(/https?:\/\/www\.w3\.org\/(?:2000\/svg|1999\/xlink)/g, '').replace(/https:\/\/github\.com\/scratchbird-software-inc\/Diagram-Design-Notation\/wiki/g, '')), f + ': no remote references outside footer');
   }
 });
 

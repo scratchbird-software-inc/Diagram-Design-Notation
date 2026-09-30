@@ -155,6 +155,7 @@ const NAV = [
   ['Standard', 'standard/index.html', 'standard'],
   ['Tools', 'tools/index.html', 'tools'],
   ['Download', 'download/index.html', 'download'],
+  ['Wiki', 'https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki', 'wiki'],
 ];
 
 function favicons(base) {
@@ -165,7 +166,7 @@ function favicons(base) {
 
 function shell({ base, title, active, body, description }) {
   const nav = NAV.map(([label, href, key]) =>
-    '<a href="' + base + href + '"' + (key === active ? ' class="active"' : '') + '>' + label + '</a>').join('\n      ');
+    '<a href="' + (/^https?:\/\//.test(href) ? href : base + href) + '"' + (key === active ? ' class="active"' : '') + '>' + label + '</a>').join('\n      ');
   return '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n' +
     '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
     '<title>' + esc(title) + '</title>\n' +
@@ -185,6 +186,7 @@ function shell({ base, title, active, body, description }) {
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
     '  <a href="' + base + 'download/index.html">Download</a>\n' +
+    '  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>\n' +
     '  <span class="spacer"></span>\n' +
     '  <span>All processing is local to this page.</span>\n' +
     '</div></footer>\n' +
@@ -262,6 +264,7 @@ function withSiteChrome(html, base, active) {
     '  <a href="' + base + 'docs/index.html">Docs</a>\n' +
     '  <a href="' + base + 'standard/index.html">Standard</a>\n' +
     '  <a href="' + base + 'download/index.html">Download</a>\n' +
+    '  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>\n' +
     '  <span class="spacer"></span>\n' +
     '  <span>All processing is local to this page.</span>\n</div></footer>\n';
   return html
@@ -434,6 +437,8 @@ writeOut('index.html', shell({
     'with a zero-dependency JavaScript runtime and deterministic SVG output.</p>\n' +
     '  <div class="cta-row">\n' +
     '    <a class="cta primary" href="tools/index.html?mode=design">Open the designer</a>\n' +
+    '    <a class="cta secondary" href="guide/index.html">Field guide — learn by doing</a>\n' +
+    '    <a class="cta secondary" href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki — learn DDN</a>\n' +
     '    <a class="cta secondary" href="docs/developers/embedding.html">Embed the runtime</a>\n' +
     '    <a class="cta secondary" href="standard/index.html">Read the standard</a>\n' +
     '  </div>\n</div></section>\n' +
