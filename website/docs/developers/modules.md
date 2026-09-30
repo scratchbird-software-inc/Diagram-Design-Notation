@@ -1,7 +1,7 @@
 # Modules and bundles
 
-B1-004 split the runtime into loadable pieces so pages can pay only for what
-they use; B1-019 moved the sources to real ES modules and the build to Rollup
+ split the runtime into loadable pieces so pages can pay only for what
+they use;  moved the sources to real ES modules and the build to Rollup
 (`tools/rollup.config.mjs`, pinned `rollup` + `@rollup/plugin-terser`
 devDependencies — the runtime itself still has zero runtime dependencies). All
 bundles live in `notation/dist/` and are rebuilt deterministically by
@@ -20,7 +20,7 @@ Every bundle ships three formats: readable browser IIFE (`.js`), ES module
 | `ddn-projections` | 91,683 | 75,333 (27,810) | Fixed-grid projections: chart (basic marks plus the Category-2 pack — distributions, tree, grid, network families and statistical overlays), matrix, panels, table, timeline, sequence, timing, chen. | `ddn-graph.js` |
 | `ddn-quality` | 20,469 | 15,633 (7,022) | Quality charts, fishbone causes, decision/rule-table rendering. | `ddn-graph.js` (renders through `ddn-projections.js`) |
 | `ddn-geo` | 23,771 | 16,201 (6,841) | **Optional** geographic module: mercator/equirectangular/albers/equal-earth projection math, GeoJSON ingestion, choropleth/symbol/outline map rendering. Registers the `geo` kind with `optional: true`. | `ddn-graph.js` |
-| `ddn-iso` | 23,406 | 14,396 (5,996) | **Optional** isometric module (B1-034): axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms. Publishes `DDNIso`; no new kind. | `ddn-graph.js` |
+| `ddn-iso` | 23,406 | 14,396 (5,996) | **Optional** isometric module: axonometric 30° projection, face shading, chart extrusions (bar/pie/donut/area/treemap), iso graph prisms. Publishes `DDNIso`; no new kind. | `ddn-graph.js` |
 | `ddn.global` | 980,489 | 819,295 (213,042) | All of the above **except** the optional `ddn-geo` and `ddn-iso`, plus the web component — one file, nothing to order. | — |
 
 The `.mjs` files are real ES modules (named exports for the live API and the
@@ -86,7 +86,7 @@ keeps the hard throw below. Verified in `notation/tests/geo.js` and
 
 ## The optional isometric module (ddn-iso)
 
-`ddn-iso` (B1-034) is the seventh bundle and the second **optional** one — same
+`ddn-iso` is the seventh bundle and the second **optional** one — same
 contract as ddn-geo: never embedded in `ddn.global.js`, loaded only on demand.
 It adds axonometric ("2.5D") depth to the existing `graph` and `chart` kinds —
 it registers no projection kind of its own:

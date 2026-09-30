@@ -26,7 +26,7 @@
 <main class="site-main">
 <article class="md-body">
 <h1>Data refresh (live dashboards)</h1>
-<p>B1-006 added <code>ws.replaceData(name, records)</code>: swap the records of a named <code>data</code> block while leaving every other byte of the source untouched. B1-029 made the refresh <strong>keyed and transactional</strong>. It is the supported way to drive a live diagram from changing data — the model, views, layout structure, pins, and format bundles all survive; only the record payload changes.</p>
+<p> added <code>ws.replaceData(name, records)</code>: swap the records of a named <code>data</code> block while leaving every other byte of the source untouched. made the refresh <strong>keyed and transactional</strong>. It is the supported way to drive a live diagram from changing data — the model, views, layout structure, pins, and format bundles all survive; only the record payload changes.</p>
 <h2>The contract</h2>
 <ul><li><code>name</code> is the data block's declared name (e.g. <code>data metrics { … }</code> →</li></ul>
 <p>  <code>&quot;metrics&quot;</code>).</p>
@@ -43,7 +43,7 @@
 <ul><li><strong>Empty result sets.</strong> A block MAY be refreshed to empty (subject to the</li></ul>
 <p>  removal rule). Selector views render an empty canvas; charts/tables authored   with an intentionally empty <code>records: []</code> render an empty plot with axes   (bar/line/area/point) or a header-only table. Filtering a non-empty set to   zero still fails <code>DDN-PJ012</code> — an empty declaration is honest, an empty   filter result is misleading.</p>
 <ul><li>The call returns</li></ul>
-<p>  <code>{ committed, revision, added, removed, updated, diagnostics }</code>   (a strict superset of the pre-B1-029 <code>{ revision, diagnostics }</code>) and bumps   the workspace revision when it commits, so <code>subscribe</code> listeners and   mounted elements re-render automatically. When <code>committed</code> is <code>false</code>, the   source and revision are byte-untouched.</p>
+<p>  <code>{ committed, revision, added, removed, updated, diagnostics }</code>   (a strict superset of the pre- <code>{ revision, diagnostics }</code>) and bumps   the workspace revision when it commits, so <code>subscribe</code> listeners and   mounted elements re-render automatically. When <code>committed</code> is <code>false</code>, the   source and revision are byte-untouched.</p>
 <ul><li>Both object records (<code>x_record</code> on <code>object</code>) and relation records are</li></ul>
 <p>  supported.</p>
 <h2>Dashboard recipe</h2>

@@ -1,7 +1,7 @@
 # Unified diagram tool
 
 `notation/tool/ddn-tool.html` — served on the website as
-`tools/index.html` — is the single-file unified diagram tool (B1-027). It
+`tools/index.html` — is the single-file unified diagram tool. It
 replaces the three retired pages (`tools/viewer/index.html`,
 `tools/studio/index.html`, `tools/studio/editor.html`), which are now redirect
 stubs forwarding their parameters. The full runtime and the example corpus
@@ -15,7 +15,7 @@ The file is committed and regenerated deterministically from
 `node tools/build-tool.js` (run after `build:sdk`). Do not edit the built
 file.
 
-## Rendering: worker by default (B1-043)
+## Rendering: worker by default
 
 Rendering runs in a **persistent Web Worker** by default. The main thread
 compiles the view, applies presentation overrides, measures text and applies
@@ -76,16 +76,16 @@ all, yet the host can still open drawers through `DDNTool` — see
 - **Files drawer**: open files / a folder / a workspace `.zip` or `.json`
   (with merge-into-current), drag-drop anywhere on the page, paste source
   text, or pick from the bundled example catalogue.
-- **`?src=<relative .ddn path>`** deep link: fetches the source relative to
+- **`?src=<relative.ddn path>`** deep link: fetches the source relative to
   the page together with its whole import closure (multi-file examples
   render), size-capped like a dropped file. Strictly relative — any scheme,
   host, or absolute path is rejected inline.
-- **`?entry=<catalogue entry or relative .ddn path>&view=<view id>`**: if the
+- **`?entry=<catalogue entry or relative.ddn path>&view=<view id>`**: if the
   entry is in the bundled catalogue it boots from there; otherwise the path
   is fetched with the same import closure. `history.replaceState` keeps the
   URL shareable when switching examples/views.
 
-## Design mode (B1-051): the designer IS the viewer with more functionality
+## Design mode: the designer IS the viewer with more functionality
 
 `?mode=design` is the shipping designer: one page, one I/O contract, with the
 editing affordances layered on top of `explore`:
@@ -109,7 +109,7 @@ timelines, sequence, …) the buttons disable with an explaining tooltip — the
 same rule drag-to-pin already follows. The programmatic counterparts
 (`DDNTool.placeElement`, `DDNTool.connectElements`, `startPlacement`,
 `startConnect`, `cancelDesignGesture`, `getDesignGesture`) drive the same code
-paths for hosts and tests. `?mode=design&toolbar=off` plus the B1-050 host I/O
+paths for hosts and tests. `?mode=design&toolbar=off` plus the  host I/O
 contract is the supported embedded-designer shape — see
 [embedding.md](embedding.md) → "Embedding the designer" and
 [examples/embed/designer-host.html](../../examples/embed/designer-host.html).
@@ -138,7 +138,7 @@ surface plus `DDNLive.authoring` / `DDNLive.io`. Presentation overrides are a
 temporary view overlay — the loaded source is only changed by explicit source
 or inspector edits.
 
-## Appearance drawer: override-channel option map (B1-046)
+## Appearance drawer: override-channel option map
 
 Every presentation option the live API's override channel accepts
 (`DDNLive.checkOptions` / `api.js` `defaults`) is reachable from the
@@ -203,7 +203,7 @@ and the stage keeps the last good picture undimmed; the runtime DDN071 on
 this path names the same remedy (larger page / bigger base font / relaxed
 `minimum_text`). Worker on and `?worker=off` behave identically.
 
-## Host I/O contract (B1-050)
+## Host I/O contract
 
 For hosts embedding the tool, three additive methods formalize DDN in/out —
 the same in every mode and with the render worker on or off:

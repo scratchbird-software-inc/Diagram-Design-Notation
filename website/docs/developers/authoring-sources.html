@@ -45,7 +45,7 @@ view overview &quot;Orders / shared model&quot; {
     format: @shared.styles.technical;
 }</code></pre>
 <ul><li><code>ddn &quot;0.5&quot;;</code> — language version stamp. See spec <code>01-language.md</code>.</li><li><code>module</code> — namespace; every declaration id is module-qualified. See</li></ul>
-<p>  <code>01-language.md</code> and <code>02-data-model.md</code>. A file may hold several   <code>module &quot;…&quot;;</code> sections , so a full design can live in one   self-contained file; sibling sections reference each other by   module-qualified id (<code>@otherModule.name</code>) with no import between them.</p>
+<p>  <code>01-language.md</code> and <code>02-data-model.md</code>. A file may hold several   <code>module &quot;…&quot;;</code> sections, so a full design can live in one   self-contained file; sibling sections reference each other by   module-qualified id (<code>@otherModule.name</code>) with no import between them.</p>
 <ul><li><code>import &quot;…&quot; as alias</code> — pulls another file's declarations in as</li></ul>
 <p>  <code>@alias.name</code>. See <code>03-views-and-reuse.md</code>. Imports are file-level: they   precede the first module header (canonical), or immediately follow the   FIRST header in the legacy position. <code>DDNLive.io.bundle(files, entry)</code> and   the CLI <code>bundle</code> command merge a workspace into one multi-section file with   byte-identical rendering.</p>
 <h2>Data blocks: the model is the source of truth</h2>
@@ -68,7 +68,7 @@ data model {
 <ul><li><code>fields</code>/<code>ports</code> — member groups, applied inside a <code>fields {}</code>/<code>ports {}</code></li></ul>
 <p>  group of the same kind; member order is preserved around local members.</p>
 <ul><li><code>relation_props</code> — property sets for relation bodies only.</li><li><code>preset</code> — property sets for any element/relation body and for view-level</li></ul>
-<p>  <code>flow</code> blocks; a motion preset is a preset carrying the B1-033 motion keys.</p>
+<p>  <code>flow</code> blocks; a motion preset is a preset carrying the  motion keys.</p>
 <ul><li><code>fragment</code> — include-by-reference data members (unparameterized;</li></ul>
 <p>  parameterized fragments are deferred, see <code>DDN-GAPS.md</code>).</p>
 <p>Precedence: local in-declaration properties override presets; two presets conflicting on a property are a coded error (DDN-E017) unless the declaration resolves the property locally. A preset-applied property is ASSERTED — it is an explicit author decision, present on the expanded declaration — and only the named definitions' own properties apply. <code>version: N</code> on a definition is optional, integer, and documentary only (expansion ignores it). Definitions are closed templates: <code>use:</code> inside a definition body, in a batch header, or in a non-application context is a coded error (DDN-E017).</p>
@@ -84,14 +84,14 @@ data model {
 }</code></pre>
 <ul><li>Looks, themes, fonts: <code>04-notation-and-looks.md</code>.</li><li>Layout algorithms, routing modes, crossings: <code>05-routing.md</code>,</li></ul>
 <p>  <code>15-placement-and-low-light.md</code>, <code>13-curved-relations.md</code>,   <code>26-local-endpoint-ordering.md</code>.</p>
-<ul><li>Spacing hints (<code>tight</code>/<code>normal</code>/<code>loose</code>/<code>expanded</code>, B1-008): registered in</li></ul>
+<ul><li>Spacing hints (<code>tight</code>/<code>normal</code>/<code>loose</code>/<code>expanded</code>, ): registered in</li></ul>
 <p>  <code>standard/registry/capabilities.json</code>, behavior pinned by   <code>notation/tests/spacing-hints.js</code>.</p>
 <ul><li>Publication sizes, subdiagrams, legends: <code>06-publication-and-subdiagrams.md</code>.</li></ul>
 <h2>Projections and profiles</h2>
 <p><code>projection { kind: …; profile: &quot;…&quot;; … }</code> turns a view into a specific diagram family: <code>chen</code>, <code>matrix</code>, <code>panels</code>, <code>table</code>, <code>chart</code>, <code>timeline</code>, <code>fishbone</code>, <code>decision</code>, <code>sequence</code>, <code>timing</code>, <code>geo</code>, or a specialised <code>graph</code> profile. All 98 installed profiles (12 projection kinds) are listed in <code>standard/registry/profiles/catalogue.json</code> and each has a rendered example in the gallery (<code>website/examples/gallery/index.html</code>). The projection chapters: <code>16-profiles-and-projections.md</code> through <code>42-family-trees.md</code> (matrices and panels 18, charts/time 19 + 22, lifecycles/rule tables 23, sequence 27, BPMN 32, SysML 36, ArchiMate 37, and so on).</p>
 <h2>Checking your work</h2>
-<pre><code>node notation/cli/cli.js check your.ddn --workspace .
-node notation/cli/cli.js render your.ddn --view overview --workspace . --out /tmp/o.svg</code></pre>
+<pre><code>node notation/cli/cli.js check your.ddn --workspace.
+node notation/cli/cli.js render your.ddn --view overview --workspace. --out /tmp/o.svg</code></pre>
 <p>Diagnostics carry stable codes (<code>DDN0xx</code> core, <code>DDN-PJ0xx</code> projections, <code>DDN-I0xx</code> interaction, <code>DDN-E0xx</code> API) — <code>07-reference-and-conformance.md</code> is the conformance chapter. Programmatic authoring edits (the same operations the visual designer uses) are documented in <a href="api-reference.html">api-reference.md</a> under <code>authoring</code>; the editing model itself is spec <code>16-workspace-and-editing.md</code>.</p>
 <p>More prose, lesson-style: <code>25-diagram-field-guide.md</code>. The largest collection of real sources to copy from is <code>website/examples/basics/</code> (01–60).</p>
 </article>

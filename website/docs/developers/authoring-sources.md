@@ -29,7 +29,7 @@ view overview "Orders / shared model" {
 - `ddn "0.5";` — language version stamp. See spec `01-language.md`.
 - `module` — namespace; every declaration id is module-qualified. See
   `01-language.md` and `02-data-model.md`. A file may hold several
-  `module "…";` sections , so a full design can live in one
+  `module "…";` sections, so a full design can live in one
   self-contained file; sibling sections reference each other by
   module-qualified id (`@otherModule.name`) with no import between them.
 - `import "…" as alias` — pulls another file's declarations in as
@@ -77,7 +77,7 @@ data model {
   group of the same kind; member order is preserved around local members.
 - `relation_props` — property sets for relation bodies only.
 - `preset` — property sets for any element/relation body and for view-level
-  `flow` blocks; a motion preset is a preset carrying the B1-033 motion keys.
+  `flow` blocks; a motion preset is a preset carrying the  motion keys.
 - `fragment` — include-by-reference data members (unparameterized;
   parameterized fragments are deferred, see `DDN-GAPS.md`).
 
@@ -118,7 +118,7 @@ view sketch "Orders / workshop sketch" {
 - Layout algorithms, routing modes, crossings: `05-routing.md`,
   `15-placement-and-low-light.md`, `13-curved-relations.md`,
   `26-local-endpoint-ordering.md`.
-- Spacing hints (`tight`/`normal`/`loose`/`expanded`, B1-008): registered in
+- Spacing hints (`tight`/`normal`/`loose`/`expanded`, ): registered in
   `standard/registry/capabilities.json`, behavior pinned by
   `notation/tests/spacing-hints.js`.
 - Publication sizes, subdiagrams, legends: `06-publication-and-subdiagrams.md`.
@@ -138,8 +138,8 @@ BPMN 32, SysML 36, ArchiMate 37, and so on).
 ## Checking your work
 
 ```sh
-node notation/cli/cli.js check your.ddn --workspace .
-node notation/cli/cli.js render your.ddn --view overview --workspace . --out /tmp/o.svg
+node notation/cli/cli.js check your.ddn --workspace.
+node notation/cli/cli.js render your.ddn --view overview --workspace. --out /tmp/o.svg
 ```
 
 Diagnostics carry stable codes (`DDN0xx` core, `DDN-PJ0xx` projections,

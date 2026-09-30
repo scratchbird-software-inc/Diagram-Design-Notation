@@ -10,7 +10,7 @@
 (<code>drawers=source:api,…</code>). Design mode is the viewer plus editing
 affordances: drag-to-pin is armed, the <em>Add element</em> palette
 (click-to-place) and <em>Connect</em> (click source → click target → pick a
-verb) sit on the stage, and the host drives everything else through the B1-050
+verb) sit on the stage, and the host drives everything else through the
 I/O contract. The textarea holds DDN source <strong>as a variable</strong>.
 <strong>Load into designer</strong> passes it in with
 <code>DDNTool.setSource</code>. Edit visually in the frame — drag elements,
@@ -34,7 +34,7 @@ const frame = document.getElementById('tool'), status = document.getElementById(
 /* Parent query passes through so the same page demonstrates worker and
  * ?worker=off parity (the headless check runs both). */
 frame.src = '../../tools/index.html?mode=design&toolbar=off&drawers=source:api,appearance:api,files:none,export:none'
-  + (params.get('worker') === 'off' ? '&worker=off' : '');
+  + (params.get('worker') === 'off' ? '&worker=off': '');
 const START = `ddn "0.5";
 module "shop.design";
 
@@ -103,7 +103,7 @@ document.getElementById('openSource').addEventListener('click', () => {
  * on-stage gestures: placeElement is the click-to-place drop, connectElements
  * is the source→target→verb connect — both commit one undoable source edit. */
 async function selftest() {
-  const out = [], ok = (name, cond, extra) => out.push(((cond ? 'PASS ' : 'FAIL ') + name) + (cond ? '' : ' — ' + String(extra).slice(0, 240)));
+  const out = [], ok = (name, cond, extra) => out.push(((cond ? 'PASS ': 'FAIL ') + name) + (cond ? '': ' — ' + String(extra).slice(0, 240)));
   const t = tool(), doc = frame.contentDocument;
   try {
     const r = await t.setSource(START);
@@ -139,8 +139,8 @@ async function selftest() {
     ok('reloaded source keeps both visual edits', again.includes('new_table') && again.includes('Notify'), again.slice(-400));
   } catch (e) { out.push('FAIL selftest fatal — ' + String(e && e.stack || e).slice(0, 300)); }
   const pass = out.every(l => l.startsWith('PASS'));
-  say('SELFTEST ' + (pass ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), !pass);
-  document.title = 'SELFTEST-' + (pass ? 'PASS' : 'FAIL');
+  say('SELFTEST ' + (pass ? 'PASS': 'FAIL') + ' — ' + out.join(' | '), !pass);
+  document.title = 'SELFTEST-' + (pass ? 'PASS': 'FAIL');
   if (params.get('report')) {
     try { await fetch(params.get('report'), { method: 'POST', body: JSON.stringify({ pass, lines: out }) }); } catch (e) { /* server gone */ }
   }

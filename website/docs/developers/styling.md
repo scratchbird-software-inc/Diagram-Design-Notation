@@ -1,6 +1,6 @@
 # Styling rendered diagrams
 
-B1-003 added stable CSS class hooks to every rendered diagram plus an
+ added stable CSS class hooks to every rendered diagram plus an
 optional stylesheet, `notation/dist/ddn.css` (source:
 `notation/studio/src/ddn.css`). The contract: **page CSS fills the gaps the
 script left unset** — script-level presentation (format palette, look,
@@ -32,17 +32,17 @@ Semantic hooks (vary per diagram):
 | `ddn-verb-<verb>` | relation verb (`ddn-verb-ref`, `ddn-verb-domain`, …) |
 | `ddn-font-<hash>` | font-stack bucket used for the render |
 
-The viewer (B1-007) builds its colour overrides on
+The viewer builds its colour overrides on
 `.ddn-kind-<code>`, `.ddn-verb-<verb>`, and `[data-ddn-id="<element id>"]`
 attribute selectors.
 
 ## Per-kind typography CSS
 
-B1-011 added per-kind font overrides in the viewer, emitted as viewer-page
+ added per-kind font overrides in the viewer, emitted as viewer-page
 rules of the form:
 
 ```css
-.ddn-svg .ddn-kind-tbl text { font-family: "DejaVu Sans Mono", monospace; font-size: 20px; }
+.ddn-svg.ddn-kind-tbl text { font-family: "DejaVu Sans Mono", monospace; font-size: 20px; }
 ```
 
 The family is always one of the four runtime stacks (`sans`, `serif`,

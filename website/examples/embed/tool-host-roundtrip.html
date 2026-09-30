@@ -35,7 +35,7 @@ const frame = document.getElementById('tool'), status = document.getElementById(
 /* Parent query passes through to the tool so the same page demonstrates
  * worker and ?worker=off parity (and the headless checks both). */
 frame.src = '../../tools/index.html?toolbar=off&drawers=source:api,appearance:api,files:none,export:none'
-  + (params.get('worker') === 'off' ? '&worker=off' : '');
+  + (params.get('worker') === 'off' ? '&worker=off': '');
 const START = `ddn "0.5";
 module "shop.demo";
 
@@ -95,7 +95,7 @@ document.getElementById('loadBtn').addEventListener('click', () =>
     e => say('setSource rejected — ' + (e.code || '') + ': ' + e.message, true)));
 function readBack(opts, label) {
   try {
-    const text = tool().getSource({ ...opts, single: true });
+    const text = tool().getSource({...opts, single: true });
     ta.value = text;
     say(label + ' — the textarea now holds the tool\'s current source (' + text.length + ' chars)');
   } catch (e) { say('getSource: ' + (e.code || '') + ': ' + e.message, true); }
@@ -119,15 +119,15 @@ function stageSvg() {
   const d = tool().diagram;
   /* The renderer's own SVG bytes — DOM outerHTML would carry the per-mount
    * component uid (safeSVG id prefixing), which is chrome, not picture. */
-  return d && d.result ? d.result.svg : '';
+  return d && d.result ? d.result.svg: '';
 }
 function overlayCss() {
   const d = tool().diagram;
   const el = d && d.shadowRoot.querySelector('#ddn-tool-overrides');
-  return el ? el.textContent : '';
+  return el ? el.textContent: '';
 }
 async function selftest() {
-  const out = [], ok = (name, cond, extra) => out.push(((cond ? 'PASS ' : 'FAIL ') + name) + (cond ? '' : ' — ' + String(extra).slice(0, 200)));
+  const out = [], ok = (name, cond, extra) => out.push(((cond ? 'PASS ': 'FAIL ') + name) + (cond ? '': ' — ' + String(extra).slice(0, 200)));
   const t = tool();
   try {
     const r = await t.setSource(START);
@@ -169,7 +169,7 @@ async function selftest() {
     await t.setSource('this is not ddn').then(() => {}, e => { bad = (e.code || 'NO-CODE') + ' ' + e.message; });
     ok('setSource rejects coded on invalid source', /^DDN/.test(bad), bad);
     await t.setSource(START);
-    /* B1-052 D5/D7: artboard pre-validation — a too-small page must be refused
+    /*  D5/D7: artboard pre-validation — a too-small page must be refused
      * BEFORE rendering, with a friendly DDN071 message naming the smallest
      * usable artboard, no stale-dimmed stage, and the last good render kept.
      * Runs in both worker modes (this page passes ?worker=off through). */
@@ -194,8 +194,8 @@ async function selftest() {
     ok('page reset to source re-renders cleanly', !!stageSvg() && frame.contentDocument.getElementById('ddn-source-error').textContent === '', frame.contentDocument.getElementById('ddn-source-error').textContent);
   } catch (e) { out.push('FAIL selftest fatal — ' + String(e && e.stack || e).slice(0, 300)); }
   const pass = out.every(l => l.startsWith('PASS'));
-  say('SELFTEST ' + (pass ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), !pass);
-  document.title = 'SELFTEST-' + (pass ? 'PASS' : 'FAIL');
+  say('SELFTEST ' + (pass ? 'PASS': 'FAIL') + ' — ' + out.join(' | '), !pass);
+  document.title = 'SELFTEST-' + (pass ? 'PASS': 'FAIL');
   if (params.get('report')) {
     try { await fetch(params.get('report'), { method: 'POST', body: JSON.stringify({ pass, lines: out }) }); } catch (e) { /* server gone */ }
   }

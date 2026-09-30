@@ -3,8 +3,8 @@ module "ddn.gallery.layouts";
 
 // Gallery layout sheet. A small holding-company hierarchy rendered once per
 // placement algorithm accepted by the runtime (native grid/manual/layered/
-// tree/mindmap/grouped plus the pattern-based fit_grid/circular/radial/
-// spanning_tree/organic).
+// tree/mindmap/grouped/ladder plus the pattern-based fit_grid/circular/
+// radial/spanning_tree/organic).
 data model {
     object holding "Meridian Holdings" { kind: context; role: group; }
     object energy "Meridian Energy" { kind: application; role: core; }
@@ -75,4 +75,8 @@ view spanning_tree "Layouts / spanning_tree" {
 view organic "Layouts / organic" {
     data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
     layout { algorithm: organic; }
+}
+view ladder "Layouts / ladder" {
+    data: [@model]; style: @gallery.standard; display: @gallery.readable; publication: @gallery.screen; legend: @gallery.key;
+    layout { algorithm: ladder; }
 }

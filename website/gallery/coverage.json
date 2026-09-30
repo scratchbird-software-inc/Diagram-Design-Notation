@@ -1657,6 +1657,11 @@
           "view": "organic",
           "title": "Layouts / organic",
           "svg": "layouts/organic.svg"
+        },
+        {
+          "view": "ladder",
+          "title": "Layouts / ladder",
+          "svg": "layouts/ladder.svg"
         }
       ]
     },

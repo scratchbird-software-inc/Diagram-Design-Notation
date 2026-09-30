@@ -40,11 +40,11 @@ frame.addEventListener('load', () => {
     else say('DDNTool did not appear — serve over HTTP, not file://', true);
   })();
 });
-/* Hash-triggered hooks for the headless-Chromium checks (B1-049 report):
+/* Hash-triggered hooks for the headless-Chromium checks:
  * #demo opens the source drawer; #selftest runs the behavioural assertions. */
 function selftest() {
   const t = tool(), out = [];
-  const ok = (name, cond) => out.push((cond ? 'PASS ' : 'FAIL ') + name);
+  const ok = (name, cond) => out.push((cond ? 'PASS ': 'FAIL ') + name);
   const c = t.getDrawerConfig();
   ok('toolbar hidden by ?toolbar=off', c.toolbar === false);
   ok('source drawer is api', c.drawers.source === 'api');
@@ -60,7 +60,7 @@ function selftest() {
   ok('gear popup states exclude api', Array.isArray(t.GEAR_STATES) && !t.GEAR_STATES.includes('api') && t.DRAWER_STATES.includes('api'));
   t.setToolbar(true);
   ok('setToolbar(true) reveals the toolbar', frameDoc.getElementById('ddn-toolbar').hidden === false);
-  say('SELFTEST ' + (out.every(l => l.startsWith('PASS')) ? 'PASS' : 'FAIL') + ' — ' + out.join(' | '), out.some(l => l.startsWith('FAIL')));
+  say('SELFTEST ' + (out.every(l => l.startsWith('PASS')) ? 'PASS': 'FAIL') + ' — ' + out.join(' | '), out.some(l => l.startsWith('FAIL')));
 }
 document.getElementById('openSource').addEventListener('click', () => {
   try { tool().setDrawer('source', 'open'); say('host opened the source drawer — no toolbar involved'); }

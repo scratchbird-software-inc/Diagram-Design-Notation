@@ -14,7 +14,7 @@ This page lists what changed, with before/after for each.
 `.ddn` files are **unchanged** — sources keep declaring `ddn "0.3"…"0.5"`;
 no source edit is required.
 
-## Element defaults are registry-driven and visible (B1-002)
+## Element defaults are registry-driven and visible
 
 **Before:** defaults for an element kind lived in the renderer; a declared
 element showed only the properties the author wrote.
@@ -26,7 +26,7 @@ property set for a kind, and declare/create paths populate from it.
 DDNLive.defaults.forKind("table");   // deep copy of the registry defaults, {} when none
 ```
 
-## CSS class hooks and ddn.css (B1-003)
+## CSS class hooks and ddn.css
 
 **Before:** restyling a rendered diagram meant post-processing SVG.
 **After:** every render carries stable hooks (`.ddn-node`, `.ddn-rel`,
@@ -42,7 +42,7 @@ gaps the script left unset; inline presentation attributes still win.
 
 Full class list and cascade rules: [styling.md](styling.md).
 
-## Modular runtime bundles (B1-004)
+## Modular runtime bundles
 
 **Before:** one all-in-one script or nothing.
 **After:** `ddn-core.js` → `ddn-graph.js` → `ddn-projections.js` →
@@ -56,28 +56,28 @@ capability whose bundle is missing throws `DDN-E010` naming the file.
 
 Sizes and the full matrix: [modules.md](modules.md).
 
-## npm packaging (B1-005)
+## npm packaging
 
 **Before:** consumers copied files out of the repo.
 **After:** `notation/` packs as `@ddn/notation` with an `exports` map:
 `.` (global), `./core`, `./graph`, `./projections`, `./quality`, each with
 import/require/types entries.
 
-## Data refresh API (B1-006)
+## Data refresh API
 
 **Before:** live data meant regenerating source text and re-parsing.
 **After:** `ws.replaceData(name, records)` swaps a data block's records in
 place; record keys must match the block's first record or `DDN-E011`.
 Recipe: [data-refresh.md](data-refresh.md).
 
-## End-user viewer (B1-007)
+## End-user viewer
 
 **New, nothing to migrate:** `notation/tool/ddn-tool.html` — single-file
-unified diagram tool (B1-027) with pop-in drawers, fit modes, font/colour
-overrides, guided edits and SVG/PNG/WebP export; it replaced the B1-007
+unified diagram tool with pop-in drawers, fit modes, font/colour
+overrides, guided edits and SVG/PNG/WebP export; it replaced the
 viewer (see [tool.md](tool.md), [viewer.md](viewer.md)).
 
-## Spacing hints (B1-008)
+## Spacing hints
 
 **Before:** inter-node gaps were only the format's `gap`/`row_gap` numbers.
 **After:** optional additive `spacing: tight|normal|loose|expanded` on views
@@ -89,7 +89,7 @@ gaps and route-label margins only — node bodies and fonts never scale.
 view workshop "Orders / wide" { data: [@model]; format: @f.common; spacing: loose; }
 ```
 
-## Script/golden refresh (B1-009)
+## Script/golden refresh
 
 All 114 `.ddn` example files re-verified (check + render-twice
 byte-determinism + golden hashes), and a permanent gate now parse-checks

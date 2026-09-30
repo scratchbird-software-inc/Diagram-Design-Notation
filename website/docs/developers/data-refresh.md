@@ -1,7 +1,7 @@
 # Data refresh (live dashboards)
 
-B1-006 added `ws.replaceData(name, records)`: swap the records of a named
-`data` block while leaving every other byte of the source untouched. B1-029
+ added `ws.replaceData(name, records)`: swap the records of a named
+`data` block while leaving every other byte of the source untouched.
 made the refresh **keyed and transactional**. It is the supported way to
 drive a live diagram from changing data — the model, views, layout structure,
 pins, and format bundles all survive; only the record payload changes.
@@ -44,7 +44,7 @@ pins, and format bundles all survive; only the record payload changes.
   filter result is misleading.
 - The call returns
   `{ committed, revision, added, removed, updated, diagnostics }`
-  (a strict superset of the pre-B1-029 `{ revision, diagnostics }`) and bumps
+  (a strict superset of the pre- `{ revision, diagnostics }`) and bumps
   the workspace revision when it commits, so `subscribe` listeners and
   mounted elements re-render automatically. When `committed` is `false`, the
   source and revision are byte-untouched.

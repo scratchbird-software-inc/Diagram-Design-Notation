@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* SPDX-License-Identifier: GPL-2.0-or-later.
- * B1-010 gallery generator (D1/D2/D5), overhauled by B1-053:
+ * gallery generator (D1/D2/D5), overhauled by
  *
  * Builds website/examples/gallery/:
  *   - one rendered SVG per installed profile (coverage map: profile -> nearest
@@ -10,14 +10,14 @@
  *   - variation sheets: chart marks, looks x palettes, routing x look,
  *     layout algorithms, spacing levels,
  *   - combined single-file variants (<name>.combined.ddn) of every multi-file
- *     example entry used by the gallery (B1-053): written beside the originals
+ *     example entry used by the gallery written beside the originals
  *     and verified to render byte-identical SVG for every view the gallery
  *     renders from that entry,
  *   - coverage.json (the machine-readable coverage map consumed by
  *     notation/tests/gallery-coverage.js),
  *   - index.html: a static, file://-safe page wrapped in the same site
- *     navigator as every other website page (B1-053 D1). Every figure carries
- *     a detail view (B1-053 D4): an explanation, deep links that open the
+ *     navigator as every other website page D1). Every figure carries
+ *     a detail view D4): an explanation, deep links that open the
  *     exact view in the unified tool (?entry=&view=&mode=, verified against
  *     notation/tool/src/tool.js — ?src= ignores the view param, ?entry= does
  *     not), a wiki link when a matching wiki page exists, and a browsable DDN
@@ -38,7 +38,7 @@ const CLI = path.join(ROOT, 'notation/cli/cli.js');
 const OUT = path.join(ROOT, 'website/examples/gallery');
 const SRC = path.join(OUT, 'src');
 const A = require(path.join(ROOT, 'notation/dist/ddn.global.js'));
-/* B1-035 (D1): mirror the CLI's optional-module wiring so the build host matches
+/* (D1): mirror the CLI's optional-module wiring so the build host matches
  * the render host. The geo plates already render (the CLI registers ddn-geo and
  * every render below goes through the CLI); ddn-iso was never loaded anywhere in
  * the gallery path, which is why no iso plates existed. Loading it publishes the
@@ -51,18 +51,18 @@ const PROJECTION_KINDS = [...new Set(catalogue.profiles.map(p => p.projection))]
 
 /* Variation sheets: gallery src file -> the views that make up the sheet. */
 const SHEETS = [
-  { id: 'marks', title: 'Chart marks', file: 'marks.ddn', wiki: 'Diagrams-Charts', blurb: 'Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1); radar, funnel, gauge, candlestick, treemap, sankey (their own profiles); and the Category-2 pack (B1-024): histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle; and the isometric variants of the extrudable marks (B1-035): iso bar, pie, donut, area, treemap — plus an iso multi-series grouped bar (B1-036).' },
+  { id: 'marks', title: 'Chart marks', file: 'marks.ddn', wiki: 'Diagrams-Charts', blurb: 'Every chart mark the runtime renders: bar, line, area, point, pie, donut (chart.basic@1); radar, funnel, gauge, candlestick, treemap, sankey (their own profiles); and the Category-2 pack histogram, density, qq, quantiledot, dotplot, boxplot, violin, beeswarm, topk, tidytree, radialtree, circlepack, sunburst, packedbubble, heatmap, densityheatmap, calendar, parallelcoords, wordcloud, arc, force, edgebundle; and the isometric variants of the extrudable marks iso bar, pie, donut, area, treemap — plus an iso multi-series grouped bar' },
   { id: 'looks', title: 'Looks × palettes', file: 'looks.ddn', blurb: 'Every look (classic, handDrawn, neo) crossed with every palette theme (default, neutral, dark, night, forest, base).' },
   { id: 'routing', title: 'Routing × look', file: 'routing.ddn', blurb: 'Every routing mode (orthogonal, straight, curved bezier, curved rounded) crossed with every look.' },
-  { id: 'layouts', title: 'Layout algorithms', file: 'layouts.ddn', blurb: 'Every placement algorithm: native grid, manual (pinned), layered, tree, mindmap, grouped, and the pattern-based fit_grid, circular, radial, spanning_tree, organic.' },
-  { id: 'spacing', title: 'Spacing levels', file: 'spacing.ddn', blurb: 'The four spacing hints (tight, normal, loose, expanded) on one graph (B1-008).' },
-  /* B1-035: iso sheets source their views straight from the basics examples
+  { id: 'layouts', title: 'Layout algorithms', file: 'layouts.ddn', blurb: 'Every placement algorithm: native grid, manual (pinned), layered, tree, mindmap, grouped, ladder, and the pattern-based fit_grid, circular, radial, spanning_tree, organic.' },
+  { id: 'spacing', title: 'Spacing levels', file: 'spacing.ddn', blurb: 'The four spacing hints (tight, normal, loose, expanded) on one graph' },
+  /* iso sheets source their views straight from the basics examples
    * (entry overrides the default gallery/src/<file>). */
-  { id: 'iso', title: 'Isometric charts', entry: 'website/examples/basics/72-iso-charts.ddn', wiki: 'Diagrams-Isometric', blurb: 'Every extrudable chart mark (bar, pie, donut, area, treemap) with iso depth, plus a multi-series grouped bar on the quality-render path (B1-036), from examples/basics/72-iso-charts.ddn (B1-034).' },
-  { id: 'isograph', title: 'Isometric graph', entry: 'website/examples/basics/73-iso-architecture.ddn', wiki: 'Diagrams-Architecture-Advanced', blurb: 'Graph nodes as extruded prisms on an isometric ground plane, from examples/basics/73-iso-architecture.ddn (B1-034).' }
+  { id: 'iso', title: 'Isometric charts', entry: 'website/examples/basics/72-iso-charts.ddn', wiki: 'Diagrams-Isometric', blurb: 'Every extrudable chart mark (bar, pie, donut, area, treemap) with iso depth, plus a multi-series grouped bar on the quality-render path, from examples/basics/72-iso-charts.ddn' },
+  { id: 'isograph', title: 'Isometric graph', entry: 'website/examples/basics/73-iso-architecture.ddn', wiki: 'Diagrams-Architecture-Advanced', blurb: 'Graph nodes as extruded prisms on an isometric ground plane, from examples/basics/73-iso-architecture.ddn' }
 ];
 
-/* B1-053 (D4): wiki mapping. A figure links a wiki page only when a page that
+/* (D4): wiki mapping. A figure links a wiki page only when a page that
  * actually covers the diagram type exists in
  * github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki — ordered
  * [prefix-or-exact-id, page] rules; anything unlisted gets no wiki link. */
@@ -127,7 +127,7 @@ function wikiPageFor(profileId) {
   return null;
 }
 
-/* B1-053 (D4): one-line explanations ("what it shows"), keyed by exact profile
+/* (D4): one-line explanations ("what it shows"), keyed by exact profile
  * id where the family phrase alone is too vague, with family-prefix fallback. */
 const EXPLAIN_EXACT = {
   'ddn@1': 'Free-form DDN graph: objects and relations from the semantic model drawn as boxes and links.',
@@ -272,7 +272,7 @@ function filesFor(entry) {
     files[name] = fs.readFileSync(path.join(ROOT, name), 'utf8');
     const ast = A.parse(files[name], name);
     for (const imp of ast.imports) visit(A.resolvePath(name, imp.path));
-    /* B1-090: architecture bases and x_link files join the workspace too. */
+    /* architecture bases and x_link files join the workspace too. */
     const walk = n => {
       if (n.type === 'architecture') for (const f of n.props?.files || []) visit(A.resolvePath(name, f));
       if (n.props?.x_link?.file) visit(A.resolvePath(name, n.props.x_link.file));
@@ -292,7 +292,7 @@ function render(entry, view, outFile) {
   if (!svg.includes('<svg')) throw new Error('Render did not produce SVG: ' + outFile);
 }
 
-/* B1-053 (D3): combined single-file variants. Every multi-file .ddn entry under
+/* (D3): combined single-file variants. Every multi-file .ddn entry under
  * website/examples/ (any file with top-level import lines) gets a
  * <name>.combined.ddn written beside it via the CLI bundle path, then every
  * view it declares is rendered from BOTH the original workspace and the
@@ -368,7 +368,7 @@ function sheetEntry(sheet) {
   return sheet.entry || path.join('website/examples/gallery/src', sheet.file);
 }
 
-/* B1-053 addendum (D7): the example corpus. Every view-bearing example file the
+/* addendum (D7): the example corpus. Every view-bearing example file the
  * retired examples index listed — basics NN-*.ddn, the projections and quality
  * entry files, use-cases, live labs — is represented in the gallery with the
  * same detail treatment as profiles/sheets. Combined variants are covered by
@@ -546,7 +546,7 @@ function page(cov, combined) {
   const corpusCount = cov.corpus.length;
   const totalCount = profileCount + sheetCount + corpusCount;
 
-  /* Example corpus section (B1-053 addendum, D7): every view-bearing example
+  /* Example corpus section addendum, D7): every view-bearing example
    * file, rendered on its first view, with the full detail treatment. */
   const corpusFigures = cov.corpus.map(c => {
     const explanation = (c.profile ? explainProfile(c.profile) : 'Example view from ' + c.entry + '.') +
@@ -568,14 +568,14 @@ function page(cov, combined) {
     return libs;
   })();
 
-  /* Projection-kind index (B1-053 D5): every projection kind the runtime
+  /* Projection-kind index D5): every projection kind the runtime
    * supports, with the profiles bound to it. */
   const kindRows = PROJECTION_KINDS.map(kind => {
     const profiles = catalogue.profiles.filter(p => p.projection === kind).map(p => p.id).sort();
     return `<tr><td><code>${esc(kind)}</code></td><td>${profiles.length}</td><td>${profiles.map(id => `<a href="#profile-${esc(slug(id))}"><code>${esc(id)}</code></a>`).join(' ')}</td></tr>`;
   }).join('\n');
 
-  /* Browsable DDN sources (B1-053 D4): one collapsed block per unique entry,
+  /* Browsable DDN sources D4): one collapsed block per unique entry,
    * anchored from every figure that renders from it. Multi-file entries show
    * the combined single-file text as well. */
   const uniqueEntries = [...new Set([

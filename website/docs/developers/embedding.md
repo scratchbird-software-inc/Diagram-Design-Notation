@@ -234,7 +234,7 @@ presentation attributes, not `<style>` blocks (see
 [styling.md](styling.md) — no `!important` anywhere, page CSS fills gaps the
 script left unset).
 
-The unified tool's render worker (B1-043) is created from a Blob URL, so a
+The unified tool's render worker is created from a Blob URL, so a
 page hosting the *tool* (or any `setRenderBridge` consumer) also needs
 `worker-src blob:` (or `child-src blob:` on older engines). Pages embedding
 only the runtime do not load any worker.
@@ -257,4 +257,4 @@ about *your sources*:
   pickers/drag-drop/paste and the bundled catalogue, so it works fully from
   `file://` in current Chrome and Firefox; its `?src=` deep links need HTTP.
   It replaced the single-file viewer (`ddn-viewer.html`, see
-  [viewer.md](viewer.md)) in B1-027.
+  [viewer.md](viewer.md)) in.

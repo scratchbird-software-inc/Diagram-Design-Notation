@@ -87,13 +87,11 @@ document.querySelector("#out").innerHTML = r.svg;
 mark, placement, spacing-era presentation switches). `'source'` means "keep
 what the view declared".
 
-`noMotion: true` strips SMIL animation (B1-033 flow motion and B1-034 iso depth
-transitions) for print/static targets. `isoFrom: { depths: { elementId: px } }`
-(B1-034, optional ddn-iso module) hands the host's previous committed depths to
+`noMotion: true` strips SMIL animation for print/static targets. `isoFrom: { depths: { elementId: px } }` hands the host's previous committed depths to
 an `iso`/`depth` view so changed extrusions carry a declarative one-shot SMIL
 transition (250 ms); omit it (or pass equal depths) for a static render.
 
-Relation-rendering override keys (B1-011):
+Relation-rendering override keys:
 
 - `relationRouting: Record<string, 'orthogonal'|'straight'|'curved'|'rounded'>`
   — per-verb / per-relation routing overlay. Keys are verb ids or relation
@@ -178,7 +176,7 @@ const off = ws.subscribe(({ revision, changedFiles }) => {
 
 `ws.replaceData(name, records): { committed, revision, added, removed, updated, diagnostics }`
 — replace the records of a named `data` block, leaving every other byte of
-the source untouched (B1-006; keyed transactional contract since B1-029).
+the source untouched.
 Records must carry the same field keys as the block's existing first record,
 or the call throws `DDN-E011`. An optional per-record `key` field matches
 records to declaration ids, so reordering never reassigns values to the wrong
@@ -264,5 +262,5 @@ workspace; external imports kept with a `DDN-W013` warning).
 
 `DDNLive.defaults.forKind(kind)` returns a deep copy of the registry default
 property set for an element kind (`{}` when the kind has none) — the same
-defaults B1-002 populates on declare/create. Use it to pre-fill forms or to
+defaults  populates on declare/create. Use it to pre-fill forms or to
 diff an element against the registry baseline.
