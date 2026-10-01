@@ -2724,7 +2724,7 @@
       validation:{mode:'logical',unknown_extensions:'warn'},
       export:{mode:'full',elements:[],fields:null,properties:[],include_samples:false,identifier_mode:'opaque',title:'Published data view',format:'json'},
     };
-    const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic','ladder'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
+    const CHOICES={projection:{kind:['graph','chen','matrix','panels','table','chart','timeline','fishbone','decision','sequence','timing','geo']},style:{look:['classic','handDrawn','neo'],theme:['default','neutral','dark','night','forest','base'],font:['sans','serif','mono','handwriting']},layout:{algorithm:['auto','grid','manual','layered','tree','mindmap','grouped','fit_grid','circular','radial','spanning_tree','organic','ladder'],center:['pins','content'],optimize:['crossings','none'],endpoint_ordering:['optimize','preserve'],frame_overflow:['expand','confine'],direction:['right','down','left','up'],routing:['orthogonal','straight','curved'],curve:['bezier','rounded'],crossings:['gap','bridge','square_bridge']},display:{fields:['names','none'],kind:['text','icon_token','icon','none'],maturity:['token','none'],badges:['tokens','none'],relations:['between_selected','none'],samples:['show','hide'],domains:['show','hide'],datatypes:['show','hide']},legend:{mode:['numbers','text','tokens','none'],placement:['right','bottom','none']},chrome:{legend:['auto','on','off'],title:['on','off'],footer:['on','off']},publication:{size:['figure','content','a4','letter'],fit:['contain','none','reflow'],overflow:['error','warn']},validation:{mode:['sketch','logical','strict'],unknown_extensions:['warn','error']},export:{mode:['full','redacted'],identifier_mode:['opaque','preserve'],format:['json','sql']}};
     const PROPERTIES={
       projection:['kind','profile','write_data','rows','columns','relation','value','duplicates','panels','records','mark','x','y','x_type','size','unit','aggregate','start','end','label','dependencies','width','height','filter','order','missing','inner_radius','values','effect','encoding','series','series_missing','arrangement','transform','layers','bins','normalize','outside','whiskers','quartiles','step','baseline','target','open','high','low','close','bin_count','k','others','error','trend','inputs','outputs','hit_policy','coverage','analysis_budget','x_completeness','traces','geography','method','graticule','iso','depth'],
       notation:['registry'],style:['look','theme','font','font_size','seed','roughness','hachure'],
@@ -5234,7 +5234,9 @@
     * 'text'), the legend repeats what the diagram says — suppress it unless the
     * author explicitly asked for it (chrome.legend: 'on'). Numbers/tokens keep
     * their legend; an explicit legend: 'off' still wins everywhere. */
-   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||(p.legend.mode==='text'&&chrome.legend!=='on')?'none':p.legend.placement;
+   /* labels 'none' behaves like 'text' for the legend: nothing to decode, so
+    * the key disappears unless the author explicitly asks for it ('on'). */
+   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||((p.legend.mode==='text'||p.legend.mode==='none')&&chrome.legend!=='on')?'none':p.legend.placement;
    const headBlock=titleOn?110:20;
    const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
    const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
@@ -5290,7 +5292,7 @@
     ladderRails={x0:gx0-56,x1:gx1+56,y0:gy0-28,y1:gy1+28};
    }
    let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q$2(d.at?.[0],i*310),y:q$2(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q$2(d.size?.[0],270),h:q$2(d.size?.[1],95)}));
-   const labelMeasure=r=>{if(r._visualLabel===false)return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$9.measure(str,12,p.style.font,500).width+20,h:28};};
+   const labelMeasure=r=>{if(r._visualLabel===false||p.legend.mode==='none')return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$9.measure(str,12,p.style.font,500).width+20,h:28};};
    const routed=api$5.route(geoms,rels,ir,labelMeasure,subs,placed);
    const routes=routed.routes.map(a=>({...a,reg:DDN$1.relationEntry(registry,a.r.kind)})),crossings=routed.crossings;
    const allBoxes=[...geoms,...frames,...subs,...routed.labels];
@@ -5563,7 +5565,7 @@
      diagram+=`<g class="ddn-vsm-einfo" data-zigzag="electronic"><path d="${pathD(bolt)}" fill="none" stroke="${esc$3(ecolour)}" stroke-width="1.6"/>`+endMark(a.points.at(-1),api$6.curveDirection(a),'open',ecolour,t.surface)+'</g>';
      continue;
     }
-    if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$2(v)):midpoint(a.points);let mode=p.legend.mode;
+    if(a.r._visualLabel===false||p.detail==='shapes'||p.legend.mode==='none')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$2(v)):midpoint(a.points);let mode=p.legend.mode;
     if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$3(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
     else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$3(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
      /* B1-061: {…} time/duration constraints under the message label. */
@@ -6625,7 +6627,7 @@
    fields:['source','names','none'],
    domains:['source','show','hide'],
    datatypes:['source','show','hide'],
-   labels:['source','numbers','text','tokens'],
+   labels:['source','numbers','text','tokens','none'],
    kind:['source','icon_token','icon','text','none'],
    legend:['source','on','off'],
    title:['source','on','off'],
@@ -7361,7 +7363,7 @@
 <label class="field">PLACEMENT<select data-control="placement"><option value="source">As authored / automatic default</option><option value="auto">Adaptive · preserve pins</option><option value="grid">Legacy grid seed</option><option value="fit_grid">Fit to grid · around pins</option><option value="circular">Circular · around pins</option><option value="radial">Radial · graph-distance rings</option><option value="layered">Hierarchical · directed layers</option><option value="spanning_tree">Tree · spanning levels</option><option value="tree">Tree · declared hierarchy</option><option value="mindmap">Mind map · two-sided</option><option value="grouped">Grouped / lanes</option><option value="organic">Organic · force-based</option></select></label>
 <label class="field">AUTO-PLACEMENT<input data-control="autoPlace" type="checkbox" checked title="Pause to keep current unpinned positions; explicit pins never move."></label><label class="field">CONNECTORS<select data-control="routing"><option value="source">As authored</option><option value="orthogonal">Right-angle</option><option value="curved">Curved</option><option value="rounded">Rounded corners</option><option value="straight">Straight</option></select></label>
 <label class="field">DETAIL<select data-control="fields"><option value="source">As authored</option><option value="names">Field names</option><option value="none">Names only</option></select></label>
-<label class="field">RELATION LABELS<select data-control="labels"><option value="source">As authored</option><option value="numbers">Numbered circles</option><option value="text">Full wording</option><option value="tokens">Short tokens</option></select></label></div>
+<label class="field">RELATION LABELS<select data-control="labels"><option value="source">As authored</option><option value="numbers">Numbered circles</option><option value="text">Full wording</option><option value="tokens">Short tokens</option><option value="none">None</option></select></label></div>
 <details class="advanced"><summary>Layout centre, page, crossings, and pen settings</summary><div class="tools"><label class="field">DOMAIN BINDINGS<select data-control="domains"><option value="source">As authored</option><option value="show">Show</option><option value="hide">Hide</option></select></label><label class="field">DATATYPES<select data-control="datatypes"><option value="source">As authored</option><option value="show">Show</option><option value="hide">Hide</option></select></label><label class="field">BASE FONT (px)<input data-control="fontSize" type="number" min="8" max="64" value="16"></label>
 <label class="field">LAYOUT CENTRE<select data-control="center"><option value="source">As authored / pattern default</option><option value="pins">Pinned group</option><option value="content">Whole content</option></select></label><label class="field">GRID STEP (PX)<input data-control="gridStep" type="number" min="8" max="512" step="8" value="32"></label><label class="field">PAGE / ARTBOARD<select data-control="page"><option value="source">As authored</option><option value="content">Fit content at native size</option><option value="web">Web figure · 1600 × 1000</option><option value="a4-landscape">A4 landscape</option><option value="a4-portrait">A4 portrait</option><option value="letter-landscape">Letter landscape</option><option value="custom">Custom size</option></select></label>
 <label class="field">WIDTH (PX)<input data-control="width" type="number" min="400" max="32000" step="100" value="1600"></label><label class="field">HEIGHT (PX)<input data-control="height" type="number" min="400" max="32000" step="100" value="1000"></label>

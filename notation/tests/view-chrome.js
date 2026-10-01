@@ -49,6 +49,17 @@ test('graph: legend:off suppresses the RELATIONSHIP KEY but keeps self-labelling
   assert.ok(!svg.includes('Relationship details are in the adjacent legend.'), 'desc sentence dropped with the legend');
 });
 
+test('graph: legend mode none emits no relation labels or badges and no legend', () => {
+  const svg = render(build(GRAPH('legend { mode: none; }')));
+  assert.ok(!svg.includes('ddn-label'), 'labels:none must emit no relation label or badge elements');
+  assert.ok(!svg.includes('RELATIONSHIP KEY'), 'labels:none must not render the legend');
+  assert.ok(svg.includes('ddn-relation'), 'relations themselves still draw');
+  const on = render(build(GRAPH('legend { mode: none; } chrome { legend: on; }')));
+  assert.ok(on.includes('RELATIONSHIP KEY'), 'explicit chrome.legend:on keeps the key even with labels none');
+  const viaOverride = A.createWorkspace({ 'm.ddn': GRAPH('') }).renderSync({ entry: 'm.ddn', view: 'v', overrides: { labels: 'none' } });
+  assert.ok(!viaOverride.svg.includes('ddn-label') && !viaOverride.svg.includes('RELATIONSHIP KEY'), 'the labels:none override suppresses labels and legend the same way');
+});
+
 test('graph: legend:off reclaims the right-hand legend band against an explicit legend:on', () => {
   const on = Render.render(build(GRAPH('chrome { legend: on; }')), reg, defs), off = Render.render(build(GRAPH('legend: off;')), reg, defs);
   assert.ok(off.scene.width < on.scene.width, 'legend band not reclaimed: ' + off.scene.width + ' vs ' + on.scene.width);

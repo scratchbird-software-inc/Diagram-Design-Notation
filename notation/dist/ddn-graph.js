@@ -1835,7 +1835,9 @@
     * 'text'), the legend repeats what the diagram says — suppress it unless the
     * author explicitly asked for it (chrome.legend: 'on'). Numbers/tokens keep
     * their legend; an explicit legend: 'off' still wins everywhere. */
-   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||(p.legend.mode==='text'&&chrome.legend!=='on')?'none':p.legend.placement;
+   /* labels 'none' behaves like 'text' for the legend: nothing to decode, so
+    * the key disappears unless the author explicitly asks for it ('on'). */
+   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||((p.legend.mode==='text'||p.legend.mode==='none')&&chrome.legend!=='on')?'none':p.legend.placement;
    const headBlock=titleOn?110:20;
    const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
    const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
@@ -1891,7 +1893,7 @@
     ladderRails={x0:gx0-56,x1:gx1+56,y0:gy0-28,y1:gy1+28};
    }
    let subs=ir.view.subdiagrams.map((d,i)=>({...d,x:q$1(d.at?.[0],i*310),y:q$1(d.at?.[1],geoms.reduce((m,g)=>Math.max(m,g.y+g.h),0)+100),w:q$1(d.size?.[0],270),h:q$1(d.size?.[1],95)}));
-   const labelMeasure=r=>{if(r._visualLabel===false)return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$7.measure(str,12,p.style.font,500).width+20,h:28};};
+   const labelMeasure=r=>{if(r._visualLabel===false||p.legend.mode==='none')return {w:0,h:0};const reg=DDN$1.relationEntry(registry,r.kind);if(p.legend.mode==='numbers')return {w:30,h:30};const str=p.legend.mode==='tokens'?reg.code:r.name;return {w:api$7.measure(str,12,p.style.font,500).width+20,h:28};};
    const routed=api$3.route(geoms,rels,ir,labelMeasure,subs,placed);
    const routes=routed.routes.map(a=>({...a,reg:DDN$1.relationEntry(registry,a.r.kind)})),crossings=routed.crossings;
    const allBoxes=[...geoms,...frames,...subs,...routed.labels];
@@ -2164,7 +2166,7 @@
      diagram+=`<g class="ddn-vsm-einfo" data-zigzag="electronic"><path d="${pathD(bolt)}" fill="none" stroke="${esc$1(ecolour)}" stroke-width="1.6"/>`+endMark(a.points.at(-1),api$4.curveDirection(a),'open',ecolour,t.surface)+'</g>';
      continue;
     }
-    if(a.r._visualLabel===false||p.detail==='shapes')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$1(v)):midpoint(a.points);let mode=p.legend.mode;
+    if(a.r._visualLabel===false||p.detail==='shapes'||p.legend.mode==='none')continue;let [x,y]=a.hint.callout?a.hint.callout.map(v=>q$1(v)):midpoint(a.points);let mode=p.legend.mode;
     if(mode==='numbers'){diagram+=`<g class="ddn-callout ddn-label" data-id="${esc$1(a.id)}"><circle cx="${x}" cy="${y}" r="14" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.5"/>`+text$1(x,y+4.5,String(ir.view.keys[a.id]),12,t.ink,700,'text-anchor="middle"')+'</g>';}
     else {let s=mode==='tokens'?a.reg.code:a.r.name,w=a.label.w;diagram+=`<g class="ddn-label" data-id="${esc$1(a.id)}"><rect x="${x-w/2}" y="${y-12}" width="${w}" height="24" rx="3" fill="${t.surface}"/>`+text$1(x,y+4,s,12,t.ink,500,'text-anchor="middle"')+'</g>';
      /* B1-061: {…} time/duration constraints under the message label. */

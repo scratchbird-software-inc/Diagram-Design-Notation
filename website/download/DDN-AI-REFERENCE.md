@@ -687,7 +687,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   "mode": [
    "numbers",
    "text",
-   "tokens"
+   "tokens",
+   "none"
   ],
   "placement": [
    "right",

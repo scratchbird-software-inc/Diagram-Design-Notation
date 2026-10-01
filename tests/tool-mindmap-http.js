@@ -85,6 +85,25 @@ try {
   lines.push(resized ? 'PASS resize raised the cap to ' + (cap0 + 4) + ' and re-rendered' : 'FAIL cap did not change after drag');
   const srcText1 = (document.querySelector('textarea') && document.querySelector('textarea').value) || '';
   lines.push(!srcText1.includes('x_mindmap') ? 'PASS resize stayed presentation-only (no x_mindmap in source)' : 'FAIL resize wrote into source');
+
+  // 4. Relation labels: none (new choice) — no labels, no badges, no legend
+  const labelSel = document.querySelector('select[aria-label="Relation labels"]');
+  lines.push(labelSel ? 'PASS Relation labels control found' : 'FAIL control missing');
+  lines.push(labelSel && [...labelSel.options].some(o => o.value === 'none') ? 'PASS None choice offered' : 'FAIL None choice missing');
+  const labelsBefore = st.querySelectorAll('.ddn-label').length;
+  const ms1 = document.getElementById('ddn-diagram').getAttribute('data-ddn-render-ms');
+  labelSel.value = 'none';
+  labelSel.dispatchEvent(new Event('change', { bubbles: true }));
+  const t1 = Date.now();
+  let settled = false;
+  while (Date.now() - t1 < 30000) {
+    if (st.querySelectorAll('.ddn-label').length === 0 && document.getElementById('ddn-diagram').getAttribute('data-ddn-render-ms') !== ms1) { settled = true; break; }
+    await sleep(250);
+  }
+  lines.push(settled ? 'PASS labels:none removes every relation label/badge (' + labelsBefore + ' → 0)' : 'FAIL labels still visible after none');
+  lines.push(settled && !st.innerHTML.includes('RELATIONSHIP KEY') ? 'PASS labels:none also drops the legend' : 'FAIL legend remains after none');
+  const srcText2 = (document.querySelector('textarea') && document.querySelector('textarea').value) || '';
+  lines.push(!/legend \{ mode: none|mode: none/.test(srcText2) ? 'PASS labels:none stayed presentation-only' : 'FAIL labels:none wrote into source');
   await report(lines.every(l => l.startsWith('PASS')));
 } catch (e) {
   lines.push('FAIL driver exception: ' + (e && e.message));

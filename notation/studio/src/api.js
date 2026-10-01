@@ -20,7 +20,7 @@ const choices={
  fields:['source','names','none'],
  domains:['source','show','hide'],
  datatypes:['source','show','hide'],
- labels:['source','numbers','text','tokens'],
+ labels:['source','numbers','text','tokens','none'],
  kind:['source','icon_token','icon','text','none'],
  legend:['source','on','off'],
  title:['source','on','off'],
