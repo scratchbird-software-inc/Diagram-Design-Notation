@@ -65,11 +65,11 @@
   },
   "icons": {
     "packs": {
-      "value": 7,
+      "value": 8,
       "source": "standard/registry/icon-packs/index.json"
     },
     "icons": {
-      "value": 207,
+      "value": 328,
       "source": "standard/registry/icon-packs/*.json (icons)"
     },
     "perPack": {
@@ -80,12 +80,13 @@
         "electrical-common@1": 32,
         "tabler-infra@1": 50,
         "iconoir-infra@1": 49,
-        "generic-demo@1": 4
+        "generic-demo@1": 4,
+        "ddn-pack-general@1": 121
       },
       "source": "standard/registry/icon-packs/*.json"
     },
     "mitPacks": {
-      "value": 2,
+      "value": 3,
       "source": "standard/registry/icon-packs/*.json (license)"
     }
   },

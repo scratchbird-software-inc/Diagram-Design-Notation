@@ -54,14 +54,19 @@ certification.
 
 ## Bundled third-party icon artwork
 
-Two shipped icon packs contain curated selections of MIT-licensed artwork,
+Three shipped icon packs contain curated selections of MIT-licensed artwork,
 each with its license text included in the pack manifest
 (`standard/registry/icon-packs/`):
 
-- **Tabler Icons** (`tabler-infra@1`) — Copyright (c) 2020-2026 Paweł Kuna,
-  MIT License — https://github.com/tabler/tabler-icons
+- **Tabler Icons** (`tabler-infra@1`, `ddn-pack-general@1`) — Copyright (c)
+  2020-2026 Paweł Kuna, MIT License — https://github.com/tabler/tabler-icons
 - **Iconoir** (`iconoir-infra@1`) — Copyright (c) 2021 Luca Burgio,
   MIT License — https://github.com/iconoir-icons/iconoir
 
-Both are diagram-relevant subsets; the full sets are not vendored. Their
-names do not imply endorsement or affiliation.
+All are diagram-relevant subsets; the full sets are not vendored. Their
+names do not imply endorsement or affiliation. Per-icon source URLs and
+retrieval dates are recorded in
+`standard/registry/icon-packs/ddn-pack-general.provenance.json`.
+freesvg.org was evaluated as an additional source (site-wide CC0 per its
+About page) and not used: its catalogue is filled clip-art, stylistically
+incompatible with the DDN stroke grid.

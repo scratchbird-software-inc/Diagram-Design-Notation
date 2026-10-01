@@ -1,0 +1,988 @@
+{
+ "format": "ddn-icon-provenance@1",
+ "pack": "ddn-pack-general@1",
+ "retrieved": "2026-10-01",
+ "upstreamLicense": "MIT (https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE)",
+ "evaluatedSources": [
+  {
+   "source": "https://freesvg.org",
+   "license": "CC0 (site-wide, per its About page: \"offers free vector images in SVG format with Creative Commons 0 license (public domain) ... even for commercial purposes, all without asking permission\")",
+   "decision": "not used \u2014 catalogue is filled clip-art, stylistically incompatible with the DDN 24x24 stroke grid",
+   "verified": "2026-10-01"
+  }
+ ],
+ "icons": [
+  {
+   "icon": "user-check",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/user-check.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "user-cog",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/user-cog.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "user-plus",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/user-plus.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "user-x",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/user-x.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "user-search",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/user-search.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "id",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/id.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "id-badge",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/id-badge.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "address-book",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/address-book.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "hierarchy",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/hierarchy.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "affiliate",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/affiliate.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "briefcase",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/briefcase.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "building-skyscraper",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-skyscraper.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "building-community",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-community.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "building-store",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-store.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "people & roles"
+  },
+  {
+   "icon": "file",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/file.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "file-text",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/file-text.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "files",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/files.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "file-description",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/file-description.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "clipboard",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/clipboard.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "clipboard-text",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/clipboard-text.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "book",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/book.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "notebook",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/notebook.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "folder-open",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/folder-open.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "news",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/news.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "receipt",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/receipt.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "paper-bag",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/paper-bag.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "documents & files"
+  },
+  {
+   "icon": "device-watch",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/device-watch.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "devices"
+  },
+  {
+   "icon": "device-gamepad-2",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/device-gamepad-2.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "devices"
+  },
+  {
+   "icon": "device-tv",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/device-tv.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "devices"
+  },
+  {
+   "icon": "device-audio-tape",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/device-audio-tape.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "devices"
+  },
+  {
+   "icon": "switch-horizontal",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/switch-horizontal.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "wifi-off",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/wifi-off.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "world-download",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/world-download.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "world-upload",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/world-upload.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "signal-3g",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/signal-3g.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "signal-4g",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/signal-4g.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "broadcast",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/broadcast.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "access-point",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/access-point.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "share",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/share.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "network & connectivity"
+  },
+  {
+   "icon": "lock-open",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/lock-open.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "shield",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/shield.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "shield-check",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/shield-check.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "shield-off",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/shield-off.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "eye",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/eye.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "fingerprint",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/fingerprint.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "password",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/password.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "shield-half",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/shield-half.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "security"
+  },
+  {
+   "icon": "coin",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/coin.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "cash",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/cash.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "currency-dollar",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/currency-dollar.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "shopping-cart",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/shopping-cart.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "chart-bar",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/chart-bar.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "chart-line",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/chart-line.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "chart-pie",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/chart-pie.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "presentation",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/presentation.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "calculator",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/calculator.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "scale",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/scale.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "credit-card",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/credit-card.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "building-bank",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-bank.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "pig-money",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/pig-money.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "business"
+  },
+  {
+   "icon": "settings-2",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/settings-2.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "robot",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/robot.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "tool",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/tool.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "assembly",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/assembly.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "crane",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/crane.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "building-factory-2",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-factory-2.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "automation",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/automation.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "process & industry"
+  },
+  {
+   "icon": "building-warehouse",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-warehouse.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "places"
+  },
+  {
+   "icon": "building-hospital",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-hospital.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "places"
+  },
+  {
+   "icon": "building-arch",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/building-arch.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "places"
+  },
+  {
+   "icon": "map-2",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/map-2.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "places"
+  },
+  {
+   "icon": "truck",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/truck.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "car",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/car.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "plane",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/plane.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "ship",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/ship.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "train",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/train.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "bike",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/bike.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "walk",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/walk.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  },
+  {
+   "icon": "alert-triangle",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/alert-triangle.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "info-circle",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/info-circle.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "circle-check",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/circle-check.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "alert-circle",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/alert-circle.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "help-circle",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/help-circle.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "flag",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/flag.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "flag-3",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/flag-3.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "ban",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/ban.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "circle-x",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/circle-x.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "status & flags"
+  },
+  {
+   "icon": "sun",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/sun.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "droplet",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/droplet.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "leaf",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/leaf.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "bulb",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/bulb.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "flame",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/flame.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "snowflake",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/snowflake.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "wind",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/wind.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "solar-panel",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/solar-panel.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "nature & energy"
+  },
+  {
+   "icon": "message-circle",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/message-circle.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "message-dots",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/message-dots.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "phone-call",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/phone-call.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "clock",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/clock.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "history",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/history.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "calendar-event",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/calendar-event.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "alarm",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/alarm.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "bell-ringing",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/bell-ringing.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "messaging & time"
+  },
+  {
+   "icon": "star",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/star.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "heart",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/heart.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "tag",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/tag.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "target",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/target.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "list-check",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/list-check.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "adjustments",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/adjustments.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "grid-dots",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/grid-dots.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "layout-grid",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/layout-grid.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "zoom-in",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/zoom-in.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "download",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/download.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "upload",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/upload.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "external-link",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/external-link.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "pin",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/pin.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "general utility"
+  },
+  {
+   "icon": "forklift",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/forklift.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "note": "alternate for conveyor",
+   "category": "transport"
+  },
+  {
+   "icon": "direction-sign",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/direction-sign.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "note": "alternate for signpost",
+   "category": "places"
+  },
+  {
+   "icon": "device-cctv",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/device-cctv.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "note": "alternate for webcam",
+   "category": "devices"
+  },
+  {
+   "icon": "device-sim",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/device-sim.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "note": "alternate for sim-card",
+   "category": "devices"
+  },
+  {
+   "icon": "package",
+   "source": "https://raw.githubusercontent.com/tabler/tabler-icons/main/icons/outline/package.svg",
+   "license": "MIT",
+   "licenseSource": "https://raw.githubusercontent.com/tabler/tabler-icons/main/LICENSE",
+   "retrieved": "2026-10-01",
+   "category": "transport"
+  }
+ ]
+}

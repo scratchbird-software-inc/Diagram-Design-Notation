@@ -72,8 +72,8 @@ versioned layer:
   semantics.
 - **Icon packs** (`ddn-icon-pack@1`, spec ch. 49) — symbols ship as
   single self-contained JSON documents with a manifest (id, name, version,
-  license, attribution, source) and inline stroke-SVG icons. **7**
-  packs ship with **207** icons total, of which **2**
+  license, attribution, source) and inline stroke-SVG icons. **8**
+  packs ship with **328** icons total, of which **3**
   are curated MIT-licensed third-party selections with license texts in
   their manifests. Every icon — shipped or host-supplied — is sanitized
   before rendering (no scripts, embedded documents, event handlers, or
