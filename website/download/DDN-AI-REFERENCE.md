@@ -9,7 +9,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
 - Endpoint marks: 12; object families: 12; relation families: 8; facets: 118; view types: 20; registered data properties: 108
-- Diagnostic codes: **437** extracted from the runtime (reference runtime + Studio `src/`)
+- Diagnostic codes: **438** extracted from the runtime (reference runtime + Studio `src/`)
 <!-- /generated (counts) -->
 
 ## 1. Purpose and the generate → check → fix loop
@@ -2119,7 +2119,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 - Split files when a workspace exceeds ~2–3 screens of source per concern (§12); ship one file via `bundle`.
 
 <!-- generated: do not edit (diagnostics) -->
-## 9. Diagnostics and error recovery (438 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
+## 9. Diagnostics and error recovery (439 codes, machine-extracted from runtime + Studio sources; 124 carry a hand-authored FIX)
 
 `check`/`render` failures print one JSON error object; warnings/infos appear in `warnings`/`diagnostics`. Families: `DDN0xx` lexical/parse, `DDN01x–02x` imports/modules, `DDN03x–06x` build/semantics, `DDN07x` publication, `DDN1xx` contracts/extensions, `DDN13x–15x` governance contracts / redacted export, `DDN2xx` layout/routing, `DDN900` unsupported constructs, `DDN-W…`/`DDN-LW…`/`DDN-PJW…`/`DDN-TW01`/`DDN-CW01` warnings/infos (`DDN-W901` reserved legacy), `DDN-E0xx` parse-form / missing runtime bundle errors, `DDN-IO…` Studio archive I/O, `DDN-I…` interaction, `DDN-P…` retained placement, `DDN-PF…` profile validators, `DDN-PJ…` projection validators, `DDN-PX…` profile-completion contracts, `DDN-Q…`/`QC`/`QD`/`QF`/`QL`/`QM`/`QP` quality/decision/fishbone/lifecycle/matrix/panels validators, `LIVE…` in-browser API. Recovery loop: read the message (it names the offending element/relation/property); apply the FIX column when present; otherwise use the section cross-references: parse errors → §2, build errors → §3, DDN050/056/102/114 → §4 vocabulary tables, DDN-PF/PJ/PX/Q* → §5/§6/§10, DDN2xx → adjust `place`/`route` hints, spacing, or simplify the view (§3.3, §8).
 
@@ -2558,6 +2558,7 @@ Geo views need the optional `ddn-geo.js` module and a registered geography (`ass
 | LIVE021 | error | Data-bound coordinates cannot be replaced with automatic graph placement<br>Numbered relationships require a legend<br>Requested mark is not supported by this projection/transform<br>This projection does not allow graph setting | - |
 | LIVE022 | error | relationRouting key is not a verb or relation in this view:<br>relationRouting must be a record keyed by verb or relation id. | - |
 | LIVE023 | error | Unsupported relationRouting value for ${key}: ${value} | - |
+| LIVE024 | error | mindNodes keys must be element ids.<br>mindNodes must be a record keyed by element id.<br>mindNodes. must be a record.<br>mindNodes..lines must be an integer between 1 and 50. | - |
 | LIVE030 | error | Source changed since this edit was prepared. | - |
 | LIVE031 | error | Overlapping or invalid text edits. | - |
 | LIVE033 | error | File is imported by: | - |

@@ -1649,7 +1649,10 @@ function measureNode(n,registry,profiles,placement={},context={}){
  let mindRows=null;
  if(profiles.projection?.profile==='mindmap.basic@1'&&n.properties.description){
   const lines=api$7.wrap(String(n.properties.description),w-30*s,12.5*s,font,400);
-  const cap=Math.max(1,Math.min(50,q$1(n.properties.x_mindmap?.lines,10))),total=lines.length,shown=Math.min(cap,total);
+  /* B1-100: the presentation override channel (studio apply()) may raise or
+   * lower an entity's window for this render without touching source —
+   * profiles.x_mind_nodes wins over the authored x_mindmap.lines hint. */
+  const cap=Math.max(1,Math.min(50,q$1(profiles.x_mind_nodes?.[n.id]?.lines??n.properties.x_mindmap?.lines,10))),total=lines.length,shown=Math.min(cap,total);
   mindRows={lines,total,cap,rowH:18*s};
   y+=shown*18*s+(total>cap?8*s:0);
  }

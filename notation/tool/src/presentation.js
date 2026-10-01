@@ -72,6 +72,9 @@ function toolOverrides(presentation) {
     if (!ROUTING_VALUES.includes(v)) throw new Error('unknown routing for ' + k + ': ' + v);
   }
   if (Object.keys(rr).length) o.relationRouting = rr;
+  /* B1-100: mind-map per-entity window caps ride the mindNodes presentation
+   * channel (never written into source). */
+  if (p.mindNodes && Object.keys(p.mindNodes).length) o.mindNodes = { ...p.mindNodes };
   return o;
 }
 

@@ -5048,7 +5048,10 @@
    let mindRows=null;
    if(profiles.projection?.profile==='mindmap.basic@1'&&n.properties.description){
     const lines=api$9.wrap(String(n.properties.description),w-30*s,12.5*s,font,400);
-    const cap=Math.max(1,Math.min(50,q$2(n.properties.x_mindmap?.lines,10))),total=lines.length,shown=Math.min(cap,total);
+    /* B1-100: the presentation override channel (studio apply()) may raise or
+     * lower an entity's window for this render without touching source —
+     * profiles.x_mind_nodes wins over the authored x_mindmap.lines hint. */
+    const cap=Math.max(1,Math.min(50,q$2(profiles.x_mind_nodes?.[n.id]?.lines??n.properties.x_mindmap?.lines,10))),total=lines.length,shown=Math.min(cap,total);
     mindRows={lines,total,cap,rowH:18*s};
     y+=shown*18*s+(total>cap?8*s:0);
    }
@@ -6637,7 +6640,7 @@
     legend:'source', title:'source', footer:'source', page:'source',
     font:'source', fontSize:null, width:1600, height:1000,
     roughness:null, hachure:null, relationRouting:null, curveTension:null,
-    curveRadius:null
+    curveRadius:null, mindNodes:null
   };
   const routingValues=['orthogonal','straight','curved','rounded'];
   function checkOptions(o={}){
@@ -6648,6 +6651,14 @@
     if(o[k]!=null&&(!Number.isFinite(o[k])||o[k]<min||o[k]>max||(k==='depth'&&!Number.isInteger(o[k]))))
      fail('LIVE003',`${k} must be between ${min} and ${max}.`);
    for(const k of ['autoPlace','hachure'])if(o[k]!=null&&typeof o[k]!=='boolean')fail('LIVE003',k+' must be boolean or null.');
+   /* B1-100: mindNodes — presentation-only per-entity mind-map window caps,
+    * {elementId: {lines: 1..50}}; never written into source. */
+   if(o.mindNodes!=null){if(typeof o.mindNodes!=='object'||Array.isArray(o.mindNodes))fail('LIVE024','mindNodes must be a record keyed by element id.');
+    for(const [id,v] of Object.entries(o.mindNodes)){
+     if(typeof id!=='string'||!id)fail('LIVE024','mindNodes keys must be element ids.');
+     if(typeof v!=='object'||Array.isArray(v)||v==null)fail('LIVE024','mindNodes.'+id+' must be a record.');
+     if(v.lines!=null&&(!Number.isInteger(v.lines)||v.lines<1||v.lines>50))fail('LIVE024','mindNodes.'+id+'.lines must be an integer between 1 and 50.');
+    }}
    if(o.relationRouting!=null){if(typeof o.relationRouting!=='object'||Array.isArray(o.relationRouting))fail('LIVE022','relationRouting must be a record keyed by verb or relation id.');
     for(const [key,value]of Object.entries(o.relationRouting))if(!routingValues.includes(value))fail('LIVE023',`Unsupported relationRouting value for ${key}: ${value}`);}
    return o;
@@ -6765,6 +6776,7 @@
    if(o.fontSize!==null)p.style.font_size=Q(o.fontSize);
    for(const k of ['fields','domains','datatypes','kind'])if(o[k]!=='source')p.display[k]=o[k];if(o.depth!==null)p.display.depth=o.depth;
    if(o.labels!=='source')p.legend.mode=o.labels;
+   if(o.mindNodes!==null)p.x_mind_nodes=clone(o.mindNodes);
    /* B1-045 (D4): chrome visibility overlay. legend:off with numbered
     * relationships is the same contradiction the parser rejects with DDN047. */
    p.chrome=p.chrome||{legend:'auto',title:'on',footer:'on'};

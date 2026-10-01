@@ -3489,7 +3489,7 @@
     legend:'source', title:'source', footer:'source', page:'source',
     font:'source', fontSize:null, width:1600, height:1000,
     roughness:null, hachure:null, relationRouting:null, curveTension:null,
-    curveRadius:null
+    curveRadius:null, mindNodes:null
   };
   const routingValues=['orthogonal','straight','curved','rounded'];
   function checkOptions(o={}){
@@ -3500,6 +3500,14 @@
     if(o[k]!=null&&(!Number.isFinite(o[k])||o[k]<min||o[k]>max||(k==='depth'&&!Number.isInteger(o[k]))))
      fail('LIVE003',`${k} must be between ${min} and ${max}.`);
    for(const k of ['autoPlace','hachure'])if(o[k]!=null&&typeof o[k]!=='boolean')fail('LIVE003',k+' must be boolean or null.');
+   /* B1-100: mindNodes — presentation-only per-entity mind-map window caps,
+    * {elementId: {lines: 1..50}}; never written into source. */
+   if(o.mindNodes!=null){if(typeof o.mindNodes!=='object'||Array.isArray(o.mindNodes))fail('LIVE024','mindNodes must be a record keyed by element id.');
+    for(const [id,v] of Object.entries(o.mindNodes)){
+     if(typeof id!=='string'||!id)fail('LIVE024','mindNodes keys must be element ids.');
+     if(typeof v!=='object'||Array.isArray(v)||v==null)fail('LIVE024','mindNodes.'+id+' must be a record.');
+     if(v.lines!=null&&(!Number.isInteger(v.lines)||v.lines<1||v.lines>50))fail('LIVE024','mindNodes.'+id+'.lines must be an integer between 1 and 50.');
+    }}
    if(o.relationRouting!=null){if(typeof o.relationRouting!=='object'||Array.isArray(o.relationRouting))fail('LIVE022','relationRouting must be a record keyed by verb or relation id.');
     for(const [key,value]of Object.entries(o.relationRouting))if(!routingValues.includes(value))fail('LIVE023',`Unsupported relationRouting value for ${key}: ${value}`);}
    return o;
@@ -3617,6 +3625,7 @@
    if(o.fontSize!==null)p.style.font_size=Q(o.fontSize);
    for(const k of ['fields','domains','datatypes','kind'])if(o[k]!=='source')p.display[k]=o[k];if(o.depth!==null)p.display.depth=o.depth;
    if(o.labels!=='source')p.legend.mode=o.labels;
+   if(o.mindNodes!==null)p.x_mind_nodes=clone(o.mindNodes);
    /* B1-045 (D4): chrome visibility overlay. legend:off with numbered
     * relationships is the same contradiction the parser rejects with DDN047. */
    p.chrome=p.chrome||{legend:'auto',title:'on',footer:'on'};

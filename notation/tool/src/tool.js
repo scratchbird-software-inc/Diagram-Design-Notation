@@ -100,7 +100,7 @@ const drawerEls = { files: $('ddn-drawer-files'), appearance: $('ddn-drawer-appe
 const iconEls = { files: $('ddn-icon-files'), appearance: $('ddn-icon-appearance'), source: $('ddn-icon-source'), export: $('ddn-icon-export'), animation: $('ddn-icon-animation') };
 
 function emptyPresentation() {
-  return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {} };
+  return { options: {}, typography: {}, kindColours: {}, verbColours: {}, objectColours: {}, verbRouting: {}, relationRouting: {}, mindNodes: {} };
 }
 const state = {
   ws: null, diagram: null, entry: '', view: '', viewList: [],
@@ -295,6 +295,8 @@ function mount() {
     applyOverrideCss();
     applyFit();
     attachDrag();
+    attachMindmap();
+    applyMindScroll();
     attachDesign();
     updateDesignBar();
     refreshAnimation();
@@ -364,6 +366,7 @@ function attachPan() {
   stage.addEventListener('pointerdown', e => {
     if (e.button !== 0) return;
     if (design.placing || design.connecting) return; // an armed design gesture owns the stage
+    if (e.target.closest && e.target.closest('.ddn-mind-resize')) return; // mind-map resize owns this drag (B1-100)
     if (els.dragMode.checked && e.target.closest && e.target.closest('.ddn-node[data-id]')) return; // drag-to-pin owns node drags
     pan = { x: e.clientX, y: e.clientY, left: stage.scrollLeft, top: stage.scrollTop, moved: 0 };
   });
@@ -875,6 +878,66 @@ function attachDrag() {
   };
   canvas.addEventListener('pointerup', e => finish(e));
   canvas.addEventListener('pointercancel', e => finish(e, true));
+}
+/* Mind-map entity interactions (B1-100): wheel over a note-heavy entity pans
+ * its body rows inside the clip window (DOM pan, no re-render); dragging the
+ * lower-right handle changes the entity's window cap through the mindNodes
+ * presentation channel (re-render, presentation-only — source untouched). */
+function attachMindmap() {
+  const stage = stageEl();
+  if (!stage || stage.dataset.toolMind) return;
+  stage.dataset.toolMind = 'true';
+  state.mindScroll = state.mindScroll || {};
+  stage.addEventListener('wheel', e => {
+    const rows = e.target.closest && e.target.closest('.ddn-mind-rows');
+    if (!rows) return;
+    const total = Number(rows.dataset.total), cap = Number(rows.dataset.cap);
+    if (!(total > cap)) return;
+    const id = rows.dataset.node;
+    state.mindScroll[id] = Math.max(0, Math.min(total - cap, (state.mindScroll[id] || 0) + (e.deltaY > 0 ? 1 : -1)));
+    applyMindScroll(stage);
+    e.preventDefault(); e.stopPropagation();
+  }, { passive: false });
+  let rez = null;
+  stage.addEventListener('pointerdown', e => {
+    const handle = e.target.closest && e.target.closest('.ddn-mind-resize');
+    if (!handle || e.button !== 0) return;
+    const rows = stage.querySelector('.ddn-mind-rows[data-node="' + CSS.escape(handle.dataset.node) + '"]');
+    if (!rows) return;
+    rez = { id: handle.dataset.node, y0: e.clientY, cap0: Number(rows.dataset.cap), rowH: Number(rows.dataset.rowH) };
+    if (stage.setPointerCapture) try { stage.setPointerCapture(e.pointerId); } catch {}
+    e.preventDefault(); e.stopPropagation();
+  });
+  stage.addEventListener('pointerup', e => {
+    if (!rez) return;
+    const d = rez; rez = null;
+    const newCap = Math.max(1, Math.min(50, d.cap0 + Math.round((e.clientY - d.y0) / d.rowH)));
+    if (newCap === d.cap0) return;
+    state.presentation.mindNodes[d.id] = { lines: newCap };
+    delete state.mindScroll[d.id];
+    rerender();
+    status('mind-map entity window: ' + newCap + ' line' + (newCap === 1 ? '' : 's') + ' (presentation only — source unchanged)');
+  });
+  stage.addEventListener('pointercancel', () => { rez = null; });
+}
+function applyMindScroll(stage) {
+  const st = stage || stageEl();
+  if (!st || !state.mindScroll) return;
+  for (const [id, offset] of Object.entries(state.mindScroll)) {
+    const rows = st.querySelector('.ddn-mind-rows[data-node="' + CSS.escape(id) + '"]');
+    if (!rows) continue;
+    const total = Number(rows.dataset.total), cap = Number(rows.dataset.cap), rowH = Number(rows.dataset.rowH);
+    if (!(total > cap)) continue;
+    const off = Math.max(0, Math.min(total - cap, offset));
+    state.mindScroll[id] = off;
+    rows.setAttribute('transform', 'translate(0 ' + (-off * rowH) + ')');
+    const sc = st.querySelector('.ddn-mind-scroll[data-node="' + CSS.escape(id) + '"]');
+    if (sc) {
+      const thumb = sc.querySelector('.ddn-mind-scroll-thumb');
+      const trackY = Number(sc.dataset.trackY), trackH = Number(sc.dataset.trackH), thumbH = Number(thumb.getAttribute('height'));
+      thumb.setAttribute('y', trackY + (trackH - thumbH) * off / (total - cap));
+    }
+  }
 }
 els.dragMode.addEventListener('change', () => {
   if (els.dragMode.checked && state.diagram && state.diagram.capabilities && (state.diagram.capabilities.sequence || state.diagram.capabilities.graphControls === false)) {

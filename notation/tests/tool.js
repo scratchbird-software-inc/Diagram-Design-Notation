@@ -316,8 +316,9 @@ test('D1 mapping: every override-channel option in the live API has a drawer con
   const covered = new Set([...selectBlock.matchAll(/'(\w+)'/g)].map(m => m[1]));
   /* relationRouting is not a single select: the "Routing per relation class"
    * panel drives it per verb (verbRouting) and per clicked relation
-   * (relationRouting), merged in toolOverrides. */
-  const panelCovered = { relationRouting: 'state.presentation.verbRouting' };
+   * (relationRouting), merged in toolOverrides. mindNodes is gesture-driven:
+   * the on-canvas resize handle (attachMindmap) writes it — no drawer. */
+  const panelCovered = { relationRouting: 'state.presentation.verbRouting', mindNodes: 'state.presentation.mindNodes' };
   const missing = keys.filter(k => !covered.has(k) && !(k in panelCovered && tool.includes(panelCovered[k])));
   assert.deepEqual(missing, [], 'override options without a drawer control');
 });
