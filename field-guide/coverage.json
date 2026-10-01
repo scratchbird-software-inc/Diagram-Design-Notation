@@ -924,7 +924,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/28-mind-map.ddn",
       "view": "mindmap",
-      "sha256": "f29f9f36a3caab0ddf689c9de9756ba2acb75fefe6a51638523be95ca3705664"
+      "sha256": "b0981efb144c19d423297cac820bd7acca6ae406db5e582ca49c57174f52dd13"
     },
     {
       "id": "concept-map",
@@ -2235,8 +2235,8 @@
     },
     {
       "id": "mindmap",
-      "before": "f29f9f36a3caab0ddf689c9de9756ba2acb75fefe6a51638523be95ca3705664",
-      "after": "c80cd06e82678c8079f056a2bfb61f80d285a34ee44147a3e4f3398ed57087ce",
+      "before": "b0981efb144c19d423297cac820bd7acca6ae406db5e582ca49c57174f52dd13",
+      "after": "251a7f8d1731afe727fd92f31b4b402f6530a9a9e78ebe9a5f7d833f42aeba42",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

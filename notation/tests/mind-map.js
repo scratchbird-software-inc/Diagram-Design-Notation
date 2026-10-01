@@ -140,6 +140,22 @@ test('B1-100: entities without body text keep the previous compact shape',()=>{
  assert.ok(!r.svg.includes('data-node="'+(marketing[0].replace('data-id="','').replace('"',''))+'" data-total'),'no rows group for a textless entity');
 });
 
+/* ---- combined-file path (B1-100 live-site regression): the bundled
+ * single-file variant must render identically-correct mind-map geometry:
+ * side-centre attachments only (never top/bottom) and rounded corners. */
+test('Combined variant: no top/bottom edge attachments, rounded corners',()=>{
+ const fs2=require('node:fs');
+ const combined=fs2.readFileSync(require('node:path').resolve(__dirname,'../../website/examples/basics/28-mind-map.combined.ddn'),'utf8');
+ const r=A.createWorkspace({'m.ddn':combined}).renderSync({entry:'m.ddn',view:'mindmap'});
+ assert.equal(r.scene.routes.length,8,'all eight branch routes present');
+ for(const rt of r.scene.routes){
+  assert.ok(['east','west'].includes(rt.source_side),rt.id+' source_side must be east/west, got '+rt.source_side);
+  assert.ok(['east','west'].includes(rt.target_side),rt.id+' target_side must be east/west, got '+rt.target_side);
+ }
+ assert.ok((r.svg.match(/rx="10"/g)||[]).length>=9,'every mind-map entity carries rounded corners (rx=10)');
+ assert.ok(!r.svg.includes('RELATIONSHIP KEY'),'full inline labels suppress the legend');
+});
+
 const report={runtime:A.VERSION,scope:'Mind map profile mindmap.basic@1 validation and rendering.',passed:results.filter(t=>t.pass).length,total:results.length,results};
 fs.mkdirSync(path.resolve(__dirname,'../tests/validation'),{recursive:true});
 fs.writeFileSync(path.resolve(__dirname,'../tests/validation/mind-map-tests.json'),JSON.stringify(report,null,2)+'\n');

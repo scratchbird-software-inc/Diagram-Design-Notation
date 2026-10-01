@@ -4037,11 +4037,8 @@ function render$3(g,p,theme){
  }else if(shape==='triangleup'){
   out+=`<path d="M${f$2(x+w/2)} ${f$2(y)}L${f$2(x+w)} ${f$2(y+h)}H${f$2(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  }else if(shape==='card'){
-  /* B1-100: mind-map entities read as ideas, not records — rounded corners
-   * (profile-scoped; every other card silhouette keeps the chamfer). */
-  if(p.projection?.profile==='mindmap.basic@1')out+=`<rect x="${f$2(x)}" y="${f$2(y)}" width="${f$2(w)}" height="${f$2(h)}" rx="${f$2(10*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
-  else {const c=12*s;
-  out+=`<path d="M${f$2(x+c)} ${f$2(y)}H${f$2(x+w)}V${f$2(y+h)}H${f$2(x)}V${f$2(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;}
+  const c=12*s;
+  out+=`<path d="M${f$2(x+c)} ${f$2(y)}H${f$2(x+w)}V${f$2(y+h)}H${f$2(x)}V${f$2(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  }else if(shape==='xellipse'){
   out+=`<ellipse cx="${f$2(x+w/2)}" cy="${f$2(y+h/2)}" rx="${f$2(w/2)}" ry="${f$2(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   out+=line(x+w*.28,y+h*.28,x+w*.72,y+h*.72,1.6)+line(x+w*.72,y+h*.28,x+w*.28,y+h*.72,1.6);
@@ -5123,7 +5120,10 @@ function renderNode(g,p,theme,registry){
   if(look==='handDrawn')out+=api$8.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
   else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc$3(fill)}" stroke="${esc$3(ink)}" stroke-width="1.8"/>`;
   out+=styleLine(x+w-16*s,y,x+w-16*s,y+16*s,ink,1.3,'',p,n.id+':fold-v')+styleLine(x+w-16*s,y+16*s,x+w,y+16*s,ink,1.3,'',p,n.id+':fold-h');
- }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:0,p.style);
+ /* B1-100 (corner fix): mind-map entities read as ideas, not records —
+  * rounded corners for every node silhouette in the profile, including the
+  * plain rect path object/entity/term/domain actually render through. */
+ }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style);
  if(k.shape==='frame')out+=`<rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" fill="none" stroke="${esc$3(ink)}" stroke-dasharray="4 4" opacity=".55"/>`;
  if(p.display.kind!=='none'){
   if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);

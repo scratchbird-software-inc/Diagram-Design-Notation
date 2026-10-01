@@ -152,7 +152,10 @@ function renderNode(g,p,theme,registry){
   if(look==='handDrawn')out+=Sketch.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
   else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc(fill)}" stroke="${esc(ink)}" stroke-width="1.8"/>`;
   out+=styleLine(x+w-16*s,y,x+w-16*s,y+16*s,ink,1.3,'',p,n.id+':fold-v')+styleLine(x+w-16*s,y+16*s,x+w,y+16*s,ink,1.3,'',p,n.id+':fold-h');
- }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:0,p.style);
+ /* B1-100 (corner fix): mind-map entities read as ideas, not records —
+  * rounded corners for every node silhouette in the profile, including the
+  * plain rect path object/entity/term/domain actually render through. */
+ }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style);
  if(k.shape==='frame')out+=`<rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" fill="none" stroke="${esc(ink)}" stroke-dasharray="4 4" opacity=".55"/>`;
  if(p.display.kind!=='none'){
   if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);

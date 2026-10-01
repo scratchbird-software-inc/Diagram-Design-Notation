@@ -374,11 +374,8 @@ function render(g,p,theme){
  }else if(shape==='triangleup'){
   out+=`<path d="M${f(x+w/2)} ${f(y)}L${f(x+w)} ${f(y+h)}H${f(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  }else if(shape==='card'){
-  /* B1-100: mind-map entities read as ideas, not records — rounded corners
-   * (profile-scoped; every other card silhouette keeps the chamfer). */
-  if(p.projection?.profile==='mindmap.basic@1')out+=`<rect x="${f(x)}" y="${f(y)}" width="${f(w)}" height="${f(h)}" rx="${f(10*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
-  else{const c=12*s;
-  out+=`<path d="M${f(x+c)} ${f(y)}H${f(x+w)}V${f(y+h)}H${f(x)}V${f(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;}
+  const c=12*s;
+  out+=`<path d="M${f(x+c)} ${f(y)}H${f(x+w)}V${f(y+h)}H${f(x)}V${f(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
  }else if(shape==='xellipse'){
   out+=`<ellipse cx="${f(x+w/2)}" cy="${f(y+h/2)}" rx="${f(w/2)}" ry="${f(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
   out+=line(x+w*.28,y+h*.28,x+w*.72,y+h*.72,1.6)+line(x+w*.72,y+h*.28,x+w*.28,y+h*.72,1.6);
