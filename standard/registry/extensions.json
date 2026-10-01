@@ -1214,7 +1214,11 @@
               "minLength": 1
             },
             "display": {
-              "enum": ["badge", "inline", "thumbnail"]
+              "enum": [
+                "badge",
+                "inline",
+                "thumbnail"
+              ]
             },
             "frozen": {
               "type": "boolean"
@@ -1306,6 +1310,21 @@
       "targets": {
         "object": {
           "type": "integer"
+        }
+      }
+    },
+    "x_mindmap": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "properties": {
+            "lines": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          "additionalProperties": false
         }
       }
     }

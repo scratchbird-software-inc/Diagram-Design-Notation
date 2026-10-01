@@ -97,6 +97,49 @@ test('Wrong projection kind rejected',()=>{
  throws(()=>run('charted',src),'DDN-PF002');
 });
 test('Deterministic rerender',()=>assert.equal(run('mindmap').svg,run('mindmap').svg));
+
+/* ---- B1-100: entity body-text rows, line cap, scrollbar affordance ---- */
+const BODY_SRC=SRC.replace('    relation r1 @root -> @pricing { kind: assoc; }',
+`    relation r1 @root -> @pricing { kind: assoc; }
+    object noted "Note heavy" { kind: object; description: "Row one of the long note body. Row two keeps the thought going. Row three adds more words here. Row four continues the note. Row five is about the middle. Row six carries the idea on. Row seven keeps writing. Row eight adds a sentence. Row nine says more again. Row ten should still show. Row eleven hides by default. Row twelve is clipped too. Row thirteen likewise. Row fourteen at the back. Row fifteen is the last."; }
+    relation r9 @root -> @noted { kind: assoc; }`)
+ .replace('    object pricing "Pricing" { kind: object; }','    object pricing "Pricing" { kind: object; description: "Short body, two rows at most."; }')
+ .replace('    object risks "Risks" { kind: object; }','    object risks "Risks" { kind: object; description: "Tight cap demo."; x_mindmap: { lines: 1 }; }');
+
+test('B1-100: entities auto-size to body rows; default cap is 10 with a scrollbar affordance',()=>{
+ const r=run('mindmap',BODY_SRC);
+ const noted=r.scene.nodes.find(n=>n.id.endsWith('.noted'));
+ assert.ok(noted,'note-heavy entity placed');
+ const group=r.svg.match(/<g class="ddn-mind-rows" data-node="[^"]*noted" data-total="(\d+)" data-cap="(\d+)"/);
+ assert.ok(group,'rows group carries total and cap');
+ const total=Number(group[1]);
+ assert.ok(total>10,'the long note exceeds the default 10-line cap ('+total+' rows)');
+ assert.equal(Number(group[2]),10,'default cap is 10');
+ const notedRows=[...r.svg.matchAll(/<g class="ddn-mind-rows" data-node="[^"]*noted"[^>]*>([\s\S]*?)<\/g>/g)];
+ assert.ok(notedRows.length,'noted rows group present');
+ const emitted=(r.svg.match(/<g class="ddn-mind-rows" data-node="[^"]*noted"[^>]*>[\s\S]*?<\/g>/)||[''])[0].match(/class="ddn-mind-row"/g);
+ assert.equal(emitted.length,total,'every wrapped row emits inside the clip window ('+total+')');
+ assert.ok(r.svg.includes('ddn-mind-scroll-thumb'),'scrollbar thumb drawn when total exceeds the cap');
+ assert.ok(r.svg.includes('ddn-mind-resize'),'resize affordance drawn');
+ // The box height is the capped window, not the full text: rows 10..14 are clipped away in the static render.
+ const clip=r.svg.match(/<clipPath id="(mindclip-[^"]+)"><rect x="[^"]*" y="[^"]*" width="[^"]*" height="([\d.]+)"/);
+ assert.ok(clip&&Number(clip[2])<=10*18+1,'clip window is the 10-row cap, not the 15-row content');
+});
+
+test('B1-100: x_mindmap.lines shrinks the visible window (authored cap)',()=>{
+ const r=run('mindmap',BODY_SRC);
+ const group=r.svg.match(/<g class="ddn-mind-rows" data-node="[^"]*risks" data-total="(\d+)" data-cap="(\d+)"/);
+ assert.ok(group,'risks rows group present');
+ assert.equal(Number(group[2]),1,'authored x_mindmap.lines: 1 caps the window to one row');
+});
+
+test('B1-100: entities without body text keep the previous compact shape',()=>{
+ const r=run('mindmap',BODY_SRC);
+ const marketing=r.svg.match(/data-id="[^"]*marketing"/);
+ assert.ok(marketing,'marketing present');
+ assert.ok(!r.svg.includes('data-node="'+(marketing[0].replace('data-id="','').replace('"',''))+'" data-total'),'no rows group for a textless entity');
+});
+
 const report={runtime:A.VERSION,scope:'Mind map profile mindmap.basic@1 validation and rendering.',passed:results.filter(t=>t.pass).length,total:results.length,results};
 fs.mkdirSync(path.resolve(__dirname,'../tests/validation'),{recursive:true});
 fs.writeFileSync(path.resolve(__dirname,'../tests/validation/mind-map-tests.json'),JSON.stringify(report,null,2)+'\n');

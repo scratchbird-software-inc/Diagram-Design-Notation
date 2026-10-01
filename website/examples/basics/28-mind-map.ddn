@@ -5,10 +5,10 @@ import "shared.ddn" as shared;
 
 // Synthetic meeting brainstorm for the mindmap.basic@1 profile.
 data ideas {
-    object root "Q3 launch brainstorm" { kind: object; }
-    object pricing "Pricing" { kind: object; }
-    object onboarding "Onboarding" { kind: object; }
-    object risks "Risks" { kind: object; }
+    object root "Q3 launch brainstorm" { kind: object; description: "Synthetic workshop capture: what ships in Q3, in what order, and what could still sink it. Everything below is a branch of this one question."; }
+    object pricing "Pricing" { kind: object; description: "Two tiers is the working bet: free for individuals, team for groups. Annual discount only on the team tier. Usage caps instead of per-seat maths. Grandfather the beta cohort quietly."; }
+    object onboarding "Onboarding" { kind: object; description: "First-run path for a brand-new account, start to first value. Sign up with the synthetic sample workspace already loaded. Tour the catalogue before any real data. Import a small file and see the same diagram update. Invite a teammate and watch roles land. Find the undo before finding trouble. Save a first view worth sharing. Confirm the welcome checklist closes itself. Measure time to the first shared link. Note every stumble for the next sprint review."; }
+    object risks "Risks" { kind: object; description: "Scope creep on the sample tour. Performance on very large maps."; }
     object marketing "Marketing" { kind: object; }
     term tiers "Usage tiers";
     term discount "Annual discount";

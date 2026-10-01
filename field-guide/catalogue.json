@@ -9934,8 +9934,8 @@
         "view": "mindmap",
         "profile": "mindmap.basic@1",
         "projection": "graph",
-        "sha256": "c0388e2081ced9e33f1a4a841e65e6ed7062ac9af48784fdb21ab9a5b6334c24",
-        "modelFingerprint": "4d816cce1af32164",
+        "sha256": "f29f9f36a3caab0ddf689c9de9756ba2acb75fefe6a51638523be95ca3705664",
+        "modelFingerprint": "33fe259f9dc0fceb",
         "warnings": [
           "DDN-TW01"
         ]
@@ -9977,8 +9977,8 @@
         "expectation": "Only the label of Q3 launch brainstorm / review changes; the branch structure and identities are untouched."
       },
       "exerciseEvidence": {
-        "before": "c0388e2081ced9e33f1a4a841e65e6ed7062ac9af48784fdb21ab9a5b6334c24",
-        "after": "121c19c5d092c36ff43dd0f50c257c820e7f4677e9302265a457adf240f4df4a",
+        "before": "f29f9f36a3caab0ddf689c9de9756ba2acb75fefe6a51638523be95ca3705664",
+        "after": "c80cd06e82678c8079f056a2bfb61f80d285a34ee44147a3e4f3398ed57087ce",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

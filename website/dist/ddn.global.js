@@ -5039,6 +5039,19 @@
    if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
    let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=api$9.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
    let noteLines=[];if(k.shape==='note'&&n.properties.description){noteLines=api$9.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
+   /* B1-100: mind-map entities carry free-form body text (their description)
+    * as wrapped rows. The box auto-sizes to the rows up to a line cap (default
+    * 10, x_mindmap.lines 1..50 per entity); beyond the cap the box stays at the
+    * cap height and a scrollbar affordance marks the hidden rows. The text
+    * engine measures and wraps only — there is no inline-markup engine in the
+    * runtime, so rows are plain text (documented gap). */
+   let mindRows=null;
+   if(profiles.projection?.profile==='mindmap.basic@1'&&n.properties.description){
+    const lines=api$9.wrap(String(n.properties.description),w-30*s,12.5*s,font,400);
+    const cap=Math.max(1,Math.min(50,q$2(n.properties.x_mindmap?.lines,10))),total=lines.length,shown=Math.min(cap,total);
+    mindRows={lines,total,cap,rowH:18*s};
+    y+=shown*18*s+(total>cap?8*s:0);
+   }
    let sample=null;
    if(n.type==='sample'||k.code==='SMP'){
     const columns=n.properties.columns||[],allRows=n.properties.rows||[],raw=allRows.slice(0,1000),omitted=allRows.length-raw.length,head=columns.map(c=>context.members?.get(c.$ref)?.name||c.$ref?.split('.').at(-1)||String(c)),widths=head.map((h,i)=>Math.max(110*s,Math.min(220*s,Math.max(api$9.measure(h,11.5*s,font,650).width,...raw.map(row=>api$9.measure(pretty(row[i]),12*s,font,400).width))+24*s)));
@@ -5050,7 +5063,7 @@
    const footer=[];if(profiles.display.badges!=='none')for(const key of ['workload','role','temporal','distribution','location'])if(n.properties[key]!==undefined)footer.push(pretty(n.properties[key]));
    if(footer.length)y+=38*s;
    let h=Math.max(y+14*s,100*s,placement.size?q$2(placement.size[1]):0,(context.degrees?.[n.id]||1)>4?(context.degrees[n.id]*44+40):((context.degrees?.[n.id]||1)*20+40));
-   const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample}; return k.profileKind?api$7.measure(g,profiles):g;
+   const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(mindRows?{mindRows}:{})}; return k.profileKind?api$7.measure(g,profiles):g;
   }
   function renderNode(g,p,theme,registry){
    if(g.k.profileKind){let shaped=api$7.render(g,p,theme);
@@ -5132,6 +5145,20 @@
    }
    if(g.meaningLines.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':meaning');out+=multilines(x+15*s,y+g.headerH+18*s,g.meaningLines,12.5*s,bodyInk,18*s);}
    if(g.noteLines.length)out+=multilines(x+15*s,y+g.headerH+18*s,g.noteLines,12.5*s,bodyInk,18*s);
+   if(g.mindRows){const mr=g.mindRows,top=y+g.headerH+8*s,winH=Math.min(mr.cap,mr.total)*mr.rowH,clipId='mindclip-'+hash(n.id);
+    /* B1-100: mind-map body rows. ALL rows render inside a clip window sized to
+     * the line cap; the tool pans the rows group and the thumb for scroll (no
+     * re-render), and drags the lower-right handle to change the cap (overlay
+     * re-render, presentation-only). The static export shows the first window. */
+    out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':mindbody');
+    out+=`<clipPath id="${clipId}"><rect x="${fmt$1(x+8*s)}" y="${fmt$1(top)}" width="${fmt$1(w-16*s)}" height="${fmt$1(winH)}"/></clipPath>`;
+    out+=`<g class="ddn-mind-rows" data-node="${esc$3(n.id)}" data-total="${mr.total}" data-cap="${mr.cap}" data-row-h="${fmt$1(mr.rowH)}" clip-path="url(#${clipId})">`;
+    mr.lines.forEach((ln,i)=>{api$9.measure(ln,12.5*s,font,400);out+=`<text class="ddn-mind-row" data-row="${i}" x="${fmt$1(x+15*s)}" y="${fmt$1(top+13*s+i*mr.rowH)}" font-size="${fmt$1(12.5*s)}" fill="${bodyInk}">${esc$3(ln)}</text>`;});
+    out+='</g>';
+    if(mr.total>mr.cap){const tx=x+w-11*s,trackY=top+2*s,trackH=winH-4*s,thumbH=Math.max(12*s,trackH*mr.cap/mr.total);
+     out+=`<g class="ddn-mind-scroll" data-node="${esc$3(n.id)}" data-track-y="${fmt$1(trackY)}" data-track-h="${fmt$1(trackH)}"><rect class="ddn-mind-scroll-track" x="${fmt$1(tx)}" y="${fmt$1(trackY)}" width="${fmt$1(5*s)}" height="${fmt$1(trackH)}" rx="${fmt$1(2.5*s)}" fill="${ink}" opacity=".18"/><rect class="ddn-mind-scroll-thumb" data-node="${esc$3(n.id)}" x="${fmt$1(tx)}" y="${fmt$1(trackY)}" width="${fmt$1(5*s)}" height="${fmt$1(thumbH)}" rx="${fmt$1(2.5*s)}" fill="${ink}" opacity=".55"/></g>`;}
+    out+=`<g class="ddn-mind-resize" data-node="${esc$3(n.id)}" data-cap="${mr.cap}" data-total="${mr.total}"><path d="M${fmt$1(x+w-16*s)} ${fmt$1(y+h-5*s)}L${fmt$1(x+w-5*s)} ${fmt$1(y+h-16*s)}M${fmt$1(x+w-11*s)} ${fmt$1(y+h-5*s)}L${fmt$1(x+w-5*s)} ${fmt$1(y+h-11*s)}" stroke="${ink}" stroke-width="1.6" opacity=".5"/></g>`;
+   }
    if(g.sample){const sm=g.sample;out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':sample');let xx=x+12*s;
     sm.headers.forEach((lines,i)=>{out+=multilines(xx,y+g.headerH+16*s,lines,11.5*s,ink,17*s,650);if(i)out+=styleLine(xx-5*s,y+g.headerH-4*s,xx-5*s,y+h-30*s,ink,.5,'',p,n.id+':column:'+i);xx+=sm.widths[i];});
     for(let j=0;j<sm.rows.length;j++){const row=sm.rows[j];let xx=x+12*s;row.cells.forEach((lines,i)=>{out+=multilines(xx,y+row.top+18*s,lines,12*s,bodyInk,18*s);xx+=sm.widths[i];});out+=styleLine(x+10*s,y+row.top+row.h-1,x+w-10*s,y+row.top+row.h-1,ink,.45,'',p,n.id+':row:'+j);}
