@@ -3,8 +3,8 @@
     "edition": "field-guide-0.7",
     "runtime": "0.7.0",
     "reviewed": "2026-09-30",
-    "chapterCount": 147,
-    "plannedChapterCount": 147,
+    "chapterCount": 148,
+    "plannedChapterCount": 148,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -13796,6 +13796,99 @@
       "exerciseEvidence": {
         "before": "11ea4b8d979d356d1e545f969e6cd9d402bdbb4c9f0d1aab17ff50a41fb33fd1",
         "after": "fcece22f1436c7b77f55f1ca24abd2a3cd391294620faa0d6604109549f86fb4",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "presentation-art",
+      "title": "Presentation diagrams — illustration art with connection points",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "website/examples/basics/110-presentation-architecture.ddn",
+      "view": "overview",
+      "what": "The slide-deck idiom: detailed illustrations (people, buildings, servers, vehicles) instead of stroke icons, with relations glued to the artwork’s declared connection anchors.",
+      "why": "Stakeholder communication reads pictures faster than notation; an art pack gives the deck idiom without giving up a real model underneath.",
+      "when": "Executive overviews, sales and training material, any audience that should see a factory, not a rect labelled factory.",
+      "read": [
+        "Each node binds a ddn-art-pack@1 item with x_art; the illustration fills the node below its header.",
+        "Relations attach exactly at the item’s declared side anchors — move the nodes and the connectors re-glue to the same points."
+      ],
+      "inputs": [
+        "The model",
+        "A registered art pack (CLI --pack or registerArtPack)",
+        "x_art per node"
+      ],
+      "pitfalls": [
+        "Art is presentation: without the pack registered, every node draws an honest placeholder — never fake the artwork inline.",
+        "Do not put fields on art nodes; the illustration owns the body area."
+      ],
+      "limits": "Host-registered packs only (never inlined into the tools); 64 KiB per item; anchors are the four side midpoints in the shipped pack.",
+      "refs": [],
+      "probe": [
+        "entity",
+        "application",
+        "database"
+      ],
+      "editTask": "Rename one node, apply, and confirm the illustration and every connector stay glued to the same anchor points.",
+      "tags": [
+        "technique",
+        "presentation",
+        "art",
+        "visio"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/110-presentation-architecture.ddn",
+        "view": "overview",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "44f10d3f9258271bc392bdbf58b2bbc3dad6ba2d9074b0ada6dc3bacb96382df",
+        "modelFingerprint": "d48d7df71bd3356f",
+        "warnings": [
+          "DDN-LW05",
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/110-presentation-architecture.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/110-presentation-architecture.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view overview \"Storefront systems — presentation overview\" {\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind: graph; profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; gap: 130px; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/110-presentation-architecture.ddn and locate view overview. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.presentation-architecture::shop.customers",
+        "file": "website/examples/basics/110-presentation-architecture.ddn",
+        "before": "Customers",
+        "after": "Customers / review",
+        "expectation": "Only the node's name changes; the artwork, anchors and routes are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "44f10d3f9258271bc392bdbf58b2bbc3dad6ba2d9074b0ada6dc3bacb96382df",
+        "after": "cf1579e94ae5f8d58804b45f093570817b65b10c352c7d1dac1f6551d3113255",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

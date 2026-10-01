@@ -1,0 +1,30 @@
+/* SPDX-License-Identifier: GPL-2.0-or-later. B1-101 slice 3: ddn-art-pack@1 —
+ * manifest/sanitization gates, host registration, x_art rendering with the
+ * shipped presentation-devices pack, connection-anchor endpoint pinning, and
+ * the unresolvable-reference placeholder contract. */
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..'),D=require('../runtime/ddn-core').default,R=require('../runtime/ddn-render').default,L=require('../runtime/ddn-layout').default,S=require('../runtime/ddn-icon-sanitize.js').default,reg=require('../../standard/registry/catalogue.json');
+const pack=JSON.parse(fs.readFileSync(path.join(root,'../standard/registry/art-packs/presentation-devices__1.json'),'utf8'));
+const checks=[];
+function test(name,fn){try{fn();checks.push({name,status:'pass'});}catch(e){checks.push({name,status:'fail',detail:e.stack});console.error(name,e.message);}}
+function build(src,view='v',usePack=true){if(usePack){if(!D.hostArtPacks().length)D.registerArtPack(pack);}else D.unregisterArtPack(pack.id);const files={'main.ddn':src};const ir=D.build(files,'main.ddn',view,reg).ir,out=R.render(ir,reg);return {ir,...out};}
+const SIMPLE=(art,extra='')=>`ddn "0.5";\nmodule "t.art";\ndata m {\n object a "A" { kind: entity; x_art: { library: "presentation-devices@1", item: "${art}" }; ${extra} }\n object b "B" { kind: entity; x_art: { library: "presentation-devices@1", item: "database" }; }\n relation r1 @a -> @b { kind: assoc; }\n}\nview v "T" { data: [@m]; projection { kind: graph; profile: "ddn@1"; } layout { algorithm: grid; gap: 120px; } publication { size: content; fit: none; } }\n`;
+
+test('Shipped pack passes manifest validation and sanitization',()=>{S.validateArtPack(pack);for(const item of pack.items)assert.equal(S.sanitizeArt(pack,item),null,item.id);});
+test('Shipped pack carries the required side anchors and provenance on every item',()=>{assert(pack.items.length>=40,'item count '+pack.items.length);for(const i of pack.items){for(const s of ['north','east','south','west'])assert(i.anchors[s],i.id+'/'+s);for(const f of ['title','author','license','source','retrieved'])assert(i.provenance[f],i.id+'.'+f);}});
+test('Every shipped item license is CC0-equivalent',()=>{for(const i of pack.items)assert.equal(i.provenance.license,'CC0-1.0',i.id);});
+test('Bad manifest fails DDN-PJ206',()=>{assert.throws(()=>S.validateArtPack({format:'ddn-icon-pack@1'}),e=>e.code==='DDN-PJ206');assert.throws(()=>S.validateArtPack({...pack,id:'Bad Id'}),e=>e.code==='DDN-PJ206');});
+test('Missing side anchor fails DDN-PJ206',()=>{const bad=JSON.parse(JSON.stringify(pack));delete bad.items[0].anchors.south;assert.throws(()=>S.validateArtPack(bad),e=>e.code==='DDN-PJ206');});
+test('Script in artwork fails DDN-PJ207 on registration',()=>{const bad=JSON.parse(JSON.stringify(pack));bad.id='evil-art@1';bad.items=[{...bad.items[0],svg:'<svg viewBox="0 0 10 10"><script>alert(1)</script></svg>'}];assert.throws(()=>D.registerArtPack(bad),e=>e.code==='DDN-PJ207');});
+test('Duplicate registration fails DDN-PJ206',()=>{D.registerArtPack(pack);assert.throws(()=>D.registerArtPack(pack),e=>e.code==='DDN-PJ206');});
+test('x_art renders the illustration below the header',()=>{const o=build(SIMPLE('laptop'));assert(o.svg.includes('class="ddn-art" data-art="presentation-devices@1/laptop"'));assert(!o.svg.includes('ddn-art-missing'));const a=o.scene.nodes.find(n=>n.id.endsWith('.a'));assert(a._art&&a._art.vbW>0&&a._art.anchors.south);});
+test('Body endpoint lands exactly on the side anchor',()=>{const o=build(SIMPLE('laptop'));const r=o.scene.routes[0];const b=o.scene.nodes.find(n=>n.id.endsWith('.b'));const anchor=L.artAnchorPoint(b,r.target_side);assert(anchor,'no anchor');assert.deepEqual(r.points.at(-1),anchor);});
+test('Named anchor snaps a declared port endpoint',()=>{const src=SIMPLE('laptop','ports { south "Downlink"; }').replace('@a ->','@a.south ->');const o=build(src);const r=o.scene.routes[0];const a=o.scene.nodes.find(n=>n.id.endsWith('.a'));assert.deepEqual(r.points[0],L.artAnchorPoint(a,'south'));});
+test('Unresolvable x_art draws a placeholder, never an error',()=>{const o=build(SIMPLE('laptop'),'v',false);assert(o.svg.includes('ddn-art-missing'));assert(o.svg.includes('pack not registered'));});
+test('Unknown item in a registered pack is a placeholder too',()=>{const o=build(SIMPLE('no-such-item'));assert(o.svg.includes('ddn-art-missing'));});
+test('x_art contract rejects malformed values (DDN105)',()=>{const bad=SIMPLE('laptop').replace('{ library: "presentation-devices@1", item: "laptop" }','{ library: "presentation-devices@1" }');assert.throws(()=>build(bad),e=>e.code==='DDN105');});
+test('The presentation example renders every node with real artwork',()=>{const ex=fs.readFileSync(path.join(root,'../website/examples/basics/110-presentation-architecture.ddn'),'utf8');const shared=fs.readFileSync(path.join(root,'../website/examples/basics/shared.ddn'),'utf8');if(!D.hostArtPacks().length)D.registerArtPack(pack);const files={'110.ddn':ex,'shared.ddn':shared};const ir=D.build(files,'110.ddn','overview',reg).ir;const o=R.render(ir,reg);assert(!o.svg.includes('ddn-art-missing'),'placeholders in packed render');const arts=(o.svg.match(/class="ddn-art" data-art=/g)||[]).length;assert(arts>=10,'art nodes '+arts);assert.equal(o.scene.quality.errors.length,0);});
+test('Art render is deterministic',()=>{assert.equal(build(SIMPLE('laptop')).svg,build(SIMPLE('laptop')).svg);});
+const report={release:D.VERSION,scope:'ddn-art-pack@1 gates, registration, x_art render, anchor pinning and the placeholder contract. Not a certification of artwork correctness or completeness.',passed:checks.filter(c=>c.status==='pass').length,failed:checks.filter(c=>c.status==='fail').length,checks};
+fs.mkdirSync(path.join(root,'validation'),{recursive:true});fs.writeFileSync(path.join(root,'validation/art-pack.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({passed:report.passed,failed:report.failed}));if(report.failed)process.exitCode=1;

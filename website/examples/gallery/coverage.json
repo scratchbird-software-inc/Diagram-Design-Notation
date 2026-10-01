@@ -2193,6 +2193,22 @@
       "svg": "corpus/basics-11-native-layouts.svg"
     },
     {
+      "entry": "website/examples/basics/110-presentation-architecture.ddn",
+      "view": "overview",
+      "title": "Storefront systems — presentation overview",
+      "views": [
+        {
+          "id": "overview",
+          "title": "Storefront systems — presentation overview"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/110-presentation-architecture.combined.ddn",
+      "svg": "corpus/basics-110-presentation-architecture.svg"
+    },
+    {
       "entry": "website/examples/basics/12-nested-fields.ddn",
       "view": "detailed",
       "title": "Nested fields / domains and representations",

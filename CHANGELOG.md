@@ -6,6 +6,36 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Illustration art pack + presentation-style diagrams** (B1-101, slice 3).
+  New pack format `ddn-art-pack@1` (normative spec chapter 50 +
+  `standard/schemas/art-pack.schema.json`): detailed presentation
+  illustrations — arbitrary viewBoxes, full colour, NOT 24×24 stroke icons —
+  with declared **connection anchors** (required `north`/`east`/`south`/
+  `west` plus optional named points, viewBox coordinates) and mandatory
+  per-item **provenance** (title, author, license, source URL, retrieval
+  date). Runtime: `registerArtPack`/`unregisterArtPack`/`hostArtPacks`/
+  `validateArtPack` in the public API (same DDN-PJ206/PJ207 gates; 64 KiB per
+  item; internal fragment references allowed, external forbidden); the
+  `x_art` contract binds an item to any node; the renderer scales the
+  artwork into the node interior below the header (aspect preserved, ids
+  namespaced) and the router pins endpoints exactly to the anchors — a `port`
+  member whose name matches an anchor snaps to it. An unresolvable `x_art`
+  draws a dashed placeholder naming the missing reference, never an error.
+  Art packs are never inlined into dist/tools; the CLI registers them per
+  run with `--pack FILE.json`. Shipped pack `presentation-devices@1`: 44
+  items (computers, servers, network gear, buildings, people, props), all
+  CC0/public domain, curated with license verification from Wikimedia
+  Commons (8) and freesvg.org (36), upstream toolchain path leaks stripped
+  at build time; unDraw and SVG Repo evaluated and rejected (see NOTICE.md).
+  New example `website/examples/basics/110-presentation-architecture.ddn`
+  (gallery and field-guide render with the pack registered), Field Guide
+  chapter *Presentation diagrams* (plan 148), developer-docs art-pack
+  section, wiki page *Presentation diagrams*, new suite
+  `notation/tests/art-pack.js` (15 checks). Curation/assembly tooling:
+  `tools/fetch-art-candidates.mjs`, `tools/fetch-art-freesvg.mjs`,
+  `tools/review-art-freesvg.mjs`, `tools/build-art-pack.mjs`,
+  `tools/curate-art.mjs`.
+
 - **Icon pack viewer** (B1-101, slice 2). New generated site page
   `website/icons/index.html` (nav: Icons) browses every installed
   ddn-icon-pack@1 pack: per-icon previews at 16/24/32/48 px, pack filter

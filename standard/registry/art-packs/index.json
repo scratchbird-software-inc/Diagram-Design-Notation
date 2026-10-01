@@ -1,0 +1,7 @@
+{
+  "format": "ddn-art-pack-index@1",
+  "note": "Shipped art packs. Art packs are opt-in: hosts register them explicitly (registerArtPack / CLI --pack); they are never inlined into runtime bundles.",
+  "packs": [
+    "presentation-devices__1.json"
+  ]
+}

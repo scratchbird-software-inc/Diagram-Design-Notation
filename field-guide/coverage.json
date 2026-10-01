@@ -3,8 +3,8 @@
     "edition": "field-guide-0.7",
     "runtime": "0.7.0",
     "reviewed": "2026-09-30",
-    "chapterCount": 147,
-    "plannedChapterCount": 147,
+    "chapterCount": 148,
+    "plannedChapterCount": 148,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
@@ -1285,6 +1285,15 @@
       "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
       "view": "workshop",
       "sha256": "11ea4b8d979d356d1e545f969e6cd9d402bdbb4c9f0d1aab17ff50a41fb33fd1"
+    },
+    {
+      "id": "presentation-art",
+      "status": "technique",
+      "profile": "ddn@1",
+      "projection": "graph",
+      "entry": "website/examples/basics/110-presentation-architecture.ddn",
+      "view": "overview",
+      "sha256": "44f10d3f9258271bc392bdbf58b2bbc3dad6ba2d9074b0ada6dc3bacb96382df"
     },
     {
       "id": "whiteboard",
@@ -2606,6 +2615,15 @@
       "id": "whiteboard-sticky-notes",
       "before": "11ea4b8d979d356d1e545f969e6cd9d402bdbb4c9f0d1aab17ff50a41fb33fd1",
       "after": "fcece22f1436c7b77f55f1ca24abd2a3cd391294620faa0d6604109549f86fb4",
+      "changed": true,
+      "modelChanged": true,
+      "relationIdentitiesPreserved": true,
+      "undoRestoresBefore": true
+    },
+    {
+      "id": "presentation-art",
+      "before": "44f10d3f9258271bc392bdbf58b2bbc3dad6ba2d9074b0ada6dc3bacb96382df",
+      "after": "cf1579e94ae5f8d58804b45f093570817b65b10c352c7d1dac1f6551d3113255",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

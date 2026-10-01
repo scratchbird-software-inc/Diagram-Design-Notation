@@ -259,4 +259,20 @@ export default [
     editTask: 'Rewrite one note with the next thought from your own workshop, apply, and confirm its string still sags to the same neighbour.',
     tags: ['technique', 'whiteboard', 'workshop', 'sticky'],
   },
+
+  {
+    id: 'presentation-art', title: 'Presentation diagrams — illustration art with connection points', category: 'Techniques',
+    status: 'technique', entry: 'website/examples/basics/110-presentation-architecture.ddn', view: 'overview',
+    what: 'The slide-deck idiom: detailed illustrations (people, buildings, servers, vehicles) instead of stroke icons, with relations glued to the artwork\u2019s declared connection anchors.',
+    why: 'Stakeholder communication reads pictures faster than notation; an art pack gives the deck idiom without giving up a real model underneath.',
+    when: 'Executive overviews, sales and training material, any audience that should see a factory, not a rect labelled factory.',
+    read: ['Each node binds a ddn-art-pack@1 item with x_art; the illustration fills the node below its header.', 'Relations attach exactly at the item\u2019s declared side anchors — move the nodes and the connectors re-glue to the same points.'],
+    inputs: ['The model', 'A registered art pack (CLI --pack or registerArtPack)', 'x_art per node'],
+    pitfalls: ['Art is presentation: without the pack registered, every node draws an honest placeholder — never fake the artwork inline.', 'Do not put fields on art nodes; the illustration owns the body area.'],
+    limits: 'Host-registered packs only (never inlined into the tools); 64 KiB per item; anchors are the four side midpoints in the shipped pack.',
+    refs: [], probe: ['entity', 'application', 'database'],
+    expectation: m => `Only the node's name changes; the artwork, anchors and routes are untouched.`,
+    editTask: 'Rename one node, apply, and confirm the illustration and every connector stay glued to the same anchor points.',
+    tags: ['technique', 'presentation', 'art', 'visio'],
+  },
 ];

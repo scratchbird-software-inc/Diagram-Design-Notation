@@ -53,6 +53,11 @@ function registry(base){
   * fixed whiteboard palette; pin/tape toggle the push-pin and tape-strip
   * decorations. Free-form body text stays in the plain description. */
  out.extension_contracts.x_sticky=def({type:'object',properties:{colour:{enum:['yellow','pink','blue','green','orange','purple']},pin:{type:'boolean'},tape:{type:'boolean'}},additionalProperties:false},['object']);
+ /* B1-101 slice 3 : presentation art binding. References an item in a
+  * registered ddn-art-pack@1 pack (host-registered; never inlined into dist).
+  * An unresolvable reference renders a placeholder, never a hard error, so a
+  * shared .ddn file still renders where the pack is not installed. */
+ out.extension_contracts.x_art=def({type:'object',required:['library','item'],properties:{library:{type:'string',minLength:1},item:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-056 : UML 2.5.1 sequence diagrams. x_message grows the UML
   * message sort, gate and time/duration annotations (seq stays optional at
   * contract level; uml.communication@1 enforces it via DDN-PJ111). x_fragment

@@ -1165,5 +1165,12 @@
     "support": "native",
     "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
     "view": "workshop"
+  },
+  {
+    "id": "presentation-art",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/110-presentation-architecture.ddn",
+    "view": "overview"
   }
 ]

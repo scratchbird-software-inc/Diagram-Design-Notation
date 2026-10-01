@@ -7,7 +7,7 @@ import Contracts from './ddn-contracts.js';
 import Profiles from './ddn-profiles.js';
 import RegistryCatalogue from './assets/catalogue.js';
 import ICONLIBS from './assets/icon-libraries.js';
-import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIconPack} from './ddn-icon-sanitize.js';
+import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIconPack,registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack} from './ddn-icon-sanitize.js';
   'use strict';
   const VERSION = '0.7.0';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
@@ -1009,6 +1009,6 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
   /* B1-088: host-supplied icon packs — validated and sanitized exactly like
    * shipped packs before they can render. */
   const registerIconPack=pack=>regPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))}))};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack};
   publishNamespace('DDN',api);
   export default api;

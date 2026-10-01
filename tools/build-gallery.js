@@ -284,10 +284,21 @@ function filesFor(entry) {
   return files;
 }
 
-/* Render one view through the real CLI path. */
+/* Render one view through the real CLI path. Examples that bind optional art
+ * packs (B1-101 slice 3) render with the pack registered — the whole point of
+ * the plate is the artwork; hosts without the pack draw placeholders. */
+const EXAMPLE_PACKS = {
+  '110-presentation-architecture': ['standard/registry/art-packs/presentation-devices__1.json'],
+};
+function packsFor(entry) {
+  const base = path.basename(entry);
+  const key = Object.keys(EXAMPLE_PACKS).find(k => base === k + '.ddn' || base === k + '.combined.ddn');
+  return key ? EXAMPLE_PACKS[key] : [];
+}
 function render(entry, view, outFile) {
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  execFileSync(process.execPath, [CLI, 'render', entry, '--view', view, '--out', outFile, '--workspace', path.dirname(entry)], { cwd: ROOT, stdio: ['ignore', 'ignore', 'pipe'] });
+  const packs = packsFor(entry).flatMap(p => ['--pack', p]);
+  execFileSync(process.execPath, [CLI, 'render', entry, '--view', view, '--out', outFile, '--workspace', path.dirname(entry), ...packs], { cwd: ROOT, stdio: ['ignore', 'ignore', 'pipe'] });
   const svg = fs.readFileSync(outFile, 'utf8');
   if (!svg.includes('<svg')) throw new Error('Render did not produce SVG: ' + outFile);
 }

@@ -214,6 +214,17 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
 // Endpoint identity and a boundary slot are different. Only slots belonging to
 // the same visible field row (or the unbound body) may exchange their order.
 // Never make a journal FK look as though it is attached to an account field.
+/* B1-101 slice 3: presentation art geometry, shared by render (drawing the
+ * illustration) and routing (pinning endpoints to its declared anchors). The
+ * art box is the node interior below the header; the viewBox scales to fit,
+ * centred. Anchors are declared in viewBox coordinates by the art pack. */
+function artBox(n){const s=n.scale||1,hh=n.headerH||64*s,pad=10*s;return{x:n.x+pad,y:n.y+hh+4*s,w:Math.max(8,n.w-2*pad),h:Math.max(8,n.h-hh-14*s)};}
+function artTransform(n){const art=n._art;if(!art)return null;const b=artBox(n),fit=Math.min(b.w/art.vbW,b.h/art.vbH),w=art.vbW*fit,h=art.vbH*fit;return{x:b.x+(b.w-w)/2,y:b.y+(b.h-h)/2,scale:fit,w,h};}
+function artAnchorPoint(n,name){const t=artTransform(n),pt=n._art?.anchors?.[name];return t&&pt?[round(t.x+pt[0]*t.scale),round(t.y+pt[1]*t.scale)]:null;}
+function artAnchorSide(n,name){const art=n._art;if(!art?.anchors?.[name])return null;
+ if(['north','east','south','west'].includes(name))return name;
+ const [ax,ay]=art.anchors[name],d={west:ax,east:art.vbW-ax,north:ay,south:art.vbH-ay};
+ return Object.entries(d).sort((a,b)=>a[1]-b[1])[0][0];}
 function portAssignments(nodes,rels,profiles,hints={}){
  const byId=new Map(nodes.map(n=>[n.id,n])),groups=new Map(),result=new Map();
  const optimize=profiles.layout.endpoint_ordering!=='preserve'&&profiles.layout.optimize!=='none';
@@ -257,6 +268,15 @@ function portAssignments(nodes,rels,profiles,hints={}){
    });let i=0;ordered=entries.map(e=>e.fixed?e:free[i++]);
   }
   ordered.forEach((o,index)=>{const{item,which,n,ep,side,row,frac}=o;let x=n.x+n.w/2,y=n.y+n.h/2;
+   /* B1-101 slice 3: art anchors pin endpoints onto the illustration. A
+    * member endpoint naming an anchor snaps to it; a lone body endpoint on a
+    * side with a declared anchor lands exactly on the anchor point. */
+   if(n._art){
+    const memberAnchor=ep.member?String(ep.member).split('.').pop().replace(/_/g,'-'):null;
+    const named=memberAnchor&&n._art.anchors[memberAnchor]?memberAnchor:null;
+    const pt=named?artAnchorPoint(n,named):(!row&&frac===undefined&&entries.length===1?artAnchorPoint(n,side):null);
+    if(pt){item[which]=pt;item[which+'_direction']=directions[named?artAnchorSide(n,named)||side:side];return;}
+   }
    /* B1-100: mind-map side anchors cluster on the side's vertical centre —
     * one branch exactly at the centre, a fan clustered ± a few pixels around
     * it (within the stroke's visual width, so the side reads as one point)
@@ -570,6 +590,6 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  return {...result,routes,crossings,labels,quality,curveTolerance:CURVE_TOLERANCE};
 }
 
-const api={crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION,q,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale};
+const api={crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION,q,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale,artBox,artTransform,artAnchorPoint,artAnchorSide};
 publishNamespace('DDNLayout',api);
 export default api;

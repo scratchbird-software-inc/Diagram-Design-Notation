@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>50. Art packs (ddn-art-pack@1) — DDN</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../../index.html"><img class="logo" src="../../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../../index.html">Home</a>
+      <a href="../../features/index.html">Features</a>
+      <a href="../../gallery/index.html">Gallery</a>
+      <a href="../../icons/index.html">Icons</a>
+      <a href="../../guide/index.html">Guide</a>
+      <a href="../../docs/index.html">Docs</a>
+      <a href="../../standard/index.html" class="active">Standard</a>
+      <a href="../../tools/index.html">Tools</a>
+      <a href="../../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<article class="md-body">
+<h1>50. Art packs (ddn-art-pack@1)</h1>
+<p>Status: implemented in runtime 0.7.0. This chapter is the normative specification of the DDN <strong>art pack</strong> format — the presentation-illustration sibling of the icon pack (chapter 49) for detailed artwork that is <strong>not</strong> drawn on a 24×24 stroke grid: computers, server racks, network devices, buildings, people. The machine-readable schema is <code>standard/schemas/art-pack.schema.json</code>; shipped packs live as one file per pack under <code>standard/registry/art-packs/</code>.</p>
+<h2>1. Purpose and distribution format</h2>
+<p>An art pack is a <strong>single JSON document</strong>, exactly like an icon pack: one file is one pack. The document's <code>format</code> member is the string <code>ddn-art-pack@1</code>.</p>
+<p>Art packs differ from icon packs in three ways:</p>
+<ol><li><strong>Artwork, not symbols.</strong> Items are detailed illustrations with arbitrary</li></ol>
+<p>   <code>viewBox</code> dimensions and full colour; there is no shared grid, stroke    width, or cap/join convention.</p>
+<ol><li><strong>Connection anchors.</strong> Every item declares the points where relations</li></ol>
+<p>   attach to the illustration (§4) — the presentation-diagram idiom of    connectors glued to a shape's connection points.</p>
+<ol><li><strong>Per-item provenance.</strong> Because artwork is curated item by item, each</li></ol>
+<p>   entry carries its own source and license record (§5) in addition to the    pack manifest.</p>
+<p>Art packs are <strong>never inlined into runtime bundles</strong>. A host registers a pack explicitly (<code>DDNLive.registerArtPack</code>); the CLI registers packs for a single run with <code>--pack FILE.json</code>. Distribution is by file download, not by embedding in <code>ddn.global.js</code> or the standalone tools.</p>
+<h2>2. Manifest</h2>
+<p>The manifest is identical in shape and rules to the icon pack manifest (chapter 49 §2): <code>format</code>, <code>id</code> (<code>lowercase-name@N</code>), <code>name</code>, <code>version</code> (semantic), <code>license</code> (SPDX), <code>attribution</code>, <code>source</code>, conditional <code>licenseText</code>, optional <code>note</code>. There is no <code>grid</code> member.</p>
+<h2>3. Art entries</h2>
+<p>Each entry in <code>items</code> has:</p>
+<table><thead><tr><th>Member</th><th>Type</th><th>Required</th><th>Rule</th></tr></thead><tbody><tr><td><code>id</code></td><td>string</td><td>yes</td><td><code>lowercase-with-hyphens</code>, unique within the pack.</td></tr><tr><td><code>name</code></td><td>string</td><td>yes</td><td>Human-readable item name.</td></tr><tr><td><code>svg</code></td><td>string</td><td>yes</td><td>A complete inline SVG document, ≤ 64 KiB, conforming to §6.</td></tr><tr><td><code>anchors</code></td><td>object</td><td>yes</td><td>Connection points in <code>viewBox</code> coordinates (§4).</td></tr><tr><td><code>tags</code></td><td>string[]</td><td>no</td><td>Free-form classification for search and curation.</td></tr><tr><td><code>provenance</code></td><td>object</td><td>yes</td><td>Per-item licensing record (§5).</td></tr></tbody></table>
+<p>An item is referenced from a model with the <code>x_art</code> extension: <code>x_art: { library: &quot;&lt;pack-id&gt;&quot;, item: &quot;&lt;item-id&gt;&quot; }</code>. The illustration renders in the node's interior below its header, scaled to fit with aspect preserved.</p>
+<p>An <strong>unresolvable <code>x_art</code> reference is not an error</strong>. Art is presentation content and packs install per host; a consumer that lacks the pack draws a dashed placeholder naming the missing reference. This keeps a shared <code>.ddn</code> file renderable everywhere. (Contrast with <code>x_icon</code>, whose references are normative model metadata and fail closed.)</p>
+<h2>4. Connection anchors</h2>
+<p><code>anchors</code> maps anchor names to <code>[x, y]</code> points in the item's <code>viewBox</code> coordinate space. The four side anchors — <code>north</code>, <code>east</code>, <code>south</code>, <code>west</code> — are <strong>required</strong>; any number of additional named anchors (for example <code>console</code>, <code>uplink</code>) is allowed. Anchor names are <code>lowercase-with-hyphens</code>.</p>
+<p>Consumers that route relations <strong>must</strong> attach endpoints as follows:</p>
+<ul><li>A relation endpoint that names a member equal to an anchor name attaches</li></ul>
+<p>  exactly at that anchor. (The member is declared in the model as a <code>port</code>;   the anchor refines where on the illustration the port sits.)</p>
+<ul><li>A body endpoint assigned to a side with a declared anchor attaches at the</li></ul>
+<p>  side's anchor point.</p>
+<ul><li>Endpoint direction is the outward normal of the anchor's nearest edge.</li></ul>
+<p>Anchors map through the same aspect-preserving fit transform as the drawn illustration, so the drawn attachment and the routed attachment coincide.</p>
+<h2>5. Provenance and licensing</h2>
+<p>Every item carries a <code>provenance</code> record:</p>
+<table><thead><tr><th>Member</th><th>Type</th><th>Required</th><th>Rule</th></tr></thead><tbody><tr><td><code>title</code></td><td>string</td><td>yes</td><td>Upstream work title (file name or artwork name).</td></tr><tr><td><code>author</code></td><td>string</td><td>yes</td><td>Upstream author or publisher.</td></tr><tr><td><code>license</code></td><td>string</td><td>yes</td><td>SPDX identifier for this item's artwork.</td></tr><tr><td><code>source</code></td><td>string</td><td>yes</td><td>Canonical URL of the exact upstream file.</td></tr><tr><td><code>retrieved</code></td><td>string</td><td>yes</td><td>ISO date the item was fetched and verified.</td></tr></tbody></table>
+<p>The pack-level <code>license</code> is the dominant (most restrictive) item license. Producers <strong>must</strong> verify every item's license at curation time and record it honestly; items whose license terms cannot be verified do not ship. <code>CC0-1.0</code> and public-domain items need no <code>licenseText</code>.</p>
+<h2>6. Sanitization (normative)</h2>
+<p>Every art item — shipped or third-party — is rejected before rendering under the same rules as icon artwork (chapter 49 §5): no scripts, no <code>foreignObject</code>, no event handlers, no external references of any kind (<code>href</code>, <code>url()</code>, remote fonts, images), no doctype/entity declarations. The per-item byte budget is <strong>64 KiB</strong> (detailed artwork needs more than an icon's 20 KiB). A pack with one unsafe item fails as a whole.</p>
+<h2>7. Versioning</h2>
+<p>The icon-pack versioning rule applies unchanged: item removals, renames, anchor moves, or artwork changes that shift anchors require a new pack major version (a new <code>@N</code> <code>id</code>), never an in-place edit.</p>
+</article>
+<p><small>Rendered from the repository source by <code>website/build-site.mjs</code>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../../docs/index.html">Docs</a>
+  <a href="../../standard/index.html">Standard</a>
+  <a href="../../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../../assets/site.js"></script>
+</body>
+</html>

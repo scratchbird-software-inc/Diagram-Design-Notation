@@ -1305,6 +1305,15 @@
       ]
     },
     {
+      "chapter": "presentation-art",
+      "entry": "website/examples/basics/110-presentation-architecture.ddn",
+      "view": "overview",
+      "files": [
+        "website/examples/basics/110-presentation-architecture.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
       "chapter": "whiteboard",
       "entry": "website/examples/use-cases/01-whiteboard.ddn",
       "view": "diagram",

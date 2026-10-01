@@ -15,13 +15,19 @@ try{
  const asset=path.join(__dirname,'../../assets/geo/world-110m.json');
  if(fs.existsSync(asset)){const g=fs.readFileSync(asset,'utf8');Geo.registerGeography('assets/geo/world-110m.json',g);Geo.registerGeography('world-110m',g);}
 }catch{}
-function usage(){console.log('Usage: node notation/cli/cli.js check|render|resolve|bundle <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR] [--no-motion]');}
+function usage(){console.log('Usage: node notation/cli/cli.js check|render|resolve|bundle <entry.ddn> [--view NAME] [--out FILE] [--workspace DIR] [--no-motion] [--pack FILE.json]...');}
 function main(){
  const args=process.argv.slice(2);
  if(args[0]==='--version'||args[0]==='-V'||args[0]==='version'){console.log(DDN.VERSION);return;}
  if(args.length<2){usage();process.exitCode=2;return;}
  const [command,file]=args;const get=k=>{const i=args.indexOf(k);return i<0?null:args[i+1];},flag=k=>args.includes(k);
  if(!['check','render','resolve','bundle'].includes(command))throw new Error('Unknown command '+command);
+ /* B1-101 slice 3: --pack registers a ddn-icon-pack@1 or ddn-art-pack@1
+  * document for this run (art packs are never inlined into the runtime). */
+ for(let i=0;i<args.length;i++)if(args[i]==='--pack'){const pack=JSON.parse(fs.readFileSync(path.resolve(args[i+1]),'utf8'));
+  if(pack.format==='ddn-art-pack@1')DDN.registerArtPack(pack);
+  else if(pack.format==='ddn-icon-pack@1')DDN.registerIconPack(pack);
+  else throw new Error('Unsupported pack format '+JSON.stringify(pack.format));}
  const root=path.resolve(get('--workspace')||'.'),absolute=path.resolve(file),entry=path.relative(root,absolute).split(path.sep).join('/');
  if(entry.startsWith('../'))throw new Error('Entry is outside workspace');
  const files={},visited=new Set();

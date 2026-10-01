@@ -59,7 +59,7 @@
   },
   "extensions": {
     "contracts": {
-      "value": 69,
+      "value": 70,
       "source": "notation/runtime/ddn-profiles.js (extension_contracts … = def)"
     }
   },
@@ -98,11 +98,11 @@
   },
   "docs": {
     "specChapters": {
-      "value": 53,
+      "value": 54,
       "source": "standard/specification/*.md"
     },
     "schemas": {
-      "value": 8,
+      "value": 9,
       "source": "standard/schemas/*.schema.json"
     },
     "ddnaChapters": {

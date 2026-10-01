@@ -1,0 +1,136 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Presentation diagrams — illustration art with connection points: a source-editable DDN field-guide chapter."><title>Presentation diagrams — illustration art with connection points · DDN field guide</title>
+<style>body{font:15px/1.55 system-ui,sans-serif;margin:0;color:#1c2733;background:#fafbfc}
+header.top{display:flex;gap:1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid #d9e2ec;background:#fff}
+header.top .mark{background:#285ea8;color:#fff;border-radius:6px;padding:.1rem .45rem;font-weight:700}
+nav a{margin-right:.8rem;color:#285ea8;text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:1rem}
+.pill{border-radius:999px;padding:.15rem .7rem;font-size:.78rem;font-weight:600;text-transform:uppercase}
+.pill.native{background:#e3f2e6;color:#1e6b34}.pill.equivalent{background:#e8effc;color:#285ea8}.pill.subset{background:#fdf0e4;color:#9a5b13}.pill.technique{background:#efe6fb;color:#6d3bb0}
+.card{border:1px solid #d9e2ec;border-radius:8px;background:#fff;padding:.8rem 1rem;margin:.6rem 0}
+.views{display:grid;gap:1rem}.viewer-label{font-size:.85rem;color:#5b6b7b}
+button{font:inherit;padding:.35rem .8rem;border:1px solid #b9c6d2;border-radius:6px;background:#fff;cursor:pointer}
+button.primary{background:#285ea8;color:#fff;border-color:#285ea8}
+button:disabled{opacity:.45;cursor:default}
+textarea.source-editor{width:100%;min-height:320px;font:12.5px/1.45 ui-monospace,monospace;border:1px solid #b9c6d2;border-radius:6px;padding:.6rem}
+pre,code{font:12.5px/1.45 ui-monospace,monospace;background:#f2f5f8;border-radius:6px}
+pre{padding:.6rem;overflow:auto}
+.status{color:#5b6b7b;font-size:.85rem}.metrics{display:flex;gap:2rem;margin:.8rem 0}
+.metrics strong{display:block;font-size:1.6rem}.metrics span{font-size:.82rem;color:#5b6b7b}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #d9e2ec;padding:.3rem .5rem;text-align:left}
+.search{width:100%;padding:.35rem;border:1px solid #b9c6d2;border-radius:6px;margin-bottom:.6rem}
+.nav-list a{display:block;padding:.18rem 0;color:#285ea8;text-decoration:none;font-size:.9rem}
+footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;margin-top:2rem}</style></head><body>
+<header class="top"><a class="brand" href="../index.html"><span class="mark">D</span></a><strong>DDN Diagram Field Guide</strong><small>0.7 edition</small><nav><a href="../index.html#paths">Learning paths</a><a href="../index.html#chapters">All chapters</a><a href="../index.html#coverage">Coverage</a><a href="../portable.html">Portable edition</a><a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a></nav></header>
+
+<main>
+<div class="lesson-title"><p class="eyebrow">Techniques</p><h2>Presentation diagrams — illustration art with connection points</h2><p class="subtitle">website/examples/basics/110-presentation-architecture.ddn # overview</p><span class="pill technique">technique</span></div>
+<div class="explain"><section class="card"><h3>What this diagram shows</h3><p>The slide-deck idiom: detailed illustrations (people, buildings, servers, vehicles) instead of stroke icons, with relations glued to the artwork’s declared connection anchors.</p></section><section class="card"><h3>Why use it?</h3><p>Stakeholder communication reads pictures faster than notation; an art pack gives the deck idiom without giving up a real model underneath.</p></section><section class="card"><h3>When is it useful?</h3><p>Executive overviews, sales and training material, any audience that should see a factory, not a rect labelled factory.</p></section></div>
+<div class="read-guide"><section class="card"><h3>How to read this example</h3><ol><li>Each node binds a ddn-art-pack@1 item with x_art; the illustration fills the node below its header.</li><li>Relations attach exactly at the item’s declared side anchors — move the nodes and the connectors re-glue to the same points.</li></ol></section>
+<section class="card"><h3>Information to gather first</h3><ul><li>The model</li><li>A registered art pack (CLI --pack or registerArtPack)</li><li>x_art per node</li></ul></section></div>
+<h3>Explore the real diagram</h3><p class="status" id="status">Loading…</p>
+<div class="views"><div><p class="viewer-label">ddn@1 · graph</p><div id="main-view"></div></div></div>
+<div class="actions" style="margin:.5rem 0"><button id="download-svg" disabled>Download SVG</button></div>
+<section class="exercise card"><p class="eyebrow">GUIDED FIRST EDIT</p><h3>Clarify a label without changing its identity</h3>
+<p class="expected">Only the node's name changes; the artwork, anchors and routes are untouched.</p>
+<div class="exercise-actions"><button id="guided" class="primary">Run guided source change</button><button id="undo" disabled>Undo source edit</button><button id="redo">Redo</button><button id="reset">Restore example</button></div>
+<p id="exercise-evidence" class="minor">Shipped evidence: edit changes the render (sha 44f10d3f9258… → cf1579e94ae5…), model changes (true), undo restores the shipped bytes (true).</p>
+<p class="minor">Rename one node, apply, and confirm the illustration and every connector stay glued to the same anchor points.</p></section>
+<details class="card"><summary>Open the DDN source and edit any definition</summary>
+<div class="source-content"><div class="source-tools"><label for="file">File</label><select id="file"></select><button id="apply-source" class="primary">Apply source</button><button id="download-ddn">Download current .ddn</button></div>
+<p id="draft-state" class="status"></p><textarea id="source-editor" class="source-editor" spellcheck="false"></textarea>
+<p class="minor">All examples are synthetic. Rendering is local to this page.</p></div></details>
+<div class="bottom-grid"><section class="card"><h3>How to author this view</h3><ol><li>Open website/examples/basics/110-presentation-architecture.ddn and locate view overview. This selects existing data; it is not a stored SVG.</li><li>Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.</li><li>Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.</li><li>Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render.</li></ol>
+<details><summary>Actual view declaration</summary><pre><code>view overview &quot;Storefront systems — presentation overview&quot; {
+    data: [@shop];
+    format: @shared.styles.technical;
+    projection { kind: graph; profile: &quot;ddn@1&quot;; }
+    layout { algorithm: layered; direction: right; gap: 130px; }
+    publication { size: content; fit: none; }
+}</code></pre></details></section>
+<section class="card"><h3>Where the definitions live</h3><table class="source-tour"><thead><tr><th>Workspace-relative file</th><th>Concern</th></tr></thead><tbody><tr><td>website/examples/basics/110-presentation-architecture.ddn</td><td>data, view</td></tr><tr><td>website/examples/basics/shared.ddn</td><td>format</td></tr></tbody></table></section></div>
+<section class="limits card"><h3>Boundaries and common mistakes</h3><p>Host-registered packs only (never inlined into the tools); 64 KiB per item; anchors are the four side midpoints in the shipped pack.</p><ul><li>Art is presentation: without the pack registered, every node draws an honest placeholder — never fake the artwork inline.</li><li>Do not put fields on art nodes; the illustration owns the body area.</li></ul></section>
+</main>
+<footer>DDN 0.7.0 · field-guide 0.7 edition · original documentation and synthetic examples · no account, font download, CDN, or remote renderer.</footer>
+<script src="../../notation/dist/ddn.global.js"></script>
+<script src="../../notation/dist/ddn-graph.js"></script>
+<script src="../../notation/dist/ddn-iso.js"></script>
+<script src="../../notation/dist/ddn-geo.js"></script>
+<script>window.GUIDE_FILES = {"website/examples/basics/110-presentation-architecture.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.presentation-architecture\";\n\nimport \"shared.ddn\" as shared;\n\n// Presentation-style system overview (Visio/deck idiom, B1-101 slice 3):\n// detailed illustrations instead of stroke icons, with relations glued to\n// the artwork's declared connection anchors. The illustrations come from the\n// optional presentation-devices art pack (ddn-art-pack@1) — render with\n//   --pack standard/registry/art-packs/presentation-devices__1.json\n// Without the pack registered, each node draws an honest placeholder.\ndata shop {\n    object customers \"Customers\" { kind: entity; x_art: { library: \"presentation-devices@1\", item: \"team\" }; }\n    object storefront \"Storefront office\" { kind: entity; x_art: { library: \"presentation-devices@1\", item: \"office-building\" }; }\n    object web \"Web storefront\" { kind: application; x_art: { library: \"presentation-devices@1\", item: \"laptop\" }; }\n    object edge \"Edge firewall\" { kind: application; x_art: { library: \"presentation-devices@1\", item: \"firewall\" }; }\n    object app \"Application server\" { kind: application; x_art: { library: \"presentation-devices@1\", item: \"server\" }; }\n    object rack \"Colocation rack\" { kind: entity; x_art: { library: \"presentation-devices@1\", item: \"server-rack\" }; }\n    object db \"Order database\" { kind: database; x_art: { library: \"presentation-devices@1\", item: \"database\" }; }\n    object backup \"Backup storage\" { kind: backup; x_art: { library: \"presentation-devices@1\", item: \"storage-array\" }; }\n    object plant \"Fulfillment plant\" { kind: entity; x_art: { library: \"presentation-devices@1\", item: \"factory\" }; }\n    object courier \"Courier\" { kind: entity; x_art: { library: \"presentation-devices@1\", item: \"truck\" }; }\n\n    relation f1 \"visit\" @customers -> @storefront { kind: assoc; }\n    relation f2 \"browse & order\" @customers -> @web { kind: assoc; }\n    relation f3 \"https\" @web -> @edge { kind: flow; }\n    relation f4 \"filtered traffic\" @edge -> @app { kind: flow; }\n    relation f5 \"orders\" @app -> @db { kind: flow; }\n    relation f6 \"hosts\" @rack -> @app { kind: assoc; }\n    relation f7 \"nightly backup\" @db -> @backup { kind: flow; }\n    relation f8 \"pick lists\" @app -> @plant { kind: assoc; }\n    relation f9 \"parcels\" @plant -> @courier { kind: assoc; }\n    relation f10 \"delivery\" @courier -> @customers { kind: assoc; }\n}\n\nview overview \"Storefront systems — presentation overview\" {\n    data: [@shop];\n    format: @shared.styles.technical;\n    projection { kind: graph; profile: \"ddn@1\"; }\n    layout { algorithm: layered; direction: right; gap: 130px; }\n    publication { size: content; fit: none; }\n}\n","website/examples/basics/shared.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core;\n    style classic;\n    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    style dark { theme: dark; }\n    style neutral { theme: neutral; font: mono; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; gap: 80px; }\n    display detailed;\n    display compact { fields: none; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { width: 280px; }\n    legend numbers { mode: numbers; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"};</script>
+<script>window.GUIDE_CHAPTER = {"id":"presentation-art","entry":"website/examples/basics/110-presentation-architecture.ddn","view":"overview","files":["website/examples/basics/110-presentation-architecture.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.presentation-architecture::shop.customers","file":"website/examples/basics/110-presentation-architecture.ddn","before":"Customers","after":"Customers / review","expectation":"Only the node's name changes; the artwork, anchors and routes are untouched."},"experimentKind":"label","evaluation":null};</script>
+
+<script>window.__guideInit = function(){
+const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
+const ws = DDNLive.createWorkspace(files);
+const status = t => document.getElementById('status').textContent = t;
+function redraw(){
+  try {
+    const r = ws.renderSync({entry: data.entry, view: currentView});
+    document.getElementById('main-view').innerHTML = r.svg;
+    status('Rendered from live source · revision ' + ws.revision + ' · ' + r.milliseconds + ' ms');
+  } catch(e){ status('Render failed: ' + (e && e.code) + ' ' + (e && e.message)); }
+}
+let currentView = data.view;
+const variantSel = document.getElementById('variant');
+if (variantSel) variantSel.onchange = () => { currentView = variantSel.value; redraw(); };
+document.getElementById('guided').onclick = () => {
+  try {
+    const ex = data.experiment;
+    if (ex.kind === 'data') {
+      status('Data experiment: edit the records of the data block in the source panel and apply — the chart re-renders from the swapped records.');
+      return;
+    }
+    if (ex.kind === 'value') DDNLive.authoring.setRecordValue(ws, data.entry, currentView, ex.id, ex.key, ex.value);
+    else if (ex.kind === 'matrix') DDNLive.authoring.setMatrixCell(ws, data.entry, currentView, ex.row, ex.column, ex.to);
+    else DDNLive.authoring.setLabel(ws, data.entry, currentView, ex.id, ex.after);
+    redraw();
+    document.getElementById('undo').disabled = false;
+    document.getElementById('exercise-evidence').textContent =
+      'Changed ' + ex.id + ' from “' + ex.before + '” to “' + ex.after + '”. ' + ex.expectation;
+  } catch(e){ status('Exercise failed: ' + (e && e.message)); }
+};
+document.getElementById('undo').onclick = () => { ws.undo(); redraw(); document.getElementById('undo').disabled = true; document.getElementById('exercise-evidence').textContent = 'Undone — the diagram is byte-identical to the shipped example.'; };
+document.getElementById('redo').onclick = () => { ws.redo(); redraw(); };
+document.getElementById('reset').onclick = () => { window.__guideInit(); };
+const sel = document.getElementById('file');
+sel.innerHTML = '';
+for (const f of data.files) sel.add(new Option(f, f));
+const editor = document.getElementById('source-editor');
+const live = Object.assign({}, files);
+function loadFile(){ editor.value = live[sel.value] || ''; }
+sel.onchange = loadFile; loadFile();
+document.getElementById('apply-source').onclick = () => {
+  try { ws.updateFiles({ [sel.value]: editor.value }); live[sel.value] = editor.value; redraw();
+    document.getElementById('draft-state').textContent = 'Applied — revision ' + ws.revision + '. Undo is available.';
+    document.getElementById('undo').disabled = false;
+  } catch(e){ document.getElementById('draft-state').textContent = 'Apply rejected: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+document.getElementById('download-svg').onclick = () => {
+  const svg = document.getElementById('main-view').innerHTML;
+  const b = new Blob([svg], {type:'image/svg+xml'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = data.id + '.svg'; a.click();
+};
+document.getElementById('download-ddn').onclick = () => {
+  const b = new Blob([editor.value], {type:'text/plain'}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(b); a.download = sel.value.split('/').pop(); a.click();
+};
+document.getElementById('download-svg').disabled = false;
+const evalRun = document.getElementById('evaluation-run');
+if (evalRun) evalRun.onclick = () => {
+  const out = document.getElementById('evaluation-result');
+  try {
+    const input = JSON.parse(document.getElementById('evaluation-input').value);
+    const res = data.evaluation.type === 'decision'
+      ? ws.evaluateDecision(data.entry, currentView, input)
+      : ws.simulateLifecycle(data.entry, currentView, Array.isArray(input) ? input : [input]);
+    out.textContent = JSON.stringify(res, null, 2);
+  } catch(e){ out.textContent = 'Evaluation failed: ' + (e && e.code) + ' ' + (e && e.message); }
+};
+if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
+  DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
+  DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+redraw();
+};</script>
+<script>window.__guideInit();</script>
+</body></html>

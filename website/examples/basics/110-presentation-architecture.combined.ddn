@@ -1,0 +1,66 @@
+ddn "0.5";
+
+module "ddn.examples.presentation-architecture";
+// Presentation-style system overview (Visio/deck idiom, B1-101 slice 3):
+// detailed illustrations instead of stroke icons, with relations glued to
+// the artwork's declared connection anchors. The illustrations come from the
+// optional presentation-devices art pack (ddn-art-pack@1) — render with
+//   --pack standard/registry/art-packs/presentation-devices__1.json
+// Without the pack registered, each node draws an honest placeholder.
+data shop {
+    object customers "Customers" { kind: entity; x_art: { library: "presentation-devices@1", item: "team" }; }
+    object storefront "Storefront office" { kind: entity; x_art: { library: "presentation-devices@1", item: "office-building" }; }
+    object web "Web storefront" { kind: application; x_art: { library: "presentation-devices@1", item: "laptop" }; }
+    object edge "Edge firewall" { kind: application; x_art: { library: "presentation-devices@1", item: "firewall" }; }
+    object app "Application server" { kind: application; x_art: { library: "presentation-devices@1", item: "server" }; }
+    object rack "Colocation rack" { kind: entity; x_art: { library: "presentation-devices@1", item: "server-rack" }; }
+    object db "Order database" { kind: database; x_art: { library: "presentation-devices@1", item: "database" }; }
+    object backup "Backup storage" { kind: backup; x_art: { library: "presentation-devices@1", item: "storage-array" }; }
+    object plant "Fulfillment plant" { kind: entity; x_art: { library: "presentation-devices@1", item: "factory" }; }
+    object courier "Courier" { kind: entity; x_art: { library: "presentation-devices@1", item: "truck" }; }
+
+    relation f1 "visit" @customers -> @storefront { kind: assoc; }
+    relation f2 "browse & order" @customers -> @web { kind: assoc; }
+    relation f3 "https" @web -> @edge { kind: flow; }
+    relation f4 "filtered traffic" @edge -> @app { kind: flow; }
+    relation f5 "orders" @app -> @db { kind: flow; }
+    relation f6 "hosts" @rack -> @app { kind: assoc; }
+    relation f7 "nightly backup" @db -> @backup { kind: flow; }
+    relation f8 "pick lists" @app -> @plant { kind: assoc; }
+    relation f9 "parcels" @plant -> @courier { kind: assoc; }
+    relation f10 "delivery" @courier -> @customers { kind: assoc; }
+}
+
+view overview "Storefront systems — presentation overview" {
+    data: [@shop];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "ddn@1"; }
+    layout { algorithm: layered; direction: right; gap: 130px; }
+    publication { size: content; fit: none; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

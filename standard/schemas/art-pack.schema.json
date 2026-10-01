@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ddn:schema:art-pack:1",
+  "title": "DDN art pack (ddn-art-pack@1)",
+  "description": "Normative schema for a DDN art pack: a single self-contained JSON document pairing a manifest (identity, license, attribution, source) with detailed presentation illustrations (arbitrary viewBoxes, full colour) that declare their relation connection anchors and per-item provenance. See standard/specification/50-art-packs.md for the prose specification, including the sanitization requirements every consumer must enforce.",
+  "type": "object",
+  "required": ["format", "id", "name", "version", "license", "attribution", "source", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "format": { "const": "ddn-art-pack@1" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*@[0-9]+$",
+      "description": "Pack namespace: lowercase letters, digits and hyphens, an @-separator and a numeric major version. Items are referenced as <pack-id>/<item-id>."
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the pack document. Item removals, renames, anchor moves or anchor-shifting artwork changes require a new pack major version (a new @N id), never an in-place edit."
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1,
+      "description": "SPDX identifier of the dominant (most restrictive) item license in the pack."
+    },
+    "attribution": { "type": "string", "minLength": 1, "description": "Copyright holder and project credit as it must appear in derivative notices." },
+    "source": { "type": "string", "minLength": 1, "description": "Canonical upstream location of the artwork collection (URL or repository path)." },
+    "licenseText": { "type": "string", "minLength": 1, "description": "Full license text. Required whenever the license demands redistribution of the text; CC0/public-domain packs omit it." },
+    "note": { "type": "string", "description": "Free-form scope note: curation stance, disclaimers, omissions." },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 400,
+      "items": { "$ref": "#/$defs/item" }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "required": ["id", "name", "svg", "anchors", "provenance"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "description": "Item identifier, unique within the pack."
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "svg": {
+          "type": "string",
+          "maxLength": 65536,
+          "description": "Complete inline SVG document, self-contained (no external references, scripts, event handlers or foreignObject — consumers reject it otherwise). At most 64 KiB."
+        },
+        "anchors": {
+          "type": "object",
+          "required": ["north", "east", "south", "west"],
+          "additionalProperties": { "$ref": "#/$defs/point" },
+          "properties": {
+            "north": { "$ref": "#/$defs/point" },
+            "east": { "$ref": "#/$defs/point" },
+            "south": { "$ref": "#/$defs/point" },
+            "west": { "$ref": "#/$defs/point" }
+          },
+          "description": "Relation connection points in viewBox coordinates: the four side anchors plus any number of named anchors."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Free-form classification for search and curation."
+        },
+        "provenance": {
+          "type": "object",
+          "required": ["title", "author", "license", "source", "retrieved"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1, "description": "Upstream work title (file name or artwork name)." },
+            "author": { "type": "string", "minLength": 1, "description": "Upstream author or publisher." },
+            "license": { "type": "string", "minLength": 1, "description": "SPDX identifier for this item's artwork." },
+            "source": { "type": "string", "minLength": 1, "description": "Canonical URL of the exact upstream file." },
+            "retrieved": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "description": "ISO date the item was fetched and license-verified." }
+          }
+        }
+      }
+    },
+    "point": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "An [x, y] point in viewBox coordinates."
+    }
+  }
+}

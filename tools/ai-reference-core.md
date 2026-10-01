@@ -190,6 +190,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_link` | relation | `{file, target}` — cross-file association metadata; resolves via architecture bases (DDN-PJ216), absent file → DDN-PJW07 note |
 | `x_sdl` / `x_hmscref` / `x_compatibility` | object / object / relation | `{signals: [@…], nodelay?}` on sdl.channel, `{priority?, spontaneous?, continuous?, active?}` on sdl.input, `{timer, duration?}` on sdl.set/reset (DDN-PJ215) / `{params: […]}` HMSC reference parameters (DDN-PJ215) / `{mode: same|specialization|realization|operation-coverage}` SoaML ServiceChannel compatibility (DDN-PJ196) |
 | `x_icon` | object | `{library, icon}` — icon-library binding; draws the sanitized library SVG in the node (DDN-PJ206/PJ207) |
+| `x_art` | object | `{library, item}` — ddn-art-pack@1 illustration binding; draws the artwork below the header, relations pin to its declared anchors; unresolvable → placeholder, never an error (spec ch.50) |
 | `x_vsm` | object | `{va?, nva?, unit?}` — VSM timeline-ladder values on process nodes (DDN-PJ205) |
 | `x_role` | field | `{uniqueness?, mandatory?}` — ORM role-box decorations (bar over box, dot at row edge; DDN-PJ204) |
 | `x_values` | object | `{values: [string]}` — ORM value constraint on value types |
@@ -229,6 +230,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 | `x_link` | relation | `{file, target}` — cross-file association metadata; resolves via architecture bases (DDN-PJ216), absent file → DDN-PJW07 note |
 | `x_sdl` / `x_hmscref` / `x_compatibility` | object / object / relation | `{signals: [@…], nodelay?}` on sdl.channel, `{priority?, spontaneous?, continuous?, active?}` on sdl.input, `{timer, duration?}` on sdl.set/reset (DDN-PJ215) / `{params: […]}` HMSC reference parameters (DDN-PJ215) / `{mode: same|specialization|realization|operation-coverage}` SoaML ServiceChannel compatibility (DDN-PJ196) |
 | `x_icon` | object | `{library, icon}` — icon-library binding; draws the sanitized library SVG in the node (DDN-PJ206/PJ207) |
+| `x_art` | object | `{library, item}` — ddn-art-pack@1 illustration binding; draws the artwork below the header, relations pin to its declared anchors; unresolvable → placeholder, never an error (spec ch.50) |
 | `x_vsm` | object | `{va?, nva?, unit?}` — VSM timeline-ladder values on process nodes (DDN-PJ205) |
 | `x_role` | field | `{uniqueness?, mandatory?}` — ORM role-box decorations (bar over box, dot at row edge; DDN-PJ204) |
 | `x_values` | object | `{values: [string]}` — ORM value constraint on value types |
@@ -317,6 +319,7 @@ Read the request, find the closest intent row, then apply §10 profile rules. Wh
 | IEC 61131-3 FBD | graph | `fbd.basic@1` | blocks (datatype header) + variables, x_fbd pin types/negation, fbd.wire with type-match (PJ209/PJ210) |
 | IEC 61131-3 LD | graph | `ladder.basic@1` | power rails + rungs (one data block per rung), contacts/coils (x_contact/x_coil), OR branches from series topology, hosted FBD blocks, labels/jumps (x_jump), layout algorithm `ladder`; PJ211–PJ214 |
 | SDL | graph | `sdl.basic@1` / `sdl.process@1` | structural: blocks/agents, channels, signal/signalset, gate ports; process: uml.statemachine@1 rebadge with sdl.input/output (flags), task, save (tag), create (dashed), procedure (subprocess); PJ208 start/outgoing rules |
+| Art packs | (any) | `standard/registry/art-packs/` (ddn-art-pack@1, spec ch.50 + `art-pack.schema.json`) + `x_art`; registration via `registerArtPack(pack)`/`unregisterArtPack`/`hostArtPacks` (PJ206 manifest/duplicate, PJ207 unsafe, 64 KiB cap); never inlined in dist — CLI `--pack FILE.json`; ships presentation-devices@1 (Wikimedia CC0/PD, per-item provenance) |
 | Icon packs | (any) | `standard/registry/icon-packs/` (ddn-icon-pack@1, spec ch.49 + `icon-pack.schema.json`) + `x_icon` | packs bound to kinds (default) or per-node (x_icon); sanitization PJ207 (scripts/foreignObject/handlers/external refs rejected, 20 KiB cap); host packs via `registerIconPack(pack)`/`unregisterIconPack`/`hostIconPacks` (PJ206 manifest/duplicate, PJ207 unsafe); ships network-generic@1 (20, binds network.*), vsm-symbols@1 (16, binds vsm.*), pid-common@1 (36), electrical-common@1 (32) — common-practice artwork pending review — tabler-infra@1 (50, MIT) and iconoir-infra@1 (49, MIT) curated selections, plus generic-demo@1 |
 | Value stream maps | graph | `vsm.basic@1` | process boxes (x_vsm va/nva ladder), inventory triangle, push/pull/material, einfo zigzag/minfo dashed, supermarket, kaizen burst, operator |
 | ORM 2 | graph | `orm.basic@1` | entitytype/valuetype ellipses, facttype role-box rows (x_role), plays member endpoints, subset/equality/exclusion arcs, x_values/x_objectified/x_derive (PJ204) |

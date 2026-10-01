@@ -70,3 +70,17 @@ retrieval dates are recorded in
 freesvg.org was evaluated as an additional source (site-wide CC0 per its
 About page) and not used: its catalogue is filled clip-art, stylistically
 incompatible with the DDN stroke grid.
+
+## Bundled third-party presentation artwork (art packs)
+
+The shipped art pack `presentation-devices@1`
+(`standard/registry/art-packs/`, format `ddn-art-pack@1`,
+specification chapter 50) contains presentation-idiom illustrations curated
+item-by-item from **Wikimedia Commons**. Every item is CC0 or public domain
+per its Commons license record at curation time; per-item title, author,
+license, canonical source URL and retrieval date are recorded in the pack's
+`provenance` records. unDraw was evaluated and not used: its license permits
+use in products but not redistribution as an asset library. SVG Repo was
+evaluated and not used: automated access is blocked and per-item license
+verification could not be completed programmatically. Art packs are opt-in
+downloads; they are never inlined into the runtime bundles.

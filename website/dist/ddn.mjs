@@ -1488,6 +1488,66 @@ function unregisterIconPack(id){
  hostPacks.splice(i,1);hostIds.delete(id);return true;
 }
 function hostIconPacks(){return hostPacks.slice();}
+/* B1-101 slice 3: art packs (ddn-art-pack@1) — detailed presentation
+ * illustrations, NOT 24x24 stroke icons. Same manifest discipline and the
+ * same DDN-PJ206/207 gates as icon packs; differences: a larger per-item byte
+ * budget, arbitrary viewBoxes, declared connection anchors, and a reference
+ * rule tuned for real artwork: internal fragment references (url(#…),
+ * href="#…" — gradients, reused paths) are fine, external references of any
+ * kind remain forbidden. */
+const ART_BUDGET=65536;
+const ART_FORBIDDEN=/<script|foreignObject|<iframe|<embed|<object|<image|\bon[a-z]+\s*=|javascript:|<\!doctype|<\!entity/i;
+const ART_EXTERNAL=/\b(?:xlink:)?href\s*=\s*"(?!#)[^"]*"|url\(\s*['"]?(?!#)/i;
+function sanitizeArt(pack,item){
+ const svg=item?.svg;
+ if(typeof svg!=='string'||!svg.trimStart().startsWith('<svg'))return {error:'Art item '+pack.id+'/'+item?.id+' is not an SVG document'};
+ if(svg.length>ART_BUDGET)return {error:'Art item '+pack.id+'/'+item?.id+' exceeds the 64 KiB asset budget'};
+ if(ART_FORBIDDEN.test(svg)||ART_EXTERNAL.test(svg))return {error:'Art item '+pack.id+'/'+item?.id+' contains forbidden content (script, foreignObject, event handler or external reference)'};
+ return null;
+}
+function validateArtPack(pack){
+ const bad=m=>Object.assign(new Error(m),{code:'DDN-PJ206'});
+ if(!pack||typeof pack!=='object'||Array.isArray(pack))throw bad('Art pack must be a JSON object');
+ if(pack.format!=='ddn-art-pack@1')throw bad('Art pack format must be ddn-art-pack@1; found '+JSON.stringify(pack.format));
+ for(const f of ['id','name','version','license','attribution','source'])if(typeof pack[f]!=='string'||!pack[f])throw bad('Art pack manifest needs a non-empty '+f);
+ if(!/^[a-z0-9][a-z0-9-]*@[0-9]+$/.test(pack.id))throw bad('Art pack id '+JSON.stringify(pack.id)+' must be lowercase-name@major');
+ if(!/^[0-9]+\.[0-9]+\.[0-9]+$/.test(pack.version))throw bad('Art pack version must be semantic (x.y.z)');
+ if(!Array.isArray(pack.items)||!pack.items.length||pack.items.length>400)throw bad('Art pack needs 1..400 items');
+ const seen=new Set();
+ for(const item of pack.items){
+  if(!item||typeof item!=='object')throw bad('Art item in '+pack.id+' must be an object');
+  for(const f of ['id','name','svg'])if(typeof item[f]!=='string'||!item[f])throw bad('Art item in '+pack.id+' needs a non-empty '+f);
+  if(!/^[a-z0-9][a-z0-9-]*$/.test(item.id))throw bad('Art item id '+JSON.stringify(item.id)+' in '+pack.id+' must be lowercase-with-hyphens');
+  if(seen.has(item.id))throw bad('Duplicate art item id '+item.id+' in pack '+pack.id);
+  seen.add(item.id);
+  const a=item.anchors;
+  if(!a||typeof a!=='object'||Array.isArray(a))throw bad('Art item '+pack.id+'/'+item.id+' needs declared connection anchors');
+  for(const side of ['north','east','south','west'])if(!point(a[side]))throw bad('Art item '+pack.id+'/'+item.id+' is missing the '+side+' anchor');
+  for(const [name,pt] of Object.entries(a)){
+   if(!/^[a-z0-9][a-z0-9-]*$/.test(name))throw bad('Anchor name '+JSON.stringify(name)+' in '+pack.id+'/'+item.id+' must be lowercase-with-hyphens');
+   if(!point(pt))throw bad('Anchor '+name+' in '+pack.id+'/'+item.id+' must be [x,y] numbers');
+  }
+ }
+ return pack;
+ function point(v){return Array.isArray(v)&&v.length===2&&v.every(x=>Number.isFinite(x));}
+}
+const hostArt=[],hostArtIds=new Set();
+function registerArtPack(pack){
+ validateArtPack(pack);
+ if(hostArtIds.has(pack.id))throw Object.assign(new Error('Art pack id '+pack.id+' is already registered'),{code:'DDN-PJ206'});
+ for(const item of pack.items){const bad=sanitizeArt(pack,item);if(bad)throw Object.assign(new Error(bad.error),{code:'DDN-PJ207'});}
+ const lib={id:pack.id,name:pack.name,items:pack.items};
+ if(pack.note)lib.note=pack.note;
+ lib.license=pack.license;lib.attribution=pack.attribution;lib.source=pack.source;
+ hostArt.push(lib);hostArtIds.add(pack.id);
+ return lib;
+}
+function unregisterArtPack(id){
+ const i=hostArt.findIndex(l=>l.id===id);
+ if(i<0)return false;
+ hostArt.splice(i,1);hostArtIds.delete(id);return true;
+}
+function hostArtPacks(){return hostArt.slice();}
 
 /* SPDX-License-Identifier: GPL-2.0-or-later. DDN profile packs: data-only definitions and bounded validators. */
 const VERSION$6='0.7.0';
@@ -1537,6 +1597,11 @@ function registry(base){
   * fixed whiteboard palette; pin/tape toggle the push-pin and tape-strip
   * decorations. Free-form body text stays in the plain description. */
  out.extension_contracts.x_sticky=def({type:'object',properties:{colour:{enum:['yellow','pink','blue','green','orange','purple']},pin:{type:'boolean'},tape:{type:'boolean'}},additionalProperties:false},['object']);
+ /* B1-101 slice 3 : presentation art binding. References an item in a
+  * registered ddn-art-pack@1 pack (host-registered; never inlined into dist).
+  * An unresolvable reference renders a placeholder, never a hard error, so a
+  * shared .ddn file still renders where the pack is not installed. */
+ out.extension_contracts.x_art=def({type:'object',required:['library','item'],properties:{library:{type:'string',minLength:1},item:{type:'string',minLength:1}},additionalProperties:false},['object']);
  /* B1-056 : UML 2.5.1 sequence diagrams. x_message grows the UML
   * message sort, gate and time/duration annotations (seq stays optional at
   * contract level; uml.communication@1 enforces it via DDN-PJ111). x_fragment
@@ -3064,7 +3129,7 @@ var registryCatalogue = {"name":"Diagram Design Notation","version":"0.3.0-draft
   /* B1-088: host-supplied icon packs — validated and sanitized exactly like
    * shipped packs before they can render. */
   const registerIconPack=pack=>registerIconPack$1(pack,ICONLIBS.libraries);
-  const api$e={VERSION: VERSION$4,SOURCE_VERSIONS,DDNError,lex,parse: parse$1,bundle,createWorkspace: createWorkspace$1,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:api$g,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))}))};
+  const api$e={VERSION: VERSION$4,SOURCE_VERSIONS,DDNError,lex,parse: parse$1,bundle,createWorkspace: createWorkspace$1,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:api$g,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack};
   publishNamespace('DDN',api$e);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -4417,6 +4482,17 @@ function layoutNodes(nodes,rels,profiles,placements={},ErrorClass=Error){
 // Endpoint identity and a boundary slot are different. Only slots belonging to
 // the same visible field row (or the unbound body) may exchange their order.
 // Never make a journal FK look as though it is attached to an account field.
+/* B1-101 slice 3: presentation art geometry, shared by render (drawing the
+ * illustration) and routing (pinning endpoints to its declared anchors). The
+ * art box is the node interior below the header; the viewBox scales to fit,
+ * centred. Anchors are declared in viewBox coordinates by the art pack. */
+function artBox(n){const s=n.scale||1,hh=n.headerH||64*s,pad=10*s;return {x:n.x+pad,y:n.y+hh+4*s,w:Math.max(8,n.w-2*pad),h:Math.max(8,n.h-hh-14*s)};}
+function artTransform(n){const art=n._art;if(!art)return null;const b=artBox(n),fit=Math.min(b.w/art.vbW,b.h/art.vbH),w=art.vbW*fit,h=art.vbH*fit;return {x:b.x+(b.w-w)/2,y:b.y+(b.h-h)/2,scale:fit,w,h};}
+function artAnchorPoint(n,name){const t=artTransform(n),pt=n._art?.anchors?.[name];return t&&pt?[round(t.x+pt[0]*t.scale),round(t.y+pt[1]*t.scale)]:null;}
+function artAnchorSide(n,name){const art=n._art;if(!art?.anchors?.[name])return null;
+ if(['north','east','south','west'].includes(name))return name;
+ const [ax,ay]=art.anchors[name],d={west:ax,east:art.vbW-ax,north:ay,south:art.vbH-ay};
+ return Object.entries(d).sort((a,b)=>a[1]-b[1])[0][0];}
 function portAssignments(nodes,rels,profiles,hints={}){
  const byId=new Map(nodes.map(n=>[n.id,n])),groups=new Map(),result=new Map();
  const optimize=profiles.layout.endpoint_ordering!=='preserve'&&profiles.layout.optimize!=='none';
@@ -4460,6 +4536,15 @@ function portAssignments(nodes,rels,profiles,hints={}){
    });let i=0;ordered=entries.map(e=>e.fixed?e:free[i++]);
   }
   ordered.forEach((o,index)=>{const{item,which,n,ep,side,row,frac}=o;let x=n.x+n.w/2,y=n.y+n.h/2;
+   /* B1-101 slice 3: art anchors pin endpoints onto the illustration. A
+    * member endpoint naming an anchor snaps to it; a lone body endpoint on a
+    * side with a declared anchor lands exactly on the anchor point. */
+   if(n._art){
+    const memberAnchor=ep.member?String(ep.member).split('.').pop().replace(/_/g,'-'):null;
+    const named=memberAnchor&&n._art.anchors[memberAnchor]?memberAnchor:null;
+    const pt=named?artAnchorPoint(n,named):(!row&&frac===undefined&&entries.length===1?artAnchorPoint(n,side):null);
+    if(pt){item[which]=pt;item[which+'_direction']=directions[named?artAnchorSide(n,named)||side:side];return;}
+   }
    /* B1-100: mind-map side anchors cluster on the side's vertical centre —
     * one branch exactly at the centre, a fan clustered ± a few pixels around
     * it (within the stroke's visual width, so the side reads as one point)
@@ -4773,7 +4858,7 @@ function curvedRouting(result,nodes,profiles,hints,ErrorClass=Error,extraObstacl
  return {...result,routes,crossings,labels,quality,curveTolerance:CURVE_TOLERANCE};
 }
 
-const api$6={crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION: VERSION$3,q: q$4,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale};
+const api$6={crossingBridge,curvedRouting,flattenCurve,pathData,curvePieces,curveDirection,curveSplit,curveSlice,roundedCommands,lineIntersection,routeCrossings,generalCollinear,CURVE_TOLERANCE,VERSION: VERSION$3,q: q$4,round,overlap,box,segmentBox,segs,cross,collinear,distancePointSegment,simplify,layoutNodes,portAssignments,routing,inspect,SPACING,spacingScale,artBox,artTransform,artAnchorPoint,artAnchorSide};
 publishNamespace('DDNLayout',api$6);
 
 /* SPDX-License-Identifier: GPL-2.0-or-later
@@ -5038,6 +5123,15 @@ function measureNode(n,registry,profiles,placement={},context={}){
  /* B1-101: a sticky note has no header — its box is exactly the wrapped body
   * text plus padding (line 65 added the lines onto a header it does not use). */
  if(k.shape==='note.sticky')y=Math.max(noteLines.length*18*s+30*s,60*s);
+ /* B1-101 slice 3: art-bound nodes reserve an illustration area below the
+  * header. The resolved item's viewBox and anchors ride on the node so the
+  * router can pin endpoints to the art's declared connection points. */
+ let _art=null;
+ if(n.properties?.x_art){
+  const found=artFor({n});
+  if(found?.item){const[,,vbW,vbH]=artViewBox(found.item);_art={vbW,vbH,anchors:found.item.anchors};}
+  y=Math.max(y,headerH+140*s);
+ }
  /* B1-100: mind-map entities carry free-form body text (their description)
   * as wrapped rows. The box auto-sizes to the rows up to a line cap (default
   * 10, x_mindmap.lines 1..50 per entity); beyond the cap the box stays at the
@@ -5065,7 +5159,7 @@ function measureNode(n,registry,profiles,placement={},context={}){
  const footer=[];if(profiles.display.badges!=='none')for(const key of ['workload','role','temporal','distribution','location'])if(n.properties[key]!==undefined)footer.push(pretty(n.properties[key]));
  if(footer.length)y+=38*s;
  let h=Math.max(y+14*s,100*s,placement.size?q$2(placement.size[1]):0,(context.degrees?.[n.id]||1)>4?(context.degrees[n.id]*44+40):((context.degrees?.[n.id]||1)*20+40));
- const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(mindRows?{mindRows}:{})}; return k.profileKind?api$7.measure(g,profiles):g;
+ const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(_art?{_art}:{}),...(mindRows?{mindRows}:{})}; return k.profileKind?api$7.measure(g,profiles):g;
 }
 /* Icon binding shared by every node path (B1-082 + general-pack): resolve the
  * explicit x_icon or the first default kind binding across shipped and
@@ -5091,6 +5185,37 @@ function emitIcon(g,found){
   .replace(/\bviewBox="[^"]*"/,'');
  return `<g class="ddn-icon" data-icon="${esc$3(xi.library+'/'+xi.icon)}">`+inner+'</g>';
 }
+/* B1-101 slice 3: presentation art binding. x_art references an item in a
+ * host-registered ddn-art-pack@1 pack. An unresolvable reference is NOT an
+ * error (art is presentation content and packs install per host): the node
+ * draws a dashed placeholder naming the missing reference. */
+function artFor(g){
+ const xa=g.n.properties?.x_art;
+ if(!xa)return null;
+ const lib=hostArtPacks().find(l=>l.id===xa.library);
+ const item=lib?.items?.find(i=>i.id===xa.item);
+ return {xa,item};
+}
+function artViewBox(item){const m=item.svg.match(/viewBox="([^"]+)"/);if(m){const v=m[1].trim().split(/[\s,]+/).map(Number);if(v.length===4&&v.every(Number.isFinite)&&(v[2]>0&&v[3]>0))return v;}
+ const w=parseFloat((item.svg.match(/\bwidth="([\d.]+)/)||[])[1]),h=parseFloat((item.svg.match(/\bheight="([\d.]+)/)||[])[1]);
+ return Number.isFinite(w)&&Number.isFinite(h)&&w>0&&h>0?[0,0,w,h]:[0,0,100,100];}
+function emitArt(g,found,p){
+ const{xa,item}=found,s=g.scale,box=api$6.artBox(g);
+ if(!item)return `<g class="ddn-art ddn-art-missing" data-art="${esc$3(xa.library+'/'+xa.item)}"><rect x="${fmt$1(box.x)}" y="${fmt$1(box.y)}" width="${fmt$1(box.w)}" height="${fmt$1(box.h)}" fill="none" stroke="${esc$3(p.style.theme==='neutral'?'#333333':'#94A3B8')}" stroke-width="1.4" stroke-dasharray="6 4"/>`+text$1(box.x+box.w/2,box.y+box.h/2-4*s,'art: '+xa.library+' / '+xa.item,11*s,'#94A3B8',500,'text-anchor="middle"')+text$1(box.x+box.w/2,box.y+box.h/2+14*s,'pack not registered in this host',10*s,'#94A3B8',400,'text-anchor="middle"')+'</g>';
+ const[,,vbW,vbH]=artViewBox(item),fit=Math.min(box.w/vbW,box.h/vbH),w=vbW*fit,h=vbH*fit,ax=box.x+(box.w-w)/2,ay=box.y+(box.h-h)/2;
+ const aPrefix='art-'+hash(g.id)+'-';
+ let inner=item.svg.replace(/<\?xml[^>]*>/,'')
+  .replace(/ id="([^"]+)"/g,(m,id)=>` id="${aPrefix}${id}"`)
+  .replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${aPrefix}${id})`);
+ /* Root-tag-only rewrite: strip the file's own width/height, guarantee a
+  * viewBox, then place and size through the shared fit transform. */
+ inner=inner.replace(/<svg\b[^>]*>/,tag=>{
+  const cleaned=tag.replace(/\s(?:width|height|x|y)="[^"]*"/g,'');
+  const withVb=/\bviewBox=/.test(cleaned)?cleaned:cleaned.replace(/\s*>$/,' viewBox="0 0 '+vbW+' '+vbH+'">');
+  return withVb.replace(/<svg\b/,`<svg x="${fmt$1(ax)}" y="${fmt$1(ay)}" width="${fmt$1(w)}" height="${fmt$1(h)}"`);
+ });
+ return `<g class="ddn-art" data-art="${esc$3(xa.library+'/'+xa.item)}">`+inner+'</g>';
+}
 function renderNode(g,p,theme,registry){
  if(g.k.profileKind){let shaped=api$7.render(g,p,theme);
   /* B1-082: icon binding — draw the referenced (pre-sanitized) library icon
@@ -5098,6 +5223,8 @@ function renderNode(g,p,theme,registry){
    * packs (B1-088) append after the shipped registry. */
   const found=iconFor(g,registry);
   if(found)shaped=shaped.slice(0,-4)+emitIcon(g,found)+'</g>';
+  const foundArt=artFor(g);
+  if(foundArt)shaped=shaped.slice(0,-4)+emitArt(g,foundArt,p)+'</g>';
 
   /* B1-076: C4 tag chip under the node (any silhouette, decorator layer). */
   if(g.n.properties.x_c4tag?.tags?.length&&p.detail!=='shapes'){const tg=g.n.properties.x_c4tag.tags.join(', ');shaped=shaped.slice(0,-4)+`<g class="ddn-c4tag">`+text$1(g.x+g.w/2,g.y+g.h-6*g.scale,'['+tg+']',10*g.scale,theme.muted,500,'text-anchor="middle" font-style="italic"')+'</g></g>';}
@@ -5164,6 +5291,8 @@ function renderNode(g,p,theme,registry){
  if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650)+'</g>';
  else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650);
  if(plainIcon)out+=emitIcon(g,plainIcon);
+ const artBind=artFor(g);
+ if(artBind)out+=emitArt(g,artBind,p);
  if(m&&p.display.maturity!=='none')out+=`<rect x="${x+w-46*s}" y="${y+8*s}" width="${38*s}" height="${22*s}" rx="4" fill="${esc$3(fill)}" stroke="${esc$3(ink)}"/>`+text$1(x+w-27*s,y+24*s,m,11*s,ink,650,'text-anchor="middle"');
  if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt$1(x+w-b.w*s)} ${fmt$1(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
  if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');

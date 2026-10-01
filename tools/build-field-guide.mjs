@@ -44,6 +44,14 @@ try {
     globalThis.DDNGeo.registerGeography('world-110m', g);
   }
 } catch {}
+/* B1-101 slice 3: the presentation-art chapter renders with the shipped art
+ * pack registered at build time (same host choice as the gallery). Live
+ * re-renders inside the guide pages have no pack and draw the documented
+ * placeholders. */
+try {
+  const artPack = path.join(REPO, 'standard/registry/art-packs/presentation-devices__1.json');
+  if (fs.existsSync(artPack)) A.registerArtPack(JSON.parse(fs.readFileSync(artPack, 'utf8')));
+} catch {}
 const args = process.argv.slice(2);
 const OUT = args.includes('--out') ? args[args.indexOf('--out') + 1] : path.join(REPO, 'field-guide');
 const facts = JSON.parse(fs.readFileSync(path.join(REPO, 'standard/submission/facts.json'), 'utf8'));

@@ -44,6 +44,17 @@
 DDNLive.hostIconPacks();                 // currently registered host packs
 DDNLive.unregisterIconPack('acme-symbols@1');</code></pre>
 <p>Host packs append after shipped packs in binding precedence, so they never shadow the built-in defaults accidentally. Every icon — shipped or host-supplied — is sanitized: no scripts, <code>foreignObject</code>, event handlers, or external references of any kind, and a 20 KiB cap per icon.</p>
+<h2>Art packs (presentation illustrations)</h2>
+<p><strong>Art packs</strong> (<code>ddn-art-pack@1</code>, <a href="../../standard/specification/50-art-packs.html">specification chapter 50</a>, schema <code>standard/schemas/art-pack.schema.json</code>) are the presentation-idiom sibling of icon packs: detailed illustrations (computers, server racks, network gear, buildings, people) with arbitrary viewBoxes and full colour — not 24×24 stroke icons. Every item declares <strong>connection anchors</strong> (the four side anchors plus optional named points, in viewBox coordinates); relations attach exactly at them: a body endpoint lands on its side's anchor, and a <code>port</code> member whose name matches an anchor snaps to that anchor.</p>
+<p>Art packs are <strong>never inlined into the runtime bundles</strong> — register them explicitly:</p>
+<pre><code>DDNLive.registerArtPack(pack);           // throws DDN-PJ206 (manifest) / DDN-PJ207 (unsafe SVG)
+DDNLive.hostArtPacks();
+DDNLive.unregisterArtPack('acme-art@1');</code></pre>
+<p>or per CLI run:</p>
+<pre><code>node notation/cli/cli.js render diagram.ddn --view overview \
+  --pack standard/registry/art-packs/presentation-devices__1.json</code></pre>
+<p>Bind an item to a node with <code>x_art: { library: &quot;presentation-devices@1&quot;, item: &quot;server&quot; }</code>. An unresolvable reference draws a dashed placeholder naming the missing pack — never an error — so a shared <code>.ddn</code> file still renders on hosts without the pack. The illustration scales into the node's interior below the header with aspect preserved.</p>
+<p>The shipped <code>presentation-devices@1</code> pack (Wikimedia Commons CC0/public domain selection, per-item provenance in the pack) is demonstrated by <code>website/examples/basics/110-presentation-architecture.ddn</code>.</p>
 </article>
 <p><small>Rendered from <a href="icon-packs.md">icon-packs.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>
