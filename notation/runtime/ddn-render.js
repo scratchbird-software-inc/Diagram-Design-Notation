@@ -92,29 +92,37 @@ function measureNode(n,registry,profiles,placement={},context={}){
  let h=Math.max(y+14*s,100*s,placement.size?q(placement.size[1]):0,(context.degrees?.[n.id]||1)>4?(context.degrees[n.id]*44+40):((context.degrees?.[n.id]||1)*20+40));
  const g={id:n.id,n,k,w,h,fields:visible,titleLines,footer,scale:s,headerH,fieldRows:rows,meaningLines,noteLines,sample,...(mindRows?{mindRows}:{})}; return k.profileKind?Shapes.measure(g,profiles):g;
 }
+/* Icon binding shared by every node path (B1-082 + general-pack): resolve the
+ * explicit x_icon or the first default kind binding across shipped and
+ * host-registered packs; DDN-PJ206 on an unresolved explicit reference. */
+function iconFor(g,registry){
+ const baseLibs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
+ const allLibs=hostIconPacks().length?baseLibs.concat(hostIconPacks()):baseLibs;
+ const xi=g.n.properties?.x_icon||((allLibs.flatMap(l=>(l.icons||[]).filter(i=>(i.kinds||[]).includes(g.n.kind)).map(i=>({library:l.id,icon:i.id}))))[0]);
+ if(!xi)return null;
+ const lib=allLibs.find(l=>l.id===xi.library);
+ const icon=lib?.icons?.find(i=>i.id===xi.icon||i.kinds?.includes(g.n.kind)&&i.id===xi.icon);
+ if(!lib||!icon)throw new DDN.DDNError('DDN-PJ206','Icon reference '+xi.library+'/'+xi.icon+' is not in the icon libraries registry',g.n.source?.file,g.n.source?.start);
+ return{xi,icon};
+}
+function emitIcon(g,found){
+ const{xi,icon}=found,isz=26*g.scale,ix=g.x+g.w/2-isz/2,iy=g.y+7*g.scale;
+ const vb=(icon.svg.match(/viewBox="([^"]+)"/)||[])[1]||'0 0 24 24';
+ const iPrefix='ic-'+hash(g.id)+'-';
+ let inner=icon.svg.replace(/<\?xml[^>]*>/,'')
+  .replace(/ id="([^"]+)"/g,(m,id)=>` id="${iPrefix}${id}"`)
+  .replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${iPrefix}${id})`);
+ inner=inner.replace(/<svg /,`<svg x="${fmt(ix)}" y="${fmt(iy)}" width="${fmt(isz)}" height="${fmt(isz)}" viewBox="${vb}" `)
+  .replace(/\bviewBox="[^"]*"/,'');
+ return`<g class="ddn-icon" data-icon="${esc(xi.library+'/'+xi.icon)}">`+inner+'</g>';
+}
 function renderNode(g,p,theme,registry){
  if(g.k.profileKind){let shaped=Shapes.render(g,p,theme);
   /* B1-082: icon binding — draw the referenced (pre-sanitized) library icon
    * inside the node's top area; ids namespaced per node. Host-registered
    * packs (B1-088) append after the shipped registry. */
-  const baseLibs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
-  const allLibs=hostIconPacks().length?baseLibs.concat(hostIconPacks()):baseLibs;
-  const xi=g.n.properties?.x_icon||((allLibs.flatMap(l=>(l.icons||[]).filter(i=>(i.kinds||[]).includes(g.n.kind)).map(i=>({library:l.id,icon:i.id}))))[0]);
-  if(xi){
-   const libs=allLibs;
-   const lib=libs.find(l=>l.id===xi.library);
-   const icon=lib?.icons?.find(i=>i.id===xi.icon||i.kinds?.includes(g.n.kind)&&i.id===xi.icon);
-   if(!lib||!icon)throw new DDN.DDNError('DDN-PJ206','Icon reference '+xi.library+'/'+xi.icon+' is not in the icon libraries registry',g.n.source?.file,g.n.source?.start);
-   const isz=26*g.scale,ix=g.x+g.w/2-isz/2,iy=g.y+7*g.scale;
-   const vb=(icon.svg.match(/viewBox="([^"]+)"/)||[])[1]||'0 0 24 24';
-   const iPrefix='ic-'+hash(g.id)+'-';
-   let inner=icon.svg.replace(/<\?xml[^>]*>/,'')
-    .replace(/ id="([^"]+)"/g,(m,id)=>` id="${iPrefix}${id}"`)
-    .replace(/url\(#([^)]+)\)/g,(m,id)=>`url(#${iPrefix}${id})`);
-   inner=inner.replace(/<svg /,`<svg x="${fmt(ix)}" y="${fmt(iy)}" width="${fmt(isz)}" height="${fmt(isz)}" viewBox="${vb}" `)
-    .replace(/\bviewBox="[^"]*"/,'');
-   shaped=shaped.slice(0,-4)+`<g class="ddn-icon" data-icon="${esc(xi.library+'/'+xi.icon)}">`+inner+'</g></g>';
-  }
+  const found=iconFor(g,registry);
+  if(found)shaped=shaped.slice(0,-4)+emitIcon(g,found)+'</g>';
 
   /* B1-076: C4 tag chip under the node (any silhouette, decorator layer). */
   if(g.n.properties.x_c4tag?.tags?.length&&p.detail!=='shapes'){const tg=g.n.properties.x_c4tag.tags.join(', ');shaped=shaped.slice(0,-4)+`<g class="ddn-c4tag">`+text(g.x+g.w/2,g.y+g.h-6*g.scale,'['+tg+']',10*g.scale,theme.muted,500,'text-anchor="middle" font-style="italic"')+'</g></g>';}
@@ -157,12 +165,16 @@ function renderNode(g,p,theme,registry){
   * plain rect path object/entity/term/domain actually render through. */
  }else out+=rect(x,y,w,h,ink,fill,look,n.id,k.shape==='activity'?18*s:p.projection?.profile==='mindmap.basic@1'?10*s:0,p.style);
  if(k.shape==='frame')out+=`<rect x="${x+6}" y="${y+6}" width="${w-12}" height="${h-12}" fill="none" stroke="${esc(ink)}" stroke-dasharray="4 4" opacity=".55"/>`;
+ /* B1-100 icon generalization: icons are not a profileKind privilege — the
+  * plain rect path resolves the same binding and leaves room for it. */
+ const plainIcon=iconFor(g,registry);
  if(p.display.kind!=='none'){
   if(p.display.kind!=='text')out+=glyph(k.glyph,x+13*s,y+15*s,24*s,ink);
   if(['text','icon_token'].includes(p.display.kind)||mono)out+=text(x+14*s,y+53*s,p.display.kind==='text'?k.name:k.code,11*s,ink,650);
  }
- if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650)+'</g>';
- else out+=multilines(x+48*s,y+29*s,titleLines,16*s,bodyInk,21*s,650);
+ if(p.projection.profile==='uml.object@2'&&n.properties.x_instance)out+=`<g text-decoration="underline">`+multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650)+'</g>';
+ else out+=multilines(x+48*s,y+29*s+(plainIcon?22*s:0),titleLines,16*s,bodyInk,21*s,650);
+ if(plainIcon)out+=emitIcon(g,plainIcon);
  if(m&&p.display.maturity!=='none')out+=`<rect x="${x+w-46*s}" y="${y+8*s}" width="${38*s}" height="${22*s}" rx="4" fill="${esc(fill)}" stroke="${esc(ink)}"/>`+text(x+w-27*s,y+24*s,m,11*s,ink,650,'text-anchor="middle"');
  if(n.properties&&n.properties.x_subdiagram){const b=badge('↗ ref',0,0,theme.surface,theme.accent);out+=`<g class="ddn-ref-badge" transform="translate(${fmt(x+w-b.w*s)} ${fmt(y-10*s)}) scale(${s})">`+b.svg+'</g>';}
  if(g.fieldRows.length){out+=styleLine(x,y+g.headerH-4*s,x+w,y+g.headerH-4*s,ink,1,'',p,n.id+':fields');

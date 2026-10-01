@@ -78,6 +78,14 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 #ddn-palette-list { max-height: 320px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
 .ddn-palette-item { display: flex; align-items: center; gap: 8px; text-align: left; border: 0; background: transparent; border-radius: 7px; padding: 4px 6px; }
 .ddn-palette-item:hover { background: #eef4ff; }
+#ddn-icon-popup { position: absolute; top: calc(100% + 6px); right: 0; z-index: 6; width: 300px; background: #fff; border: 1px solid #cbd5e3; border-radius: 12px; padding: 10px 12px; box-shadow: 0 12px 32px #243b5933; }
+#ddn-icon-popup[hidden] { display: none; }
+#ddn-icon-search { width: 100%; box-sizing: border-box; margin-bottom: 8px; }
+#ddn-icon-list { max-height: 300px; overflow: auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.ddn-icon-pick { display: flex; flex-direction: column; align-items: center; gap: 2px; border: 1px solid #e3eaf3; background: #fff; border-radius: 8px; padding: 6px 2px; font-size: 10px; color: #40536b; }
+.ddn-icon-pick:hover { background: #eef4ff; border-color: #a9c4f5; }
+.ddn-icon-pick svg { width: 22px; height: 22px; display: block; }
+.ddn-icon-pick span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ddn-palette-glyph { width: 20px; height: 20px; flex: none; display: inline-flex; color: #40536b; font-size: 10px; align-items: center; justify-content: center; }
 .ddn-palette-glyph svg { width: 20px; height: 20px; display: block; }
 #ddn-connect-popup label { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }

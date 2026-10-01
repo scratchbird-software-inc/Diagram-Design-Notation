@@ -63,7 +63,7 @@ try {
   lines.push(document.getElementById('ddn-diagram').getAttribute('data-ddn-render-ms') === mark ? 'PASS scroll did not re-render' : 'FAIL scroll triggered a re-render');
 
   // 2. source is untouched by scrolling (presentation-only)
-  const srcText0 = (document.querySelector('textarea') && document.querySelector('textarea').value) || '';
+  const srcText0 = (document.getElementById('ddn-source') && document.getElementById('ddn-source').value) || '';
   lines.push(!srcText0.includes('x_mindmap') ? 'PASS source untouched after scroll' : 'FAIL source mutated by scroll');
 
   // 3. drag the lower-right handle down four rows → cap 10 → 14 via mindNodes
@@ -83,7 +83,7 @@ try {
     await sleep(250);
   }
   lines.push(resized ? 'PASS resize raised the cap to ' + (cap0 + 4) + ' and re-rendered' : 'FAIL cap did not change after drag');
-  const srcText1 = (document.querySelector('textarea') && document.querySelector('textarea').value) || '';
+  const srcText1 = (document.getElementById('ddn-source') && document.getElementById('ddn-source').value) || '';
   lines.push(!srcText1.includes('x_mindmap') ? 'PASS resize stayed presentation-only (no x_mindmap in source)' : 'FAIL resize wrote into source');
 
   // 4. Relation labels: none (new choice) — no labels, no badges, no legend
@@ -102,7 +102,7 @@ try {
   }
   lines.push(settled ? 'PASS labels:none removes every relation label/badge (' + labelsBefore + ' → 0)' : 'FAIL labels still visible after none');
   lines.push(settled && !st.innerHTML.includes('RELATIONSHIP KEY') ? 'PASS labels:none also drops the legend' : 'FAIL legend remains after none');
-  const srcText2 = (document.querySelector('textarea') && document.querySelector('textarea').value) || '';
+  const srcText2 = (document.getElementById('ddn-source') && document.getElementById('ddn-source').value) || '';
   lines.push(!/legend \{ mode: none|mode: none/.test(srcText2) ? 'PASS labels:none stayed presentation-only' : 'FAIL labels:none wrote into source');
   await report(lines.every(l => l.startsWith('PASS')));
 } catch (e) {

@@ -149,3 +149,49 @@ test('external pack icons are sanitized identically (DDN-PJ207)',()=>{
 const failed=results.filter(r=>!r.pass);
 console.log('icons-compliance:',results.length-failed.length+'/'+results.length,'passed');
 if(failed.length){console.error(failed.map(f=>f.name+' ['+f.code+'] '+f.message).join('\n'));process.exit(1);}
+
+/* ---- ddn-pack-general@1 (B1-end-user icons): pack validity, sanitization,
+ * plain-path icons on generic kinds, provenance completeness. */
+test('ddn-pack-general@1 is a valid, fully-sanitized pack with complete provenance',()=>{
+ const fs2=require('node:fs'),path2=require('node:path');
+ const pack=JSON.parse(fs2.readFileSync(path2.resolve(__dirname,'../../standard/registry/icon-packs/ddn-pack-general__1.json'),'utf8'));
+ assert.equal(pack.format,'ddn-icon-pack@1');
+ assert.equal(pack.license,'MIT');
+ assert.ok(pack.attribution.includes('Paweł Kuna')&&pack.attribution.includes('tabler.io'),'tabler attribution present');
+ assert.ok(pack.licenseText&&pack.licenseText.includes('MIT License'),'MIT license text vendored');
+ assert.ok(pack.icons.length>=100,'curated pack is substantial ('+pack.icons.length+' icons)');
+ const ids=pack.icons.map(i=>i.id);
+ assert.equal(new Set(ids).size,ids.length,'icon ids unique');
+ const P2=globalThis.__DDN_MODULE_REGISTRY__.namespaces.DDNProfiles;
+ for(const icon of pack.icons)assert.ok(!P2.sanitizeIcon({id:pack.id},icon),'icon must pass sanitization: '+icon.id);
+ assert.ok(pack.icons.every(i=>(i.svg.match(/viewBox="0 0 24 24"/))),'every icon on the 24x24 grid');
+ const prov=JSON.parse(fs2.readFileSync(path2.resolve(__dirname,'../../standard/registry/icon-packs/ddn-pack-general.provenance.json'),'utf8'));
+ assert.equal(prov.icons.length,pack.icons.length,'provenance covers every icon');
+ assert.ok(prov.evaluatedSources.some(s=>s.source==='https://freesvg.org'&&/CC0/.test(s.license)),'freesvg.org CC0 evaluation recorded');
+});
+
+test('icons render on generic kinds via the plain rect path (application, table, entity)',()=>{
+ const src=`ddn "0.5";
+module "test.icons.general";
+data m {
+    object bot "Build bot" { kind: application; x_icon: { library: "ddn-pack-general@1", icon: "robot" }; }
+    object box "Parcels" { kind: table; x_icon: { library: "ddn-pack-general@1", icon: "package" }; }
+    object cash "Cash" { kind: entity; x_icon: { library: "ddn-pack-general@1", icon: "coin" }; }
+}
+view v "V" { data: [@m]; publication { size: content; fit: none; overflow: error; minimum_text: 8pt; } }
+`;
+ const r=A.createWorkspace({'main.ddn':src}).renderSync({entry:'main.ddn',view:'v'});
+ for(const ic of ['ddn-pack-general@1/robot','ddn-pack-general@1/package','ddn-pack-general@1/coin'])
+  assert.ok(r.svg.includes('data-icon="'+ic+'"'),'icon missing on generic kind: '+ic);
+});
+
+test('bad icon reference on a generic kind is coded DDN-PJ206',()=>{
+ const bad='ddn "0.5";\nmodule "t";\ndata m { object a "A" { kind: application; x_icon: { library: "ddn-pack-general@1", icon: "nope" }; } }\nview v "V" { data: [@m]; }\n';
+ assert.throws(()=>A.createWorkspace({'main.ddn':bad}).renderSync({entry:'main.ddn',view:'v'}),e=>e.code==='DDN-PJ206');
+});
+
+test('iconLibraries() surfaces all eight shipped packs including the general pack',()=>{
+ const libs=A.iconLibraries();
+ assert.equal(libs.length,8,'eight shipped packs');
+ assert.ok(libs.some(l=>l.id==='ddn-pack-general@1'&&l.icons.length>=100),'general pack shipped with the full set');
+});

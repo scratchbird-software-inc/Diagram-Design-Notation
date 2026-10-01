@@ -1009,6 +1009,6 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
   /* B1-088: host-supplied icon packs — validated and sanitized exactly like
    * shipped packs before they can render. */
   const registerIconPack=pack=>regPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack};
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))}))};
   publishNamespace('DDN',api);
   export default api;

@@ -151,6 +151,15 @@
             <p><button id="ddn-set-label" type="button" class="ddn-mini">Set label</button></p>
             <label>Kind <select id="ddn-kind-value"></select></label>
             <p><button id="ddn-set-kind" type="button" class="ddn-mini">Set kind</button></p>
+            <label>Icon <span id="ddn-icon-current" class="ddn-dim">none</span></label>
+            <div class="ddn-row" style="position:relative">
+              <button id="ddn-icon-browse" type="button" class="ddn-mini">Browse icons…</button>
+              <button id="ddn-icon-clear" type="button" class="ddn-mini">Clear</button>
+              <div id="ddn-icon-popup" hidden>
+                <input id="ddn-icon-search" type="search" placeholder="Find an icon…" aria-label="Find an icon">
+                <div id="ddn-icon-list" role="listbox" aria-label="Icons"></div>
+              </div>
+            </div>
             <div class="ddn-row">
               <input id="ddn-pos-x" type="number" step="1" aria-label="Pin x (px)" title="Pin x (px)">
               <input id="ddn-pos-y" type="number" step="1" aria-label="Pin y (px)" title="Pin y (px)">

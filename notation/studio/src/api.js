@@ -373,6 +373,8 @@ const api={VERSION,profileCatalogue:clone(D.profiles.catalogue),runtime:ENGINES,
  /* B1-088: host-supplied icon packs (ddn-icon-pack@1) — validated and
   * sanitized exactly like shipped packs (DDN-PJ206/PJ207). */
  registerIconPack:D.registerIconPack,unregisterIconPack:D.unregisterIconPack,hostIconPacks:D.hostIconPacks,validateIconPack:D.validateIconPack,
+ /* Read-only view of the shipped icon packs (icon browsers, pickers). */
+ iconLibraries:D.iconLibraries,
  engineAssets:{registry:assets.registry,glyphs:assets.glyphs},
  defaults:{...defaults,forKind:id=>clone(backend.Defaults.forKind(id,assets.registry))},
  choices,checkOptions,filesChecked,pathChecked,fingerprint,parse:D.parse,lex:D.lex,bundle:D.bundle,

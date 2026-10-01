@@ -81,6 +81,8 @@ const els = {
   undo: $('ddn-undo'), redo: $('ddn-redo'), find: $('ddn-find'), replace: $('ddn-replace'), goto: $('ddn-goto'),
   inspector: $('ddn-inspector'), inspectorControls: $('ddn-inspector-controls'), selectionSummary: $('ddn-selection-summary'),
   labelValue: $('ddn-label-value'), setLabel: $('ddn-set-label'), kindValue: $('ddn-kind-value'), setKind: $('ddn-set-kind'),
+  iconCurrent: $('ddn-icon-current'), iconBrowse: $('ddn-icon-browse'), iconClear: $('ddn-icon-clear'),
+  iconPopup: $('ddn-icon-popup'), iconSearch: $('ddn-icon-search'), iconList: $('ddn-icon-list'),
   posX: $('ddn-pos-x'), posY: $('ddn-pos-y'), pin: $('ddn-pin'), unpin: $('ddn-unpin'), hide: $('ddn-hide'),
   addField: $('ddn-add-field'), goSource: $('ddn-go-source'), deleteDef: $('ddn-delete-def'),
   addElement: $('ddn-add-element'), addRelation: $('ddn-add-relation'),
@@ -777,6 +779,9 @@ function inspector(id, ir, relation) {
   const noGraph = state.diagram && state.diagram.capabilities && state.diagram.capabilities.graphControls === false;
   for (const b of [els.pin, els.unpin, els.hide]) b.disabled = !node || noGraph;
   els.addField.disabled = !!relation;
+  const xi = node && node.properties && node.properties.x_icon;
+  els.iconCurrent.textContent = xi ? xi.library + '/' + xi.icon : 'none';
+  for (const b of [els.iconBrowse, els.iconClear]) b.disabled = !node;
 }
 
 function guided(action) {
@@ -1015,6 +1020,58 @@ function buildPalette() {
   }));
   if (!kinds.length) els.paletteList.append(dim('no kind matches “' + els.paletteSearch.value + '”'));
 }
+/* Icon picker (B1-end-user icons): browse every shipped and host-registered
+ * icon pack and bind an icon to the selected node via x_icon — a real model
+ * property, so it is persisted in source like any other inspector edit. */
+function allIcons() {
+  const libs = (A.iconLibraries ? A.iconLibraries() : []).concat(A.hostIconPacks ? A.hostIconPacks() : []);
+  const out = [];
+  for (const lib of libs) for (const ic of lib.icons || []) out.push({ library: lib.id, icon: ic.id, name: ic.name, svg: ic.svg });
+  return out;
+}
+function buildIconPicker() {
+  const q = els.iconSearch.value.trim().toLowerCase();
+  const icons = allIcons().filter(i => !q || (i.icon + ' ' + i.name + ' ' + i.library).toLowerCase().includes(q));
+  els.iconList.replaceChildren(...icons.slice(0, 200).map(i => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'ddn-icon-pick';
+    b.title = i.name + ' (' + i.library + '/' + i.icon + ')';
+    b.innerHTML = i.svg + '<span>' + i.name + '</span>';
+    b.setAttribute('data-icon', i.library + '/' + i.icon);
+    b.addEventListener('click', () => {
+      if (!state.selected) return;
+      guard(() => {
+        flush();
+        A.authoring.setProperty(state.ws, state.entry, state.view, state.selected, 'x_icon', { library: i.library, icon: i.icon });
+        els.iconPopup.hidden = true;
+        showSource(state.currentFile);
+        inspector(state.selected, state.ws.resolve(state.entry, state.view), null);
+        status('icon ' + i.library + '/' + i.icon + ' set on the selected occurrence');
+      });
+    });
+    return b;
+  }));
+  if (!icons.length) els.iconList.append(dim('no icon matches “' + els.iconSearch.value + '”'));
+  if (icons.length > 200) els.iconList.append(dim((icons.length - 200) + ' more — refine the search'));
+}
+els.iconBrowse.addEventListener('click', () => {
+  if (!state.selected) { status('select an object first'); return; }
+  buildIconPicker();
+  els.iconPopup.hidden = !els.iconPopup.hidden;
+  if (!els.iconPopup.hidden) els.iconSearch.focus();
+});
+els.iconSearch.addEventListener('input', buildIconPicker);
+els.iconClear.addEventListener('click', () => {
+  if (!state.selected) return;
+  guard(() => {
+    flush();
+    A.authoring.setProperty(state.ws, state.entry, state.view, state.selected, 'x_icon', undefined);
+    showSource(state.currentFile);
+    inspector(state.selected, state.ws.resolve(state.entry, state.view), null);
+    status('icon cleared from the selected occurrence');
+  });
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !els.iconPopup.hidden) els.iconPopup.hidden = true; });
 els.paletteSearch.addEventListener('input', buildPalette);
 
 /* World-coordinates of a stage pointer event (same drawing-group inverse CTM
