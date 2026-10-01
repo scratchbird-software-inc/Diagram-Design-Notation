@@ -9905,7 +9905,9 @@
       "when": "Workshops, note-taking, scope exploration before any formal structure exists.",
       "read": [
         "The centre is the subject; each ring outward is one level more specific.",
-        "Sibling order is the order they were declared, not a ranking."
+        "Sibling order is the order they were declared, not a ranking.",
+        "Branches always leave the vertical centre of an entity's left or right side — the root branches from both.",
+        "Entities with long note bodies cap at ten rows: a scrollbar pans them, and the lower-right handle resizes the window (presentation only)."
       ],
       "inputs": [
         "The central topic",

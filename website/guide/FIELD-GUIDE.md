@@ -1615,7 +1615,7 @@ time; every guided first edit is executed and undone, with both SVG hashes recor
 **Why:** Brainstorming needs a shape that rewards adding, not arranging — the map grows the way the conversation does.
 **When:** Workshops, note-taking, scope exploration before any formal structure exists.
 
-**Read it:** The centre is the subject; each ring outward is one level more specific. Sibling order is the order they were declared, not a ranking.
+**Read it:** The centre is the subject; each ring outward is one level more specific. Sibling order is the order they were declared, not a ranking. Branches always leave the vertical centre of an entity's left or right side — the root branches from both. Entities with long note bodies cap at ten rows: a scrollbar pans them, and the lower-right handle resizes the window (presentation only).
 **Gather first:** The central topic; The branches
 
 **Pitfalls:** Do not force a mind map to hold cross-links — that is a concept map. More than three levels usually means one branch deserves its own map.
