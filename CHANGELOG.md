@@ -6,6 +6,19 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Icon pack viewer** (B1-101, slice 2). New generated site page
+  `website/icons/index.html` (nav: Icons) browses every installed
+  ddn-icon-pack@1 pack: per-icon previews at 16/24/32/48 px, pack filter
+  chips, search across name/id/tags/kinds, and click-to-copy of the exact
+  `x_icon: { library: "…", icon: "…" };` reference (clipboard API with a
+  textarea fallback, toast confirmation). Pack data comes from the pack
+  sources in `standard/registry/icon-packs/` so license, attribution and the
+  source link stay visible per pack; counts are generated (currently 8 packs,
+  328 icons). The tool's icon picker popup links to the viewer
+  (`ddn-icon-viewer` in `notation/tool/src/template.html`). New headless
+  suite `tests/icons-page-http.js` (list/filter/search/copy + tool link)
+  wired into `test:site`; wiki *Icon packs* guide links the viewer.
+
 - **Sticky-note entities + string relations + whiteboard workshop example** (B1-101, slice 1).
   New core kind `note.sticky` (alias `sticky`) renders the collaborative
   whiteboard idiom: a coloured, free-form note with no name header, no kind

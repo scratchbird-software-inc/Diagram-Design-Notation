@@ -38,6 +38,11 @@ const GALLERY_COVERAGE = readJson('website/examples/gallery/coverage.json');
 const GALLERY_SVG_COUNT = Object.keys(GALLERY_COVERAGE.profiles).length +
   Object.values(GALLERY_COVERAGE.sheets).reduce((n, s) => n + s.views.length, 0) +
   (GALLERY_COVERAGE.corpus ? GALLERY_COVERAGE.corpus.length : 0);
+/* B1-101 slice 2: icon pack viewer page — pack data from the ddn-icon-pack@1
+ * sources (license/attribution visible), not the aggregated runtime asset. */
+const ICON_PACKS = readJson('standard/registry/icon-packs/index.json').packs.map(f =>
+  readJson('standard/registry/icon-packs/' + f));
+const ICON_TOTAL = ICON_PACKS.reduce((n, p) => n + p.icons.length, 0);
 
 const written = []; // paths relative to OUT, for the manifest
 function writeOut(rel, content) {
@@ -150,6 +155,7 @@ const NAV = [
   ['Home', 'index.html', 'home'],
   ['Features', 'features/index.html', 'features'],
   ['Gallery', 'gallery/index.html', 'gallery'],
+  ['Icons', 'icons/index.html', 'icons'],
   ['Guide', 'guide/index.html', 'guide'],
   ['Docs', 'docs/index.html', 'docs'],
   ['Standard', 'standard/index.html', 'standard'],
@@ -478,7 +484,7 @@ const FEATURES = [
   ['IEC 61131-3 function blocks', 'FBD blocks with name/type headers and typed pins (BOOL/INT/REAL/TIME…), type-checked wires, negation bubbles, and feedback loops — see the <a href="../gallery/index.html">gallery</a> for a rendered motor-control diagram.'],
   ['IEC 61131-3 ladder diagrams', 'LD rungs between power rails — NO/NC contacts, output coils (normal/set/reset/negated), parallel OR branches inferred from the wiring, hosted FBD blocks, labels and jumps, laid out by a dedicated rung algorithm — see the <a href="../gallery/index.html">gallery</a> for a rendered motor-control ladder.'],
   ['SDL (ITU-T Z.100)', 'System views with blocks, gates, channels and signal lists, plus SDL process diagrams — start, states, input/output flags, decisions, tasks, saves, creates and procedure references — see the <a href="../gallery/index.html">gallery</a> for a rendered example.'],
-  ['Icon packs', 'Symbols ship as open ddn-icon-pack@1 documents (<a href="../standard/specification/49-icon-packs.html">specification</a> + JSON schema) — seven packs: network-generic (20), vsm-symbols (16), pid-common (36), electrical-common (32), curated MIT selections tabler-infra (50) and iconoir-infra (49), plus the demo set. Author and register your own pack at runtime — validated and sanitized identically (no scripts, handlers or external references, 20 KiB cap). Common-practice artwork pending standards review; no vendor packs — see the <a href="../gallery/index.html">gallery</a> for rendered examples.'],
+  ['Icon packs', 'Symbols ship as open ddn-icon-pack@1 documents (<a href="../standard/specification/49-icon-packs.html">specification</a> + JSON schema) — ' + ICON_PACKS.length + ' packs, ' + ICON_TOTAL + ' icons, browsable with multi-size previews and a copyable x_icon reference in the <a href="../icons/index.html">icon pack viewer</a>. Author and register your own pack at runtime — validated and sanitized identically (no scripts, handlers or external references, 20 KiB cap). Common-practice artwork pending standards review; no vendor packs.'],
   ['Value stream mapping', 'Process boxes with data rows, the VA/NVA timeline ladder strip with totals, inventory triangles, push/pull and material arrows, electronic (zigzag) and manual information arrows, supermarket, kaizen bursts and operators — see the <a href="../gallery/index.html">gallery</a> for a rendered current-state map.'],
   ['ORM 2 object-role modeling', 'Entity and value types (solid/dashed ellipses), fact types as role-box predicate rows with uniqueness bars and mandatory dots, n-ary predicates, subset/equality/exclusion constraint arcs, value constraints, objectification and derivation text — see the <a href="../gallery/index.html">gallery</a> for a rendered fact model.'],
   ['Petri nets (ISO/IEC 15909)', 'Places with token markings, transition bars, weighted arcs, inhibitor arcs and test/read arcs, with bipartite-graph validation — notation only, no reachability analysis — see the <a href="../gallery/index.html">gallery</a> for a rendered producer/consumer net.'],
@@ -617,6 +623,65 @@ writeOut('license/index.html', page('../', 'home', 'License — DDN',
   '  <li><a href="NOTICE.md">Project notice (NOTICE.md)</a></li>\n' +
   '</ul>\n' +
   '<p>Rendered SVG output produced by the runtime from your own .ddn sources is yours; the GPL covers the software and standard text themselves.</p>'));
+
+/* Icon pack viewer (B1-101 slice 2): browse every installed pack with
+ * multi-size previews, search by name/id/tag/kind, and copy the exact x_icon
+ * reference. */
+const iconViewerData = JSON.stringify(ICON_PACKS.map(p => ({
+  id: p.id, name: p.name, license: p.license || '', attribution: p.attribution || '', source: p.source || '', note: p.note || '',
+  icons: p.icons.map(i => ({ id: i.id, name: i.name, tags: i.tags || [], kinds: i.kinds || [], svg: i.svg })),
+}))).replace(/</g, '\\u003c');
+writeOut('icons/index.html', page('../', 'icons', 'Icon packs — browse, preview, copy the x_icon reference',
+  '<h1 class="page-title">Icon packs</h1>\n' +
+  '<p class="lede">' + ICON_PACKS.length + ' installed packs, ' + ICON_TOTAL + ' icons. Every icon renders at 16/24/32/48 px; click a card to copy the exact <code>x_icon</code> reference for your source. Packs are open <a href="../standard/specification/49-icon-packs.html">ddn-icon-pack@1</a> documents — license and attribution are shown per pack.</p>\n' +
+  '<div class="icon-browser">\n' +
+  '  <div class="icon-browser-bar"><input id="icon-q" type="search" placeholder="Search name, id, tag or kind…" aria-label="Search icons"><span id="icon-count" class="icon-count"></span></div>\n' +
+  '  <div id="icon-pack-filters" class="icon-pack-filters" role="group" aria-label="Filter by pack"></div>\n' +
+  '  <div id="icon-packs"></div>\n' +
+  '</div>\n' +
+  '<div id="icon-copied" role="status" aria-live="polite"></div>\n' +
+  '<style>\n' +
+  '.icon-browser-bar{display:flex;gap:12px;align-items:center;margin:12px 0}#icon-q{flex:1;max-width:520px;padding:8px 10px;font-size:15px}\n' +
+  '.icon-count{color:var(--muted,#5b6570);font-size:13px;white-space:nowrap}\n' +
+  '.icon-pack-filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px}\n' +
+  '.icon-pack-filters button{border:1px solid currentColor;border-radius:14px;background:none;padding:3px 10px;font-size:12.5px;cursor:pointer;opacity:.75}\n' +
+  '.icon-pack-filters button[aria-pressed="true"]{opacity:1;font-weight:650}\n' +
+  '.icon-pack{margin:0 0 30px}.icon-pack>h2{margin:0 0 2px;font-size:19px}\n' +
+  '.icon-pack-meta{font-size:12.5px;color:var(--muted,#5b6570);margin:0 0 10px}\n' +
+  '.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}\n' +
+  '.icon-card{border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:8px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px}\n' +
+  '.icon-card:hover{border-color:#0c75bd}.icon-card:focus-visible{outline:2px solid #0c75bd}\n' +
+  '.icon-sizes{display:flex;align-items:flex-end;gap:10px;color:#22303c;height:52px}\n' +
+  '.icon-sizes svg{display:block}\n' +
+  '.icon-name{font-size:12.5px;font-weight:600}.icon-ref{font-size:11px;color:var(--muted,#5b6570);font-family:ui-monospace,monospace;word-break:break-all}\n' +
+  '#icon-copied{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#22303c;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:80vw}\n' +
+  '</style>\n' +
+  '<script>const ICON_PACKS = ' + iconViewerData + ';</script>\n' +
+  '<script>(function(){\n' +
+  'var packsEl=document.getElementById("icon-packs"),q=document.getElementById("icon-q"),count=document.getElementById("icon-count"),filters=document.getElementById("icon-pack-filters"),copied=document.getElementById("icon-copied");\n' +
+  'var activePack=null,copiedTimer=null;\n' +
+  'function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}\n' +
+  'function xref(p,i){return "x_icon: { library: \\""+p.id+"\\", icon: \\""+i.id+"\\" };";}\n' +
+  'function copy(text,label){function done(){copied.textContent="Copied: "+text;copied.style.opacity=1;clearTimeout(copiedTimer);copiedTimer=setTimeout(function(){copied.style.opacity=0;},2200);}\n' +
+  '  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){fallback();});}else fallback();\n' +
+  '  function fallback(){var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}ta.remove();done();}}\n' +
+  'function match(p,i,needle){if(activePack&&p.id!==activePack)return false;if(!needle)return true;var hay=(i.id+" "+i.name+" "+p.id+" "+p.name+" "+i.tags.join(" ")+" "+i.kinds.join(" ")).toLowerCase();return needle.split(/\\s+/).every(function(w){return hay.indexOf(w)>=0;});}\n' +
+  'function render(){var needle=q.value.trim().toLowerCase(),shown=0;packsEl.replaceChildren();\n' +
+  '  ICON_PACKS.forEach(function(p){var icons=p.icons.filter(function(i){return match(p,i,needle);});if(!icons.length)return;shown+=icons.length;\n' +
+  '    var sec=document.createElement("section");sec.className="icon-pack";\n' +
+  '    var meta=esc(p.license)+(p.attribution?" · "+esc(p.attribution):"")+(p.source?" · <a href=\\""+esc(p.source)+"\\">source</a>":"")+(p.note?" — "+esc(p.note):"");\n' +
+  '    sec.innerHTML="<h2>"+esc(p.name)+" <span class=\\"icon-count\\">"+p.id+" · "+icons.length+" icons</span></h2><p class=\\"icon-pack-meta\\">"+meta+"</p>";\n' +
+  '    var grid=document.createElement("div");grid.className="icon-grid";\n' +
+  '    icons.forEach(function(i){var card=document.createElement("button");card.type="button";card.className="icon-card";card.title="Copy "+xref(p,i);\n' +
+  '      card.innerHTML="<span class=\\"icon-sizes\\">"+[16,24,32,48].map(function(s){return "<span style=\\"width:"+s+"px;height:"+s+"px\\">"+i.svg.replace("<svg ","<svg width=\\""+s+"\\" height=\\""+s+"\\" ")+"</span>";}).join("")+"</span><span class=\\"icon-name\\">"+esc(i.name)+"</span><span class=\\"icon-ref\\">"+esc(p.id+" / "+i.id)+"</span>";\n' +
+  '      card.addEventListener("click",function(){copy(xref(p,i));});grid.appendChild(card);});\n' +
+  '    sec.appendChild(grid);packsEl.appendChild(sec);});\n' +
+  '  count.textContent=shown+" of "+ICON_PACKS.reduce(function(n,p){return n+p.icons.length;},0)+" icons";}\n' +
+  'var chipDefs=[["All packs",null]].concat(ICON_PACKS.map(function(p){return [p.id,p.id];}));\n' +
+  'filters.replaceChildren.apply(filters,chipDefs.map(function(pair){var b=document.createElement("button");b.type="button";b.textContent=pair[0];b.setAttribute("aria-pressed",pair[1]===activePack?"true":"false");b.addEventListener("click",function(){activePack=pair[1];filters.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});render();});return b;}));\n' +
+  'q.addEventListener("input",render);render();\n' +
+  '})();</script>'));
+
 
 /* ---------------------------------------------------------------- manifest */
 

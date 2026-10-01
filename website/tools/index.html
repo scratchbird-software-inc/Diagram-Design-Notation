@@ -28,6 +28,7 @@ button:hover:not(:disabled) { background: #eef4ff; border-color: #8babe8; }
 button:disabled, select:disabled, input:disabled { opacity: .45; cursor: not-allowed; }
 button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
 .ddn-mini { padding: 2px 8px; font-size: 12px; }
+.ddn-mini-link { display: block; padding: 4px 2px 2px; font-size: 12px; }
 .ddn-dim { color: #61718a; font-size: 12px; }
 .ddn-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0; }
 .ddn-check { display: inline-flex; gap: 4px; align-items: center; font-size: 12px; }
@@ -381,6 +382,7 @@ button.active { background: #245ac8; color: #fff; border-color: #245ac8; }
               <div id="ddn-icon-popup" hidden>
                 <input id="ddn-icon-search" type="search" placeholder="Find an icon…" aria-label="Find an icon">
                 <div id="ddn-icon-list" role="listbox" aria-label="Icons"></div>
+                <a id="ddn-icon-viewer" class="ddn-mini-link" href="../icons/index.html" target="_blank" rel="noopener" title="Open the full icon pack viewer — multi-size previews and a copyable x_icon reference">Full icon viewer ↗</a>
               </div>
             </div>
             <div class="ddn-row">
