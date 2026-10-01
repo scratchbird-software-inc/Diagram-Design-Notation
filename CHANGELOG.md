@@ -6,6 +6,30 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Sticky-note entities + string relations + whiteboard workshop example** (B1-101, slice 1).
+  New core kind `note.sticky` (alias `sticky`) renders the collaborative
+  whiteboard idiom: a coloured, free-form note with no name header, no kind
+  chip and no field rows — the description *is* the note. The registered
+  `x_sticky` contract (`standard/registry/extensions.json`, runtime contract
+  in `notation/runtime/ddn-profiles.js`, invalid values fail DDN105) declares
+  the decorations: `colour` from a fixed six-colour palette (yellow default,
+  pink, blue, green, orange, purple), plus independent `pin` (red push-pin)
+  and `tape` (translucent strips) booleans. A fourth routing value `string`
+  joins `straight`/`orthogonal`/`curved`: the layout engine plans the direct
+  corridor exactly like `straight`, and the renderer draws it as a gently
+  sagging cubic with a deterministic per-relation wobble (label-detour middle
+  points never bow the curve; no crossing treatment, by design for a workshop
+  wall). Surfaced consistently: grammar choices, tool options, studio
+  connector select + LIVE023 override validation, designer display routing,
+  developer API docs and specification `13-curved-relations.md`. New example
+  `website/examples/basics/109-whiteboard-workshop.ddn` (six sticky notes,
+  five string relations), new Field Guide technique chapter
+  *Whiteboard wall — sticky notes and string* (plan now 147 chapters),
+  gallery plate regenerated, new test suite `notation/tests/sticky-string.js`
+  (15 checks, wired into `npm test` as `test:sticky`), wiki page
+  *Whiteboard walls (sticky notes and string)* + regenerated reference pages
+  (coverage gate PASS).
+
 - **Crow's-foot ERD example facelift + artboard DDN071 UX** (B1-052).
   `website/examples/basics/37-crows-foot-erd.ddn` now renders with
   `layout { algorithm: organic; }` and `chrome { legend: off; }` (the

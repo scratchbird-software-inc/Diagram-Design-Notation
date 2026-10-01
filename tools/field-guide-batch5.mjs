@@ -243,4 +243,20 @@ export default [
     editTask: 'Rename one candidate cause to your current leading hypothesis, apply, and check it still sits on the right bone.',
     tags: ['fishbone', 'ishikawa', 'cause-effect'],
   },
+
+  {
+    id: 'whiteboard-sticky-notes', title: 'Whiteboard wall — sticky notes and string', category: 'Techniques',
+    status: 'technique', entry: 'website/examples/basics/109-whiteboard-workshop.ddn', view: 'workshop',
+    what: 'The collaborative workshop idiom: free-form sticky notes in six paper colours, push-pins and tape, with sagging string relations between the notes they connect.',
+    why: 'Early workshops die in record-keeping tooling; a sticky note carries one thought and no structure, so the wall stays at the speed of the conversation.',
+    when: 'Discovery workshops, brainstorming, affinity grouping, retrospectives — anywhere the model is not yet agreed.',
+    read: ['Each note is its body text only — no name header, no fields, no kind chip; the colour is a declared x_sticky choice.', 'A string relation sags like pinned thread: it says "these two belong together" and nothing more.'],
+    inputs: ['One thought per note', 'The x_sticky decoration (colour, pin, tape)', 'String routing on the view'],
+    pitfalls: ['Do not put fields on a sticky note — the moment a note has rows it is an entity and should be modelled as one.', 'String is presentation routing: it carries the relation, never adds meaning to it.'],
+    limits: 'Six declared paper colours and the pin/tape decorations; free placement on an infinite canvas is a host-tool concern, the wall uses declared layout.',
+    refs: [], probe: ['note.sticky'],
+    expectation: m => `Only the note's text changes; colour, decorations, string routes and identities are untouched.`,
+    editTask: 'Rewrite one note with the next thought from your own workshop, apply, and confirm its string still sags to the same neighbour.',
+    tags: ['technique', 'whiteboard', 'workshop', 'sticky'],
+  },
 ];

@@ -1327,6 +1327,32 @@
           "additionalProperties": false
         }
       }
+    },
+    "x_sticky": {
+      "targets": {
+        "object": {
+          "type": "object",
+          "properties": {
+            "colour": {
+              "enum": [
+                "yellow",
+                "pink",
+                "blue",
+                "green",
+                "orange",
+                "purple"
+              ]
+            },
+            "pin": {
+              "type": "boolean"
+            },
+            "tape": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
     }
   }
 }

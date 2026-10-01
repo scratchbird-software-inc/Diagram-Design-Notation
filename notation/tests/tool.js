@@ -529,7 +529,7 @@ test('options.js drift guard: FONT_STACKS equals runtime DDNText.FONTS', () => {
   const O = require('../tool/src/options.js');
   const FONTS = globalThis.__DDN_MODULE_REGISTRY__.namespaces.DDNText.FONTS;
   assert.deepEqual(O.FONT_STACKS, FONTS);
-  assert.deepEqual(O.ROUTING_VALUES, ['orthogonal', 'straight', 'curved', 'rounded']);
+  assert.deepEqual(O.ROUTING_VALUES, ['orthogonal', 'straight', 'curved', 'rounded', 'string']);
 });
 
 const n = results.length;

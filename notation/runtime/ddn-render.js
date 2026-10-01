@@ -62,7 +62,10 @@ function measureNode(n,registry,profiles,placement={},context={}){
  /* B1-061 : packaged-element visibility prefix. */
  if(n.properties.x_pack?.visibility)titleLines[0]=(n.properties.x_pack.visibility==='private'?'− ':'+ ')+titleLines[0];
  let meaningLines=[];if(n.type==='domain'||k.code==='DOM'){meaningLines=Text.wrap(n.properties.meaning||'Shared semantic meaning',w-30*s,12.5*s,font,400);y=Math.max(y,headerH)+meaningLines.length*18*s+20*s;}
- let noteLines=[];if(k.shape==='note'&&n.properties.description){noteLines=Text.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
+ let noteLines=[];if((k.shape==='note'||k.shape==='note.sticky')&&n.properties.description){noteLines=Text.wrap(n.properties.description,w-30*s,12.5*s,font,400);y+=noteLines.length*18*s+20*s;}
+ /* B1-101: a sticky note has no header — its box is exactly the wrapped body
+  * text plus padding (line 65 added the lines onto a header it does not use). */
+ if(k.shape==='note.sticky')y=Math.max(noteLines.length*18*s+30*s,60*s);
  /* B1-100: mind-map entities carry free-form body text (their description)
   * as wrapped rows. The box auto-sizes to the rows up to a line cap (default
   * 10, x_mindmap.lines 1..50 per entity); beyond the cap the box stays at the
@@ -156,7 +159,21 @@ function renderNode(g,p,theme,registry){
  const nc=Palette.node(k,theme),ink=mono?'#333333':nc.ink,fill=mono?'#FAFAFA':nc.fill,bodyInk=nc.text;
  const maturity={draft:'DRF',approved:'APR',undecided:'UNK',review:'REV',deprecated:'DEP',retired:'RET',rejected:'REJ'},m=typeof n.properties.maturity==='object'?'UNK':maturity[n.properties.maturity];
  let out=`<g class="${cls('ddn-node','ddn-kind-'+slug(k.code))}" data-id="${esc(n.id)}" data-ddn-id="${esc(n.id)}" data-ref="${esc(n.ref||n.id)}" tabindex="0" role="group" aria-label="${esc(n.name)}"><title>${esc(n.name+' — '+k.name)}</title>`;
- if(k.shape==='note'){
+ if(k.shape==='note.sticky'){
+  /* B1-101: sticky note (collaborative whiteboard idiom) — a coloured,
+   * optionally taped/pinned free-form note. No name header, no kind chip, no
+   * field rows: the body text IS the note. */
+  const STICKY={yellow:'#FEF3C7',pink:'#FCE7F3',blue:'#DBEAFE',green:'#D1FAE5',orange:'#FFEDD5',purple:'#EDE9FE'};
+  const st=n.properties.x_sticky||{},sfill=STICKY[st.colour]||STICKY.yellow;
+  out+=`<rect class="ddn-sticky" data-colour="${esc(st.colour||'yellow')}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${4*s}" fill="${esc(sfill)}" stroke="${ink}" stroke-width="1.8"/>`;
+  if(st.tape){for(const sx of [x+w*.22,x+w*.78])out+=`<rect class="ddn-sticky-tape" x="${fmt(sx-14*s)}" y="${fmt(y-6*s)}" width="${fmt(28*s)}" height="${fmt(12*s)}" fill="${ink}" opacity=".16" transform="rotate(-4 ${fmt(sx)} ${fmt(y)})"/>`;}
+  if(g.noteLines.length){let ty=y+14*s;for(const ln of g.noteLines){Text.measure(ln,12.5*s,p.style.font,400);out+=text(x+15*s,ty+13*s,ln,12.5*s,bodyInk,400);ty+=18*s;}}
+  if(st.pin){const px=x+w/2,py=y+4*s;
+   out+=`<g class="ddn-sticky-pin"><path d="M${fmt(px)} ${fmt(py)}L${fmt(px)} ${fmt(py+12*s)}" stroke="${ink}" stroke-width="1.8"/><circle cx="${fmt(px)}" cy="${fmt(py)}" r="${fmt(6*s)}" fill="#DC2626" stroke="${ink}" stroke-width="1.4"/><circle cx="${fmt(px-2*s)}" cy="${fmt(py-2*s)}" r="${fmt(1.8*s)}" fill="#fff" opacity=".7"/></g>`;}
+  /* The sticky note is self-contained: no kind glyph/chip, no title, no field
+   * or meaning rows (line 201 would also re-draw the note lines). */
+  return out+'</g>';
+ }else if(k.shape==='note'){
   if(look==='handDrawn')out+=Sketch.polygon([[x,y],[x+w-16*s,y],[x+w,y+16*s],[x+w,y+h],[x,y+h]],{...p.style,id:n.id,stroke:ink,fill});
   else out+=`<path d="M${x} ${y}H${x+w-16*s}L${x+w} ${y+16*s}V${y+h}H${x}Z" fill="${esc(fill)}" stroke="${esc(ink)}" stroke-width="1.8"/>`;
   out+=styleLine(x+w-16*s,y,x+w-16*s,y+16*s,ink,1.3,'',p,n.id+':fold-v')+styleLine(x+w-16*s,y+16*s,x+w,y+16*s,ink,1.3,'',p,n.id+':fold-h');
@@ -442,7 +459,17 @@ function renderInner(ir,registry,glyphDefs='',options={}){
   if(a.r.properties.x_genset&&!gensets.has(a.r.properties.x_genset.name))gensets.set(a.r.properties.x_genset.name,{gs:a.r.properties.x_genset,pt:a.points.at(-1),ang:Layout.curveDirection(a)+180,colour});
   let mask='';const holes=crossings.filter(c=>p.layout.crossings==='gap'?c.under===a.id:c.over===a.id);if(holes.length){const mid='gap-'+hash(a.id);mask=` mask="url(#${mid})"`;diagram+=`<defs><mask id="${mid}" maskUnits="userSpaceOnUse" x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}"><rect x="${minX-100}" y="${minY-100}" width="${width+200}" height="${height+200}" fill="white"/>`+holes.map(h=>`<circle cx="${h.point[0]}" cy="${h.point[1]}" r="7" fill="black"/>`).join('')+'</mask></defs>';}
   diagram+=`<g class="${cls('ddn-relation','ddn-rel','ddn-verb-'+slug(a.reg.code||a.r.kind))}" data-routing="${a.routing||p.layout.routing}" data-id="${esc(a.id)}"><title>${esc(a.r.name)}</title>`;
-  const pieces=a.commands||holes.some(h=>h.overDistance!==undefined)?Layout.curvePieces(a,holes):visibleRoutePieces(a.points,holes);
+  /* B1-101: string routing — a slightly sagging, gently wavy line pinned
+   * between the two points (workshop string between sticky notes). Geometry
+   * is the straight corridor; only the drawn path changes. */
+  const isString=(a.routing||p.layout.routing)==='string';
+  /* The layout router may detour a direct corridor to seat the label; a
+   * string only cares about its two pinned ends, so the curve always spans
+   * endpoint to endpoint regardless of any label-detour middle points. */
+  const stringD=pts=>{const [x0,y0]=pts[0],[x1,y1]=pts.at(-1);
+   const dist=Math.hypot(x1-x0,y1-y0),sag=Math.max(8,Math.min(40,dist*.12)),dx=(x1-x0)/3,dy=(y1-y0)/3,wob=((parseInt(hash(a.id),16)%7)-3)*2;
+   return `M${fmt(x0)} ${fmt(y0)}C${fmt(x0+dx)} ${fmt(y0+dy+sag+wob)}, ${fmt(x0+2*dx)} ${fmt(y0+2*dy+sag-wob)}, ${fmt(x1)} ${fmt(y1)}`;};
+  const pieces=isString?[{points:a.points,d:stringD(a.points),distance:0}]:(a.commands||holes.some(h=>h.overDistance!==undefined)?Layout.curvePieces(a,holes):visibleRoutePieces(a.points,holes));
   diagram+=`<g${mask} data-route-pieces="${pieces.length}">`+pieces.map((piece,i)=>p.style.look==='handDrawn'?(a.commands?Sketch.curve:Sketch.polyline)(a.commands?piece.commands:piece.points,{...p.style,id:a.id+':piece:'+i,stroke:colour,width:a.reg.width,dash:a.reg.pattern,dashOffset:-piece.distance,protectedPoints:crossings.filter(c=>c.under===a.id||c.over===a.id).map(c=>c.point)}):`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(colour)}" stroke-width="${a.reg.width}"${a.reg.pattern?` stroke-dasharray="${esc(a.reg.pattern)}" stroke-dashoffset="${fmt(-piece.distance)}"`:''}/>`).join('')+'</g>';
   /* B1-090: cross-file relations — the badge edge draws dashed and muted. */
   if(a.r.properties.x_external)diagram+=`<g data-external="true">`+pieces.map(piece=>`<path d="${piece.d||pathD(piece.points)}" fill="none" stroke="${esc(t.muted)}" stroke-width="${a.reg.width}" stroke-dasharray="7 5"/>`).join('')+'</g>';

@@ -1499,7 +1499,7 @@ const DENSITY_DEFAULT='compact';
 // the designer is separate code.
 const DISPLAY_FONT_STACKS={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'};
 const DISPLAY_FONT_SIZES=[8,9,10,11,12,14,16,18,20,24];
-const DISPLAY_ROUTING=['orthogonal','straight','curved','rounded'];
+const DISPLAY_ROUTING=['orthogonal','straight','curved','rounded','string'];
 const DISPLAY_CROSSINGS=['gap','bridge','square_bridge'];
 const DISPLAY_ENDPOINT_ORDERING=['optimize','preserve'];
 const cssSlug=s=>String(s??'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');

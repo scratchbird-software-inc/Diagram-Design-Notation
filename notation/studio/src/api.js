@@ -15,7 +15,7 @@ const choices={
  placement:['source','auto','grid','manual','fit_grid','circular','radial','layered','tree','spanning_tree','mindmap','grouped','organic'],
  center:['source','pins','content'],
  look:['classic','handDrawn','neo'],
- routing:['source','orthogonal','straight','curved','rounded'],
+ routing:['source','orthogonal','straight','curved','rounded','string'],
  crossings:['source','gap','bridge','square_bridge'],
  fields:['source','names','none'],
  domains:['source','show','hide'],
@@ -37,7 +37,7 @@ const defaults={
   roughness:null, hachure:null, relationRouting:null, curveTension:null,
   curveRadius:null, mindNodes:null
 };
-const routingValues=['orthogonal','straight','curved','rounded'];
+const routingValues=['orthogonal','straight','curved','rounded','string'];
 function checkOptions(o={}){
  if(!o||typeof o!=='object'||Array.isArray(o))fail('LIVE001','Presentation options must be a record.');
  for(const k of Object.keys(o))if(!Object.hasOwn(defaults,k))fail('LIVE001','Unsupported presentation option: '+k);

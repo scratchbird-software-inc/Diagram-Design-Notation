@@ -1,0 +1,54 @@
+ddn "0.5";
+
+module "ddn.examples.whiteboard-workshop";
+// Synthetic workshop wall (all content invented): sticky notes in every
+// sticky colour, push-pins and tape decorations, and string relations between
+// pinned notes — the collaborative whiteboard idiom (B1-101).
+data wall {
+    sticky goal "Goal" { description: "What does a good Q3 look like? Agree it before we plan it."; x_sticky: { colour: yellow, pin: true }; }
+    sticky customers "Customers" { description: "New accounts stall at the sample tour. Onboarding emails arrive too late to help."; x_sticky: { colour: pink, pin: true }; }
+    sticky tour "Sample tour" { description: "Keep it to five steps. Load synthetic data first, real import second."; x_sticky: { colour: blue, tape: true }; }
+    sticky pricing "Pricing" { description: "Free tier is fine. Team tier needs the annual discount story."; x_sticky: { colour: green, pin: true }; }
+    sticky risk "Risks" { description: "Scope creep on the tour. Performance on very large maps. Holiday freeze."; x_sticky: { colour: orange, tape: true }; }
+    sticky actions "Next steps" { description: "Robin drafts the tour. Sam prices the discount. Review Friday."; x_sticky: { colour: purple, pin: true }; }
+    relation s1 @goal -> @customers { kind: assoc; }
+    relation s2 @customers -> @tour { kind: assoc; }
+    relation s3 @tour -> @pricing { kind: assoc; }
+    relation s4 @risk -> @tour { kind: assoc; }
+    relation s5 @actions -> @tour { kind: assoc; }
+}
+
+view workshop "Synthetic workshop wall" {
+    data: [@wall];
+    format: @ddn.examples.shared.styles.technical;
+    projection { kind: graph; profile: "ddn@1"; }
+    layout { algorithm: grid; gap: 120px; routing: string; }
+    display { kind: none; }
+    publication { size: content; fit: none; }
+}
+
+module "ddn.examples.shared";
+format styles {
+    notation core;
+    style classic;
+    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }
+    style neo { look: neo; }
+    style dark { theme: dark; }
+    style neutral { theme: neutral; font: mono; }
+    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }
+    layout wires { algorithm: grid; gap: 80px; }
+    display detailed;
+    display compact { fields: none; maturity: none; badges: none; }
+    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }
+    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }
+    legend words { width: 280px; }
+    legend numbers { mode: numbers; width: 280px; }
+    bundle technical {
+        notation: @core;
+        style: @classic;
+        layout: @wires;
+        display: @detailed;
+        publication: @screen;
+        legend: @words;
+    }
+}

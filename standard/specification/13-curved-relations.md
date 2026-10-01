@@ -8,13 +8,14 @@
 
 `style.look` is independent: classic, handDrawn, and neo can all display curved paths. `font`, maturity, and authority retain their separate meanings. A precisely drawn curve is not necessarily approved; a sketched curve is not necessarily a draft.
 
-There are three routing values in this release:
+There are four routing values in this release:
 
 | Value | Meaning |
 |---|---|
 | `straight` | A direct straight segment. It cannot evade an obstacle by silently becoming orthogonal. |
 | `orthogonal` | Horizontal/vertical route segments with sharp right-angle bends, except an explicitly requested local crossing jump. |
 | `curved` | Cubic Bézier path segments, optionally joined by straight tangent runs. The renderer checks the resulting curve geometry, not just a polygonal plan. |
+| `string` | A direct corridor (planned like `straight`) drawn as a gently sagging cubic between the two endpoints — the workshop idiom of string pinned between sticky notes. Presentation only; a label-detour on the corridor does not bow the drawn curve, and string routes carry no crossing treatment. |
 
 Perfectly aligned endpoints MAY produce a geometrically straight result even under `curved`. No artificial bow is required when it conveys nothing.
 

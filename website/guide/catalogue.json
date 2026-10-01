@@ -3,12 +3,12 @@
     "edition": "field-guide-0.7",
     "runtime": "0.7.0",
     "reviewed": "2026-09-30",
-    "chapterCount": 146,
-    "plannedChapterCount": 146,
+    "chapterCount": 147,
+    "plannedChapterCount": 147,
     "facts": {
       "profiles": 150,
       "projectionKinds": 12,
-      "totalKinds": 374,
+      "totalKinds": 375,
       "totalRelations": 185,
       "iconPacks": 8,
       "icons": 328
@@ -13706,6 +13706,96 @@
       "exerciseEvidence": {
         "before": "64980d959ba3e05df73c0bb0c5e3a215445b2a49ff5824e53487392212bf684a",
         "after": "f32e3f443922f2f0f7bb12fb17876dcbc075849eee586e980696ea156e7028e5",
+        "changed": true,
+        "modelChanged": true,
+        "relationIdentitiesPreserved": true,
+        "undoRestoresBefore": true
+      }
+    },
+    {
+      "id": "whiteboard-sticky-notes",
+      "title": "Whiteboard wall — sticky notes and string",
+      "category": "Techniques",
+      "status": "technique",
+      "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
+      "view": "workshop",
+      "what": "The collaborative workshop idiom: free-form sticky notes in six paper colours, push-pins and tape, with sagging string relations between the notes they connect.",
+      "why": "Early workshops die in record-keeping tooling; a sticky note carries one thought and no structure, so the wall stays at the speed of the conversation.",
+      "when": "Discovery workshops, brainstorming, affinity grouping, retrospectives — anywhere the model is not yet agreed.",
+      "read": [
+        "Each note is its body text only — no name header, no fields, no kind chip; the colour is a declared x_sticky choice.",
+        "A string relation sags like pinned thread: it says \"these two belong together\" and nothing more."
+      ],
+      "inputs": [
+        "One thought per note",
+        "The x_sticky decoration (colour, pin, tape)",
+        "String routing on the view"
+      ],
+      "pitfalls": [
+        "Do not put fields on a sticky note — the moment a note has rows it is an entity and should be modelled as one.",
+        "String is presentation routing: it carries the relation, never adds meaning to it."
+      ],
+      "limits": "Six declared paper colours and the pin/tape decorations; free placement on an infinite canvas is a host-tool concern, the wall uses declared layout.",
+      "refs": [],
+      "probe": [
+        "note.sticky"
+      ],
+      "editTask": "Rewrite one note with the next thought from your own workshop, apply, and confirm its string still sags to the same neighbour.",
+      "tags": [
+        "technique",
+        "whiteboard",
+        "workshop",
+        "sticky"
+      ],
+      "runtime": {
+        "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
+        "view": "workshop",
+        "profile": "ddn@1",
+        "projection": "graph",
+        "sha256": "11ea4b8d979d356d1e545f969e6cd9d402bdbb4c9f0d1aab17ff50a41fb33fd1",
+        "modelFingerprint": "64951ebd21e20b73",
+        "warnings": [
+          "DDN-TW01"
+        ]
+      },
+      "files": [
+        "website/examples/basics/109-whiteboard-workshop.ddn",
+        "website/examples/basics/shared.ddn"
+      ],
+      "sourceTour": [
+        {
+          "file": "website/examples/basics/109-whiteboard-workshop.ddn",
+          "roles": [
+            "data",
+            "view"
+          ]
+        },
+        {
+          "file": "website/examples/basics/shared.ddn",
+          "roles": [
+            "format"
+          ]
+        }
+      ],
+      "viewSource": "view workshop \"Synthetic workshop wall\" {\n    data: [@wall];\n    format: @shared.styles.technical;\n    projection { kind: graph; profile: \"ddn@1\"; }\n    layout { algorithm: grid; gap: 120px; routing: string; }\n    display { kind: none; }\n    publication { size: content; fit: none; }\n}",
+      "walkthrough": [
+        "Open website/examples/basics/109-whiteboard-workshop.ddn and locate view workshop. This selects existing data; it is not a stored SVG.",
+        "Inspect the ddn@1 profile and graph projection. Read the bindings before changing any value.",
+        "Use the source-file picker or select a diagram element to find its declaration. Edit labels or values deliberately; keep identifiers stable unless all references are updated.",
+        "Apply the source, inspect diagnostics, and compare the expected result. Export the SVG only after a successful render."
+      ],
+      "experiment": {
+        "kind": "label",
+        "title": "Clarify a label without changing its identity",
+        "id": "ddn.examples.whiteboard-workshop::wall.goal",
+        "file": "website/examples/basics/109-whiteboard-workshop.ddn",
+        "before": "Goal",
+        "after": "Goal / review",
+        "expectation": "Only the note's text changes; colour, decorations, string routes and identities are untouched."
+      },
+      "exerciseEvidence": {
+        "before": "11ea4b8d979d356d1e545f969e6cd9d402bdbb4c9f0d1aab17ff50a41fb33fd1",
+        "after": "fcece22f1436c7b77f55f1ca24abd2a3cd391294620faa0d6604109549f86fb4",
         "changed": true,
         "modelChanged": true,
         "relationIdentitiesPreserved": true,

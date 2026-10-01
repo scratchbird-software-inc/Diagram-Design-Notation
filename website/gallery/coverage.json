@@ -2145,6 +2145,22 @@
       "svg": "corpus/basics-108-uaf-traceability.svg"
     },
     {
+      "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
+      "view": "workshop",
+      "title": "Synthetic workshop wall",
+      "views": [
+        {
+          "id": "workshop",
+          "title": "Synthetic workshop wall"
+        }
+      ],
+      "profile": "ddn@1",
+      "kind": "graph",
+      "wiki": "Diagrams-Flowcharts",
+      "combined": "website/examples/basics/109-whiteboard-workshop.combined.ddn",
+      "svg": "corpus/basics-109-whiteboard-workshop.svg"
+    },
+    {
       "entry": "website/examples/basics/11-native-layouts.ddn",
       "view": "grid",
       "title": "Native grid / no coordinates",

@@ -4,7 +4,7 @@ Single self-contained authoring specification. An AI given ONLY this file plus a
 
 <!-- generated: do not edit (counts) -->
 **Vocabulary counts (generated from the registries + runtime sources):**
-- Object kinds: **374 total** = 152 core (`registry/catalogue.json .kinds`) + 222 profile (`registry/profiles/catalogue.json .kinds`)
+- Object kinds: **375 total** = 153 core (`registry/catalogue.json .kinds`) + 222 profile (`registry/profiles/catalogue.json .kinds`)
 - Relationships (verbs): **185 total** = 91 core + 94 profile
 - Diagram profiles: **150** (`profiles/catalogue.json .profiles`)
 - Projection kinds: **12** (`graph`, `chen`, `matrix`, `panels`, `table`, `chart`, `timeline`, `fishbone`, `decision`, `sequence`, `timing`, `geo`)
@@ -635,7 +635,8 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
   "routing": [
    "orthogonal",
    "straight",
-   "curved"
+   "curved",
+   "string"
   ],
   "curve": [
    "bezier",
@@ -762,7 +763,7 @@ View-level property keys allowed (DDN033 for anything else not starting `x_`): `
 
 Every value below was extracted programmatically from `standard/registry/catalogue.json` (version 0.3.0-draft.1) and `standard/registry/profiles/catalogue.json` (runtime 0.7.0). Use these EXACT keywords. Aliases and lowercase registry codes are also accepted by the resolver (`DDN.kindEntry`/`DDN.relationEntry` match keyword, lowercase code, or alias).
 
-### 4.1 Core object kinds (152)
+### 4.1 Core object kinds (153)
 
 `shape` is the registered default presentation (card = rectangular card; activity = rounded card; frame; note = folded annotation; sample = grid; port; cylinder etc.). Kinds may carry a documentation-only registry `defaults` property object: the renderer NEVER applies it implicitly; authoring tools merge it before explicit properties (explicit wins) and write it into source. Kinds with nonempty defaults: `cloud` {"location":"cloud"}; `cache` {"role":"cache"}; `snapshot` {"temporal":"snapshot"}; `archive` {"role":"archive"}; `history` {"temporal":"event_history"}. All other kinds default to `{}`.
 
@@ -920,6 +921,7 @@ Every value below was extracted programmatically from `standard/registry/catalog
 | change | Change / migration proposal | note | evidence | chg |
 | saved_view | Diagram / saved view | frame | evidence | vie |
 | extension | Extension / unknown-kind fallback | note | evidence | extn |
+| note.sticky | Sticky note | note.sticky | evidence | sticky |
 
 ### 4.2 Profile object kinds (222)
 

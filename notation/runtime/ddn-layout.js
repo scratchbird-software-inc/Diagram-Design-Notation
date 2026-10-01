@@ -279,7 +279,7 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
  const bounds={minX:minOf(nodes,n=>n.x,0),minY:minOf(nodes,n=>n.y,0),maxX:maxOf(nodes,n=>n.x+n.w,100),maxY:maxOf(nodes,n=>n.y+n.h,100)};
  const inflated=nodes.map(n=>box(n,clear));
  const reservations=[];for(const r of rels){const ep=assignments.get(r.id);for(const which of ['source','target']){const pt=ep[which],dir=ep[which+'_direction'],out=[round(pt[0]+dir[0]*(clear+port)),round(pt[1]+dir[1]*(clear+port))];reservations.push({id:r.id+':reserved:'+which,owner:r.id,points:[pt,out]});}}
- for(const r of rels)if((hints[r.id]?.routing||p.routing)==='straight'){const ep=assignments.get(r.id);reservations.push({id:r.id+':reserved:direct',owner:r.id,points:[ep.source,ep.target]});}
+ for(const r of rels)if(['straight','string'].includes(hints[r.id]?.routing||p.routing)){const ep=assignments.get(r.id);reservations.push({id:r.id+':reserved:direct',owner:r.id,points:[ep.source,ep.target]});}
  function costSegment(s,obstacles,priorSegs,permitCross=true){
   const ax=s.a[0],ay=s.a[1],bx=s.b[0],by=s.b[1];
   if(Math.abs(ax-bx)<EPS&&Math.abs(ay-by)<EPS)return 0;
@@ -377,7 +377,7 @@ function routingAttempt(nodes,rels,profiles,hints={},labelMeasure,ErrorClass=Err
    else if((hint.policy||p.route_policy)==='strict')throw new ErrorClass(!orthogonal?'DDN073':'DDN213','Unsafe hard waypoint route: '+r.id);
    else repaired=true;
   }
-  if(!points&&(hint.routing||p.routing)==='straight'){
+  if(!points&&['straight','string'].includes(hint.routing||p.routing)){
    const s={a:start,b:end};if(nodes.some(n=>n.id!==ownA.id&&n.id!==ownB.id&&segmentBox(s,box(n,clear))))throw new ErrorClass('DDN214','Straight connector intersects an unrelated object; choose orthogonal routing');
    if(routes.some(rt=>segs(rt.points).some(t=>collinear(s,t,lane-.1))))throw new ErrorClass('DDN214','Straight connectors share a track; choose distinct ports or orthogonal routing');points=[start,end];
   }

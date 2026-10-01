@@ -59,7 +59,7 @@ document.querySelector(&quot;#out&quot;).innerHTML = r.svg;</code></pre>
 <p><code>overrides</code> is the <code>Options</code> type from <code>public.d.ts</code> (theme, look, routing, mark, placement, spacing-era presentation switches). <code>'source'</code> means &quot;keep what the view declared&quot;.</p>
 <p><code>noMotion: true</code> strips SMIL animation for print/static targets. <code>isoFrom: { depths: { elementId: px } }</code> hands the host's previous committed depths to an <code>iso</code>/<code>depth</code> view so changed extrusions carry a declarative one-shot SMIL transition (250 ms); omit it (or pass equal depths) for a static render.</p>
 <p>Relation-rendering override keys:</p>
-<ul><li><code>relationRouting: Record&lt;string, 'orthogonal'|'straight'|'curved'|'rounded'&gt;</code></li></ul>
+<ul><li><code>relationRouting: Record&lt;string, 'orthogonal'|'straight'|'curved'|'rounded'|'string'&gt;</code></li></ul>
 <p>  — per-verb / per-relation routing overlay. Keys are verb ids or relation   ids of the current view; relation-id keys win over verb keys, and verb keys   win over the view-level <code>routing</code>. <code>rounded</code> maps to a curved route with   rounded bends, per relation. Unknown keys reject <code>LIVE022</code> (naming the   key), unsupported values reject <code>LIVE023</code>; data-bound/chen views reject it   with <code>LIVE021</code> and interaction (fixed-lane) views with <code>LIVE020</code>, exactly   like <code>routing</code>.</p>
 <ul><li><code>curveTension: number</code> (0–1) and <code>curveRadius: number</code> (px, 0–512) —</li></ul>
 <p>  view-level curve quantities; out-of-range values reject <code>LIVE003</code>. They are   accepted but inert when the effective routing is not curved.</p>

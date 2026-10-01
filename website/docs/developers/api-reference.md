@@ -93,7 +93,7 @@ transition (250 ms); omit it (or pass equal depths) for a static render.
 
 Relation-rendering override keys:
 
-- `relationRouting: Record<string, 'orthogonal'|'straight'|'curved'|'rounded'>`
+- `relationRouting: Record<string, 'orthogonal'|'straight'|'curved'|'rounded'|'string'>`
   — per-verb / per-relation routing overlay. Keys are verb ids or relation
   ids of the current view; relation-id keys win over verb keys, and verb keys
   win over the view-level `routing`. `rounded` maps to a curved route with

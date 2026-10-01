@@ -17,7 +17,7 @@ const FONT_STACKS = {
   handwriting: 'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'
 };
 const FONT_SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24];
-const ROUTING_VALUES = ['orthogonal', 'straight', 'curved', 'rounded'];
+const ROUTING_VALUES = ['orthogonal', 'straight', 'curved', 'rounded', 'string'];
 const CROSSING_VALUES = ['gap', 'bridge', 'square_bridge'];
 
 /* B1-046 (D2): publication.minimum_text defaults to 8pt ≈ 10.67px. */

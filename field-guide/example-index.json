@@ -1296,6 +1296,15 @@
       ]
     },
     {
+      "chapter": "whiteboard-sticky-notes",
+      "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
+      "view": "workshop",
+      "files": [
+        "website/examples/basics/109-whiteboard-workshop.ddn",
+        "website/examples/basics/shared.ddn"
+      ]
+    },
+    {
       "chapter": "whiteboard",
       "entry": "website/examples/use-cases/01-whiteboard.ddn",
       "view": "diagram",

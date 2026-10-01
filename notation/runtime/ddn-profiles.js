@@ -49,6 +49,10 @@ function registry(base){
  out.extension_contracts.x_epc=def({type:'object',properties:{operator:{type:'string'}},additionalProperties:false},['object']);
  out.extension_contracts.x_sets=def({type:'array',items:{type:'string',minLength:1},minItems:1,maxItems:3,uniqueItems:true},['object']);
  out.extension_contracts.x_return=def({type:'boolean'},['relation']);
+ /* B1-101 : sticky-note decorations. colour picks the paper colour from the
+  * fixed whiteboard palette; pin/tape toggle the push-pin and tape-strip
+  * decorations. Free-form body text stays in the plain description. */
+ out.extension_contracts.x_sticky=def({type:'object',properties:{colour:{enum:['yellow','pink','blue','green','orange','purple']},pin:{type:'boolean'},tape:{type:'boolean'}},additionalProperties:false},['object']);
  /* B1-056 : UML 2.5.1 sequence diagrams. x_message grows the UML
   * message sort, gate and time/duration annotations (seq stays optional at
   * contract level; uml.communication@1 enforces it via DDN-PJ111). x_fragment

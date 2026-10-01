@@ -44,11 +44,11 @@ machine-readable catalogue that the specification and the runtime share.
 
 | Measure | Count | Source |
 | --- | --- | --- |
-| Core object kinds | 152 | registry catalogue |
+| Core object kinds | 153 | registry catalogue |
 | Core relation verbs | 91 | registry catalogue |
 | Profile object kinds | 222 | profiles catalogue |
 | Profile relation verbs | 94 | profiles catalogue |
-| **Total element kinds** | **374** | computed |
+| **Total element kinds** | **375** | computed |
 | **Total relation verbs** | **185** | computed |
 | Shape silhouettes | 14 | profiles catalogue |
 | Installed profiles | 150 | profiles catalogue |
@@ -60,7 +60,7 @@ machine-readable catalogue that the specification and the runtime share.
 Three additive mechanisms keep the core small and everything else a
 versioned layer:
 
-- **Extension contracts** — **68** `x_*`-prefixed
+- **Extension contracts** — **69** `x_*`-prefixed
   contracts declared in the registry of extension contracts. Unknown
   extensions are carried (never silently dropped); known ones are
   schema-validated. Old processors pass new extensions through untouched.

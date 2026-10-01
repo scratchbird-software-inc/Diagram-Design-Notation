@@ -2,7 +2,7 @@
   "generated": "build-submission.mjs — every entry carries its source path",
   "registry": {
     "coreKinds": {
-      "value": 152,
+      "value": 153,
       "source": "standard/registry/catalogue.json (kinds)"
     },
     "coreRelations": {
@@ -18,7 +18,7 @@
       "source": "standard/registry/profiles/catalogue.json (relationships)"
     },
     "totalKinds": {
-      "value": 374,
+      "value": 375,
       "source": "computed: coreKinds + profileKinds"
     },
     "totalRelations": {
@@ -59,7 +59,7 @@
   },
   "extensions": {
     "contracts": {
-      "value": 68,
+      "value": 69,
       "source": "notation/runtime/ddn-profiles.js (extension_contracts … = def)"
     }
   },

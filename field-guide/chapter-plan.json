@@ -1158,5 +1158,12 @@
     "support": "native",
     "entry": "website/examples/quality/views.ddn",
     "view": "fishbone"
+  },
+  {
+    "id": "whiteboard-sticky-notes",
+    "status": "pilot",
+    "support": "native",
+    "entry": "website/examples/basics/109-whiteboard-workshop.ddn",
+    "view": "workshop"
   }
 ]

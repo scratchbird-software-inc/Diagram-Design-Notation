@@ -3227,6 +3227,27 @@
         "extn"
       ],
       "defaults": {}
+    },
+    {
+      "id": "kind.note.sticky",
+      "code": "STKY",
+      "name": "Sticky note",
+      "glyph": "note",
+      "family": "evidence",
+      "shape": "note.sticky",
+      "meaning": "Free-form workshop sticky note (collaborative whiteboard idiom): a coloured, optionally pinned note with body text only \u2014 no name/rows sections.",
+      "text_label": "Sticky note",
+      "icon_recipe": "sticky note + STKY discriminator",
+      "slot": "NW",
+      "colour": "#B45309",
+      "fill": "#FEF3C7",
+      "glyph_base": "note",
+      "token_required_when_ambiguous": false,
+      "keyword": "note.sticky",
+      "aliases": [
+        "sticky"
+      ],
+      "defaults": {}
     }
   ],
   "facets": [
@@ -15163,49 +15184,49 @@
   "sources": [
     [
       "S1",
-      "W3C — Use of Color",
+      "W3C \u2014 Use of Color",
       "https://www.w3.org/WAI/WCAG21/Understanding/use-of-color.html",
       "Use non-colour redundancy; no claim that these artifacts have been accessibility-certified."
     ],
     [
       "S2",
-      "PostgreSQL — Schemas",
+      "PostgreSQL \u2014 Schemas",
       "https://www.postgresql.org/docs/current/ddl-schemas.html",
       "Namespace examples include objects beyond tables; vendor-specific namespace rules still need profiles."
     ],
     [
       "S3",
-      "W3C — PROV-DM",
+      "W3C \u2014 PROV-DM",
       "https://www.w3.org/TR/prov-dm/",
       "Entities, activities, agents and provenance relationships; visual lineage direction is stated separately."
     ],
     [
       "S4",
-      "JSON Schema — Null",
+      "JSON Schema \u2014 Null",
       "https://json-schema.org/understanding-json-schema/reference/null",
       "Missing property and null value are distinct."
     ],
     [
       "S5",
-      "Microsoft — Temporal tables",
+      "Microsoft \u2014 Temporal tables",
       "https://learn.microsoft.com/en-us/sql/relational-databases/tables/temporal/overview?view=sql-server-ver17",
       "Historical query support is distinguished from recovery capability."
     ],
     [
       "S6",
-      "PostgreSQL — Continuous archiving / PITR",
+      "PostgreSQL \u2014 Continuous archiving / PITR",
       "https://www.postgresql.org/docs/current/continuous-archiving.html",
       "Recovery depends on backup and log coverage; PITR is not a historical-query time axis."
     ],
     [
       "S7",
-      "Apache Kafka — Design",
+      "Apache Kafka \u2014 Design",
       "https://kafka.apache.org/40/design/design/",
       "End-to-end effects in external systems require cooperation; a technology glyph is not a guarantee."
     ],
     [
       "S8",
-      "W3C — SVG document structure",
+      "W3C \u2014 SVG document structure",
       "https://www.w3.org/TR/SVG/struct.html",
       "SVG definitions, reuse and descriptive metadata inform the artifact implementation."
     ]
