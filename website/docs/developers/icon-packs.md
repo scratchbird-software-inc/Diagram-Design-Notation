@@ -17,14 +17,18 @@ tool-agnostic: any producer or consumer can interoperate.
 | `tabler-infra@1` | 50 | MIT | curated Tabler infrastructure selection |
 | `iconoir-infra@1` | 49 | MIT | curated Iconoir selection, complementing Tabler |
 | `generic-demo@1` | 4 | GPL-2.0-or-later | mechanism demo set |
+| `ddn-pack-general@1` | 121 | MIT | general-purpose end-user selection (people, documents, devices, network, security, business, process, places, transport, status, nature, messaging) |
 
 Vendor packs (Cisco/AWS/Azure/GCP) are excluded pending licensing diligence.
+`ddn-pack-general@1` binds nothing by default — pick icons explicitly in the
+designer (select a node → **Icon → Browse icons…**) or per node in source.
+Per-icon provenance: `standard/registry/icon-packs/ddn-pack-general.provenance.json`.
 
 ## Binding
 
 - **Default**: the first icon entry whose `kinds` lists the node's kind
   wins; pack registration order is precedence.
-- **Per node**: `x_icon: { library: "tabler-infra@1", icon: "server" }`.
+- **Per node**: `x_icon: { library: "tabler-infra@1", icon: "server" }` — works on **any** node kind, not just notation-profile kinds.
 
 Unknown references are `DDN-PJ206` errors, never silent fallbacks.
 
