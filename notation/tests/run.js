@@ -107,7 +107,11 @@ test('SVG font styles are scoped and inherited per nested root',()=>{const s=han
 test('gap crossing has physically interrupted path pieces',()=>{const x=byView['10-handdrawn-routing.ddn#gap'];assert.ok(x.svg.includes('data-route-pieces="2"'));});
 test('crossing gap is explicit absent geometry without mask support',()=>{const x=Render.visibleRoutePieces([[0,0],[200,0]],[{point:[100,0]}]);assert.deepEqual(x,[{points:[[0,0],[93,0]],distance:0},{points:[[107,0],[200,0]],distance:107}]);});
 test('crossing gap split handles reverse direction',()=>{const x=Render.visibleRoutePieces([[200,0],[0,0]],[{point:[100,0]}]);assert.deepEqual(x.map(v=>v.points),[[[200,0],[107,0]],[[93,0],[0,0]]]);});
-test('legend direction and missing markers get explicit symbol font fallback',()=>assert.ok(handRender().svg.includes('<tspan font-family="DejaVu Sans, Arial, sans-serif">→</tspan>')));
+test('legend direction and missing markers get explicit symbol font fallback',()=>{
+ /* Text-mode legends suppress by default (B1-100); an explicit chrome.legend:on
+  * keeps the legend and its direction-glyph fallback. */
+ const s=handIR('');s.view.profiles.chrome={...s.view.profiles.chrome,legend:'on'};
+ assert.ok(Render.render(s,reg,defs).svg.includes('<tspan font-family="DejaVu Sans, Arial, sans-serif">→</tspan>'));});
 const report={version:DDN.VERSION,runtime:process.version,tests:results.length,passed:results.filter(x=>x.status==='pass').length,failed:results.filter(x=>x.status==='fail').length,scope:'Executable reference subset; not full proposed conformance',results};
 fs.writeFileSync(path.join(__dirname,'core-report.json'),JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({tests:report.tests,passed:report.passed,failed:report.failed}));if(report.failed)process.exitCode=1;

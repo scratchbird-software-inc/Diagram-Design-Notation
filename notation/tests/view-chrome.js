@@ -32,12 +32,14 @@ view v "Chrome view" { data: [@d]; publication { size: content; fit: none; } ${c
 const build = (src, view = 'v') => DDN.build({ 'm.ddn': src }, 'm.ddn', view, reg).ir;
 const render = ir => Render.render(ir, reg, defs).svg;
 
-/* ---- graph view: defaults are byte-identical; auto ≡ on ≡ omitted ---- */
-test('graph: legend:auto and legend:on are byte-identical to the omitted default', () => {
+/* ---- graph view: defaults are byte-identical; auto ≡ omitted (text-mode
+ * legend suppressed per B1-100); chrome.legend:on is the explicit keep ---- */
+test('graph: legend:auto is byte-identical to the omitted default; legend:on keeps the key', () => {
   const base = render(build(GRAPH('')));
   assert.equal(render(build(GRAPH('legend: auto;'))), base);
-  assert.equal(render(build(GRAPH('legend: on;'))), base);
   assert.equal(render(build(GRAPH('chrome { legend: auto; title: on; footer: on; }'))), base);
+  assert.ok(!base.includes('RELATIONSHIP KEY'), 'text-mode legend must suppress by default (B1-100)');
+  assert.ok(render(build(GRAPH('chrome { legend: on; }'))).includes('RELATIONSHIP KEY'), 'explicit legend:on keeps the RELATIONSHIP KEY');
 });
 
 test('graph: legend:off suppresses the RELATIONSHIP KEY but keeps self-labelling route labels', () => {
@@ -47,9 +49,11 @@ test('graph: legend:off suppresses the RELATIONSHIP KEY but keeps self-labelling
   assert.ok(!svg.includes('Relationship details are in the adjacent legend.'), 'desc sentence dropped with the legend');
 });
 
-test('graph: legend:off reclaims the right-hand legend band', () => {
-  const base = Render.render(build(GRAPH('')), reg, defs), off = Render.render(build(GRAPH('legend: off;')), reg, defs);
-  assert.ok(off.scene.width < base.scene.width, 'legend band not reclaimed: ' + off.scene.width + ' vs ' + base.scene.width);
+test('graph: legend:off reclaims the right-hand legend band against an explicit legend:on', () => {
+  const on = Render.render(build(GRAPH('chrome { legend: on; }')), reg, defs), off = Render.render(build(GRAPH('legend: off;')), reg, defs);
+  assert.ok(off.scene.width < on.scene.width, 'legend band not reclaimed: ' + off.scene.width + ' vs ' + on.scene.width);
+  const auto = Render.render(build(GRAPH('')), reg, defs);
+  assert.equal(off.svg, auto.svg, 'text-mode default is already legend-free, so off ≡ auto (B1-100)');
 });
 
 test('graph: title:off drops the header block; footer:off drops the footer line', () => {
@@ -168,7 +172,9 @@ test('override channel: chrome overrides compose with authored source and stay d
   assert.equal(a.svg, b.svg, 'nondeterministic chrome override render');
   assert.ok(!a.svg.includes('RELATIONSHIP KEY') && !a.svg.includes('DDN / PROPOSED STANDARD') && !a.svg.includes('Same data'));
   const authored = A.createWorkspace(files).renderSync({ entry: 'm.ddn', view: 'v', overrides: { legend: 'source', title: 'source', footer: 'source' } });
-  assert.ok(authored.svg.includes('RELATIONSHIP KEY'), 'source must restore authored chrome');
+  assert.ok(!authored.svg.includes('RELATIONSHIP KEY'), 'source restores the authored default (text-mode legend suppressed, B1-100)');
+  const kept = A.createWorkspace(files).renderSync({ entry: 'm.ddn', view: 'v', overrides: { legend: 'on' } });
+  assert.ok(kept.svg.includes('RELATIONSHIP KEY'), 'explicit legend:on keeps the key');
 });
 
 test('tool: toolOverrides passes chrome options through; choices expose As authored/on/off', () => {

@@ -245,7 +245,12 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},
   titleOn=chrome.title!=='off'&&p.detail!=='shapes',
   footerOn=chrome.footer!=='off'&&p.detail!=='shapes';
- const legendPlacement=chrome.legend==='off'||p.detail==='shapes'?'none':p.legend.placement;
+ /* B1-100: the RELATIONSHIP KEY legend exists to decode numbered badges and
+  * tokens. When relation names already print in full inline (legend mode
+  * 'text'), the legend repeats what the diagram says — suppress it unless the
+  * author explicitly asked for it (chrome.legend: 'on'). Numbers/tokens keep
+  * their legend; an explicit legend: 'off' still wins everywhere. */
+ const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||(p.legend.mode==='text'&&chrome.legend!=='on')?'none':p.legend.placement;
  const headBlock=titleOn?110:20;
  const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
  const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
@@ -602,7 +607,7 @@ function renderInner(ir,registry,glyphDefs='',options={}){
  const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
  const fontClass='ddn-font-'+hash(font);
  const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
- let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections.${chrome.legend==='off'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+ let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt(pageW)}" height="${fmt(pageH)}" viewBox="0 0 ${fmt(pageW)} ${fmt(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc(p.publication.caption||'')} ${esc(p.style.look)} look; ${esc(p.style.theme)} presentation. Crossings are not connections.${legendPlacement==='none'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
  if(titleOn)out+=text(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
  out+=`<g id="drawing" transform="translate(${fmt(tx)} ${fmt(ty)}) scale(${fmt(scale)})">${diagram}</g>`;
  if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;

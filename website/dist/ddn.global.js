@@ -4042,8 +4042,11 @@
    }else if(shape==='triangleup'){
     out+=`<path d="M${f$2(x+w/2)} ${f$2(y)}L${f$2(x+w)} ${f$2(y+h)}H${f$2(x)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
    }else if(shape==='card'){
-    const c=12*s;
-    out+=`<path d="M${f$2(x+c)} ${f$2(y)}H${f$2(x+w)}V${f$2(y+h)}H${f$2(x)}V${f$2(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    /* B1-100: mind-map entities read as ideas, not records — rounded corners
+     * (profile-scoped; every other card silhouette keeps the chamfer). */
+    if(p.projection?.profile==='mindmap.basic@1')out+=`<rect x="${f$2(x)}" y="${f$2(y)}" width="${f$2(w)}" height="${f$2(h)}" rx="${f$2(10*s)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
+    else {const c=12*s;
+    out+=`<path d="M${f$2(x+c)} ${f$2(y)}H${f$2(x+w)}V${f$2(y+h)}H${f$2(x)}V${f$2(y+c)}Z" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;}
    }else if(shape==='xellipse'){
     out+=`<ellipse cx="${f$2(x+w/2)}" cy="${f$2(y+h/2)}" rx="${f$2(w/2)}" ry="${f$2(h/2)}" fill="${fill}" stroke="${ink}" stroke-width="1.8"/>`;
     out+=line(x+w*.28,y+h*.28,x+w*.72,y+h*.72,1.6)+line(x+w*.72,y+h*.28,x+w*.28,y+h*.72,1.6);
@@ -4425,6 +4428,13 @@
    const portOf=(n,ep)=>n.n?.ports?.find(f=>f.id===ep.member);
    for(const r of rels){const a=byId.get(r.from.element),b=byId.get(r.to.element),hint=hints[r.id]||{};
     let ss=hint.source_side||portOf(a,r.from)?.properties?.side,ts=hint.target_side||portOf(b,r.to)?.properties?.side;
+    /* B1-100: the mindmap algorithm owns its attachment rule — branches leave
+     * only the left or right side of an entity (root branches from both),
+     * never the top or bottom edge. When several relations share one side they
+     * fan from a tight cluster centred on that side's vertical centre, so the
+     * side presents one connection point. */
+    const mindBody=profiles.layout.algorithm==='mindmap'&&!r.from.member&&!r.to.member;
+    if(mindBody&&a!==b){const dx=b.x+b.w/2-a.x-a.w/2;ss=hint.source_side||(dx>=0?'east':'west');ts=hint.target_side||(dx>=0?'west':'east');}
     if(!ss||!ts){const dx=b.x+b.w/2-a.x-a.w/2,dy=b.y+b.h/2-a.y-a.h/2,vertical=['down','up'].includes(profiles.layout.direction)&&!r.from.member&&!r.to.member;
      if(a===b){ss=ss||'east';ts=ts||'east';}else if(vertical){ss=ss||(dy>=0?'south':'north');ts=ts||(dy>=0?'north':'south');}else {ss=ss||(dx>=0?'east':'west');ts=ts||(dx>=0?'west':'east');}}
     const item={r,source_side:ss,target_side:ts};result.set(r.id,item);
@@ -4454,7 +4464,12 @@
      });let i=0;ordered=entries.map(e=>e.fixed?e:free[i++]);
     }
     ordered.forEach((o,index)=>{const{item,which,n,ep,side,row,frac}=o;let x=n.x+n.w/2,y=n.y+n.h/2;
-     if(side==='east'||side==='west'){x=side==='east'?n.x+n.w:n.x;y=n.y+(row?row.top+(index+1)*row.h/(entries.length+1):frac!==undefined?frac*n.h:(index+1)*n.h/(entries.length+1));}
+     /* B1-100: mind-map side anchors cluster on the side's vertical centre —
+      * one branch exactly at the centre, a fan clustered ± a few pixels around
+      * it (within the stroke's visual width, so the side reads as one point)
+      * rather than spread down the whole edge. */
+     const mindCentre=profiles.layout.algorithm==='mindmap'&&!row&&frac===undefined;
+     if(side==='east'||side==='west'){x=side==='east'?n.x+n.w:n.x;y=n.y+(row?row.top+(index+1)*row.h/(entries.length+1):frac!==undefined?frac*n.h:mindCentre?n.h/2+(index-(entries.length-1)/2)*Math.max(12,q$4(profiles.layout.edge_clearance,12)):(index+1)*n.h/(entries.length+1));}
      else {y=side==='south'?n.y+n.h:n.y;x=n.x+(frac!==undefined?frac*n.w:(index+1)*n.w/(entries.length+1));}
      item[which]=api$7.anchor(n,side,[round(x),round(y)]);item[which+'_direction']=directions[side];
     });
@@ -4730,8 +4745,17 @@
    function label(candidate,index){const size=routes[index].label,old=[size.x,size.y],len=candidate.arc.length,samples=[.5,.4,.6,.3,.7,.2,.8,.1,.9,...Array.from({length:80},(_,i)=>(i+1)/81)],positions=[];
    if(routeSegments(candidate).some(s=>distancePointSegment(old,s)<.15))positions.push(old);
    positions.push(...samples.map(t=>curvePointAt(candidate,len*t).point));
-   for(const pt of positions){const[x,y]=pt,rect={x:x-size.w/2,y:y-size.h/2,w:size.w,h:size.h};if(Math.min(Math.hypot(x-candidate.points[0][0],y-candidate.points[0][1]),Math.hypot(x-candidate.points.at(-1)[0],y-candidate.points.at(-1)[1]))<Math.max(size.w,size.h)/2+20)continue;
-   if([...nodes,...extraObstacles].some(n=>overlap(rect,n,labelMargin)))continue;
+   for(const pt of positions){const[x,y]=pt,rect={x:x-size.w/2,y:y-size.h/2,w:size.w,h:size.h};/* B1-100: mind-map branches are short by nature (fan-out from one anchor);
+    * the long-endpoint label clearance makes every position illegal. A branch
+    * label near its anchor still reads perfectly in a mind map. */
+   const endClear=p.algorithm==='mindmap'?Math.max(size.h,10)/2+6:Math.max(size.w,size.h)/2+20;
+   if(Math.min(Math.hypot(x-candidate.points[0][0],y-candidate.points[0][1]),Math.hypot(x-candidate.points.at(-1)[0],y-candidate.points.at(-1)[1]))<endClear){continue;}
+   /* B1-100: a mind-map branch label may sit on the edge of its own two
+    * entities — the standard mind-map reading (the corridor between fan-out
+    * neighbours is narrower than any label). Unrelated nodes still reject. */
+   const ownNode=n=>p.algorithm==='mindmap'&&(n.id===routes[index].r.from.element||n.id===routes[index].r.to.element);
+   const nodeHit=[...nodes,...extraObstacles].find(n=>!ownNode(n)&&overlap(rect,n,labelMargin));if(nodeHit){continue;}
+
    if(routes.some((r,j)=>j!==index&&(overlap(rect,r.label.bounds,labelMargin)||routeSegments(r).some(s=>segmentBox(s,box(rect,labelRouteMargin))))))continue;
    if(previewCurves.some((pts,j)=>j>index&&pts&&segs(pts).some(s=>segmentBox(s,box(rect,labelRouteMargin)))))continue;
    return {...size,x:round(x),y:round(y),bounds:{...rect,x:round(rect.x),y:round(rect.y)},explicit:false};}return null;}
@@ -4739,7 +4763,7 @@
    if(mode==='bezier'&&!hints[r.id]?.via&&r.r.from.element!==r.r.to.element){const a=r.points[0],b=r.points.at(-1),sd=dirs[r.source_side],td=dirs[r.target_side],major=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1])),handle=Math.max(24,major*tension);
     for(const t of [1,.75,.5])candidates.push({strategy:'direct-bezier',appliedTension:tension*t,commands:[{kind:'cubic',from:a,c1:[a[0]+sd[0]*handle*t,a[1]+sd[1]*handle*t],c2:[b[0]+td[0]*handle*t,b[1]+td[1]*handle*t],to:b}]});}
    for(const rad of [mode==='bezier'?Math.max(radius,70):radius,radius,16,8,4,2,1].filter((x,i,a)=>x>0&&a.indexOf(x)===i))candidates.push({strategy:'corridor-spline',commands:roundedCommands(r.points,rad),radius:rad});
-   let selected=null;for(const candidate of candidates){const arc=flattenCurve(candidate.commands),test={...r,...candidate,arc,points:arc.points};if(!safe(test,i))continue;const nextLabel=label(test,i);if(nextLabel){selected={...test,label:nextLabel,hint:{...r.hint,callout:[nextLabel.x,nextLabel.y]}};break;}}
+   let selected=null;for(const candidate of candidates){const arc=flattenCurve(candidate.commands),test={...r,...candidate,arc,points:arc.points};const safeOk=safe(test,i);if(!safeOk)continue;const nextLabel=label(test,i);if(nextLabel){selected={...test,label:nextLabel,hint:{...r.hint,callout:[nextLabel.x,nextLabel.y]}};break;}}
    if(!selected)throw new ErrorClass('DDN220','No checked curved route/label fits '+r.id+'; enlarge spacing or split the view. No silent angular fallback.');
    if(!selected.commands.some(s=>s.kind==='cubic'))selected.strategy='aligned-curve';selected.curveFamily=mode;routes[i]=selected;
    if(selected.strategy==='corridor-spline')result.diagnostics.push({code:'DDN-CW01',severity:'info',message:'Cubic corridor spline used to retain clearance or routing hints for '+r.id});
@@ -5175,7 +5199,12 @@
    const chrome=p.chrome||{legend:'auto',title:'on',footer:'on'},
     titleOn=chrome.title!=='off'&&p.detail!=='shapes',
     footerOn=chrome.footer!=='off'&&p.detail!=='shapes';
-   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'?'none':p.legend.placement;
+   /* B1-100: the RELATIONSHIP KEY legend exists to decode numbered badges and
+    * tokens. When relation names already print in full inline (legend mode
+    * 'text'), the legend repeats what the diagram says — suppress it unless the
+    * author explicitly asked for it (chrome.legend: 'on'). Numbers/tokens keep
+    * their legend; an explicit legend: 'off' still wins everywhere. */
+   const legendPlacement=chrome.legend==='off'||p.detail==='shapes'||(p.legend.mode==='text'&&chrome.legend!=='on')?'none':p.legend.placement;
    const headBlock=titleOn?110:20;
    const elems=ir.view.selected.map(id=>ir.elements.find(n=>n.id===id));
    const rels=ir.view.relations.map(id=>ir.relations.find(r=>r.id===id));
@@ -5532,7 +5561,7 @@
    const font={sans:'DejaVu Sans, Arial, sans-serif',serif:'DejaVu Serif, Georgia, serif',mono:'DejaVu Sans Mono, monospace',handwriting:'Comic Neue, Segoe Print, Bradley Hand, Comic Sans MS, cursive'}[p.style.font]||'DejaVu Sans, Arial, sans-serif';
    const fontClass='ddn-font-'+hash(font);
    const viewClass=cls('ddn-svg','ddn-view-'+slug(p.projection?.kind||'graph'),p.projection?.profile&&'ddn-profile-'+slug(p.projection.profile),fontClass);
-   let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt$1(pageW)}" height="${fmt$1(pageH)}" viewBox="0 0 ${fmt$1(pageW)} ${fmt$1(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$3(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$3(p.publication.caption||'')} ${esc$3(p.style.look)} look; ${esc$3(p.style.theme)} presentation. Crossings are not connections.${chrome.legend==='off'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
+   let out=`<?xml version="1.0" encoding="UTF-8"?>\n<svg class="${viewClass}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${fmt$1(pageW)}" height="${fmt$1(pageH)}" viewBox="0 0 ${fmt$1(pageW)} ${fmt$1(pageH)}" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ddn-title ddn-desc"><title id="ddn-title">${esc$3(ir.view.name)}</title><desc id="ddn-desc">DDN 0.5 proposed standard example. ${esc$3(p.publication.caption||'')} ${esc$3(p.style.look)} look; ${esc$3(p.style.theme)} presentation. Crossings are not connections.${legendPlacement==='none'?'':' Relationship details are in the adjacent legend.'}</desc><defs>${glyphDefs}</defs><style>.${fontClass}{font-family:${font}} .ddn-node:focus{outline:none}</style><rect width="100%" height="100%" fill="${t.background}"/>`;
    if(titleOn)out+=text$1(margin,margin+5,'DDN / PROPOSED STANDARD / 0.5',11,t.muted,650)+multilines(margin,margin+34,titleLines,24,t.ink,28,650)+multilines(margin,margin+34+titleLines.length*28,captionLines,13,t.muted,18)+text$1(pageW-margin,margin+5,p.style.look+' · '+p.style.theme,11,t.muted,500,'text-anchor="end"');
    out+=`<g id="drawing" transform="translate(${fmt$1(tx)} ${fmt$1(ty)}) scale(${fmt$1(scale)})">${diagram}</g>`;
    if(legendPlacement!=='none'&&legendEntries.length){let lx=legendPlacement==='right'?pageW-margin-legendW:margin,ly=legendPlacement==='right'?headBlock-15+extraHeader:pageH-margin-legendHeight;out+=line(lx-12,ly-12,lx-12,legendPlacement==='right'?pageH-margin-40:ly+legendHeight,t.rule,1);out+=text$1(lx,ly,'RELATIONSHIP KEY',11,t.muted,700);ly+=33;
