@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Lineage &amp; derivation relations — DDN</title>
+<meta name="description" content="Every lineage relation in DDN (11): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Lineage &amp; derivation relations</h1>
+<p>Lineage relations say <em>where this came from</em>: derives from, aggregates, joins, filters, masks. They answer the auditor’s favourite question — “says who?” — by tracing a number back to its sources. Lineage reads backwards along the arrows: start at the report, walk to the raw data.</p><p>This page lists every <strong>Lineage</strong> relation in DDN — <strong>11</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Lineage relations end in a <strong>filled arrow</strong> pointing the way derivation flows (source → derived). No cardinality marks. Labels name the transformation when it isn’t obvious (“daily rollup”, “PII masked”).</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-derives">derives into · <code>derives</code></a>
+<a href="#r-generates">generates · <code>generates</code></a>
+<a href="#r-consumed">used as input by · <code>consumed</code></a>
+<a href="#r-aggregates">aggregates into · <code>aggregates</code></a>
+<a href="#r-joins">contributes to join result · <code>joins</code></a>
+<a href="#r-filters">filters into · <code>filters</code></a>
+<a href="#r-masks">masks into · <code>masks</code></a>
+<a href="#r-train">trains · <code>train</code></a>
+<a href="#r-feature">computes feature into · <code>feature</code></a>
+<a href="#r-report">contributes to report · <code>report</code></a>
+<a href="#r-family-parent_of">parent of · <code>family.parent_of</code></a></div>
+<section class="ref-entry" id="r-derives">
+<h3>derives into (<code>derives</code>)</h3>
+<img class="ref-plate" alt="What the “derives into” line looks like" src="assets/relations/derives.svg">
+<p><strong>What it means.</strong> Upstream data to derived data; opposite to the spelling of prov:wasDerivedFrom. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// derives into (derives) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;derives into&quot; @from_side -&gt; @to_side {
+        kind: derives;
+    }
+}
+
+view picture &quot;derives into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-generates">
+<h3>generates (<code>generates</code>)</h3>
+<img class="ref-plate" alt="What the “generates” line looks like" src="assets/relations/generates.svg">
+<p><strong>What it means.</strong> Activity or execution to produced entity/data artifact. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// generates (generates) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;generates&quot; @from_side -&gt; @to_side {
+        kind: generates;
+    }
+}
+
+view picture &quot;generates&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-consumed">
+<h3>used as input by (<code>consumed</code>)</h3>
+<img class="ref-plate" alt="What the “used as input by” line looks like" src="assets/relations/consumed.svg">
+<p><strong>What it means.</strong> Data entity to activity or execution that used it. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// used as input by (consumed) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;used as input by&quot; @from_side -&gt; @to_side {
+        kind: consumed;
+    }
+}
+
+view picture &quot;used as input by&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-aggregates">
+<h3>aggregates into (<code>aggregates</code>)</h3>
+<img class="ref-plate" alt="What the “aggregates into” line looks like" src="assets/relations/aggregates.svg">
+<p><strong>What it means.</strong> Fine-grained inputs to an explicitly defined aggregate output. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// aggregates into (aggregates) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;aggregates into&quot; @from_side -&gt; @to_side {
+        kind: aggregates;
+    }
+}
+
+view picture &quot;aggregates into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-joins">
+<h3>contributes to join result (<code>joins</code>)</h3>
+<img class="ref-plate" alt="What the “contributes to join result” line looks like" src="assets/relations/joins.svg">
+<p><strong>What it means.</strong> Each upstream source to the join result or join activity. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// contributes to join result (joins) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;contributes to join result&quot; @from_side -&gt; @to_side {
+        kind: joins;
+    }
+}
+
+view picture &quot;contributes to join result&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-filters">
+<h3>filters into (<code>filters</code>)</h3>
+<img class="ref-plate" alt="What the “filters into” line looks like" src="assets/relations/filters.svg">
+<p><strong>What it means.</strong> Input to a restricted output with predicate metadata. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// filters into (filters) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;filters into&quot; @from_side -&gt; @to_side {
+        kind: filters;
+    }
+}
+
+view picture &quot;filters into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-masks">
+<h3>masks into (<code>masks</code>)</h3>
+<img class="ref-plate" alt="What the “masks into” line looks like" src="assets/relations/masks.svg">
+<p><strong>What it means.</strong> Unmasked input to a transformed output under a named policy. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// masks into (masks) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;masks into&quot; @from_side -&gt; @to_side {
+        kind: masks;
+    }
+}
+
+view picture &quot;masks into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-train">
+<h3>trains (<code>train</code>)</h3>
+<img class="ref-plate" alt="What the “trains” line looks like" src="assets/relations/train.svg">
+<p><strong>What it means.</strong> Training data or training activity to the resulting model artifact. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// trains (train) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;trains&quot; @from_side -&gt; @to_side {
+        kind: train;
+    }
+}
+
+view picture &quot;trains&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-feature">
+<h3>computes feature into (<code>feature</code>)</h3>
+<img class="ref-plate" alt="What the “computes feature into” line looks like" src="assets/relations/feature.svg">
+<p><strong>What it means.</strong> Source representation to derived feature representation. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// computes feature into (feature) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;computes feature into&quot; @from_side -&gt; @to_side {
+        kind: feature;
+    }
+}
+
+view picture &quot;computes feature into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-report">
+<h3>contributes to report (<code>report</code>)</h3>
+<img class="ref-plate" alt="What the “contributes to report” line looks like" src="assets/relations/report.svg">
+<p><strong>What it means.</strong> Source dataset or metric to a reporting output. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// contributes to report (report) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;contributes to report&quot; @from_side -&gt; @to_side {
+        kind: report;
+    }
+}
+
+view picture &quot;contributes to report&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-family-parent_of">
+<h3>parent of (<code>family.parent_of</code>)</h3>
+<img class="ref-plate" alt="What the “parent of” line looks like" src="assets/relations/family-parent_of.svg">
+<p><strong>What it means.</strong> parent of. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// parent of (family.parent_of) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;family.person&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;family.person&quot;; }
+    relation shows &quot;parent of&quot; @from_side -&gt; @to_side {
+        kind: &quot;family.parent_of&quot;;
+    }
+}
+
+view picture &quot;parent of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Lineage">Ref-Relations-Lineage</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -6,6 +6,29 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Website reference section — every element kind and relation, registry
+  generated.** The 0.5-era per-kind/per-relation reference pages return,
+  this time on the website: `reference/index.html` (landing) + 12 per-family
+  kind pages (all 375 kinds) + 8 per-family relation pages (all 185 verbs) +
+  a relations overview — 22 pages total, plus 560 validated example plates
+  (one rendered SVG per kind and relation; the build fails loudly if any
+  example stops rendering, the same 100%-coverage guarantee the wiki
+  coverage gate enforces). Data, prose and example builders are the new
+  shared module `tools/reference-data.mjs`, consumed by BOTH the site
+  generator and the wiki reference generator (`gen-reference.mjs`) — one
+  source of truth; the wiki regen from it is byte-identical and the coverage
+  gate passes. Structure choice: anchored per-family pages over ~560
+  per-kind pages (no information gain for 25× the pages); total site build
+  stays at ~3.3 s including all plate renders. Each entry shows the symbol,
+  meaning, accepted properties, profile/gallery cross-links and a
+  paste-ready example; pages cross-link their wiki counterparts. Linked from
+  the site-wide nav (Reference), a home-page card, and the download page;
+  wiki sidebar Elsewhere list + the two Ref landing pages link back (counts
+  from facts.json throughout). Freshness: the generated section is part of
+  `build:site`, so the existing byte-compare freshness gate and the full
+  internal-link crawl in `tests/website-links.js` cover it — no new drift
+  channel.
+
 - **Field-guide live rendering + art-pack page context**. Investigation of the
   owner-reported live-guide failures found two real defects underneath the
   deployment lag: (1) the `DDNLive` facade (`notation/studio/src/api.js`)

@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Dependency &amp; reference relations — DDN</title>
+<meta name="description" content="Every dependency relation in DDN (39): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Dependency &amp; reference relations</h1>
+<p>Dependency relations say <em>needs</em>: this report needs that dataset, this service calls that API, this field uses that domain. A dependency does <strong>not</strong> say data moves — that’s what flow relations are for. Dependency lines are dashed with an open arrow, so a reader can tell “talks to” from “sends to” at a glance.</p><p>This page lists every <strong>Dependency</strong> relation in DDN — <strong>39</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Dependency relations end in an <strong>open arrow</strong> — direction of need, read the verb. No cardinality marks. Labels name the nature of the need (“reads schema”, “onboarding queries”).</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-depends">depends on · <code>depends</code></a>
+<a href="#r-calls">calls definition · <code>calls</code></a>
+<a href="#r-queries">queries interface of · <code>queries</code></a>
+<a href="#r-refresh">refresh depends on · <code>refresh</code></a>
+<a href="#r-lookup">looks up using · <code>lookup</code></a>
+<a href="#r-uses">uses resource · <code>uses</code></a>
+<a href="#r-aliases">aliases · <code>aliases</code></a>
+<a href="#r-enforces">enforces constraint on · <code>enforces</code></a>
+<a href="#r-uml-realization">Realization · <code>uml.realization</code></a>
+<a href="#r-uml-deploy">«deploy» · <code>uml.deploy</code></a>
+<a href="#r-uml-manifest">«manifest» · <code>uml.manifest</code></a>
+<a href="#r-uml-delegation">Delegation connector · <code>uml.delegation</code></a>
+<a href="#r-uml-import">«import» · <code>uml.import</code></a>
+<a href="#r-uml-access">«access» · <code>uml.access</code></a>
+<a href="#r-uml-merge">«merge» · <code>uml.merge</code></a>
+<a href="#r-uml-application">«apply» · <code>uml.application</code></a>
+<a href="#r-uml-dependency">Dependency · <code>uml.dependency</code></a>
+<a href="#r-uml-include">«include» · <code>uml.include</code></a>
+<a href="#r-uml-extend">«extend» · <code>uml.extend</code></a>
+<a href="#r-req-satisfies">Satisfies · <code>req.satisfies</code></a>
+<a href="#r-req-verifies">Verifies · <code>req.verifies</code></a>
+<a href="#r-req-derives">Derived from · <code>req.derives</code></a>
+<a href="#r-cmmn-dependency">Dependency · <code>cmmn.dependency</code></a>
+<a href="#r-c4-rel">Uses / interacts with · <code>c4.rel</code></a>
+<a href="#r-bpmn-association">Data association · <code>bpmn.association</code></a>
+<a href="#r-sysml-derive">«deriveReqt» · <code>sysml.derive</code></a>
+<a href="#r-sysml-satisfy">«satisfy» · <code>sysml.satisfy</code></a>
+<a href="#r-sysml-verify">«verify» · <code>sysml.verify</code></a>
+<a href="#r-sysml-refine">«refine» · <code>sysml.refine</code></a>
+<a href="#r-sysml-trace">«trace» · <code>sysml.trace</code></a>
+<a href="#r-sysml-copy">«copy» · <code>sysml.copy</code></a>
+<a href="#r-sysml-master">«master» · <code>sysml.master</code></a>
+<a href="#r-sysml-allocate">«allocate» · <code>sysml.allocate</code></a>
+<a href="#r-uaf-capabilitydependency">«capabilityDependency» · <code>uaf.capabilitydependency</code></a>
+<a href="#r-uaf-satisfiescapability">«satisfiesCapability» · <code>uaf.satisfiescapability</code></a>
+<a href="#r-uaf-complieswith">«compliesWith» · <code>uaf.complieswith</code></a>
+<a href="#r-uaf-mitigates">«mitigates» · <code>uaf.mitigates</code></a>
+<a href="#r-uaf-milestonedependency">«milestoneDependency» · <code>uaf.milestonedependency</code></a>
+<a href="#r-uaf-supports">«supports» · <code>uaf.supports</code></a></div>
+<section class="ref-entry" id="r-depends">
+<h3>depends on (<code>depends</code>)</h3>
+<img class="ref-plate" alt="What the “depends on” line looks like" src="assets/relations/depends.svg">
+<p><strong>What it means.</strong> Dependent definition to the definition it requires. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// depends on (depends) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;depends on&quot; @from_side -&gt; @to_side {
+        kind: depends;
+    }
+}
+
+view picture &quot;depends on&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-calls">
+<h3>calls definition (<code>calls</code>)</h3>
+<img class="ref-plate" alt="What the “calls definition” line looks like" src="assets/relations/calls.svg">
+<p><strong>What it means.</strong> Calling definition to callable definition; not a runtime data-flow assertion. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// calls definition (calls) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;calls definition&quot; @from_side -&gt; @to_side {
+        kind: calls;
+    }
+}
+
+view picture &quot;calls definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-queries">
+<h3>queries interface of (<code>queries</code>)</h3>
+<img class="ref-plate" alt="What the “queries interface of” line looks like" src="assets/relations/queries.svg">
+<p><strong>What it means.</strong> Consumer definition to queried interface or dataset. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// queries interface of (queries) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;queries interface of&quot; @from_side -&gt; @to_side {
+        kind: queries;
+    }
+}
+
+view picture &quot;queries interface of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-refresh">
+<h3>refresh depends on (<code>refresh</code>)</h3>
+<img class="ref-plate" alt="What the “refresh depends on” line looks like" src="assets/relations/refresh.svg">
+<p><strong>What it means.</strong> Persisted query result to a required source or refresh definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// refresh depends on (refresh) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;refresh depends on&quot; @from_side -&gt; @to_side {
+        kind: refresh;
+    }
+}
+
+view picture &quot;refresh depends on&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-lookup">
+<h3>looks up using (<code>lookup</code>)</h3>
+<img class="ref-plate" alt="What the “looks up using” line looks like" src="assets/relations/lookup.svg">
+<p><strong>What it means.</strong> Definition to lookup/reference representation it uses. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// looks up using (lookup) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;looks up using&quot; @from_side -&gt; @to_side {
+        kind: lookup;
+    }
+}
+
+view picture &quot;looks up using&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uses">
+<h3>uses resource (<code>uses</code>)</h3>
+<img class="ref-plate" alt="What the “uses resource” line looks like" src="assets/relations/uses.svg">
+<p><strong>What it means.</strong> Software or activity definition to required resource. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// uses resource (uses) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;uses resource&quot; @from_side -&gt; @to_side {
+        kind: uses;
+    }
+}
+
+view picture &quot;uses resource&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-aliases">
+<h3>aliases (<code>aliases</code>)</h3>
+<img class="ref-plate" alt="What the “aliases” line looks like" src="assets/relations/aliases.svg">
+<p><strong>What it means.</strong> Alias to its named referent. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// aliases (aliases) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;aliases&quot; @from_side -&gt; @to_side {
+        kind: aliases;
+    }
+}
+
+view picture &quot;aliases&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-enforces">
+<h3>enforces constraint on (<code>enforces</code>)</h3>
+<img class="ref-plate" alt="What the “enforces constraint on” line looks like" src="assets/relations/enforces.svg">
+<p><strong>What it means.</strong> Enforcement object to the structure whose constraint it implements. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// enforces constraint on (enforces) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;enforces constraint on&quot; @from_side -&gt; @to_side {
+        kind: enforces;
+    }
+}
+
+view picture &quot;enforces constraint on&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-realization">
+<h3>Realization (<code>uml.realization</code>)</h3>
+<img class="ref-plate" alt="What the “Realization” line looks like" src="assets/relations/uml-realization.svg">
+<p><strong>What it means.</strong> Realization. It ends with a triangle mark — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Realization (uml.realization) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.interface&quot;; }
+    relation shows &quot;Realization&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.realization&quot;;
+    }
+}
+
+view picture &quot;Realization&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-deploy">
+<h3>«deploy» (<code>uml.deploy</code>)</h3>
+<img class="ref-plate" alt="What the “«deploy»” line looks like" src="assets/relations/uml-deploy.svg">
+<p><strong>What it means.</strong> Deploys. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «deploy» (uml.deploy) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.artifact&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.node&quot;; }
+    relation shows &quot;«deploy»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.deploy&quot;;
+    }
+}
+
+view picture &quot;«deploy»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-manifest">
+<h3>«manifest» (<code>uml.manifest</code>)</h3>
+<img class="ref-plate" alt="What the “«manifest»” line looks like" src="assets/relations/uml-manifest.svg">
+<p><strong>What it means.</strong> Manifests. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «manifest» (uml.manifest) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.artifact&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.artifact&quot;; }
+    relation shows &quot;«manifest»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.manifest&quot;;
+    }
+}
+
+view picture &quot;«manifest»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-delegation">
+<h3>Delegation connector (<code>uml.delegation</code>)</h3>
+<img class="ref-plate" alt="What the “Delegation connector” line looks like" src="assets/relations/uml-delegation.svg">
+<p><strong>What it means.</strong> Delegates. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Delegation connector (uml.delegation) from a boundary port to an internal part.
+data demo {
+    object box &quot;Box&quot; { kind: &quot;uml.component&quot;;
+        ports { port api { direction: in; } }
+        fields { field engine { x_part: { classifier: &quot;Engine&quot; }; } }
+    }
+    relation shows &quot;Delegation connector&quot; @box.api -&gt; @box.engine {
+        kind: &quot;uml.delegation&quot;;
+    }
+}
+
+view picture &quot;Delegation connector&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-import">
+<h3>«import» (<code>uml.import</code>)</h3>
+<img class="ref-plate" alt="What the “«import»” line looks like" src="assets/relations/uml-import.svg">
+<p><strong>What it means.</strong> Imports. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «import» (uml.import) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.package&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.package&quot;; }
+    relation shows &quot;«import»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.import&quot;;
+    }
+}
+
+view picture &quot;«import»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-access">
+<h3>«access» (<code>uml.access</code>)</h3>
+<img class="ref-plate" alt="What the “«access»” line looks like" src="assets/relations/uml-access.svg">
+<p><strong>What it means.</strong> Accesses. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «access» (uml.access) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.package&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.package&quot;; }
+    relation shows &quot;«access»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.access&quot;;
+    }
+}
+
+view picture &quot;«access»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-merge">
+<h3>«merge» (<code>uml.merge</code>)</h3>
+<img class="ref-plate" alt="What the “«merge»” line looks like" src="assets/relations/uml-merge.svg">
+<p><strong>What it means.</strong> Merges. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «merge» (uml.merge) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.package&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.package&quot;; }
+    relation shows &quot;«merge»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.merge&quot;;
+    }
+}
+
+view picture &quot;«merge»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-application">
+<h3>«apply» (<code>uml.application</code>)</h3>
+<img class="ref-plate" alt="What the “«apply»” line looks like" src="assets/relations/uml-application.svg">
+<p><strong>What it means.</strong> Applies. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «apply» (uml.application) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.package&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.package&quot;; }
+    relation shows &quot;«apply»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.application&quot;;
+    }
+}
+
+view picture &quot;«apply»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-dependency">
+<h3>Dependency (<code>uml.dependency</code>)</h3>
+<img class="ref-plate" alt="What the “Dependency” line looks like" src="assets/relations/uml-dependency.svg">
+<p><strong>What it means.</strong> Dependency. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Dependency (uml.dependency) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.class&quot;; }
+    relation shows &quot;Dependency&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.dependency&quot;;
+    }
+}
+
+view picture &quot;Dependency&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-include">
+<h3>«include» (<code>uml.include</code>)</h3>
+<img class="ref-plate" alt="What the “«include»” line looks like" src="assets/relations/uml-include.svg">
+<p><strong>What it means.</strong> «include». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «include» (uml.include) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.usecase&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.usecase&quot;; }
+    relation shows &quot;«include»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.include&quot;;
+    }
+}
+
+view picture &quot;«include»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-extend">
+<h3>«extend» (<code>uml.extend</code>)</h3>
+<img class="ref-plate" alt="What the “«extend»” line looks like" src="assets/relations/uml-extend.svg">
+<p><strong>What it means.</strong> «extend». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «extend» (uml.extend) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.usecase&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.usecase&quot;; }
+    relation shows &quot;«extend»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.extend&quot;;
+    }
+}
+
+view picture &quot;«extend»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-req-satisfies">
+<h3>Satisfies (<code>req.satisfies</code>)</h3>
+<img class="ref-plate" alt="What the “Satisfies” line looks like" src="assets/relations/req-satisfies.svg">
+<p><strong>What it means.</strong> Satisfies. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Satisfies (req.satisfies) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;req.implementation&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;;
+        x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The system shall greet the user by name.&quot; };
+    }
+    relation shows &quot;Satisfies&quot; @from_side -&gt; @to_side {
+        kind: &quot;req.satisfies&quot;;
+    }
+}
+
+view picture &quot;Satisfies&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-req-verifies">
+<h3>Verifies (<code>req.verifies</code>)</h3>
+<img class="ref-plate" alt="What the “Verifies” line looks like" src="assets/relations/req-verifies.svg">
+<p><strong>What it means.</strong> Verifies. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Verifies (req.verifies) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;req.test&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;;
+        x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The system shall greet the user by name.&quot; };
+    }
+    relation shows &quot;Verifies&quot; @from_side -&gt; @to_side {
+        kind: &quot;req.verifies&quot;;
+    }
+}
+
+view picture &quot;Verifies&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-req-derives">
+<h3>Derived from (<code>req.derives</code>)</h3>
+<img class="ref-plate" alt="What the “Derived from” line looks like" src="assets/relations/req-derives.svg">
+<p><strong>What it means.</strong> Derived from. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Derived from (req.derives) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;req.requirement&quot;;
+        x_diagram: { code: &quot;REQ-1&quot;; text: &quot;The system shall greet the user by name.&quot; };
+    }
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;;
+        x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The system shall greet the user by name.&quot; };
+    }
+    relation shows &quot;Derived from&quot; @from_side -&gt; @to_side {
+        kind: &quot;req.derives&quot;;
+    }
+}
+
+view picture &quot;Derived from&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-cmmn-dependency">
+<h3>Dependency (<code>cmmn.dependency</code>)</h3>
+<img class="ref-plate" alt="What the “Dependency” line looks like" src="assets/relations/cmmn-dependency.svg">
+<p><strong>What it means.</strong> Depends. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Dependency (cmmn.dependency) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;cmmn.task&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;cmmn.task&quot;; }
+    relation shows &quot;Dependency&quot; @from_side -&gt; @to_side {
+        kind: &quot;cmmn.dependency&quot;;
+    }
+}
+
+view picture &quot;Dependency&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-c4-rel">
+<h3>Uses / interacts with (<code>c4.rel</code>)</h3>
+<img class="ref-plate" alt="What the “Uses / interacts with” line looks like" src="assets/relations/c4-rel.svg">
+<p><strong>What it means.</strong> Uses / interacts with. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Uses / interacts with (c4.rel) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;c4.person&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;c4.person&quot;; }
+    relation shows &quot;Uses / interacts with&quot; @from_side -&gt; @to_side {
+        kind: &quot;c4.rel&quot;;
+    }
+}
+
+view picture &quot;Uses / interacts with&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-bpmn-association">
+<h3>Data association (<code>bpmn.association</code>)</h3>
+<img class="ref-plate" alt="What the “Data association” line looks like" src="assets/relations/bpmn-association.svg">
+<p><strong>What it means.</strong> Associates. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Data association (bpmn.association) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;flow.dataobject&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.start&quot;; }
+    relation shows &quot;Data association&quot; @from_side -&gt; @to_side {
+        kind: &quot;bpmn.association&quot;;
+    }
+}
+
+view picture &quot;Data association&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-derive">
+<h3>«deriveReqt» (<code>sysml.derive</code>)</h3>
+<img class="ref-plate" alt="What the “«deriveReqt»” line looks like" src="assets/relations/sysml-derive.svg">
+<p><strong>What it means.</strong> «deriveReqt». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «deriveReqt» (sysml.derive) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-1&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The pump shall reach rated flow in 500 ms.&quot; };}
+    relation shows &quot;«deriveReqt»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.derive&quot;;
+    }
+}
+
+view picture &quot;«deriveReqt»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-satisfy">
+<h3>«satisfy» (<code>sysml.satisfy</code>)</h3>
+<img class="ref-plate" alt="What the “«satisfy»” line looks like" src="assets/relations/sysml-satisfy.svg">
+<p><strong>What it means.</strong> «satisfy». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «satisfy» (sysml.satisfy) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;sysml.block&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    relation shows &quot;«satisfy»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.satisfy&quot;;
+    }
+}
+
+view picture &quot;«satisfy»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-verify">
+<h3>«verify» (<code>sysml.verify</code>)</h3>
+<img class="ref-plate" alt="What the “«verify»” line looks like" src="assets/relations/sysml-verify.svg">
+<p><strong>What it means.</strong> «verify». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «verify» (sysml.verify) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;sysml.testcase&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    relation shows &quot;«verify»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.verify&quot;;
+    }
+}
+
+view picture &quot;«verify»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-refine">
+<h3>«refine» (<code>sysml.refine</code>)</h3>
+<img class="ref-plate" alt="What the “«refine»” line looks like" src="assets/relations/sysml-refine.svg">
+<p><strong>What it means.</strong> «refine». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «refine» (sysml.refine) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«refine»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.refine&quot;;
+    }
+}
+
+view picture &quot;«refine»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-trace">
+<h3>«trace» (<code>sysml.trace</code>)</h3>
+<img class="ref-plate" alt="What the “«trace»” line looks like" src="assets/relations/sysml-trace.svg">
+<p><strong>What it means.</strong> «trace». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «trace» (sysml.trace) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«trace»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.trace&quot;;
+    }
+}
+
+view picture &quot;«trace»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-copy">
+<h3>«copy» (<code>sysml.copy</code>)</h3>
+<img class="ref-plate" alt="What the “«copy»” line looks like" src="assets/relations/sysml-copy.svg">
+<p><strong>What it means.</strong> «copy». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «copy» (sysml.copy) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-1&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    relation shows &quot;«copy»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.copy&quot;;
+    }
+}
+
+view picture &quot;«copy»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-master">
+<h3>«master» (<code>sysml.master</code>)</h3>
+<img class="ref-plate" alt="What the “«master»” line looks like" src="assets/relations/sysml-master.svg">
+<p><strong>What it means.</strong> «master». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «master» (sysml.master) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-1&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    object to_side &quot;To&quot; { kind: &quot;req.requirement&quot;; x_diagram: { code: &quot;REQ-2&quot;; text: &quot;The pump shall sustain rated flow.&quot; };}
+    relation shows &quot;«master»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.master&quot;;
+    }
+}
+
+view picture &quot;«master»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-allocate">
+<h3>«allocate» (<code>sysml.allocate</code>)</h3>
+<img class="ref-plate" alt="What the “«allocate»” line looks like" src="assets/relations/sysml-allocate.svg">
+<p><strong>What it means.</strong> «allocate». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «allocate» (sysml.allocate) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«allocate»&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.allocate&quot;;
+    }
+}
+
+view picture &quot;«allocate»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-capabilitydependency">
+<h3>«capabilityDependency» (<code>uaf.capabilitydependency</code>)</h3>
+<img class="ref-plate" alt="What the “«capabilityDependency»” line looks like" src="assets/relations/uaf-capabilitydependency.svg">
+<p><strong>What it means.</strong> «capabilityDependency». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «capabilityDependency» (uaf.capabilitydependency) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.capability&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.capability&quot;; }
+    relation shows &quot;«capabilityDependency»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.capabilitydependency&quot;;
+    }
+}
+
+view picture &quot;«capabilityDependency»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-satisfiescapability">
+<h3>«satisfiesCapability» (<code>uaf.satisfiescapability</code>)</h3>
+<img class="ref-plate" alt="What the “«satisfiesCapability»” line looks like" src="assets/relations/uaf-satisfiescapability.svg">
+<p><strong>What it means.</strong> «satisfiesCapability». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «satisfiesCapability» (uaf.satisfiescapability) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.capability&quot;; }
+    relation shows &quot;«satisfiesCapability»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.satisfiescapability&quot;;
+    }
+}
+
+view picture &quot;«satisfiesCapability»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-complieswith">
+<h3>«compliesWith» (<code>uaf.complieswith</code>)</h3>
+<img class="ref-plate" alt="What the “«compliesWith»” line looks like" src="assets/relations/uaf-complieswith.svg">
+<p><strong>What it means.</strong> «compliesWith». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «compliesWith» (uaf.complieswith) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.standard&quot;; }
+    relation shows &quot;«compliesWith»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.complieswith&quot;;
+    }
+}
+
+view picture &quot;«compliesWith»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-mitigates">
+<h3>«mitigates» (<code>uaf.mitigates</code>)</h3>
+<img class="ref-plate" alt="What the “«mitigates»” line looks like" src="assets/relations/uaf-mitigates.svg">
+<p><strong>What it means.</strong> «mitigates». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «mitigates» (uaf.mitigates) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.securitycontrol&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.threat&quot;; }
+    relation shows &quot;«mitigates»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.mitigates&quot;;
+    }
+}
+
+view picture &quot;«mitigates»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-milestonedependency">
+<h3>«milestoneDependency» (<code>uaf.milestonedependency</code>)</h3>
+<img class="ref-plate" alt="What the “«milestoneDependency»” line looks like" src="assets/relations/uaf-milestonedependency.svg">
+<p><strong>What it means.</strong> «milestoneDependency». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «milestoneDependency» (uaf.milestonedependency) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.projectmilestone&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.projectmilestone&quot;; }
+    relation shows &quot;«milestoneDependency»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.milestonedependency&quot;;
+    }
+}
+
+view picture &quot;«milestoneDependency»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-supports">
+<h3>«supports» (<code>uaf.supports</code>)</h3>
+<img class="ref-plate" alt="What the “«supports»” line looks like" src="assets/relations/uaf-supports.svg">
+<p><strong>What it means.</strong> «supports». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «supports» (uaf.supports) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«supports»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.supports&quot;;
+    }
+}
+
+view picture &quot;«supports»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Dependency">Ref-Relations-Dependency</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

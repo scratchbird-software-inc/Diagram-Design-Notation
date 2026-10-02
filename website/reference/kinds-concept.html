@@ -1,0 +1,1436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Concept &amp; model kinds — DDN</title>
+<meta name="description" content="Every concept element kind in DDN (69): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Concept &amp; model kinds</h1>
+<p>These kinds are for the <em>meaning</em> layer — the business ideas a diagram talks about, before anybody decides how to store or build them. Use them when the argument is &quot;what do we mean by a customer?&quot; rather than &quot;which table is that in?&quot;. A concept diagram stays true even when the database underneath changes, which is exactly why you would draw one.</p><p>This page lists every <strong>Concept</strong> element kind in DDN — <strong>69</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD">ERD</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">ERD Notation</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Fishbone">Fishbone</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-States">States</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Decision-tables">Decision tables</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-object">Unspecified object · <code>object</code></a>
+<a href="#k-entity">Business entity / concept · <code>entity</code></a>
+<a href="#k-rel">Relationship concept · <code>rel</code></a>
+<a href="#k-domain">Semantic domain · <code>domain</code></a>
+<a href="#k-term">Glossary term · <code>term</code></a>
+<a href="#k-enumeration">Enumeration / code set · <code>enumeration</code></a>
+<a href="#k-rule">Business rule · <code>rule</code></a>
+<a href="#k-unit">Unit / quantity definition · <code>unit</code></a>
+<a href="#k-aggregate">Aggregate definition · <code>aggregate</code></a>
+<a href="#k-context">Bounded context · <code>context</code></a>
+<a href="#k-binding">Representation binding · <code>binding</code></a>
+<a href="#k-identity">Business identity definition · <code>identity</code></a>
+<a href="#k-uml-class">Class · <code>uml.class</code></a>
+<a href="#k-uml-interface">Interface · <code>uml.interface</code></a>
+<a href="#k-uml-enumeration">Enumeration · <code>uml.enumeration</code></a>
+<a href="#k-uml-package">Package · <code>uml.package</code></a>
+<a href="#k-uml-component">Component · <code>uml.component</code></a>
+<a href="#k-uml-node">Node · <code>uml.node</code></a>
+<a href="#k-uml-device">Device · <code>uml.device</code></a>
+<a href="#k-uml-executionenv">Execution environment · <code>uml.executionenv</code></a>
+<a href="#k-uml-artifact">Artifact · <code>uml.artifact</code></a>
+<a href="#k-uml-collaboration">Collaboration · <code>uml.collaboration</code></a>
+<a href="#k-uml-metaclass">Metaclass · <code>uml.metaclass</code></a>
+<a href="#k-uml-stereotype">Stereotype · <code>uml.stereotype</code></a>
+<a href="#k-uml-actor">Actor · <code>uml.actor</code></a>
+<a href="#k-uml-usecase">Use case · <code>uml.usecase</code></a>
+<a href="#k-chen-entity">Entity · <code>chen.entity</code></a>
+<a href="#k-chen-attribute">Attribute · <code>chen.attribute</code></a>
+<a href="#k-chen-association">Relationship · <code>chen.association</code></a>
+<a href="#k-quality-effect">Effect under investigation · <code>quality.effect</code></a>
+<a href="#k-quality-category">Cause category · <code>quality.category</code></a>
+<a href="#k-quality-cause">Possible contributing cause · <code>quality.cause</code></a>
+<a href="#k-state-initial">Initial state marker · <code>state.initial</code></a>
+<a href="#k-state-state">Lifecycle state · <code>state.state</code></a>
+<a href="#k-state-final">Terminal state · <code>state.final</code></a>
+<a href="#k-state-history_shallow">Shallow history pseudostate · <code>state.history_shallow</code></a>
+<a href="#k-state-history_deep">Deep history pseudostate · <code>state.history_deep</code></a>
+<a href="#k-state-junction">Junction pseudostate · <code>state.junction</code></a>
+<a href="#k-state-choice">Choice pseudostate · <code>state.choice</code></a>
+<a href="#k-state-entrypoint">Entry point pseudostate · <code>state.entrypoint</code></a>
+<a href="#k-state-exitpoint">Exit point pseudostate · <code>state.exitpoint</code></a>
+<a href="#k-state-forkjoin">Fork/join synchronization bar · <code>state.forkjoin</code></a>
+<a href="#k-state-terminate">Terminate pseudostate · <code>state.terminate</code></a>
+<a href="#k-rule-row">Decision rule · <code>rule.row</code></a>
+<a href="#k-uml-subject">Use-case subject · <code>uml.subject</code></a>
+<a href="#k-c4-component">Component · <code>c4.component</code></a>
+<a href="#k-epk-event">Event · <code>epk.event</code></a>
+<a href="#k-sysml-constraint">Constraint block · <code>sysml.constraint</code></a>
+<a href="#k-tree-event">Basic event · <code>tree.event</code></a>
+<a href="#k-family-person">Family person · <code>family.person</code></a>
+<a href="#k-family-union">Partnership union · <code>family.union</code></a>
+<a href="#k-sysml-flowspec">Flow specification · <code>sysml.flowspec</code></a>
+<a href="#k-soaml-servicecontract">Service contract · <code>soaml.servicecontract</code></a>
+<a href="#k-soaml-capability">Capability · <code>soaml.capability</code></a>
+<a href="#k-soaml-milestone">Milestone · <code>soaml.milestone</code></a>
+<a href="#k-uaf-capability">Capability · <code>uaf.capability</code></a>
+<a href="#k-uaf-strategicphase">Strategic phase · <code>uaf.strategicphase</code></a>
+<a href="#k-uaf-archdesc">Architecture description · <code>uaf.archdesc</code></a>
+<a href="#k-uaf-viewpoint">Viewpoint · <code>uaf.viewpoint</code></a>
+<a href="#k-uaf-modelref">Model reference · <code>uaf.modelref</code></a>
+<a href="#k-msc-hmscref">HMSC reference · <code>msc.hmscref</code></a>
+<a href="#k-petri-place">Place · <code>petri.place</code></a>
+<a href="#k-orm-entitytype">Entity type · <code>orm.entitytype</code></a>
+<a href="#k-orm-facttype">Fact type · <code>orm.facttype</code></a>
+<a href="#k-vsm-inventory">Inventory · <code>vsm.inventory</code></a>
+<a href="#k-vsm-supermarket">Supermarket · <code>vsm.supermarket</code></a>
+<a href="#k-vsm-kaizen">Kaizen burst · <code>vsm.kaizen</code></a>
+<a href="#k-sdl-signal">Signal · <code>sdl.signal</code></a>
+<a href="#k-sdl-signalset">Signal set · <code>sdl.signalset</code></a></div>
+<section class="ref-entry" id="k-object">
+<h3>Unspecified object (<code>object</code>)</h3>
+<img class="ref-plate" alt="The Unspecified object symbol" src="assets/kinds/object.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Named sketch element whose implementation kind is undecided.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Unspecified object (object) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Unspecified object&quot; { kind: object; }
+}
+
+view picture &quot;Unspecified object&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-entity">
+<h3>Business entity / concept (<code>entity</code>)</h3>
+<img class="ref-plate" alt="The Business entity / concept symbol" src="assets/kinds/entity.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A business meaning independent of a storage representation.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business entity / concept (entity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business entity / concept&quot; { kind: entity; }
+}
+
+view picture &quot;Business entity / concept&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-rel">
+<h3>Relationship concept (<code>rel</code>)</h3>
+<img class="ref-plate" alt="The Relationship concept symbol" src="assets/kinds/rel.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named business association that can carry properties.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Relationship concept (rel) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Relationship concept&quot; { kind: rel; }
+}
+
+view picture &quot;Relationship concept&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-domain">
+<h3>Semantic domain (<code>domain</code>)</h3>
+<img class="ref-plate" alt="The Semantic domain symbol" src="assets/kinds/domain.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Shared meaning and constraints, before any platform datatype is chosen.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Semantic domain (domain) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Semantic domain&quot; { kind: domain; }
+}
+
+view picture &quot;Semantic domain&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-term">
+<h3>Glossary term (<code>term</code>)</h3>
+<img class="ref-plate" alt="The Glossary term symbol" src="assets/kinds/term.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A defined term and its aliases, distinct from its implementations.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Glossary term (term) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Glossary term&quot; { kind: term; }
+}
+
+view picture &quot;Glossary term&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-enumeration">
+<h3>Enumeration / code set (<code>enumeration</code>)</h3>
+<img class="ref-plate" alt="The Enumeration / code set symbol" src="assets/kinds/enumeration.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named set of values with meaning and optional evolution rules.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Enumeration / code set (enumeration) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Enumeration / code set&quot; { kind: enumeration; }
+}
+
+view picture &quot;Enumeration / code set&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-rule">
+<h3>Business rule (<code>rule</code>)</h3>
+<img class="ref-plate" alt="The Business rule symbol" src="assets/kinds/rule.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A condition or invariant stated independently of enforcement.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business rule (rule) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business rule&quot; { kind: rule; }
+}
+
+view picture &quot;Business rule&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-unit">
+<h3>Unit / quantity definition (<code>unit</code>)</h3>
+<img class="ref-plate" alt="The Unit / quantity definition symbol" src="assets/kinds/unit.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A measurement meaning with unit and conversion policy.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Unit / quantity definition (unit) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Unit / quantity definition&quot; { kind: unit; }
+}
+
+view picture &quot;Unit / quantity definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-aggregate">
+<h3>Aggregate definition (<code>aggregate</code>)</h3>
+<img class="ref-plate" alt="The Aggregate definition symbol" src="assets/kinds/aggregate.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A business consistency grouping; not an automatic shard or transaction.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Aggregate definition (aggregate) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Aggregate definition&quot; { kind: aggregate; }
+}
+
+view picture &quot;Aggregate definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-context">
+<h3>Bounded context (<code>context</code>)</h3>
+<img class="ref-plate" alt="The Bounded context symbol" src="assets/kinds/context.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> The scope in which a business model has an agreed meaning.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Bounded context (context) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Bounded context&quot; { kind: context; }
+}
+
+view picture &quot;Bounded context&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-binding">
+<h3>Representation binding (<code>binding</code>)</h3>
+<img class="ref-plate" alt="The Representation binding symbol" src="assets/kinds/binding.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Mapping from a semantic domain to a platform-specific representation.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Representation binding (binding) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Representation binding&quot; { kind: binding; }
+}
+
+view picture &quot;Representation binding&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-identity">
+<h3>Business identity definition (<code>identity</code>)</h3>
+<img class="ref-plate" alt="The Business identity definition symbol" src="assets/kinds/identity.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Concept family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Named identity semantics, scope and composition independent of SQL keys.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business identity definition (identity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business identity definition&quot; { kind: identity; }
+}
+
+view picture &quot;Business identity definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-class">
+<h3>Class (<code>uml.class</code>)</h3>
+<img class="ref-plate" alt="The Class symbol" src="assets/kinds/uml-class.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Class — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Class (uml.class) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Class&quot; { kind: &quot;uml.class&quot;; }
+}
+
+view picture &quot;Class&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-interface">
+<h3>Interface (<code>uml.interface</code>)</h3>
+<img class="ref-plate" alt="The Interface symbol" src="assets/kinds/uml-interface.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Interface — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Interface (uml.interface) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Interface&quot; { kind: &quot;uml.interface&quot;; }
+}
+
+view picture &quot;Interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-enumeration">
+<h3>Enumeration (<code>uml.enumeration</code>)</h3>
+<img class="ref-plate" alt="The Enumeration symbol" src="assets/kinds/uml-enumeration.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Enumeration — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Enumeration (uml.enumeration) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Enumeration&quot; { kind: &quot;uml.enumeration&quot;; }
+}
+
+view picture &quot;Enumeration&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-package">
+<h3>Package (<code>uml.package</code>)</h3>
+<img class="ref-plate" alt="The Package symbol" src="assets/kinds/uml-package.svg">
+<p><strong>What it looks like.</strong> Drawn as a folder-shaped tab. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Package — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Package (uml.package) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Package&quot; { kind: &quot;uml.package&quot;; }
+}
+
+view picture &quot;Package&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-component">
+<h3>Component (<code>uml.component</code>)</h3>
+<img class="ref-plate" alt="The Component symbol" src="assets/kinds/uml-component.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with the component “plug” tabs. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Component — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Component (uml.component) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Component&quot; { kind: &quot;uml.component&quot;; }
+}
+
+view picture &quot;Component&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-node">
+<h3>Node (<code>uml.node</code>)</h3>
+<img class="ref-plate" alt="The Node symbol" src="assets/kinds/uml-node.svg">
+<p><strong>What it looks like.</strong> Drawn as a node3d shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Node — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Node (uml.node) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Node&quot; { kind: &quot;uml.node&quot;; }
+}
+
+view picture &quot;Node&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-device">
+<h3>Device (<code>uml.device</code>)</h3>
+<img class="ref-plate" alt="The Device symbol" src="assets/kinds/uml-device.svg">
+<p><strong>What it looks like.</strong> Drawn as a node3d shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Device — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Device (uml.device) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Device&quot; { kind: &quot;uml.device&quot;; }
+}
+
+view picture &quot;Device&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-executionenv">
+<h3>Execution environment (<code>uml.executionenv</code>)</h3>
+<img class="ref-plate" alt="The Execution environment symbol" src="assets/kinds/uml-executionenv.svg">
+<p><strong>What it looks like.</strong> Drawn as a node3d shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Execution environment — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Execution environment (uml.executionenv) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Execution environment&quot; { kind: &quot;uml.executionenv&quot;; }
+}
+
+view picture &quot;Execution environment&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-artifact">
+<h3>Artifact (<code>uml.artifact</code>)</h3>
+<img class="ref-plate" alt="The Artifact symbol" src="assets/kinds/uml-artifact.svg">
+<p><strong>What it looks like.</strong> Drawn as a artifact shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Artifact — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Artifact (uml.artifact) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Artifact&quot; { kind: &quot;uml.artifact&quot;; }
+}
+
+view picture &quot;Artifact&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-collaboration">
+<h3>Collaboration (<code>uml.collaboration</code>)</h3>
+<img class="ref-plate" alt="The Collaboration symbol" src="assets/kinds/uml-collaboration.svg">
+<p><strong>What it looks like.</strong> Drawn as a collab shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Collaboration — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Collaboration (uml.collaboration) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Collaboration&quot; { kind: &quot;uml.collaboration&quot;; }
+}
+
+view picture &quot;Collaboration&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-metaclass">
+<h3>Metaclass (<code>uml.metaclass</code>)</h3>
+<img class="ref-plate" alt="The Metaclass symbol" src="assets/kinds/uml-metaclass.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Metaclass — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Metaclass (uml.metaclass) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Metaclass&quot; { kind: &quot;uml.metaclass&quot;; }
+}
+
+view picture &quot;Metaclass&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-stereotype">
+<h3>Stereotype (<code>uml.stereotype</code>)</h3>
+<img class="ref-plate" alt="The Stereotype symbol" src="assets/kinds/uml-stereotype.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Stereotype — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Stereotype (uml.stereotype) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Stereotype&quot; { kind: &quot;uml.stereotype&quot;; }
+}
+
+view picture &quot;Stereotype&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-actor">
+<h3>Actor (<code>uml.actor</code>)</h3>
+<img class="ref-plate" alt="The Actor symbol" src="assets/kinds/uml-actor.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Actor — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Actor (uml.actor) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Actor&quot; { kind: &quot;uml.actor&quot;; }
+}
+
+view picture &quot;Actor&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-usecase">
+<h3>Use case (<code>uml.usecase</code>)</h3>
+<img class="ref-plate" alt="The Use case symbol" src="assets/kinds/uml-usecase.svg">
+<p><strong>What it looks like.</strong> Drawn as an ellipse. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Use case — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Use case (uml.usecase) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Use case&quot; { kind: &quot;uml.usecase&quot;; }
+}
+
+view picture &quot;Use case&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-chen-entity">
+<h3>Entity (<code>chen.entity</code>)</h3>
+<img class="ref-plate" alt="The Entity symbol" src="assets/kinds/chen-entity.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Entity — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;chen.basic@1&lt;/code&gt;, &lt;code&gt;chen.binary@2&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/chen-basic-1.svg&quot;&gt;chen.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/chen-binary-2.svg&quot;&gt;chen.binary@2&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Entity (chen.entity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Entity&quot; { kind: &quot;chen.entity&quot;; }
+}
+
+view picture &quot;Entity&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-chen-attribute">
+<h3>Attribute (<code>chen.attribute</code>)</h3>
+<img class="ref-plate" alt="The Attribute symbol" src="assets/kinds/chen-attribute.svg">
+<p><strong>What it looks like.</strong> Drawn as an ellipse. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Attribute — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;chen.basic@1&lt;/code&gt;, &lt;code&gt;chen.binary@2&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/chen-basic-1.svg&quot;&gt;chen.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/chen-binary-2.svg&quot;&gt;chen.binary@2&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Attribute (chen.attribute) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Attribute&quot; { kind: &quot;chen.attribute&quot;; }
+}
+
+view picture &quot;Attribute&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-chen-association">
+<h3>Relationship (<code>chen.association</code>)</h3>
+<img class="ref-plate" alt="The Relationship symbol" src="assets/kinds/chen-association.svg">
+<p><strong>What it looks like.</strong> Drawn as a diamond. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Relationship — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;chen.basic@1&lt;/code&gt;, &lt;code&gt;chen.binary@2&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/chen-basic-1.svg&quot;&gt;chen.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/chen-binary-2.svg&quot;&gt;chen.binary@2&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Relationship (chen.association) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Relationship&quot; { kind: &quot;chen.association&quot;; }
+}
+
+view picture &quot;Relationship&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-quality-effect">
+<h3>Effect under investigation (<code>quality.effect</code>)</h3>
+<img class="ref-plate" alt="The Effect under investigation symbol" src="assets/kinds/quality-effect.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Effect under investigation — a concept kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Effect under investigation (quality.effect) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Effect under investigation&quot; { kind: &quot;quality.effect&quot;; }
+}
+
+view picture &quot;Effect under investigation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-quality-category">
+<h3>Cause category (<code>quality.category</code>)</h3>
+<img class="ref-plate" alt="The Cause category symbol" src="assets/kinds/quality-category.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Cause category — a concept kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Cause category (quality.category) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Cause category&quot; { kind: &quot;quality.category&quot;; }
+}
+
+view picture &quot;Cause category&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-quality-cause">
+<h3>Possible contributing cause (<code>quality.cause</code>)</h3>
+<img class="ref-plate" alt="The Possible contributing cause symbol" src="assets/kinds/quality-cause.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Possible contributing cause — a concept kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Possible contributing cause (quality.cause) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Possible contributing cause&quot; { kind: &quot;quality.cause&quot;; }
+}
+
+view picture &quot;Possible contributing cause&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-initial">
+<h3>Initial state marker (<code>state.initial</code>)</h3>
+<img class="ref-plate" alt="The Initial state marker symbol" src="assets/kinds/state-initial.svg">
+<p><strong>What it looks like.</strong> Drawn as a small filled dot. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Initial state marker — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Initial state marker (state.initial) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Initial state marker&quot; { kind: &quot;state.initial&quot;; }
+}
+
+view picture &quot;Initial state marker&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-state">
+<h3>Lifecycle state (<code>state.state</code>)</h3>
+<img class="ref-plate" alt="The Lifecycle state symbol" src="assets/kinds/state-state.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Lifecycle state — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Lifecycle state (state.state) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Lifecycle state&quot; { kind: &quot;state.state&quot;; }
+}
+
+view picture &quot;Lifecycle state&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-final">
+<h3>Terminal state (<code>state.final</code>)</h3>
+<img class="ref-plate" alt="The Terminal state symbol" src="assets/kinds/state-final.svg">
+<p><strong>What it looks like.</strong> Drawn as a filled dot inside a ring. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Terminal state — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Terminal state (state.final) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Terminal state&quot; { kind: &quot;state.final&quot;; }
+}
+
+view picture &quot;Terminal state&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-history_shallow">
+<h3>Shallow history pseudostate (<code>state.history_shallow</code>)</h3>
+<img class="ref-plate" alt="The Shallow history pseudostate symbol" src="assets/kinds/state-history_shallow.svg">
+<p><strong>What it looks like.</strong> Drawn as a history shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Shallow history pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Shallow history pseudostate (state.history_shallow) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Shallow history pseudostate&quot; { kind: &quot;state.history_shallow&quot;; }
+}
+
+view picture &quot;Shallow history pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-history_deep">
+<h3>Deep history pseudostate (<code>state.history_deep</code>)</h3>
+<img class="ref-plate" alt="The Deep history pseudostate symbol" src="assets/kinds/state-history_deep.svg">
+<p><strong>What it looks like.</strong> Drawn as a history shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Deep history pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Deep history pseudostate (state.history_deep) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Deep history pseudostate&quot; { kind: &quot;state.history_deep&quot;; }
+}
+
+view picture &quot;Deep history pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-junction">
+<h3>Junction pseudostate (<code>state.junction</code>)</h3>
+<img class="ref-plate" alt="The Junction pseudostate symbol" src="assets/kinds/state-junction.svg">
+<p><strong>What it looks like.</strong> Drawn as a junction shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Junction pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Junction pseudostate (state.junction) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Junction pseudostate&quot; { kind: &quot;state.junction&quot;; }
+}
+
+view picture &quot;Junction pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-choice">
+<h3>Choice pseudostate (<code>state.choice</code>)</h3>
+<img class="ref-plate" alt="The Choice pseudostate symbol" src="assets/kinds/state-choice.svg">
+<p><strong>What it looks like.</strong> Drawn as a choice shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Choice pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Choice pseudostate (state.choice) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Choice pseudostate&quot; { kind: &quot;state.choice&quot;; }
+}
+
+view picture &quot;Choice pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-entrypoint">
+<h3>Entry point pseudostate (<code>state.entrypoint</code>)</h3>
+<img class="ref-plate" alt="The Entry point pseudostate symbol" src="assets/kinds/state-entrypoint.svg">
+<p><strong>What it looks like.</strong> Drawn as a entrypoint shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Entry point pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Entry point pseudostate (state.entrypoint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Entry point pseudostate&quot; { kind: &quot;state.entrypoint&quot;; }
+}
+
+view picture &quot;Entry point pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-exitpoint">
+<h3>Exit point pseudostate (<code>state.exitpoint</code>)</h3>
+<img class="ref-plate" alt="The Exit point pseudostate symbol" src="assets/kinds/state-exitpoint.svg">
+<p><strong>What it looks like.</strong> Drawn as a exitpoint shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Exit point pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Exit point pseudostate (state.exitpoint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Exit point pseudostate&quot; { kind: &quot;state.exitpoint&quot;; }
+}
+
+view picture &quot;Exit point pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-forkjoin">
+<h3>Fork/join synchronization bar (<code>state.forkjoin</code>)</h3>
+<img class="ref-plate" alt="The Fork/join synchronization bar symbol" src="assets/kinds/state-forkjoin.svg">
+<p><strong>What it looks like.</strong> Drawn as a forkbar shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Fork/join synchronization bar — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Fork/join synchronization bar (state.forkjoin) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Fork/join synchronization bar&quot; { kind: &quot;state.forkjoin&quot;; }
+}
+
+view picture &quot;Fork/join synchronization bar&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-state-terminate">
+<h3>Terminate pseudostate (<code>state.terminate</code>)</h3>
+<img class="ref-plate" alt="The Terminate pseudostate symbol" src="assets/kinds/state-terminate.svg">
+<p><strong>What it looks like.</strong> Drawn as a terminate shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Terminate pseudostate — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;state.flat@1&lt;/code&gt;, &lt;code&gt;state.composite@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/state-flat-1.svg&quot;&gt;state.flat@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/state-composite-1.svg&quot;&gt;state.composite@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Terminate pseudostate (state.terminate) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Terminate pseudostate&quot; { kind: &quot;state.terminate&quot;; }
+}
+
+view picture &quot;Terminate pseudostate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-rule-row">
+<h3>Decision rule (<code>rule.row</code>)</h3>
+<img class="ref-plate" alt="The Decision rule symbol" src="assets/kinds/rule-row.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Decision rule — a concept kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision rule (rule.row) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision rule&quot; { kind: &quot;rule.row&quot;; }
+}
+
+view picture &quot;Decision rule&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uml-subject">
+<h3>Use-case subject (<code>uml.subject</code>)</h3>
+<img class="ref-plate" alt="The Use-case subject symbol" src="assets/kinds/uml-subject.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Use-case subject — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uml.structure@1&lt;/code&gt;, &lt;code&gt;uml.structure@2&lt;/code&gt;, &lt;code&gt;uml.deployment@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uml-structure-1.svg&quot;&gt;uml.structure@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-structure-2.svg&quot;&gt;uml.structure@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uml-deployment-1.svg&quot;&gt;uml.deployment@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Use-case subject (uml.subject) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Use-case subject&quot; { kind: &quot;uml.subject&quot;; }
+}
+
+view picture &quot;Use-case subject&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-c4-component">
+<h3>Component (<code>c4.component</code>)</h3>
+<img class="ref-plate" alt="The Component symbol" src="assets/kinds/c4-component.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with the component “plug” tabs. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Component — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;c4.context@1&lt;/code&gt;, &lt;code&gt;c4.container@1&lt;/code&gt;, &lt;code&gt;c4.component@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/c4-context-1.svg&quot;&gt;c4.context@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-container-1.svg&quot;&gt;c4.container@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-component-1.svg&quot;&gt;c4.component@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Component (c4.component) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Component&quot; { kind: &quot;c4.component&quot;; }
+}
+
+view picture &quot;Component&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-event">
+<h3>Event (<code>epk.event</code>)</h3>
+<img class="ref-plate" alt="The Event symbol" src="assets/kinds/epk-event.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Event — a concept kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Event (epk.event) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Event&quot; { kind: &quot;epk.event&quot;; }
+}
+
+view picture &quot;Event&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sysml-constraint">
+<h3>Constraint block (<code>sysml.constraint</code>)</h3>
+<img class="ref-plate" alt="The Constraint block symbol" src="assets/kinds/sysml-constraint.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Constraint block — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sysml.bdd@1&lt;/code&gt;, &lt;code&gt;sysml.ibd@1&lt;/code&gt;, &lt;code&gt;sysml.parametric@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sysml-bdd-1.svg&quot;&gt;sysml.bdd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-ibd-1.svg&quot;&gt;sysml.ibd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-parametric-1.svg&quot;&gt;sysml.parametric@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Constraint block (sysml.constraint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Constraint block&quot; { kind: &quot;sysml.constraint&quot;; }
+}
+
+view picture &quot;Constraint block&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-tree-event">
+<h3>Basic event (<code>tree.event</code>)</h3>
+<img class="ref-plate" alt="The Basic event symbol" src="assets/kinds/tree-event.svg">
+<p><strong>What it looks like.</strong> Drawn as a small circle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Basic event — a concept kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Basic event (tree.event) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Basic event&quot; { kind: &quot;tree.event&quot;; }
+}
+
+view picture &quot;Basic event&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-family-person">
+<h3>Family person (<code>family.person</code>)</h3>
+<img class="ref-plate" alt="The Family person symbol" src="assets/kinds/family-person.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Family person — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;family.tree@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/family-tree-1.svg&quot;&gt;family.tree@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Family person (family.person) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Family person&quot; { kind: &quot;family.person&quot;; }
+}
+
+view picture &quot;Family person&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-family-union">
+<h3>Partnership union (<code>family.union</code>)</h3>
+<img class="ref-plate" alt="The Partnership union symbol" src="assets/kinds/family-union.svg">
+<p><strong>What it looks like.</strong> Drawn as a small circle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Partnership union — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;family.tree@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/family-tree-1.svg&quot;&gt;family.tree@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Partnership union (family.union) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Partnership union&quot; { kind: &quot;family.union&quot;; }
+}
+
+view picture &quot;Partnership union&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sysml-flowspec">
+<h3>Flow specification (<code>sysml.flowspec</code>)</h3>
+<img class="ref-plate" alt="The Flow specification symbol" src="assets/kinds/sysml-flowspec.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Flow specification — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sysml.bdd@1&lt;/code&gt;, &lt;code&gt;sysml.ibd@1&lt;/code&gt;, &lt;code&gt;sysml.parametric@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sysml-bdd-1.svg&quot;&gt;sysml.bdd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-ibd-1.svg&quot;&gt;sysml.ibd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-parametric-1.svg&quot;&gt;sysml.parametric@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Flow specification (sysml.flowspec) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Flow specification&quot; { kind: &quot;sysml.flowspec&quot;; }
+}
+
+view picture &quot;Flow specification&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-servicecontract">
+<h3>Service contract (<code>soaml.servicecontract</code>)</h3>
+<img class="ref-plate" alt="The Service contract symbol" src="assets/kinds/soaml-servicecontract.svg">
+<p><strong>What it looks like.</strong> Drawn as a collab shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Service contract — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Service contract (soaml.servicecontract) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Service contract&quot; { kind: &quot;soaml.servicecontract&quot;; }
+}
+
+view picture &quot;Service contract&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-capability">
+<h3>Capability (<code>soaml.capability</code>)</h3>
+<img class="ref-plate" alt="The Capability symbol" src="assets/kinds/soaml-capability.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Capability — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Capability (soaml.capability) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Capability&quot; { kind: &quot;soaml.capability&quot;; }
+}
+
+view picture &quot;Capability&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-milestone">
+<h3>Milestone (<code>soaml.milestone</code>)</h3>
+<img class="ref-plate" alt="The Milestone symbol" src="assets/kinds/soaml-milestone.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Milestone — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Milestone (soaml.milestone) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Milestone&quot; { kind: &quot;soaml.milestone&quot;; }
+}
+
+view picture &quot;Milestone&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-capability">
+<h3>Capability (<code>uaf.capability</code>)</h3>
+<img class="ref-plate" alt="The Capability symbol" src="assets/kinds/uaf-capability.svg">
+<p><strong>What it looks like.</strong> Drawn as a tag shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Capability — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Capability (uaf.capability) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Capability&quot; { kind: &quot;uaf.capability&quot;; }
+}
+
+view picture &quot;Capability&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-strategicphase">
+<h3>Strategic phase (<code>uaf.strategicphase</code>)</h3>
+<img class="ref-plate" alt="The Strategic phase symbol" src="assets/kinds/uaf-strategicphase.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Strategic phase — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Strategic phase (uaf.strategicphase) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Strategic phase&quot; { kind: &quot;uaf.strategicphase&quot;; }
+}
+
+view picture &quot;Strategic phase&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-archdesc">
+<h3>Architecture description (<code>uaf.archdesc</code>)</h3>
+<img class="ref-plate" alt="The Architecture description symbol" src="assets/kinds/uaf-archdesc.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Architecture description — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Architecture description (uaf.archdesc) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Architecture description&quot; { kind: &quot;uaf.archdesc&quot;; }
+}
+
+view picture &quot;Architecture description&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-viewpoint">
+<h3>Viewpoint (<code>uaf.viewpoint</code>)</h3>
+<img class="ref-plate" alt="The Viewpoint symbol" src="assets/kinds/uaf-viewpoint.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Viewpoint — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Viewpoint (uaf.viewpoint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Viewpoint&quot; { kind: &quot;uaf.viewpoint&quot;; }
+}
+
+view picture &quot;Viewpoint&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-modelref">
+<h3>Model reference (<code>uaf.modelref</code>)</h3>
+<img class="ref-plate" alt="The Model reference symbol" src="assets/kinds/uaf-modelref.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Model reference — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Model reference (uaf.modelref) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Model reference&quot; { kind: &quot;uaf.modelref&quot;; }
+}
+
+view picture &quot;Model reference&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-msc-hmscref">
+<h3>HMSC reference (<code>msc.hmscref</code>)</h3>
+<img class="ref-plate" alt="The HMSC reference symbol" src="assets/kinds/msc-hmscref.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> HMSC reference — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;msc.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/msc-basic-1.svg&quot;&gt;msc.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One HMSC reference (msc.hmscref) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;HMSC reference&quot; { kind: &quot;msc.hmscref&quot;; }
+}
+
+view picture &quot;HMSC reference&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-petri-place">
+<h3>Place (<code>petri.place</code>)</h3>
+<img class="ref-plate" alt="The Place symbol" src="assets/kinds/petri-place.svg">
+<p><strong>What it looks like.</strong> Drawn as a small circle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Place — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;petri.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/petri-basic-1.svg&quot;&gt;petri.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Place (petri.place) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Place&quot; { kind: &quot;petri.place&quot;; }
+}
+
+view picture &quot;Place&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-orm-entitytype">
+<h3>Entity type (<code>orm.entitytype</code>)</h3>
+<img class="ref-plate" alt="The Entity type symbol" src="assets/kinds/orm-entitytype.svg">
+<p><strong>What it looks like.</strong> Drawn as an ellipse. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Entity type — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;orm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/orm-basic-1.svg&quot;&gt;orm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Entity type (orm.entitytype) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Entity type&quot; { kind: &quot;orm.entitytype&quot;; }
+}
+
+view picture &quot;Entity type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-orm-facttype">
+<h3>Fact type (<code>orm.facttype</code>)</h3>
+<img class="ref-plate" alt="The Fact type symbol" src="assets/kinds/orm-facttype.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Fact type — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;orm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/orm-basic-1.svg&quot;&gt;orm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Fact type (orm.facttype) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Fact type&quot; { kind: &quot;orm.facttype&quot;; }
+}
+
+view picture &quot;Fact type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-inventory">
+<h3>Inventory (<code>vsm.inventory</code>)</h3>
+<img class="ref-plate" alt="The Inventory symbol" src="assets/kinds/vsm-inventory.svg">
+<p><strong>What it looks like.</strong> Drawn as a triangledown shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Inventory — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Inventory (vsm.inventory) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Inventory&quot; { kind: &quot;vsm.inventory&quot;; }
+}
+
+view picture &quot;Inventory&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-supermarket">
+<h3>Supermarket (<code>vsm.supermarket</code>)</h3>
+<img class="ref-plate" alt="The Supermarket symbol" src="assets/kinds/vsm-supermarket.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Supermarket — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Supermarket (vsm.supermarket) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Supermarket&quot; { kind: &quot;vsm.supermarket&quot;; }
+}
+
+view picture &quot;Supermarket&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-kaizen">
+<h3>Kaizen burst (<code>vsm.kaizen</code>)</h3>
+<img class="ref-plate" alt="The Kaizen burst symbol" src="assets/kinds/vsm-kaizen.svg">
+<p><strong>What it looks like.</strong> Drawn as a burst shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Kaizen burst — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Kaizen burst (vsm.kaizen) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Kaizen burst&quot; { kind: &quot;vsm.kaizen&quot;; }
+}
+
+view picture &quot;Kaizen burst&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-signal">
+<h3>Signal (<code>sdl.signal</code>)</h3>
+<img class="ref-plate" alt="The Signal symbol" src="assets/kinds/sdl-signal.svg">
+<p><strong>What it looks like.</strong> Drawn as a sendpent shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Signal — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Signal (sdl.signal) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Signal&quot; { kind: &quot;sdl.signal&quot;; }
+}
+
+view picture &quot;Signal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-signalset">
+<h3>Signal set (<code>sdl.signalset</code>)</h3>
+<img class="ref-plate" alt="The Signal set symbol" src="assets/kinds/sdl-signalset.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Signal set — a concept kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (plain-language definition), <code>aliases</code> (other names people use), <code>level</code> (concept / definition / instance), <code>maturity</code> (draft → approved), and a stable <code>uid</code> so renames don’t break links.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Signal set (sdl.signalset) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Signal set&quot; { kind: &quot;sdl.signalset&quot;; }
+}
+
+view picture &quot;Signal set&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Concept">Ref-Kinds-Concept</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

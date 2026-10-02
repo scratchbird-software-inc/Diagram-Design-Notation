@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Interface &amp; messaging kinds — DDN</title>
+<meta name="description" content="Every interface element kind in DDN (39): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Interface &amp; messaging kinds</h1>
+<p>These kinds describe the places where systems <em>talk</em>: APIs, endpoints, topics, queues, messages, webhooks. An interface kind is a promise about shape and behaviour, not a running server — deployment is drawn separately with the deployment kinds. Use these for integration diagrams and event-driven designs.</p><p>This page lists every <strong>Interface</strong> element kind in DDN — <strong>39</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">Architecture</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Data-flow">Data flow</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Sequence">Sequence</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-api">Data API / interface · <code>api</code></a>
+<a href="#k-endpoint">Endpoint / port definition · <code>endpoint</code></a>
+<a href="#k-topic">Topic / retained event channel · <code>topic</code></a>
+<a href="#k-queue">Queue · <code>queue</code></a>
+<a href="#k-message">Message / event schema · <code>message</code></a>
+<a href="#k-command">Command schema · <code>command</code></a>
+<a href="#k-consumer_group">Consumer group · <code>consumer_group</code></a>
+<a href="#k-subscription">Subscription · <code>subscription</code></a>
+<a href="#k-schema_registry">Schema registry · <code>schema_registry</code></a>
+<a href="#k-connector">Connector definition · <code>connector</code></a>
+<a href="#k-webhook">Webhook definition · <code>webhook</code></a>
+<a href="#k-federation">Federation / query interface · <code>federation</code></a>
+<a href="#k-c4-queue">Queue/topic · <code>c4.queue</code></a>
+<a href="#k-sysml-block">Block · <code>sysml.block</code></a>
+<a href="#k-archi-application_component">Application component · <code>archi.application_component</code></a>
+<a href="#k-archi-application_service">Application service · <code>archi.application_service</code></a>
+<a href="#k-ui-frame">Wireframe frame · <code>ui.frame</code></a>
+<a href="#k-ui-label">Wireframe label · <code>ui.label</code></a>
+<a href="#k-ui-input">Wireframe input · <code>ui.input</code></a>
+<a href="#k-ui-button">Wireframe button · <code>ui.button</code></a>
+<a href="#k-ui-image">Wireframe image placeholder · <code>ui.image</code></a>
+<a href="#k-ui-checkbox">Wireframe checkbox · <code>ui.checkbox</code></a>
+<a href="#k-ui-list">Wireframe list · <code>ui.list</code></a>
+<a href="#k-sysml-valuetype">Value type · <code>sysml.valuetype</code></a>
+<a href="#k-sysml-interfaceblock">Interface block · <code>sysml.interfaceblock</code></a>
+<a href="#k-soaml-participant">Participant · <code>soaml.participant</code></a>
+<a href="#k-soaml-agent">Agent · <code>soaml.agent</code></a>
+<a href="#k-soaml-serviceinterface">Service interface · <code>soaml.serviceinterface</code></a>
+<a href="#k-uaf-opperformer">Operational performer · <code>uaf.opperformer</code></a>
+<a href="#k-uaf-opnode">Operational node · <code>uaf.opnode</code></a>
+<a href="#k-uaf-servicespec">Service specification · <code>uaf.servicespec</code></a>
+<a href="#k-uaf-system">System · <code>uaf.system</code></a>
+<a href="#k-uaf-implementer">Implementer · <code>uaf.implementer</code></a>
+<a href="#k-uaf-resourceperformer">Resource performer · <code>uaf.resourceperformer</code></a>
+<a href="#k-uaf-resource">Resource · <code>uaf.resource</code></a>
+<a href="#k-uaf-technology">Technology · <code>uaf.technology</code></a>
+<a href="#k-uaf-actualresource">Actual resource · <code>uaf.actualresource</code></a>
+<a href="#k-sdl-block">Block · <code>sdl.block</code></a>
+<a href="#k-sdl-agent">Agent · <code>sdl.agent</code></a></div>
+<section class="ref-entry" id="k-api">
+<h3>Data API / interface (<code>api</code>)</h3>
+<img class="ref-plate" alt="The Data API / interface symbol" src="assets/kinds/api.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A declared interaction surface independent of its deployment endpoint.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data API / interface (api) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data API / interface&quot; { kind: api; }
+}
+
+view picture &quot;Data API / interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-endpoint">
+<h3>Endpoint / port definition (<code>endpoint</code>)</h3>
+<img class="ref-plate" alt="The Endpoint / port definition symbol" src="assets/kinds/endpoint.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named addressable or conceptual input, output or query interaction point.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Endpoint / port definition (endpoint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Endpoint / port definition&quot; { kind: endpoint; }
+}
+
+view picture &quot;Endpoint / port definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-topic">
+<h3>Topic / retained event channel (<code>topic</code>)</h3>
+<img class="ref-plate" alt="The Topic / retained event channel symbol" src="assets/kinds/topic.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named event channel with partitioning, retention and access metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Topic / retained event channel (topic) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Topic / retained event channel&quot; { kind: topic; }
+}
+
+view picture &quot;Topic / retained event channel&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-queue">
+<h3>Queue (<code>queue</code>)</h3>
+<img class="ref-plate" alt="The Queue symbol" src="assets/kinds/queue.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A delivery channel with explicit competing or fan-out consumption semantics.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Queue (queue) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Queue&quot; { kind: queue; }
+}
+
+view picture &quot;Queue&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-message">
+<h3>Message / event schema (<code>message</code>)</h3>
+<img class="ref-plate" alt="The Message / event schema symbol" src="assets/kinds/message.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A contract for message shape, identity and compatibility.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Message / event schema (message) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Message / event schema&quot; { kind: message; }
+}
+
+view picture &quot;Message / event schema&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-command">
+<h3>Command schema (<code>command</code>)</h3>
+<img class="ref-plate" alt="The Command schema symbol" src="assets/kinds/command.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A request to perform an action; distinguish it from a reported event.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Command schema (command) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Command schema&quot; { kind: command; }
+}
+
+view picture &quot;Command schema&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-consumer_group">
+<h3>Consumer group (<code>consumer_group</code>)</h3>
+<img class="ref-plate" alt="The Consumer group symbol" src="assets/kinds/consumer_group.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named consumption coordination scope and assignment policy.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Consumer group (consumer_group) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Consumer group&quot; { kind: consumer_group; }
+}
+
+view picture &quot;Consumer group&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-subscription">
+<h3>Subscription (<code>subscription</code>)</h3>
+<img class="ref-plate" alt="The Subscription symbol" src="assets/kinds/subscription.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A consumer's declared interest, filter and delivery configuration.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Subscription (subscription) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Subscription&quot; { kind: subscription; }
+}
+
+view picture &quot;Subscription&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-schema_registry">
+<h3>Schema registry (<code>schema_registry</code>)</h3>
+<img class="ref-plate" alt="The Schema registry symbol" src="assets/kinds/schema_registry.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A registry of schema definitions, versions and compatibility policies.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Schema registry (schema_registry) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Schema registry&quot; { kind: schema_registry; }
+}
+
+view picture &quot;Schema registry&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-connector">
+<h3>Connector definition (<code>connector</code>)</h3>
+<img class="ref-plate" alt="The Connector definition symbol" src="assets/kinds/connector.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A defined adapter between systems, not an implied delivery guarantee.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Connector definition (connector) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Connector definition&quot; { kind: connector; }
+}
+
+view picture &quot;Connector definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-webhook">
+<h3>Webhook definition (<code>webhook</code>)</h3>
+<img class="ref-plate" alt="The Webhook definition symbol" src="assets/kinds/webhook.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An event-triggered interaction definition with retry and verification policy.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Webhook definition (webhook) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Webhook definition&quot; { kind: webhook; }
+}
+
+view picture &quot;Webhook definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-federation">
+<h3>Federation / query interface (<code>federation</code>)</h3>
+<img class="ref-plate" alt="The Federation / query interface symbol" src="assets/kinds/federation.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Interface family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An interface that queries across sources without automatically copying them.</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Federation / query interface (federation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Federation / query interface&quot; { kind: federation; }
+}
+
+view picture &quot;Federation / query interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-c4-queue">
+<h3>Queue/topic (<code>c4.queue</code>)</h3>
+<img class="ref-plate" alt="The Queue/topic symbol" src="assets/kinds/c4-queue.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Queue/topic — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;c4.context@1&lt;/code&gt;, &lt;code&gt;c4.container@1&lt;/code&gt;, &lt;code&gt;c4.component@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/c4-context-1.svg&quot;&gt;c4.context@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-container-1.svg&quot;&gt;c4.container@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-component-1.svg&quot;&gt;c4.component@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Queue/topic (c4.queue) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Queue/topic&quot; { kind: &quot;c4.queue&quot;; }
+}
+
+view picture &quot;Queue/topic&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sysml-block">
+<h3>Block (<code>sysml.block</code>)</h3>
+<img class="ref-plate" alt="The Block symbol" src="assets/kinds/sysml-block.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Block — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sysml.bdd@1&lt;/code&gt;, &lt;code&gt;sysml.ibd@1&lt;/code&gt;, &lt;code&gt;sysml.parametric@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sysml-bdd-1.svg&quot;&gt;sysml.bdd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-ibd-1.svg&quot;&gt;sysml.ibd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-parametric-1.svg&quot;&gt;sysml.parametric@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Block (sysml.block) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Block&quot; { kind: &quot;sysml.block&quot;; }
+}
+
+view picture &quot;Block&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-application_component">
+<h3>Application component (<code>archi.application_component</code>)</h3>
+<img class="ref-plate" alt="The Application component symbol" src="assets/kinds/archi-application_component.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with the component “plug” tabs. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Application component — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Application component (archi.application_component) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Application component&quot; { kind: &quot;archi.application_component&quot;; }
+}
+
+view picture &quot;Application component&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-application_service">
+<h3>Application service (<code>archi.application_service</code>)</h3>
+<img class="ref-plate" alt="The Application service symbol" src="assets/kinds/archi-application_service.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Application service — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Application service (archi.application_service) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Application service&quot; { kind: &quot;archi.application_service&quot;; }
+}
+
+view picture &quot;Application service&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-frame">
+<h3>Wireframe frame (<code>ui.frame</code>)</h3>
+<img class="ref-plate" alt="The Wireframe frame symbol" src="assets/kinds/ui-frame.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe frame — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe frame (ui.frame) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe frame&quot; { kind: &quot;ui.frame&quot;; }
+}
+
+view picture &quot;Wireframe frame&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-label">
+<h3>Wireframe label (<code>ui.label</code>)</h3>
+<img class="ref-plate" alt="The Wireframe label symbol" src="assets/kinds/ui-label.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe label — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe label (ui.label) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe label&quot; { kind: &quot;ui.label&quot;; }
+}
+
+view picture &quot;Wireframe label&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-input">
+<h3>Wireframe input (<code>ui.input</code>)</h3>
+<img class="ref-plate" alt="The Wireframe input symbol" src="assets/kinds/ui-input.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe input — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe input (ui.input) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe input&quot; { kind: &quot;ui.input&quot;; }
+}
+
+view picture &quot;Wireframe input&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-button">
+<h3>Wireframe button (<code>ui.button</code>)</h3>
+<img class="ref-plate" alt="The Wireframe button symbol" src="assets/kinds/ui-button.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe button — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe button (ui.button) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe button&quot; { kind: &quot;ui.button&quot;; }
+}
+
+view picture &quot;Wireframe button&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-image">
+<h3>Wireframe image placeholder (<code>ui.image</code>)</h3>
+<img class="ref-plate" alt="The Wireframe image placeholder symbol" src="assets/kinds/ui-image.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe image placeholder — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe image placeholder (ui.image) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe image placeholder&quot; { kind: &quot;ui.image&quot;; }
+}
+
+view picture &quot;Wireframe image placeholder&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-checkbox">
+<h3>Wireframe checkbox (<code>ui.checkbox</code>)</h3>
+<img class="ref-plate" alt="The Wireframe checkbox symbol" src="assets/kinds/ui-checkbox.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe checkbox — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe checkbox (ui.checkbox) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe checkbox&quot; { kind: &quot;ui.checkbox&quot;; }
+}
+
+view picture &quot;Wireframe checkbox&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ui-list">
+<h3>Wireframe list (<code>ui.list</code>)</h3>
+<img class="ref-plate" alt="The Wireframe list symbol" src="assets/kinds/ui-list.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Wireframe list — a interface kind..</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wireframe list (ui.list) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wireframe list&quot; { kind: &quot;ui.list&quot;; }
+}
+
+view picture &quot;Wireframe list&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sysml-valuetype">
+<h3>Value type (<code>sysml.valuetype</code>)</h3>
+<img class="ref-plate" alt="The Value type symbol" src="assets/kinds/sysml-valuetype.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Value type — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sysml.bdd@1&lt;/code&gt;, &lt;code&gt;sysml.ibd@1&lt;/code&gt;, &lt;code&gt;sysml.parametric@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sysml-bdd-1.svg&quot;&gt;sysml.bdd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-ibd-1.svg&quot;&gt;sysml.ibd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-parametric-1.svg&quot;&gt;sysml.parametric@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Value type (sysml.valuetype) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Value type&quot; { kind: &quot;sysml.valuetype&quot;; }
+}
+
+view picture &quot;Value type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sysml-interfaceblock">
+<h3>Interface block (<code>sysml.interfaceblock</code>)</h3>
+<img class="ref-plate" alt="The Interface block symbol" src="assets/kinds/sysml-interfaceblock.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Interface block — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sysml.bdd@1&lt;/code&gt;, &lt;code&gt;sysml.ibd@1&lt;/code&gt;, &lt;code&gt;sysml.parametric@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sysml-bdd-1.svg&quot;&gt;sysml.bdd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-ibd-1.svg&quot;&gt;sysml.ibd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-parametric-1.svg&quot;&gt;sysml.parametric@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Interface block (sysml.interfaceblock) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Interface block&quot; { kind: &quot;sysml.interfaceblock&quot;; }
+}
+
+view picture &quot;Interface block&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-participant">
+<h3>Participant (<code>soaml.participant</code>)</h3>
+<img class="ref-plate" alt="The Participant symbol" src="assets/kinds/soaml-participant.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Participant — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Participant (soaml.participant) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Participant&quot; { kind: &quot;soaml.participant&quot;; }
+}
+
+view picture &quot;Participant&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-agent">
+<h3>Agent (<code>soaml.agent</code>)</h3>
+<img class="ref-plate" alt="The Agent symbol" src="assets/kinds/soaml-agent.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Agent — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Agent (soaml.agent) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Agent&quot; { kind: &quot;soaml.agent&quot;; }
+}
+
+view picture &quot;Agent&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-serviceinterface">
+<h3>Service interface (<code>soaml.serviceinterface</code>)</h3>
+<img class="ref-plate" alt="The Service interface symbol" src="assets/kinds/soaml-serviceinterface.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Service interface — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Service interface (soaml.serviceinterface) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Service interface&quot; { kind: &quot;soaml.serviceinterface&quot;; }
+}
+
+view picture &quot;Service interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-opperformer">
+<h3>Operational performer (<code>uaf.opperformer</code>)</h3>
+<img class="ref-plate" alt="The Operational performer symbol" src="assets/kinds/uaf-opperformer.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Operational performer — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Operational performer (uaf.opperformer) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Operational performer&quot; { kind: &quot;uaf.opperformer&quot;; }
+}
+
+view picture &quot;Operational performer&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-opnode">
+<h3>Operational node (<code>uaf.opnode</code>)</h3>
+<img class="ref-plate" alt="The Operational node symbol" src="assets/kinds/uaf-opnode.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Operational node — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Operational node (uaf.opnode) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Operational node&quot; { kind: &quot;uaf.opnode&quot;; }
+}
+
+view picture &quot;Operational node&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-servicespec">
+<h3>Service specification (<code>uaf.servicespec</code>)</h3>
+<img class="ref-plate" alt="The Service specification symbol" src="assets/kinds/uaf-servicespec.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Service specification — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Service specification (uaf.servicespec) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Service specification&quot; { kind: &quot;uaf.servicespec&quot;; }
+}
+
+view picture &quot;Service specification&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-system">
+<h3>System (<code>uaf.system</code>)</h3>
+<img class="ref-plate" alt="The System symbol" src="assets/kinds/uaf-system.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> System — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One System (uaf.system) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;System&quot; { kind: &quot;uaf.system&quot;; }
+}
+
+view picture &quot;System&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-implementer">
+<h3>Implementer (<code>uaf.implementer</code>)</h3>
+<img class="ref-plate" alt="The Implementer symbol" src="assets/kinds/uaf-implementer.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Implementer — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Implementer (uaf.implementer) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Implementer&quot; { kind: &quot;uaf.implementer&quot;; }
+}
+
+view picture &quot;Implementer&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-resourceperformer">
+<h3>Resource performer (<code>uaf.resourceperformer</code>)</h3>
+<img class="ref-plate" alt="The Resource performer symbol" src="assets/kinds/uaf-resourceperformer.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Resource performer — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Resource performer (uaf.resourceperformer) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Resource performer&quot; { kind: &quot;uaf.resourceperformer&quot;; }
+}
+
+view picture &quot;Resource performer&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-resource">
+<h3>Resource (<code>uaf.resource</code>)</h3>
+<img class="ref-plate" alt="The Resource symbol" src="assets/kinds/uaf-resource.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Resource — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Resource (uaf.resource) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Resource&quot; { kind: &quot;uaf.resource&quot;; }
+}
+
+view picture &quot;Resource&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-technology">
+<h3>Technology (<code>uaf.technology</code>)</h3>
+<img class="ref-plate" alt="The Technology symbol" src="assets/kinds/uaf-technology.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Technology — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Technology (uaf.technology) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Technology&quot; { kind: &quot;uaf.technology&quot;; }
+}
+
+view picture &quot;Technology&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-actualresource">
+<h3>Actual resource (<code>uaf.actualresource</code>)</h3>
+<img class="ref-plate" alt="The Actual resource symbol" src="assets/kinds/uaf-actualresource.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Actual resource — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Actual resource (uaf.actualresource) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Actual resource&quot; { kind: &quot;uaf.actualresource&quot;; }
+}
+
+view picture &quot;Actual resource&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-block">
+<h3>Block (<code>sdl.block</code>)</h3>
+<img class="ref-plate" alt="The Block symbol" src="assets/kinds/sdl-block.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Block — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Block (sdl.block) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Block&quot; { kind: &quot;sdl.block&quot;; }
+}
+
+view picture &quot;Block&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-agent">
+<h3>Agent (<code>sdl.agent</code>)</h3>
+<img class="ref-plate" alt="The Agent symbol" src="assets/kinds/sdl-agent.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Agent — a interface kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>dialect</code> (payload format), <code>parameters</code>, <code>payload</code> shape, <code>description</code>, <code>maturity</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Agent (sdl.agent) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Agent&quot; { kind: &quot;sdl.agent&quot;; }
+}
+
+view picture &quot;Agent&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Interface">Ref-Kinds-Interface</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

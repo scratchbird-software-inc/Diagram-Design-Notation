@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Flow (data movement) relations — DDN</title>
+<meta name="description" content="Every flow relation in DDN (34): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Flow (data movement) relations</h1>
+<p>Flow relations say <em>data moves this way</em>: read, write, replicate, publish, load, sync. The arrow points the way the bytes travel. A flow says nothing about <em>how</em> it moves — mechanism, schedule and guarantees are separate properties, so “replicates” and “replicates every 5 minutes over TLS” are the same line with different notes.</p><p>This page lists every <strong>Flow</strong> relation in DDN — <strong>34</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Flow relations end in a <strong>filled arrow</strong> (forward payload movement). Cardinality marks are not allowed here — the line is about movement, not participation. Label the line with what travels (“orders”, “nightly snapshot”).</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-flow">transfers data to · <code>flow</code></a>
+<a href="#r-read">read produces input for · <code>read</code></a>
+<a href="#r-write">writes output to · <code>write</code></a>
+<a href="#r-replicate">replicates to · <code>replicate</code></a>
+<a href="#r-capture">captures changes into · <code>capture</code></a>
+<a href="#r-publish">publishes to · <code>publish</code></a>
+<a href="#r-deliver">delivers to · <code>deliver</code></a>
+<a href="#r-extract">extracts into · <code>extract</code></a>
+<a href="#r-load">loads into · <code>load</code></a>
+<a href="#r-sync">synchronizes toward · <code>sync</code></a>
+<a href="#r-snapshot">copies snapshot to · <code>snapshot</code></a>
+<a href="#r-export">exports to · <code>export</code></a>
+<a href="#r-import">imports into · <code>import</code></a>
+<a href="#r-invalidate">invalidates cache via · <code>invalidate</code></a>
+<a href="#r-delete">propagates deletion to · <code>delete</code></a>
+<a href="#r-replay">replays into · <code>replay</code></a>
+<a href="#r-restore">restores into · <code>restore</code></a>
+<a href="#r-reject">routes rejected data to · <code>reject</code></a>
+<a href="#r-dfd-data">Data transfer · <code>dfd.data</code></a>
+<a href="#r-sysml-flow">Item flow · <code>sysml.flow</code></a>
+<a href="#r-epk-infoflow">Informs · <code>epk.infoflow</code></a>
+<a href="#r-idef0-flow">Flow · <code>idef0.flow</code></a>
+<a href="#r-idef0-call">Call · <code>idef0.call</code></a>
+<a href="#r-petri-arc">Arc · <code>petri.arc</code></a>
+<a href="#r-petri-inhibitor">Inhibits · <code>petri.inhibitor</code></a>
+<a href="#r-petri-testarc">Reads · <code>petri.testarc</code></a>
+<a href="#r-vsm-material">Material flow · <code>vsm.material</code></a>
+<a href="#r-vsm-push">Push · <code>vsm.push</code></a>
+<a href="#r-vsm-pull">Pull · <code>vsm.pull</code></a>
+<a href="#r-vsm-einfo">Electronic information · <code>vsm.einfo</code></a>
+<a href="#r-vsm-minfo">Manual information · <code>vsm.minfo</code></a>
+<a href="#r-sdl-links">Links · <code>sdl.links</code></a>
+<a href="#r-fbd-wire">Wire · <code>fbd.wire</code></a>
+<a href="#r-ladder-series">Series connection · <code>ladder.series</code></a></div>
+<section class="ref-entry" id="r-flow">
+<h3>transfers data to (<code>flow</code>)</h3>
+<img class="ref-plate" alt="What the “transfers data to” line looks like" src="assets/relations/flow.svg">
+<p><strong>What it means.</strong> Source to destination; any transport is specified separately. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// transfers data to (flow) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;transfers data to&quot; @from_side -&gt; @to_side {
+        kind: flow;
+    }
+}
+
+view picture &quot;transfers data to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-read">
+<h3>read produces input for (<code>read</code>)</h3>
+<img class="ref-plate" alt="What the “read produces input for” line looks like" src="assets/relations/read.svg">
+<p><strong>What it means.</strong> Data source to reading activity; data arrow follows payload, not request. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// read produces input for (read) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;read produces input for&quot; @from_side -&gt; @to_side {
+        kind: read;
+    }
+}
+
+view picture &quot;read produces input for&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-write">
+<h3>writes output to (<code>write</code>)</h3>
+<img class="ref-plate" alt="What the “writes output to” line looks like" src="assets/relations/write.svg">
+<p><strong>What it means.</strong> Writing activity to target dataset or interface. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// writes output to (write) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;writes output to&quot; @from_side -&gt; @to_side {
+        kind: write;
+    }
+}
+
+view picture &quot;writes output to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-replicate">
+<h3>replicates to (<code>replicate</code>)</h3>
+<img class="ref-plate" alt="What the “replicates to” line looks like" src="assets/relations/replicate.svg">
+<p><strong>What it means.</strong> Upstream copy to receiving copy; copy identity remains explicit. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// replicates to (replicate) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;replicates to&quot; @from_side -&gt; @to_side {
+        kind: replicate;
+    }
+}
+
+view picture &quot;replicates to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-capture">
+<h3>captures changes into (<code>capture</code>)</h3>
+<img class="ref-plate" alt="What the “captures changes into” line looks like" src="assets/relations/capture.svg">
+<p><strong>What it means.</strong> Source to capture activity or captured-change representation. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// captures changes into (capture) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;captures changes into&quot; @from_side -&gt; @to_side {
+        kind: capture;
+    }
+}
+
+view picture &quot;captures changes into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-publish">
+<h3>publishes to (<code>publish</code>)</h3>
+<img class="ref-plate" alt="What the “publishes to” line looks like" src="assets/relations/publish.svg">
+<p><strong>What it means.</strong> Producer or activity to channel or published interface. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// publishes to (publish) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;publishes to&quot; @from_side -&gt; @to_side {
+        kind: publish;
+    }
+}
+
+view picture &quot;publishes to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-deliver">
+<h3>delivers to (<code>deliver</code>)</h3>
+<img class="ref-plate" alt="What the “delivers to” line looks like" src="assets/relations/deliver.svg">
+<p><strong>What it means.</strong> Channel to subscription, group or consumer input. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// delivers to (deliver) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;delivers to&quot; @from_side -&gt; @to_side {
+        kind: deliver;
+    }
+}
+
+view picture &quot;delivers to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-extract">
+<h3>extracts into (<code>extract</code>)</h3>
+<img class="ref-plate" alt="What the “extracts into” line looks like" src="assets/relations/extract.svg">
+<p><strong>What it means.</strong> Source to extracted representation or extraction activity. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// extracts into (extract) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;extracts into&quot; @from_side -&gt; @to_side {
+        kind: extract;
+    }
+}
+
+view picture &quot;extracts into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-load">
+<h3>loads into (<code>load</code>)</h3>
+<img class="ref-plate" alt="What the “loads into” line looks like" src="assets/relations/load.svg">
+<p><strong>What it means.</strong> Transfer or activity to loaded destination. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// loads into (load) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;loads into&quot; @from_side -&gt; @to_side {
+        kind: load;
+    }
+}
+
+view picture &quot;loads into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sync">
+<h3>synchronizes toward (<code>sync</code>)</h3>
+<img class="ref-plate" alt="What the “synchronizes toward” line looks like" src="assets/relations/sync.svg">
+<p><strong>What it means.</strong> One directed synchronization leg; use two legs for bidirectional designs. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// synchronizes toward (sync) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;synchronizes toward&quot; @from_side -&gt; @to_side {
+        kind: sync;
+    }
+}
+
+view picture &quot;synchronizes toward&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-snapshot">
+<h3>copies snapshot to (<code>snapshot</code>)</h3>
+<img class="ref-plate" alt="What the “copies snapshot to” line looks like" src="assets/relations/snapshot.svg">
+<p><strong>What it means.</strong> Captured state to receiving artifact or load step. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// copies snapshot to (snapshot) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;copies snapshot to&quot; @from_side -&gt; @to_side {
+        kind: snapshot;
+    }
+}
+
+view picture &quot;copies snapshot to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-export">
+<h3>exports to (<code>export</code>)</h3>
+<img class="ref-plate" alt="What the “exports to” line looks like" src="assets/relations/export.svg">
+<p><strong>What it means.</strong> Data or activity to a consumer-oriented output artifact. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// exports to (export) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;exports to&quot; @from_side -&gt; @to_side {
+        kind: export;
+    }
+}
+
+view picture &quot;exports to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-import">
+<h3>imports into (<code>import</code>)</h3>
+<img class="ref-plate" alt="What the “imports into” line looks like" src="assets/relations/import.svg">
+<p><strong>What it means.</strong> External representation to importing activity or managed destination. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// imports into (import) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;imports into&quot; @from_side -&gt; @to_side {
+        kind: import;
+    }
+}
+
+view picture &quot;imports into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-invalidate">
+<h3>invalidates cache via (<code>invalidate</code>)</h3>
+<img class="ref-plate" alt="What the “invalidates cache via” line looks like" src="assets/relations/invalidate.svg">
+<p><strong>What it means.</strong> Invalidation payload to a cache-handling activity or channel. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// invalidates cache via (invalidate) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;invalidates cache via&quot; @from_side -&gt; @to_side {
+        kind: invalidate;
+    }
+}
+
+view picture &quot;invalidates cache via&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-delete">
+<h3>propagates deletion to (<code>delete</code>)</h3>
+<img class="ref-plate" alt="What the “propagates deletion to” line looks like" src="assets/relations/delete.svg">
+<p><strong>What it means.</strong> Deletion or tombstone information to a downstream system. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// propagates deletion to (delete) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;propagates deletion to&quot; @from_side -&gt; @to_side {
+        kind: delete;
+    }
+}
+
+view picture &quot;propagates deletion to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-replay">
+<h3>replays into (<code>replay</code>)</h3>
+<img class="ref-plate" alt="What the “replays into” line looks like" src="assets/relations/replay.svg">
+<p><strong>What it means.</strong> Retained messages or log entries to a processing activity. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// replays into (replay) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;replays into&quot; @from_side -&gt; @to_side {
+        kind: replay;
+    }
+}
+
+view picture &quot;replays into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-restore">
+<h3>restores into (<code>restore</code>)</h3>
+<img class="ref-plate" alt="What the “restores into” line looks like" src="assets/relations/restore.svg">
+<p><strong>What it means.</strong> Recovery artifact or restoring activity to restored state. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// restores into (restore) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;restores into&quot; @from_side -&gt; @to_side {
+        kind: restore;
+    }
+}
+
+view picture &quot;restores into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-reject">
+<h3>routes rejected data to (<code>reject</code>)</h3>
+<img class="ref-plate" alt="What the “routes rejected data to” line looks like" src="assets/relations/reject.svg">
+<p><strong>What it means.</strong> Rejected records to explicit quarantine or dead-letter storage. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// routes rejected data to (reject) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;routes rejected data to&quot; @from_side -&gt; @to_side {
+        kind: reject;
+    }
+}
+
+view picture &quot;routes rejected data to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-dfd-data">
+<h3>Data transfer (<code>dfd.data</code>)</h3>
+<img class="ref-plate" alt="What the “Data transfer” line looks like" src="assets/relations/dfd-data.svg">
+<p><strong>What it means.</strong> Data transfer. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Data transfer (dfd.data) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;dfd.process&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;dfd.process&quot;; }
+    relation shows &quot;Data transfer&quot; @from_side -&gt; @to_side {
+        kind: &quot;dfd.data&quot;;
+    }
+}
+
+view picture &quot;Data transfer&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-flow">
+<h3>Item flow (<code>sysml.flow</code>)</h3>
+<img class="ref-plate" alt="What the “Item flow” line looks like" src="assets/relations/sysml-flow.svg">
+<p><strong>What it means.</strong> Item flow. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Item flow (sysml.flow) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;Item flow&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.flow&quot;;
+    }
+}
+
+view picture &quot;Item flow&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-epk-infoflow">
+<h3>Informs (<code>epk.infoflow</code>)</h3>
+<img class="ref-plate" alt="What the “Informs” line looks like" src="assets/relations/epk-infoflow.svg">
+<p><strong>What it means.</strong> Informs. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Informs (epk.infoflow) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;epk.infoobject&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;epk.infoobject&quot;; }
+    relation shows &quot;Informs&quot; @from_side -&gt; @to_side {
+        kind: &quot;epk.infoflow&quot;;
+    }
+}
+
+view picture &quot;Informs&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-idef0-flow">
+<h3>Flow (<code>idef0.flow</code>)</h3>
+<img class="ref-plate" alt="What the “Flow” line looks like" src="assets/relations/idef0-flow.svg">
+<p><strong>What it means.</strong> Flows. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Flow (idef0.flow) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;idef0.activity&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;idef0.activity&quot;; }
+    relation shows &quot;Flow&quot; @from_side -&gt; @to_side {
+        kind: &quot;idef0.flow&quot;;
+    }
+}
+
+view picture &quot;Flow&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-idef0-call">
+<h3>Call (<code>idef0.call</code>)</h3>
+<img class="ref-plate" alt="What the “Call” line looks like" src="assets/relations/idef0-call.svg">
+<p><strong>What it means.</strong> Calls. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Call (idef0.call) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;idef0.activity&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;idef0.activity&quot;; }
+    relation shows &quot;Call&quot; @from_side -&gt; @to_side {
+        kind: &quot;idef0.call&quot;;
+    }
+}
+
+view picture &quot;Call&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-petri-arc">
+<h3>Arc (<code>petri.arc</code>)</h3>
+<img class="ref-plate" alt="What the “Arc” line looks like" src="assets/relations/petri-arc.svg">
+<p><strong>What it means.</strong> Flows. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Arc (petri.arc) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;petri.place&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;petri.place&quot;; }
+    relation shows &quot;Arc&quot; @from_side -&gt; @to_side {
+        kind: &quot;petri.arc&quot;;
+    }
+}
+
+view picture &quot;Arc&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-petri-inhibitor">
+<h3>Inhibits (<code>petri.inhibitor</code>)</h3>
+<img class="ref-plate" alt="What the “Inhibits” line looks like" src="assets/relations/petri-inhibitor.svg">
+<p><strong>What it means.</strong> Inhibits. It ends with a circle mark — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Inhibits (petri.inhibitor) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;petri.place&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;petri.transition&quot;; }
+    relation shows &quot;Inhibits&quot; @from_side -&gt; @to_side {
+        kind: &quot;petri.inhibitor&quot;;
+    }
+}
+
+view picture &quot;Inhibits&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-petri-testarc">
+<h3>Reads (<code>petri.testarc</code>)</h3>
+<img class="ref-plate" alt="What the “Reads” line looks like" src="assets/relations/petri-testarc.svg">
+<p><strong>What it means.</strong> Reads. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Reads (petri.testarc) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;petri.place&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;petri.place&quot;; }
+    relation shows &quot;Reads&quot; @from_side -&gt; @to_side {
+        kind: &quot;petri.testarc&quot;;
+    }
+}
+
+view picture &quot;Reads&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-vsm-material">
+<h3>Material flow (<code>vsm.material</code>)</h3>
+<img class="ref-plate" alt="What the “Material flow” line looks like" src="assets/relations/vsm-material.svg">
+<p><strong>What it means.</strong> Flows. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Material flow (vsm.material) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;vsm.process&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;vsm.process&quot;; }
+    relation shows &quot;Material flow&quot; @from_side -&gt; @to_side {
+        kind: &quot;vsm.material&quot;;
+    }
+}
+
+view picture &quot;Material flow&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-vsm-push">
+<h3>Push (<code>vsm.push</code>)</h3>
+<img class="ref-plate" alt="What the “Push” line looks like" src="assets/relations/vsm-push.svg">
+<p><strong>What it means.</strong> Pushes. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Push (vsm.push) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;vsm.process&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;vsm.process&quot;; }
+    relation shows &quot;Push&quot; @from_side -&gt; @to_side {
+        kind: &quot;vsm.push&quot;;
+    }
+}
+
+view picture &quot;Push&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-vsm-pull">
+<h3>Pull (<code>vsm.pull</code>)</h3>
+<img class="ref-plate" alt="What the “Pull” line looks like" src="assets/relations/vsm-pull.svg">
+<p><strong>What it means.</strong> Pulls. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Pull (vsm.pull) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;vsm.process&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;vsm.process&quot;; }
+    relation shows &quot;Pull&quot; @from_side -&gt; @to_side {
+        kind: &quot;vsm.pull&quot;;
+    }
+}
+
+view picture &quot;Pull&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-vsm-einfo">
+<h3>Electronic information (<code>vsm.einfo</code>)</h3>
+<img class="ref-plate" alt="What the “Electronic information” line looks like" src="assets/relations/vsm-einfo.svg">
+<p><strong>What it means.</strong> Informs (electronic). It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Electronic information (vsm.einfo) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;vsm.process&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;vsm.process&quot;; }
+    relation shows &quot;Electronic information&quot; @from_side -&gt; @to_side {
+        kind: &quot;vsm.einfo&quot;;
+    }
+}
+
+view picture &quot;Electronic information&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-vsm-minfo">
+<h3>Manual information (<code>vsm.minfo</code>)</h3>
+<img class="ref-plate" alt="What the “Manual information” line looks like" src="assets/relations/vsm-minfo.svg">
+<p><strong>What it means.</strong> Informs. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Manual information (vsm.minfo) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;vsm.process&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;vsm.process&quot;; }
+    relation shows &quot;Manual information&quot; @from_side -&gt; @to_side {
+        kind: &quot;vsm.minfo&quot;;
+    }
+}
+
+view picture &quot;Manual information&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sdl-links">
+<h3>Links (<code>sdl.links</code>)</h3>
+<img class="ref-plate" alt="What the “Links” line looks like" src="assets/relations/sdl-links.svg">
+<p><strong>What it means.</strong> Links. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Links (sdl.links) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;sdl.signal&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;sdl.block&quot;; }
+    relation shows &quot;Links&quot; @from_side -&gt; @to_side {
+        kind: &quot;sdl.links&quot;;
+    }
+}
+
+view picture &quot;Links&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-fbd-wire">
+<h3>Wire (<code>fbd.wire</code>)</h3>
+<img class="ref-plate" alt="What the “Wire” line looks like" src="assets/relations/fbd-wire.svg">
+<p><strong>What it means.</strong> Connects. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Wire (fbd.wire) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;fbd.block&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;fbd.block&quot;; }
+    relation shows &quot;Wire&quot; @from_side -&gt; @to_side {
+        kind: &quot;fbd.wire&quot;;
+    }
+}
+
+view picture &quot;Wire&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-ladder-series">
+<h3>Series connection (<code>ladder.series</code>)</h3>
+<img class="ref-plate" alt="What the “Series connection” line looks like" src="assets/relations/ladder-series.svg">
+<p><strong>What it means.</strong> Wires in series. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Series connection (ladder.series) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;ladder.contact&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;ladder.contact&quot;; }
+    relation shows &quot;Series connection&quot; @from_side -&gt; @to_side {
+        kind: &quot;ladder.series&quot;;
+    }
+}
+
+view picture &quot;Series connection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Flow">Ref-Relations-Flow</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

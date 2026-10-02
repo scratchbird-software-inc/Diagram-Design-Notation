@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Governance &amp; responsibility kinds — DDN</title>
+<meta name="description" content="Every governance element kind in DDN (47): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Governance &amp; responsibility kinds</h1>
+<p>These kinds name the <em>who and the rules</em>: organizations, teams, roles, contracts, policies, classifications, entitlements. Governance relations (who owns what, which policy applies where) turn a picture of boxes into a picture of accountability.</p><p>This page lists every <strong>Governance</strong> element kind in DDN — <strong>47</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Matrices">Matrices</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">Architecture</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Trees">Trees</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-organization">Organization / party · <code>organization</code></a>
+<a href="#k-team">Team / owner group · <code>team</code></a>
+<a href="#k-role">Role / principal · <code>role</code></a>
+<a href="#k-dct">Data contract · <code>dct</code></a>
+<a href="#k-gpo">Governance policy · <code>gpo</code></a>
+<a href="#k-qlr">Quality assertion · <code>qlr</code></a>
+<a href="#k-slo">Service-level objective / agreement · <code>slo</code></a>
+<a href="#k-entl">Entitlement / grant · <code>entl</code></a>
+<a href="#k-cls">Classification definition · <code>cls</code></a>
+<a href="#k-prv">Provenance record · <code>prv</code></a>
+<a href="#k-dcl">Deletion / legal-hold instruction · <code>dcl</code></a>
+<a href="#k-req-requirement">Requirement · <code>req.requirement</code></a>
+<a href="#k-req-test">Verification case · <code>req.test</code></a>
+<a href="#k-req-implementation">Implementation element · <code>req.implementation</code></a>
+<a href="#k-analysis-role">Responsible role · <code>analysis.role</code></a>
+<a href="#k-c4-person">Person · <code>c4.person</code></a>
+<a href="#k-epk-connector">Connector · <code>epk.connector</code></a>
+<a href="#k-archi-business_actor">Business actor · <code>archi.business_actor</code></a>
+<a href="#k-archi-business_role">Business role · <code>archi.business_role</code></a>
+<a href="#k-archi-business_process">Business process · <code>archi.business_process</code></a>
+<a href="#k-archi-business_service">Business service · <code>archi.business_service</code></a>
+<a href="#k-archi-business_interface">Business interface · <code>archi.business_interface</code></a>
+<a href="#k-sysml-testcase">Test case · <code>sysml.testcase</code></a>
+<a href="#k-dmn-decision">Decision · <code>dmn.decision</code></a>
+<a href="#k-dmn-bkm">Business knowledge model · <code>dmn.bkm</code></a>
+<a href="#k-dmn-decisionservice">Decision service · <code>dmn.decisionservice</code></a>
+<a href="#k-uaf-enterprisegoal">Enterprise goal · <code>uaf.enterprisegoal</code></a>
+<a href="#k-uaf-enterprisevision">Enterprise vision · <code>uaf.enterprisevision</code></a>
+<a href="#k-uaf-servicepolicy">Service policy · <code>uaf.servicepolicy</code></a>
+<a href="#k-uaf-person">Person · <code>uaf.person</code></a>
+<a href="#k-uaf-organization">Organization · <code>uaf.organization</code></a>
+<a href="#k-uaf-post">Post · <code>uaf.post</code></a>
+<a href="#k-uaf-responsibility">Responsibility · <code>uaf.responsibility</code></a>
+<a href="#k-uaf-securityelement">Security element · <code>uaf.securityelement</code></a>
+<a href="#k-uaf-securitycontrol">Security control · <code>uaf.securitycontrol</code></a>
+<a href="#k-uaf-threat">Threat · <code>uaf.threat</code></a>
+<a href="#k-uaf-asset">Asset · <code>uaf.asset</code></a>
+<a href="#k-uaf-standard">Standard · <code>uaf.standard</code></a>
+<a href="#k-uaf-standardcollection">Standard collection · <code>uaf.standardcollection</code></a>
+<a href="#k-uaf-protocol">Protocol · <code>uaf.protocol</code></a>
+<a href="#k-uaf-actualorganization">Actual organization · <code>uaf.actualorganization</code></a>
+<a href="#k-uaf-actualperson">Actual person · <code>uaf.actualperson</code></a>
+<a href="#k-epk-orgunit">Organizational unit · <code>epk.orgunit</code></a>
+<a href="#k-epk-role">Role · <code>epk.role</code></a>
+<a href="#k-vsm-customer">Customer / supplier · <code>vsm.customer</code></a>
+<a href="#k-vsm-control">Production control · <code>vsm.control</code></a>
+<a href="#k-vsm-operator">Operator · <code>vsm.operator</code></a></div>
+<section class="ref-entry" id="k-organization">
+<h3>Organization / party (<code>organization</code>)</h3>
+<img class="ref-plate" alt="The Organization / party symbol" src="assets/kinds/organization.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A party with an explicit responsibility or contractual role.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Organization / party (organization) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Organization / party&quot; { kind: organization; }
+}
+
+view picture &quot;Organization / party&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-team">
+<h3>Team / owner group (<code>team</code>)</h3>
+<img class="ref-plate" alt="The Team / owner group symbol" src="assets/kinds/team.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named ownership or operational responsibility group.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Team / owner group (team) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Team / owner group&quot; { kind: team; }
+}
+
+view picture &quot;Team / owner group&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-role">
+<h3>Role / principal (<code>role</code>)</h3>
+<img class="ref-plate" alt="The Role / principal symbol" src="assets/kinds/role.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An actor or access role; avoid exposing unnecessary personal data.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Role / principal (role) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Role / principal&quot; { kind: role; }
+}
+
+view picture &quot;Role / principal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dct">
+<h3>Data contract (<code>dct</code>)</h3>
+<img class="ref-plate" alt="The Data contract symbol" src="assets/kinds/dct.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A versioned agreement covering structure, semantics and expectations.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data contract (dct) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data contract&quot; { kind: dct; }
+}
+
+view picture &quot;Data contract&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-gpo">
+<h3>Governance policy (<code>gpo</code>)</h3>
+<img class="ref-plate" alt="The Governance policy symbol" src="assets/kinds/gpo.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A policy definition and explicit applicability relationships.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Governance policy (gpo) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Governance policy&quot; { kind: gpo; }
+}
+
+view picture &quot;Governance policy&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-qlr">
+<h3>Quality assertion (<code>qlr</code>)</h3>
+<img class="ref-plate" alt="The Quality assertion symbol" src="assets/kinds/qlr.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named, measurable assertion with threshold, scope and enforcement.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Quality assertion (qlr) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Quality assertion&quot; { kind: qlr; }
+}
+
+view picture &quot;Quality assertion&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-slo">
+<h3>Service-level objective / agreement (<code>slo</code>)</h3>
+<img class="ref-plate" alt="The Service-level objective / agreement symbol" src="assets/kinds/slo.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named operational target with units, window and evidence.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Service-level objective / agreement (slo) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Service-level objective / agreement&quot; { kind: slo; }
+}
+
+view picture &quot;Service-level objective / agreement&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-entl">
+<h3>Entitlement / grant (<code>entl</code>)</h3>
+<img class="ref-plate" alt="The Entitlement / grant symbol" src="assets/kinds/entl.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An access authorization definition and its scope.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Entitlement / grant (entl) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Entitlement / grant&quot; { kind: entl; }
+}
+
+view picture &quot;Entitlement / grant&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cls">
+<h3>Classification definition (<code>cls</code>)</h3>
+<img class="ref-plate" alt="The Classification definition symbol" src="assets/kinds/cls.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A sensitivity or handling category; jurisdiction and policy are separate.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Classification definition (cls) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Classification definition&quot; { kind: cls; }
+}
+
+view picture &quot;Classification definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-prv">
+<h3>Provenance record (<code>prv</code>)</h3>
+<img class="ref-plate" alt="The Provenance record symbol" src="assets/kinds/prv.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Evidence linking sources, activities, outputs and responsible parties.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Provenance record (prv) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Provenance record&quot; { kind: prv; }
+}
+
+view picture &quot;Provenance record&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dcl">
+<h3>Deletion / legal-hold instruction (<code>dcl</code>)</h3>
+<img class="ref-plate" alt="The Deletion / legal-hold instruction symbol" src="assets/kinds/dcl.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Governance family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A scoped deletion, preservation or exception instruction.</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Deletion / legal-hold instruction (dcl) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Deletion / legal-hold instruction&quot; { kind: dcl; }
+}
+
+view picture &quot;Deletion / legal-hold instruction&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-req-requirement">
+<h3>Requirement (<code>req.requirement</code>)</h3>
+<img class="ref-plate" alt="The Requirement symbol" src="assets/kinds/req-requirement.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Requirement — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Requirement (req.requirement) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Requirement&quot; { kind: &quot;req.requirement&quot;;
+        x_diagram: { code: &quot;REQ-1&quot;; text: &quot;The system shall greet the user by name.&quot; };
+    }
+}
+
+view picture &quot;Requirement&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-req-test">
+<h3>Verification case (<code>req.test</code>)</h3>
+<img class="ref-plate" alt="The Verification case symbol" src="assets/kinds/req-test.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Verification case — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Verification case (req.test) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Verification case&quot; { kind: &quot;req.test&quot;; }
+}
+
+view picture &quot;Verification case&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-req-implementation">
+<h3>Implementation element (<code>req.implementation</code>)</h3>
+<img class="ref-plate" alt="The Implementation element symbol" src="assets/kinds/req-implementation.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with the component “plug” tabs. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Implementation element — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Implementation element (req.implementation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Implementation element&quot; { kind: &quot;req.implementation&quot;; }
+}
+
+view picture &quot;Implementation element&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-analysis-role">
+<h3>Responsible role (<code>analysis.role</code>)</h3>
+<img class="ref-plate" alt="The Responsible role symbol" src="assets/kinds/analysis-role.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Responsible role — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Responsible role (analysis.role) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Responsible role&quot; { kind: &quot;analysis.role&quot;; }
+}
+
+view picture &quot;Responsible role&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-c4-person">
+<h3>Person (<code>c4.person</code>)</h3>
+<img class="ref-plate" alt="The Person symbol" src="assets/kinds/c4-person.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Person — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;c4.context@1&lt;/code&gt;, &lt;code&gt;c4.container@1&lt;/code&gt;, &lt;code&gt;c4.component@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/c4-context-1.svg&quot;&gt;c4.context@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-container-1.svg&quot;&gt;c4.container@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-component-1.svg&quot;&gt;c4.component@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Person (c4.person) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Person&quot; { kind: &quot;c4.person&quot;; }
+}
+
+view picture &quot;Person&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-connector">
+<h3>Connector (<code>epk.connector</code>)</h3>
+<img class="ref-plate" alt="The Connector symbol" src="assets/kinds/epk-connector.svg">
+<p><strong>What it looks like.</strong> Drawn as a small circle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Connector — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Connector (epk.connector) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Connector&quot; { kind: &quot;epk.connector&quot;; }
+}
+
+view picture &quot;Connector&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-business_actor">
+<h3>Business actor (<code>archi.business_actor</code>)</h3>
+<img class="ref-plate" alt="The Business actor symbol" src="assets/kinds/archi-business_actor.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Business actor — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business actor (archi.business_actor) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business actor&quot; { kind: &quot;archi.business_actor&quot;; }
+}
+
+view picture &quot;Business actor&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-business_role">
+<h3>Business role (<code>archi.business_role</code>)</h3>
+<img class="ref-plate" alt="The Business role symbol" src="assets/kinds/archi-business_role.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Business role — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business role (archi.business_role) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business role&quot; { kind: &quot;archi.business_role&quot;; }
+}
+
+view picture &quot;Business role&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-business_process">
+<h3>Business process (<code>archi.business_process</code>)</h3>
+<img class="ref-plate" alt="The Business process symbol" src="assets/kinds/archi-business_process.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Business process — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business process (archi.business_process) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business process&quot; { kind: &quot;archi.business_process&quot;; }
+}
+
+view picture &quot;Business process&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-business_service">
+<h3>Business service (<code>archi.business_service</code>)</h3>
+<img class="ref-plate" alt="The Business service symbol" src="assets/kinds/archi-business_service.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Business service — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business service (archi.business_service) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business service&quot; { kind: &quot;archi.business_service&quot;; }
+}
+
+view picture &quot;Business service&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-business_interface">
+<h3>Business interface (<code>archi.business_interface</code>)</h3>
+<img class="ref-plate" alt="The Business interface symbol" src="assets/kinds/archi-business_interface.svg">
+<p><strong>What it looks like.</strong> Drawn as an ellipse. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Business interface — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business interface (archi.business_interface) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business interface&quot; { kind: &quot;archi.business_interface&quot;; }
+}
+
+view picture &quot;Business interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sysml-testcase">
+<h3>Test case (<code>sysml.testcase</code>)</h3>
+<img class="ref-plate" alt="The Test case symbol" src="assets/kinds/sysml-testcase.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Test case — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sysml.bdd@1&lt;/code&gt;, &lt;code&gt;sysml.ibd@1&lt;/code&gt;, &lt;code&gt;sysml.parametric@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sysml-bdd-1.svg&quot;&gt;sysml.bdd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-ibd-1.svg&quot;&gt;sysml.ibd@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sysml-parametric-1.svg&quot;&gt;sysml.parametric@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Test case (sysml.testcase) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Test case&quot; { kind: &quot;sysml.testcase&quot;; }
+}
+
+view picture &quot;Test case&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dmn-decision">
+<h3>Decision (<code>dmn.decision</code>)</h3>
+<img class="ref-plate" alt="The Decision symbol" src="assets/kinds/dmn-decision.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Decision — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dmn.drd@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dmn-drd-1.svg&quot;&gt;dmn.drd@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision (dmn.decision) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision&quot; { kind: &quot;dmn.decision&quot;; }
+}
+
+view picture &quot;Decision&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dmn-bkm">
+<h3>Business knowledge model (<code>dmn.bkm</code>)</h3>
+<img class="ref-plate" alt="The Business knowledge model symbol" src="assets/kinds/dmn-bkm.svg">
+<p><strong>What it looks like.</strong> Drawn as a clippedcorner shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Business knowledge model — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dmn.drd@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dmn-drd-1.svg&quot;&gt;dmn.drd@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Business knowledge model (dmn.bkm) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Business knowledge model&quot; { kind: &quot;dmn.bkm&quot;; }
+}
+
+view picture &quot;Business knowledge model&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dmn-decisionservice">
+<h3>Decision service (<code>dmn.decisionservice</code>)</h3>
+<img class="ref-plate" alt="The Decision service symbol" src="assets/kinds/dmn-decisionservice.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Decision service — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dmn.drd@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dmn-drd-1.svg&quot;&gt;dmn.drd@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision service (dmn.decisionservice) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision service&quot; { kind: &quot;dmn.decisionservice&quot;; }
+}
+
+view picture &quot;Decision service&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-enterprisegoal">
+<h3>Enterprise goal (<code>uaf.enterprisegoal</code>)</h3>
+<img class="ref-plate" alt="The Enterprise goal symbol" src="assets/kinds/uaf-enterprisegoal.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Enterprise goal — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Enterprise goal (uaf.enterprisegoal) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Enterprise goal&quot; { kind: &quot;uaf.enterprisegoal&quot;; }
+}
+
+view picture &quot;Enterprise goal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-enterprisevision">
+<h3>Enterprise vision (<code>uaf.enterprisevision</code>)</h3>
+<img class="ref-plate" alt="The Enterprise vision symbol" src="assets/kinds/uaf-enterprisevision.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Enterprise vision — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Enterprise vision (uaf.enterprisevision) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Enterprise vision&quot; { kind: &quot;uaf.enterprisevision&quot;; }
+}
+
+view picture &quot;Enterprise vision&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-servicepolicy">
+<h3>Service policy (<code>uaf.servicepolicy</code>)</h3>
+<img class="ref-plate" alt="The Service policy symbol" src="assets/kinds/uaf-servicepolicy.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Service policy — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Service policy (uaf.servicepolicy) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Service policy&quot; { kind: &quot;uaf.servicepolicy&quot;; }
+}
+
+view picture &quot;Service policy&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-person">
+<h3>Person (<code>uaf.person</code>)</h3>
+<img class="ref-plate" alt="The Person symbol" src="assets/kinds/uaf-person.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Person — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Person (uaf.person) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Person&quot; { kind: &quot;uaf.person&quot;; }
+}
+
+view picture &quot;Person&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-organization">
+<h3>Organization (<code>uaf.organization</code>)</h3>
+<img class="ref-plate" alt="The Organization symbol" src="assets/kinds/uaf-organization.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Organization — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Organization (uaf.organization) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Organization&quot; { kind: &quot;uaf.organization&quot;; }
+}
+
+view picture &quot;Organization&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-post">
+<h3>Post (<code>uaf.post</code>)</h3>
+<img class="ref-plate" alt="The Post symbol" src="assets/kinds/uaf-post.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Post — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Post (uaf.post) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Post&quot; { kind: &quot;uaf.post&quot;; }
+}
+
+view picture &quot;Post&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-responsibility">
+<h3>Responsibility (<code>uaf.responsibility</code>)</h3>
+<img class="ref-plate" alt="The Responsibility symbol" src="assets/kinds/uaf-responsibility.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Responsibility — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Responsibility (uaf.responsibility) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Responsibility&quot; { kind: &quot;uaf.responsibility&quot;; }
+}
+
+view picture &quot;Responsibility&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-securityelement">
+<h3>Security element (<code>uaf.securityelement</code>)</h3>
+<img class="ref-plate" alt="The Security element symbol" src="assets/kinds/uaf-securityelement.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Security element — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Security element (uaf.securityelement) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Security element&quot; { kind: &quot;uaf.securityelement&quot;; }
+}
+
+view picture &quot;Security element&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-securitycontrol">
+<h3>Security control (<code>uaf.securitycontrol</code>)</h3>
+<img class="ref-plate" alt="The Security control symbol" src="assets/kinds/uaf-securitycontrol.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Security control — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Security control (uaf.securitycontrol) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Security control&quot; { kind: &quot;uaf.securitycontrol&quot;; }
+}
+
+view picture &quot;Security control&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-threat">
+<h3>Threat (<code>uaf.threat</code>)</h3>
+<img class="ref-plate" alt="The Threat symbol" src="assets/kinds/uaf-threat.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Threat — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Threat (uaf.threat) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Threat&quot; { kind: &quot;uaf.threat&quot;; }
+}
+
+view picture &quot;Threat&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-asset">
+<h3>Asset (<code>uaf.asset</code>)</h3>
+<img class="ref-plate" alt="The Asset symbol" src="assets/kinds/uaf-asset.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Asset — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Asset (uaf.asset) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Asset&quot; { kind: &quot;uaf.asset&quot;; }
+}
+
+view picture &quot;Asset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-standard">
+<h3>Standard (<code>uaf.standard</code>)</h3>
+<img class="ref-plate" alt="The Standard symbol" src="assets/kinds/uaf-standard.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Standard — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Standard (uaf.standard) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Standard&quot; { kind: &quot;uaf.standard&quot;; }
+}
+
+view picture &quot;Standard&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-standardcollection">
+<h3>Standard collection (<code>uaf.standardcollection</code>)</h3>
+<img class="ref-plate" alt="The Standard collection symbol" src="assets/kinds/uaf-standardcollection.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Standard collection — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Standard collection (uaf.standardcollection) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Standard collection&quot; { kind: &quot;uaf.standardcollection&quot;; }
+}
+
+view picture &quot;Standard collection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-protocol">
+<h3>Protocol (<code>uaf.protocol</code>)</h3>
+<img class="ref-plate" alt="The Protocol symbol" src="assets/kinds/uaf-protocol.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Protocol — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Protocol (uaf.protocol) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Protocol&quot; { kind: &quot;uaf.protocol&quot;; }
+}
+
+view picture &quot;Protocol&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-actualorganization">
+<h3>Actual organization (<code>uaf.actualorganization</code>)</h3>
+<img class="ref-plate" alt="The Actual organization symbol" src="assets/kinds/uaf-actualorganization.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Actual organization — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Actual organization (uaf.actualorganization) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Actual organization&quot; { kind: &quot;uaf.actualorganization&quot;; }
+}
+
+view picture &quot;Actual organization&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-actualperson">
+<h3>Actual person (<code>uaf.actualperson</code>)</h3>
+<img class="ref-plate" alt="The Actual person symbol" src="assets/kinds/uaf-actualperson.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Actual person — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Actual person (uaf.actualperson) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Actual person&quot; { kind: &quot;uaf.actualperson&quot;; }
+}
+
+view picture &quot;Actual person&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-orgunit">
+<h3>Organizational unit (<code>epk.orgunit</code>)</h3>
+<img class="ref-plate" alt="The Organizational unit symbol" src="assets/kinds/epk-orgunit.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Organizational unit — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Organizational unit (epk.orgunit) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Organizational unit&quot; { kind: &quot;epk.orgunit&quot;; }
+}
+
+view picture &quot;Organizational unit&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-role">
+<h3>Role (<code>epk.role</code>)</h3>
+<img class="ref-plate" alt="The Role symbol" src="assets/kinds/epk-role.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Role — a governance kind..</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Role (epk.role) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Role&quot; { kind: &quot;epk.role&quot;; }
+}
+
+view picture &quot;Role&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-customer">
+<h3>Customer / supplier (<code>vsm.customer</code>)</h3>
+<img class="ref-plate" alt="The Customer / supplier symbol" src="assets/kinds/vsm-customer.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Customer / supplier — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Customer / supplier (vsm.customer) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Customer / supplier&quot; { kind: &quot;vsm.customer&quot;; }
+}
+
+view picture &quot;Customer / supplier&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-control">
+<h3>Production control (<code>vsm.control</code>)</h3>
+<img class="ref-plate" alt="The Production control symbol" src="assets/kinds/vsm-control.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Production control — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Production control (vsm.control) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Production control&quot; { kind: &quot;vsm.control&quot;; }
+}
+
+view picture &quot;Production control&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-operator">
+<h3>Operator (<code>vsm.operator</code>)</h3>
+<img class="ref-plate" alt="The Operator symbol" src="assets/kinds/vsm-operator.svg">
+<p><strong>What it looks like.</strong> Drawn as a stick figure. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Operator — a governance kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>owner</code>, <code>classification</code>, <code>contract</code>, <code>quality</code>, <code>scope</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Operator (vsm.operator) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Operator&quot; { kind: &quot;vsm.operator&quot;; }
+}
+
+view picture &quot;Operator&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Governance">Ref-Kinds-Governance</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

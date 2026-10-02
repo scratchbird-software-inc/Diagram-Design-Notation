@@ -21,6 +21,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import * as REFDATA from '../tools/reference-data.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const outIdx = process.argv.indexOf('--out');
@@ -43,6 +45,8 @@ const GALLERY_SVG_COUNT = Object.keys(GALLERY_COVERAGE.profiles).length +
 const ICON_PACKS = readJson('standard/registry/icon-packs/index.json').packs.map(f =>
   readJson('standard/registry/icon-packs/' + f));
 const ICON_TOTAL = ICON_PACKS.reduce((n, p) => n + p.icons.length, 0);
+const REF_FACTS = readJson('standard/submission/facts.json');
+const REF_FACT = path2 => path2.split('.').reduce((o, k) => o?.[k], REF_FACTS)?.value;
 
 const written = []; // paths relative to OUT, for the manifest
 function writeOut(rel, content) {
@@ -157,6 +161,7 @@ const NAV = [
   ['Gallery', 'gallery/index.html', 'gallery'],
   ['Icons', 'icons/index.html', 'icons'],
   ['Guide', 'guide/index.html', 'guide'],
+  ['Reference', 'reference/index.html', 'reference'],
   ['Docs', 'docs/index.html', 'docs'],
   ['Standard', 'standard/index.html', 'standard'],
   ['Tools', 'tools/index.html', 'tools'],
@@ -430,6 +435,7 @@ const demoScript = '(function(){\n' +
 const homeCards = [
   ['download/DDN-AI-REFERENCE.md', 'AI authoring reference — let a chat AI write your DDN', 'The whole dialect in one generated file: paste it into Claude, ChatGPT or any chat AI, describe your diagram in plain language, and paste the DDN it writes into the tool. The validator catches mistakes by code.', 'generated · always current'],
   ['guide/index.html', 'Diagram field guide — read, change, verify', GUIDE_CHAPTER_COUNT + ' chapters: every major notation family and chart type as a live, source-editable example with a guided first edit whose render-changing evidence is shipped in the page. Also as one self-contained portable file.', 'live · works offline'],
+  ['reference/index.html', 'Reference — every element kind and relation', 'The complete shelf catalogue: all ' + REF_FACT('registry.totalKinds') + ' element kinds and ' + REF_FACT('registry.totalRelations') + ' relations by family — each with its rendered symbol, a plain-language meaning, accepted properties, and a paste-ready working example. Generated from the registry.', 'registry-generated'],
   ['gallery/index.html', 'Gallery — full notation coverage and every example', 'One pre-rendered SVG per installed profile (all ' + PROFILE_COUNT + '), variation sheets (every chart mark flat and isometric, look × palette, routing × style, layout algorithm, spacing level), and the complete example corpus — every runnable .ddn the project ships — ' + GALLERY_SVG_COUNT + ' CLI renders, each with an explanation, browsable DDN source, and wiki/viewer/designer links.', 'static · file:// safe'],
   ['tools/index.html?mode=design', 'Designer — the tool in design mode', 'The designer IS the viewer with more functionality: drag-to-pin, click-to-place from the full kind palette (notation-plate glyphs), click-source-click-target connecting, inspector edits with undo, live source — one page, one I/O contract.', 'standalone · no server'],
   ['tools/index.html', 'Unified diagram tool', 'One page for viewing, exploring, editing and designing: pan/zoom stage with fit modes, pop-in drawers for appearance, source, files and export configured per drawer (?drawers=, ?mode= presets — view, explore, edit, design), colour/typography overrides, guided edits with undo, SVG/PNG/WebP export, workspace I/O.', 'standalone · no server'],
@@ -604,6 +610,8 @@ writeOut('download/index.html', page('../', 'download', 'Download — DDN',
   '<table>\n<thead><tr><th>Bundle</th><th>Bytes</th></tr></thead><tbody>\n' + distRows.join('\n') + '\n</tbody></table>\n' +
   '<h2>Field guide</h2>\n' +
   '<p>The <a href="../guide/index.html">Diagram Field Guide</a> (' + GUIDE_CHAPTER_COUNT + ' chapters) also ships as <a href="../guide/portable.html">one portable, self-contained HTML file</a> — the whole edition: live examples, guided edits and the full runtime inlined; save it and it works offline.</p>\n' +
+  '<h2>Reference</h2>\n' +
+  '<p>The <a href="../reference/index.html">element kind and relation reference</a> lists every one of the ' + REF_FACT('registry.totalKinds') + ' kinds and ' + REF_FACT('registry.totalRelations') + ' relations with its rendered symbol, meaning and a paste-ready example — generated from the registry at every site build.</p>\n' +
   '<h2>AI authoring reference</h2>\n' +
   '<p><a href="DDN-AI-REFERENCE.md"><strong>DDN-AI-REFERENCE.md</strong></a> (' + Math.round(Buffer.byteLength(AI_REFERENCE.text, 'utf8') / 1024) + ' KiB, regenerated from the registry at every site build) is the whole DDN dialect in one file — vocabulary, properties, projections, all ' + AI_REFERENCE.diagnosticCount + ' diagnostic codes with fixes, the full grammar, and two dozen worked recipes — written so a chat AI can author valid DDN from it. How to use it:</p>\n' +
   '<ol>\n' +
@@ -681,6 +689,225 @@ writeOut('icons/index.html', page('../', 'icons', 'Icon packs — browse, previe
   'filters.replaceChildren.apply(filters,chipDefs.map(function(pair){var b=document.createElement("button");b.type="button";b.textContent=pair[0];b.setAttribute("aria-pressed",pair[1]===activePack?"true":"false");b.addEventListener("click",function(){activePack=pair[1];filters.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});render();});return b;}));\n' +
   'q.addEventListener("input",render);render();\n' +
   '})();</script>'));
+
+
+/* ---------------------------------------------------- reference section ----
+ * Every element kind and relation, generated from the runtime registries
+ * with the shared data/prose/example builders in tools/reference-data.mjs
+ * (single source of truth — the wiki reference generator consumes the same
+ * module). Structure: one landing page + per-family kind pages (12) +
+ * per-family relation pages (8) + a relations overview; one validated,
+ * rendered example plate per kind and relation. Counts come from facts.json.
+ * Page count stays at 22 on purpose: per-kind pages would add ~560 pages for
+ * no information gain over anchored per-family pages. */
+
+const REF = (() => {
+  const require2 = createRequire(import.meta.url);
+  const A = require2(path.join(REPO, 'notation/dist/ddn.global.js'));
+  require2(path.join(REPO, 'notation/dist/ddn-graph.js'));
+  require2(path.join(REPO, 'notation/dist/ddn-iso.js'));
+  require2(path.join(REPO, 'notation/dist/ddn-geo.js'));
+  return A;
+})();
+const refCore = (await import('../notation/runtime/assets/catalogue.js')).default;
+const refProf = (await import('../notation/runtime/assets/profiles-catalogue.js')).default;
+const WIKI_BASE = 'https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki';
+
+/* md-inline for the shared prose: escaping, `code`, **bold**, *italic*, and
+ * [label](target) links — bare Wiki-Page targets become absolute wiki links,
+ * anchors/URLs/relative links pass through. */
+function refInline(text) {
+  let t = esc(String(text));
+  t = t.replace(/`([^`]+)`/g, (m, c) => '<code>' + c + '</code>');
+  t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, u) => {
+    const href = /^(https?:|#|\.|\/)/.test(u) ? u : WIKI_BASE + '/' + u;
+    return '<a href="' + href + '">' + label + '</a>';
+  });
+  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  t = t.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+  return t;
+}
+const refPara = text => '<p>' + refInline(text) + '</p>';
+const refSlugProfile = id => id.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+const REF_CSS = '<style>\n' +
+  '.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}\n' +
+  '.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}\n' +
+  '.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}\n' +
+  '.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}\n' +
+  '.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}\n' +
+  '.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}\n' +
+  '.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}\n' +
+  '</style>';
+
+const refFailures = [];
+function refProve(id, src, relOut) {
+  try {
+    const ws = REF.createWorkspace({ 'demo.ddn': src });
+    const r = ws.renderSync({ entry: 'demo.ddn', view: 'picture' });
+    ws.destroy();
+    writeOut(relOut, r.svg);
+    return true;
+  } catch (e) {
+    refFailures.push({ id, err: String(e && (e.code ? e.code + ' ' : '') + (e.message || e)).slice(0, 300) });
+    return false;
+  }
+}
+
+const refAllKinds = [...refCore.kinds.map(k => ({ ...k, profile: false })), ...refProf.kinds.map(k => ({ ...k, profile: true }))];
+const refByFamily = {};
+for (const k of refAllKinds) (refByFamily[k.family] = refByFamily[k.family] || []).push(k);
+const refAllRels = [...refCore.relationships.map(r => ({ ...r, profile: false })), ...refProf.relationships.map(r => ({ ...r, profile: true, end: r.end || 'filled' }))];
+const refRelFamilyMap = { data_flow: 'flow' };
+const refRelByFamily = {};
+for (const r of refAllRels) { const f = refRelFamilyMap[r.family] || r.family; (refRelByFamily[f] = refRelByFamily[f] || []).push(r); }
+
+function refKindEntry(k, family) {
+  const name = k.text_label || k.name, kw = REFDATA.kwFile(k.keyword);
+  const profiles = REFDATA.profilesFor(refProf, k.keyword);
+  const bits = [];
+  if (profiles.length) bits.push('profiles such as ' + profiles.slice(0, 3).map(p => '<code>' + esc(p) + '</code>').join(', '));
+  const gallery = profiles.length
+    ? ' · <span class="ref-gall">gallery: ' + profiles.slice(0, 3).map(p => '<a href="../gallery/profiles/' + refSlugProfile(p) + '.svg">' + esc(p) + '</a>').join(', ') + '</span>'
+    : '';
+  return '<section class="ref-entry" id="k-' + kw + '">\n' +
+    '<h3>' + esc(name) + ' (<code>' + esc(k.keyword) + '</code>)</h3>\n' +
+    '<img class="ref-plate" alt="The ' + esc(name) + ' symbol" src="assets/kinds/' + kw + '.svg">\n' +
+    refPara('**What it looks like.** ' + REFDATA.kindLooks(k, family)) +
+    refPara('**What it represents.** ' + (k.meaning ? k.meaning.replace(/\.$/, '') : name + ' — a ' + family + ' kind.') + '.') +
+    (bits.length ? refPara('**Where it shows up.** ' + bits.join('; ') + '.' + gallery) : '') +
+    refPara('**What you can add.** Everything optional: ' + REFDATA.FAMILIES[family].props) +
+    '<details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>' + esc(REFDATA.kindExample(k, name).trimEnd()) + '</code></pre></details>\n' +
+    '</section>';
+}
+
+function refRelEntry(r, family) {
+  const kw = REFDATA.kwFile(r.keyword);
+  const ends = [];
+  if (r.start && r.start !== 'none') ends.push('starts with a ' + r.start + ' mark');
+  if (r.end && r.end !== 'none') ends.push('ends with a ' + (r.end === 'filled' ? 'filled arrowhead' : r.end === 'open' ? 'open arrowhead' : r.end + ' mark'));
+  const dir = r.direction || (ends.length ? 'It ' + ends.join(' and ') + ' — read it in the arrow direction: “From → To”.' : 'It has no arrowheads — the relation is symmetric in meaning; the label does the talking.');
+  const meaning = r.meaning ? r.meaning.replace(/\.$/, '') : (r.verb || r.name);
+  const extra = family === 'structural'
+    ? refPara('**Endpoint options.** The example shows crow’s-foot marks (`zeromany` on the source, `one` on the target). Swap in `one`, `zeroone`, `many`, or use `diamond`/`triangle` for containment and generalization.')
+    : '';
+  return '<section class="ref-entry" id="r-' + kw + '">\n' +
+    '<h3>' + esc(r.name) + ' (<code>' + esc(r.keyword) + '</code>)</h3>\n' +
+    '<img class="ref-plate" alt="What the “' + esc(r.name) + '” line looks like" src="assets/relations/' + kw + '.svg">\n' +
+    refPara('**What it means.** ' + meaning + '. ' + dir) + extra +
+    '<details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>' + esc(refRelExampleSrc(r)) + '</code></pre></details>\n' +
+    '</section>';
+}
+
+function refRelExampleSrc(r) {
+  if (REFDATA.REL_EXAMPLE[r.keyword]) return REFDATA.REL_EXAMPLE[r.keyword](r).trimEnd();
+  if (r.profile) {
+    const pick = list => (list && list[0] && list[0] !== '*') ? list[0] : 'object';
+    return REFDATA.relExample(r, { source: pick(r.source), target: pick(r.target) }).trimEnd();
+  }
+  return REFDATA.relExample(r).trimEnd();
+}
+
+/* Render every plate first (fail the build loudly on any regression — the
+ * same 100%-coverage guarantee the wiki generator's coverage gate enforces). */
+for (const k of refAllKinds) {
+  const kw = REFDATA.kwFile(k.keyword);
+  if (!refProve('kind-' + kw, REFDATA.kindExample(k, k.text_label || k.name), 'reference/assets/kinds/' + kw + '.svg'))
+    throw new Error('reference plate failed for kind ' + k.keyword + ': ' + refFailures.at(-1).err);
+}
+for (const r of refAllRels) {
+  const kw = REFDATA.kwFile(r.keyword);
+  let ok = false;
+  if (REFDATA.REL_EXAMPLE[r.keyword]) ok = refProve('rel-' + kw, REFDATA.REL_EXAMPLE[r.keyword](r), 'reference/assets/relations/' + kw + '.svg');
+  else if (r.profile) {
+    const pick = list => (list && list[0] && list[0] !== '*') ? list[0] : 'object';
+    const sK = pick(r.source), tK = pick(r.target);
+    for (const p of [''].concat(REFDATA.profilesFor(refProf, r.keyword))) {
+      if (refProve('rel-' + kw, REFDATA.relExample(r, { source: sK, target: tK, profile: p || undefined }), 'reference/assets/relations/' + kw + '.svg')) { ok = true; break; }
+    }
+  } else ok = refProve('rel-' + kw, REFDATA.relExample(r), 'reference/assets/relations/' + kw + '.svg');
+  if (!ok) throw new Error('reference plate failed for relation ' + r.keyword + ': ' + refFailures.at(-1).err);
+}
+
+/* Kind family pages. */
+const refKindPageList = [];
+for (const [family, meta] of Object.entries(REFDATA.FAMILIES)) {
+  const kinds = refByFamily[family] || [];
+  const fileSlug = 'kinds-' + family;
+  refKindPageList.push({ family, title: meta.title, file: fileSlug, count: kinds.length, into: meta.into });
+  const toc = kinds.map(k => '<a href="#k-' + REFDATA.kwFile(k.keyword) + '">' + esc(k.text_label || k.name) + ' · <code>' + esc(k.keyword) + '</code></a>').join('\n');
+  const body = REF_CSS + '\n<h1 class="page-title">Reference — ' + esc(meta.title) + '</h1>\n' +
+    refPara(meta.into) +
+    refPara('This page lists every **' + ({ sql: 'SQL' }[family] || family[0].toUpperCase() + family.slice(1)) + '** element kind in DDN — **' + kinds.length + '** of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.') +
+    refPara('Diagram guides on the wiki: ' + meta.pages.map(p => '[' + p.replace('Diagrams-', '').replace(/-/g, ' ') + '](' + p + ')').join(' · ') + ' · relations: [all relation families](relations.html) · [reference index](index.html).') +
+    '<div class="ref-toc">' + toc + '</div>\n' +
+    kinds.map(k => refKindEntry(k, family)).join('\n') +
+    '<hr><p><small>Applies to DDN ' + VERSION + ' · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="' + WIKI_BASE + '/Ref-Kinds-' + family[0].toUpperCase() + family.slice(1) + '">Ref-Kinds-' + family[0].toUpperCase() + family.slice(1) + '</a>.</small></p>';
+  writeOut('reference/' + fileSlug + '.html', page('../', 'reference', 'Reference — ' + meta.title + ' — DDN', body,
+    'Every ' + family + ' element kind in DDN (' + kinds.length + '): symbol, meaning, properties and a working example, generated from the registry.'));
+}
+
+/* Relation family pages. */
+const refRelPageList = [];
+for (const [family, meta] of Object.entries(REFDATA.REL_FAMILIES)) {
+  const rels = refRelByFamily[family] || [];
+  const fileSlug = 'relations-' + family;
+  refRelPageList.push({ family, title: meta.title, file: fileSlug, count: rels.length, into: meta.into });
+  const toc = rels.map(r => '<a href="#r-' + REFDATA.kwFile(r.keyword) + '">' + esc(r.name) + ' · <code>' + esc(r.keyword) + '</code></a>').join('\n');
+  const body = REF_CSS + '\n<h1 class="page-title">Reference — ' + esc(meta.title) + '</h1>\n' +
+    refPara(meta.into) +
+    refPara('This page lists every **' + family[0].toUpperCase() + family.slice(1) + '** relation in DDN — **' + rels.length + '** of them. Relations are declared inside a `data` block: `relation id "label" @from -> @to { kind: …; }`. Every example on this page passes the tool’s own check and render steps.') +
+    refPara(meta.marks) +
+    refPara('Element kinds: [all element families](index.html) · relations overview: [relations, the short version](relations.html).') +
+    '<div class="ref-toc">' + toc + '</div>\n' +
+    rels.map(r => refRelEntry(r, family)).join('\n') +
+    '<hr><p><small>Applies to DDN ' + VERSION + ' · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="' + WIKI_BASE + '/' + meta.file + '">' + meta.file + '</a>.</small></p>';
+  writeOut('reference/' + fileSlug + '.html', page('../', 'reference', 'Reference — ' + meta.title + ' — DDN', body,
+    'Every ' + family + ' relation in DDN (' + rels.length + '): line marks, meaning, constraints and a working example, generated from the registry.'));
+}
+
+/* Relations overview page (Ref-Relations-Home equivalent). */
+{
+  const gists = {
+    structural: 'things belong together; the only lines that carry cardinality marks',
+    flow: 'data moves this way',
+    dependency: 'this needs that — no data implied',
+    mapping: 'this stands for that',
+    control: 'what happens next',
+    lineage: 'where this came from',
+    governance: 'who owns it, which rules apply',
+    annotation: 'margin notes attached to the model',
+  };
+  const cards = Object.entries(REFDATA.REL_FAMILIES).map(([f, m]) =>
+    '<a href="relations-' + f + '.html"><b>' + esc(m.title) + '</b><span>' + (refRelByFamily[f] || []).length + ' relations — ' + esc(gists[f]) + '</span></a>').join('\n');
+  const body = REF_CSS + '\n<h1 class="page-title">Reference — relations, the short version</h1>\n' +
+    refPara('Relations are the lines. In DDN every line is *typed*: it declares what kind of connection it is, and the drawing follows from that — dashed open arrows for dependencies, solid filled arrows for flows and control, crow’s feet for structural cardinality. You never draw an arrowhead by hand; you say what the connection *means*. Pick a family to browse all **' + REF_FACT('registry.totalRelations') + '** relation kinds:') +
+    '<div class="ref-cards">' + cards + '</div>\n' +
+    refPara(REFDATA.ROUTING_NOTE) +
+    '<hr><p><small>Applies to DDN ' + VERSION + ' · wiki counterpart: <a href="' + WIKI_BASE + '/Ref-Relations-Home">Ref-Relations-Home</a>.</small></p>';
+  writeOut('reference/relations.html', page('../', 'reference', 'Reference — relations — DDN', body,
+    'All ' + REF_FACT('registry.totalRelations') + ' DDN relation kinds by family: line marks, meaning and working examples.'));
+}
+
+/* Landing page (Ref-Element-reference equivalent). */
+{
+  const kindCards = refKindPageList.map(p =>
+    '<a href="' + p.file + '.html"><b>' + esc(p.title) + '</b><span>' + p.count + ' kinds</span></a>').join('\n');
+  const relCards = refRelPageList.map(p =>
+    '<a href="' + p.file + '.html"><b>' + esc(p.title) + '</b><span>' + p.count + ' relations</span></a>').join('\n');
+  const body = REF_CSS + '\n<h1 class="page-title">Reference — every element kind and relation</h1>\n' +
+    '<p class="lede">' + refInline('This is the complete shelf catalogue of DDN. Every **element kind** (the boxes and symbols you can place — **' + REF_FACT('registry.totalKinds') + '** of them) and every **relation** (the lines between them — **' + REF_FACT('registry.totalRelations') + '** of them) gets its symbol, a plain-language meaning, the extra information it accepts, and a small example you can paste into the [tool](../tools/index.html) as-is. Every example in this reference passes the tool’s own check and render steps.') + '</p>\n' +
+    refPara('Why so many kinds? Because a diagram that says *exactly* what a thing is — a queue, not a box labelled "queue-ish" — never needs a footnote. You don’t need to know them all. Skim the family that matches your job, steal an example, and come back when you meet something new.') +
+    '<h2>Element kinds by family</h2>\n<div class="ref-cards">' + kindCards + '</div>\n' +
+    '<h2>Relations by family</h2>\n<div class="ref-cards">' + relCards + '</div>\n' +
+    '<h2>How to read a kind page</h2>\n' +
+    refPara('Each kind entry shows four things: **what it looks like** (the drawn symbol), **what it represents** (the idea, not the picture), **where it shows up** (the diagram types that use it), and **what you can add** (optional properties — labels, datatypes, keys, notes and so on). The examples are minimal on purpose: they pin nothing down, so DDN picks the layout and you see the kind’s own defaults.') +
+    refPara('Style never changes meaning. A `table` drawn hand-drawn, neo, or plain is still a table — looks come from [styles](Guide-Layout-and-appearance), meaning comes from the kind.') +
+    '<h2>Looking the other way</h2>\n' +
+    refPara('If you know the *diagram* you want and need its symbols, start from the gallery instead — [every installed profile rendered](../gallery/index.html) — or the wiki’s [diagram type pages](' + 'Ref-Diagram-types' + ').') +
+    '<hr><p><small>Applies to DDN ' + VERSION + ' · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="' + WIKI_BASE + '/Ref-Element-reference">Ref-Element-reference</a>.</small></p>';
+  writeOut('reference/index.html', page('../', 'reference', 'Reference — every element kind and relation — DDN', body,
+    'The complete DDN shelf catalogue: all ' + REF_FACT('registry.totalKinds') + ' element kinds and ' + REF_FACT('registry.totalRelations') + ' relations with symbols, meanings and working examples, generated from the registry.'));
+}
 
 
 /* ---------------------------------------------------------------- manifest */

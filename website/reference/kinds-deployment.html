@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Deployment &amp; infrastructure kinds — DDN</title>
+<meta name="description" content="Every deployment element kind in DDN (20): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Deployment &amp; infrastructure kinds</h1>
+<p>These kinds are the physical world: clouds, regions, zones, hosts, containers, volumes, devices. They answer &quot;where does it actually run?&quot; Draw them for deployment views, network overviews and residency conversations — and remember a box around boxes only means a boundary if a kind says so.</p><p>This page lists every <strong>Deployment</strong> element kind in DDN — <strong>20</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture-Advanced">Architecture Advanced</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Networks">Networks</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Isometric">Isometric</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-cloud">Cloud provider / cloud scope · <code>cloud</code></a>
+<a href="#k-cloud_account">Cloud account / subscription · <code>cloud_account</code></a>
+<a href="#k-region">Region / geography · <code>region</code></a>
+<a href="#k-zone">Availability / fault zone · <code>zone</code></a>
+<a href="#k-site">Local site / data centre · <code>site</code></a>
+<a href="#k-network">Network / connectivity zone · <code>network</code></a>
+<a href="#k-cluster">Cluster · <code>cluster</code></a>
+<a href="#k-service">Database / storage service instance · <code>service</code></a>
+<a href="#k-host">Host / machine / VM · <code>host</code></a>
+<a href="#k-container">Container / process instance · <code>container</code></a>
+<a href="#k-volume">Volume / tablespace / filegroup · <code>volume</code></a>
+<a href="#k-device">Edge device / sensor · <code>device</code></a>
+<a href="#k-environment">Environment · <code>environment</code></a>
+<a href="#k-security_zone">Security / trust zone · <code>security_zone</code></a>
+<a href="#k-archi-technology_node">Technology node · <code>archi.technology_node</code></a>
+<a href="#k-archi-technology_service">Technology service · <code>archi.technology_service</code></a>
+<a href="#k-network-bus">Network bus · <code>network.bus</code></a>
+<a href="#k-network-switch">Network switch · <code>network.switch</code></a>
+<a href="#k-network-server">Network server · <code>network.server</code></a>
+<a href="#k-network-rack">Equipment rack · <code>network.rack</code></a></div>
+<section class="ref-entry" id="k-cloud">
+<h3>Cloud provider / cloud scope (<code>cloud</code>)</h3>
+<img class="ref-plate" alt="The Cloud provider / cloud scope symbol" src="assets/kinds/cloud.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A declared cloud hosting scope; managed status is a separate property.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Cloud provider / cloud scope (cloud) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Cloud provider / cloud scope&quot; { kind: cloud; }
+}
+
+view picture &quot;Cloud provider / cloud scope&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cloud_account">
+<h3>Cloud account / subscription (<code>cloud_account</code>)</h3>
+<img class="ref-plate" alt="The Cloud account / subscription symbol" src="assets/kinds/cloud_account.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An administrative cloud resource scope with explicit owner and policy.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Cloud account / subscription (cloud_account) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Cloud account / subscription&quot; { kind: cloud_account; }
+}
+
+view picture &quot;Cloud account / subscription&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-region">
+<h3>Region / geography (<code>region</code>)</h3>
+<img class="ref-plate" alt="The Region / geography symbol" src="assets/kinds/region.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A declared geographical or regional placement scope.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Region / geography (region) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Region / geography&quot; { kind: region; }
+}
+
+view picture &quot;Region / geography&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-zone">
+<h3>Availability / fault zone (<code>zone</code>)</h3>
+<img class="ref-plate" alt="The Availability / fault zone symbol" src="assets/kinds/zone.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A declared failure or availability boundary whose guarantees need metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Availability / fault zone (zone) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Availability / fault zone&quot; { kind: zone; }
+}
+
+view picture &quot;Availability / fault zone&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-site">
+<h3>Local site / data centre (<code>site</code>)</h3>
+<img class="ref-plate" alt="The Local site / data centre symbol" src="assets/kinds/site.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An on-premises or other site scope, distinct from a software namespace.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Local site / data centre (site) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Local site / data centre&quot; { kind: site; }
+}
+
+view picture &quot;Local site / data centre&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-network">
+<h3>Network / connectivity zone (<code>network</code>)</h3>
+<img class="ref-plate" alt="The Network / connectivity zone symbol" src="assets/kinds/network.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A connectivity or network-scope boundary; not inferred from drawing overlap.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Network / connectivity zone (network) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Network / connectivity zone&quot; { kind: network; }
+}
+
+view picture &quot;Network / connectivity zone&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cluster">
+<h3>Cluster (<code>cluster</code>)</h3>
+<img class="ref-plate" alt="The Cluster symbol" src="assets/kinds/cluster.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A coordinated group of service or compute instances.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Cluster (cluster) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Cluster&quot; { kind: cluster; }
+}
+
+view picture &quot;Cluster&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-service">
+<h3>Database / storage service instance (<code>service</code>)</h3>
+<img class="ref-plate" alt="The Database / storage service instance symbol" src="assets/kinds/service.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A deployed service endpoint hosting or exposing resources.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Database / storage service instance (service) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Database / storage service instance&quot; { kind: service; }
+}
+
+view picture &quot;Database / storage service instance&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-host">
+<h3>Host / machine / VM (<code>host</code>)</h3>
+<img class="ref-plate" alt="The Host / machine / VM symbol" src="assets/kinds/host.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A compute placement instance, not a database schema.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Host / machine / VM (host) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Host / machine / VM&quot; { kind: host; }
+}
+
+view picture &quot;Host / machine / VM&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-container">
+<h3>Container / process instance (<code>container</code>)</h3>
+<img class="ref-plate" alt="The Container / process instance symbol" src="assets/kinds/container.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A runtime placement instance with its orchestration context declared.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Container / process instance (container) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Container / process instance&quot; { kind: container; }
+}
+
+view picture &quot;Container / process instance&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-volume">
+<h3>Volume / tablespace / filegroup (<code>volume</code>)</h3>
+<img class="ref-plate" alt="The Volume / tablespace / filegroup symbol" src="assets/kinds/volume.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A physical or logical storage-allocation resource with platform scope.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Volume / tablespace / filegroup (volume) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Volume / tablespace / filegroup&quot; { kind: volume; }
+}
+
+view picture &quot;Volume / tablespace / filegroup&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-device">
+<h3>Edge device / sensor (<code>device</code>)</h3>
+<img class="ref-plate" alt="The Edge device / sensor symbol" src="assets/kinds/device.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A local data-producing or data-storing device.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Edge device / sensor (device) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Edge device / sensor&quot; { kind: device; }
+}
+
+view picture &quot;Edge device / sensor&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-environment">
+<h3>Environment (<code>environment</code>)</h3>
+<img class="ref-plate" alt="The Environment symbol" src="assets/kinds/environment.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Development, test, staging, production or another explicitly named scope.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Environment (environment) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Environment&quot; { kind: environment; }
+}
+
+view picture &quot;Environment&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-security_zone">
+<h3>Security / trust zone (<code>security_zone</code>)</h3>
+<img class="ref-plate" alt="The Security / trust zone symbol" src="assets/kinds/security_zone.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Deployment family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A security scope requiring explicit policy; not implied by location.</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Security / trust zone (security_zone) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Security / trust zone&quot; { kind: security_zone; }
+}
+
+view picture &quot;Security / trust zone&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-technology_node">
+<h3>Technology node (<code>archi.technology_node</code>)</h3>
+<img class="ref-plate" alt="The Technology node symbol" src="assets/kinds/archi-technology_node.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Technology node — a deployment kind..</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Technology node (archi.technology_node) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Technology node&quot; { kind: &quot;archi.technology_node&quot;; }
+}
+
+view picture &quot;Technology node&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archi-technology_service">
+<h3>Technology service (<code>archi.technology_service</code>)</h3>
+<img class="ref-plate" alt="The Technology service symbol" src="assets/kinds/archi-technology_service.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Technology service — a deployment kind..</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Technology service (archi.technology_service) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Technology service&quot; { kind: &quot;archi.technology_service&quot;; }
+}
+
+view picture &quot;Technology service&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-network-bus">
+<h3>Network bus (<code>network.bus</code>)</h3>
+<img class="ref-plate" alt="The Network bus symbol" src="assets/kinds/network-bus.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Network bus — a deployment kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;network.basic@1&lt;/code&gt;, &lt;code&gt;network.rack@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/network-basic-1.svg&quot;&gt;network.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/network-rack-1.svg&quot;&gt;network.rack@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Network bus (network.bus) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Network bus&quot; { kind: &quot;network.bus&quot;; }
+}
+
+view picture &quot;Network bus&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-network-switch">
+<h3>Network switch (<code>network.switch</code>)</h3>
+<img class="ref-plate" alt="The Network switch symbol" src="assets/kinds/network-switch.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Network switch — a deployment kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;network.basic@1&lt;/code&gt;, &lt;code&gt;network.rack@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/network-basic-1.svg&quot;&gt;network.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/network-rack-1.svg&quot;&gt;network.rack@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Network switch (network.switch) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Network switch&quot; { kind: &quot;network.switch&quot;; }
+}
+
+view picture &quot;Network switch&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-network-server">
+<h3>Network server (<code>network.server</code>)</h3>
+<img class="ref-plate" alt="The Network server symbol" src="assets/kinds/network-server.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Network server — a deployment kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;network.basic@1&lt;/code&gt;, &lt;code&gt;network.rack@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/network-basic-1.svg&quot;&gt;network.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/network-rack-1.svg&quot;&gt;network.rack@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Network server (network.server) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Network server&quot; { kind: &quot;network.server&quot;; }
+}
+
+view picture &quot;Network server&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-network-rack">
+<h3>Equipment rack (<code>network.rack</code>)</h3>
+<img class="ref-plate" alt="The Equipment rack symbol" src="assets/kinds/network-rack.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Equipment rack — a deployment kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;network.basic@1&lt;/code&gt;, &lt;code&gt;network.rack@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/network-basic-1.svg&quot;&gt;network.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/network-rack-1.svg&quot;&gt;network.rack@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>provider</code>, <code>region</code>, <code>environment</code>, <code>location</code> (local/cloud/edge), <code>residency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Equipment rack (network.rack) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Equipment rack&quot; { kind: &quot;network.rack&quot;; }
+}
+
+view picture &quot;Equipment rack&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Deployment">Ref-Kinds-Deployment</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Annotation relations — DDN</title>
+<meta name="description" content="Every annotation relation in DDN (8): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Annotation relations</h1>
+<p>Annotation relations attach <em>commentary</em> to the model: notes, examples, evidence, decisions, open issues. An annotation never changes what the model means — it explains it. Reach for these whenever the diagram needs an honest margin note instead of another fact.</p><p>This page lists every <strong>Annotation</strong> relation in DDN — <strong>8</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Annotation relations are plain lines (no arrow) — a note doesn’t act on anything. No cardinality marks. The note element itself carries the text.</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-note">annotates · <code>note</code></a>
+<a href="#r-example">illustrates · <code>example</code></a>
+<a href="#r-evidence">supports assertion about · <code>evidence</code></a>
+<a href="#r-decision">records decision for · <code>decision</code></a>
+<a href="#r-issue">questions · <code>issue</code></a>
+<a href="#r-test">tests expectation for · <code>test</code></a>
+<a href="#r-appear">appearance of · <code>appear</code></a>
+<a href="#r-flow-annotation">Annotates · <code>flow.annotation</code></a></div>
+<section class="ref-entry" id="r-note">
+<h3>annotates (<code>note</code>)</h3>
+<img class="ref-plate" alt="What the “annotates” line looks like" src="assets/relations/note.svg">
+<p><strong>What it means.</strong> Note to the element it explains. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// annotates (note) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;annotates&quot; @from_side -&gt; @to_side {
+        kind: note;
+    }
+}
+
+view picture &quot;annotates&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-example">
+<h3>illustrates (<code>example</code>)</h3>
+<img class="ref-plate" alt="What the “illustrates” line looks like" src="assets/relations/example.svg">
+<p><strong>What it means.</strong> Sample set to the structure or behaviour it illustrates. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// illustrates (example) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;illustrates&quot; @from_side -&gt; @to_side {
+        kind: example;
+    }
+}
+
+view picture &quot;illustrates&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-evidence">
+<h3>supports assertion about (<code>evidence</code>)</h3>
+<img class="ref-plate" alt="What the “supports assertion about” line looks like" src="assets/relations/evidence.svg">
+<p><strong>What it means.</strong> Evidence record to the assertion or object it supports. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// supports assertion about (evidence) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;supports assertion about&quot; @from_side -&gt; @to_side {
+        kind: evidence;
+    }
+}
+
+view picture &quot;supports assertion about&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-decision">
+<h3>records decision for (<code>decision</code>)</h3>
+<img class="ref-plate" alt="What the “records decision for” line looks like" src="assets/relations/decision.svg">
+<p><strong>What it means.</strong> Decision record to affected model elements. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// records decision for (decision) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;records decision for&quot; @from_side -&gt; @to_side {
+        kind: decision;
+    }
+}
+
+view picture &quot;records decision for&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-issue">
+<h3>questions (<code>issue</code>)</h3>
+<img class="ref-plate" alt="What the “questions” line looks like" src="assets/relations/issue.svg">
+<p><strong>What it means.</strong> Issue to affected element or unresolved property. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// questions (issue) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;questions&quot; @from_side -&gt; @to_side {
+        kind: issue;
+    }
+}
+
+view picture &quot;questions&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-test">
+<h3>tests expectation for (<code>test</code>)</h3>
+<img class="ref-plate" alt="What the “tests expectation for” line looks like" src="assets/relations/test.svg">
+<p><strong>What it means.</strong> Fixture or assertion to the behaviour under test. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// tests expectation for (test) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;tests expectation for&quot; @from_side -&gt; @to_side {
+        kind: test;
+    }
+}
+
+view picture &quot;tests expectation for&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-appear">
+<h3>appearance of (<code>appear</code>)</h3>
+<img class="ref-plate" alt="What the “appearance of” line looks like" src="assets/relations/appear.svg">
+<p><strong>What it means.</strong> View occurrence to model identity; no second physical object is created. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// appearance of (appear) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;appearance of&quot; @from_side -&gt; @to_side {
+        kind: appear;
+    }
+}
+
+view picture &quot;appearance of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-flow-annotation">
+<h3>Annotates (<code>flow.annotation</code>)</h3>
+<img class="ref-plate" alt="What the “Annotates” line looks like" src="assets/relations/flow-annotation.svg">
+<p><strong>What it means.</strong> Annotates. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Annotates (flow.annotation) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;flow.annotation&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.start&quot;; }
+    relation shows &quot;Annotates&quot; @from_side -&gt; @to_side {
+        kind: &quot;flow.annotation&quot;;
+    }
+}
+
+view picture &quot;Annotates&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Annotation">Ref-Relations-Annotation</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

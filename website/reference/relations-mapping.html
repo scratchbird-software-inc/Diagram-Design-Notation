@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Mapping &amp; representation relations — DDN</title>
+<meta name="description" content="Every mapping relation in DDN (20): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Mapping &amp; representation relations</h1>
+<p>Mapping relations say <em>this stands for that</em>: a table represents a business entity, a field binds to a domain, a copy is a copy <em>of</em>. They are the glue between the meaning layer and the building layers — the lines that let one model serve an ER diagram and a concept diagram without drifting apart.</p><p>This page lists every <strong>Mapping</strong> relation in DDN — <strong>20</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Mapping relations end in an <strong>open arrow</strong> pointing at the thing being represented or bound. No cardinality marks. Labels name the mapping when the verb alone isn’t enough.</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-represents">represents · <code>represents</code></a>
+<a href="#r-instance">instance of · <code>instance</code></a>
+<a href="#r-domain">uses semantic domain · <code>domain</code></a>
+<a href="#r-candidate">candidate domain match · <code>candidate</code></a>
+<a href="#r-binds">has representation binding · <code>binds</code></a>
+<a href="#r-placed">placed on · <code>placed</code></a>
+<a href="#r-namespace">member of namespace · <code>namespace</code></a>
+<a href="#r-realizes">realizes partition · <code>realizes</code></a>
+<a href="#r-copyof">replica of · <code>copyof</code></a>
+<a href="#r-coloc">co-located with · <code>coloc</code></a>
+<a href="#r-implements">implements · <code>implements</code></a>
+<a href="#r-exposes">exposes interface · <code>exposes</code></a>
+<a href="#r-version">version of · <code>version</code></a>
+<a href="#r-supersedes">supersedes · <code>supersedes</code></a>
+<a href="#r-compat">compatible with · <code>compat</code></a>
+<a href="#r-bindfield">sample field binds to · <code>bindfield</code></a>
+<a href="#r-uaf-exhibits">«exhibits» · <code>uaf.exhibits</code></a>
+<a href="#r-uaf-mapsto">«mapsTo» · <code>uaf.mapsto</code></a>
+<a href="#r-uaf-performs">«performs» · <code>uaf.performs</code></a>
+<a href="#r-uaf-forecast">«forecast» · <code>uaf.forecast</code></a></div>
+<section class="ref-entry" id="r-represents">
+<h3>represents (<code>represents</code>)</h3>
+<img class="ref-plate" alt="What the “represents” line looks like" src="assets/relations/represents.svg">
+<p><strong>What it means.</strong> Data representation to business concept. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// represents (represents) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;represents&quot; @from_side -&gt; @to_side {
+        kind: represents;
+    }
+}
+
+view picture &quot;represents&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-instance">
+<h3>instance of (<code>instance</code>)</h3>
+<img class="ref-plate" alt="What the “instance of” line looks like" src="assets/relations/instance.svg">
+<p><strong>What it means.</strong> Deployed instance to its definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// instance of (instance) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;instance of&quot; @from_side -&gt; @to_side {
+        kind: instance;
+    }
+}
+
+view picture &quot;instance of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-domain">
+<h3>uses semantic domain (<code>domain</code>)</h3>
+<img class="ref-plate" alt="What the “uses semantic domain” line looks like" src="assets/relations/domain.svg">
+<p><strong>What it means.</strong> Field or property to semantic domain. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// uses semantic domain (domain) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;uses semantic domain&quot; @from_side -&gt; @to_side {
+        kind: domain;
+    }
+}
+
+view picture &quot;uses semantic domain&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-candidate">
+<h3>candidate domain match (<code>candidate</code>)</h3>
+<img class="ref-plate" alt="What the “candidate domain match” line looks like" src="assets/relations/candidate.svg">
+<p><strong>What it means.</strong> Field to suggested domain; never approved merely by a matching name. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// candidate domain match (candidate) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;candidate domain match&quot; @from_side -&gt; @to_side {
+        kind: candidate;
+    }
+}
+
+view picture &quot;candidate domain match&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-binds">
+<h3>has representation binding (<code>binds</code>)</h3>
+<img class="ref-plate" alt="What the “has representation binding” line looks like" src="assets/relations/binds.svg">
+<p><strong>What it means.</strong> Semantic domain to binding; binding identifies platform, type and constraints. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// has representation binding (binds) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;has representation binding&quot; @from_side -&gt; @to_side {
+        kind: binds;
+    }
+}
+
+view picture &quot;has representation binding&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-placed">
+<h3>placed on (<code>placed</code>)</h3>
+<img class="ref-plate" alt="What the “placed on” line looks like" src="assets/relations/placed.svg">
+<p><strong>What it means.</strong> Deployed copy or resource to its physical/service placement. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// placed on (placed) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;placed on&quot; @from_side -&gt; @to_side {
+        kind: placed;
+    }
+}
+
+view picture &quot;placed on&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-namespace">
+<h3>member of namespace (<code>namespace</code>)</h3>
+<img class="ref-plate" alt="What the “member of namespace” line looks like" src="assets/relations/namespace.svg">
+<p><strong>What it means.</strong> Named object to its name-resolution scope. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// member of namespace (namespace) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;member of namespace&quot; @from_side -&gt; @to_side {
+        kind: namespace;
+    }
+}
+
+view picture &quot;member of namespace&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-realizes">
+<h3>realizes partition (<code>realizes</code>)</h3>
+<img class="ref-plate" alt="What the “realizes partition” line looks like" src="assets/relations/realizes.svg">
+<p><strong>What it means.</strong> Deployed fragment copy to logical fragment. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// realizes partition (realizes) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;realizes partition&quot; @from_side -&gt; @to_side {
+        kind: realizes;
+    }
+}
+
+view picture &quot;realizes partition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-copyof">
+<h3>replica of (<code>copyof</code>)</h3>
+<img class="ref-plate" alt="What the “replica of” line looks like" src="assets/relations/copyof.svg">
+<p><strong>What it means.</strong> Receiving copy to represented/source copy; distinct from a forward replication flow. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// replica of (copyof) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;replica of&quot; @from_side -&gt; @to_side {
+        kind: copyof;
+    }
+}
+
+view picture &quot;replica of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-coloc">
+<h3>co-located with (<code>coloc</code>)</h3>
+<img class="ref-plate" alt="What the “co-located with” line looks like" src="assets/relations/coloc.svg">
+<p><strong>What it means.</strong> Peers governed by a named co-location requirement; direction has no meaning. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// co-located with (coloc) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;co-located with&quot; @from_side -&gt; @to_side {
+        kind: coloc;
+    }
+}
+
+view picture &quot;co-located with&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-implements">
+<h3>implements (<code>implements</code>)</h3>
+<img class="ref-plate" alt="What the “implements” line looks like" src="assets/relations/implements.svg">
+<p><strong>What it means.</strong> Implementation element to a logical contract or definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// implements (implements) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;implements&quot; @from_side -&gt; @to_side {
+        kind: implements;
+    }
+}
+
+view picture &quot;implements&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-exposes">
+<h3>exposes interface (<code>exposes</code>)</h3>
+<img class="ref-plate" alt="What the “exposes interface” line looks like" src="assets/relations/exposes.svg">
+<p><strong>What it means.</strong> Resource to its published interface definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// exposes interface (exposes) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;exposes interface&quot; @from_side -&gt; @to_side {
+        kind: exposes;
+    }
+}
+
+view picture &quot;exposes interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-version">
+<h3>version of (<code>version</code>)</h3>
+<img class="ref-plate" alt="What the “version of” line looks like" src="assets/relations/version.svg">
+<p><strong>What it means.</strong> Specific version to stable definition identity. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// version of (version) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;version of&quot; @from_side -&gt; @to_side {
+        kind: version;
+    }
+}
+
+view picture &quot;version of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-supersedes">
+<h3>supersedes (<code>supersedes</code>)</h3>
+<img class="ref-plate" alt="What the “supersedes” line looks like" src="assets/relations/supersedes.svg">
+<p><strong>What it means.</strong> New version or replacement to the predecessor. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// supersedes (supersedes) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;supersedes&quot; @from_side -&gt; @to_side {
+        kind: supersedes;
+    }
+}
+
+view picture &quot;supersedes&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-compat">
+<h3>compatible with (<code>compat</code>)</h3>
+<img class="ref-plate" alt="What the “compatible with” line looks like" src="assets/relations/compat.svg">
+<p><strong>What it means.</strong> Schema version to the referenced compatibility baseline, under a named rule. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// compatible with (compat) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;compatible with&quot; @from_side -&gt; @to_side {
+        kind: compat;
+    }
+}
+
+view picture &quot;compatible with&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-bindfield">
+<h3>sample field binds to (<code>bindfield</code>)</h3>
+<img class="ref-plate" alt="What the “sample field binds to” line looks like" src="assets/relations/bindfield.svg">
+<p><strong>What it means.</strong> Sample-grid column to structural field identity. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// sample field binds to (bindfield) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;sample field binds to&quot; @from_side -&gt; @to_side {
+        kind: bindfield;
+    }
+}
+
+view picture &quot;sample field binds to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-exhibits">
+<h3>«exhibits» (<code>uaf.exhibits</code>)</h3>
+<img class="ref-plate" alt="What the “«exhibits»” line looks like" src="assets/relations/uaf-exhibits.svg">
+<p><strong>What it means.</strong> «exhibits». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «exhibits» (uaf.exhibits) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.opperformer&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.capability&quot;; }
+    relation shows &quot;«exhibits»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.exhibits&quot;;
+    }
+}
+
+view picture &quot;«exhibits»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-mapsto">
+<h3>«mapsTo» (<code>uaf.mapsto</code>)</h3>
+<img class="ref-plate" alt="What the “«mapsTo»” line looks like" src="assets/relations/uaf-mapsto.svg">
+<p><strong>What it means.</strong> «mapsTo». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «mapsTo» (uaf.mapsto) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«mapsTo»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.mapsto&quot;;
+    }
+}
+
+view picture &quot;«mapsTo»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-performs">
+<h3>«performs» (<code>uaf.performs</code>)</h3>
+<img class="ref-plate" alt="What the “«performs»” line looks like" src="assets/relations/uaf-performs.svg">
+<p><strong>What it means.</strong> «performs». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «performs» (uaf.performs) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.organization&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uaf.opactivity&quot;; }
+    relation shows &quot;«performs»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.performs&quot;;
+    }
+}
+
+view picture &quot;«performs»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-forecast">
+<h3>«forecast» (<code>uaf.forecast</code>)</h3>
+<img class="ref-plate" alt="What the “«forecast»” line looks like" src="assets/relations/uaf-forecast.svg">
+<p><strong>What it means.</strong> «forecast». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «forecast» (uaf.forecast) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«forecast»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.forecast&quot;;
+    }
+}
+
+view picture &quot;«forecast»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Mapping">Ref-Relations-Mapping</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

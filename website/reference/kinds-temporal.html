@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Time &amp; lifecycle kinds — DDN</title>
+<meta name="description" content="Every temporal element kind in DDN (8): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Time &amp; lifecycle kinds</h1>
+<p>These kinds capture data <em>at a time</em>: snapshots, backups, archives, timelines, recovery plans, retention rules. They make the difference between &quot;a backup exists&quot; and &quot;a backup we can actually restore from&quot; visible — coverage, window and policy are stated, not hoped for.</p><p>This page lists every <strong>Temporal</strong> element kind in DDN — <strong>8</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Timelines">Timelines</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-snapshot">Data snapshot · <code>snapshot</code></a>
+<a href="#k-backup">Backup artifact · <code>backup</code></a>
+<a href="#k-archive">Archive dataset · <code>archive</code></a>
+<a href="#k-timeline">Timeline / version branch · <code>timeline</code></a>
+<a href="#k-recovery">Recovery plan / recovery point · <code>recovery</code></a>
+<a href="#k-window">Time window / watermark definition · <code>window</code></a>
+<a href="#k-history">History representation · <code>history</code></a>
+<a href="#k-retention">Retention / expiry definition · <code>retention</code></a></div>
+<section class="ref-entry" id="k-snapshot">
+<h3>Data snapshot (<code>snapshot</code>)</h3>
+<img class="ref-plate" alt="The Data snapshot symbol" src="assets/kinds/snapshot.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A captured data state with timestamp or version and consistency scope.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data snapshot (snapshot) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data snapshot&quot; { kind: snapshot; }
+}
+
+view picture &quot;Data snapshot&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-backup">
+<h3>Backup artifact (<code>backup</code>)</h3>
+<img class="ref-plate" alt="The Backup artifact symbol" src="assets/kinds/backup.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A recovery artifact with source, coverage, retention and restoration requirements.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Backup artifact (backup) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Backup artifact&quot; { kind: backup; }
+}
+
+view picture &quot;Backup artifact&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-archive">
+<h3>Archive dataset (<code>archive</code>)</h3>
+<img class="ref-plate" alt="The Archive dataset symbol" src="assets/kinds/archive.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A retained representation whose access and deletion policies are explicit.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Archive dataset (archive) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Archive dataset&quot; { kind: archive; }
+}
+
+view picture &quot;Archive dataset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-timeline">
+<h3>Timeline / version branch (<code>timeline</code>)</h3>
+<img class="ref-plate" alt="The Timeline / version branch symbol" src="assets/kinds/timeline.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A branch or ordered history in a declared model or data-time domain.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Timeline / version branch (timeline) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Timeline / version branch&quot; { kind: timeline; }
+}
+
+view picture &quot;Timeline / version branch&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-recovery">
+<h3>Recovery plan / recovery point (<code>recovery</code>)</h3>
+<img class="ref-plate" alt="The Recovery plan / recovery point symbol" src="assets/kinds/recovery.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A defined restoration target or procedure, not automatic query-time travel.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Recovery plan / recovery point (recovery) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Recovery plan / recovery point&quot; { kind: recovery; }
+}
+
+view picture &quot;Recovery plan / recovery point&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-window">
+<h3>Time window / watermark definition (<code>window</code>)</h3>
+<img class="ref-plate" alt="The Time window / watermark definition symbol" src="assets/kinds/window.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A processing-time or event-time window with lateness and closure policy.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Time window / watermark definition (window) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Time window / watermark definition&quot; { kind: window; }
+}
+
+view picture &quot;Time window / watermark definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-history">
+<h3>History representation (<code>history</code>)</h3>
+<img class="ref-plate" alt="The History representation symbol" src="assets/kinds/history.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A representation retaining versions with explicitly named time axes.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One History representation (history) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;History representation&quot; { kind: history; }
+}
+
+view picture &quot;History representation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-retention">
+<h3>Retention / expiry definition (<code>retention</code>)</h3>
+<img class="ref-plate" alt="The Retention / expiry definition symbol" src="assets/kinds/retention.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Temporal family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A data lifecycle rule with scope, exceptions and legal-hold interaction.</p><p><strong>What you can add.</strong> Everything optional: <code>snapshot_at</code>, <code>recovery_window</code>, <code>cadence</code>, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Retention / expiry definition (retention) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Retention / expiry definition&quot; { kind: retention; }
+}
+
+view picture &quot;Retention / expiry definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Temporal">Ref-Kinds-Temporal</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

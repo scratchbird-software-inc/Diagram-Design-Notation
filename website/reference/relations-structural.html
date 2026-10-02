@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Structural relations — DDN</title>
+<meta name="description" content="Every structural relation in DDN (35): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Structural relations</h1>
+<p>Structural relations say two <em>things</em> belong together: a purchase belongs to a customer, a wheel is part of a car, a savings account is a kind of account. Nothing moves along these lines — they state how the world is arranged. This is the only relation family that may carry <strong>cardinality marks</strong> (crow’s feet, bars and circles) at its ends.</p><p>This page lists every <strong>Structural</strong> relation in DDN — <strong>35</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Structural relations accept the participation marks <code>one</code>, <code>zeroone</code>, <code>many</code>, <code>zeromany</code> (crow’s-foot cardinality), plus <code>diamond</code> (containment — the diamond sits at the <em>container</em> end) and <code>triangle</code> (points at the more general type). Set them with <code>source_mark:</code> / <code>target_mark:</code>. Any other mark on a structural relation is an error (DDN114), and these marks on any <em>other</em> family are an error too.</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-assoc">associated with · <code>assoc</code></a>
+<a href="#r-ref">references · <code>ref</code></a>
+<a href="#r-emb">embeds · <code>emb</code></a>
+<a href="#r-mem">has member · <code>mem</code></a>
+<a href="#r-subtype">specializes · <code>subtype</code></a>
+<a href="#r-part">partitioned into · <code>part</code></a>
+<a href="#r-edge">graph edge connects · <code>edge</code></a>
+<a href="#r-ident">identifies · <code>ident</code></a>
+<a href="#r-same">same business identity · <code>same</code></a>
+<a href="#r-uml-association">Association · <code>uml.association</code></a>
+<a href="#r-uml-generalization">Generalization · <code>uml.generalization</code></a>
+<a href="#r-uml-provided">Provided interface · <code>uml.provided</code></a>
+<a href="#r-uml-required">Required interface · <code>uml.required</code></a>
+<a href="#r-uml-commpath">Communication path · <code>uml.commpath</code></a>
+<a href="#r-uml-assembly">Assembly connector · <code>uml.assembly</code></a>
+<a href="#r-uml-connector">Connector · <code>uml.connector</code></a>
+<a href="#r-uml-link">Link · <code>uml.link</code></a>
+<a href="#r-uml-extension">Extension · <code>uml.extension</code></a>
+<a href="#r-uml-uses">Participates in · <code>uml.uses</code></a>
+<a href="#r-analysis-assignment">Responsibility assignment · <code>analysis.assignment</code></a>
+<a href="#r-analysis-access">Data access · <code>analysis.access</code></a>
+<a href="#r-quality-cause">Contributes to · <code>quality.cause</code></a>
+<a href="#r-analysis-decomposes">Decomposes into · <code>analysis.decomposes</code></a>
+<a href="#r-bpmn-conversationlink">Conversation link · <code>bpmn.conversationlink</code></a>
+<a href="#r-archi-rel">serves / relates to · <code>archi.rel</code></a>
+<a href="#r-network-attaches">attaches to · <code>network.attaches</code></a>
+<a href="#r-family-partner_of">partner of · <code>family.partner_of</code></a>
+<a href="#r-sysml-composition">Composition · <code>sysml.composition</code></a>
+<a href="#r-uaf-assignedto">«assignedTo» · <code>uaf.assignedto</code></a>
+<a href="#r-uaf-owns">«owns» · <code>uaf.owns</code></a>
+<a href="#r-epk-assigned">Assigned to · <code>epk.assigned</code></a>
+<a href="#r-orm-plays">Plays · <code>orm.plays</code></a>
+<a href="#r-orm-subset">«subset» · <code>orm.subset</code></a>
+<a href="#r-orm-equality">«equality» · <code>orm.equality</code></a>
+<a href="#r-orm-exclusion">«exclusion» · <code>orm.exclusion</code></a></div>
+<section class="ref-entry" id="r-assoc">
+<h3>associated with (<code>assoc</code>)</h3>
+<img class="ref-plate" alt="What the “associated with” line looks like" src="assets/relations/assoc.svg">
+<p><strong>What it means.</strong> Concept or structure to related concept or structure; no enforcement implied. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// associated with (assoc) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;associated with&quot; @from_side -&gt; @to_side {
+        kind: assoc;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;associated with&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-ref">
+<h3>references (<code>ref</code>)</h3>
+<img class="ref-plate" alt="What the “references” line looks like" src="assets/relations/ref.svg">
+<p><strong>What it means.</strong> Referencing structure or field to referenced structure or field. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// references (ref) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;references&quot; @from_side -&gt; @to_side {
+        kind: ref;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;references&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-emb">
+<h3>embeds (<code>emb</code>)</h3>
+<img class="ref-plate" alt="What the “embeds” line looks like" src="assets/relations/emb.svg">
+<p><strong>What it means.</strong> Container to embedded structure; diamond sits at the containing end. It starts with a diamond mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// embeds (emb) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;embeds&quot; @from_side -&gt; @to_side {
+        kind: emb;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;embeds&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-mem">
+<h3>has member (<code>mem</code>)</h3>
+<img class="ref-plate" alt="What the “has member” line looks like" src="assets/relations/mem.svg">
+<p><strong>What it means.</strong> Collection or group to explicit member; not generic physical containment. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// has member (mem) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;has member&quot; @from_side -&gt; @to_side {
+        kind: mem;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;has member&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-subtype">
+<h3>specializes (<code>subtype</code>)</h3>
+<img class="ref-plate" alt="What the “specializes” line looks like" src="assets/relations/subtype.svg">
+<p><strong>What it means.</strong> Specific type to general type; hollow triangle is at the general end. It ends with a triangle mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// specializes (subtype) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;specializes&quot; @from_side -&gt; @to_side {
+        kind: subtype;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;specializes&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-part">
+<h3>partitioned into (<code>part</code>)</h3>
+<img class="ref-plate" alt="What the “partitioned into” line looks like" src="assets/relations/part.svg">
+<p><strong>What it means.</strong> Logical dataset to its logical fragment; not to a replica. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// partitioned into (part) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;partitioned into&quot; @from_side -&gt; @to_side {
+        kind: part;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;partitioned into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-edge">
+<h3>graph edge connects (<code>edge</code>)</h3>
+<img class="ref-plate" alt="What the “graph edge connects” line looks like" src="assets/relations/edge.svg">
+<p><strong>What it means.</strong> Node-type endpoints through an explicit edge-type definition. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// graph edge connects (edge) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;graph edge connects&quot; @from_side -&gt; @to_side {
+        kind: edge;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;graph edge connects&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-ident">
+<h3>identifies (<code>ident</code>)</h3>
+<img class="ref-plate" alt="What the “identifies” line looks like" src="assets/relations/ident.svg">
+<p><strong>What it means.</strong> Identity definition or fields to the identified concept or structure. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// identifies (ident) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;identifies&quot; @from_side -&gt; @to_side {
+        kind: ident;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;identifies&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-same">
+<h3>same business identity (<code>same</code>)</h3>
+<img class="ref-plate" alt="What the “same business identity” line looks like" src="assets/relations/same.svg">
+<p><strong>What it means.</strong> Related representations share an explicitly scoped business identity. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// same business identity (same) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;same business identity&quot; @from_side -&gt; @to_side {
+        kind: same;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;same business identity&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-association">
+<h3>Association (<code>uml.association</code>)</h3>
+<img class="ref-plate" alt="What the “Association” line looks like" src="assets/relations/uml-association.svg">
+<p><strong>What it means.</strong> Association. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Association (uml.association) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.class&quot;; }
+    relation shows &quot;Association&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.association&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Association&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-generalization">
+<h3>Generalization (<code>uml.generalization</code>)</h3>
+<img class="ref-plate" alt="What the “Generalization” line looks like" src="assets/relations/uml-generalization.svg">
+<p><strong>What it means.</strong> Generalization. It ends with a triangle mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Generalization (uml.generalization) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.class&quot;; }
+    relation shows &quot;Generalization&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.generalization&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Generalization&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-provided">
+<h3>Provided interface (<code>uml.provided</code>)</h3>
+<img class="ref-plate" alt="What the “Provided interface” line looks like" src="assets/relations/uml-provided.svg">
+<p><strong>What it means.</strong> Provides. It ends with a lollipop mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Provided interface (uml.provided) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.interface&quot;; }
+    relation shows &quot;Provided interface&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.provided&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Provided interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-required">
+<h3>Required interface (<code>uml.required</code>)</h3>
+<img class="ref-plate" alt="What the “Required interface” line looks like" src="assets/relations/uml-required.svg">
+<p><strong>What it means.</strong> Requires. It starts with a socket mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Required interface (uml.required) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.interface&quot;; }
+    relation shows &quot;Required interface&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.required&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Required interface&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-commpath">
+<h3>Communication path (<code>uml.commpath</code>)</h3>
+<img class="ref-plate" alt="What the “Communication path” line looks like" src="assets/relations/uml-commpath.svg">
+<p><strong>What it means.</strong> Connects. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Communication path (uml.commpath) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.node&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.node&quot;; }
+    relation shows &quot;Communication path&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.commpath&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Communication path&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-assembly">
+<h3>Assembly connector (<code>uml.assembly</code>)</h3>
+<img class="ref-plate" alt="What the “Assembly connector” line looks like" src="assets/relations/uml-assembly.svg">
+<p><strong>What it means.</strong> Assembles. It starts with a socket mark and ends with a lollipop mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Assembly connector (uml.assembly) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.component&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.component&quot;; }
+    relation shows &quot;Assembly connector&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.assembly&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Assembly connector&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-connector">
+<h3>Connector (<code>uml.connector</code>)</h3>
+<img class="ref-plate" alt="What the “Connector” line looks like" src="assets/relations/uml-connector.svg">
+<p><strong>What it means.</strong> Connects. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Connector (uml.connector) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.class&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.class&quot;; }
+    relation shows &quot;Connector&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.connector&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Connector&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-link">
+<h3>Link (<code>uml.link</code>)</h3>
+<img class="ref-plate" alt="What the “Link” line looks like" src="assets/relations/uml-link.svg">
+<p><strong>What it means.</strong> Links. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Link (uml.link) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: record; }
+    object to_side &quot;To&quot; { kind: record; }
+    relation shows &quot;Link&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.link&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Link&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-extension">
+<h3>Extension (<code>uml.extension</code>)</h3>
+<img class="ref-plate" alt="What the “Extension” line looks like" src="assets/relations/uml-extension.svg">
+<p><strong>What it means.</strong> Extends. It ends with a filled_triangle mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Extension (uml.extension) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.stereotype&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.metaclass&quot;; }
+    relation shows &quot;Extension&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.extension&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Extension&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-uses">
+<h3>Participates in (<code>uml.uses</code>)</h3>
+<img class="ref-plate" alt="What the “Participates in” line looks like" src="assets/relations/uml-uses.svg">
+<p><strong>What it means.</strong> Participates in. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Participates in (uml.uses) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.actor&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;uml.usecase&quot;; }
+    relation shows &quot;Participates in&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.uses&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Participates in&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-analysis-assignment">
+<h3>Responsibility assignment (<code>analysis.assignment</code>)</h3>
+<img class="ref-plate" alt="What the “Responsibility assignment” line looks like" src="assets/relations/analysis-assignment.svg">
+<p><strong>What it means.</strong> Responsibility assignment. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Responsibility assignment (analysis.assignment) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;analysis.task&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;analysis.role&quot;; }
+    relation shows &quot;Responsibility assignment&quot; @from_side -&gt; @to_side {
+        kind: &quot;analysis.assignment&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Responsibility assignment&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-analysis-access">
+<h3>Data access (<code>analysis.access</code>)</h3>
+<img class="ref-plate" alt="What the “Data access” line looks like" src="assets/relations/analysis-access.svg">
+<p><strong>What it means.</strong> Data access. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Data access (analysis.access) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;analysis.task&quot;; }
+    object to_side &quot;To&quot; { kind: entity; }
+    relation shows &quot;Data access&quot; @from_side -&gt; @to_side {
+        kind: &quot;analysis.access&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Data access&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-quality-cause">
+<h3>Contributes to (<code>quality.cause</code>)</h3>
+<img class="ref-plate" alt="What the “Contributes to” line looks like" src="assets/relations/quality-cause.svg">
+<p><strong>What it means.</strong> Contributes to. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Contributes to (quality.cause) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;quality.category&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;quality.effect&quot;; }
+    relation shows &quot;Contributes to&quot; @from_side -&gt; @to_side {
+        kind: &quot;quality.cause&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Contributes to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-analysis-decomposes">
+<h3>Decomposes into (<code>analysis.decomposes</code>)</h3>
+<img class="ref-plate" alt="What the “Decomposes into” line looks like" src="assets/relations/analysis-decomposes.svg">
+<p><strong>What it means.</strong> Decomposes into. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Decomposes into (analysis.decomposes) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;analysis.task&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;analysis.task&quot;; }
+    relation shows &quot;Decomposes into&quot; @from_side -&gt; @to_side {
+        kind: &quot;analysis.decomposes&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Decomposes into&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-bpmn-conversationlink">
+<h3>Conversation link (<code>bpmn.conversationlink</code>)</h3>
+<img class="ref-plate" alt="What the “Conversation link” line looks like" src="assets/relations/bpmn-conversationlink.svg">
+<p><strong>What it means.</strong> Links. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Conversation link (bpmn.conversationlink) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uml.actor&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.conversation&quot;; }
+    relation shows &quot;Conversation link&quot; @from_side -&gt; @to_side {
+        kind: &quot;bpmn.conversationlink&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Conversation link&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-archi-rel">
+<h3>serves / relates to (<code>archi.rel</code>)</h3>
+<img class="ref-plate" alt="What the “serves / relates to” line looks like" src="assets/relations/archi-rel.svg">
+<p><strong>What it means.</strong> serves / relates to. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// serves / relates to (archi.rel) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;archi.business_actor&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;archi.business_actor&quot;; }
+    relation shows &quot;serves / relates to&quot; @from_side -&gt; @to_side {
+        kind: &quot;archi.rel&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;serves / relates to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-network-attaches">
+<h3>attaches to (<code>network.attaches</code>)</h3>
+<img class="ref-plate" alt="What the “attaches to” line looks like" src="assets/relations/network-attaches.svg">
+<p><strong>What it means.</strong> attaches to. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// attaches to (network.attaches) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;attaches to&quot; @from_side -&gt; @to_side {
+        kind: &quot;network.attaches&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;attaches to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-family-partner_of">
+<h3>partner of (<code>family.partner_of</code>)</h3>
+<img class="ref-plate" alt="What the “partner of” line looks like" src="assets/relations/family-partner_of.svg">
+<p><strong>What it means.</strong> partner of. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// partner of (family.partner_of) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;family.person&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;family.person&quot;; }
+    relation shows &quot;partner of&quot; @from_side -&gt; @to_side {
+        kind: &quot;family.partner_of&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;partner of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sysml-composition">
+<h3>Composition (<code>sysml.composition</code>)</h3>
+<img class="ref-plate" alt="What the “Composition” line looks like" src="assets/relations/sysml-composition.svg">
+<p><strong>What it means.</strong> Composes. It starts with a diamond mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Composition (sysml.composition) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;sysml.block&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;sysml.block&quot;; }
+    relation shows &quot;Composition&quot; @from_side -&gt; @to_side {
+        kind: &quot;sysml.composition&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Composition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-assignedto">
+<h3>«assignedTo» (<code>uaf.assignedto</code>)</h3>
+<img class="ref-plate" alt="What the “«assignedTo»” line looks like" src="assets/relations/uaf-assignedto.svg">
+<p><strong>What it means.</strong> «assignedTo». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «assignedTo» (uaf.assignedto) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.organization&quot;; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«assignedTo»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.assignedto&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;«assignedTo»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uaf-owns">
+<h3>«owns» (<code>uaf.owns</code>)</h3>
+<img class="ref-plate" alt="What the “«owns»” line looks like" src="assets/relations/uaf-owns.svg">
+<p><strong>What it means.</strong> «owns». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «owns» (uaf.owns) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;uaf.organization&quot;; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;«owns»&quot; @from_side -&gt; @to_side {
+        kind: &quot;uaf.owns&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;«owns»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-epk-assigned">
+<h3>Assigned to (<code>epk.assigned</code>)</h3>
+<img class="ref-plate" alt="What the “Assigned to” line looks like" src="assets/relations/epk-assigned.svg">
+<p><strong>What it means.</strong> Assigned to. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Assigned to (epk.assigned) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;epk.orgunit&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;epk.function&quot;; }
+    relation shows &quot;Assigned to&quot; @from_side -&gt; @to_side {
+        kind: &quot;epk.assigned&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Assigned to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-orm-plays">
+<h3>Plays (<code>orm.plays</code>)</h3>
+<img class="ref-plate" alt="What the “Plays” line looks like" src="assets/relations/orm-plays.svg">
+<p><strong>What it means.</strong> Plays. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Plays (orm.plays) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;orm.facttype&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;orm.entitytype&quot;; }
+    relation shows &quot;Plays&quot; @from_side -&gt; @to_side {
+        kind: &quot;orm.plays&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;Plays&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-orm-subset">
+<h3>«subset» (<code>orm.subset</code>)</h3>
+<img class="ref-plate" alt="What the “«subset»” line looks like" src="assets/relations/orm-subset.svg">
+<p><strong>What it means.</strong> «subset». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «subset» (orm.subset) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;orm.facttype&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;orm.facttype&quot;; }
+    relation shows &quot;«subset»&quot; @from_side -&gt; @to_side {
+        kind: &quot;orm.subset&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;«subset»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-orm-equality">
+<h3>«equality» (<code>orm.equality</code>)</h3>
+<img class="ref-plate" alt="What the “«equality»” line looks like" src="assets/relations/orm-equality.svg">
+<p><strong>What it means.</strong> «equality». It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «equality» (orm.equality) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;orm.facttype&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;orm.facttype&quot;; }
+    relation shows &quot;«equality»&quot; @from_side -&gt; @to_side {
+        kind: &quot;orm.equality&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;«equality»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-orm-exclusion">
+<h3>«exclusion» (<code>orm.exclusion</code>)</h3>
+<img class="ref-plate" alt="What the “«exclusion»” line looks like" src="assets/relations/orm-exclusion.svg">
+<p><strong>What it means.</strong> «exclusion». It ends with a xcircle mark — read it in the arrow direction: “From → To”.</p><p><strong>Endpoint options.</strong> The example shows crow’s-foot marks (<code>zeromany</code> on the source, <code>one</code> on the target). Swap in <code>one</code>, <code>zeroone</code>, <code>many</code>, or use <code>diamond</code>/<code>triangle</code> for containment and generalization.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// «exclusion» (orm.exclusion) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;orm.facttype&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;orm.facttype&quot;; }
+    relation shows &quot;«exclusion»&quot; @from_side -&gt; @to_side {
+        kind: &quot;orm.exclusion&quot;;
+        source_mark: zeromany;
+        target_mark: one;
+    }
+}
+
+view picture &quot;«exclusion»&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Structural">Ref-Relations-Structural</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

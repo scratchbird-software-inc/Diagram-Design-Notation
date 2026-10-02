@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Namespace &amp; catalog kinds — DDN</title>
+<meta name="description" content="Every namespace element kind in DDN (8): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Namespace &amp; catalog kinds</h1>
+<p>These kinds are the &quot;where it lives by name&quot; boxes: catalogs, databases, schemas, keyspaces, folders. A namespace is a naming scope, <em>not</em> a server — the same schema can be deployed to many hosts. That separation is the whole point: name things here, place them with the deployment kinds.</p><p>This page lists every <strong>Namespace</strong> element kind in DDN — <strong>8</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD">ERD</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">Architecture</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-catalog">Catalog / metastore · <code>catalog</code></a>
+<a href="#k-database">Database · <code>database</code></a>
+<a href="#k-schema">SQL schema · <code>schema</code></a>
+<a href="#k-keyspace">Keyspace · <code>keyspace</code></a>
+<a href="#k-namespace">Generic namespace · <code>namespace</code></a>
+<a href="#k-workspace">Project / workspace · <code>workspace</code></a>
+<a href="#k-folder">Folder / prefix · <code>folder</code></a>
+<a href="#k-registry">Metadata registry · <code>registry</code></a></div>
+<section class="ref-entry" id="k-catalog">
+<h3>Catalog / metastore (<code>catalog</code>)</h3>
+<img class="ref-plate" alt="The Catalog / metastore symbol" src="assets/kinds/catalog.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named organization or metadata service; platform-specific scope is explicit.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Catalog / metastore (catalog) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Catalog / metastore&quot; { kind: catalog; }
+}
+
+view picture &quot;Catalog / metastore&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-database">
+<h3>Database (<code>database</code>)</h3>
+<img class="ref-plate" alt="The Database symbol" src="assets/kinds/database.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A database-level namespace or resource; deployment is separately bound.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Database (database) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Database&quot; { kind: database; }
+}
+
+view picture &quot;Database&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-schema">
+<h3>SQL schema (<code>schema</code>)</h3>
+<img class="ref-plate" alt="The SQL schema symbol" src="assets/kinds/schema.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A namespace containing named SQL objects, not a physical server.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One SQL schema (schema) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;SQL schema&quot; { kind: schema; }
+}
+
+view picture &quot;SQL schema&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-keyspace">
+<h3>Keyspace (<code>keyspace</code>)</h3>
+<img class="ref-plate" alt="The Keyspace symbol" src="assets/kinds/keyspace.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A platform-defined namespace and policy grouping.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Keyspace (keyspace) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Keyspace&quot; { kind: keyspace; }
+}
+
+view picture &quot;Keyspace&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-namespace">
+<h3>Generic namespace (<code>namespace</code>)</h3>
+<img class="ref-plate" alt="The Generic namespace symbol" src="assets/kinds/namespace.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named resolution scope when a more specific kind is not yet chosen.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Generic namespace (namespace) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Generic namespace&quot; { kind: namespace; }
+}
+
+view picture &quot;Generic namespace&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-workspace">
+<h3>Project / workspace (<code>workspace</code>)</h3>
+<img class="ref-plate" alt="The Project / workspace symbol" src="assets/kinds/workspace.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A collaborative or platform organization scope, separate from team ownership.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Project / workspace (workspace) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Project / workspace&quot; { kind: workspace; }
+}
+
+view picture &quot;Project / workspace&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-folder">
+<h3>Folder / prefix (<code>folder</code>)</h3>
+<img class="ref-plate" alt="The Folder / prefix symbol" src="assets/kinds/folder.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A path or name grouping; not automatically a security or storage boundary.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Folder / prefix (folder) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Folder / prefix&quot; { kind: folder; }
+}
+
+view picture &quot;Folder / prefix&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-registry">
+<h3>Metadata registry (<code>registry</code>)</h3>
+<img class="ref-plate" alt="The Metadata registry symbol" src="assets/kinds/registry.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Namespace family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A catalog of agreed definitions, domains, bindings or contracts.</p><p><strong>What you can add.</strong> Everything optional: <code>platform</code> and <code>platform_version</code> when the platform matters, plus <code>description</code>, <code>maturity</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Metadata registry (registry) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Metadata registry&quot; { kind: registry; }
+}
+
+view picture &quot;Metadata registry&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Namespace">Ref-Kinds-Namespace</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

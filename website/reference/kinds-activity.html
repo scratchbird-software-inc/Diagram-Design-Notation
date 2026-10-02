@@ -1,0 +1,1856 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Activity &amp; process kinds — DDN</title>
+<meta name="description" content="Every activity element kind in DDN (90): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Activity &amp; process kinds</h1>
+<p>These kinds describe <em>doing</em>: activities, pipelines, jobs, runs, schedules — and the classic flowchart shapes (start, process, decision) that profiles like <code>flow.basic@1</code> dress up. Use them whenever the diagram tells a story in time: steps, hand-offs, branches, retries.</p><p>This page lists every <strong>Activity</strong> element kind in DDN — <strong>90</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts">Flowcharts</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Flowcharts-Decisions">Flowcharts Decisions</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Data-flow">Data flow</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture">Architecture</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-activity">Activity / transformation · <code>activity</code></a>
+<a href="#k-pipeline">Pipeline / workflow · <code>pipeline</code></a>
+<a href="#k-job">Job definition · <code>job</code></a>
+<a href="#k-run">Run / execution instance · <code>run</code></a>
+<a href="#k-schedule">Schedule / timer · <code>schedule</code></a>
+<a href="#k-application">Application / data service · <code>application</code></a>
+<a href="#k-query_operation">Query / read operation · <code>query_operation</code></a>
+<a href="#k-write_operation">Write / mutation operation · <code>write_operation</code></a>
+<a href="#k-checkpoint">Checkpoint / progress marker · <code>checkpoint</code></a>
+<a href="#k-test">Validation / test execution · <code>test</code></a>
+<a href="#k-manual_activity">Manual data-handling activity · <code>manual_activity</code></a>
+<a href="#k-gateway">Decision / routing activity · <code>gateway</code></a>
+<a href="#k-flow-start">Start · <code>flow.start</code></a>
+<a href="#k-flow-end">End · <code>flow.end</code></a>
+<a href="#k-flow-process">Process · <code>flow.process</code></a>
+<a href="#k-flow-decision">Decision · <code>flow.decision</code></a>
+<a href="#k-flow-io">Input / output · <code>flow.io</code></a>
+<a href="#k-flow-document">Document · <code>flow.document</code></a>
+<a href="#k-flow-subprocess">Predefined process · <code>flow.subprocess</code></a>
+<a href="#k-analysis-task">Activity / task · <code>analysis.task</code></a>
+<a href="#k-flow-connector">Connector · <code>flow.connector</code></a>
+<a href="#k-flow-offpage">Offpage · <code>flow.offpage</code></a>
+<a href="#k-flow-annotation">Annotation · <code>flow.annotation</code></a>
+<a href="#k-flow-storage">Storage · <code>flow.storage</code></a>
+<a href="#k-flow-forkjoin">Fork / join · <code>flow.forkjoin</code></a>
+<a href="#k-flow-merge">Merge · <code>flow.merge</code></a>
+<a href="#k-flow-sendsignal">Send signal · <code>flow.sendsignal</code></a>
+<a href="#k-flow-acceptsignal">Accept signal · <code>flow.acceptsignal</code></a>
+<a href="#k-flow-timeevent">Time event · <code>flow.timeevent</code></a>
+<a href="#k-flow-flowfinal">Flow final · <code>flow.flowfinal</code></a>
+<a href="#k-c4-system">System · <code>c4.system</code></a>
+<a href="#k-c4-container">Container (app/service) · <code>c4.container</code></a>
+<a href="#k-epk-function">Function · <code>epk.function</code></a>
+<a href="#k-flow-gateway">Gateway · <code>flow.gateway</code></a>
+<a href="#k-flow-intermediate">Intermediate event · <code>flow.intermediate</code></a>
+<a href="#k-flow-group">Group · <code>flow.group</code></a>
+<a href="#k-flow-choreotask">Choreography task · <code>flow.choreotask</code></a>
+<a href="#k-flow-conversation">Conversation · <code>flow.conversation</code></a>
+<a href="#k-flow-subconversation">Sub-conversation · <code>flow.subconversation</code></a>
+<a href="#k-flow-callconversation">Call conversation · <code>flow.callconversation</code></a>
+<a href="#k-cmmn-stage">Case stage · <code>cmmn.stage</code></a>
+<a href="#k-cmmn-milestone">Case milestone · <code>cmmn.milestone</code></a>
+<a href="#k-cmmn-sentry">Case sentry · <code>cmmn.sentry</code></a>
+<a href="#k-cmmn-caseplan">Case plan model · <code>cmmn.caseplan</code></a>
+<a href="#k-cmmn-task">Task · <code>cmmn.task</code></a>
+<a href="#k-cmmn-humantask">Human task · <code>cmmn.humantask</code></a>
+<a href="#k-cmmn-processtask">Process task · <code>cmmn.processtask</code></a>
+<a href="#k-cmmn-decisiontask">Decision task · <code>cmmn.decisiontask</code></a>
+<a href="#k-cmmn-timerevent">Timer event listener · <code>cmmn.timerevent</code></a>
+<a href="#k-cmmn-userevent">User event listener · <code>cmmn.userevent</code></a>
+<a href="#k-cmmn-casefile">Case file item · <code>cmmn.casefile</code></a>
+<a href="#k-tree-gate">Logic gate · <code>tree.gate</code></a>
+<a href="#k-uaf-opactivity">Operational activity · <code>uaf.opactivity</code></a>
+<a href="#k-uaf-servicefunction">Service function · <code>uaf.servicefunction</code></a>
+<a href="#k-uaf-systemfunction">System function · <code>uaf.systemfunction</code></a>
+<a href="#k-uaf-resourcefunction">Resource function · <code>uaf.resourcefunction</code></a>
+<a href="#k-uaf-project">Project · <code>uaf.project</code></a>
+<a href="#k-uaf-projectmilestone">Project milestone · <code>uaf.projectmilestone</code></a>
+<a href="#k-uaf-workpackage">Work package · <code>uaf.workpackage</code></a>
+<a href="#k-flow-manualinput">Manual input · <code>flow.manualinput</code></a>
+<a href="#k-flow-manualop">Manual operation · <code>flow.manualop</code></a>
+<a href="#k-flow-preparation">Preparation · <code>flow.preparation</code></a>
+<a href="#k-flow-display">Display · <code>flow.display</code></a>
+<a href="#k-flow-delay">Delay · <code>flow.delay</code></a>
+<a href="#k-flow-loopstart">Loop start · <code>flow.loopstart</code></a>
+<a href="#k-flow-loopend">Loop end · <code>flow.loopend</code></a>
+<a href="#k-flow-isomerge">Merge · <code>flow.isomerge</code></a>
+<a href="#k-flow-isoextract">Extract · <code>flow.isoextract</code></a>
+<a href="#k-flow-card">Card · <code>flow.card</code></a>
+<a href="#k-flow-collate">Collate · <code>flow.collate</code></a>
+<a href="#k-flow-sort">Sort · <code>flow.sort</code></a>
+<a href="#k-flow-parallelmode">Parallel mode · <code>flow.parallelmode</code></a>
+<a href="#k-epk-processlink">Process link · <code>epk.processlink</code></a>
+<a href="#k-idef0-activity">Activity box · <code>idef0.activity</code></a>
+<a href="#k-petri-transition">Transition · <code>petri.transition</code></a>
+<a href="#k-vsm-process">Process · <code>vsm.process</code></a>
+<a href="#k-sdl-input">Input · <code>sdl.input</code></a>
+<a href="#k-sdl-output">Output · <code>sdl.output</code></a>
+<a href="#k-sdl-task">Task · <code>sdl.task</code></a>
+<a href="#k-sdl-save">Save · <code>sdl.save</code></a>
+<a href="#k-sdl-create">Create · <code>sdl.create</code></a>
+<a href="#k-sdl-procedure">Procedure · <code>sdl.procedure</code></a>
+<a href="#k-sdl-timer">Timer · <code>sdl.timer</code></a>
+<a href="#k-sdl-set">Timer set · <code>sdl.set</code></a>
+<a href="#k-sdl-reset">Timer reset · <code>sdl.reset</code></a>
+<a href="#k-fbd-block">Function block · <code>fbd.block</code></a>
+<a href="#k-ladder-contact">Contact · <code>ladder.contact</code></a>
+<a href="#k-ladder-coil">Coil · <code>ladder.coil</code></a>
+<a href="#k-ladder-jump">Jump · <code>ladder.jump</code></a>
+<a href="#k-ladder-return">Return · <code>ladder.return</code></a></div>
+<section class="ref-entry" id="k-activity">
+<h3>Activity / transformation (<code>activity</code>)</h3>
+<img class="ref-plate" alt="The Activity / transformation symbol" src="assets/kinds/activity.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An action definition with explicit inputs and outputs.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Activity / transformation (activity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Activity / transformation&quot; { kind: activity; }
+}
+
+view picture &quot;Activity / transformation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-pipeline">
+<h3>Pipeline / workflow (<code>pipeline</code>)</h3>
+<img class="ref-plate" alt="The Pipeline / workflow symbol" src="assets/kinds/pipeline.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A composed flow definition whose overview can expand into activities.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Pipeline / workflow (pipeline) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Pipeline / workflow&quot; { kind: pipeline; }
+}
+
+view picture &quot;Pipeline / workflow&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-job">
+<h3>Job definition (<code>job</code>)</h3>
+<img class="ref-plate" alt="The Job definition symbol" src="assets/kinds/job.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A configured executable task independent of an individual run.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Job definition (job) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Job definition&quot; { kind: job; }
+}
+
+view picture &quot;Job definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-run">
+<h3>Run / execution instance (<code>run</code>)</h3>
+<img class="ref-plate" alt="The Run / execution instance symbol" src="assets/kinds/run.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An observed or planned execution of a job or activity.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Run / execution instance (run) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Run / execution instance&quot; { kind: run; }
+}
+
+view picture &quot;Run / execution instance&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-schedule">
+<h3>Schedule / timer (<code>schedule</code>)</h3>
+<img class="ref-plate" alt="The Schedule / timer symbol" src="assets/kinds/schedule.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A time-based trigger definition and its time-zone semantics.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Schedule / timer (schedule) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Schedule / timer&quot; { kind: schedule; }
+}
+
+view picture &quot;Schedule / timer&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-application">
+<h3>Application / data service (<code>application</code>)</h3>
+<img class="ref-plate" alt="The Application / data service symbol" src="assets/kinds/application.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A software component that produces, consumes or manages data.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Application / data service (application) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Application / data service&quot; { kind: application; }
+}
+
+view picture &quot;Application / data service&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-query_operation">
+<h3>Query / read operation (<code>query_operation</code>)</h3>
+<img class="ref-plate" alt="The Query / read operation symbol" src="assets/kinds/query_operation.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An operation that consumes a query interface and produces a result.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Query / read operation (query_operation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Query / read operation&quot; { kind: query_operation; }
+}
+
+view picture &quot;Query / read operation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-write_operation">
+<h3>Write / mutation operation (<code>write_operation</code>)</h3>
+<img class="ref-plate" alt="The Write / mutation operation symbol" src="assets/kinds/write_operation.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An operation that changes data with declared atomicity and authority.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Write / mutation operation (write_operation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Write / mutation operation&quot; { kind: write_operation; }
+}
+
+view picture &quot;Write / mutation operation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-checkpoint">
+<h3>Checkpoint / progress marker (<code>checkpoint</code>)</h3>
+<img class="ref-plate" alt="The Checkpoint / progress marker symbol" src="assets/kinds/checkpoint.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A recorded processing position; not automatically a data snapshot.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Checkpoint / progress marker (checkpoint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Checkpoint / progress marker&quot; { kind: checkpoint; }
+}
+
+view picture &quot;Checkpoint / progress marker&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-test">
+<h3>Validation / test execution (<code>test</code>)</h3>
+<img class="ref-plate" alt="The Validation / test execution symbol" src="assets/kinds/test.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An activity that checks specified assertions against defined inputs.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Validation / test execution (test) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Validation / test execution&quot; { kind: test; }
+}
+
+view picture &quot;Validation / test execution&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-manual_activity">
+<h3>Manual data-handling activity (<code>manual_activity</code>)</h3>
+<img class="ref-plate" alt="The Manual data-handling activity symbol" src="assets/kinds/manual_activity.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An explicit human-operated collection, approval or correction step.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Manual data-handling activity (manual_activity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Manual data-handling activity&quot; { kind: manual_activity; }
+}
+
+view picture &quot;Manual data-handling activity&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-gateway">
+<h3>Decision / routing activity (<code>gateway</code>)</h3>
+<img class="ref-plate" alt="The Decision / routing activity symbol" src="assets/kinds/gateway.svg">
+<p><strong>What it looks like.</strong> Drawn as a activity shape in the Activity family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An explicit conditional route or switch, with labeled branch conditions.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision / routing activity (gateway) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision / routing activity&quot; { kind: gateway; }
+}
+
+view picture &quot;Decision / routing activity&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-start">
+<h3>Start (<code>flow.start</code>)</h3>
+<img class="ref-plate" alt="The Start symbol" src="assets/kinds/flow-start.svg">
+<p><strong>What it looks like.</strong> Drawn as a stadium-shaped pill. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Start — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Start (flow.start) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Start&quot; { kind: &quot;flow.start&quot;; }
+}
+
+view picture &quot;Start&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-end">
+<h3>End (<code>flow.end</code>)</h3>
+<img class="ref-plate" alt="The End symbol" src="assets/kinds/flow-end.svg">
+<p><strong>What it looks like.</strong> Drawn as a stadium-shaped pill. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> End — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One End (flow.end) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;End&quot; { kind: &quot;flow.end&quot;; }
+}
+
+view picture &quot;End&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-process">
+<h3>Process (<code>flow.process</code>)</h3>
+<img class="ref-plate" alt="The Process symbol" src="assets/kinds/flow-process.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Process — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Process (flow.process) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Process&quot; { kind: &quot;flow.process&quot;; }
+}
+
+view picture &quot;Process&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-decision">
+<h3>Decision (<code>flow.decision</code>)</h3>
+<img class="ref-plate" alt="The Decision symbol" src="assets/kinds/flow-decision.svg">
+<p><strong>What it looks like.</strong> Drawn as a diamond. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Decision — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision (flow.decision) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision&quot; { kind: &quot;flow.decision&quot;; }
+}
+
+view picture &quot;Decision&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-io">
+<h3>Input / output (<code>flow.io</code>)</h3>
+<img class="ref-plate" alt="The Input / output symbol" src="assets/kinds/flow-io.svg">
+<p><strong>What it looks like.</strong> Drawn as a slanted parallelogram. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Input / output — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Input / output (flow.io) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Input / output&quot; { kind: &quot;flow.io&quot;; }
+}
+
+view picture &quot;Input / output&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-document">
+<h3>Document (<code>flow.document</code>)</h3>
+<img class="ref-plate" alt="The Document symbol" src="assets/kinds/flow-document.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Document — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Document (flow.document) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Document&quot; { kind: &quot;flow.document&quot;; }
+}
+
+view picture &quot;Document&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-subprocess">
+<h3>Predefined process (<code>flow.subprocess</code>)</h3>
+<img class="ref-plate" alt="The Predefined process symbol" src="assets/kinds/flow-subprocess.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with double side bars. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Predefined process — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Predefined process (flow.subprocess) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Predefined process&quot; { kind: &quot;flow.subprocess&quot;; }
+}
+
+view picture &quot;Predefined process&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-analysis-task">
+<h3>Activity / task (<code>analysis.task</code>)</h3>
+<img class="ref-plate" alt="The Activity / task symbol" src="assets/kinds/analysis-task.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Activity / task — a activity kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Activity / task (analysis.task) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Activity / task&quot; { kind: &quot;analysis.task&quot;; }
+}
+
+view picture &quot;Activity / task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-connector">
+<h3>Connector (<code>flow.connector</code>)</h3>
+<img class="ref-plate" alt="The Connector symbol" src="assets/kinds/flow-connector.svg">
+<p><strong>What it looks like.</strong> Drawn as a small circle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Connector — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Connector (flow.connector) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Connector&quot; { kind: &quot;flow.connector&quot;; }
+}
+
+view picture &quot;Connector&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-offpage">
+<h3>Offpage (<code>flow.offpage</code>)</h3>
+<img class="ref-plate" alt="The Offpage symbol" src="assets/kinds/flow-offpage.svg">
+<p><strong>What it looks like.</strong> Drawn as a pentagon that points off the page. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Offpage — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Offpage (flow.offpage) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Offpage&quot; { kind: &quot;flow.offpage&quot;; }
+}
+
+view picture &quot;Offpage&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-annotation">
+<h3>Annotation (<code>flow.annotation</code>)</h3>
+<img class="ref-plate" alt="The Annotation symbol" src="assets/kinds/flow-annotation.svg">
+<p><strong>What it looks like.</strong> Drawn as a square bracket that hugs the element it explains. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Annotation — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Annotation (flow.annotation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Annotation&quot; { kind: &quot;flow.annotation&quot;; }
+}
+
+view picture &quot;Annotation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-storage">
+<h3>Storage (<code>flow.storage</code>)</h3>
+<img class="ref-plate" alt="The Storage symbol" src="assets/kinds/flow-storage.svg">
+<p><strong>What it looks like.</strong> Drawn as a database cylinder. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Storage — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Storage (flow.storage) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Storage&quot; { kind: &quot;flow.storage&quot;; }
+}
+
+view picture &quot;Storage&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-forkjoin">
+<h3>Fork / join (<code>flow.forkjoin</code>)</h3>
+<img class="ref-plate" alt="The Fork / join symbol" src="assets/kinds/flow-forkjoin.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Fork / join — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Fork / join (flow.forkjoin) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Fork / join&quot; { kind: &quot;flow.forkjoin&quot;; }
+}
+
+view picture &quot;Fork / join&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-merge">
+<h3>Merge (<code>flow.merge</code>)</h3>
+<img class="ref-plate" alt="The Merge symbol" src="assets/kinds/flow-merge.svg">
+<p><strong>What it looks like.</strong> Drawn as a diamond. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Merge — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Merge (flow.merge) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Merge&quot; { kind: &quot;flow.merge&quot;; }
+}
+
+view picture &quot;Merge&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-sendsignal">
+<h3>Send signal (<code>flow.sendsignal</code>)</h3>
+<img class="ref-plate" alt="The Send signal symbol" src="assets/kinds/flow-sendsignal.svg">
+<p><strong>What it looks like.</strong> Drawn as a sendpent shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Send signal — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Send signal (flow.sendsignal) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Send signal&quot; { kind: &quot;flow.sendsignal&quot;; }
+}
+
+view picture &quot;Send signal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-acceptsignal">
+<h3>Accept signal (<code>flow.acceptsignal</code>)</h3>
+<img class="ref-plate" alt="The Accept signal symbol" src="assets/kinds/flow-acceptsignal.svg">
+<p><strong>What it looks like.</strong> Drawn as a acceptpent shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Accept signal — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Accept signal (flow.acceptsignal) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Accept signal&quot; { kind: &quot;flow.acceptsignal&quot;; }
+}
+
+view picture &quot;Accept signal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-timeevent">
+<h3>Time event (<code>flow.timeevent</code>)</h3>
+<img class="ref-plate" alt="The Time event symbol" src="assets/kinds/flow-timeevent.svg">
+<p><strong>What it looks like.</strong> Drawn as a hourglass shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Time event — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Time event (flow.timeevent) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Time event&quot; { kind: &quot;flow.timeevent&quot;; }
+}
+
+view picture &quot;Time event&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-flowfinal">
+<h3>Flow final (<code>flow.flowfinal</code>)</h3>
+<img class="ref-plate" alt="The Flow final symbol" src="assets/kinds/flow-flowfinal.svg">
+<p><strong>What it looks like.</strong> Drawn as a flowfinal shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Flow final — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Flow final (flow.flowfinal) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Flow final&quot; { kind: &quot;flow.flowfinal&quot;; }
+}
+
+view picture &quot;Flow final&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-c4-system">
+<h3>System (<code>c4.system</code>)</h3>
+<img class="ref-plate" alt="The System symbol" src="assets/kinds/c4-system.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> System — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;c4.context@1&lt;/code&gt;, &lt;code&gt;c4.container@1&lt;/code&gt;, &lt;code&gt;c4.component@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/c4-context-1.svg&quot;&gt;c4.context@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-container-1.svg&quot;&gt;c4.container@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-component-1.svg&quot;&gt;c4.component@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One System (c4.system) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;System&quot; { kind: &quot;c4.system&quot;; }
+}
+
+view picture &quot;System&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-c4-container">
+<h3>Container (app/service) (<code>c4.container</code>)</h3>
+<img class="ref-plate" alt="The Container (app/service) symbol" src="assets/kinds/c4-container.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Container (app/service) — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;c4.context@1&lt;/code&gt;, &lt;code&gt;c4.container@1&lt;/code&gt;, &lt;code&gt;c4.component@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/c4-context-1.svg&quot;&gt;c4.context@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-container-1.svg&quot;&gt;c4.container@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-component-1.svg&quot;&gt;c4.component@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Container (app/service) (c4.container) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Container (app/service)&quot; { kind: &quot;c4.container&quot;; }
+}
+
+view picture &quot;Container (app/service)&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-function">
+<h3>Function (<code>epk.function</code>)</h3>
+<img class="ref-plate" alt="The Function symbol" src="assets/kinds/epk-function.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Function — a activity kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Function (epk.function) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Function&quot; { kind: &quot;epk.function&quot;; }
+}
+
+view picture &quot;Function&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-gateway">
+<h3>Gateway (<code>flow.gateway</code>)</h3>
+<img class="ref-plate" alt="The Gateway symbol" src="assets/kinds/flow-gateway.svg">
+<p><strong>What it looks like.</strong> Drawn as a diamond. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Gateway — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Gateway (flow.gateway) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Gateway&quot; { kind: &quot;flow.gateway&quot;; }
+}
+
+view picture &quot;Gateway&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-intermediate">
+<h3>Intermediate event (<code>flow.intermediate</code>)</h3>
+<img class="ref-plate" alt="The Intermediate event symbol" src="assets/kinds/flow-intermediate.svg">
+<p><strong>What it looks like.</strong> Drawn as a intermediate shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Intermediate event — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Intermediate event (flow.intermediate) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Intermediate event&quot; { kind: &quot;flow.intermediate&quot;; }
+}
+
+view picture &quot;Intermediate event&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-group">
+<h3>Group (<code>flow.group</code>)</h3>
+<img class="ref-plate" alt="The Group symbol" src="assets/kinds/flow-group.svg">
+<p><strong>What it looks like.</strong> Drawn as a groupbox shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Group — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Group (flow.group) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Group&quot; { kind: &quot;flow.group&quot;; }
+}
+
+view picture &quot;Group&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-choreotask">
+<h3>Choreography task (<code>flow.choreotask</code>)</h3>
+<img class="ref-plate" alt="The Choreography task symbol" src="assets/kinds/flow-choreotask.svg">
+<p><strong>What it looks like.</strong> Drawn as a choreotask shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Choreography task — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Choreography task (flow.choreotask) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Choreography task&quot; { kind: &quot;flow.choreotask&quot;; }
+}
+
+view picture &quot;Choreography task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-conversation">
+<h3>Conversation (<code>flow.conversation</code>)</h3>
+<img class="ref-plate" alt="The Conversation symbol" src="assets/kinds/flow-conversation.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Conversation — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Conversation (flow.conversation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Conversation&quot; { kind: &quot;flow.conversation&quot;; }
+}
+
+view picture &quot;Conversation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-subconversation">
+<h3>Sub-conversation (<code>flow.subconversation</code>)</h3>
+<img class="ref-plate" alt="The Sub-conversation symbol" src="assets/kinds/flow-subconversation.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Sub-conversation — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Sub-conversation (flow.subconversation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Sub-conversation&quot; { kind: &quot;flow.subconversation&quot;; }
+}
+
+view picture &quot;Sub-conversation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-callconversation">
+<h3>Call conversation (<code>flow.callconversation</code>)</h3>
+<img class="ref-plate" alt="The Call conversation symbol" src="assets/kinds/flow-callconversation.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Call conversation — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Call conversation (flow.callconversation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Call conversation&quot; { kind: &quot;flow.callconversation&quot;; }
+}
+
+view picture &quot;Call conversation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-stage">
+<h3>Case stage (<code>cmmn.stage</code>)</h3>
+<img class="ref-plate" alt="The Case stage symbol" src="assets/kinds/cmmn-stage.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Case stage — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Case stage (cmmn.stage) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Case stage&quot; { kind: &quot;cmmn.stage&quot;; }
+}
+
+view picture &quot;Case stage&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-milestone">
+<h3>Case milestone (<code>cmmn.milestone</code>)</h3>
+<img class="ref-plate" alt="The Case milestone symbol" src="assets/kinds/cmmn-milestone.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Case milestone — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Case milestone (cmmn.milestone) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Case milestone&quot; { kind: &quot;cmmn.milestone&quot;; }
+}
+
+view picture &quot;Case milestone&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-sentry">
+<h3>Case sentry (<code>cmmn.sentry</code>)</h3>
+<img class="ref-plate" alt="The Case sentry symbol" src="assets/kinds/cmmn-sentry.svg">
+<p><strong>What it looks like.</strong> Drawn as a diamond. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Case sentry — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Case sentry (cmmn.sentry) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Case sentry&quot; { kind: &quot;cmmn.sentry&quot;; }
+}
+
+view picture &quot;Case sentry&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-caseplan">
+<h3>Case plan model (<code>cmmn.caseplan</code>)</h3>
+<img class="ref-plate" alt="The Case plan model symbol" src="assets/kinds/cmmn-caseplan.svg">
+<p><strong>What it looks like.</strong> Drawn as a caseplan shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Case plan model — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Case plan model (cmmn.caseplan) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Case plan model&quot; { kind: &quot;cmmn.caseplan&quot;; }
+}
+
+view picture &quot;Case plan model&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-task">
+<h3>Task (<code>cmmn.task</code>)</h3>
+<img class="ref-plate" alt="The Task symbol" src="assets/kinds/cmmn-task.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Task — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Task (cmmn.task) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Task&quot; { kind: &quot;cmmn.task&quot;; }
+}
+
+view picture &quot;Task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-humantask">
+<h3>Human task (<code>cmmn.humantask</code>)</h3>
+<img class="ref-plate" alt="The Human task symbol" src="assets/kinds/cmmn-humantask.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Human task — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Human task (cmmn.humantask) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Human task&quot; { kind: &quot;cmmn.humantask&quot;; }
+}
+
+view picture &quot;Human task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-processtask">
+<h3>Process task (<code>cmmn.processtask</code>)</h3>
+<img class="ref-plate" alt="The Process task symbol" src="assets/kinds/cmmn-processtask.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Process task — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Process task (cmmn.processtask) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Process task&quot; { kind: &quot;cmmn.processtask&quot;; }
+}
+
+view picture &quot;Process task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-decisiontask">
+<h3>Decision task (<code>cmmn.decisiontask</code>)</h3>
+<img class="ref-plate" alt="The Decision task symbol" src="assets/kinds/cmmn-decisiontask.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Decision task — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision task (cmmn.decisiontask) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision task&quot; { kind: &quot;cmmn.decisiontask&quot;; }
+}
+
+view picture &quot;Decision task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-timerevent">
+<h3>Timer event listener (<code>cmmn.timerevent</code>)</h3>
+<img class="ref-plate" alt="The Timer event listener symbol" src="assets/kinds/cmmn-timerevent.svg">
+<p><strong>What it looks like.</strong> Drawn as a hourglass shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Timer event listener — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Timer event listener (cmmn.timerevent) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Timer event listener&quot; { kind: &quot;cmmn.timerevent&quot;; }
+}
+
+view picture &quot;Timer event listener&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-userevent">
+<h3>User event listener (<code>cmmn.userevent</code>)</h3>
+<img class="ref-plate" alt="The User event listener symbol" src="assets/kinds/cmmn-userevent.svg">
+<p><strong>What it looks like.</strong> Drawn as a userevent shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> User event listener — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One User event listener (cmmn.userevent) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;User event listener&quot; { kind: &quot;cmmn.userevent&quot;; }
+}
+
+view picture &quot;User event listener&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cmmn-casefile">
+<h3>Case file item (<code>cmmn.casefile</code>)</h3>
+<img class="ref-plate" alt="The Case file item symbol" src="assets/kinds/cmmn-casefile.svg">
+<p><strong>What it looks like.</strong> Drawn as a dataobject shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Case file item — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;cmmn.basic@1&lt;/code&gt;, &lt;code&gt;cmmn.complete@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/cmmn-basic-1.svg&quot;&gt;cmmn.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/cmmn-complete-1.svg&quot;&gt;cmmn.complete@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Case file item (cmmn.casefile) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Case file item&quot; { kind: &quot;cmmn.casefile&quot;; }
+}
+
+view picture &quot;Case file item&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-tree-gate">
+<h3>Logic gate (<code>tree.gate</code>)</h3>
+<img class="ref-plate" alt="The Logic gate symbol" src="assets/kinds/tree-gate.svg">
+<p><strong>What it looks like.</strong> Drawn as a diamond. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Logic gate — a activity kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Logic gate (tree.gate) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Logic gate&quot; { kind: &quot;tree.gate&quot;; }
+}
+
+view picture &quot;Logic gate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-opactivity">
+<h3>Operational activity (<code>uaf.opactivity</code>)</h3>
+<img class="ref-plate" alt="The Operational activity symbol" src="assets/kinds/uaf-opactivity.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Operational activity — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Operational activity (uaf.opactivity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Operational activity&quot; { kind: &quot;uaf.opactivity&quot;; }
+}
+
+view picture &quot;Operational activity&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-servicefunction">
+<h3>Service function (<code>uaf.servicefunction</code>)</h3>
+<img class="ref-plate" alt="The Service function symbol" src="assets/kinds/uaf-servicefunction.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Service function — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Service function (uaf.servicefunction) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Service function&quot; { kind: &quot;uaf.servicefunction&quot;; }
+}
+
+view picture &quot;Service function&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-systemfunction">
+<h3>System function (<code>uaf.systemfunction</code>)</h3>
+<img class="ref-plate" alt="The System function symbol" src="assets/kinds/uaf-systemfunction.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> System function — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One System function (uaf.systemfunction) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;System function&quot; { kind: &quot;uaf.systemfunction&quot;; }
+}
+
+view picture &quot;System function&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-resourcefunction">
+<h3>Resource function (<code>uaf.resourcefunction</code>)</h3>
+<img class="ref-plate" alt="The Resource function symbol" src="assets/kinds/uaf-resourcefunction.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Resource function — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Resource function (uaf.resourcefunction) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Resource function&quot; { kind: &quot;uaf.resourcefunction&quot;; }
+}
+
+view picture &quot;Resource function&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-project">
+<h3>Project (<code>uaf.project</code>)</h3>
+<img class="ref-plate" alt="The Project symbol" src="assets/kinds/uaf-project.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Project — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Project (uaf.project) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Project&quot; { kind: &quot;uaf.project&quot;; }
+}
+
+view picture &quot;Project&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-projectmilestone">
+<h3>Project milestone (<code>uaf.projectmilestone</code>)</h3>
+<img class="ref-plate" alt="The Project milestone symbol" src="assets/kinds/uaf-projectmilestone.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Project milestone — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Project milestone (uaf.projectmilestone) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Project milestone&quot; { kind: &quot;uaf.projectmilestone&quot;; }
+}
+
+view picture &quot;Project milestone&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-workpackage">
+<h3>Work package (<code>uaf.workpackage</code>)</h3>
+<img class="ref-plate" alt="The Work package symbol" src="assets/kinds/uaf-workpackage.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Work package — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Work package (uaf.workpackage) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Work package&quot; { kind: &quot;uaf.workpackage&quot;; }
+}
+
+view picture &quot;Work package&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-manualinput">
+<h3>Manual input (<code>flow.manualinput</code>)</h3>
+<img class="ref-plate" alt="The Manual input symbol" src="assets/kinds/flow-manualinput.svg">
+<p><strong>What it looks like.</strong> Drawn as a manualinput shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Manual input — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Manual input (flow.manualinput) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Manual input&quot; { kind: &quot;flow.manualinput&quot;; }
+}
+
+view picture &quot;Manual input&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-manualop">
+<h3>Manual operation (<code>flow.manualop</code>)</h3>
+<img class="ref-plate" alt="The Manual operation symbol" src="assets/kinds/flow-manualop.svg">
+<p><strong>What it looks like.</strong> Drawn as a manualop shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Manual operation — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Manual operation (flow.manualop) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Manual operation&quot; { kind: &quot;flow.manualop&quot;; }
+}
+
+view picture &quot;Manual operation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-preparation">
+<h3>Preparation (<code>flow.preparation</code>)</h3>
+<img class="ref-plate" alt="The Preparation symbol" src="assets/kinds/flow-preparation.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Preparation — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Preparation (flow.preparation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Preparation&quot; { kind: &quot;flow.preparation&quot;; }
+}
+
+view picture &quot;Preparation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-display">
+<h3>Display (<code>flow.display</code>)</h3>
+<img class="ref-plate" alt="The Display symbol" src="assets/kinds/flow-display.svg">
+<p><strong>What it looks like.</strong> Drawn as a display shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Display — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Display (flow.display) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Display&quot; { kind: &quot;flow.display&quot;; }
+}
+
+view picture &quot;Display&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-delay">
+<h3>Delay (<code>flow.delay</code>)</h3>
+<img class="ref-plate" alt="The Delay symbol" src="assets/kinds/flow-delay.svg">
+<p><strong>What it looks like.</strong> Drawn as a delay shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Delay — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Delay (flow.delay) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Delay&quot; { kind: &quot;flow.delay&quot;; }
+}
+
+view picture &quot;Delay&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-loopstart">
+<h3>Loop start (<code>flow.loopstart</code>)</h3>
+<img class="ref-plate" alt="The Loop start symbol" src="assets/kinds/flow-loopstart.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Loop start — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Loop start (flow.loopstart) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Loop start&quot; { kind: &quot;flow.loopstart&quot;; }
+}
+
+view picture &quot;Loop start&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-loopend">
+<h3>Loop end (<code>flow.loopend</code>)</h3>
+<img class="ref-plate" alt="The Loop end symbol" src="assets/kinds/flow-loopend.svg">
+<p><strong>What it looks like.</strong> Drawn as a hexagon. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Loop end — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Loop end (flow.loopend) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Loop end&quot; { kind: &quot;flow.loopend&quot;; }
+}
+
+view picture &quot;Loop end&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-isomerge">
+<h3>Merge (<code>flow.isomerge</code>)</h3>
+<img class="ref-plate" alt="The Merge symbol" src="assets/kinds/flow-isomerge.svg">
+<p><strong>What it looks like.</strong> Drawn as a triangledown shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Merge — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Merge (flow.isomerge) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Merge&quot; { kind: &quot;flow.isomerge&quot;; }
+}
+
+view picture &quot;Merge&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-isoextract">
+<h3>Extract (<code>flow.isoextract</code>)</h3>
+<img class="ref-plate" alt="The Extract symbol" src="assets/kinds/flow-isoextract.svg">
+<p><strong>What it looks like.</strong> Drawn as a triangleup shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Extract — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Extract (flow.isoextract) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Extract&quot; { kind: &quot;flow.isoextract&quot;; }
+}
+
+view picture &quot;Extract&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-card">
+<h3>Card (<code>flow.card</code>)</h3>
+<img class="ref-plate" alt="The Card symbol" src="assets/kinds/flow-card.svg">
+<p><strong>What it looks like.</strong> Drawn as a card shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Card — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Card (flow.card) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Card&quot; { kind: &quot;flow.card&quot;; }
+}
+
+view picture &quot;Card&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-collate">
+<h3>Collate (<code>flow.collate</code>)</h3>
+<img class="ref-plate" alt="The Collate symbol" src="assets/kinds/flow-collate.svg">
+<p><strong>What it looks like.</strong> Drawn as a xellipse shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Collate — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Collate (flow.collate) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Collate&quot; { kind: &quot;flow.collate&quot;; }
+}
+
+view picture &quot;Collate&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-sort">
+<h3>Sort (<code>flow.sort</code>)</h3>
+<img class="ref-plate" alt="The Sort symbol" src="assets/kinds/flow-sort.svg">
+<p><strong>What it looks like.</strong> Drawn as a barellipse shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Sort — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Sort (flow.sort) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Sort&quot; { kind: &quot;flow.sort&quot;; }
+}
+
+view picture &quot;Sort&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-parallelmode">
+<h3>Parallel mode (<code>flow.parallelmode</code>)</h3>
+<img class="ref-plate" alt="The Parallel mode symbol" src="assets/kinds/flow-parallelmode.svg">
+<p><strong>What it looks like.</strong> Drawn as a parallelmode shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Parallel mode — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Parallel mode (flow.parallelmode) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Parallel mode&quot; { kind: &quot;flow.parallelmode&quot;; }
+}
+
+view picture &quot;Parallel mode&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-processlink">
+<h3>Process link (<code>epk.processlink</code>)</h3>
+<img class="ref-plate" alt="The Process link symbol" src="assets/kinds/epk-processlink.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Process link — a activity kind..</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Process link (epk.processlink) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Process link&quot; { kind: &quot;epk.processlink&quot;; }
+}
+
+view picture &quot;Process link&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-idef0-activity">
+<h3>Activity box (<code>idef0.activity</code>)</h3>
+<img class="ref-plate" alt="The Activity box symbol" src="assets/kinds/idef0-activity.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Activity box — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;idef0.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/idef0-basic-1.svg&quot;&gt;idef0.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Activity box (idef0.activity) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Activity box&quot; { kind: &quot;idef0.activity&quot;; }
+}
+
+view picture &quot;Activity box&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-petri-transition">
+<h3>Transition (<code>petri.transition</code>)</h3>
+<img class="ref-plate" alt="The Transition symbol" src="assets/kinds/petri-transition.svg">
+<p><strong>What it looks like.</strong> Drawn as a forkbar shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Transition — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;petri.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/petri-basic-1.svg&quot;&gt;petri.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Transition (petri.transition) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Transition&quot; { kind: &quot;petri.transition&quot;; }
+}
+
+view picture &quot;Transition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vsm-process">
+<h3>Process (<code>vsm.process</code>)</h3>
+<img class="ref-plate" alt="The Process symbol" src="assets/kinds/vsm-process.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Process — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;vsm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/vsm-basic-1.svg&quot;&gt;vsm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Process (vsm.process) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Process&quot; { kind: &quot;vsm.process&quot;; }
+}
+
+view picture &quot;Process&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-input">
+<h3>Input (<code>sdl.input</code>)</h3>
+<img class="ref-plate" alt="The Input symbol" src="assets/kinds/sdl-input.svg">
+<p><strong>What it looks like.</strong> Drawn as a acceptpent shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Input — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Input (sdl.input) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Input&quot; { kind: &quot;sdl.input&quot;; }
+}
+
+view picture &quot;Input&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-output">
+<h3>Output (<code>sdl.output</code>)</h3>
+<img class="ref-plate" alt="The Output symbol" src="assets/kinds/sdl-output.svg">
+<p><strong>What it looks like.</strong> Drawn as a sendpent shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Output — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Output (sdl.output) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Output&quot; { kind: &quot;sdl.output&quot;; }
+}
+
+view picture &quot;Output&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-task">
+<h3>Task (<code>sdl.task</code>)</h3>
+<img class="ref-plate" alt="The Task symbol" src="assets/kinds/sdl-task.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Task — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Task (sdl.task) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Task&quot; { kind: &quot;sdl.task&quot;; }
+}
+
+view picture &quot;Task&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-save">
+<h3>Save (<code>sdl.save</code>)</h3>
+<img class="ref-plate" alt="The Save symbol" src="assets/kinds/sdl-save.svg">
+<p><strong>What it looks like.</strong> Drawn as a tag shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Save — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Save (sdl.save) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Save&quot; { kind: &quot;sdl.save&quot;; }
+}
+
+view picture &quot;Save&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-create">
+<h3>Create (<code>sdl.create</code>)</h3>
+<img class="ref-plate" alt="The Create symbol" src="assets/kinds/sdl-create.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Create — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Create (sdl.create) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Create&quot; { kind: &quot;sdl.create&quot;; }
+}
+
+view picture &quot;Create&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-procedure">
+<h3>Procedure (<code>sdl.procedure</code>)</h3>
+<img class="ref-plate" alt="The Procedure symbol" src="assets/kinds/sdl-procedure.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with double side bars. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Procedure — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Procedure (sdl.procedure) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Procedure&quot; { kind: &quot;sdl.procedure&quot;; }
+}
+
+view picture &quot;Procedure&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-timer">
+<h3>Timer (<code>sdl.timer</code>)</h3>
+<img class="ref-plate" alt="The Timer symbol" src="assets/kinds/sdl-timer.svg">
+<p><strong>What it looks like.</strong> Drawn as a hourglass shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Timer — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Timer (sdl.timer) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Timer&quot; { kind: &quot;sdl.timer&quot;; }
+}
+
+view picture &quot;Timer&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-set">
+<h3>Timer set (<code>sdl.set</code>)</h3>
+<img class="ref-plate" alt="The Timer set symbol" src="assets/kinds/sdl-set.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Timer set — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Timer set (sdl.set) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Timer set&quot; { kind: &quot;sdl.set&quot;; }
+}
+
+view picture &quot;Timer set&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sdl-reset">
+<h3>Timer reset (<code>sdl.reset</code>)</h3>
+<img class="ref-plate" alt="The Timer reset symbol" src="assets/kinds/sdl-reset.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Timer reset — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;sdl.basic@1&lt;/code&gt;, &lt;code&gt;sdl.process@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/sdl-basic-1.svg&quot;&gt;sdl.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/sdl-process-1.svg&quot;&gt;sdl.process@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Timer reset (sdl.reset) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Timer reset&quot; { kind: &quot;sdl.reset&quot;; }
+}
+
+view picture &quot;Timer reset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-fbd-block">
+<h3>Function block (<code>fbd.block</code>)</h3>
+<img class="ref-plate" alt="The Function block symbol" src="assets/kinds/fbd-block.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Function block — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;fbd.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/fbd-basic-1.svg&quot;&gt;fbd.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Function block (fbd.block) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Function block&quot; { kind: &quot;fbd.block&quot;; }
+}
+
+view picture &quot;Function block&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ladder-contact">
+<h3>Contact (<code>ladder.contact</code>)</h3>
+<img class="ref-plate" alt="The Contact symbol" src="assets/kinds/ladder-contact.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Contact — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;ladder.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/ladder-basic-1.svg&quot;&gt;ladder.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Contact (ladder.contact) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Contact&quot; { kind: &quot;ladder.contact&quot;; }
+}
+
+view picture &quot;Contact&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ladder-coil">
+<h3>Coil (<code>ladder.coil</code>)</h3>
+<img class="ref-plate" alt="The Coil symbol" src="assets/kinds/ladder-coil.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Coil — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;ladder.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/ladder-basic-1.svg&quot;&gt;ladder.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Coil (ladder.coil) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Coil&quot; { kind: &quot;ladder.coil&quot;; }
+}
+
+view picture &quot;Coil&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ladder-jump">
+<h3>Jump (<code>ladder.jump</code>)</h3>
+<img class="ref-plate" alt="The Jump symbol" src="assets/kinds/ladder-jump.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Jump — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;ladder.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/ladder-basic-1.svg&quot;&gt;ladder.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Jump (ladder.jump) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Jump&quot; { kind: &quot;ladder.jump&quot;; }
+}
+
+view picture &quot;Jump&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ladder-return">
+<h3>Return (<code>ladder.return</code>)</h3>
+<img class="ref-plate" alt="The Return symbol" src="assets/kinds/ladder-return.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Return — a activity kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;ladder.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/ladder-basic-1.svg&quot;&gt;ladder.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>description</code>, <code>parameters</code>, <code>owner</code>, <code>maturity</code>, and on relations between them the control verbs (<a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">control relations</a>).</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Return (ladder.return) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Return&quot; { kind: &quot;ladder.return&quot;; }
+}
+
+view picture &quot;Return&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Activity">Ref-Kinds-Activity</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

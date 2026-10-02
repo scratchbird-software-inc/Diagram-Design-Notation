@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Relational (SQL) kinds — DDN</title>
+<meta name="description" content="Every sql element kind in DDN (20): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Relational (SQL) kinds</h1>
+<p>These kinds are the vocabulary of a relational database: tables, views, indexes, triggers and friends. They describe <em>definitions</em> — the things a <code>CREATE</code> statement would make — not the live data inside them. Draw them when the conversation is about schema design, migrations, or explaining a database to someone new.</p><p>This page lists every <strong>SQL</strong> element kind in DDN — <strong>20</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD">ERD</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD-Notation">ERD Notation</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-table">Table · <code>table</code></a>
+<a href="#k-view">View · <code>view</code></a>
+<a href="#k-materialized_view">Materialized view · <code>materialized_view</code></a>
+<a href="#k-foreign_table">Foreign / external table · <code>foreign_table</code></a>
+<a href="#k-function">Function · <code>function</code></a>
+<a href="#k-procedure">Procedure · <code>procedure</code></a>
+<a href="#k-trigger">Trigger · <code>trigger</code></a>
+<a href="#k-sequence">Sequence / identity generator · <code>sequence</code></a>
+<a href="#k-sql_domain">SQL domain · <code>sql_domain</code></a>
+<a href="#k-sql_type">SQL user-defined type · <code>sql_type</code></a>
+<a href="#k-constraint">Constraint · <code>constraint</code></a>
+<a href="#k-index">Index · <code>index</code></a>
+<a href="#k-synonym">Synonym / database alias · <code>synonym</code></a>
+<a href="#k-opr">Operator · <code>opr</code></a>
+<a href="#k-pkg">Package / module · <code>pkg</code></a>
+<a href="#k-ext">Database extension · <code>ext</code></a>
+<a href="#k-qry">Query definition · <code>qry</code></a>
+<a href="#k-pol">Database policy object · <code>pol</code></a>
+<a href="#k-pub">Replication publication · <code>pub</code></a>
+<a href="#k-sub">Replication subscription · <code>sub</code></a></div>
+<section class="ref-entry" id="k-table">
+<h3>Table (<code>table</code>)</h3>
+<img class="ref-plate" alt="The Table symbol" src="assets/kinds/table.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named relational table definition; no datatype decision is required to draw it.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Table (table) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Table&quot; { kind: table; }
+}
+
+view picture &quot;Table&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-view">
+<h3>View (<code>view</code>)</h3>
+<img class="ref-plate" alt="The View symbol" src="assets/kinds/view.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named query-based representation; does not imply a stored copy.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One View (view) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;View&quot; { kind: view; }
+}
+
+view picture &quot;View&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-materialized_view">
+<h3>Materialized view (<code>materialized_view</code>)</h3>
+<img class="ref-plate" alt="The Materialized view symbol" src="assets/kinds/materialized_view.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A persisted query result with explicit refresh semantics.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Materialized view (materialized_view) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Materialized view&quot; { kind: materialized_view; }
+}
+
+view picture &quot;Materialized view&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-foreign_table">
+<h3>Foreign / external table (<code>foreign_table</code>)</h3>
+<img class="ref-plate" alt="The Foreign / external table symbol" src="assets/kinds/foreign_table.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A local relational object referring to externally provided data.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Foreign / external table (foreign_table) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Foreign / external table&quot; { kind: foreign_table; }
+}
+
+view picture &quot;Foreign / external table&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-function">
+<h3>Function (<code>function</code>)</h3>
+<img class="ref-plate" alt="The Function symbol" src="assets/kinds/function.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Stored or defined callable code; distinguish definition from execution.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Function (function) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Function&quot; { kind: function; }
+}
+
+view picture &quot;Function&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-procedure">
+<h3>Procedure (<code>procedure</code>)</h3>
+<img class="ref-plate" alt="The Procedure symbol" src="assets/kinds/procedure.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named procedure definition with parameters and dependencies.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Procedure (procedure) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Procedure&quot; { kind: procedure; }
+}
+
+view picture &quot;Procedure&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-trigger">
+<h3>Trigger (<code>trigger</code>)</h3>
+<img class="ref-plate" alt="The Trigger symbol" src="assets/kinds/trigger.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A rule or callable definition initiated by a specified database event.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Trigger (trigger) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Trigger&quot; { kind: trigger; }
+}
+
+view picture &quot;Trigger&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sequence">
+<h3>Sequence / identity generator (<code>sequence</code>)</h3>
+<img class="ref-plate" alt="The Sequence / identity generator symbol" src="assets/kinds/sequence.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An identifier-generating object or generator definition.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Sequence / identity generator (sequence) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Sequence / identity generator&quot; { kind: sequence; }
+}
+
+view picture &quot;Sequence / identity generator&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sql_domain">
+<h3>SQL domain (<code>sql_domain</code>)</h3>
+<img class="ref-plate" alt="The SQL domain symbol" src="assets/kinds/sql_domain.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An implemented constrained type; not the early semantic domain.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One SQL domain (sql_domain) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;SQL domain&quot; { kind: sql_domain; }
+}
+
+view picture &quot;SQL domain&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sql_type">
+<h3>SQL user-defined type (<code>sql_type</code>)</h3>
+<img class="ref-plate" alt="The SQL user-defined type symbol" src="assets/kinds/sql_type.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An implemented scalar, composite, collection or other vendor-supported type.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One SQL user-defined type (sql_type) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;SQL user-defined type&quot; { kind: sql_type; }
+}
+
+view picture &quot;SQL user-defined type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-constraint">
+<h3>Constraint (<code>constraint</code>)</h3>
+<img class="ref-plate" alt="The Constraint symbol" src="assets/kinds/constraint.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An enforceable rule definition; state scope, timing and enforcement.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Constraint (constraint) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Constraint&quot; { kind: constraint; }
+}
+
+view picture &quot;Constraint&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-index">
+<h3>Index (<code>index</code>)</h3>
+<img class="ref-plate" alt="The Index symbol" src="assets/kinds/index.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An access structure with target, expressions and index method metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Index (index) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Index&quot; { kind: index; }
+}
+
+view picture &quot;Index&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-synonym">
+<h3>Synonym / database alias (<code>synonym</code>)</h3>
+<img class="ref-plate" alt="The Synonym / database alias symbol" src="assets/kinds/synonym.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named indirection to another object where the platform supports it.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Synonym / database alias (synonym) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Synonym / database alias&quot; { kind: synonym; }
+}
+
+view picture &quot;Synonym / database alias&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-opr">
+<h3>Operator (<code>opr</code>)</h3>
+<img class="ref-plate" alt="The Operator symbol" src="assets/kinds/opr.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named operation over typed operands where supported.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Operator (opr) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Operator&quot; { kind: opr; }
+}
+
+view picture &quot;Operator&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-pkg">
+<h3>Package / module (<code>pkg</code>)</h3>
+<img class="ref-plate" alt="The Package / module symbol" src="assets/kinds/pkg.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A grouping of executable definitions in an applicable SQL dialect.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Package / module (pkg) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Package / module&quot; { kind: pkg; }
+}
+
+view picture &quot;Package / module&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ext">
+<h3>Database extension (<code>ext</code>)</h3>
+<img class="ref-plate" alt="The Database extension symbol" src="assets/kinds/ext.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An installed extension definition and its dependency boundary.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Database extension (ext) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Database extension&quot; { kind: ext; }
+}
+
+view picture &quot;Database extension&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-qry">
+<h3>Query definition (<code>qry</code>)</h3>
+<img class="ref-plate" alt="The Query definition symbol" src="assets/kinds/qry.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A reusable statement, query pattern or named operation definition.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Query definition (qry) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Query definition&quot; { kind: qry; }
+}
+
+view picture &quot;Query definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-pol">
+<h3>Database policy object (<code>pol</code>)</h3>
+<img class="ref-plate" alt="The Database policy object symbol" src="assets/kinds/pol.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A database-level policy definition, such as a row-access policy.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Database policy object (pol) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Database policy object&quot; { kind: pol; }
+}
+
+view picture &quot;Database policy object&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-pub">
+<h3>Replication publication (<code>pub</code>)</h3>
+<img class="ref-plate" alt="The Replication publication symbol" src="assets/kinds/pub.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A definition of data offered for replication; not a guarantee of delivery.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Replication publication (pub) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Replication publication&quot; { kind: pub; }
+}
+
+view picture &quot;Replication publication&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sub">
+<h3>Replication subscription (<code>sub</code>)</h3>
+<img class="ref-plate" alt="The Replication subscription symbol" src="assets/kinds/sub.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the SQL family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A receiving replication definition with source and application policy.</p><p><strong>What you can add.</strong> Everything optional: <code>fields { field … { key: primary; datatype: …; nullable: false; domain: @…; default: …; } }</code> for columns, plus <code>workload</code> (oltp/olap/…), <code>role</code> (authoritative/derived/…), <code>maturity</code>, <code>description</code> and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Replication subscription (sub) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Replication subscription&quot; { kind: sub; }
+}
+
+view picture &quot;Replication subscription&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Sql">Ref-Kinds-Sql</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

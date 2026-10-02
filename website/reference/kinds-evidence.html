@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Evidence &amp; documentation kinds — DDN</title>
+<meta name="description" content="Every evidence element kind in DDN (11): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Evidence &amp; documentation kinds</h1>
+<p>These kinds are the honest margin notes of a model: notes, samples, fixtures, decisions, open issues, observations. They matter because diagrams lie by omission — an <code>issue</code> box says &quot;this is <em>not</em> decided yet&quot; in a way a missing box never can.</p><p>This page lists every <strong>Evidence</strong> element kind in DDN — <strong>11</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Fishbone">Fishbone</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Decision-tables">Decision tables</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-note">Note / explanation · <code>note</code></a>
+<a href="#k-sample">Sample-data grid · <code>sample</code></a>
+<a href="#k-fixture">Test fixture / expected output · <code>fixture</code></a>
+<a href="#k-decision">Decision record · <code>decision</code></a>
+<a href="#k-issue">Open question / issue · <code>issue</code></a>
+<a href="#k-observation">Observation / evidence · <code>observation</code></a>
+<a href="#k-change">Change / migration proposal · <code>change</code></a>
+<a href="#k-saved_view">Diagram / saved view · <code>saved_view</code></a>
+<a href="#k-extension">Extension / unknown-kind fallback · <code>extension</code></a>
+<a href="#k-note-sticky">Sticky note · <code>note.sticky</code></a>
+<a href="#k-dmn-knowledgesource">Knowledge source · <code>dmn.knowledgesource</code></a></div>
+<section class="ref-entry" id="k-note">
+<h3>Note / explanation (<code>note</code>)</h3>
+<img class="ref-plate" alt="The Note / explanation symbol" src="assets/kinds/note.svg">
+<p><strong>What it looks like.</strong> Drawn as a note shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Non-executable explanatory material attached to a model element.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Note / explanation (note) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Note / explanation&quot; { kind: note; }
+}
+
+view picture &quot;Note / explanation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-sample">
+<h3>Sample-data grid (<code>sample</code>)</h3>
+<img class="ref-plate" alt="The Sample-data grid symbol" src="assets/kinds/sample.svg">
+<p><strong>What it looks like.</strong> Drawn as a sample shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Synthetic, sanitized or observed records with explicit provenance and bindings.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Sample-data grid (sample) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Sample-data grid&quot; { kind: sample; }
+}
+
+view picture &quot;Sample-data grid&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-fixture">
+<h3>Test fixture / expected output (<code>fixture</code>)</h3>
+<img class="ref-plate" alt="The Test fixture / expected output symbol" src="assets/kinds/fixture.svg">
+<p><strong>What it looks like.</strong> Drawn as a sample shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An approved example with explicit assertions; not just an illustrative sample.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Test fixture / expected output (fixture) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Test fixture / expected output&quot; { kind: fixture; }
+}
+
+view picture &quot;Test fixture / expected output&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-decision">
+<h3>Decision record (<code>decision</code>)</h3>
+<img class="ref-plate" alt="The Decision record symbol" src="assets/kinds/decision.svg">
+<p><strong>What it looks like.</strong> Drawn as a note shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A recorded design decision, alternatives and rationale.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Decision record (decision) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Decision record&quot; { kind: decision; }
+}
+
+view picture &quot;Decision record&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-issue">
+<h3>Open question / issue (<code>issue</code>)</h3>
+<img class="ref-plate" alt="The Open question / issue symbol" src="assets/kinds/issue.svg">
+<p><strong>What it looks like.</strong> Drawn as a note shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An unresolved concern that must not look like an approved design fact.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Open question / issue (issue) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Open question / issue&quot; { kind: issue; }
+}
+
+view picture &quot;Open question / issue&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-observation">
+<h3>Observation / evidence (<code>observation</code>)</h3>
+<img class="ref-plate" alt="The Observation / evidence symbol" src="assets/kinds/observation.svg">
+<p><strong>What it looks like.</strong> Drawn as a note shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An observed implementation fact with source, timestamp and confidence.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Observation / evidence (observation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Observation / evidence&quot; { kind: observation; }
+}
+
+view picture &quot;Observation / evidence&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-change">
+<h3>Change / migration proposal (<code>change</code>)</h3>
+<img class="ref-plate" alt="The Change / migration proposal symbol" src="assets/kinds/change.svg">
+<p><strong>What it looks like.</strong> Drawn as a note shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An intended transition between identified model states.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Change / migration proposal (change) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Change / migration proposal&quot; { kind: change; }
+}
+
+view picture &quot;Change / migration proposal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-saved_view">
+<h3>Diagram / saved view (<code>saved_view</code>)</h3>
+<img class="ref-plate" alt="The Diagram / saved view symbol" src="assets/kinds/saved_view.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A projection of the model, not a duplicate of the represented objects.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Diagram / saved view (saved_view) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Diagram / saved view&quot; { kind: saved_view; }
+}
+
+view picture &quot;Diagram / saved view&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-extension">
+<h3>Extension / unknown-kind fallback (<code>extension</code>)</h3>
+<img class="ref-plate" alt="The Extension / unknown-kind fallback symbol" src="assets/kinds/extension.svg">
+<p><strong>What it looks like.</strong> Drawn as a note shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A namespaced custom kind rendered with a mandatory label or registered token.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Extension / unknown-kind fallback (extension) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Extension / unknown-kind fallback&quot; { kind: extension; }
+}
+
+view picture &quot;Extension / unknown-kind fallback&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-note-sticky">
+<h3>Sticky note (<code>note.sticky</code>)</h3>
+<img class="ref-plate" alt="The Sticky note symbol" src="assets/kinds/note-sticky.svg">
+<p><strong>What it looks like.</strong> Drawn as a note.sticky shape in the Evidence family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Free-form workshop sticky note (collaborative whiteboard idiom): a coloured, optionally pinned note with body text only — no name/rows sections.</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Sticky note (note.sticky) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Sticky note&quot; { kind: &quot;note.sticky&quot;; }
+}
+
+view picture &quot;Sticky note&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dmn-knowledgesource">
+<h3>Knowledge source (<code>dmn.knowledgesource</code>)</h3>
+<img class="ref-plate" alt="The Knowledge source symbol" src="assets/kinds/dmn-knowledgesource.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Knowledge source — a evidence kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dmn.drd@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dmn-drd-1.svg&quot;&gt;dmn.drd@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>source</code>, <code>observed_at</code>, <code>confidence</code>, <code>expected</code> (for fixtures), <code>state</code>, and for samples the required <code>columns:</code> / <code>rows:</code> grid, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Knowledge source (dmn.knowledgesource) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Knowledge source&quot; { kind: &quot;dmn.knowledgesource&quot;; }
+}
+
+view picture &quot;Knowledge source&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Evidence">Ref-Kinds-Evidence</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

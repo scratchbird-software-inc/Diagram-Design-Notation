@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Control &amp; orchestration relations — DDN</title>
+<meta name="description" content="Every control relation in DDN (24): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Control &amp; orchestration relations</h1>
+<p>Control relations say <em>what happens next</em>: triggers, schedules, precedes, retries, cancels. These are the arrows of flowcharts, state machines and job orchestration. They move <em>control</em>, not data — an order to start, a signal that something finished.</p><p>This page lists every <strong>Control</strong> relation in DDN — <strong>24</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Control relations end in a <strong>filled arrow</strong> (forward control). Flowchart branches off a decision must be labelled — that’s a profile rule (<code>flow.basic@1</code>, error DDN-PF009), because an unlabelled exit is where processes go to be misunderstood.</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-trigger">triggers · <code>trigger</code></a>
+<a href="#r-schedule">schedules · <code>schedule</code></a>
+<a href="#r-invoke">invokes execution · <code>invoke</code></a>
+<a href="#r-precede">must precede · <code>precede</code></a>
+<a href="#r-gate">gates execution of · <code>gate</code></a>
+<a href="#r-retry">retries · <code>retry</code></a>
+<a href="#r-ack">acknowledges · <code>ack</code></a>
+<a href="#r-cancel">cancels · <code>cancel</code></a>
+<a href="#r-failover">activates failover to · <code>failover</code></a>
+<a href="#r-flow-next">Control passes to · <code>flow.next</code></a>
+<a href="#r-analysis-precedes">Must finish before · <code>analysis.precedes</code></a>
+<a href="#r-cmmn-sentryref">Sentry on-part · <code>cmmn.sentryref</code></a>
+<a href="#r-state-transition">Event transition · <code>state.transition</code></a>
+<a href="#r-flow-continues">Continues at · <code>flow.continues</code></a>
+<a href="#r-epk-next">Control passes to · <code>epk.next</code></a>
+<a href="#r-uml-message">Message · <code>uml.message</code></a>
+<a href="#r-uml-flow">Activity edge · <code>uml.flow</code></a>
+<a href="#r-bpmn-messageflow">Message flow · <code>bpmn.messageflow</code></a>
+<a href="#r-tree-input">has input · <code>tree.input</code></a>
+<a href="#r-dmn-inforeq">Information requirement · <code>dmn.inforeq</code></a>
+<a href="#r-dmn-knowledgereq">Knowledge requirement · <code>dmn.knowledgereq</code></a>
+<a href="#r-dmn-authorityreq">Authority requirement · <code>dmn.authorityreq</code></a>
+<a href="#r-epk-links">Links process · <code>epk.links</code></a>
+<a href="#r-sdl-channel">Channel · <code>sdl.channel</code></a></div>
+<section class="ref-entry" id="r-trigger">
+<h3>triggers (<code>trigger</code>)</h3>
+<img class="ref-plate" alt="What the “triggers” line looks like" src="assets/relations/trigger.svg">
+<p><strong>What it means.</strong> Source event, activity or condition to activated activity. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// triggers (trigger) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;triggers&quot; @from_side -&gt; @to_side {
+        kind: trigger;
+    }
+}
+
+view picture &quot;triggers&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-schedule">
+<h3>schedules (<code>schedule</code>)</h3>
+<img class="ref-plate" alt="What the “schedules” line looks like" src="assets/relations/schedule.svg">
+<p><strong>What it means.</strong> Schedule definition to activity or job. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// schedules (schedule) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;schedules&quot; @from_side -&gt; @to_side {
+        kind: schedule;
+    }
+}
+
+view picture &quot;schedules&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-invoke">
+<h3>invokes execution (<code>invoke</code>)</h3>
+<img class="ref-plate" alt="What the “invokes execution” line looks like" src="assets/relations/invoke.svg">
+<p><strong>What it means.</strong> Calling activity to invoked activity; request payload may be a separate flow. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// invokes execution (invoke) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;invokes execution&quot; @from_side -&gt; @to_side {
+        kind: invoke;
+    }
+}
+
+view picture &quot;invokes execution&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-precede">
+<h3>must precede (<code>precede</code>)</h3>
+<img class="ref-plate" alt="What the “must precede” line looks like" src="assets/relations/precede.svg">
+<p><strong>What it means.</strong> Earlier activity to later activity in an ordering constraint. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// must precede (precede) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;must precede&quot; @from_side -&gt; @to_side {
+        kind: precede;
+    }
+}
+
+view picture &quot;must precede&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-gate">
+<h3>gates execution of (<code>gate</code>)</h3>
+<img class="ref-plate" alt="What the “gates execution of” line looks like" src="assets/relations/gate.svg">
+<p><strong>What it means.</strong> Condition or approval to the controlled activity. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// gates execution of (gate) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;gates execution of&quot; @from_side -&gt; @to_side {
+        kind: gate;
+    }
+}
+
+view picture &quot;gates execution of&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-retry">
+<h3>retries (<code>retry</code>)</h3>
+<img class="ref-plate" alt="What the “retries” line looks like" src="assets/relations/retry.svg">
+<p><strong>What it means.</strong> Failure handling or schedule to the retried activity. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// retries (retry) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;retries&quot; @from_side -&gt; @to_side {
+        kind: retry;
+    }
+}
+
+view picture &quot;retries&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-ack">
+<h3>acknowledges (<code>ack</code>)</h3>
+<img class="ref-plate" alt="What the “acknowledges” line looks like" src="assets/relations/ack.svg">
+<p><strong>What it means.</strong> Receiving activity to the sender or coordinator acknowledged. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// acknowledges (ack) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;acknowledges&quot; @from_side -&gt; @to_side {
+        kind: ack;
+    }
+}
+
+view picture &quot;acknowledges&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-cancel">
+<h3>cancels (<code>cancel</code>)</h3>
+<img class="ref-plate" alt="What the “cancels” line looks like" src="assets/relations/cancel.svg">
+<p><strong>What it means.</strong> Cancellation source to controlled execution. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// cancels (cancel) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;cancels&quot; @from_side -&gt; @to_side {
+        kind: cancel;
+    }
+}
+
+view picture &quot;cancels&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-failover">
+<h3>activates failover to (<code>failover</code>)</h3>
+<img class="ref-plate" alt="What the “activates failover to” line looks like" src="assets/relations/failover.svg">
+<p><strong>What it means.</strong> Controller or failure condition to the replacement execution/service activation. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// activates failover to (failover) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;activates failover to&quot; @from_side -&gt; @to_side {
+        kind: failover;
+    }
+}
+
+view picture &quot;activates failover to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-flow-next">
+<h3>Control passes to (<code>flow.next</code>)</h3>
+<img class="ref-plate" alt="What the “Control passes to” line looks like" src="assets/relations/flow-next.svg">
+<p><strong>What it means.</strong> Control passes to. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Control passes to (flow.next) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;flow.start&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.start&quot;; }
+    relation shows &quot;Control passes to&quot; @from_side -&gt; @to_side {
+        kind: &quot;flow.next&quot;;
+    }
+}
+
+view picture &quot;Control passes to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-analysis-precedes">
+<h3>Must finish before (<code>analysis.precedes</code>)</h3>
+<img class="ref-plate" alt="What the “Must finish before” line looks like" src="assets/relations/analysis-precedes.svg">
+<p><strong>What it means.</strong> Must finish before. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Must finish before (analysis.precedes) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;analysis.task&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;analysis.task&quot;; }
+    relation shows &quot;Must finish before&quot; @from_side -&gt; @to_side {
+        kind: &quot;analysis.precedes&quot;;
+    }
+}
+
+view picture &quot;Must finish before&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-cmmn-sentryref">
+<h3>Sentry on-part (<code>cmmn.sentryref</code>)</h3>
+<img class="ref-plate" alt="What the “Sentry on-part” line looks like" src="assets/relations/cmmn-sentryref.svg">
+<p><strong>What it means.</strong> Triggers. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Sentry on-part (cmmn.sentryref) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;cmmn.timerevent&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;cmmn.sentry&quot;; }
+    relation shows &quot;Sentry on-part&quot; @from_side -&gt; @to_side {
+        kind: &quot;cmmn.sentryref&quot;;
+    }
+}
+
+view picture &quot;Sentry on-part&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-state-transition">
+<h3>Event transition (<code>state.transition</code>)</h3>
+<img class="ref-plate" alt="What the “Event transition” line looks like" src="assets/relations/state-transition.svg">
+<p><strong>What it means.</strong> Event transition. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Event transition (state.transition) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;state.initial&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;state.state&quot;; }
+    relation shows &quot;Event transition&quot; @from_side -&gt; @to_side {
+        kind: &quot;state.transition&quot;;
+    }
+}
+
+view picture &quot;Event transition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-flow-continues">
+<h3>Continues at (<code>flow.continues</code>)</h3>
+<img class="ref-plate" alt="What the “Continues at” line looks like" src="assets/relations/flow-continues.svg">
+<p><strong>What it means.</strong> Continues at. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Continues at (flow.continues) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;flow.offpage&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.offpage&quot;; }
+    relation shows &quot;Continues at&quot; @from_side -&gt; @to_side {
+        kind: &quot;flow.continues&quot;;
+    }
+}
+
+view picture &quot;Continues at&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-epk-next">
+<h3>Control passes to (<code>epk.next</code>)</h3>
+<img class="ref-plate" alt="What the “Control passes to” line looks like" src="assets/relations/epk-next.svg">
+<p><strong>What it means.</strong> Control passes to. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Control passes to (epk.next) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;epk.event&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;epk.event&quot;; }
+    relation shows &quot;Control passes to&quot; @from_side -&gt; @to_side {
+        kind: &quot;epk.next&quot;;
+    }
+}
+
+view picture &quot;Control passes to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-message">
+<h3>Message (<code>uml.message</code>)</h3>
+<img class="ref-plate" alt="What the “Message” line looks like" src="assets/relations/uml-message.svg">
+<p><strong>What it means.</strong> Message. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Message (uml.message) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;Message&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.message&quot;;
+    }
+}
+
+view picture &quot;Message&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-uml-flow">
+<h3>Activity edge (<code>uml.flow</code>)</h3>
+<img class="ref-plate" alt="What the “Activity edge” line looks like" src="assets/relations/uml-flow.svg">
+<p><strong>What it means.</strong> Activity edge. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Activity edge (uml.flow) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;flow.start&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.start&quot;; }
+    relation shows &quot;Activity edge&quot; @from_side -&gt; @to_side {
+        kind: &quot;uml.flow&quot;;
+    }
+}
+
+view picture &quot;Activity edge&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-bpmn-messageflow">
+<h3>Message flow (<code>bpmn.messageflow</code>)</h3>
+<img class="ref-plate" alt="What the “Message flow” line looks like" src="assets/relations/bpmn-messageflow.svg">
+<p><strong>What it means.</strong> Message flow. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Message flow (bpmn.messageflow) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;flow.start&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;flow.start&quot;; }
+    relation shows &quot;Message flow&quot; @from_side -&gt; @to_side {
+        kind: &quot;bpmn.messageflow&quot;;
+    }
+}
+
+view picture &quot;Message flow&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-tree-input">
+<h3>has input (<code>tree.input</code>)</h3>
+<img class="ref-plate" alt="What the “has input” line looks like" src="assets/relations/tree-input.svg">
+<p><strong>What it means.</strong> has input. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// has input (tree.input) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;tree.gate&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;tree.gate&quot;; }
+    relation shows &quot;has input&quot; @from_side -&gt; @to_side {
+        kind: &quot;tree.input&quot;;
+    }
+}
+
+view picture &quot;has input&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-dmn-inforeq">
+<h3>Information requirement (<code>dmn.inforeq</code>)</h3>
+<img class="ref-plate" alt="What the “Information requirement” line looks like" src="assets/relations/dmn-inforeq.svg">
+<p><strong>What it means.</strong> Requires information. It ends with a filled arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Information requirement (dmn.inforeq) — information flows into the decision.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;dmn.inputdata&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;dmn.decision&quot;; }
+    relation shows &quot;Information requirement&quot; @from_side -&gt; @to_side {
+        kind: &quot;dmn.inforeq&quot;;
+    }
+}
+
+view picture &quot;Information requirement&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-dmn-knowledgereq">
+<h3>Knowledge requirement (<code>dmn.knowledgereq</code>)</h3>
+<img class="ref-plate" alt="What the “Knowledge requirement” line looks like" src="assets/relations/dmn-knowledgereq.svg">
+<p><strong>What it means.</strong> Requires knowledge. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Knowledge requirement (dmn.knowledgereq) — a business knowledge model the decision calls on.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;dmn.bkm&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;dmn.decision&quot;; }
+    relation shows &quot;Knowledge requirement&quot; @from_side -&gt; @to_side {
+        kind: &quot;dmn.knowledgereq&quot;;
+    }
+}
+
+view picture &quot;Knowledge requirement&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-dmn-authorityreq">
+<h3>Authority requirement (<code>dmn.authorityreq</code>)</h3>
+<img class="ref-plate" alt="What the “Authority requirement” line looks like" src="assets/relations/dmn-authorityreq.svg">
+<p><strong>What it means.</strong> Has authority. It starts with a circle mark and ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Authority requirement (dmn.authorityreq) — the knowledge source governing the decision.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;dmn.knowledgesource&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;dmn.decision&quot;; }
+    relation shows &quot;Authority requirement&quot; @from_side -&gt; @to_side {
+        kind: &quot;dmn.authorityreq&quot;;
+    }
+}
+
+view picture &quot;Authority requirement&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-epk-links">
+<h3>Links process (<code>epk.links</code>)</h3>
+<img class="ref-plate" alt="What the “Links process” line looks like" src="assets/relations/epk-links.svg">
+<p><strong>What it means.</strong> Links process. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Links process (epk.links) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;epk.processlink&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;epk.event&quot;; }
+    relation shows &quot;Links process&quot; @from_side -&gt; @to_side {
+        kind: &quot;epk.links&quot;;
+    }
+}
+
+view picture &quot;Links process&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-sdl-channel">
+<h3>Channel (<code>sdl.channel</code>)</h3>
+<img class="ref-plate" alt="What the “Channel” line looks like" src="assets/relations/sdl-channel.svg">
+<p><strong>What it means.</strong> Carries. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// Channel (sdl.channel) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: &quot;sdl.block&quot;; }
+    object to_side &quot;To&quot; { kind: &quot;sdl.block&quot;; }
+    relation shows &quot;Channel&quot; @from_side -&gt; @to_side {
+        kind: &quot;sdl.channel&quot;;
+    }
+}
+
+view picture &quot;Channel&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Control">Ref-Relations-Control</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

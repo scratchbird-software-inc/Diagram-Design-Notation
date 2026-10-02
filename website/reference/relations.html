@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — relations — DDN</title>
+<meta name="description" content="All 185 DDN relation kinds by family: line marks, meaning and working examples.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — relations, the short version</h1>
+<p>Relations are the lines. In DDN every line is <em>typed</em>: it declares what kind of connection it is, and the drawing follows from that — dashed open arrows for dependencies, solid filled arrows for flows and control, crow’s feet for structural cardinality. You never draw an arrowhead by hand; you say what the connection <em>means</em>. Pick a family to browse all <strong>185</strong> relation kinds:</p><div class="ref-cards"><a href="relations-structural.html"><b>Structural relations</b><span>35 relations — things belong together; the only lines that carry cardinality marks</span></a>
+<a href="relations-flow.html"><b>Flow (data movement) relations</b><span>34 relations — data moves this way</span></a>
+<a href="relations-dependency.html"><b>Dependency &amp; reference relations</b><span>39 relations — this needs that — no data implied</span></a>
+<a href="relations-mapping.html"><b>Mapping &amp; representation relations</b><span>20 relations — this stands for that</span></a>
+<a href="relations-control.html"><b>Control &amp; orchestration relations</b><span>24 relations — what happens next</span></a>
+<a href="relations-lineage.html"><b>Lineage &amp; derivation relations</b><span>11 relations — where this came from</span></a>
+<a href="relations-governance.html"><b>Governance &amp; responsibility relations</b><span>14 relations — who owns it, which rules apply</span></a>
+<a href="relations-annotation.html"><b>Annotation relations</b><span>8 relations — margin notes attached to the model</span></a></div>
+<p><strong>Routing, bends and crossings.</strong> DDN routes relation lines for you. When a crossing bothers you, prefer a hint over a pin: <code>route { via: [ … ]; source_side: …; target_side: …; }</code> nudges a line’s path, and the view’s <code>layout { crossings: gap | bridge | square_bridge; }</code> picks how crossings are drawn. A crossing is <strong>never</strong> a connection — only a filled <em>junction</em> dot joins lines, and junctions are declared, never guessed. Full list: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Guide-Layout-and-appearance">Layout and appearance</a>.</p><hr><p><small>Applies to DDN 0.7.0 · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Home">Ref-Relations-Home</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Data structure kinds — DDN</title>
+<meta name="description" content="Every data element kind in DDN (41): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Data structure kinds</h1>
+<p>These kinds describe how data is <em>shaped</em> — records, documents, arrays, maps, time series, files, buckets. They sit between the business concepts and any one database: a <code>record</code> shape can be true of a JSON payload, a table row and a message all at once. Reach for these when the question is &quot;what does this data look like?&quot;</p><p>This page lists every <strong>Data</strong> element kind in DDN — <strong>41</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-ERD">ERD</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Data-flow">Data flow</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-dataset">Logical dataset · <code>dataset</code></a>
+<a href="#k-record">Record / payload shape · <code>record</code></a>
+<a href="#k-field">Field / attribute / property · <code>field</code></a>
+<a href="#k-collection">Document collection · <code>collection</code></a>
+<a href="#k-document">Embedded document / object · <code>document</code></a>
+<a href="#k-array">Array / ordered collection · <code>array</code></a>
+<a href="#k-map">Map / dictionary · <code>map</code></a>
+<a href="#k-set">Set / unordered collection · <code>set</code></a>
+<a href="#k-variant">Union / structural variant · <code>variant</code></a>
+<a href="#k-graph">Property graph / graph dataset · <code>graph</code></a>
+<a href="#k-graph_node">Graph node type · <code>graph_node</code></a>
+<a href="#k-graph_edge">Graph edge type · <code>graph_edge</code></a>
+<a href="#k-key_value">Key-value collection · <code>key_value</code></a>
+<a href="#k-wide_column">Wide-column family · <code>wide_column</code></a>
+<a href="#k-time_series">Time-series dataset · <code>time_series</code></a>
+<a href="#k-file">File / file object · <code>file</code></a>
+<a href="#k-file_set">File set / table-format dataset · <code>file_set</code></a>
+<a href="#k-bucket">Object-storage bucket · <code>bucket</code></a>
+<a href="#k-manifest">Manifest / data-file metadata · <code>manifest</code></a>
+<a href="#k-search_index">Search index / collection · <code>search_index</code></a>
+<a href="#k-vector">Vector collection / index · <code>vector</code></a>
+<a href="#k-blob">Blob / binary asset · <code>blob</code></a>
+<a href="#k-tensor">Tensor / multidimensional array · <code>tensor</code></a>
+<a href="#k-rdf">RDF dataset / named graph · <code>rdf</code></a>
+<a href="#k-dfd-process">Data process · <code>dfd.process</code></a>
+<a href="#k-dfd-store">Data store · <code>dfd.store</code></a>
+<a href="#k-dfd-external">External participant · <code>dfd.external</code></a>
+<a href="#k-flow-objectnode">Object node · <code>flow.objectnode</code></a>
+<a href="#k-c4-store">Data store · <code>c4.store</code></a>
+<a href="#k-flow-dataobject">Data object · <code>flow.dataobject</code></a>
+<a href="#k-flow-datainput">Data input · <code>flow.datainput</code></a>
+<a href="#k-flow-dataoutput">Data output · <code>flow.dataoutput</code></a>
+<a href="#k-flow-datastore">Data store · <code>flow.datastore</code></a>
+<a href="#k-dmn-inputdata">Input data · <code>dmn.inputdata</code></a>
+<a href="#k-soaml-message">Message type · <code>soaml.message</code></a>
+<a href="#k-uaf-opexchange">Operational exchange · <code>uaf.opexchange</code></a>
+<a href="#k-uaf-dictionaryentry">Dictionary entry · <code>uaf.dictionaryentry</code></a>
+<a href="#k-epk-infoobject">Information object · <code>epk.infoobject</code></a>
+<a href="#k-orm-valuetype">Value type · <code>orm.valuetype</code></a>
+<a href="#k-fbd-variable">Variable · <code>fbd.variable</code></a>
+<a href="#k-ladder-label">Label · <code>ladder.label</code></a></div>
+<section class="ref-entry" id="k-dataset">
+<h3>Logical dataset (<code>dataset</code>)</h3>
+<img class="ref-plate" alt="The Logical dataset symbol" src="assets/kinds/dataset.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A logical set of records independent of physical placement.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Logical dataset (dataset) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Logical dataset&quot; { kind: dataset; }
+}
+
+view picture &quot;Logical dataset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-record">
+<h3>Record / payload shape (<code>record</code>)</h3>
+<img class="ref-plate" alt="The Record / payload shape symbol" src="assets/kinds/record.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A reusable structural definition, separate from a stored dataset.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Record / payload shape (record) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Record / payload shape&quot; { kind: record; }
+}
+
+view picture &quot;Record / payload shape&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-field">
+<h3>Field / attribute / property (<code>field</code>)</h3>
+<img class="ref-plate" alt="The Field / attribute / property symbol" src="assets/kinds/field.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A first-class structural member with stable identity and optional type.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Field / attribute / property (field) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Field / attribute / property&quot; { kind: field; }
+}
+
+view picture &quot;Field / attribute / property&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-collection">
+<h3>Document collection (<code>collection</code>)</h3>
+<img class="ref-plate" alt="The Document collection symbol" src="assets/kinds/collection.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A collection whose members may have explicitly modeled shape variants.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Document collection (collection) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Document collection&quot; { kind: collection; }
+}
+
+view picture &quot;Document collection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-document">
+<h3>Embedded document / object (<code>document</code>)</h3>
+<img class="ref-plate" alt="The Embedded document / object symbol" src="assets/kinds/document.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A structured value embedded in another value or record.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Embedded document / object (document) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Embedded document / object&quot; { kind: document; }
+}
+
+view picture &quot;Embedded document / object&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-array">
+<h3>Array / ordered collection (<code>array</code>)</h3>
+<img class="ref-plate" alt="The Array / ordered collection symbol" src="assets/kinds/array.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An ordered repeated structure with item definition and cardinality.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Array / ordered collection (array) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Array / ordered collection&quot; { kind: array; }
+}
+
+view picture &quot;Array / ordered collection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-map">
+<h3>Map / dictionary (<code>map</code>)</h3>
+<img class="ref-plate" alt="The Map / dictionary symbol" src="assets/kinds/map.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A structure with key and value domains, not a fixed field list.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Map / dictionary (map) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Map / dictionary&quot; { kind: map; }
+}
+
+view picture &quot;Map / dictionary&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-set">
+<h3>Set / unordered collection (<code>set</code>)</h3>
+<img class="ref-plate" alt="The Set / unordered collection symbol" src="assets/kinds/set.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A repeated structure with uniqueness and ordering stated explicitly.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Set / unordered collection (set) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Set / unordered collection&quot; { kind: set; }
+}
+
+view picture &quot;Set / unordered collection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-variant">
+<h3>Union / structural variant (<code>variant</code>)</h3>
+<img class="ref-plate" alt="The Union / structural variant symbol" src="assets/kinds/variant.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Alternative shapes with explicit selection or discriminator rules.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Union / structural variant (variant) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Union / structural variant&quot; { kind: variant; }
+}
+
+view picture &quot;Union / structural variant&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-graph">
+<h3>Property graph / graph dataset (<code>graph</code>)</h3>
+<img class="ref-plate" alt="The Property graph / graph dataset symbol" src="assets/kinds/graph.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A graph dataset whose node and edge schemas can be shown separately.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Property graph / graph dataset (graph) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Property graph / graph dataset&quot; { kind: graph; }
+}
+
+view picture &quot;Property graph / graph dataset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-graph_node">
+<h3>Graph node type (<code>graph_node</code>)</h3>
+<img class="ref-plate" alt="The Graph node type symbol" src="assets/kinds/graph_node.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A node type, labels, properties and identity scope.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Graph node type (graph_node) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Graph node type&quot; { kind: graph_node; }
+}
+
+view picture &quot;Graph node type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-graph_edge">
+<h3>Graph edge type (<code>graph_edge</code>)</h3>
+<img class="ref-plate" alt="The Graph edge type symbol" src="assets/kinds/graph_edge.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A relationship type that may carry properties and endpoint restrictions.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Graph edge type (graph_edge) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Graph edge type&quot; { kind: graph_edge; }
+}
+
+view picture &quot;Graph edge type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-key_value">
+<h3>Key-value collection (<code>key_value</code>)</h3>
+<img class="ref-plate" alt="The Key-value collection symbol" src="assets/kinds/key_value.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A collection addressed by keys with explicit value shape.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Key-value collection (key_value) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Key-value collection&quot; { kind: key_value; }
+}
+
+view picture &quot;Key-value collection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-wide_column">
+<h3>Wide-column family (<code>wide_column</code>)</h3>
+<img class="ref-plate" alt="The Wide-column family symbol" src="assets/kinds/wide_column.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A wide-column structure with its key and ordering roles made explicit.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Wide-column family (wide_column) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Wide-column family&quot; { kind: wide_column; }
+}
+
+view picture &quot;Wide-column family&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-time_series">
+<h3>Time-series dataset (<code>time_series</code>)</h3>
+<img class="ref-plate" alt="The Time-series dataset symbol" src="assets/kinds/time_series.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A series-oriented representation with identity, time and retention metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Time-series dataset (time_series) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Time-series dataset&quot; { kind: time_series; }
+}
+
+view picture &quot;Time-series dataset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-file">
+<h3>File / file object (<code>file</code>)</h3>
+<img class="ref-plate" alt="The File / file object symbol" src="assets/kinds/file.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An individual data artifact, not a generic folder or storage service.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One File / file object (file) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;File / file object&quot; { kind: file; }
+}
+
+view picture &quot;File / file object&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-file_set">
+<h3>File set / table-format dataset (<code>file_set</code>)</h3>
+<img class="ref-plate" alt="The File set / table-format dataset symbol" src="assets/kinds/file_set.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A logically related group of files, optionally with manifests and metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One File set / table-format dataset (file_set) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;File set / table-format dataset&quot; { kind: file_set; }
+}
+
+view picture &quot;File set / table-format dataset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-bucket">
+<h3>Object-storage bucket (<code>bucket</code>)</h3>
+<img class="ref-plate" alt="The Object-storage bucket symbol" src="assets/kinds/bucket.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An object-store namespace or resource; location is modeled separately.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Object-storage bucket (bucket) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Object-storage bucket&quot; { kind: bucket; }
+}
+
+view picture &quot;Object-storage bucket&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-manifest">
+<h3>Manifest / data-file metadata (<code>manifest</code>)</h3>
+<img class="ref-plate" alt="The Manifest / data-file metadata symbol" src="assets/kinds/manifest.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Metadata identifying data files, versions or snapshot contents.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Manifest / data-file metadata (manifest) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Manifest / data-file metadata&quot; { kind: manifest; }
+}
+
+view picture &quot;Manifest / data-file metadata&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-search_index">
+<h3>Search index / collection (<code>search_index</code>)</h3>
+<img class="ref-plate" alt="The Search index / collection symbol" src="assets/kinds/search_index.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A searchable derived or primary representation with its scope stated.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Search index / collection (search_index) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Search index / collection&quot; { kind: search_index; }
+}
+
+view picture &quot;Search index / collection&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-vector">
+<h3>Vector collection / index (<code>vector</code>)</h3>
+<img class="ref-plate" alt="The Vector collection / index symbol" src="assets/kinds/vector.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> Vectors with identity, dimensions, metric, model and source linkage metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Vector collection / index (vector) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Vector collection / index&quot; { kind: vector; }
+}
+
+view picture &quot;Vector collection / index&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-blob">
+<h3>Blob / binary asset (<code>blob</code>)</h3>
+<img class="ref-plate" alt="The Blob / binary asset symbol" src="assets/kinds/blob.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An opaque or externally described binary value or collection.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Blob / binary asset (blob) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Blob / binary asset&quot; { kind: blob; }
+}
+
+view picture &quot;Blob / binary asset&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-tensor">
+<h3>Tensor / multidimensional array (<code>tensor</code>)</h3>
+<img class="ref-plate" alt="The Tensor / multidimensional array symbol" src="assets/kinds/tensor.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A dimensional numeric or structured representation with named axes.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Tensor / multidimensional array (tensor) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Tensor / multidimensional array&quot; { kind: tensor; }
+}
+
+view picture &quot;Tensor / multidimensional array&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-rdf">
+<h3>RDF dataset / named graph (<code>rdf</code>)</h3>
+<img class="ref-plate" alt="The RDF dataset / named graph symbol" src="assets/kinds/rdf.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Data family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A triple or quad-oriented representation with vocabulary and graph scope.</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One RDF dataset / named graph (rdf) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;RDF dataset / named graph&quot; { kind: rdf; }
+}
+
+view picture &quot;RDF dataset / named graph&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dfd-process">
+<h3>Data process (<code>dfd.process</code>)</h3>
+<img class="ref-plate" alt="The Data process symbol" src="assets/kinds/dfd-process.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data process — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dfd.gane_sarson@1&lt;/code&gt;, &lt;code&gt;dfd.yourdon@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dfd-gane-sarson-1.svg&quot;&gt;dfd.gane_sarson@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/dfd-yourdon-1.svg&quot;&gt;dfd.yourdon@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data process (dfd.process) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data process&quot; { kind: &quot;dfd.process&quot;; }
+}
+
+view picture &quot;Data process&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dfd-store">
+<h3>Data store (<code>dfd.store</code>)</h3>
+<img class="ref-plate" alt="The Data store symbol" src="assets/kinds/dfd-store.svg">
+<p><strong>What it looks like.</strong> Drawn as an open-topped data-store shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data store — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dfd.gane_sarson@1&lt;/code&gt;, &lt;code&gt;dfd.yourdon@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dfd-gane-sarson-1.svg&quot;&gt;dfd.gane_sarson@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/dfd-yourdon-1.svg&quot;&gt;dfd.yourdon@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data store (dfd.store) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data store&quot; { kind: &quot;dfd.store&quot;; }
+}
+
+view picture &quot;Data store&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dfd-external">
+<h3>External participant (<code>dfd.external</code>)</h3>
+<img class="ref-plate" alt="The External participant symbol" src="assets/kinds/dfd-external.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> External participant — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dfd.gane_sarson@1&lt;/code&gt;, &lt;code&gt;dfd.yourdon@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dfd-gane-sarson-1.svg&quot;&gt;dfd.gane_sarson@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/dfd-yourdon-1.svg&quot;&gt;dfd.yourdon@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One External participant (dfd.external) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;External participant&quot; { kind: &quot;dfd.external&quot;; }
+}
+
+view picture &quot;External participant&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-objectnode">
+<h3>Object node (<code>flow.objectnode</code>)</h3>
+<img class="ref-plate" alt="The Object node symbol" src="assets/kinds/flow-objectnode.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Object node — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Object node (flow.objectnode) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Object node&quot; { kind: &quot;flow.objectnode&quot;; }
+}
+
+view picture &quot;Object node&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-c4-store">
+<h3>Data store (<code>c4.store</code>)</h3>
+<img class="ref-plate" alt="The Data store symbol" src="assets/kinds/c4-store.svg">
+<p><strong>What it looks like.</strong> Drawn as a database cylinder. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data store — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;c4.context@1&lt;/code&gt;, &lt;code&gt;c4.container@1&lt;/code&gt;, &lt;code&gt;c4.component@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/c4-context-1.svg&quot;&gt;c4.context@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-container-1.svg&quot;&gt;c4.container@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/c4-component-1.svg&quot;&gt;c4.component@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data store (c4.store) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data store&quot; { kind: &quot;c4.store&quot;; }
+}
+
+view picture &quot;Data store&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-dataobject">
+<h3>Data object (<code>flow.dataobject</code>)</h3>
+<img class="ref-plate" alt="The Data object symbol" src="assets/kinds/flow-dataobject.svg">
+<p><strong>What it looks like.</strong> Drawn as a dataobject shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data object — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data object (flow.dataobject) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data object&quot; { kind: &quot;flow.dataobject&quot;; }
+}
+
+view picture &quot;Data object&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-datainput">
+<h3>Data input (<code>flow.datainput</code>)</h3>
+<img class="ref-plate" alt="The Data input symbol" src="assets/kinds/flow-datainput.svg">
+<p><strong>What it looks like.</strong> Drawn as a datainput shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data input — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data input (flow.datainput) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data input&quot; { kind: &quot;flow.datainput&quot;; }
+}
+
+view picture &quot;Data input&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-dataoutput">
+<h3>Data output (<code>flow.dataoutput</code>)</h3>
+<img class="ref-plate" alt="The Data output symbol" src="assets/kinds/flow-dataoutput.svg">
+<p><strong>What it looks like.</strong> Drawn as a dataoutput shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data output — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data output (flow.dataoutput) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data output&quot; { kind: &quot;flow.dataoutput&quot;; }
+}
+
+view picture &quot;Data output&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-flow-datastore">
+<h3>Data store (<code>flow.datastore</code>)</h3>
+<img class="ref-plate" alt="The Data store symbol" src="assets/kinds/flow-datastore.svg">
+<p><strong>What it looks like.</strong> Drawn as a database cylinder. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Data store — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;flow.basic@1&lt;/code&gt;, &lt;code&gt;flow.documented@2&lt;/code&gt;, &lt;code&gt;flow.iso5807@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/flow-basic-1.svg&quot;&gt;flow.basic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-documented-2.svg&quot;&gt;flow.documented@2&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/flow-iso5807-1.svg&quot;&gt;flow.iso5807@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data store (flow.datastore) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data store&quot; { kind: &quot;flow.datastore&quot;; }
+}
+
+view picture &quot;Data store&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dmn-inputdata">
+<h3>Input data (<code>dmn.inputdata</code>)</h3>
+<img class="ref-plate" alt="The Input data symbol" src="assets/kinds/dmn-inputdata.svg">
+<p><strong>What it looks like.</strong> Drawn as a rounded rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Input data — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;dmn.drd@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/dmn-drd-1.svg&quot;&gt;dmn.drd@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Input data (dmn.inputdata) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Input data&quot; { kind: &quot;dmn.inputdata&quot;; }
+}
+
+view picture &quot;Input data&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-soaml-message">
+<h3>Message type (<code>soaml.message</code>)</h3>
+<img class="ref-plate" alt="The Message type symbol" src="assets/kinds/soaml-message.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Message type — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;soaml.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/soaml-services-1.svg&quot;&gt;soaml.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Message type (soaml.message) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Message type&quot; { kind: &quot;soaml.message&quot;; }
+}
+
+view picture &quot;Message type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-opexchange">
+<h3>Operational exchange (<code>uaf.opexchange</code>)</h3>
+<img class="ref-plate" alt="The Operational exchange symbol" src="assets/kinds/uaf-opexchange.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Operational exchange — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Operational exchange (uaf.opexchange) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Operational exchange&quot; { kind: &quot;uaf.opexchange&quot;; }
+}
+
+view picture &quot;Operational exchange&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-uaf-dictionaryentry">
+<h3>Dictionary entry (<code>uaf.dictionaryentry</code>)</h3>
+<img class="ref-plate" alt="The Dictionary entry symbol" src="assets/kinds/uaf-dictionaryentry.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Dictionary entry — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;uaf.strategic@1&lt;/code&gt;, &lt;code&gt;uaf.operational@1&lt;/code&gt;, &lt;code&gt;uaf.services@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/uaf-strategic-1.svg&quot;&gt;uaf.strategic@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-operational-1.svg&quot;&gt;uaf.operational@1&lt;/a&gt;, &lt;a href=&quot;../gallery/profiles/uaf-services-1.svg&quot;&gt;uaf.services@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Dictionary entry (uaf.dictionaryentry) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Dictionary entry&quot; { kind: &quot;uaf.dictionaryentry&quot;; }
+}
+
+view picture &quot;Dictionary entry&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-epk-infoobject">
+<h3>Information object (<code>epk.infoobject</code>)</h3>
+<img class="ref-plate" alt="The Information object symbol" src="assets/kinds/epk-infoobject.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle with a wavy bottom edge (a sheet of paper). The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Information object — a data kind..</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Information object (epk.infoobject) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Information object&quot; { kind: &quot;epk.infoobject&quot;; }
+}
+
+view picture &quot;Information object&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-orm-valuetype">
+<h3>Value type (<code>orm.valuetype</code>)</h3>
+<img class="ref-plate" alt="The Value type symbol" src="assets/kinds/orm-valuetype.svg">
+<p><strong>What it looks like.</strong> Drawn as an ellipse. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Value type — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;orm.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/orm-basic-1.svg&quot;&gt;orm.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Value type (orm.valuetype) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Value type&quot; { kind: &quot;orm.valuetype&quot;; }
+}
+
+view picture &quot;Value type&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-fbd-variable">
+<h3>Variable (<code>fbd.variable</code>)</h3>
+<img class="ref-plate" alt="The Variable symbol" src="assets/kinds/fbd-variable.svg">
+<p><strong>What it looks like.</strong> Drawn as a rectangle. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Variable — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;fbd.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/fbd-basic-1.svg&quot;&gt;fbd.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Variable (fbd.variable) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Variable&quot; { kind: &quot;fbd.variable&quot;; }
+}
+
+view picture &quot;Variable&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-ladder-label">
+<h3>Label (<code>ladder.label</code>)</h3>
+<img class="ref-plate" alt="The Label symbol" src="assets/kinds/ladder-label.svg">
+<p><strong>What it looks like.</strong> Drawn as a tag shape. The exact look comes from the diagram profile — hand-drawn and neo styles redraw the same kind, they never change what it <em>is</em>.</p><p><strong>What it represents.</strong> Label — a data kind..</p><p><strong>Where it shows up.</strong> profiles such as &lt;code&gt;ladder.basic@1&lt;/code&gt;. · &lt;span class=&quot;ref-gall&quot;&gt;gallery: &lt;a href=&quot;../gallery/profiles/ladder-basic-1.svg&quot;&gt;ladder.basic@1&lt;/a&gt;&lt;/span&gt;</p><p><strong>What you can add.</strong> Everything optional: <code>datatype</code>, <code>representation</code>, <code>shape</code> (scalar/object/array/map/set/variant), nested <code>fields { … }</code>, plus <code>role</code>, <code>workload</code>, <code>maturity</code>, <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Label (ladder.label) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Label&quot; { kind: &quot;ladder.label&quot;; }
+}
+
+view picture &quot;Label&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Data">Ref-Kinds-Data</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

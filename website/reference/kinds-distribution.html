@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Distribution &amp; replication kinds — DDN</title>
+<meta name="description" content="Every distribution element kind in DDN (10): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Distribution &amp; replication kinds</h1>
+<p>These kinds describe how one logical dataset is <em>spread out</em>: partitions, shards, replicas, caches, logs, routers. The careful distinction DDN keeps here is logical vs physical — a shard is a fragment of the data; a replica is a deployed copy of it. Use these for scaling and resilience designs.</p><p>This page lists every <strong>Distribution</strong> element kind in DDN — <strong>10</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Architecture-Advanced">Architecture Advanced</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-partition_rule">Partitioning rule · <code>partition_rule</code></a>
+<a href="#k-partition">Logical partition · <code>partition</code></a>
+<a href="#k-shard">Shard · <code>shard</code></a>
+<a href="#k-placement">Placement binding · <code>placement</code></a>
+<a href="#k-replica">Replica / deployed copy · <code>replica</code></a>
+<a href="#k-replica_set">Replica set / replication group · <code>replica_set</code></a>
+<a href="#k-colocation">Co-location group · <code>colocation</code></a>
+<a href="#k-cache">Cache representation · <code>cache</code></a>
+<a href="#k-log">Durable log / journal · <code>log</code></a>
+<a href="#k-router">Router / placement directory · <code>router</code></a></div>
+<section class="ref-entry" id="k-partition_rule">
+<h3>Partitioning rule (<code>partition_rule</code>)</h3>
+<img class="ref-plate" alt="The Partitioning rule symbol" src="assets/kinds/partition_rule.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A logical fragmentation policy with its key, method and version.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Partitioning rule (partition_rule) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Partitioning rule&quot; { kind: partition_rule; }
+}
+
+view picture &quot;Partitioning rule&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-partition">
+<h3>Logical partition (<code>partition</code>)</h3>
+<img class="ref-plate" alt="The Logical partition symbol" src="assets/kinds/partition.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A logical subset of a dataset; not inherently a deployment unit.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Logical partition (partition) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Logical partition&quot; { kind: partition; }
+}
+
+view picture &quot;Logical partition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-shard">
+<h3>Shard (<code>shard</code>)</h3>
+<img class="ref-plate" alt="The Shard symbol" src="assets/kinds/shard.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A distribution fragment identified separately from its deployed copies.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Shard (shard) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Shard&quot; { kind: shard; }
+}
+
+view picture &quot;Shard&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-placement">
+<h3>Placement binding (<code>placement</code>)</h3>
+<img class="ref-plate" alt="The Placement binding symbol" src="assets/kinds/placement.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An assignment of a resource or copy to an infrastructure scope.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Placement binding (placement) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Placement binding&quot; { kind: placement; }
+}
+
+view picture &quot;Placement binding&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-replica">
+<h3>Replica / deployed copy (<code>replica</code>)</h3>
+<img class="ref-plate" alt="The Replica / deployed copy symbol" src="assets/kinds/replica.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A distinct deployed copy linked to the represented logical data and source.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Replica / deployed copy (replica) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Replica / deployed copy&quot; { kind: replica; }
+}
+
+view picture &quot;Replica / deployed copy&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-replica_set">
+<h3>Replica set / replication group (<code>replica_set</code>)</h3>
+<img class="ref-plate" alt="The Replica set / replication group symbol" src="assets/kinds/replica_set.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A group of coordinated copies with explicit role and consistency policy.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Replica set / replication group (replica_set) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Replica set / replication group&quot; { kind: replica_set; }
+}
+
+view picture &quot;Replica set / replication group&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-colocation">
+<h3>Co-location group (<code>colocation</code>)</h3>
+<img class="ref-plate" alt="The Co-location group symbol" src="assets/kinds/colocation.svg">
+<p><strong>What it looks like.</strong> Drawn as a frame shape in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A declaration that related fragments should share placement or distribution.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Co-location group (colocation) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Co-location group&quot; { kind: colocation; }
+}
+
+view picture &quot;Co-location group&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cache">
+<h3>Cache representation (<code>cache</code>)</h3>
+<img class="ref-plate" alt="The Cache representation symbol" src="assets/kinds/cache.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A replaceable representation with explicit population and invalidation rules.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Cache representation (cache) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Cache representation&quot; { kind: cache; }
+}
+
+view picture &quot;Cache representation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-log">
+<h3>Durable log / journal (<code>log</code>)</h3>
+<img class="ref-plate" alt="The Durable log / journal symbol" src="assets/kinds/log.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A persisted ordered or partially ordered record whose scope is stated.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Durable log / journal (log) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Durable log / journal&quot; { kind: log; }
+}
+
+view picture &quot;Durable log / journal&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-router">
+<h3>Router / placement directory (<code>router</code>)</h3>
+<img class="ref-plate" alt="The Router / placement directory symbol" src="assets/kinds/router.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Distribution family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A routing or mapping resource that resolves a logical request to placements.</p><p><strong>What you can add.</strong> Everything optional: <code>partition_key</code>, <code>partition_rule</code>, <code>distribution</code> (hash/range/list/…), <code>replication_factor</code>, <code>replica_role</code>, <code>consistency</code>, plus <code>description</code> and <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Router / placement directory (router) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Router / placement directory&quot; { kind: router; }
+}
+
+view picture &quot;Router / placement directory&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Distribution">Ref-Kinds-Distribution</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

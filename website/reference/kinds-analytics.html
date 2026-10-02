@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Analytics &amp; reporting kinds — DDN</title>
+<meta name="description" content="Every analytics element kind in DDN (12): symbol, meaning, properties and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Analytics &amp; reporting kinds</h1>
+<p>These kinds are the vocabulary of the reporting world: facts, dimensions, cubes, metrics, dashboards, data products. They describe <em>analytic roles</em> — a fact table is a role a dataset plays, with a grain and measures — not a particular vendor’s feature. Use them for star schemas, metric layers and &quot;where does this number come from?&quot; diagrams.</p><p>This page lists every <strong>Analytics</strong> element kind in DDN — <strong>12</strong> of them. Each one shows its symbol, what it means, what extra information it accepts, and a tiny working example. Every example on this page passes the tool’s own check and render steps.</p><p>Diagram guides on the wiki: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Dashboards">Dashboards</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Charts">Charts</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Diagrams-Matrices">Matrices</a> · relations: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">all relation families</a> · <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">reference index</a>.</p><div class="ref-toc"><a href="#k-fact">Fact representation · <code>fact</code></a>
+<a href="#k-dimension">Dimension representation · <code>dimension</code></a>
+<a href="#k-bridge">Bridge representation · <code>bridge</code></a>
+<a href="#k-cube">Cube / analytic model · <code>cube</code></a>
+<a href="#k-semantic_model">Semantic model · <code>semantic_model</code></a>
+<a href="#k-metric">Metric definition · <code>metric</code></a>
+<a href="#k-report">Report · <code>report</code></a>
+<a href="#k-dashboard">Dashboard · <code>dashboard</code></a>
+<a href="#k-data_product">Data product · <code>data_product</code></a>
+<a href="#k-feature">Feature definition / feature view · <code>feature</code></a>
+<a href="#k-model_artifact">Model artifact · <code>model_artifact</code></a>
+<a href="#k-export">Extract / export definition · <code>export</code></a></div>
+<section class="ref-entry" id="k-fact">
+<h3>Fact representation (<code>fact</code>)</h3>
+<img class="ref-plate" alt="The Fact representation symbol" src="assets/kinds/fact.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An analytic role with declared grain and measures; does not imply a datatype.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Fact representation (fact) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Fact representation&quot; { kind: fact; }
+}
+
+view picture &quot;Fact representation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dimension">
+<h3>Dimension representation (<code>dimension</code>)</h3>
+<img class="ref-plate" alt="The Dimension representation symbol" src="assets/kinds/dimension.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An analytic role with business keys, hierarchies and change policy.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Dimension representation (dimension) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Dimension representation&quot; { kind: dimension; }
+}
+
+view picture &quot;Dimension representation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-bridge">
+<h3>Bridge representation (<code>bridge</code>)</h3>
+<img class="ref-plate" alt="The Bridge representation symbol" src="assets/kinds/bridge.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> An explicit many-to-many or association representation in an analytic design.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Bridge representation (bridge) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Bridge representation&quot; { kind: bridge; }
+}
+
+view picture &quot;Bridge representation&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-cube">
+<h3>Cube / analytic model (<code>cube</code>)</h3>
+<img class="ref-plate" alt="The Cube / analytic model symbol" src="assets/kinds/cube.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A multidimensional analytical representation with measures and dimensions.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Cube / analytic model (cube) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Cube / analytic model&quot; { kind: cube; }
+}
+
+view picture &quot;Cube / analytic model&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-semantic_model">
+<h3>Semantic model (<code>semantic_model</code>)</h3>
+<img class="ref-plate" alt="The Semantic model symbol" src="assets/kinds/semantic_model.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A consumer-facing model of dimensions, metrics and relationships.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Semantic model (semantic_model) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Semantic model&quot; { kind: semantic_model; }
+}
+
+view picture &quot;Semantic model&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-metric">
+<h3>Metric definition (<code>metric</code>)</h3>
+<img class="ref-plate" alt="The Metric definition symbol" src="assets/kinds/metric.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A named measurement with grain, formula and filters.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Metric definition (metric) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Metric definition&quot; { kind: metric; }
+}
+
+view picture &quot;Metric definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-report">
+<h3>Report (<code>report</code>)</h3>
+<img class="ref-plate" alt="The Report symbol" src="assets/kinds/report.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A defined information output and its parameter or data dependencies.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Report (report) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Report&quot; { kind: report; }
+}
+
+view picture &quot;Report&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-dashboard">
+<h3>Dashboard (<code>dashboard</code>)</h3>
+<img class="ref-plate" alt="The Dashboard symbol" src="assets/kinds/dashboard.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A group of information views with freshness and ownership metadata.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Dashboard (dashboard) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Dashboard&quot; { kind: dashboard; }
+}
+
+view picture &quot;Dashboard&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-data_product">
+<h3>Data product (<code>data_product</code>)</h3>
+<img class="ref-plate" alt="The Data product symbol" src="assets/kinds/data_product.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A published data offering with owner, interfaces, contracts and consumers.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Data product (data_product) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Data product&quot; { kind: data_product; }
+}
+
+view picture &quot;Data product&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-feature">
+<h3>Feature definition / feature view (<code>feature</code>)</h3>
+<img class="ref-plate" alt="The Feature definition / feature view symbol" src="assets/kinds/feature.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A feature representation with entity keys, event time and computation scope.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Feature definition / feature view (feature) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Feature definition / feature view&quot; { kind: feature; }
+}
+
+view picture &quot;Feature definition / feature view&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-model_artifact">
+<h3>Model artifact (<code>model_artifact</code>)</h3>
+<img class="ref-plate" alt="The Model artifact symbol" src="assets/kinds/model_artifact.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A versioned learned or computational artifact and its training or input lineage.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Model artifact (model_artifact) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Model artifact&quot; { kind: model_artifact; }
+}
+
+view picture &quot;Model artifact&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="k-export">
+<h3>Extract / export definition (<code>export</code>)</h3>
+<img class="ref-plate" alt="The Extract / export definition symbol" src="assets/kinds/export.svg">
+<p><strong>What it looks like.</strong> Drawn as a titled card in the Analytics family colour. Hand-drawn and neo styles redraw the same kind — style changes the look, never the meaning.</p><p><strong>What it represents.</strong> A defined consumer-oriented output; physical files are separate instances.</p><p><strong>What you can add.</strong> Everything optional: <code>description</code> and <code>meaning</code> (the formula or grain in words), <code>role</code>, <code>maturity</code>, <code>freshness</code>-style notes via relations, and a stable <code>uid</code>.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.kinds&quot;;
+
+// One Extract / export definition (export) on its own, drawn by the default graph view.
+data demo {
+    object example &quot;Extract / export definition&quot; { kind: export; }
+}
+
+view picture &quot;Extract / export definition&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Kinds-Analytics">Ref-Kinds-Analytics</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

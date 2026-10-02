@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference — Governance &amp; responsibility relations — DDN</title>
+<meta name="description" content="Every governance relation in DDN (14): line marks, meaning, constraints and a working example, generated from the registry.">
+<link rel="icon" type="image/svg+xml" href="../assets/brand/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="../assets/brand/favicon-64.png">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="bar">
+  <a class="wordmark" href="../index.html"><img class="logo" src="../assets/brand/ddn.svg" alt="DDN logo"><span class="name">ddn<small>Diagram Design Notation</small></span></a>
+  <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+  <nav class="site-nav">
+      <a href="../index.html">Home</a>
+      <a href="../features/index.html">Features</a>
+      <a href="../gallery/index.html">Gallery</a>
+      <a href="../icons/index.html">Icons</a>
+      <a href="../guide/index.html">Guide</a>
+      <a href="../reference/index.html" class="active">Reference</a>
+      <a href="../docs/index.html">Docs</a>
+      <a href="../standard/index.html">Standard</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../download/index.html">Download</a>
+      <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  </nav>
+</div></header>
+<main class="site-main">
+<style>
+.ref-toc{columns:3;font-size:13px;margin:0 0 18px}.ref-toc a{display:block;padding:1px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ref-entry{border-top:1px solid #d9e2ec;padding:14px 0 6px}.ref-entry h3{margin:0 0 8px;font-size:17px}
+.ref-plate{display:block;max-width:340px;border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:6px;margin:4px 0 8px}
+.ref-entry p{margin:4px 0;font-size:14px}.ref-entry details{margin:6px 0 12px}.ref-entry pre{max-height:320px;overflow:auto}
+.ref-gall{font-size:12.5px}.ref-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0}
+.ref-cards a{display:block;border:1px solid #d4d9df;border-radius:8px;padding:10px 12px;background:#fff;text-decoration:none}.ref-cards a:hover{border-color:#0c75bd}
+.ref-cards b{display:block;font-size:14.5px}.ref-cards span{font-size:12.5px;color:#5b6570}
+</style>
+<h1 class="page-title">Reference — Governance &amp; responsibility relations</h1>
+<p>Governance relations attach <em>people and rules</em> to things: owns, stewards, operates, grants, classifies, retains. They’re what turns an architecture sketch into something an organization can act on — every box with an owner is a box someone can be asked about.</p><p>This page lists every <strong>Governance</strong> relation in DDN — <strong>14</strong> of them. Relations are declared inside a <code>data</code> block: <code>relation id &quot;label&quot; @from -&gt; @to { kind: …; }</code>. Every example on this page passes the tool’s own check and render steps.</p><p>Governance relations end in an <strong>open arrow</strong> pointing at the governed thing. No cardinality marks. Labels can carry scope (“production only”, “EU residents”).</p><p>Element kinds: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/index.html">all element families</a> · relations overview: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/relations.html">relations, the short version</a>.</p><div class="ref-toc"><a href="#r-owns">owned by · <code>owns</code></a>
+<a href="#r-steward">stewarded by · <code>steward</code></a>
+<a href="#r-operate">operated by · <code>operate</code></a>
+<a href="#r-policy">governed by · <code>policy</code></a>
+<a href="#r-contract">conforms to contract · <code>contract</code></a>
+<a href="#r-grant">grants access to · <code>grant</code></a>
+<a href="#r-class">classified as · <code>class</code></a>
+<a href="#r-resides">must reside within · <code>resides</code></a>
+<a href="#r-retain">retained under · <code>retain</code></a>
+<a href="#r-hold">preserved under · <code>hold</code></a>
+<a href="#r-quality">validated against · <code>quality</code></a>
+<a href="#r-slo">subject to objective · <code>slo</code></a>
+<a href="#r-consent">permitted under · <code>consent</code></a>
+<a href="#r-reports_to">has direct report · <code>reports_to</code></a></div>
+<section class="ref-entry" id="r-owns">
+<h3>owned by (<code>owns</code>)</h3>
+<img class="ref-plate" alt="What the “owned by” line looks like" src="assets/relations/owns.svg">
+<p><strong>What it means.</strong> Resource to accountable owner; do not reverse this without changing the verb. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// owned by (owns) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;owned by&quot; @from_side -&gt; @to_side {
+        kind: owns;
+    }
+}
+
+view picture &quot;owned by&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-steward">
+<h3>stewarded by (<code>steward</code>)</h3>
+<img class="ref-plate" alt="What the “stewarded by” line looks like" src="assets/relations/steward.svg">
+<p><strong>What it means.</strong> Resource to party responsible for semantic stewardship. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// stewarded by (steward) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;stewarded by&quot; @from_side -&gt; @to_side {
+        kind: steward;
+    }
+}
+
+view picture &quot;stewarded by&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-operate">
+<h3>operated by (<code>operate</code>)</h3>
+<img class="ref-plate" alt="What the “operated by” line looks like" src="assets/relations/operate.svg">
+<p><strong>What it means.</strong> Service or pipeline to operationally responsible party. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// operated by (operate) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;operated by&quot; @from_side -&gt; @to_side {
+        kind: operate;
+    }
+}
+
+view picture &quot;operated by&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-policy">
+<h3>governed by (<code>policy</code>)</h3>
+<img class="ref-plate" alt="What the “governed by” line looks like" src="assets/relations/policy.svg">
+<p><strong>What it means.</strong> Resource or flow to applicable policy definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// governed by (policy) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;governed by&quot; @from_side -&gt; @to_side {
+        kind: policy;
+    }
+}
+
+view picture &quot;governed by&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-contract">
+<h3>conforms to contract (<code>contract</code>)</h3>
+<img class="ref-plate" alt="What the “conforms to contract” line looks like" src="assets/relations/contract.svg">
+<p><strong>What it means.</strong> Producer, interface or dataset to its governing contract. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// conforms to contract (contract) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;conforms to contract&quot; @from_side -&gt; @to_side {
+        kind: contract;
+    }
+}
+
+view picture &quot;conforms to contract&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-grant">
+<h3>grants access to (<code>grant</code>)</h3>
+<img class="ref-plate" alt="What the “grants access to” line looks like" src="assets/relations/grant.svg">
+<p><strong>What it means.</strong> Entitlement definition to the protected resource; principal is separately bound. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// grants access to (grant) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;grants access to&quot; @from_side -&gt; @to_side {
+        kind: grant;
+    }
+}
+
+view picture &quot;grants access to&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-class">
+<h3>classified as (<code>class</code>)</h3>
+<img class="ref-plate" alt="What the “classified as” line looks like" src="assets/relations/class.svg">
+<p><strong>What it means.</strong> Resource or field to a classification definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// classified as (class) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;classified as&quot; @from_side -&gt; @to_side {
+        kind: class;
+    }
+}
+
+view picture &quot;classified as&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-resides">
+<h3>must reside within (<code>resides</code>)</h3>
+<img class="ref-plate" alt="What the “must reside within” line looks like" src="assets/relations/resides.svg">
+<p><strong>What it means.</strong> Resource to an allowed-location scope; not observed placement. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// must reside within (resides) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;must reside within&quot; @from_side -&gt; @to_side {
+        kind: resides;
+    }
+}
+
+view picture &quot;must reside within&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-retain">
+<h3>retained under (<code>retain</code>)</h3>
+<img class="ref-plate" alt="What the “retained under” line looks like" src="assets/relations/retain.svg">
+<p><strong>What it means.</strong> Resource to retention definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// retained under (retain) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;retained under&quot; @from_side -&gt; @to_side {
+        kind: retain;
+    }
+}
+
+view picture &quot;retained under&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-hold">
+<h3>preserved under (<code>hold</code>)</h3>
+<img class="ref-plate" alt="What the “preserved under” line looks like" src="assets/relations/hold.svg">
+<p><strong>What it means.</strong> Resource to legal-hold or preservation instruction. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// preserved under (hold) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;preserved under&quot; @from_side -&gt; @to_side {
+        kind: hold;
+    }
+}
+
+view picture &quot;preserved under&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-quality">
+<h3>validated against (<code>quality</code>)</h3>
+<img class="ref-plate" alt="What the “validated against” line looks like" src="assets/relations/quality.svg">
+<p><strong>What it means.</strong> Resource to quality assertion. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// validated against (quality) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;validated against&quot; @from_side -&gt; @to_side {
+        kind: quality;
+    }
+}
+
+view picture &quot;validated against&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-slo">
+<h3>subject to objective (<code>slo</code>)</h3>
+<img class="ref-plate" alt="What the “subject to objective” line looks like" src="assets/relations/slo.svg">
+<p><strong>What it means.</strong> Service or flow to SLO definition. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// subject to objective (slo) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;subject to objective&quot; @from_side -&gt; @to_side {
+        kind: slo;
+    }
+}
+
+view picture &quot;subject to objective&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-consent">
+<h3>permitted under (<code>consent</code>)</h3>
+<img class="ref-plate" alt="What the “permitted under” line looks like" src="assets/relations/consent.svg">
+<p><strong>What it means.</strong> Processing or dataset to permission/consent basis where explicitly modeled. It ends with a open arrowhead — read it in the arrow direction: “From → To”.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// permitted under (consent) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;permitted under&quot; @from_side -&gt; @to_side {
+        kind: consent;
+    }
+}
+
+view picture &quot;permitted under&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section>
+<section class="ref-entry" id="r-reports_to">
+<h3>has direct report (<code>reports_to</code>)</h3>
+<img class="ref-plate" alt="What the “has direct report” line looks like" src="assets/relations/reports_to.svg">
+<p><strong>What it means.</strong> Manager/lead to direct report in an organisational tree; direction is parent to child (like emb), so tree roots are nodes with no incoming reports_to edge. It has no arrowheads — the relation is symmetric in meaning; the label does the talking.</p><details><summary>Example — paste it into the tool’s source drawer and Apply</summary><pre><code>ddn &quot;0.5&quot;;
+module &quot;wiki.ref.relations&quot;;
+
+// has direct report (reports_to) between two elements.
+data demo {
+    object from_side &quot;From&quot; { kind: object; }
+    object to_side &quot;To&quot; { kind: object; }
+    relation shows &quot;has direct report&quot; @from_side -&gt; @to_side {
+        kind: reports_to;
+    }
+}
+
+view picture &quot;has direct report&quot; {
+    data: [@demo];
+    publication { size: content; }
+    legend: off;
+    title: off;
+    footer: off;
+}</code></pre></details>
+</section><hr><p><small>Applies to DDN 0.7.0 · generated from the registry by <code>website/build-site.mjs</code> · wiki counterpart: <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki/Ref-Relations-Governance">Ref-Relations-Governance</a>.</small></p>
+</main>
+<footer class="site-footer"><div class="inner">
+  <span>ddn 0.7.0 — open-source dialect · free ddn-viewer · free ddn-designer · proposed standard, pre-1.0</span>
+  <span><img src="../assets/brand/scratchweaver.svg" alt="ScratchWeaver logo" style="height:14px;vertical-align:-2px"> A <a href="https://scratchbird.ca/weaver"><strong>ScratchWeaver</strong></a>-sponsored open-source project · <a href="https://www.scratchbird.ca">ScratchBird Software Inc.</a> · GPL-2.0-or-later</span>
+  <a href="../license/index.html">License: GPL-2.0-or-later</a>
+  <a href="../docs/index.html">Docs</a>
+  <a href="../standard/index.html">Standard</a>
+  <a href="../download/index.html">Download</a>
+  <a href="https://github.com/scratchbird-software-inc/Diagram-Design-Notation/wiki">Wiki</a>
+  <span class="spacer"></span>
+  <span>All processing is local to this page.</span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>
