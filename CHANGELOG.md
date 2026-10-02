@@ -6,6 +6,31 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Art pack discovery: art viewer, reference pointers, how-to-use/add
+  docs** (owner gap report — "where do I find the presentation images, and
+  how do I use and add them?"). New generated page `website/icons/art.html`:
+  every item of every installed art pack (currently
+  `presentation-devices@1`, 44 items — counts read from the registry, never
+  hardcoded) with a large preview, tags, anchor count, and click-to-copy
+  `x_art: { library: "…", item: "…" };` (clipboard + timed fallback), plus
+  *How to use art in your diagrams* (snippet → register via
+  `registerArtPack`/CLI `--pack` → honest placeholder without the pack →
+  N/E/S/W anchors and named-port attachment) and *How to add items*
+  (ddn-art-pack@1 format, mandatory provenance, CC0/preferred license gate,
+  PJ206/PJ207 sanitization, curation tooling paths). Sibling of the icon
+  viewer by design (24×24 stroke vs detailed art); the icon viewer, the
+  reference landing page (new "Art packs" block listing installed packs
+  from the registry), and `docs/developers/icon-packs.md` (new
+  *Browsing and adding items* walkthrough) all link to it. Copy-to-clipboard
+  in both viewers now falls back on a timer (headless/slow-permission
+  clipboard no longer swallows the toast). Wiki updated:
+  *Presentation diagrams* (find/use/add sections) and *Icon libraries*
+  (viewer links), both pushed. Tests: `tests/icons-page-http.js` gains the
+  art viewer headless case (44 cards, previews, counter, both how-to
+  sections, registration/license guidance, search, copy toast) + cross-link
+  assertions — 5/5; website-links 6/6 (freshness + link crawl cover the new
+  pages via build:site).
+
 - **Website reference section — every element kind and relation, registry
   generated.** The 0.5-era per-kind/per-relation reference pages return,
   this time on the website: `reference/index.html` (landing) + 12 per-family

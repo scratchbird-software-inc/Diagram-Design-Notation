@@ -29,7 +29,7 @@
 </div></header>
 <main class="site-main">
 <h1 class="page-title">Icon packs</h1>
-<p class="lede">8 installed packs, 328 icons. Every icon renders at 16/24/32/48 px; click a card to copy the exact <code>x_icon</code> reference for your source. Packs are open <a href="../standard/specification/49-icon-packs.html">ddn-icon-pack@1</a> documents — license and attribution are shown per pack.</p>
+<p class="lede">8 installed packs, 328 icons. Every icon renders at 16/24/32/48 px; click a card to copy the exact <code>x_icon</code> reference for your source. Packs are open <a href="../standard/specification/49-icon-packs.html">ddn-icon-pack@1</a> documents — license and attribution are shown per pack. Looking for detailed presentation illustrations instead of stroke icons? Those are <strong>art packs</strong> — <a href="art.html">browse them here</a>.</p>
 <div class="icon-browser">
   <div class="icon-browser-bar"><input id="icon-q" type="search" placeholder="Search name, id, tag or kind…" aria-label="Search icons"><span id="icon-count" class="icon-count"></span></div>
   <div id="icon-pack-filters" class="icon-pack-filters" role="group" aria-label="Filter by pack"></div>
@@ -58,8 +58,9 @@ var packsEl=document.getElementById("icon-packs"),q=document.getElementById("ico
 var activePack=null,copiedTimer=null;
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
 function xref(p,i){return "x_icon: { library: \""+p.id+"\", icon: \""+i.id+"\" };";}
-function copy(text,label){function done(){copied.textContent="Copied: "+text;copied.style.opacity=1;clearTimeout(copiedTimer);copiedTimer=setTimeout(function(){copied.style.opacity=0;},2200);}
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){fallback();});}else fallback();
+function copy(text,label){var settled=false;function done(){if(settled)return;settled=true;copied.textContent="Copied: "+text;copied.style.opacity=1;clearTimeout(copiedTimer);copiedTimer=setTimeout(function(){copied.style.opacity=0;},2200);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){try{navigator.clipboard.writeText(text).then(done,function(){fallback();});}catch(e){fallback();}}else fallback();
+  setTimeout(function(){if(!settled)fallback();},700);
   function fallback(){var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}ta.remove();done();}}
 function match(p,i,needle){if(activePack&&p.id!==activePack)return false;if(!needle)return true;var hay=(i.id+" "+i.name+" "+p.id+" "+p.name+" "+i.tags.join(" ")+" "+i.kinds.join(" ")).toLowerCase();return needle.split(/\s+/).every(function(w){return hay.indexOf(w)>=0;});}
 function render(){var needle=q.value.trim().toLowerCase(),shown=0;packsEl.replaceChildren();

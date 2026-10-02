@@ -641,7 +641,7 @@ const iconViewerData = JSON.stringify(ICON_PACKS.map(p => ({
 }))).replace(/</g, '\\u003c');
 writeOut('icons/index.html', page('../', 'icons', 'Icon packs — browse, preview, copy the x_icon reference',
   '<h1 class="page-title">Icon packs</h1>\n' +
-  '<p class="lede">' + ICON_PACKS.length + ' installed packs, ' + ICON_TOTAL + ' icons. Every icon renders at 16/24/32/48 px; click a card to copy the exact <code>x_icon</code> reference for your source. Packs are open <a href="../standard/specification/49-icon-packs.html">ddn-icon-pack@1</a> documents — license and attribution are shown per pack.</p>\n' +
+  '<p class="lede">' + ICON_PACKS.length + ' installed packs, ' + ICON_TOTAL + ' icons. Every icon renders at 16/24/32/48 px; click a card to copy the exact <code>x_icon</code> reference for your source. Packs are open <a href="../standard/specification/49-icon-packs.html">ddn-icon-pack@1</a> documents — license and attribution are shown per pack. Looking for detailed presentation illustrations instead of stroke icons? Those are <strong>art packs</strong> — <a href="art.html">browse them here</a>.</p>\n' +
   '<div class="icon-browser">\n' +
   '  <div class="icon-browser-bar"><input id="icon-q" type="search" placeholder="Search name, id, tag or kind…" aria-label="Search icons"><span id="icon-count" class="icon-count"></span></div>\n' +
   '  <div id="icon-pack-filters" class="icon-pack-filters" role="group" aria-label="Filter by pack"></div>\n' +
@@ -670,8 +670,9 @@ writeOut('icons/index.html', page('../', 'icons', 'Icon packs — browse, previe
   'var activePack=null,copiedTimer=null;\n' +
   'function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}\n' +
   'function xref(p,i){return "x_icon: { library: \\""+p.id+"\\", icon: \\""+i.id+"\\" };";}\n' +
-  'function copy(text,label){function done(){copied.textContent="Copied: "+text;copied.style.opacity=1;clearTimeout(copiedTimer);copiedTimer=setTimeout(function(){copied.style.opacity=0;},2200);}\n' +
-  '  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){fallback();});}else fallback();\n' +
+  'function copy(text,label){var settled=false;function done(){if(settled)return;settled=true;copied.textContent="Copied: "+text;copied.style.opacity=1;clearTimeout(copiedTimer);copiedTimer=setTimeout(function(){copied.style.opacity=0;},2200);}\n' +
+  '  if(navigator.clipboard&&navigator.clipboard.writeText){try{navigator.clipboard.writeText(text).then(done,function(){fallback();});}catch(e){fallback();}}else fallback();\n' +
+  '  setTimeout(function(){if(!settled)fallback();},700);\n' +
   '  function fallback(){var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}ta.remove();done();}}\n' +
   'function match(p,i,needle){if(activePack&&p.id!==activePack)return false;if(!needle)return true;var hay=(i.id+" "+i.name+" "+p.id+" "+p.name+" "+i.tags.join(" ")+" "+i.kinds.join(" ")).toLowerCase();return needle.split(/\\s+/).every(function(w){return hay.indexOf(w)>=0;});}\n' +
   'function render(){var needle=q.value.trim().toLowerCase(),shown=0;packsEl.replaceChildren();\n' +
@@ -686,6 +687,72 @@ writeOut('icons/index.html', page('../', 'icons', 'Icon packs — browse, previe
   '    sec.appendChild(grid);packsEl.appendChild(sec);});\n' +
   '  count.textContent=shown+" of "+ICON_PACKS.reduce(function(n,p){return n+p.icons.length;},0)+" icons";}\n' +
   'var chipDefs=[["All packs",null]].concat(ICON_PACKS.map(function(p){return [p.id,p.id];}));\n' +
+  'filters.replaceChildren.apply(filters,chipDefs.map(function(pair){var b=document.createElement("button");b.type="button";b.textContent=pair[0];b.setAttribute("aria-pressed",pair[1]===activePack?"true":"false");b.addEventListener("click",function(){activePack=pair[1];filters.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});render();});return b;}));\n' +
+  'q.addEventListener("input",render);render();\n' +
+  '})();</script>'));
+
+
+/* Art pack viewer (B1-101 follow-up, owner gap report): the presentation
+ * illustrations are art packs (ddn-art-pack@1), not icon packs — a sibling
+ * page so the icon viewer keeps its 24x24-stroke semantics. Every item in
+ * every installed art pack, large preview, tags, anchors, and a copyable
+ * x_art snippet, plus how-to-use and how-to-add sections. Pack data comes
+ * from standard/registry/art-packs/ (counts never hardcoded). */
+const ART_PACKS = readJson('standard/registry/art-packs/index.json').packs.map(f =>
+  readJson('standard/registry/art-packs/' + f));
+const ART_TOTAL = ART_PACKS.reduce((n, p) => n + p.items.length, 0);
+const artViewerData = JSON.stringify(ART_PACKS.map(p => ({
+  id: p.id, name: p.name, license: p.license || '', attribution: p.attribution || '', source: p.source || '', note: p.note || '',
+  items: p.items.map(i => ({ id: i.id, name: i.name, tags: i.tags || [], anchors: Object.keys(i.anchors || {}).length, svg: i.svg })),
+}))).replace(/</g, '\\u003c');
+writeOut('icons/art.html', page('../', 'icons', 'Art packs — presentation illustrations, browse and copy the x_art reference',
+  '<h1 class="page-title">Art packs — presentation illustrations</h1>\n' +
+  '<p class="lede">' + ART_PACKS.length + ' installed art pack' + (ART_PACKS.length === 1 ? '' : 's') + ', ' + ART_TOTAL + ' items — detailed illustrations (computers, servers, network gear, buildings, people) for presentation-style diagrams, not 24×24 stroke icons. Click a card to copy the exact <code>x_art</code> reference. Packs are open <a href="../standard/specification/50-art-packs.html">ddn-art-pack@1</a> documents with per-item provenance. (Stroke icons live in the <a href="index.html">icon pack viewer</a>.)</p>\n' +
+  '<section class="card" style="border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:12px 16px;margin:0 0 14px"><h2 style="margin-top:0">How to use art in your diagrams</h2>\n' +
+  '<ol style="margin:0;padding-left:1.3em">\n' +
+  '<li>Find an item below and click its card — the exact <code>x_art</code> snippet is on your clipboard, e.g. <code>x_art: { library: "presentation-devices@1", item: "server" };</code></li>\n' +
+  '<li>Paste it into any object in your <code>data</code> block. The illustration fills the node below its header; the item\'s declared <strong>anchors</strong> (north/east/south/west edge midpoints, plus any named points) are exactly where relations attach — a <code>port</code> member whose name matches an anchor snaps to it.</li>\n' +
+  '<li><strong>Register the pack where you render.</strong> Art packs are never inlined into the tools: CLI renders take <code>--pack standard/registry/art-packs/presentation-devices__1.json</code>; hosts call <code>DDNLive.registerArtPack(pack)</code>. Without the pack, every art node draws an honest dashed placeholder naming the missing reference — never an error, never a fake image.</li>\n' +
+  '</ol></section>\n' +
+  '<section class="card" style="border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:12px 16px;margin:0 0 14px"><h2 style="margin-top:0">How to add items</h2>\n' +
+  '<p style="margin:0">An art pack is a single JSON document: a manifest (id, name, version, license, attribution, source) plus <code>items</code> — each with <code>id</code>, <code>name</code>, inline <code>svg</code> (≤ 64 KiB, arbitrary viewBox), required <strong>connection anchors</strong> (<code>north</code>/<code>east</code>/<code>south</code>/<code>west</strong> in viewBox coordinates, plus optional named points), and mandatory per-item <strong>provenance</strong> (title, author, license, source URL, retrieval date). The hard gate is licensing: every item\'s license must be verified at curation time — CC0 / public domain preferred; items whose terms can\'t be verified do not ship. Registration sanitizes exactly like icon artwork (DDN-PJ206 manifest / DDN-PJ207 unsafe SVG: no scripts, handlers, or external references). Curation and assembly tooling lives in the repository: <code>tools/curate-art.mjs</code>, <code>tools/fetch-art-candidates.mjs</code>, <code>tools/fetch-art-freesvg.mjs</code>, <code>tools/review-art-freesvg.mjs</code>, <code>tools/build-art-pack.mjs</code>. Full format: <a href="../standard/specification/50-art-packs.html">specification chapter 50</a> + the <a href="../docs/developers/icon-packs.html#art-packs-presentation-illustrations">developer guide</a>.</p></section>\n' +
+  '<div class="icon-browser">\n' +
+  '  <div class="icon-browser-bar"><input id="art-q" type="search" placeholder="Search name, id or tag…" aria-label="Search art items"><span id="art-count" class="icon-count"></span></div>\n' +
+  '  <div id="art-pack-filters" class="icon-pack-filters" role="group" aria-label="Filter by pack"></div>\n' +
+  '  <div id="art-packs"></div>\n' +
+  '</div>\n' +
+  '<div id="icon-copied" role="status" aria-live="polite"></div>\n' +
+  '<style>\n' +
+  '.art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}\n' +
+  '.art-card{border:1px solid #d4d9df;border-radius:8px;background:#fff;padding:8px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px}\n' +
+  '.art-card:hover{border-color:#0c75bd}.art-card:focus-visible{outline:2px solid #0c75bd}\n' +
+  '.art-preview{height:110px;display:flex;align-items:center;justify-content:center;color:#22303c}\n' +
+  '.art-preview svg{max-width:100%;max-height:110px}\n' +
+  '.art-tags{font-size:11px;color:var(--muted,#5b6570)}\n' +
+  '</style>\n' +
+  '<script>const ART_PACKS = ' + artViewerData + ';</script>\n' +
+  '<script>(function(){\n' +
+  'var packsEl=document.getElementById("art-packs"),q=document.getElementById("art-q"),count=document.getElementById("art-count"),filters=document.getElementById("art-pack-filters"),copied=document.getElementById("icon-copied");\n' +
+  'var activePack=null,copiedTimer=null;\n' +
+  'function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}\n' +
+  'function xref(p,i){return "x_art: { library: \\""+p.id+"\\", item: \\""+i.id+"\\" };";}\n' +
+  'function copy(text){var settled=false;function done(){if(settled)return;settled=true;copied.textContent="Copied: "+text;copied.style.opacity=1;clearTimeout(copiedTimer);copiedTimer=setTimeout(function(){copied.style.opacity=0;},2200);}\n' +
+  '  if(navigator.clipboard&&navigator.clipboard.writeText){try{navigator.clipboard.writeText(text).then(done,function(){fallback();});}catch(e){fallback();}}else fallback();\n' +
+  '  setTimeout(function(){if(!settled)fallback();},700);\n' +
+  '  function fallback(){var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}ta.remove();done();}}\n' +
+  'function match(p,i,needle){if(activePack&&p.id!==activePack)return false;if(!needle)return true;var hay=(i.id+" "+i.name+" "+p.id+" "+p.name+" "+i.tags.join(" ")).toLowerCase();return needle.split(/\\s+/).every(function(w){return hay.indexOf(w)>=0;});}\n' +
+  'function render(){var needle=q.value.trim().toLowerCase(),shown=0;packsEl.replaceChildren();\n' +
+  '  ART_PACKS.forEach(function(p){var items=p.items.filter(function(i){return match(p,i,needle);});if(!items.length)return;shown+=items.length;\n' +
+  '    var sec=document.createElement("section");sec.className="icon-pack";\n' +
+  '    var meta=esc(p.license)+(p.attribution?" · "+esc(p.attribution):"")+(p.source?" · <a href=\\""+esc(p.source)+"\\">source</a>":"")+(p.note?" — "+esc(p.note):"");\n' +
+  '    sec.innerHTML="<h2>"+esc(p.name)+" <span class=\\"icon-count\\">"+p.id+" · "+items.length+" items</span></h2><p class=\\"icon-pack-meta\\">"+meta+"</p>";\n' +
+  '    var grid=document.createElement("div");grid.className="art-grid";\n' +
+  '    items.forEach(function(i){var card=document.createElement("button");card.type="button";card.className="art-card";card.title="Copy "+xref(p,i);\n' +
+  '      card.innerHTML="<span class=\\"art-preview\\">"+i.svg+"</span><span class=\\"icon-name\\">"+esc(i.name)+"</span><span class=\\"icon-ref\\">"+esc(p.id+" / "+i.id)+"</span><span class=\\"art-tags\\">"+(i.tags.length?"tags: "+esc(i.tags.join(", "))+" · ":"")+i.anchors+" anchors</span>";\n' +
+  '      card.addEventListener("click",function(){copy(xref(p,i));});grid.appendChild(card);});\n' +
+  '    sec.appendChild(grid);packsEl.appendChild(sec);});\n' +
+  '  count.textContent=shown+" of "+ART_PACKS.reduce(function(n,p){return n+p.items.length;},0)+" items";}\n' +
+  'var chipDefs=[["All packs",null]].concat(ART_PACKS.map(function(p){return [p.id,p.id];}));\n' +
   'filters.replaceChildren.apply(filters,chipDefs.map(function(pair){var b=document.createElement("button");b.type="button";b.textContent=pair[0];b.setAttribute("aria-pressed",pair[1]===activePack?"true":"false");b.addEventListener("click",function(){activePack=pair[1];filters.querySelectorAll("button").forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false");});render();});return b;}));\n' +
   'q.addEventListener("input",render);render();\n' +
   '})();</script>'));
@@ -899,6 +966,9 @@ for (const [family, meta] of Object.entries(REFDATA.REL_FAMILIES)) {
     refPara('Why so many kinds? Because a diagram that says *exactly* what a thing is — a queue, not a box labelled "queue-ish" — never needs a footnote. You don’t need to know them all. Skim the family that matches your job, steal an example, and come back when you meet something new.') +
     '<h2>Element kinds by family</h2>\n<div class="ref-cards">' + kindCards + '</div>\n' +
     '<h2>Relations by family</h2>\n<div class="ref-cards">' + relCards + '</div>\n' +
+    '<h2>Art packs — presentation illustrations</h2>\n' +
+    refPara('Art packs are **not** kinds or relations — they are presentation *illustrations* (detailed artwork for slide-deck diagrams) bound to any node with `x_art`, and users looking for them often land here first. Browse every item with previews and a copyable reference in the [art pack viewer](../icons/art.html); stroke-symbol packs live in the [icon pack viewer](../icons/index.html). Installed art packs:') +
+    '<div class="ref-cards">' + ART_PACKS.map(p => '<a href="../icons/art.html"><b>' + esc(p.name) + '</b><span><code>' + esc(p.id) + '</code> · ' + p.items.length + ' items · ' + esc(p.license) + '</span></a>').join('\n') + '</div>\n' +
     '<h2>How to read a kind page</h2>\n' +
     refPara('Each kind entry shows four things: **what it looks like** (the drawn symbol), **what it represents** (the idea, not the picture), **where it shows up** (the diagram types that use it), and **what you can add** (optional properties — labels, datatypes, keys, notes and so on). The examples are minimal on purpose: they pin nothing down, so DDN picks the layout and you see the kind’s own defaults.') +
     refPara('Style never changes meaning. A `table` drawn hand-drawn, neo, or plain is still a table — looks come from [styles](Guide-Layout-and-appearance), meaning comes from the kind.') +

@@ -87,3 +87,41 @@ interior below the header with aspect preserved.
 The shipped `presentation-devices@1` pack (Wikimedia Commons CC0/public
 domain selection, per-item provenance in the pack) is demonstrated by
 `website/examples/basics/110-presentation-architecture.ddn`.
+
+### Browsing and adding items
+
+Every installed item is browsable with previews and a copyable `x_art`
+reference in the [art pack viewer](../../icons/art.html).
+
+To add items to a pack (or author a new one), work through the format and
+its gates — there is no shortcut around them:
+
+1. **One JSON document per pack** (`ddn-art-pack@1`): manifest (`id`
+   `lowercase-name@N`, `name`, semantic `version`, `license`, `attribution`,
+   `source`) plus `items`.
+2. **Each item** needs `id` (`lowercase-with-hyphens`), `name`, inline `svg`
+   (≤ 64 KiB, arbitrary viewBox, self-contained), required **anchors**
+   (`north`/`east`/`south`/`west` in viewBox coordinates — the points
+   relations attach to — plus optional named points addressable as `port`
+   members), and mandatory **provenance** (`title`, `author`, `license`,
+   `source` URL, `retrieved` date).
+3. **Licensing is the hard gate.** Verify every item's license at curation
+   time and record it in `provenance` — CC0 / public domain preferred. Items
+   whose terms cannot be verified do not ship. (unDraw and similar
+   use-but-don't-redistribute licenses are out; see `NOTICE.md` for the
+   standing evaluations.)
+4. **Sanitization is identical to icons**: registration rejects scripts,
+   `foreignObject`, event handlers, external references (DDN-PJ207), and
+   malformed manifests (DDN-PJ206) — a pack with one unsafe item fails as a
+   whole.
+5. **Curation tooling** (used for the shipped pack):
+   `tools/fetch-art-candidates.mjs` (Wikimedia Commons CC0/PD search +
+   download with license metadata), `tools/fetch-art-freesvg.mjs` +
+   `tools/review-art-freesvg.mjs` (freesvg.org CC0 candidates + manual
+   review listing), `tools/curate-art.mjs` (topic-slot search helper),
+   `tools/build-art-pack.mjs` (license gate, sanitize, minify, anchor
+   derivation, provenance assembly → `standard/registry/art-packs/`).
+   Review every candidate visually — automated picking is not trustworthy
+   on its own.
+6. **Versioning**: item removals, renames, anchor moves, or anchor-shifting
+   artwork changes require a new pack major (`@N`), never an in-place edit.

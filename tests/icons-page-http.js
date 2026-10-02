@@ -62,6 +62,38 @@ try {
 }
 })();</script>`;
 
+const ART_DRIVER = `<script>(async () => {
+const lines = [];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const report = async (pass) => { try { await fetch('REPORT_URL', { method: 'POST', body: JSON.stringify({ pass, lines }) }); } catch (e) {} };
+try {
+  await sleep(1200);
+  const cards = () => [...document.querySelectorAll('.art-card')];
+  lines.push(cards().length === 44 ? 'PASS all 44 art items listed' : 'FAIL art card count ' + cards().length);
+  lines.push(cards().every(c => c.querySelector('.art-preview svg')) ? 'PASS every card renders its illustration' : 'FAIL card without preview svg');
+  const count = document.getElementById('art-count');
+  lines.push(count && count.textContent.includes('44 of 44') ? 'PASS counter shows full set' : 'FAIL counter: ' + (count && count.textContent));
+  lines.push([...document.querySelectorAll('h2')].some(h => h.textContent === 'How to use art in your diagrams') ? 'PASS how-to-use section present' : 'FAIL how-to-use missing');
+  lines.push([...document.querySelectorAll('h2')].some(h => h.textContent === 'How to add items') ? 'PASS how-to-add section present' : 'FAIL how-to-add missing');
+  lines.push(document.body.textContent.includes('registerArtPack') && document.body.textContent.includes('--pack') ? 'PASS registration + --pack instructions present' : 'FAIL usage instructions incomplete');
+  lines.push(document.body.textContent.includes('provenance') && document.body.textContent.includes('CC0') ? 'PASS provenance/license guidance present' : 'FAIL contribution guidance incomplete');
+  const q = document.getElementById('art-q');
+  q.value = 'server'; q.dispatchEvent(new Event('input', { bubbles: true }));
+  await sleep(200);
+  lines.push(cards().length >= 2 && cards().length < 44 ? 'PASS search narrows the grid (' + cards().length + ')' : 'FAIL search count ' + cards().length);
+  q.value = ''; q.dispatchEvent(new Event('input', { bubbles: true }));
+  await sleep(200);
+  cards()[0].click();
+  await sleep(1200);
+  const toast = document.getElementById('icon-copied');
+  lines.push(toast && toast.textContent.startsWith('Copied: x_art: { library: "presentation-devices@1", item: "') ? 'PASS copy toast has exact x_art reference' : 'FAIL toast: ' + (toast && toast.textContent));
+  await report(lines.every(l => l.startsWith('PASS')));
+} catch (e) {
+  lines.push('FAIL driver exception: ' + (e && e.message));
+  await report(false);
+}
+})();</script>`;
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, BASE);
   if (url.pathname === '/hang') { hanging.push(res); return; }
@@ -80,6 +112,10 @@ const server = http.createServer((req, res) => {
   let bytes = fs.readFileSync(p);
   if (url.pathname.endsWith('/website/icons/index.html')) {
     const inject = DRIVER.replace('REPORT_URL', BASE + '/result') + '<img src="' + BASE + '/hang" style="display:none" alt="">';
+    bytes = Buffer.from(bytes.toString('utf8').replace('</body>', () => inject + '\n</body>'));
+  }
+  if (url.pathname.endsWith('/website/icons/art.html')) {
+    const inject = ART_DRIVER.replace('REPORT_URL', BASE + '/result') + '<img src="' + BASE + '/hang" style="display:none" alt="">';
     bytes = Buffer.from(bytes.toString('utf8').replace('</body>', () => inject + '\n</body>'));
   }
   res.setHeader('content-type', MIME[path.extname(p)] || 'application/octet-stream');
@@ -114,6 +150,20 @@ function nextResult(timeoutMs) {
     });
     await test('viewer link target resolves on the site', async () => {
       assert.ok(fs.existsSync(path.join(root, 'website/icons/index.html')), 'icons/index.html not in the built site');
+    });
+    await test('art pack viewer: all items, search, copy, how-to sections (headless)', async () => {
+      const chrome = cp.spawn(BIN, ['--headless', '--disable-gpu', '--no-sandbox', '--window-size=1300,1000',
+        '--dump-dom', BASE + '/website/icons/art.html'], { stdio: 'pipe' });
+      let body;
+      try { body = await nextResult(60000); }
+      finally { chrome.kill(); }
+      const out = JSON.parse(body);
+      for (const l of out.lines) console.log('  ', l);
+      assert.ok(out.pass, 'art viewer selftest failed');
+    });
+    await test('art viewer is linked from the icon viewer and the reference index', async () => {
+      assert.ok(fs.readFileSync(path.join(root, 'website/icons/index.html'), 'utf8').includes('href="art.html"'), 'icon viewer lacks the art link');
+      assert.ok(fs.readFileSync(path.join(root, 'website/reference/index.html'), 'utf8').includes('icons/art.html'), 'reference index lacks the art link');
     });
   } finally {
     for (const r of hanging) try { r.end(); } catch { /* gone */ }

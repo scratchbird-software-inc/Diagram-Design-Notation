@@ -56,6 +56,21 @@ DDNLive.unregisterArtPack('acme-art@1');</code></pre>
   --pack standard/registry/art-packs/presentation-devices__1.json</code></pre>
 <p>Bind an item to a node with <code>x_art: { library: &quot;presentation-devices@1&quot;, item: &quot;server&quot; }</code>. An unresolvable reference draws a dashed placeholder naming the missing pack — never an error — so a shared <code>.ddn</code> file still renders on hosts without the pack. The illustration scales into the node's interior below the header with aspect preserved.</p>
 <p>The shipped <code>presentation-devices@1</code> pack (Wikimedia Commons CC0/public domain selection, per-item provenance in the pack) is demonstrated by <code>website/examples/basics/110-presentation-architecture.ddn</code>.</p>
+<h3>Browsing and adding items</h3>
+<p>Every installed item is browsable with previews and a copyable <code>x_art</code> reference in the <a href="../../icons/art.html">art pack viewer</a>.</p>
+<p>To add items to a pack (or author a new one), work through the format and its gates — there is no shortcut around them:</p>
+<ol><li><strong>One JSON document per pack</strong> (<code>ddn-art-pack@1</code>): manifest (<code>id</code></li></ol>
+<p>   <code>lowercase-name@N</code>, <code>name</code>, semantic <code>version</code>, <code>license</code>, <code>attribution</code>,    <code>source</code>) plus <code>items</code>.</p>
+<ol><li><strong>Each item</strong> needs <code>id</code> (<code>lowercase-with-hyphens</code>), <code>name</code>, inline <code>svg</code></li></ol>
+<p>   (≤ 64 KiB, arbitrary viewBox, self-contained), required <strong>anchors</strong>    (<code>north</code>/<code>east</code>/<code>south</code>/<code>west</code> in viewBox coordinates — the points    relations attach to — plus optional named points addressable as <code>port</code>    members), and mandatory <strong>provenance</strong> (<code>title</code>, <code>author</code>, <code>license</code>,    <code>source</code> URL, <code>retrieved</code> date).</p>
+<ol><li><strong>Licensing is the hard gate.</strong> Verify every item's license at curation</li></ol>
+<p>   time and record it in <code>provenance</code> — CC0 / public domain preferred. Items    whose terms cannot be verified do not ship. (unDraw and similar    use-but-don't-redistribute licenses are out; see <code>NOTICE.md</code> for the    standing evaluations.)</p>
+<ol><li><strong>Sanitization is identical to icons</strong>: registration rejects scripts,</li></ol>
+<p>   <code>foreignObject</code>, event handlers, external references (DDN-PJ207), and    malformed manifests (DDN-PJ206) — a pack with one unsafe item fails as a    whole.</p>
+<ol><li><strong>Curation tooling</strong> (used for the shipped pack):</li></ol>
+<p>   <code>tools/fetch-art-candidates.mjs</code> (Wikimedia Commons CC0/PD search +    download with license metadata), <code>tools/fetch-art-freesvg.mjs</code> +    <code>tools/review-art-freesvg.mjs</code> (freesvg.org CC0 candidates + manual    review listing), <code>tools/curate-art.mjs</code> (topic-slot search helper),    <code>tools/build-art-pack.mjs</code> (license gate, sanitize, minify, anchor    derivation, provenance assembly → <code>standard/registry/art-packs/</code>).    Review every candidate visually — automated picking is not trustworthy    on its own.</p>
+<ol><li><strong>Versioning</strong>: item removals, renames, anchor moves, or anchor-shifting</li></ol>
+<p>   artwork changes require a new pack major (<code>@N</code>), never an in-place edit.</p>
 </article>
 <p><small>Rendered from <a href="icon-packs.md">icon-packs.md</a> by <code>website/build-site.mjs</code>.</small></p>
 </main>
