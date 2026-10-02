@@ -6599,34 +6599,54 @@ function render(ir,reg,glyphs='',options={}){
   const sortOf=r=>r.properties.x_message?.sort;
   const createdRow=new Map(),destroyedRow=new Map();
   msgs.forEach((r,i)=>{if(sortOf(r)==='create'&&!createdRow.has(r.to.element))createdRow.set(r.to.element,i);if(sortOf(r)==='delete')destroyedRow.set(r.to.element,i);});
+  /* Layout pass: head geometry and lifeline ends first — messages, bars and
+   * fragment frames all reserve space against these (collision fixes: create
+   * arrows terminate at the head edge, frames clear head boxes, bars clamp
+   * to the lifeline end). */
+  const headGeom=new Map();
   for(const n of parts){
-   const x=px.get(n.id),hw=Math.max(130*s,Text.measure(n.name,13*s,p.style.font,600).width+36*s);
-   const used=msgs.some(r=>r.from.element===n.id||r.to.element===n.id);
-   if(!used)diagnostics.push({code:'DDN-PJW03',severity:'warning',message:'Sequence participant '+n.name+' has no incident messages; it is drawn with an empty lifeline.'});
    const cr=createdRow.get(n.id),dr=destroyedRow.get(n.id);
-   const headY=cr!==undefined?firstRow+cr*pitch-headH/2:0,lifeEnd=dr!==undefined?firstRow+dr*pitch:bottom;
-   /* B1-077: HMSC references render the «ref» keyword in the participant box. */
-  const refKw=n.kind==='msc.hmscref'?text(x,headY+16*s,'«ref»',11,500,'middle'):'';
-  body+=group(n.id,[n.id],rect(x-hw/2,headY,hw,headH,t.surface,t.ink)+refKw+lines(wrap(n.name,hw-20*s,13,600),x,headY+headH/2+5*s,13,600,'middle')+line(x,headY+headH,x,lifeEnd,t.rule,1.2,'5 5'),{x:x-hw/2,y:headY,w:hw,h:lifeEnd-headY});
-   if(dr!==undefined){const dy=firstRow+dr*pitch;body+=group(n.id,[n.id],`<g class="ddn-destruction" data-participant="${esc(n.id)}"><path d="M${f(x-7*s)} ${f(dy-7*s)}L${f(x+7*s)} ${f(dy+7*s)}M${f(x+7*s)} ${f(dy-7*s)}L${f(x-7*s)} ${f(dy+7*s)}" stroke="${t.ink}" stroke-width="2.2"/></g>`,{x:x-7*s,y:dy-7*s,w:14*s,h:14*s});}
+   headGeom.set(n.id,{hw:Math.max(130*s,Text.measure(n.name,13*s,p.style.font,600).width+36*s),headY:cr!==undefined?firstRow+cr*pitch-headH/2:0,lifeEnd:dr!==undefined?firstRow+dr*pitch:bottom});
+  }
+  for(const n of parts){
+   const x=px.get(n.id),{hw,headY,lifeEnd}=headGeom.get(n.id);
+   const used=msgs.some(r=>r.from.element===n.id||r.to.element===n.id);
+   const isRef=n.kind==='msc.hmscref';
+   if(!used&&!isRef)diagnostics.push({code:'DDN-PJW03',severity:'warning',message:'Sequence participant '+n.name+' has no incident messages; it is drawn with an empty lifeline.'});
+   /* B1-077: HMSC references render the «ref» keyword in the participant box.
+    * A ref box is not a participant: no lifeline descends under it (Z.120 —
+    * the box itself is the event; an empty dashed lifeline below a «ref»
+    * reads as a layout defect). */
+   const refKw=isRef?text(x,headY+16*s,'«ref»',11,500,'middle'):'';
+   const life=isRef?'':line(x,headY+headH,x,lifeEnd,t.rule,1.2,'5 5');
+   body+=group(n.id,[n.id],rect(x-hw/2,headY,hw,headH,t.surface,t.ink)+refKw+lines(wrap(n.name,hw-20*s,13,600),x,headY+headH/2+5*s,13,600,'middle')+life,{x:x-hw/2,y:headY,w:hw,h:lifeEnd-headY});
+   /* Z.120 stop symbol: the lifeline ends in a small square with a diagonal
+    * cross (the plain cross alone read as a stray glyph beside the arrow). */
+   if(destroyedRow.get(n.id)!==undefined){const dy=firstRow+destroyedRow.get(n.id)*pitch;body+=group(n.id,[n.id],`<g class="ddn-destruction" data-participant="${esc(n.id)}"><rect x="${f(x-8*s)}" y="${f(dy-8*s)}" width="${f(16*s)}" height="${f(16*s)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.4"/><path d="M${f(x-5.5*s)} ${f(dy-5.5*s)}L${f(x+5.5*s)} ${f(dy+5.5*s)}M${f(x+5.5*s)} ${f(dy-5.5*s)}L${f(x-5.5*s)} ${f(dy+5.5*s)}" stroke="${t.ink}" stroke-width="2"/></g>`,{x:x-8*s,y:dy-8*s,w:16*s,h:16*s});}
   }
   const bars=new Map();
   msgs.forEach((r,i)=>{
-   const recv=r.to.element,next=msgs.findIndex((m,j)=>j>i&&m.from.element===recv),key=recv+':'+i+':'+(next<0?msgs.length-1:next);
-   if(!bars.has(key))bars.set(key,{id:recv,from:i,to:next<0?msgs.length-1:next});
+   const recv=r.to.element,next=msgs.findIndex((m,j)=>j>i&&m.from.element===recv),key=recv+':'+i+':'+(next<0?i:next);
+   if(!bars.has(key))bars.set(key,{id:recv,from:i,to:next<0?i:next});
   });
-  for(const a of bars.values()){const x=px.get(a.id),y0=firstRow+a.from*pitch-16*s,y1=firstRow+a.to*pitch+16*s;
+  for(const a of bars.values()){const x=px.get(a.id),hg=headGeom.get(a.id),le=hg?.lifeEnd??bottom,created=createdRow.get(a.id)!==undefined,y0=Math.max(firstRow+a.from*pitch-16*s,created?hg.headY+headH:-Infinity),y1=Math.min(le,firstRow+a.to*pitch+16*s);
    body+=group(a.id,[a.id],`<rect x="${f(x-5*s)}" y="${f(y0)}" width="${f(10*s)}" height="${f(y1-y0)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`,{x:x-5*s,y:y0,w:10*s,h:y1-y0});}
   // B1-056: authorable execution occurrences (x_activation) — same bar glyph, declared rows.
   for(const n of parts)for(const [ai,a]of (n.properties.x_activation||[]).entries()){
    const from=msgs.findIndex(m=>m.id===(a.from.$ref||a.from)),to=msgs.findIndex(m=>m.id===(a.to.$ref||a.to));
    if(from<0||to<0)continue;
-   const x=px.get(n.id),y0=firstRow+from*pitch-16*s,y1=firstRow+to*pitch+16*s;
+   const x=px.get(n.id),le=headGeom.get(n.id)?.lifeEnd??bottom,y0=firstRow+from*pitch-16*s,y1=Math.min(le,firstRow+to*pitch+16*s);
    body+=group(n.id,[n.id],`<rect class="ddn-activation" data-explicit="${ai}" x="${f(x-5*s)}" y="${f(y0)}" width="${f(10*s)}" height="${f(y1-y0)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.2"/>`,{x:x-5*s,y:y0,w:10*s,h:y1-y0});}
   const fragRect=(f2,depth)=>{
    const involved=new Set();for(let i=f2.from;i<=f2.to;i++){involved.add(msgs[i].from.element);involved.add(msgs[i].to.element);}
    const xs2=[...involved].map(id=>px.get(id)),pad=(34+depth*12)*s;
-   return {x0:Math.max(8*s,Math.min(...xs2)-pad),x1:Math.min(W-8*s,Math.max(...xs2)+pad),y0:firstRow+f2.from*pitch-40*s,y1:firstRow+f2.to*pitch+30*s};
+   /* The frame reserves space: vertically it clears both the first message's
+    * label zone above it and any created participant's head box bottom in the
+    * rows above it; horizontally the pad covers lifelines plus their
+    * activation bars. */
+   let y0=firstRow+f2.from*pitch-40*s;
+   for(const [id,cr]of createdRow){if(cr<f2.from)y0=Math.max(y0,firstRow+cr*pitch+headH/2+6*s);}
+   return {x0:Math.max(8*s,Math.min(...xs2)-pad),x1:Math.min(W-8*s,Math.max(...xs2)+pad),y0,y1:firstRow+f2.to*pitch+30*s};
   };
   const innermost=i=>{let best=null;const walk=(f2,depth)=>{if(i>=f2.from&&i<=f2.to){if(!best||depth>best.depth)best={f:f2,depth};for(const op of f2.operands)for(const nf of op.fragments||[])walk(nf,depth+1);}};for(const f2 of fragments)walk(f2,0);return best;};
   msgs.forEach((r,i)=>{
@@ -6635,12 +6655,20 @@ function render(ir,reg,glyphs='',options={}){
    const label=num+(sort==='create'?'«create» ':'')+r.name;
    if(sort==='lost'||sort==='found'){
     const cx=xs+(sort==='lost'?56:-56)*s;
+    /* The label leads the line: anchored clear of the source lifeline's
+     * activation bar instead of centred over it. */
+    const labelTxt=sort==='lost'?text(xs+14*s,y-10*s,label,12,400,'start'):text(xs-14*s,y-10*s,label,12,400,'end');
     const content=sort==='lost'
      ?line(xs,y,cx-6*s,y,t.ink,1.4)+`<circle class="ddn-lost" cx="${f(cx)}" cy="${f(y)}" r="${f(4.5*s)}" fill="${t.ink}"/>`
      :`<circle class="ddn-found" cx="${f(cx)}" cy="${f(y)}" r="${f(4.5*s)}" fill="${t.ink}"/>`+line(cx+6*s,y,xs-2*s,y,t.ink,1.4)+R.endMark([xs-2*s,y],0,'filled',t.ink,t.surface);
-    body+=group(r.id,[r.id],content+text(xs+(sort==='lost'?28:-28)*s,y-10*s,label,12,400,'middle'),{x:Math.min(xs,cx),y:y-20*s,w:Math.abs(cx-xs)+10*s,h:24*s});
+    body+=group(r.id,[r.id],content+labelTxt,{x:Math.min(xs,cx),y:y-20*s,w:Math.abs(cx-xs)+10*s,h:24*s});
     return;
    }
+   /* Z.120 stop: a delete message does not draw a loop/arrow — the lifeline
+    * already ends in the stop symbol at this row (drawn with the
+    * participant). A delete sent to another participant still draws its
+    * arrow into the stop row. */
+   if(sort==='delete'&&r.from.element===r.to.element){body+=group(r.id,[r.id],text(xs+16*s,y+4*s,label,12,400,'start'),{x:xs,y:y-8*s,w:Text.measure(label,12*s,p.style.font,400).width+16*s,h:16*s});return;}
    let sx=xs,ex2=xt,gateMark='';
    if(xm.gate&&fragments.length){const enc=innermost(i);
     if(enc){const fr=fragRect(enc.f,enc.depth);
@@ -6650,16 +6678,21 @@ function render(ir,reg,glyphs='',options={}){
     const lw=48*s,lh=26*s,d=`M${f(xs)} ${f(y)}H${f(xs+lw)}V${f(y+lh)}H${f(xs+9*s)}`;
     body+=group(r.id,[r.id],`<path d="${d}" stroke="${ret?t.rule:t.ink}" stroke-width="1.4" fill="none"${ret?' stroke-dasharray="5 4"':''}/>`+R.endMark([xs+9*s,y+lh],90,'open',ret?t.rule:t.ink,t.surface)+text(xs+lw/2+12*s,y-10*s,label,12,400,'middle'),{x:xs,y:y-20*s,w:lw+14*s,h:lh+22*s});
    }else {
+    /* A «create» arrow terminates at the new participant's head-box edge —
+     * never through the box (the box owns that row's target zone). */
+    if(sort==='create'&&createdRow.get(r.to.element)===i){const hw2=headGeom.get(r.to.element)?.hw||0;ex2=xt+(xt>xs?-hw2/2:hw2/2);}
     const dir=ex2>sx?0:180,ex=ex2+(ex2>sx?-2:2)*s;
     body+=group(r.id,[r.id],line(sx,y,ex,y,ret?t.rule:t.ink,1.4,ret?'5 4':'')+R.endMark([ex,y],dir,ret?'open':head,ret?t.rule:t.ink,t.surface)+gateMark+text((sx+ex2)/2,y-10*s,label,12,400,'middle'),{x:Math.min(sx,ex2),y:y-20*s,w:Math.abs(ex2-sx),h:24*s});
    }
    if(xm.time)body+=text(Math.max(sx,ex2)+12*s,y-10*s,xm.time,11,500);
    if(xm.duration)body+=text(Math.max(sx,ex2)+12*s,y+18*s,xm.duration,11,500);
   });
-  // B1-056: state invariants — stadium symbol on the lifeline below the row.
+  // B1-056: state invariants — stadium symbol on the lifeline below the row,
+  // clear of the guarded message's label above and the next message's label
+  // below (pitch/2 centered exactly on the next label's ascender zone).
   for(const n of parts)for(const inv of n.properties.x_invariant||[]){
    const ai=msgs.findIndex(m=>m.id===(inv.after.$ref||inv.after));if(ai<0)continue;
-   const x=px.get(n.id),y=firstRow+ai*pitch+pitch/2,iw=Math.max(60*s,Text.measure(inv.label,11*s,p.style.font,500).width+22*s);
+   const x=px.get(n.id),y=firstRow+ai*pitch+pitch/2-8*s,iw=Math.max(60*s,Text.measure(inv.label,11*s,p.style.font,500).width+22*s);
    body+=group(n.id,[n.id],`<g class="ddn-invariant"><rect x="${f(x-iw/2)}" y="${f(y-11*s)}" width="${f(iw)}" height="${f(22*s)}" rx="${f(11*s)}" fill="${t.surface}" stroke="${t.ink}" stroke-width="1.4"/>`+text(x,y+4*s,inv.label,11,500,'middle')+'</g>',{x:x-iw/2,y:y-11*s,w:iw,h:22*s},'x_invariant');}
   // B1-056: combined fragments — frame, operator pentagon, guards, separators.
   function renderFragment(f2,depth){

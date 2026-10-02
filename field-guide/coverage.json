@@ -294,7 +294,7 @@
       "projection": "sequence",
       "entry": "website/examples/basics/76-uml-sequence-complete.ddn",
       "view": "fragments",
-      "sha256": "007bcfa02a656a9b0ec15fc7e28dfd537b2bbd3dcbb334a089b28de94a8bfc7f"
+      "sha256": "2882ba41d86f6296e29acb6604fd459e6ffc69f52afb9d8a9366e4fe22aeeb07"
     },
     {
       "id": "raci",
@@ -834,7 +834,7 @@
       "projection": "sequence",
       "entry": "website/examples/basics/93-msc.ddn",
       "view": "chart",
-      "sha256": "09527af4e43f9c886e8fcb1b6701776c24cd4bf295742058d30b57d16bc14f93"
+      "sha256": "822b44f2554f8b56369200933367ed2b95d6c556fc5357a3a9c7670be49a8750"
     },
     {
       "id": "sdl",
@@ -1623,8 +1623,8 @@
     },
     {
       "id": "sequence-fragments",
-      "before": "007bcfa02a656a9b0ec15fc7e28dfd537b2bbd3dcbb334a089b28de94a8bfc7f",
-      "after": "8e5eb77c8d1b440314d4c430f994455907bad3644800e56b1d328ecba4f6fe19",
+      "before": "2882ba41d86f6296e29acb6604fd459e6ffc69f52afb9d8a9366e4fe22aeeb07",
+      "after": "6fc25f4fb7dcb0ed7611bce9e6c3925ed4b4d1f2c088b24adbe5079cb75af09e",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,
@@ -2163,8 +2163,8 @@
     },
     {
       "id": "msc",
-      "before": "09527af4e43f9c886e8fcb1b6701776c24cd4bf295742058d30b57d16bc14f93",
-      "after": "3be5dead1d88d700662c1d91aa97b27b3b335caee2cf09be4c5d1a1ab2389409",
+      "before": "822b44f2554f8b56369200933367ed2b95d6c556fc5357a3a9c7670be49a8750",
+      "after": "338b6678aa78a030cc6a5d6678f95c5f11969acd2fca0f74d01103a3131987c0",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

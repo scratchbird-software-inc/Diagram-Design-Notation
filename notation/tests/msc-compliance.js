@@ -74,6 +74,53 @@ test('HMSC reference carries actual parameter lists (x_hmscref)',()=>{
 test('x_hmscref applies to msc.hmscref only (DDN-PJ215)',()=>{
  throws(()=>run('chart',edit('object srv "Server" { kind: "uml.class"; x_invariant: [ { label: "authenticated"; after: @m.m4 } ]; }','object srv "Server" { kind: "uml.class"; x_invariant: [ { label: "authenticated"; after: @m.m4 } ]; x_hmscref: { params: [ "x" ] }; }')),'DDN-PJ215');});
 
+/* Geometry regressions (owner-reported collisions on the live gallery plate).
+ * All coordinates are drawing units; s=1 at the default 16px base font, so
+ * headH=52, pitch=64, firstRow=118, rows at 118/182/246/310/374/438, and
+ * participants at x=110/340/570/800. */
+test('«create» arrow terminates at the head-box edge, not through it',()=>{
+ const r=run();
+ const c1=r.scene.marks.find(m=>m.sourceIds?.some(id=>id.endsWith('.c1')));
+ assert.ok(c1,'create message mark missing');
+ assert.equal(c1.x,110);assert.equal(c1.w,395,'create arrow must end at the Worker head edge (570-65), not the lifeline centre');});
+test('created participant activation starts below the head box',()=>{
+ const r=run();
+ const bar=r.scene.marks.find(m=>m.sourceIds?.some(id=>id.endsWith('.worker'))&&m.w===10);
+ assert.ok(bar,'worker activation mark missing');
+ assert.equal(bar.y,144,'activation must start at the head-box bottom (92+52), not inside the box');});
+test('fragment frame clears created head boxes above it',()=>{
+ const r=run();
+ const m=r.svg.match(/class="ddn-fragment ddn-fragment-coreg"[^>]*><rect x="([\d.-]+)" y="([\d.-]+)"/);
+ assert.ok(m,'coreg frame missing');
+ assert.ok(+m[2]>=150,'frame top must clear the Worker head bottom plus margin, got y='+m[2]);});
+test('state invariant is on its lifeline clear of the next message label zone',()=>{
+ const r=run();
+ const inv=r.scene.marks.find(m=>m.property==='x_invariant');
+ assert.ok(inv,'invariant mark missing');
+ assert.ok(inv.y+inv.h<=416,'invariant bottom must clear the next label zone (top 416), got bottom '+(inv.y+inv.h));});
+test('lost-message label is anchored clear of the activation bar',()=>{
+ const r=run();
+ const t=r.svg.match(/<text x="([\d.-]+)" y="([\d.-]+)"[^>]*text-anchor="(\w+)"[^>]*>4\. lost packet<\/text>/);
+ assert.ok(t,'lost label missing');
+ assert.equal(t[3],'start','lost label must be start-anchored right of the lifeline, not centred over the bar');});
+test('last-message activation is clamped to the message row and the lifeline end',()=>{
+ const r=run();
+ const bar=r.scene.marks.find(m=>m.sourceIds?.some(id=>id.endsWith('.cli'))&&m.w===10);
+ assert.ok(bar,'reply activation mark missing');
+ assert.ok(bar.h<=40,'reply activation must span only its own row (was a floating segment to the chart bottom), got h='+bar.h);});
+test('stop renders the Z.120 square-with-cross at the lifeline end, no self-loop',()=>{
+ const r=run();
+ const g=r.svg.match(/<g class="ddn-destruction"[\s\S]*?<\/g>/);
+ assert.ok(g&&g[0].includes('<rect'),'stop must be a square with a diagonal cross');
+ const sq=g[0].match(/<rect x="([\d.-]+)" y="([\d.-]+)" width="([\d.-]+)" height="([\d.-]+)"/);
+ assert.deepEqual([+sq[3],+sq[4]],[16,16]);
+ assert.ok(!r.svg.includes('M570 438H618'),'delete self-message must not draw a loop');});
+test('«ref» participant draws no lifeline and earns no PJW03',()=>{
+ const r=run();
+ assert.ok(!r.diagnostics.some(d=>d.code==='DDN-PJW03'),'ref box must not warn as an empty participant');
+ const lifelines=(r.svg.match(/stroke-dasharray="5 5"/g)||[]).length;
+ assert.equal(lifelines,3,'exactly the three real participants have lifelines');});
+
 const failed=results.filter(r=>!r.pass);
 console.log('msc-compliance:',results.length-failed.length+'/'+results.length,'passed');
 if(failed.length){console.error(failed.map(f=>f.name+' ['+f.code+'] '+f.message).join('\n'));process.exit(1);}

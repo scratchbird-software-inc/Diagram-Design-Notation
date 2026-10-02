@@ -6,6 +6,27 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **MSC/sequence layout collision fixes** (owner-reported on the live
+  `msc.basic@1` gallery plate). In the sequence projection
+  (`notation/runtime/ddn-projections.js`): «create» arrows now terminate at
+  the new participant's head-box edge instead of through the box (head
+  geometry is computed in a layout pass before messages); receiver
+  activations of created participants start below the head box and every
+  activation is clamped to the lifeline end (a reply as the last message no
+  longer draws a floating bar to the chart bottom); combined-fragment/coreg
+  frames reserve space below created head boxes above them; state invariants
+  shift up half a label zone so the stadium sits on its lifeline clear of the
+  next message's label; lost/found message labels anchor off the lifeline
+  instead of centring over the activation bar; the Z.120 stop symbol is a
+  small square with a diagonal cross at the lifeline end (delete
+  self-messages no longer draw a confusing self-loop); and an `msc.hmscref`
+  «ref» box draws no lifeline and earns no DDN-PJW03 (it is not a
+  participant). Eight new geometry regression tests in
+  `notation/tests/msc-compliance.js` (arrow/head edge, bar clamp, frame
+  clearance, invariant clearance, lost-label anchor, last-message bar span,
+  stop symbol shape, ref lifeline count) — 20/20 with the pre-existing
+  checks; sequence/UML/sysml plates visually re-verified.
+
 - **Illustration art pack + presentation-style diagrams** (B1-101, slice 3).
   New pack format `ddn-art-pack@1` (normative spec chapter 50 +
   `standard/schemas/art-pack.schema.json`): detailed presentation
