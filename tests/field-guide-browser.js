@@ -40,6 +40,12 @@ try {
   const view = () => document.getElementById('main-view').innerHTML;
   if (!view().includes('<svg')) throw new Error('no live SVG rendered');
   lines.push('PASS live render present');
+  /* Art-pack chapters must show real artwork, not the unregistered-pack
+   * placeholder: the guide page context registers embedded ddn-art-pack@1
+   * documents before the first render. */
+  if (document.querySelector('[data-art]')) {
+    lines.push(!document.querySelector('.ddn-art-missing') ? 'PASS art pack registered in the page context (real artwork, no placeholders)' : 'FAIL art pack not registered — placeholder visible');
+  }
   const before = view();
   document.getElementById('guided').click();
   await sleep(300);
@@ -88,7 +94,7 @@ const server = http.createServer((req, res) => {
   const p = path.normalize(path.join(root, decodeURIComponent(url.pathname)));
   if (!p.startsWith(root) || !fs.existsSync(p) || !fs.statSync(p).isFile()) { res.statusCode = 404; res.end(); return; }
   let bytes = fs.readFileSync(p);
-  if (url.pathname.includes('/field-guide/lessons/') || url.pathname.endsWith('/field-guide/portable.html')) {
+  if (url.pathname.includes('/field-guide/lessons/') || url.pathname.includes('/website/guide/lessons/') || url.pathname.endsWith('/field-guide/portable.html')) {
     /* The hanging <img> delays the load event so headless chrome stays alive
      * until the driver POSTs its results. */
     const inject = ERROR_TRAP + DRIVER.replace('REPORT_URL', BASE + '/result').replace('HASH_ID', url.searchParams.get('chapter') || 'raci') +
@@ -128,6 +134,10 @@ async function runCase(name, rel, chapter) {
     await test('lesson page: variants (empathy-scorecard)', () => runCase('variants', 'field-guide/lessons/empathy-scorecard.html'));
     await test('portable edition: hash routing + guided edit (story-map)', () => runCase('portable story-map', 'field-guide/portable.html', 'story-map'));
     await test('portable edition: waterfall value experiment', () => runCase('portable waterfall', 'field-guide/portable.html', 'waterfall'));
+    await test('lesson page: art pack registered (presentation-art)', () => runCase('presentation-art', 'field-guide/lessons/presentation-art.html'));
+    await test('portable edition: art pack registered (presentation-art)', () => runCase('portable presentation-art', 'field-guide/portable.html', 'presentation-art'));
+    await test('site mirror lesson renders (physical-model)', () => runCase('site mirror physical-model', 'website/guide/lessons/physical-model.html'));
+    await test('site mirror art lesson renders (presentation-art)', () => runCase('site mirror presentation-art', 'website/guide/lessons/presentation-art.html'));
   } finally {
     for (const r of hanging) try { r.end(); } catch { /* gone */ }
     server.close();

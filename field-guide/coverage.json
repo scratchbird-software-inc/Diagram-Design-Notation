@@ -1293,7 +1293,7 @@
       "projection": "graph",
       "entry": "website/examples/basics/110-presentation-architecture.ddn",
       "view": "overview",
-      "sha256": "44f10d3f9258271bc392bdbf58b2bbc3dad6ba2d9074b0ada6dc3bacb96382df"
+      "sha256": "8347def81b9535221850e510a4e69f6a7aa3fdb6f2a68aa67d5f949940923f2b"
     },
     {
       "id": "whiteboard",
@@ -2622,8 +2622,8 @@
     },
     {
       "id": "presentation-art",
-      "before": "44f10d3f9258271bc392bdbf58b2bbc3dad6ba2d9074b0ada6dc3bacb96382df",
-      "after": "cf1579e94ae5f8d58804b45f093570817b65b10c352c7d1dac1f6551d3113255",
+      "before": "8347def81b9535221850e510a4e69f6a7aa3fdb6f2a68aa67d5f949940923f2b",
+      "after": "a0e820ead030b61d13360d252f72ce0eaccd6e20595c787ac7b460db7ebac90a",
       "changed": true,
       "modelChanged": true,
       "relationIdentitiesPreserved": true,

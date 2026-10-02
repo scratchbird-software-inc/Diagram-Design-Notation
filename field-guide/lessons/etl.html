@@ -56,6 +56,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"field-guide/sources/etl.ddn":"ddn \"0.5\";\nmodule \"ddn.fieldguide.etl\";\n\n// Synthetic nightly ETL pipeline (all systems invented): two operational\n// sources land in a raw staging area, conformance transforms integrate and\n// deduplicate, and two marts serve reporting. Drawn in the data-flow idiom:\n// activities transform, datasets hold, read/write relations mark direction.\ndata pipeline {\n    dataset shop \"Shop OLTP\" {description: \"Synthetic order-taking source: orders, customers, payments.\"; }\n    dataset crm \"CRM extracts\" {description: \"Synthetic nightly customer-master extract files.\"; }\n    activity land \"Nightly landing\" {description: \"Synthetic copy job: source-faithful, no business rules.\"; }\n    dataset raw \"Raw staging\" {description: \"Synthetic landing zone: immutable copies with arrival metadata.\"; }\n    activity conform \"Conform and deduplicate\" {description: \"Synthetic transform: key mapping, survivorship, type alignment.\"; }\n    dataset warehouse \"Integrated warehouse\" {description: \"Synthetic conformed store: one customer, one order line.\"; }\n    activity feed_sales \"Sales slice build\" {description: \"Synthetic daily slice for order reporting.\"; }\n    activity feed_churn \"Churn feature build\" {description: \"Synthetic feature build for retention analysis.\"; }\n    dataset sales_mart \"Sales mart\" {description: \"Synthetic star for order reporting.\"; }\n    dataset churn_mart \"Churn mart\" {description: \"Synthetic features for retention analysis.\"; }\n    read r1 @shop -> @land;\n    read r2 @crm -> @land;\n    write r3 @land -> @raw;\n    read r4 @raw -> @conform;\n    write r5 @conform -> @warehouse;\n    read r6 @warehouse -> @feed_sales;\n    write r7 @feed_sales -> @sales_mart;\n    read r8 @warehouse -> @feed_churn;\n    write r9 @feed_churn -> @churn_mart;\n}\n\nview diagram \"Synthetic ETL / sources to marts\": [@pipeline] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"etl","entry":"field-guide/sources/etl.ddn","view":"diagram","files":["field-guide/sources/etl.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.fieldguide.etl::pipeline.shop","file":"field-guide/sources/etl.ddn","before":"Shop OLTP","after":"Shop OLTP / review","expectation":"Only the label of Shop OLTP / review changes; the read/write topology and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -126,6 +127,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

@@ -59,6 +59,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"field-guide/sources/event-contract.ddn":"ddn \"0.5\";\nmodule \"ddn.fieldguide.eventcontract\";\n\n// Synthetic event contract (all parties invented): one order-events topic\n// with its declared schema versions, the producer that owns it, and two\n// consumer groups with their compatibility claims. The contract view makes\n// \"who may break whom\" a reviewable graph instead of a wiki promise.\ndata contract {\n    application orders_api \"Orders API\" {description: \"Synthetic producer: emits order lifecycle events.\"; }\n    topic topic \"order-events v3\" {description: \"Synthetic topic carrying the current schema version.\"; }\n    record schema_v2 \"Schema v2 (deprecated)\" {description: \"Synthetic previous schema: kept for the deprecation window.\"; }\n    record schema_v3 \"Schema v3\" {description: \"Synthetic current schema: adds cancellation reason.\"; }\n    application billing \"Billing consumer\" {description: \"Synthetic consumer: reads payment-relevant events only.\"; }\n    application fulfil \"Fulfilment consumer\" {description: \"Synthetic consumer: drives warehouse tasks from confirmed orders.\"; }\n    relation publishes \"publishes\" @orders_api -> @topic { kind: \"flow\"; }\n    assoc carries \"conforms to\" @topic -> @schema_v3;\n    assoc supersedes \"backward compatible\" @schema_v3 -> @schema_v2;\n    relation reads_billing \"consumer group: billing\" @topic -> @billing { kind: \"flow\"; }\n    relation reads_fulfil \"consumer group: fulfilment\" @topic -> @fulfil { kind: \"flow\"; }\n}\n\nview diagram \"Synthetic event contract / producer to consumers\": [@contract] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"event-contract","entry":"field-guide/sources/event-contract.ddn","view":"diagram","files":["field-guide/sources/event-contract.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.fieldguide.eventcontract::contract.orders_api","file":"field-guide/sources/event-contract.ddn","before":"Orders API","after":"Orders API / review","expectation":"Only the label of Orders API / review changes; producer, schemas, consumers and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -129,6 +130,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

@@ -56,6 +56,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/100-fbd.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.fbd\";\n\n// B1-084: an IEC 61131-3 FBD motor-control diagram — a TON timer and an AND\n// block with name/type headers, typed pins (BOOL/TIME), a negation bubble on\n// the STOP input, and a feedback wire from the timer output back into the\n// AND input. All data is synthetic.\ndata m {\n    object start_btn \"START\" { kind: \"fbd.variable\"; }\n    object stop_btn \"STOP\" { kind: \"fbd.variable\"; }\n    object t1 \"T1\" { kind: \"fbd.block\"; datatype: \"TON\";\n        ports {\n            in1 { direction: in; x_fbd: { type: \"BOOL\" }; }\n            pt { direction: in; x_fbd: { type: \"TIME\" }; }\n            q { direction: out; x_fbd: { type: \"BOOL\" }; }\n            et { direction: out; x_fbd: { type: \"TIME\" }; }\n        }\n    }\n    object a1 \"A1\" { kind: \"fbd.block\"; datatype: \"AND\";\n        ports {\n            ina { direction: in; x_fbd: { type: \"BOOL\" }; }\n            inb { direction: in; x_fbd: { type: \"BOOL\", negated: true }; }\n            out1 { direction: out; x_fbd: { type: \"BOOL\" }; }\n        }\n    }\n    object motor \"MOTOR\" { kind: \"fbd.variable\"; }\n    relation w1 \"\" @start_btn -> @a1.ina { kind: \"fbd.wire\"; }\n    relation w2 \"\" @stop_btn -> @a1.inb { kind: \"fbd.wire\"; }\n    relation w3 \"\" @a1.out1 -> @t1.in1 { kind: \"fbd.wire\"; }\n    relation w4 \"\" @t1.q -> @motor { kind: \"fbd.wire\"; }\n    relation fb \"\" @t1.q -> @a1.ina { kind: \"fbd.wire\"; }\n}\nview d \"Motor control FBD\": [@m] as \"fbd.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"fbd","entry":"website/examples/basics/100-fbd.ddn","view":"d","files":["website/examples/basics/100-fbd.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.fbd::m.t1","file":"website/examples/basics/100-fbd.ddn","before":"T1","after":"T1 / review","expectation":"Only the label of T1 / review changes; pins, wires and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -126,6 +127,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

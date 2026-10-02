@@ -57,6 +57,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"field-guide/sources/roadmap.ddn":"ddn \"0.5\";\nmodule \"ddn.fieldguide.roadmap\";\n\n// Synthetic product roadmap (all dates and phases invented): four phases of\n// a platform rebuild on one timeline, with the finish-to-start dependencies\n// declared. A roadmap is the schedule at phase granularity — one bar per\n// phase, read for sequence and overlap, not for task tracking.\ndata phases {\n    object discover \"Discover\" { kind: \"flow.process\"; x_record: { start: \"2026-01-05\", end: \"2026-02-13\", status: \"Complete\" }; }\n    object foundation \"Foundation\" { kind: \"flow.process\"; x_record: { start: \"2026-02-16\", end: \"2026-04-10\", status: \"Complete\" }; }\n    object build \"Build out\" { kind: \"flow.process\"; x_record: { start: \"2026-04-13\", end: \"2026-07-31\", status: \"In progress\" }; }\n    object harden \"Harden and launch\" { kind: \"flow.process\"; x_record: { start: \"2026-08-03\", end: \"2026-10-09\", status: \"Planned\" }; }\n}\n\ndata sequence {\n    relation d_then_f \"Discovery gates foundation\" @phases.discover -> @phases.foundation { kind: \"analysis.precedes\"; }\n    relation f_then_b \"Foundation gates build\" @phases.foundation -> @phases.build { kind: \"analysis.precedes\"; }\n    relation b_then_h \"Build gates hardening\" @phases.build -> @phases.harden { kind: \"analysis.precedes\"; }\n}\n\nview roadmap \"Synthetic platform rebuild / roadmap\" {\n    data: [@phases, @sequence];\n    projection { kind: timeline; profile: \"timeline.basic@1\"; records: [@phases.discover, @phases.foundation, @phases.build, @phases.harden]; start: \"x_record.start\"; end: \"x_record.end\"; dependencies: [@sequence.d_then_f, @sequence.f_then_b, @sequence.b_then_h]; width: 1250px; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"timeline-roadmap","entry":"field-guide/sources/roadmap.ddn","view":"roadmap","files":["field-guide/sources/roadmap.ddn"],"experiment":{"kind":"value","title":"Change one record value without touching the model","id":"ddn.fieldguide.roadmap::phases.discover","file":"field-guide/sources/roadmap.ddn","before":"Discover end = 2026-02-13","after":"Discover end = 2026-02-06","expectation":"Only one phase's end date changes (earlier, keeping finish-to-start intact); every other bar and identity is untouched.","key":"end","value":"2026-02-06"},"experimentKind":"value","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -127,6 +128,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

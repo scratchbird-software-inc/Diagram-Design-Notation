@@ -36,19 +36,30 @@ function minify(svg) {
     .replace(/<\?xml[^>]*>\s*/g, '')
     .replace(/<!DOCTYPE[^>]*>\s*/gi, '')
     .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/<metadata[\s\S]*?<\/metadata>/g, '')
-    .replace(/<sodipodi:namedview[\s\S]*?(?:\/>|<\/sodipodi:namedview>)/g, '')
-    .replace(/<sodipodi:[a-z]+[\s\S]*?<\/sodipodi:[a-z]+>/g, '')
+    .replace(/<metadata[\s\S]*?<\/metadata\s*>/g, '')
+    .replace(/<rdf:RDF[\s\S]*?<\/rdf:RDF\s*>/g, '')
+    .replace(/<cc:Work[\s\S]*?<\/cc:Work\s*>/g, '')
+    .replace(/<sodipodi:namedview\b[^>]*\/>/g, '')
+    .replace(/<sodipodi:namedview\b[^>]*>[\s\S]*?<\/sodipodi:namedview\s*>/g, '')
+    .replace(/<inkscape:[a-z]+\b[^>]*\/>/g, '')
+    .replace(/<inkscape:([a-z]+)\b[^>]*>[\s\S]*?<\/inkscape:\1\s*>/g, '')
     /* Toolchain attributes leak the upstream author's local file paths
-     * (sodipodi:docname="/home/…"); they carry no drawing information. */
-    .replace(/\s(?:sodipodi|inkscape):[a-z-]+="[^"]*"/gi, '')
-    .replace(/\sxmlns:(?:sodipodi|inkscape)="[^"]*"/gi, '')
+     * (sodipodi:docname="/home/…"); they carry no drawing information. The
+     * same goes for RDF/Dublin-Core licence metadata — the pack's own
+     * provenance records carry the verified licence per item. */
+    .replace(/\s(?:sodipodi|inkscape|dc|cc|rdf):[\w-]+="[^"]*"/gi, '')
+    .replace(/\sxmlns:(?:sodipodi|inkscape|dc|cc|rdf|svg)="[^"]*"/gi, '')
     .replace(/>\s+</g, '><')
     .replace(/\s{2,}/g, ' ')
     /* Inkscape/Illustrator exports carry absurd coordinate precision; one
      * decimal is indistinguishable at presentation scale and routinely
      * halves path-heavy files. */
     .replace(/-?\d+\.\d{3,}/g, m => String(Number(Number(m).toFixed(1))))
+    /* Drop namespace declarations whose prefix no longer appears anywhere
+     * (metadata/toolchain vocabularies stripped above); they are dead weight
+     * and can leak upstream tool/site URLs. */
+    .replace(/\sxmlns:([a-z][a-z0-9]*)="[^"]*"/gi, (m, prefix, offset, whole) =>
+      whole.includes('<' + prefix + ':') || whole.includes(' ' + prefix + ':') ? m : '')
     .trim();
 }
 

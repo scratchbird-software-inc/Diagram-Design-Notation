@@ -59,6 +59,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/79-uml-composite.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.umlcomp\";\n\n// B1-059 : UML 2.5.1 component + composite structure on uml.composite@1.\n// View 1: ports, assembly ball-and-socket, delegation, parts. View 2: plain\n// connectors with role names + multiplicity, collaboration occurrence.\n// Minimal current-dialect style, no pinned layout.\n\ndata shop {\n    object storefront \"Storefront\" { kind: \"uml.component\";\n        ports { web { direction: in; } orders_if { direction: out; } }\n        fields { cart { x_part: { classifier: \"Cart\"; multiplicity: \"1\" }; } }\n    }\n    object warehouse \"Warehouse\" { kind: \"uml.component\";\n        ports { orders_in { direction: in; } }\n        fields { stock { x_part: { classifier: \"Stock\"; multiplicity: \"0..*\" }; } }\n    }\n    object accounts \"Accounts\" { kind: \"uml.interface\"; }\n\n    relation assembly \"\" @storefront.orders_if -> @warehouse.orders_in { kind: \"uml.assembly\"; }\n    relation delegate \"\" @storefront.web -> @storefront.cart { kind: \"uml.delegation\"; }\n    relation billing \"\" @storefront -> @accounts { kind: \"uml.provided\"; }\n}\n\ndata structure {\n    object order \"Order\" { kind: \"uml.class\";\n        fields {\n            customer { x_part: { classifier: \"Customer\"; multiplicity: \"1\" }; }\n            lines { x_part: { classifier: \"OrderLine\"; multiplicity: \"1..*\" }; }\n        }\n    }\n    object fulfil \"Fulfilment\" { kind: \"uml.class\";\n        fields { picking { x_part: { classifier: \"Picking\" }; } }\n    }\n    object planning \"Release planning\" { kind: \"uml.collaboration\";\n        fields {\n            planner { x_part: { classifier: \"Planner\" }; }\n            builder { x_part: { classifier: \"Builder\" }; }\n        }\n    }\n\n    relation c1 \"\" @order.customer -> @fulfil.picking { kind: \"uml.connector\";\n        x_endlabels: { source: { role: \"buyer\"; multiplicity: \"1\"; }; target: { role: \"picking\"; multiplicity: \"0..1\"; }; };\n    }\n}\n\nview components \"UML component / ports and assembly\": [@shop] as \"uml.composite@1\" {\n    publication { size: content; fit: none; }\n}\n\nview structures \"UML composite structure / parts and connectors\": [@structure] as \"uml.composite@1\" {\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"umlcomposite","entry":"website/examples/basics/79-uml-composite.ddn","view":"components","files":["website/examples/basics/79-uml-composite.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.umlcomp::shop.storefront","file":"website/examples/basics/79-uml-composite.ddn","before":"Storefront","after":"Storefront / review","expectation":"Only the label of Storefront / review changes; ports, connectors and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -129,6 +130,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

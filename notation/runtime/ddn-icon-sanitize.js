@@ -3,6 +3,7 @@
  * scripts, foreignObject, event handlers, external references and oversized
  * assets. Shared by the registry path (ddn-profiles.js) and the raw-catalogue
  * render path (CLI via ddn-render.js). */
+import {publishNamespace} from './ddn-module-registry.js';
 const FORBIDDEN=/<script|foreignObject|<iframe|<embed|<object|<image|\b(?:xlink:)?href\s*=|\bon[a-z]+\s*=|javascript:|url\s*\(|<\!doctype|<\!entity/i;
 export function sanitizeIcon(lib,icon){
  const svg=icon?.svg;
@@ -114,4 +115,11 @@ export function unregisterArtPack(id){
  hostArt.splice(i,1);hostArtIds.delete(id);return true;
 }
 export function hostArtPacks(){return hostArt.slice();}
-export default {sanitizeIcon,sanitizedLibraries,validateIconPack,registerIconPack,unregisterIconPack,hostIconPacks,sanitizeArt,validateArtPack,registerArtPack,unregisterArtPack,hostArtPacks};
+const api={sanitizeIcon,sanitizedLibraries,validateIconPack,registerIconPack,unregisterIconPack,hostIconPacks,sanitizeArt,validateArtPack,registerArtPack,unregisterArtPack,hostArtPacks};
+/* The host pack registries are cross-bundle shared state (module-scope lists
+ * would split: ddn.global.js and ddn-graph.js each inline their own copy, so
+ * a pack registered through one bundle would be invisible to renders running
+ * through the other). First publish wins; every consumer must resolve the
+ * namespace, not the module-local import. */
+publishNamespace('DDNPacks',api);
+export default api;

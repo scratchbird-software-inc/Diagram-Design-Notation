@@ -58,6 +58,13 @@ test('every chapter fixture re-renders to the recorded sha256 (evidence is fresh
       globalThis.DDNGeo.registerGeography('world-110m', g);
     }
   } catch {}
+  // Same art-pack wiring as the builder: x_art chapters render with the
+  // shipped pack registered (placeholder renders otherwise).
+  try {
+    const idx = path.join(repo, 'standard/registry/art-packs/index.json');
+    if (fs.existsSync(idx)) for (const f of JSON.parse(fs.readFileSync(idx, 'utf8')).packs)
+      A.registerArtPack(JSON.parse(fs.readFileSync(path.join(repo, 'standard/registry/art-packs', f), 'utf8')));
+  } catch {}
   for (const l of catalogue.lessons) {
     const files = {};
     const visit = name => {

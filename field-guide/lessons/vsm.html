@@ -56,6 +56,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/97-vsm.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.vsm\";\n\n// B1-081: a small current-state value stream map — process boxes with data\n// rows and VA/NVA values feeding the timeline ladder strip, an inventory\n// triangle, push/pull and material arrows, electronic (zigzag) and manual\n// (dashed) information arrows, a supermarket, a kaizen burst and an\n// operator. All data is synthetic.\ndata m {\n    object cust \"Retailer\" { kind: \"vsm.customer\"; }\n    object ctrl \"Production control\" { kind: \"vsm.control\"; }\n    object stamp \"Stamping\" { kind: \"vsm.process\"; x_vsm: { va: 1.5, nva: 3, unit: \"d\" };\n        fields { co \"C/O 30 min\"; up \"85%\"; }\n    }\n    object inv1 \"\" { kind: \"vsm.inventory\"; }\n    object weld \"Welding\" { kind: \"vsm.process\"; x_vsm: { va: 2, nva: 1.5, unit: \"d\" };\n        fields { co \"C/O 15 min\"; }\n    }\n    object sup \"Supermarket\" { kind: \"vsm.supermarket\"; }\n    object asm \"Assembly\" { kind: \"vsm.process\"; x_vsm: { va: 3, nva: 2, unit: \"d\" }; }\n    object kz \"\" { kind: \"vsm.kaizen\"; }\n    object op \"Operator\" { kind: \"vsm.operator\"; }\n    relation m1 \"\" @cust -> @stamp { kind: \"vsm.pull\"; }\n    relation m2 \"\" @stamp -> @inv1 { kind: \"vsm.material\"; }\n    relation m3 \"\" @inv1 -> @weld { kind: \"vsm.push\"; }\n    relation m4 \"\" @weld -> @sup { kind: \"vsm.material\"; }\n    relation m5 \"\" @sup -> @asm { kind: \"vsm.pull\"; }\n    relation i1 \"\" @ctrl -> @stamp { kind: \"vsm.einfo\"; }\n    relation i2 \"\" @ctrl -> @asm { kind: \"vsm.minfo\"; }\n    relation i3 \"\" @asm -> @cust { kind: \"vsm.material\"; }\n    relation o1 \"\" @op -> @weld { kind: \"vsm.minfo\"; }\n}\nview map \"Current state map\": [@m] as \"vsm.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"vsm","entry":"website/examples/basics/97-vsm.ddn","view":"map","files":["website/examples/basics/97-vsm.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.vsm::m.stamp","file":"website/examples/basics/97-vsm.ddn","before":"Stamping","after":"Stamping / review","expectation":"Only the label of Stamping / review changes; flows, data and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -126,6 +127,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

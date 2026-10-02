@@ -8,6 +8,7 @@ import Profiles from './ddn-profiles.js';
 import RegistryCatalogue from './assets/catalogue.js';
 import ICONLIBS from './assets/icon-libraries.js';
 import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIconPack,registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack} from './ddn-icon-sanitize.js';
+import {namespace as ddnNamespace} from './ddn-module-registry.js';
   'use strict';
   const VERSION = '0.7.0';
   const SOURCE_VERSIONS=Object.freeze(['0.2','0.3','0.4','0.5']);
@@ -1008,7 +1009,10 @@ import {registerIconPack as regPack,unregisterIconPack,hostIconPacks,validateIco
   function semanticJSON(ir){function canon(v){if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(canon);const o={};for(const k of Object.keys(v).sort())if(!['source','ref','local'].includes(k))o[k]=canon(v[k]);return o;}const es=new Map(),rs=new Map();function visit(x){x.elements.forEach(n=>es.set(n.id,n));x.relations.forEach(n=>rs.set(n.id,n));for(const c of x.view?.children||[])visit(c.ir);}visit(ir);return {format:ir.format,elements:[...es.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon),relations:[...rs.values()].sort((a,b)=>a.id.localeCompare(b.id,'en')).map(canon)};}
   /* B1-088: host-supplied icon packs — validated and sanitized exactly like
    * shipped packs before they can render. */
-  const registerIconPack=pack=>regPack(pack,ICONLIBS.libraries);
-  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack,hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack,unregisterArtPack,hostArtPacks,validateArtPack};
+  /* Host pack registries are shared across bundles through the DDNPacks
+   * namespace (first publish wins); never touch the module-local copy. */
+  const Packs=ddnNamespace('DDNPacks');
+  const registerIconPack=pack=>Packs.registerIconPack(pack,ICONLIBS.libraries);
+  const api={VERSION,SOURCE_VERSIONS,DDNError,lex,parse,bundle,createWorkspace,build,children,group,values,getFields,fieldTree,getPorts,clean,quantity,kindEntry,relationEntry,semanticJSON,typedKindWords,relationKindWords,projectionProfileKinds,DEFAULTS,PROPERTIES,CHOICES,profiles:Profiles,registerIconPack,unregisterIconPack:Packs.unregisterIconPack,hostIconPacks:Packs.hostIconPacks,validateIconPack,iconLibraries:()=>ICONLIBS.libraries.map(l=>({...l,icons:(l.icons||[]).map(i=>({...i}))})),registerArtPack:Packs.registerArtPack,unregisterArtPack:Packs.unregisterArtPack,hostArtPacks:Packs.hostArtPacks,validateArtPack};
   publishNamespace('DDN',api);
   export default api;

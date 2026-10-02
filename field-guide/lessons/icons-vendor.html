@@ -55,6 +55,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/106-tabler-icons.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.tabler\";\n\n// B1-088: the tabler-infra@1 icon pack — a curated infrastructure selection\n// from tabler-icons (MIT, license text and attribution in the pack\n// manifest; full set not vendored). Icons bind per node via x_icon.\n// All data is synthetic.\ndata m {\n    object wan \"WAN\" { kind: \"network.bus\"; }\n    object rtr \"Core router\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"router\" }; }\n    object sw \"Distribution switch\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"network\" }; }\n    object srv \"App server\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"server\" }; }\n    object db \"Database\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"database\" }; }\n    object mon \"Operator workstation\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"device-desktop\" }; }\n    object lap \"Field laptop\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"device-laptop\" }; }\n    object sec \"Secrets vault\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"shield-lock\" }; }\n    object api \"Public API\" { kind: \"network.server\"; x_icon: { library: \"tabler-infra@1\", icon: \"api\" }; }\n    relation a1 \"\" @rtr -> @wan { kind: \"network.attaches\"; }\n    relation a2 \"\" @sw -> @wan { kind: \"network.attaches\"; }\n    relation a3 \"\" @srv -> @wan { kind: \"network.attaches\"; }\n    relation a4 \"\" @db -> @wan { kind: \"network.attaches\"; }\n    relation a5 \"\" @mon -> @wan { kind: \"network.attaches\"; }\n    relation a6 \"\" @lap -> @wan { kind: \"network.attaches\"; }\n    relation a7 \"\" @sec -> @wan { kind: \"network.attaches\"; }\n    relation a8 \"\" @api -> @wan { kind: \"network.attaches\"; }\n}\nview net \"Tabler pack\": [@m] as \"network.basic@1\" {\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"icons-vendor","entry":"website/examples/basics/106-tabler-icons.ddn","view":"net","files":["website/examples/basics/106-tabler-icons.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.tabler::m.wan","file":"website/examples/basics/106-tabler-icons.ddn","before":"WAN","after":"WAN / review","expectation":"Only the label of WAN / review changes; glyphs, relations and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -125,6 +126,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

@@ -59,6 +59,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"field-guide/sources/shards-replicas.ddn":"ddn \"0.5\";\nmodule \"ddn.fieldguide.shards\";\n\n// Synthetic shard-and-replica placement (all infrastructure invented): the\n// orders keyspace split into three shards, each shard led in one zone with\n// its replicas placed in the other two. The diagram is the placement claim:\n// which copy lives where, and which copy leads.\ndata cluster {\n    zone zone_a \"Zone A\" {description: \"Synthetic failure zone A.\"; }\n    zone zone_b \"Zone B\" {description: \"Synthetic failure zone B.\"; }\n    zone zone_c \"Zone C\" {description: \"Synthetic failure zone C.\"; }\n    shard shard1 \"Shard 1 (hash 0-33%)\" {description: \"Synthetic first key range; leader in zone A.\"; }\n    shard shard2 \"Shard 2 (hash 34-66%)\" {description: \"Synthetic second key range; leader in zone B.\"; }\n    shard shard3 \"Shard 3 (hash 67-100%)\" {description: \"Synthetic third key range; leader in zone C.\"; }\n    application router \"Query router\" {description: \"Synthetic router: maps key to shard, reads from replicas.\"; }\n    assoc lead1 \"leads in\" @shard1 -> @zone_a;\n    assoc lead2 \"leads in\" @shard2 -> @zone_b;\n    assoc lead3 \"leads in\" @shard3 -> @zone_c;\n    assoc repl1b \"replica\" @shard1 -> @zone_b;\n    assoc repl1c \"replica\" @shard1 -> @zone_c;\n    assoc repl2a \"replica\" @shard2 -> @zone_a;\n    assoc repl2c \"replica\" @shard2 -> @zone_c;\n    assoc repl3a \"replica\" @shard3 -> @zone_a;\n    assoc repl3b \"replica\" @shard3 -> @zone_b;\n    relation route1 \"routes\" @router -> @shard1 { kind: \"flow\"; }\n    relation route2 \"routes\" @router -> @shard2 { kind: \"flow\"; }\n    relation route3 \"routes\" @router -> @shard3 { kind: \"flow\"; }\n}\n\nview diagram \"Synthetic shards and replicas / placement\": [@cluster] as \"ddn@1\" {\n    layout { algorithm: layered; direction: right; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"shards-replicas","entry":"field-guide/sources/shards-replicas.ddn","view":"diagram","files":["field-guide/sources/shards-replicas.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.fieldguide.shards::cluster.zone_a","file":"field-guide/sources/shards-replicas.ddn","before":"Zone A","after":"Zone A / review","expectation":"Only the label of Zone A / review changes; placement edges and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -129,6 +130,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

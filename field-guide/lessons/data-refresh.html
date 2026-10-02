@@ -58,6 +58,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/59-data-refresh.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.data-refresh\";\n\n// Data refresh (B1-006, keyed transactional contract B1-029): a host page\n// swaps the records of the `metrics` data block with\n// ws.replaceData(\"metrics\", [...]) and re-renders — the model, views and\n// layout structure stay untouched. Records match by their `key` field (the\n// declaration id), so reordered payloads never corrupt identities. Replacing\n// with the same values re-renders every view byte-identical; replacing with\n// new values moves only the chart marks. The chart below binds records\n// explicitly (explicit membership), so added records are reported via\n// DDN-W015 addedRecordsNotVisible instead of appearing silently, and removing\n// a bound record is rejected transactionally; the dependency graph selects\n// the whole block (selector membership) and picks up additions automatically.\n// See examples/embed/data-refresh.html.\n//\n//   ws.replaceData(\"metrics\", rows);   // rows: plain objects, optional key,\n//   const r = ws.renderSync({entry, view: \"latency_chart\"});  // same fields\n//   host.innerHTML = r.svg;            // as the first record\n\ndata metrics {\n    record m1 \"Alpha\" {x_record: { label: \"Alpha\", value: 10, unit: \"ms\" }; }\n    record m2 \"Beta\" {x_record: { label: \"Beta\", value: 20, unit: \"ms\" }; }\n    record m3 \"Gamma\" {x_record: { label: \"Gamma\", value: 15, unit: \"ms\" }; }\n    relation trend \"Alpha drives Beta\" @m1 -> @m2 { kind: flow; }\n    relation feed \"Beta feeds Gamma\" @m2 -> @m3 { kind: flow; }\n}\n\nview latency_chart \"Latency / chart\" {\n    data: [@metrics];\n    projection { kind: chart; profile: \"chart.basic@1\"; records: [@metrics.m1, @metrics.m2, @metrics.m3]; mark: bar; x: \"x_record.label\"; y: \"x_record.value\"; unit: \"ms\"; width: 900px; height: 560px; }\n    publication { size: content; fit: none; }\n}\n\nview dependency_graph \"Latency / dependency graph\" {\n    data: [@metrics];\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"data-refresh","entry":"website/examples/basics/59-data-refresh.ddn","view":"latency_chart","files":["website/examples/basics/59-data-refresh.ddn"],"experiment":{"kind":"data","title":"Swap one record payload without touching the model","id":"ddn.examples.data-refresh::metrics.m1","file":"website/examples/basics/59-data-refresh.ddn","before":"metrics.m1 value 10","after":"metrics.m1 value 15","expectation":"Only the record's value changes from 10 to 15; the chart re-renders from the swapped records and undo restores the original payload."},"experimentKind":"data","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -128,6 +129,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

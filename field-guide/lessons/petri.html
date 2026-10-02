@@ -56,6 +56,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/95-petrinet.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.petri\";\n\n// B1-079: a producer/consumer Petri net — places with token markings (dots,\n// or a count above five), transitions as bars, a weighted arc, an inhibitor\n// arc (open circle at the transition end), and a dashed read/test arc.\n// All data is synthetic.\ndata m {\n    object idle \"Idle producers\" { kind: \"petri.place\"; x_petri: { tokens: 3 }; }\n    object produce \"Produce\" { kind: \"petri.transition\"; }\n    object buf \"Buffer\" { kind: \"petri.place\"; x_petri: { tokens: 1 }; }\n    object consume \"Consume\" { kind: \"petri.transition\"; }\n    object done \"Done items\" { kind: \"petri.place\"; x_petri: { tokens: 7 }; }\n    relation a1 \"\" @idle -> @produce { kind: \"petri.arc\"; }\n    relation a2 \"\" @produce -> @buf { kind: \"petri.arc\"; x_petri: { weight: 2 }; }\n    relation a3 \"\" @buf -> @consume { kind: \"petri.arc\"; }\n    relation a4 \"\" @consume -> @done { kind: \"petri.arc\"; }\n    relation inh \"\" @buf -> @produce { kind: \"petri.inhibitor\"; }\n    relation rd \"\" @idle -> @consume { kind: \"petri.testarc\"; }\n}\nview net \"Producer/consumer net\": [@m] as \"petri.basic@1\" {\n    layout { algorithm: layered; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"petri","entry":"website/examples/basics/95-petrinet.ddn","view":"net","files":["website/examples/basics/95-petrinet.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.petri::m.idle","file":"website/examples/basics/95-petrinet.ddn","before":"Idle producers","after":"Idle producers / review","expectation":"Only the label of Idle producers / review changes; arcs, marking and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -126,6 +127,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

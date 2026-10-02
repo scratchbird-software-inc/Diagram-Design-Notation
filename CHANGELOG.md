@@ -6,6 +6,31 @@ Component-level history predating the monorepo import lives in
 
 ## [Unreleased]
 
+- **Field-guide live rendering + art-pack page context**. Investigation of the
+  owner-reported live-guide failures found two real defects underneath the
+  deployment lag: (1) the `DDNLive` facade (`notation/studio/src/api.js`)
+  never exposed the art-pack API added in B1-101 — `registerArtPack` et al.
+  existed in the runtime but not in the published global, so any host using
+  the facade (guide pages, tools) could not register art packs; (2) the host
+  pack registries were bundle-local state — `ddn.global.js` and
+  `ddn-graph.js` each inline their own copy of `ddn-icon-sanitize.js`, so a
+  pack registered through one bundle was invisible to renders running
+  through the other (split-brain; latently affected host icon packs too).
+  The registry now publishes itself as the `DDNPacks` namespace (first
+  publish wins) and `ddn-core`/`ddn-render` resolve through it. The field
+  guide embeds the shipped `presentation-devices@1` pack (provenance records
+  and upstream URLs stripped from the page embed; the pack file keeps them)
+  into art-binding chapters and registers it in the page context — the
+  presentation-art lesson and the portable edition now show the real artwork
+  inline. Art-pack build hardening along the way: closing-tag whitespace
+  tolerance, RDF/Dublin-Core and sodipodi/inkscape metadata stripping
+  (namespace-orphan checked), dead namespace-declaration removal, well-
+  formedness verified in-browser for all 44 items. Regression coverage:
+  `tests/field-guide-browser.js` gains presentation-art source/mirror/
+  portable cases plus a generic no-`.ddn-art-missing` assertion, and
+  `tests/field-guide.js` re-renders chapter fixtures with the pack
+  registered like the builder. Field guide 4/4 + browser 11/11.
+
 - **MSC/sequence layout collision fixes** (owner-reported on the live
   `msc.basic@1` gallery plate). In the sequence projection
   (`notation/runtime/ddn-projections.js`): «create» arrows now terminate at

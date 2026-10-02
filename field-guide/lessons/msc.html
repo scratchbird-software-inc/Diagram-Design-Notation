@@ -56,6 +56,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/93-msc.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.msc\";\n\n// B1-077: an ITU-T Z.120 message sequence chart with an HMSC reference\n// (with its actual parameter list), a guarding state invariant, a coregion,\n// a lost message, instance creation (start) and stop (delete), and reply\n// messages. All data is synthetic.\ndata m {\n    object cli \"Client\" { kind: \"uml.class\"; }\n    object srv \"Server\" { kind: \"uml.class\"; x_invariant: [ { label: \"authenticated\"; after: @m.m1, role: \"guarding\" } ]; }\n    object worker \"Worker\" { kind: \"uml.class\"; }\n    object billing \"Billing HMSC\" { kind: \"msc.hmscref\"; x_subdiagram: { view: \"billing\" }; x_hmscref: { params: [ \"shop\", \"amount\" ] }; }\n    relation c1 \"start\" @cli -> @worker { kind: \"uml.message\"; x_message: { sort: \"create\" }; }\n    relation m1 \"request\" @cli -> @srv { kind: \"uml.message\"; x_fragment: { operator: \"coreg\"; operands: [ { messages: [ @m.m1, @m.m2 ] } ] }; }\n    relation m2 \"query\" @worker -> @srv { kind: \"uml.message\"; }\n    relation m3 \"lost packet\" @srv -> @srv { kind: \"uml.message\"; x_message: { sort: \"lost\" }; }\n    relation m4 \"reply\" @srv -> @cli { kind: \"uml.message\"; x_message: { sort: \"reply\" }; }\n    relation m5 \"stop\" @worker -> @worker { kind: \"uml.message\"; x_message: { sort: \"delete\" }; }\n}\ndata b {\n    object a \"A\" { kind: \"uml.class\"; }\n    object bb \"B\" { kind: \"uml.class\"; }\n    relation q1 \"charge\" @a -> @bb { kind: \"uml.message\"; }\n}\nview chart \"Order MSC\": [@m] as \"msc.basic@1\" {\n    publication { size: content; fit: none; }\n}\nview billing \"Billing HMSC detail\": [@b] as \"msc.basic@1\" {\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"msc","entry":"website/examples/basics/93-msc.ddn","view":"chart","files":["website/examples/basics/93-msc.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.msc::m.cli","file":"website/examples/basics/93-msc.ddn","before":"Client","after":"Client / review","expectation":"Only the label of Client / review changes; axes, messages and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -126,6 +127,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

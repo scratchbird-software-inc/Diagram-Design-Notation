@@ -55,6 +55,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/98-icons.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.icons\";\n\n// B1-082: the icon-library mechanism — default kind bindings (B1-087's\n// network-generic@1 set now wins for network kinds) plus an explicit\n// per-node x_icon override (the guest user, drawn from the original demo\n// set). Icons are simple generic glyphs; vendor packs are excluded pending\n// licensing diligence.\n// All data is synthetic.\ndata m {\n    object lan \"Office LAN\" { kind: \"network.bus\"; }\n    object srv \"App server\" { kind: \"network.server\"; }\n    object rack \"Data rack\" { kind: \"network.rack\"; }\n    object guest \"Guest user\" { kind: \"network.server\"; x_icon: { library: \"generic-demo@1\", icon: \"user\" }; }\n    relation a1 \"\" @srv -> @lan { kind: \"network.attaches\"; }\n    relation a2 \"\" @rack -> @lan { kind: \"network.attaches\"; }\n    relation a3 \"\" @guest -> @lan { kind: \"network.attaches\"; }\n}\nview net \"Icon network\": [@m] as \"network.basic@1\" {\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"icons","entry":"website/examples/basics/98-icons.ddn","view":"net","files":["website/examples/basics/98-icons.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.icons::m.lan","file":"website/examples/basics/98-icons.ddn","before":"Office LAN","after":"Office LAN / review","expectation":"Only the label of Office LAN / review changes; icons, relations and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -125,6 +126,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

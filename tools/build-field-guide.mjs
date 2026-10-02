@@ -446,6 +446,11 @@ if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
 }
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
+}
 redraw();
 };`;
 
@@ -481,14 +486,30 @@ function lessonMain(ch) {
 </main>`;
 }
 
+/* The page-embed form of an art pack: drops per-item provenance records
+ * (they carry upstream URLs the self-containment gate forbids in page HTML;
+ * the pack file on disk keeps them). */
+function slimArtPack(p) {
+  return { format: p.format, id: p.id, name: p.name, version: p.version, license: p.license, attribution: p.attribution, source: 'Wikimedia Commons + freesvg.org item pages (per-item provenance URLs in the pack file)', ...(p.note ? { note: p.note } : {}), items: p.items.map(i => ({ id: i.id, name: i.name, svg: i.svg, anchors: i.anchors, ...(i.tags ? { tags: i.tags } : {}) })) };
+}
 function lessonPayloads(ch) {
   const files = filesFor(ch.entry);
+  const allText = Object.values(files).join('\n');
+  /* B1-101 follow-up: chapters binding ddn-art-pack@1 artwork (x_art) get the
+   * pack embedded and registered in the page context — the guide is the one
+   * place the artwork must be visible inline; everywhere else packs stay
+   * opt-in downloads. */
+  const artPacks = /x_art\s*:/.test(allText)
+    ? JSON.parse(fs.readFileSync(new URL('./../standard/registry/art-packs/index.json', import.meta.url))).packs
+        .map(f => slimArtPack(JSON.parse(fs.readFileSync(path.join(REPO, 'standard/registry/art-packs', f), 'utf8'))))
+    : null;
   return {
     files,
     chapter: { id: ch.id, entry: ch.entry, view: ch.view, files: ch.files, experiment: ch.experiment, experimentKind: ch.experimentKind || 'label', evaluation: ch.evaluation || null },
-    geography: /geography\s*:/.test(Object.values(files).join('\n'))
+    geography: /geography\s*:/.test(allText)
       ? { name: 'assets/geo/world-110m.json', json: fs.readFileSync(path.join(REPO, 'assets/geo/world-110m.json'), 'utf8') }
       : null,
+    artPacks,
   };
 }
 
@@ -507,6 +528,7 @@ ${lessonMain(ch)}
 <script>window.GUIDE_FILES = ${JSON.stringify(p.files).replace(/<\//g, '<\\/')};</script>
 <script>window.GUIDE_CHAPTER = ${JSON.stringify(p.chapter).replace(/<\//g, '<\\/')};</script>
 ${p.geography ? `<script>window.GUIDE_GEOGRAPHY = ${JSON.stringify(p.geography).replace(/<\//g, '<\\/')};</script>` : ''}
+${p.artPacks ? `<script>window.GUIDE_ART_PACKS = ${JSON.stringify(p.artPacks).replace(/<\//g, '<\\/')};</script>` : ''}
 <script>${GUIDE_JS}</script>
 <script>window.__guideInit();</script>
 </body></html>`;
@@ -574,9 +596,14 @@ function portableHtml(chapters, meta) {
   const payload = chapters.map(ch => {
     const p = lessonPayloads(ch);
     for (const [k, v] of Object.entries(p.files)) sharedFiles[k] = v;
-    return { id: ch.id, title: ch.title, category: ch.category, main: lessonMain(ch), files: Object.keys(p.files), chapter: p.chapter, geography: !!p.geography };
+    return { id: ch.id, title: ch.title, category: ch.category, main: lessonMain(ch), files: Object.keys(p.files), chapter: p.chapter, geography: !!p.geography, artPacks: !!p.artPacks };
   });
   const needsGeo = payload.some(c => c.geography);
+  const needsArt = payload.some(c => c.artPacks);
+  const artPackDocs = needsArt
+    ? JSON.parse(fs.readFileSync(new URL('./../standard/registry/art-packs/index.json', import.meta.url))).packs
+        .map(f => slimArtPack(JSON.parse(fs.readFileSync(path.join(REPO, 'standard/registry/art-packs', f), 'utf8'))))
+    : null;
   const safe = s => s.replace(/<\//g, '<\\/');
   const runtimes = ['ddn.global.min.js', 'ddn-graph.min.js', 'ddn-iso.min.js', 'ddn-geo.min.js'].map(f => {
     const js = fs.readFileSync(path.join(REPO, 'notation/dist', f), 'utf8');
@@ -603,8 +630,9 @@ function portableHtml(chapters, meta) {
 <footer>DDN ${A.VERSION} · field-guide 0.7 portable edition · original documentation and synthetic examples · everything on this page runs locally.</footer>
 ${runtimes}
 <script>window.GUIDE_SHARED_FILES = ${safe(JSON.stringify(sharedFiles))};</script>
-<script>window.GUIDE_PORTABLE = ${safe(JSON.stringify(payload.map(c => ({ id: c.id, main: c.main, files: c.files, chapter: c.chapter, geography: c.geography }))))};</script>
+<script>window.GUIDE_PORTABLE = ${safe(JSON.stringify(payload.map(c => ({ id: c.id, main: c.main, files: c.files, chapter: c.chapter, geography: c.geography, artPacks: !!c.artPacks }))))};</script>
 ${needsGeo ? `<script>window.GUIDE_GEO_JSON = ${safe(JSON.stringify(fs.readFileSync(path.join(REPO, 'assets/geo/world-110m.json'), 'utf8')))};</script>` : ''}
+${needsArt ? `<script>window.GUIDE_ART_JSON = ${safe(JSON.stringify(artPackDocs))};</script>` : ''}
 <script>${GUIDE_JS}</script>
 <script>(function(){
 const byId = {};
@@ -616,6 +644,7 @@ function open(id){
   for (const f of c.files) window.GUIDE_FILES[f] = window.GUIDE_SHARED_FILES[f];
   window.GUIDE_CHAPTER = c.chapter;
   window.GUIDE_GEOGRAPHY = c.geography ? { name: 'assets/geo/world-110m.json', json: window.GUIDE_GEO_JSON } : null;
+  window.GUIDE_ART_PACKS = c.artPacks ? window.GUIDE_ART_JSON : null;
   document.getElementById('lesson').innerHTML = c.main;
   window.__guideInit();
   for (const a of document.querySelectorAll('#sidebar a')) a.classList.toggle('active', a.dataset.id === id);

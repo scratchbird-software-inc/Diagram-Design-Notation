@@ -63,6 +63,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/use-cases/18-security.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.views.security\";\nimport \"formats.ddn\" as fmt;\nimport \"data/security.ddn\" as s;\n\n// What must happen before data leaves a restricted context?\n// Automatic grid placement: no absolute positions or waypoints.\nview diagram \"18 / Data handling boundaries\" {\n    data: [@s.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@s.model.source, @s.model.mask, @s.model.export];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_input\": 1, \"model.r_output\": 2 }; }\n    frame restricted \"RESTRICTED / view scope\" { scope: @s.model.restricted; members: [@s.model.source]; }\n    frame review \"REVIEW BEFORE RELEASE / view scope\" { scope: @s.model.egress; members: [@s.model.export]; }\n}\n","website/examples/use-cases/formats.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.formats\";\nformat shared {\n    notation core;\n    style classic;\n    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    layout row { algorithm: grid; gap: 120px; }\n    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }\n    layout teaching { algorithm: manual; gap: 120px; }\n    display full;\n    display compact { fields: none; maturity: none; }\n    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }\n    legend numbered { mode: numbers; width: 340px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @row;\n        display: @full;\n        publication: @figure;\n        legend: @numbered;\n    }\n}\n","website/examples/use-cases/data/security.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.security\";\n\n// All names, records and architectures in this catalogue are synthetic teaching examples.\n\ndata model {\n    dataset source \"Contact records\" {\n        level: instance;\n        fields {\n            customer_id;\n            email;\n        }\n    }\n    activity mask \"Aggregate + remove IDs\";\n    dataset export \"Proposed cohort export\" {\n        level: instance;\n        fields {\n            cohort_id;\n            count;\n        }\n    }\n    security_zone restricted \"Restricted processing\";\n    security_zone egress \"Review before release\";\n    read r_input @source -> @mask;\n    write r_output @mask -> @export;\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"security-boundary","entry":"website/examples/use-cases/18-security.ddn","view":"diagram","files":["website/examples/use-cases/18-security.ddn","website/examples/use-cases/formats.ddn","website/examples/use-cases/data/security.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.usecases.security::model.source","file":"website/examples/use-cases/18-security.ddn","before":"Contact records","after":"Contact records / review","expectation":"Only the label of Contact records / review changes; zones, gates and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -133,6 +134,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

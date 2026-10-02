@@ -3,7 +3,7 @@
  */
 import {publishNamespace} from './ddn-module-registry.js';
 import ICONLIBS from './assets/icon-libraries.js';
-import {sanitizedLibraries,hostIconPacks,hostArtPacks} from './ddn-icon-sanitize.js';
+import {sanitizedLibraries} from './ddn-icon-sanitize.js';
 import Sketch from './ddn-sketch.js';
 import Layout from './ddn-layout.js';
 import Text from './ddn-text.js';
@@ -109,7 +109,8 @@ function measureNode(n,registry,profiles,placement={},context={}){
  * host-registered packs; DDN-PJ206 on an unresolved explicit reference. */
 function iconFor(g,registry){
  const baseLibs=registry.icon_libraries||(registry._iconLibsSanitized??(registry._iconLibsSanitized=sanitizedLibraries(ICONLIBS.libraries)));
- const allLibs=hostIconPacks().length?baseLibs.concat(hostIconPacks()):baseLibs;
+ const Packs=namespace('DDNPacks'),hostLibs=Packs.hostIconPacks();
+ const allLibs=hostLibs.length?baseLibs.concat(hostLibs):baseLibs;
  const xi=g.n.properties?.x_icon||((allLibs.flatMap(l=>(l.icons||[]).filter(i=>(i.kinds||[]).includes(g.n.kind)).map(i=>({library:l.id,icon:i.id}))))[0]);
  if(!xi)return null;
  const lib=allLibs.find(l=>l.id===xi.library);
@@ -135,7 +136,7 @@ function emitIcon(g,found){
 function artFor(g){
  const xa=g.n.properties?.x_art;
  if(!xa)return null;
- const lib=hostArtPacks().find(l=>l.id===xa.library);
+ const lib=namespace('DDNPacks').hostArtPacks().find(l=>l.id===xa.library);
  const item=lib?.items?.find(i=>i.id===xa.item);
  return{xa,item};
 }

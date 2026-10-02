@@ -61,6 +61,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/14-authorized-export.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.export\";\nimport \"shared.ddn\" as shared;\ndata model {\n table workforce \"Workforce public directory\" {\n  fields {staff_id; display_name; salary {classification: restricted;}}\n  description: \"Synthetic restricted note: SALARY_SECRET_CANARY\";\n }\n table team \"Team\" {fields {team_id;name;}}\n ref membership \"Membership\" @workforce -> @team;\n}\nview private \"Private source / hiding is not redaction\" {\n data: [@model];format: @shared.styles.technical;\n display {fields: none;}\n publication {size: content;fit: none;overflow: error;}\n}\nview public \"Allowlisted publication\" {\n data: [@model];format: @shared.styles.technical;\n export {\n  mode: redacted;\n  elements: [@model.workforce, @model.team];\n  fields: [@model.workforce.staff_id,@model.workforce.display_name,@model.team.team_id,@model.team.name];\n  properties: [kind];\n  identifier_mode: opaque;\n  title: \"Public directory / approved projection\";\n }\n publication {size: content;fit: none;overflow: error;}\n}\n","website/examples/basics/shared.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.shared\";\n\nformat styles {\n    notation core;\n    style classic;\n    style hand { look: handDrawn; font: handwriting; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    style dark { theme: dark; }\n    style neutral { theme: neutral; font: mono; }\n    style forest { look: handDrawn; theme: forest; font: handwriting; roughness: 1.8; hachure: true; }\n    layout wires { algorithm: grid; gap: 80px; }\n    display detailed;\n    display compact { fields: none; maturity: none; badges: none; }\n    publication screen { size: content; width: 1360px; height: 860px; margin: 30px; overflow: warn; }\n    publication paper { size: a4; orientation: landscape; margin: 8mm; minimum_text: 7pt; overflow: warn; }\n    legend words { width: 280px; }\n    legend numbers { mode: numbers; width: 280px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @wires;\n        display: @detailed;\n        publication: @screen;\n        legend: @words;\n    }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"safe-export","entry":"website/examples/basics/14-authorized-export.ddn","view":"private","files":["website/examples/basics/14-authorized-export.ddn","website/examples/basics/shared.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.export::model.workforce","file":"website/examples/basics/14-authorized-export.ddn","before":"Workforce public directory","after":"Workforce public directory / review","expectation":"Only the label of Workforce public directory / review changes; the allowlist and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -131,6 +132,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

@@ -59,6 +59,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/94-idef0.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.idef0\";\n\n// B1-078: a small IDEF0 A-0 decomposition. The context view is the single A0\n// activity with its four ICOM sides (input west, control north, output east,\n// mechanism south) and a reference badge into the decomposition view, which\n// shows three numbered activities, a forked labeled arrow, a tunneled arrow\n// (parenthesis at the tunneled end), and a call arrow. All data is synthetic.\ndata m {\n    object a0 \"Manage shop\" { kind: \"idef0.activity\"; x_idef0: { node: \"A0\" };\n        ports {\n            orders { direction: in; side: west; x_icom: { type: \"input\" }; }\n            policy { direction: in; side: north; x_icom: { type: \"control\" }; }\n            service { direction: out; side: east; x_icom: { type: \"output\" }; }\n            staff { direction: in; side: south; x_icom: { type: \"mechanism\" }; }\n        }\n        x_subdiagram: { view: \"detail\" };\n    }\n}\ndata d {\n    object a1 \"Take orders\" { kind: \"idef0.activity\"; x_idef0: { node: \"A01\" };\n        ports { packed { direction: out; side: east; x_icom: { type: \"output\" }; } }\n    }\n    object a3 \"Stock shelves\" { kind: \"idef0.activity\"; x_idef0: { node: \"A03\" };\n        ports { packed { direction: in; side: west; x_icom: { type: \"input\" }; } }\n    }\n    object a2 \"Ship orders\" { kind: \"idef0.activity\"; x_idef0: { node: \"A02\" };\n        ports {\n            packed { direction: in; side: west; x_icom: { type: \"input\" }; }\n            carrier { direction: in; side: south; x_icom: { type: \"mechanism\" }; }\n            shipped { direction: out; side: east; x_icom: { type: \"output\" }; }\n        }\n    }\n    relation f1 \"packed orders\" @a1.packed -> @a2.packed { kind: \"idef0.flow\"; }\n    relation f2 \"packed orders\" @a1.packed -> @a3.packed { kind: \"idef0.flow\"; }\n    relation f3 \"returns\" @a3.packed -> @a1.packed { kind: \"idef0.flow\"; x_tunnel: { start: true }; }\n    relation call1 \"\" @a2 -> @a1 { kind: \"idef0.call\"; x_tunnel: { end: true }; }\n}\nview context \"A-0 context\": [@m] as \"idef0.basic@1\" {\n    publication { size: content; fit: none; }\n}\nview detail \"A0 decomposition\": [@d] as \"idef0.basic@1\" {\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"idef0","entry":"website/examples/basics/94-idef0.ddn","view":"context","files":["website/examples/basics/94-idef0.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.idef0::m.a0","file":"website/examples/basics/94-idef0.ddn","before":"Manage shop","after":"Manage shop / review","expectation":"Only the label of Manage shop / review changes; ICOM arrows and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -129,6 +130,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

@@ -64,6 +64,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/use-cases/05-documents.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.views.documents\";\nimport \"formats.ddn\" as fmt;\nimport \"data/documents.ddn\" as d;\n\n// What is embedded rather than independently stored?\n// Automatic grid placement: no absolute positions or waypoints.\nview diagram \"05 / Nested document structure\" {\n    data: [@d.model];\n    format: @fmt.shared.technical;\n    style: @fmt.shared.classic;\n    layout: @fmt.shared.row;\n    select: [@d.model.profiles, @d.model.contacts, @d.model.contact];\n    publication { width: 1580px; height: 440px; }\n    legend { keys: { \"model.r_a\": 1, \"model.r_b\": 2 }; }\n}\n","website/examples/use-cases/formats.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.formats\";\nformat shared {\n    notation core;\n    style classic;\n    style sketch { look: handDrawn; roughness: 1.8; hachure: true; }\n    style neo { look: neo; }\n    layout row { algorithm: grid; gap: 120px; }\n    layout column { algorithm: grid; columns: 1; gap: 120px; direction: down; }\n    layout teaching { algorithm: manual; gap: 120px; }\n    display full;\n    display compact { fields: none; maturity: none; }\n    publication figure { size: content; width: 1580px; height: 440px; margin: 30px; }\n    legend numbered { mode: numbers; width: 340px; }\n    bundle technical {\n        notation: @core;\n        style: @classic;\n        layout: @row;\n        display: @full;\n        publication: @figure;\n        legend: @numbered;\n    }\n}\n","website/examples/use-cases/data/documents.ddn":"ddn \"0.5\";\nmodule \"ddn.usecases.documents\";\n\n// All names, records and architectures in this catalogue are synthetic teaching examples.\n\ndata model {\n    collection profiles \"Customer profile\" {\n        fields {\n            customer_id;\n            contacts { shape: array; }\n        }\n    }\n    array contacts \"Contacts array\" {\n        description: \"Embedded collection value, not an independently stored table.\";\n    }\n    document contact \"Contact item\" {\n        fields {\n            kind;\n            value;\n            preferred { presence: optional; nullable: false; }\n        }\n    }\n    emb r_a @profiles -> @contacts;\n    mem r_b \"item shape\" @contacts -> @contact;\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"documents","entry":"website/examples/use-cases/05-documents.ddn","view":"diagram","files":["website/examples/use-cases/05-documents.ddn","website/examples/use-cases/formats.ddn","website/examples/use-cases/data/documents.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.usecases.documents::model.contact","file":"website/examples/use-cases/05-documents.ddn","before":"Contact item","after":"Contact item / review","expectation":"Only the label of Contact item / review changes; nesting and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -134,6 +135,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

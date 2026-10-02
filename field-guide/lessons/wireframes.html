@@ -59,6 +59,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/55-wireframe.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.wireframe\";\n\n// Synthetic settings-screen mock for the wireframe.ui@1 profile. The\n// screen area is a ui.frame object; the contained controls are members of\n// a view frame scoped to it. Drawn as plain rect variants in the classic\n// look with the neutral grey palette — clean low-fi boxes, not a widget\n// toolkit. All data is synthetic.\ndata m {\n    object settings \"Settings\" { kind: \"ui.frame\"; }\n    object profile_label \"Profile\" { kind: \"ui.label\"; }\n    object display_name \"Display name\" { kind: \"ui.input\"; }\n    object email_notifications \"Email notifications\" { kind: \"ui.checkbox\"; }\n    object timezone_list \"Timezone\" { kind: \"ui.list\";\n        fields { utc; berlin; tokyo; }\n    }\n    object avatar_placeholder \"Avatar\" { kind: \"ui.image\"; }\n    object save_button \"Save\" { kind: \"ui.button\"; }\n}\n\nview settings \"Settings screen\": [@m] as \"wireframe.ui@1\" {\n    select: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button];\n    style { theme: neutral; }\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n    frame settings_area \"Settings\" { scope: @m.settings; members: [@m.profile_label, @m.display_name, @m.email_notifications, @m.timezone_list, @m.avatar_placeholder, @m.save_button]; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"wireframes","entry":"website/examples/basics/55-wireframe.ddn","view":"settings","files":["website/examples/basics/55-wireframe.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.wireframe::m.profile_label","file":"website/examples/basics/55-wireframe.ddn","before":"Profile","after":"Profile / review","expectation":"Only the label of Profile / review changes; regions, controls and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -129,6 +130,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>

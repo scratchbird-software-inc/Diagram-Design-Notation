@@ -60,6 +60,7 @@ footer{color:#5b6b7b;font-size:.8rem;padding:1rem;border-top:1px solid #d9e2ec;m
 <script>window.GUIDE_FILES = {"website/examples/basics/56-family-tree.ddn":"ddn \"0.5\";\nmodule \"ddn.examples.familytree\";\n\n// Fictional three-generation family for the family.tree@1 profile.\n// Partnerships join through small family.union nodes: alex and miriam via\n// union_am, sam and jo via union_sj. family.parent_of edges run from a\n// union down to a child, so the layered downward layout stacks the\n// generations — grandparents' union at the top, the child generation\n// below, the grandchild at the bottom. Persons carry optional x_birth\n// (and one x_death) years. All persons and dates are fictional.\ndata m {\n    object alex \"Alex\" { kind: \"family.person\"; x_birth: 1948; x_death: 2019; }\n    object miriam \"Miriam\" { kind: \"family.person\"; x_birth: 1951; }\n    object union_am { kind: \"family.union\"; }\n    object sam \"Sam\" { kind: \"family.person\"; x_birth: 1976; }\n    object jo \"Jo\" { kind: \"family.person\"; x_birth: 1978; }\n    object union_sj { kind: \"family.union\"; }\n    object robin \"Robin\" { kind: \"family.person\"; x_birth: 2005; }\n\n    relation partner_alex \"partner of\" @alex -> @union_am { kind: \"family.partner_of\"; }\n    relation partner_miriam \"partner of\" @miriam -> @union_am { kind: \"family.partner_of\"; }\n    relation partner_sam \"partner of\" @sam -> @union_sj { kind: \"family.partner_of\"; }\n    relation partner_jo \"partner of\" @jo -> @union_sj { kind: \"family.partner_of\"; }\n    relation child_sam \"parent of\" @union_am -> @sam { kind: \"family.parent_of\"; }\n    relation child_robin \"parent of\" @union_sj -> @robin { kind: \"family.parent_of\"; }\n}\n\nview family \"Three generations\": [@m] as \"family.tree@1\" {\n    select: [@m.alex, @m.miriam, @m.union_am, @m.sam, @m.jo, @m.union_sj, @m.robin];\n    layout { algorithm: layered; direction: down; }\n    publication { size: content; fit: none; }\n}\n"};</script>
 <script>window.GUIDE_CHAPTER = {"id":"family-tree","entry":"website/examples/basics/56-family-tree.ddn","view":"family","files":["website/examples/basics/56-family-tree.ddn"],"experiment":{"kind":"label","title":"Clarify a label without changing its identity","id":"ddn.examples.familytree::m.alex","file":"website/examples/basics/56-family-tree.ddn","before":"Alex","after":"Alex / review","expectation":"Only the label of Alex / review changes; partnerships, descent and identities are untouched."},"experimentKind":"label","evaluation":null};</script>
 
+
 <script>window.__guideInit = function(){
 const data = window.GUIDE_CHAPTER, files = window.GUIDE_FILES;
 const ws = DDNLive.createWorkspace(files);
@@ -130,6 +131,11 @@ if (evalRun) evalRun.onclick = () => {
 if (window.GUIDE_GEOGRAPHY && window.DDNGeo) {
   DDNGeo.registerGeography(window.GUIDE_GEOGRAPHY.name, window.GUIDE_GEOGRAPHY.json);
   DDNGeo.registerGeography('world-110m', window.GUIDE_GEOGRAPHY.json);
+}
+if (window.GUIDE_ART_PACKS) {
+  for (const pk of window.GUIDE_ART_PACKS) {
+    if (!DDNLive.hostArtPacks().some(l => l.id === pk.id)) DDNLive.registerArtPack(pk);
+  }
 }
 redraw();
 };</script>
