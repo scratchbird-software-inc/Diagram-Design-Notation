@@ -684,7 +684,10 @@
     let yy=y+h/2-(g.titleLines.length-1)*10.5*s+5*s;if(shape==='package')yy+=10*s;
     /* B1-085: contact/coil names sit above the glyph, not at node centre. */
     if(['ladder.contact','ladder.coil'].includes(n.kind))yy=y+17*s;
-    out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
+    /* A sentry criterion shows its if-part condition at the diamond centre; an
+     * unnamed (id-labelled) sentry would otherwise print its id on top of it. */
+    const sentryCriterion=n.kind==='cmmn.sentry'&&n.properties.x_sentry?.if_part;
+    if(!sentryCriterion)out+=lines(g.titleLines,x+w/2+(shape==='store'&&p.projection.profile!=='dfd.yourdon@1'?12*s:0),yy,16,600,n.properties.key||n.properties.x_chen?.key?'text-anchor="middle" text-decoration="underline"':'text-anchor="middle"');
    }
    if(n.properties.x_chen?.partial_key){const tw=Math.min(w*.8,api$9.measure(n.name,16*s,p.style.font,600).width);out+=`<path d="M${x+w/2-tw/2} ${y+h/2+11*s}h${tw}" stroke="${ink}" fill="none" stroke-dasharray="4 3"/>`;}
    /* B1-079: Petri markings — token dots inside a place (count text past 5). */
