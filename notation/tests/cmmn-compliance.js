@@ -56,6 +56,19 @@ test('sentry: if-part text, criterion attachment, on-part connectors',()=>{const
 test('planning table attaches at the stage/task top edge with its items',()=>{const r=run();
  assert.ok(r.svg.includes('ddn-planning-table'),'planning table missing');
  assert.ok(r.svg.includes('Senior review')&&r.svg.includes('Legal opinion'),'planning items missing');});
+test('planning table reserves its band and never overlaps the task body or other nodes',()=>{const r=run();
+ // The expanded table occupies a reserved band above the task body (CMMN:
+ // attached but offset, never over the task). Geometry check on the emitted
+ // rectangles inside the Approve node group, plus scene-level overlap proof.
+ const table=(r.svg.match(/ddn-planning-table"><rect x="([\d.-]+)" y="([\d.-]+)" width="([\d.-]+)" height="([\d.-]+)"/)||[]).slice(1).map(Number);
+ assert.ok(table.length===4,'planning table rect missing');
+ const appr=r.scene.nodes.find(n=>n.id.endsWith('.appr'));
+ const tableBottom=table[1]+table[3],bodyTop=appr.y+ (appr.h-(r.scene.nodes.find(n=>n.id.endsWith('.review')).h));
+ assert.ok(table[0]>=appr.x-.01&&table[2]<=appr.w+.01,'table must stay inside the reserved node box horizontally');
+ assert.ok(table[1]>=appr.y-.01,'table starts at the reserved band top');
+ assert.ok(tableBottom<bodyTop,'table bottom must clear the task body (got '+tableBottom+' vs '+bodyTop+')');
+ assert.deepEqual(r.scene.quality.objectOverlaps,[],'no box-on-box overlaps in the scene');
+ assert.deepEqual(r.scene.quality.errors,[]);});
 test('dependency connectors render dashed; stage frame renders',()=>{const r=run();
  assert.ok((r.svg.match(/ddn-verb-cmndep/g)||[]).length===5,'dependencies missing');
  assert.ok(r.svg.includes('ddn-frame'),'stage frame missing');});

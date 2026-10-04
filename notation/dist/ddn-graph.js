@@ -350,6 +350,15 @@
      g.h=Math.max(g.h,(100+acts.length*20+(x.submachine?24:0))*s);}
    }
    if(n.kind==='uml.usecase'&&n.properties.x_usecase?.extension_points?.length){g.extensionPoints=n.properties.x_usecase.extension_points;g.w=Math.max(g.w,320*s);g.h=Math.max(g.h,(110+g.extensionPoints.length*20)*s);}
+   /* CMMN planning table: an expanded table attaches above its task/stage, never
+    * over its body. Reserve a top band in the node's own box so layout, frames
+    * and overlap inspection all account for it; render() draws the table there
+    * and shifts the task body below it. */
+   const xp=n.properties.x_planning;
+   if(xp?.items?.length){
+    const pw=Math.max(g.w,Math.max(...xp.items.map(it=>api$9.measure(it,10.5*s,p.style.font,400).width))+24*s),ph=xp.items.length*16*s+24*s;
+    g.w=Math.max(g.w,pw);g.planningH=ph+8*s;g.h+=g.planningH;
+   }
    return g;
   }
   function polygon(g){const{x,y,w,h,silhouette:t}=g;
@@ -419,6 +428,8 @@
    return false;
   }
   function render$2(g,p,theme){
+   let planning=null;
+   if(g.planningH){planning={x:g.x,y:g.y,w:g.w,h:g.planningH-8*g.scale,items:g.n.properties.x_planning.items};g={...g,y:g.y+g.planningH,h:g.h-g.planningH};}
    const {n,k,x,y,w,h}=g,s=g.scale,look=p.style.look,shape=g.silhouette,mono=p.style.theme==='neutral'||p.theme08==='mono_print',monoPrint=p.theme08==='mono_print',nc=api$a.node(k,theme),ink=monoPrint?'#000000':mono?'#333333':nc.ink,fill=monoPrint?'#FFFFFF':mono?'#FAFAFA':nc.fill,fg=monoPrint?'#000000':nc.text;
    const opt={...p.style,id:n.id,stroke:ink,fill,width:1.8};
    const line=(x1,y1,x2,y2,width=1)=>look==='handDrawn'?api$8.polyline([[x1,y1],[x2,y2]],{...opt,id:n.id+':line:'+x1+':'+y1,width,hachure:false}):`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" fill="none" stroke="${ink}" stroke-width="${width}"/>`;
@@ -427,6 +438,7 @@
    const text=(xx,yy,txt,size=13,weight=400,extra='')=>{if(shapesOnly)return '';api$9.measure(txt,size*s,p.style.font,weight);return `<text x="${f(xx)}" y="${f(yy)}" font-size="${size*s}" fill="${fg}" font-weight="${weight}" ${extra}>${esc$2(txt)}</text>`;};
    const lines=(ls,xx,yy,size=16,weight=600,extra='text-anchor="middle"')=>ls.map((v,i)=>text(xx,yy+i*(size+5)*s,v,size,weight,extra)).join('');
    let out=`<g class="ddn-node ddn-kind-${slug$1(k.code)}" data-id="${esc$2(n.id)}" data-ddn-id="${esc$2(n.id)}" data-shape="${esc$2(shape)}" tabindex="0" role="group" aria-label="${esc$2(n.name)}"><title>${esc$2(n.name+' — '+k.name)}</title>`;
+   if(planning)out+=`<g class="ddn-planning-table"><rect x="${f(planning.x)}" y="${f(planning.y)}" width="${f(planning.w)}" height="${f(planning.h)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(planning.x+8*s,planning.y+18*s,'Planning',10,650,'')+planning.items.map((it,i)=>text(planning.x+8*s,planning.y+(36+i*16)*s,it,10.5,400,'')).join('')+'</g>';
    if(['initial','final'].includes(shape)){
     const cx=x+w/2,cy=y+h/2-8,r=12*s;
     if(shape==='initial')out+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${ink}"/>`;
@@ -743,11 +755,6 @@
      else if(m==='completion')out+=`<g class="ddn-marker" data-marker="completion"><path d="M${f(bx-5*s)} ${f(by)}L${f(bx-1*s)} ${f(by+4*s)}L${f(bx+6*s)} ${f(by-5*s)}" fill="none" stroke="${ink}" stroke-width="1.8"/></g>`;
      else if(m==='collapsed')out+=`<g class="ddn-marker" data-marker="collapsed">`+text(bx,by+4*s,'+',14,650,'text-anchor="middle"')+'</g>';
     });
-   }
-   const xp=n.properties.x_planning;
-   if(xp?.items?.length){
-    const pw=Math.max(w,Math.max(...xp.items.map(it=>api$9.measure(it,10.5*s,p.style.font,400).width))+24*s),ph=xp.items.length*16*s+24*s;
-    out+=`<g class="ddn-planning-table"><rect x="${f(x)}" y="${f(y-ph+6*s)}" width="${f(pw)}" height="${f(ph)}" fill="${fill}" stroke="${ink}" stroke-width="1.3" stroke-dasharray="5 4"/>`+text(x+8*s,y-ph+18*s+6*s,'Planning',10,650,'')+xp.items.map((it,i)=>text(x+8*s,y-ph+(36+i*16)*s+6*s,it,10.5,400,'')).join('')+'</g>';
    }
    /* B1-063: BPMN decorators — gateway inner glyphs and activity border
     * modes/markers. Driven by x_gateway/x_activity contracts; profile-neutral. */
